@@ -145,7 +145,7 @@ const filters = reactive({
 });
 
 const employeeOptions = computed(() => {
-  const options = employees.value.map(e => ({ value: e.id, label: e.name || e.ho_ten }));
+  const options = employees.value.map(e => ({ value: (e.id_tai_khoan || e.id), label: e.name || e.ho_ten }));
   return [{value: null, label: 'Tất cả nhân viên'}, ...options];
 });
 
@@ -231,3 +231,4 @@ const getActionLabel = (action) => {
   }
 };
 </script>
+

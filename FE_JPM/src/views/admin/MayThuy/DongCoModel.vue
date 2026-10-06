@@ -222,7 +222,8 @@
                 </div>
 
                 <div class="row">
-                  <div class="col-md-6 mb-3">
+                  
+<div class="col-md-12 mb-3">
                     <label class="form-label fw-medium text-dark">Trạng Thái <span class="text-danger">*</span></label>
                     <v-select
                       v-model="formData.trang_thai"
@@ -511,7 +512,7 @@ export default {
       try {
         const payload = new FormData();
         Object.keys(this.formData).forEach(key => {
-          if (this.formData[key] !== null && this.formData[key] !== undefined && key !== 'hinh_anh_url') {
+          if (this.formData[key] !== null && this.formData[key] !== undefined && key !== 'hinh_anh_url' && key !== 'hinh_anh') {
             payload.append(key, this.formData[key]);
           }
         });
@@ -584,6 +585,9 @@ export default {
   color: #697a8d;
 }
 </style>
+
+
+
 
 
 
