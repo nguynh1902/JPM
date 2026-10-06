@@ -11,15 +11,19 @@ trait LogsActivity
     public static function bootLogsActivity()
     {
         static::created(function ($model) {
-            self::logAction('THÊM MỚI', 'Thêm mới ' . self::getModelName($model));
+            self::logAction('CREATE', 'Thêm mới ' . self::getModelName($model));
         });
 
         static::updated(function ($model) {
-            self::logAction('CẬP NHẬT', 'Cập nhật ' . self::getModelName($model));
+            // Prevent double logging when model is created and then immediately updated in the same instance
+            if ($model->wasRecentlyCreated) {
+                return;
+            }
+            self::logAction('UPDATE', 'Cập nhật ' . self::getModelName($model));
         });
 
         static::deleted(function ($model) {
-            self::logAction('XÓA', 'Xóa ' . self::getModelName($model));
+            self::logAction('DELETE', 'Xóa ' . self::getModelName($model));
         });
     }
 
@@ -45,7 +49,7 @@ trait LogsActivity
                 $name = 'Sản Phẩm (' . ($model->ten_san_pham ?? $model->id) . ')';
                 break;
             case 'ThuongHieu':
-                $name = 'Thương Hiệu (' . ($model->ten_thuong_hieu ?? $model->id) . ')';
+                $name = 'Thương Hiệu (' . ($model->name ?? $model->ten_thuong_hieu ?? $model->id) . ')';
                 break;
             case 'DongCoModel':
                 $name = 'Model Động Cơ (' . ($model->ten_model ?? $model->id) . ')';
@@ -60,7 +64,7 @@ trait LogsActivity
                 $name = 'Đơn Hàng (' . ($model->ma_don_hang ?? $model->id) . ')';
                 break;
             default:
-                $name = $class . ' ID: ' . $model->id;
+                $name = $class . ' (' . $model->id . ')';
         }
         
         return $name;
