@@ -1,0 +1,601 @@
+Tôi đã hoàn thành việc code website. Bây giờ hãy đóng vai trò là một Senior QA Engineer + Senior Full-Stack Developer và thực hiện kiểm thử TOÀN BỘ dự án trước khi website được đưa lên production cho khách hàng.
+
+MỤC TIÊU:
+Đảm bảo website hoạt động ổn định, logic giữa các page và chức năng liên kết chính xác, không có lỗi nghiêm trọng và trải nghiệm người dùng trơn tru.
+
+QUAN TRỌNG:
+
+* Không chỉ kiểm tra syntax hoặc build.
+* Hãy kiểm tra toàn bộ project từ frontend, backend, database, API, authentication, routing, state management đến UI/UX.
+* Hãy kiểm tra cả logic giữa các page và luồng người dùng từ đầu đến cuối.
+* Nếu phát hiện lỗi, hãy xác định nguyên nhân, mức độ nghiêm trọng và sửa lỗi nếu có thể.
+* Không được tự ý thay đổi logic nghiệp vụ nếu chưa cần thiết.
+* Không được xóa chức năng đang hoạt động chỉ để làm test pass.
+* Sau mỗi thay đổi quan trọng, hãy kiểm tra lại các chức năng liên quan để đảm bảo không tạo ra regression bug.
+
+==================================================
+
+1. KIỂM TRA CẤU TRÚC TOÀN BỘ PROJECT
+   ==================================================
+
+Hãy kiểm tra:
+
+* Cấu trúc folder/file
+* Frontend
+* Backend
+* Database
+* API
+* Components
+* Pages
+* Routes
+* Services
+* Hooks
+* Utilities
+* Authentication
+* Authorization
+* Configuration
+* Environment variables
+* Dependencies
+* Build configuration
+
+Xác định:
+
+* File thừa
+* Code chết
+* Code duplicate
+* Import sai
+* Dependency không sử dụng
+* Dependency có vấn đề
+* Configuration sai
+* Environment variable bị thiếu
+* Hard-code dữ liệu quan trọng
+* Các điểm có nguy cơ gây lỗi production
+
+==================================================
+2. KIỂM TRA TẤT CẢ PAGE
+=======================
+
+Hãy lập danh sách TOÀN BỘ page/route của website.
+
+Với từng page hãy kiểm tra:
+
+* Page có load được không?
+* URL có chính xác không?
+* Navigation có hoạt động không?
+* Link có dẫn đúng page không?
+* Button có hoạt động không?
+* Form có hoạt động không?
+* Data có hiển thị đúng không?
+* Loading state
+* Empty state
+* Error state
+* Responsive
+* Refresh page có lỗi không?
+* Truy cập trực tiếp URL có lỗi không?
+* Back/Forward browser có hoạt động đúng không?
+* Có console error không?
+* Có broken image/icon không?
+* Có dữ liệu giả/test data còn sót không?
+
+==================================================
+3. KIỂM TRA LOGIC GIỮA CÁC PAGE
+===============================
+
+Đây là phần rất quan trọng.
+
+Hãy kiểm tra các user flow từ đầu đến cuối.
+
+Ví dụ:
+
+Home
+→ Category
+→ Product/Article Detail
+→ Search
+→ Filter
+→ Cart/Favorite
+→ Checkout/Request
+→ Login/Register
+→ Account
+→ Dashboard
+→ Logout
+
+Kiểm tra xem dữ liệu có được truyền chính xác giữa các page hay không.
+
+Ví dụ:
+
+Nếu người dùng chọn một sản phẩm ở Product List:
+
+Product List
+→ Product Detail
+→ Add to Cart
+→ Cart
+→ Checkout
+
+Hãy kiểm tra toàn bộ flow này.
+
+Nếu website có:
+
+News
+→ News Detail
+→ Related News
+→ Category
+
+hãy kiểm tra toàn bộ flow.
+
+Nếu có:
+
+Login
+→ Dashboard
+→ Profile
+→ Logout
+
+hãy kiểm tra toàn bộ flow.
+
+Nếu có:
+
+Admin
+→ Product Management
+→ Add Product
+→ Edit Product
+→ Delete Product
+→ Product List
+
+hãy kiểm tra toàn bộ CRUD flow.
+
+==================================================
+4. KIỂM TRA BUTTON VÀ INTERACTION
+=================================
+
+Hãy kiểm tra TẤT CẢ:
+
+* Button
+* Link
+* Dropdown
+* Select
+* Checkbox
+* Radio
+* Toggle
+* Modal
+* Popup
+* Tabs
+* Accordion
+* Pagination
+* Search
+* Filter
+* Sort
+* Form
+* Upload
+* Download
+* Navigation
+* Mobile menu
+
+Không được chỉ kiểm tra bằng mắt.
+
+Hãy xác nhận interaction thực sự hoạt động.
+
+Đặc biệt kiểm tra:
+
+* Button không làm gì
+* Button sai action
+* Link sai URL
+* Modal không đóng
+* Form submit sai
+* Double click gây duplicate request
+* Pagination sai
+* Filter không cập nhật data
+* Search trả kết quả sai
+
+==================================================
+5. KIỂM TRA FORM
+================
+
+Kiểm tra tất cả form trong website.
+
+Test:
+
+* Input rỗng
+* Input hợp lệ
+* Input không hợp lệ
+* Email sai format
+* Số điện thoại sai
+* Giá trị quá dài
+* Giá trị quá ngắn
+* Ký tự đặc biệt
+* Khoảng trắng
+* Duplicate data
+* Submit nhiều lần
+* Loading khi submit
+* Error message
+* Success message
+
+Đảm bảo validation ở cả frontend và backend nếu cần.
+
+==================================================
+6. KIỂM TRA AUTHENTICATION / AUTHORIZATION
+==========================================
+
+Nếu website có tài khoản:
+
+Test:
+
+* Register
+* Login
+* Logout
+* Forgot password
+* Reset password
+* Session
+* Token
+* Refresh
+* Protected routes
+* Role permissions
+* Admin/User permissions
+
+Kiểm tra:
+
+User thường có truy cập được Admin page không?
+
+User chưa login có truy cập được protected page không?
+
+Logout xong có quay lại protected page bằng browser Back được không?
+
+Token/session hết hạn thì website xử lý như thế nào?
+
+==================================================
+7. KIỂM TRA API
+===============
+
+Kiểm tra toàn bộ API:
+
+* GET
+* POST
+* PUT/PATCH
+* DELETE
+
+Với mỗi API:
+
+* Request đúng?
+* Response đúng?
+* Status code đúng?
+* Validation?
+* Authentication?
+* Authorization?
+* Error handling?
+* Empty data?
+* Invalid ID?
+* Missing parameters?
+* Duplicate request?
+* Server error?
+
+Kiểm tra frontend có xử lý đúng mọi response từ API hay không.
+
+==================================================
+8. KIỂM TRA DATABASE
+====================
+
+Kiểm tra:
+
+* Schema
+* Relationships
+* Foreign keys
+* Required fields
+* Nullable fields
+* Unique fields
+* Default values
+* Constraints
+* CRUD
+* Data consistency
+* Duplicate records
+* Orphan records
+
+Đặc biệt kiểm tra các quan hệ giữa dữ liệu.
+
+Ví dụ:
+
+User
+→ Order
+→ Order Item
+→ Product
+
+Đảm bảo dữ liệu không bị sai hoặc mất liên kết.
+
+==================================================
+9. KIỂM TRA ERROR HANDLING
+==========================
+
+Cố tình tạo các tình huống lỗi:
+
+* API không phản hồi
+* Server error
+* Database error
+* Network error
+* Invalid input
+* Không có dữ liệu
+* Không tìm thấy dữ liệu
+* Unauthorized
+* Forbidden
+* Timeout
+
+Website phải hiển thị thông báo phù hợp thay vì crash hoặc blank screen.
+
+==================================================
+10. KIỂM TRA RESPONSIVE
+=======================
+
+Kiểm tra ít nhất:
+
+* Desktop
+* Laptop
+* Tablet
+* Mobile
+
+Kiểm tra:
+
+* Layout
+* Header
+* Navigation
+* Menu
+* Images
+* Tables
+* Forms
+* Buttons
+* Cards
+* Text
+* Modal
+* Footer
+
+Không để:
+
+* Overflow ngang
+* Text bị cắt
+* Button bị che
+* Image vỡ
+* Layout lệch
+* Menu không sử dụng được trên mobile
+
+==================================================
+11. KIỂM TRA UI/UX
+==================
+
+Kiểm tra:
+
+* Consistent spacing
+* Typography
+* Button states
+* Hover
+* Active
+* Disabled
+* Loading
+* Error
+* Success
+* Empty state
+* Visual hierarchy
+* Navigation
+* User feedback
+
+Đảm bảo người dùng luôn biết:
+
+* Đang loading
+* Action đã thành công
+* Action thất bại
+* Dữ liệu đang được xử lý
+
+==================================================
+12. KIỂM TRA PERFORMANCE
+========================
+
+Kiểm tra:
+
+* Page load
+* API response
+* Image optimization
+* Lazy loading
+* Bundle size
+* Unnecessary requests
+* Duplicate requests
+* Memory leaks
+* Excessive re-render
+* Large assets
+* Slow components
+
+Tìm những điểm có thể làm website chậm khi có nhiều người dùng.
+
+==================================================
+13. KIỂM TRA SECURITY CƠ BẢN
+============================
+
+Kiểm tra các vấn đề phổ biến:
+
+* XSS
+* SQL Injection
+* Authentication bypass
+* Authorization bypass
+* Sensitive data exposed
+* API exposed
+* Secrets trong frontend
+* Environment variables
+* Unsafe file upload
+* Insecure URL parameters
+* CORS configuration
+* Cookie/session security
+
+Không được hiển thị:
+
+* Password
+* API key
+* Secret key
+* Database credentials
+* Private tokens
+
+==================================================
+14. KIỂM TRA SEO VÀ PRODUCTION
+==============================
+
+Nếu đây là website public, kiểm tra:
+
+* Title
+* Meta description
+* H1
+* Heading structure
+* URL
+* Canonical
+* Sitemap
+* Robots.txt
+* Open Graph
+* Favicon
+* Image alt
+* 404 page
+* 500/error handling
+
+==================================================
+15. KIỂM TRA PRODUCTION BUILD
+=============================
+
+Hãy chạy:
+
+* Install/dependency check
+* Lint
+* Type check nếu project có TypeScript
+* Build production
+* Test production build
+
+Đảm bảo:
+
+* Không build error
+* Không runtime error
+* Không missing environment variable
+* Không broken import
+* Không broken asset
+* Không console error nghiêm trọng
+
+==================================================
+16. KIỂM TRA REGRESSION
+=======================
+
+Sau khi sửa bất kỳ lỗi nào:
+
+Hãy test lại các chức năng có liên quan.
+
+Không được chỉ sửa lỗi rồi kết luận.
+
+Ví dụ:
+
+Nếu sửa Login:
+
+Test lại:
+Login
+→ Dashboard
+→ Profile
+→ Logout
+→ Protected routes
+
+Nếu sửa Product:
+
+Test lại:
+Product List
+→ Product Detail
+→ Search
+→ Filter
+→ Cart
+→ Checkout
+
+==================================================
+17. TẠO TEST REPORT
+===================
+
+Sau khi kiểm tra xong, hãy tạo báo cáo theo format:
+
+1. PROJECT STATUS
+
+* PASS / NEED FIX / BLOCKED
+
+2. TOTAL TESTS
+
+* Total:
+* Passed:
+* Failed:
+* Blocked:
+
+3. CRITICAL ISSUES
+   Danh sách lỗi nghiêm trọng phải sửa trước khi production.
+
+4. HIGH PRIORITY ISSUES
+
+5. MEDIUM PRIORITY ISSUES
+
+6. LOW PRIORITY ISSUES
+
+7. PAGE TEST RESULTS
+
+Page | Status | Issues
+
+8. FUNCTION TEST RESULTS
+
+Function | Status | Issues
+
+9. API TEST RESULTS
+
+API | Status | Issues
+
+10. SECURITY FINDINGS
+
+11. PERFORMANCE FINDINGS
+
+12. RESPONSIVE FINDINGS
+
+13. PRODUCTION READINESS
+
+Cuối cùng hãy đưa ra:
+
+PRODUCTION CHECKLIST
+
+[ ] Build successful
+[ ] No critical bugs
+[ ] No major broken functionality
+[ ] All pages accessible
+[ ] All navigation works
+[ ] All important user flows work
+[ ] Forms work
+[ ] API works
+[ ] Database works
+[ ] Authentication works
+[ ] Authorization works
+[ ] Error handling works
+[ ] Responsive works
+[ ] No exposed secrets
+[ ] No major console errors
+[ ] Production environment works
+
+==================================================
+QUY TẮC LÀM VIỆC
+================
+
+1. Hãy kiểm tra project thực tế, không chỉ đọc code rồi đoán.
+2. Nếu có thể chạy project, hãy chạy project.
+3. Nếu có thể sử dụng browser để test UI, hãy thực hiện.
+4. Ưu tiên test các user flow quan trọng trước.
+5. Không bỏ qua các lỗi nhỏ nếu chúng có thể ảnh hưởng đến production.
+6. Không tự ý thay đổi business logic.
+7. Khi phát hiện lỗi, hãy:
+
+   * Mô tả lỗi
+   * Xác định nguyên nhân
+   * Đánh giá mức độ
+   * Sửa lỗi
+   * Test lại
+8. Sau khi hoàn tất, hãy chỉ ra rõ:
+
+   * Những gì đã kiểm tra
+   * Những gì đã sửa
+   * Những gì vẫn còn vấn đề
+   * Những gì cần tôi kiểm tra thủ công
+   * Website đã đủ điều kiện để deploy hay chưa
+
+MỤC TIÊU CUỐI CÙNG:
+
+Tôi muốn website được kiểm tra như một dự án chuẩn bị bàn giao cho khách hàng thực tế.
+
+Hãy tìm càng nhiều lỗi thực tế càng tốt, đặc biệt là lỗi logic giữa các page, lỗi chức năng, lỗi API, lỗi dữ liệu, lỗi authentication/authorization, lỗi responsive và lỗi production.
+
+Đừng chỉ nói "Everything looks good".
+
+Chỉ kết luận website ổn khi đã thực sự kiểm tra các chức năng và user flow quan trọng.

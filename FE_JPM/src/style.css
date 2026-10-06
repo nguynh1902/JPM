@@ -1,0 +1,40 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body,
+#app {
+  width: 100%;
+  min-height: 100%;
+}
+
+body {
+  overflow-x: hidden;
+}
+
+/* Global Table Header Styles */
+.table th {
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 1px;
+  color: #233446 !important;
+  font-weight: 700 !important;
+}
+
+/* Khắc phục lỗi Bootstrap Modal tạo cột trắng và đẩy layout */
+html:has(body.modal-open) {
+  overflow-y: hidden !important;
+}
+
+/* Fix SweetAlert2 z-index for Sneat template */
+.swal2-container {
+    z-index: 1105 !important;
+}
+
+/* Shift SweetAlert modal up slightly */
+.swal-shift-up {
+    margin-top: -10vh !important;
+}

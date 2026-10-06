@@ -1,0 +1,63 @@
+[
+    {
+        "name": "Create Brand",
+        "url": "\/admin\/thuong-hieu",
+        "status": 422,
+        "pass": false,
+        "data": {
+            "message": "Tr\u1ea1ng th\u00e1i l\u00e0 b\u1eaft bu\u1ed9c",
+            "errors": {
+                "status": [
+                    "Tr\u1ea1ng th\u00e1i l\u00e0 b\u1eaft bu\u1ed9c"
+                ]
+            }
+        }
+    },
+    {
+        "name": "System Logs",
+        "url": "\/admin\/system-logs",
+        "status": 200,
+        "pass": true,
+        "data": {
+            "success": true,
+            "data": {
+                "data": [
+                    {
+                        "id": 2,
+                        "user_id": 1,
+                        "user_name": "Admin Manager",
+                        "avatar": "https:\/\/imgs.search.brave.com\/Tuuaec6b4bnBCERP1mrixq3iANwRwsLWmVGN-fgKsxU\/rs:fit:860:0:0:0\/g:ce\/aHR0cHM6Ly9tZWRp\/YS5pc3RvY2twaG90\/by5jb20vaWQvMTYy\/MzI0OTQxL3ZpL2Fu\/aC9tJUUxJUJCJTk5\/dC1jaGklRTElQkEl\/QkZjLWR1LXRodXkl\/RTElQkIlODFuLW0l\/QzMlQTB1LXRyJUUx\/JUJBJUFGbmctcyVF\/MSVCQiU4RGMteGFu\/aC1jaCVFMSVCQSVB\/MXktcXUlQzMlQTEt\/dCVFMSVCQiU5MWMt\/JUM0JTkxJUUxJUJC\/JTk5LXRyJUMzJUFB\/bi1iaSVFMSVCQiU4\/M24uanBnP3M9NjEy\/eDYxMiZ3PTAmaz0y\/MCZjPWo0QVc2aWxC\/OThPc1Qwc2k2WEJa\/RWdZeG1lV042cTE1\/YjItdFd1SDlQUnM9",
+                        "role": "admin",
+                        "action": "UPDATE",
+                        "description": "C\u1eadp nh\u1eadt gi\u00e1 s\u1ea3n ph\u1ea9m Yamaha F150",
+                        "ip_address": "192.168.1.15",
+                        "created_at": "2026-10-06 04:13:26"
+                    },
+                    {
+                        "id": 1,
+                        "user_id": 1,
+                        "user_name": "Admin Manager",
+                        "avatar": "https:\/\/imgs.search.brave.com\/Tuuaec6b4bnBCERP1mrixq3iANwRwsLWmVGN-fgKsxU\/rs:fit:860:0:0:0\/g:ce\/aHR0cHM6Ly9tZWRp\/YS5pc3RvY2twaG90\/by5jb20vaWQvMTYy\/MzI0OTQxL3ZpL2Fu\/aC9tJUUxJUJCJTk5\/dC1jaGklRTElQkEl\/QkZjLWR1LXRodXkl\/RTElQkIlODFuLW0l\/QzMlQTB1LXRyJUUx\/JUJBJUFGbmctcyVF\/MSVCQiU4RGMteGFu\/aC1jaCVFMSVCQSVB\/MXktcXUlQzMlQTEt\/dCVFMSVCQiU5MWMt\/JUM0JTkxJUUxJUJC\/JTk5LXRyJUMzJUFB\/bi1iaSVFMSVCQiU4\/M24uanBnP3M9NjEy\/eDYxMiZ3PTAmaz0y\/MCZjPWo0QVc2aWxC\/OThPc1Qwc2k2WEJa\/RWdZeG1lV042cTE1\/YjItdFd1SDlQUnM9",
+                        "role": "admin",
+                        "action": "LOGIN",
+                        "description": "\u0110\u0103ng nh\u1eadp v\u00e0o h\u1ec7 th\u1ed1ng",
+                        "ip_address": "192.168.1.15",
+                        "created_at": "2026-10-06 02:43:26"
+                    }
+                ],
+                "links": {
+                    "first": null,
+                    "last": null,
+                    "prev": null,
+                    "next": null
+                },
+                "meta": {
+                    "path": "http:\/\/localhost:8000\/api\/admin\/system-logs",
+                    "per_page": 30,
+                    "next_cursor": null,
+                    "prev_cursor": null
+                }
+            }
+        }
+    }
+]

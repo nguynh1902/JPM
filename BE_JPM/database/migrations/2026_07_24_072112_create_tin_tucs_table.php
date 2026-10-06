@@ -1,0 +1,30 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('tin_tucs', function (Blueprint $table) {
+            $table->id();
+            $table->string("title")->nullable(); $table->string("category")->nullable(); $table->text('thumbnail')->nullable(); $table->string("youtube_url")->nullable(); $table->text("summary")->nullable(); $table->longText("content")->nullable(); $table->string("status")->default("PUBLISHED"); $table->integer("views")->default(0); $table->string("author")->nullable();
+            $table->timestamps();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('tin_tucs');
+    }
+};
+
+

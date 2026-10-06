@@ -1,0 +1,198 @@
+<?php
+
+namespace App\Domain\Sales\Controllers;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use App\Domain\Sales\Models\DonHang;
+use App\Domain\Sales\Models\ChiTietDonHang;
+use App\Domain\Procurement\Models\TonKho;
+use App\Domain\Procurement\Models\TheKho;
+use App\Domain\Sales\Services\OrderService;
+
+class DonHangController extends Controller
+{
+    public function store(Request $request)
+    {
+        $data = $request->validate([
+            'id_khach_hang' => 'required|integer',
+            'id_dia_chi_giao_hang' => 'required|integer',
+            'id_phuong_thuc_thanh_toan' => 'required|integer',
+            'items' => 'required|array',
+        ]);
+
+        $idempotencyKey = $request->header('Idempotency-Key');
+        $requestHash = md5(json_encode($request->all()));
+
+        if ($idempotencyKey) {
+            try {
+                $existing = DB::table('idempotency_keys')->where('key', $idempotencyKey)->first();
+                if ($existing) {
+                    if ($existing->request_hash !== $requestHash) {
+                        return response()->json(['success' => false, 'message' => 'Idempotency key mismatch body'], 409);
+                    }
+                    return response()->json(json_decode($existing->response_body, true), $existing->status_code);
+                }
+                
+                DB::table('idempotency_keys')->insert([
+                    'key' => $idempotencyKey,
+                    'request_hash' => $requestHash,
+                    'status_code' => 200,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+            } catch (\Exception $e) {
+                return response()->json(['success' => false, 'message' => 'Concurrent request detected'], 409);
+            }
+        }
+
+        DB::beginTransaction();
+
+        try {
+            $maCode = 'DH-' . date('ymd') . '-' . strtoupper(substr(uniqid(), -4));
+            $donHang = DonHang::create([
+                'ma_don_hang' => $maCode,
+                'id_khach_hang' => $data['id_khach_hang'],
+                'id_dia_chi_giao_hang' => $data['id_dia_chi_giao_hang'],
+                'id_phuong_thuc_thanh_toan' => $data['id_phuong_thuc_thanh_toan'],
+                'ghi_chu_khach_hang' => $request->ghi_chu_khach_hang,
+                'tong_tien' => 0,
+            ]);
+
+            $orderService = new OrderService();
+            $processedData = $orderService->processItemsAndInventory($data['items'], $donHang->id, false);
+
+            foreach ($processedData['items'] as $itemData) {
+                ChiTietDonHang::create($itemData);
+            }
+
+            $donHang->tong_tien = $processedData['tong_tien'];
+            $donHang->save();
+
+            DB::commit();
+            
+            $resBody = [
+                'success' => true,
+                'message' => 'T?o don hng thnh cng',
+                'data' => $donHang
+            ];
+            
+            if ($idempotencyKey) {
+                DB::table('idempotency_keys')->where('key', $idempotencyKey)->update([
+                    'response_body' => json_encode($resBody),
+                    'status_code' => 200,
+                ]);
+            }
+
+            return response()->json($resBody, 200);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            
+            $status = 500;
+            if (str_contains($e->getMessage(), 'Khng d? s? lu?ng') || str_contains($e->getMessage(), 'Khng th? h?y')) {
+                $status = 409;
+            } elseif (str_contains($e->getMessage(), 'Khng tm th?y') || str_contains($e->getMessage(), 'khng h?p l?')) {
+                $status = 422;
+            }
+            
+            $resBody = [
+                'success' => false,
+                'message' => 'L?i t?o don hng: ' . $e->getMessage()
+            ];
+
+            if ($idempotencyKey) {
+                DB::table('idempotency_keys')->where('key', $idempotencyKey)->update([
+                    'response_body' => json_encode($resBody),
+                    'status_code' => $status,
+                ]);
+            }
+
+            return response()->json($resBody, $status);
+        }
+    }
+
+    public function index() { 
+        return response()->json([
+            'success' => true, 
+            'data' => DonHang::with(['khachHang', 'diaChi', 'chiTiet.phuTung', 'chiTiet.sanPham'])->orderBy('id', 'desc')->get()
+        ]); 
+    }
+
+    public function update(Request $request, $id)
+    {
+        DB::beginTransaction();
+        try {
+            $donHang = DonHang::lockForUpdate()->findOrFail($id);
+            $oldStatus = $donHang->trang_thai;
+            $newStatus = $request->status ?? $donHang->trang_thai;
+            
+            if ($oldStatus == 2 && $newStatus == 3) {
+                throw new \Exception("Khng th? h?y don hng d hon thnh. Vui lng dng quy trnh d?i tr?.");
+            }
+            
+            $donHang->update([
+                'trang_thai' => $newStatus,
+                'trang_thai_thanh_toan' => $request->payment_status ?? $donHang->trang_thai_thanh_toan,
+                'tong_tien' => $request->total_amount ?? $donHang->tong_tien,
+                'phi_van_chuyen' => $request->shipping_fee ?? $donHang->phi_van_chuyen,
+                'loai_don' => $request->order_type ?? $donHang->loai_don,
+                'tien_coc_yeu_cau' => $request->deposit_required ?? $donHang->tien_coc_yeu_cau,
+                'da_thu' => $request->paid_amount ?? $donHang->da_thu,
+                'khach_tu_tra_cuoc' => $request->freight_collect ?? $donHang->khach_tu_tra_cuoc,
+            ]);
+
+            if ($oldStatus != 3 && $newStatus == 3) {
+                $orderService = new OrderService();
+                $orderService->cancelOrderInventory($donHang, auth()->id() ?? 1);
+            }
+
+            DB::commit();
+            return response()->json([
+                'success' => true,
+                'message' => 'C?p nh?t don hng thnh cng',
+                'data' => $donHang
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            $status = 500;
+            if (str_contains($e->getMessage(), 'Khng th? h?y')) {
+                $status = 409;
+            }
+            return response()->json([
+                'success' => false,
+                'message' => 'L?i c?p nh?t don hng: ' . $e->getMessage()
+            ], $status);
+        }
+    }
+
+    public function destroy($id)
+    {
+        DB::beginTransaction();
+        try {
+            $donHang = DonHang::lockForUpdate()->findOrFail($id);
+            
+            if ($donHang->trang_thai != 3) {
+                $orderService = new OrderService();
+                $orderService->cancelOrderInventory($donHang, auth()->id() ?? 1);
+                $donHang->trang_thai = 3;
+                $donHang->save();
+            }
+            
+            $donHang->delete();
+
+            DB::commit();
+            return response()->json([
+                'success' => true,
+                'message' => 'Xoa don hng thnh cng (Soft Delete)'
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => 'L?i xoa don hng: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+}

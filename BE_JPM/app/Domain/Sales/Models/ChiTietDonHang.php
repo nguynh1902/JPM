@@ -1,0 +1,1 @@
+<?php namespace App\Domain\Sales\Models; use Illuminate\Database\Eloquent\Model; class ChiTietDonHang extends Model { protected $guarded = []; public function sanPham() { return $this->belongsTo(\App\Domain\CMS\Models\SanPham::class, 'id_san_pham'); } public function phuTung() { return $this->belongsTo(\App\Domain\PIM\Models\PhuTung::class, 'id_san_pham'); } }

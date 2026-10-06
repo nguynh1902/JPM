@@ -1,0 +1,47 @@
+[
+    {
+        "step": "Client Register (API)",
+        "pass": true,
+        "details": "Status: 201"
+    },
+    {
+        "step": "Client Register (DB)",
+        "pass": true,
+        "details": "DB user & khachhang must map correctly from ho + ten"
+    },
+    {
+        "step": "Client Login (API)",
+        "pass": true,
+        "details": "Status: 200"
+    },
+    {
+        "step": "Client Profile (API)",
+        "pass": true,
+        "details": "Profile name mismatch"
+    },
+    {
+        "step": "Admin Edit Customer (API)",
+        "pass": true,
+        "details": "Status: 200 Response: {\"success\":true,\"message\":\"C\\u1eadp nh\\u1eadt kh\\u00e1ch h\\u00e0ng th\\u00e0nh c\\u00f4ng\",\"data\":{\"id\":6,\"id_tai_khoan\":10,\"user_code\":\"KH06\",\"name\":\"Nguyen Van B\",\"phone\":\"0941823827\",\"address\":\"N\\\/A\",\"email\":\"customer_e2e_1791264908@example.com\",\"avatar\":\"\",\"status\":1,\"created_at\":\"2026-10-06T05:35:08.000000Z\"}}"
+    },
+    {
+        "step": "Admin Edit Customer (DB)",
+        "pass": true,
+        "details": "DB name must be updated by Admin"
+    },
+    {
+        "step": "Client Read Updated Profile (API)",
+        "pass": false,
+        "details": "Profile did not sync from Admin update"
+    },
+    {
+        "step": "Admin Reset Password (API)",
+        "pass": true,
+        "details": "Status: 200"
+    },
+    {
+        "step": "Client Login Blocked after Reset",
+        "pass": true,
+        "details": "Old password should fail"
+    }
+]

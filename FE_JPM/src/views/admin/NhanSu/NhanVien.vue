@@ -1,0 +1,545 @@
+<template>
+  <div class="container-xxl flex-grow-1 container-p-y">
+    <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Nhân Sự /</span> Danh Sách Nhân Viên</h4>
+
+    <div class="card">
+      <div class="card-header border-bottom">
+        <h5 class="mb-0 fw-bold text-dark">Danh sách Nhân Viên</h5>
+      </div>
+
+      <div class="card-body pt-3 pb-3">
+        <div class="d-flex align-items-center gap-2">
+          <div class="flex-grow-1">
+            <input type="text" class="form-control" placeholder="Tìm tên, email, sđt..." v-model="filters.search">
+          </div>
+          <div style="width: 20%;">
+            <v-select
+              v-model="filters.role"
+              :options="[{value: null, label: 'Tất cả Vai trò'}, ...roleOptions]"
+              placeholder="Vai trò"
+              :searchable="true"
+              :can-clear="false"
+            />
+          </div>
+          <div style="width: 20%;">
+            <v-select
+              v-model="filters.status"
+              :options="[{value: null, label: 'Tất cả Trạng thái'}, ...statusOptions]"
+              placeholder="Trạng thái"
+              :searchable="true"
+              :can-clear="false"
+            />
+          </div>
+          <button class="btn btn-secondary px-3 text-nowrap" @click="resetFilters" title="Đặt lại bộ lọc">
+            Đặt lại
+          </button>
+          <button class="btn btn-primary px-4 shadow-sm text-nowrap" data-bs-toggle="modal" data-bs-target="#modalStaff" @click="openAddModal">
+            <i class="bx bx-plus me-1"></i> Thêm Mới
+          </button>
+        </div>
+      </div>
+
+      <div class="table-responsive text-nowrap custom-scroll" style="max-height: calc(100vh - 260px); min-height: 400px; overflow-y: auto;">
+        <table class="table table-hover mb-0">
+          <thead>
+            <tr>
+              <th class="text-center" style="width: 5%">STT</th>
+              <th class="text-center" style="width: 5%">Avatar</th>
+              <th style="width: 10%">Mã NV</th>
+              <th style="width: 20%">Nhân Viên</th>
+              <th style="width: 15%">Số điện thoại</th>
+              <th style="width: 15%">Email</th>
+              <th style="width: 10%">Vai trò</th>
+              <th class="text-center" style="width: 10%">Trạng thái</th>
+              <th class="text-center" style="width: 10%">Hành động</th>
+            </tr>
+          </thead>
+          <tbody class="table-border-bottom-0">
+            <tr v-if="isFetching && filteredStaffs.length === 0">
+              <td colspan="9" class="text-center py-5">
+                <div class="spinner-border text-primary" role="status">
+                  <span class="visually-hidden">Loading...</span>
+                    </div>
+              </td>
+            </tr>
+            <tr v-else-if="filteredStaffs.length === 0">
+              <td colspan="9" class="text-center py-4 text-muted">Không tìm thấy nhân viên nào.</td>
+            </tr>
+            <tr v-for="(item, index) in filteredStaffs" :key="item.id || index">
+              <td class="text-center"><strong>{{ index + 1 }}</strong></td>
+              <td class="text-center">
+                <div class="d-inline-flex justify-content-center align-items-center border rounded bg-white" style="width: 60px; height: 60px;">
+                  <img v-if="item.avatar" :src="item.avatar" alt="Avatar" style="max-height: 40px; max-width: 50px; object-fit: contain;">
+                  <i v-else class="bx bx-image text-muted fs-3"></i>
+                </div>
+              </td>
+              <td><span class="fw-bold text-primary">{{ item.user_code }}</span></td>
+              <td class="fw-bold text-dark">{{ item.name }}</td>
+              <td>{{ item.phone }}</td>
+              <td class="fw-semibold text-secondary">{{ item.email }}</td>
+              <td class="fw-semibold text-secondary">{{ item.role }}</td>
+              <td class="text-center">
+                <span class="badge badge-custom" :class="item.status === 1 ? 'bg-pastel-success' : 'bg-pastel-danger'">
+                  {{ item.status === 1 ? 'HOẠT ĐỘNG' : 'ĐÃ KHÓA' }}
+                </span>
+              </td>
+              <td class="text-center">
+                <div class="d-flex justify-content-center">
+                  <button 
+                    type="button"
+                    class="action-btn text-primary me-2" 
+                    data-bs-toggle="modal" 
+                    data-bs-target="#modalStaff" 
+                    @click="openEditModal(item)"
+                    title="Chỉnh sửa"
+                  >
+                    <i class="bx bx-edit-alt"></i>
+                  </button>
+                  <button 
+                    type="button"
+                    class="action-btn text-danger" 
+                    @click="confirmDelete(item)" 
+                    title="XÓA tài khoản"
+                  >
+                    <i class="bx bx-trash"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+            <!-- Tổng số mục -->
+      <div class="card-footer py-3 border-top">
+        <span class="text-muted fw-medium">Tổng cộng: {{ (filteredStaffs && filteredStaffs.length) ? filteredStaffs.length : 0 }} mục</span>
+      </div>
+    </div>
+
+    <!-- Modal Form -->
+    <div class="modal fade" id="modalStaff" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+      <div class="modal-dialog modal-xl mt-5" role="document">
+        <div class="modal-content border-0 shadow-lg">
+          <div class="modal-header border-bottom pb-3">
+            <h4 class="modal-title fw-bold text-dark mb-0 fs-4">
+              {{ isEditMode ? 'Cập Nhật Nhân Viên' : 'Thêm Nhân Viên Mới' }}
+            </h4>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <form @submit.prevent="saveData">
+            <div class="modal-body pb-2 pt-4">
+                <div class="row">
+                  <!-- Cột trái: Thông tin cơ bản -->
+                  <div class="col-md-7 pe-md-4">
+                    <div class="row">
+                      <div class="col-md-12 mb-3">
+                        <label class="form-label fw-medium text-dark">Tên Nhân Viên <span class="text-danger">*</span></label>
+                        <input
+                          type="text"
+                          class="form-control"
+                          placeholder="VD: Nguyễn Văn B"
+                          v-model="formData.name"
+                          required
+                        />
+                      </div>
+                    </div>
+                    
+                    <div class="row">
+                      <div class="col-md-6 mb-3">
+                        <label class="form-label fw-medium text-dark">Email <span class="text-danger">*</span></label>
+                        <input
+                          type="email"
+                          class="form-control"
+                          
+                          placeholder="VD: b@jpm.com"
+                          v-model="formData.email"
+                          required
+                          
+                        />
+                      </div>
+                      <div class="col-md-6 mb-3">
+                        <label class="form-label fw-medium text-dark">Số Điện Thoại <span class="text-danger">*</span></label>
+                        <input
+                          type="text"
+                          class="form-control"
+                          
+                          placeholder="VD: 0901234567"
+                          v-model="formData.phone"
+                          required
+                          
+                          pattern="^[0-9]{9,15}$"
+                          title="Số điện thoại phải từ 9-15 chữ số"
+                        />
+                      </div>
+                    </div>
+
+                    <div class="row">
+                      <div class="col-md-12 mb-3">
+                        <label class="form-label fw-medium text-dark">Mật Khẩu <span class="text-danger">*</span></label>
+                        <div v-if="!isEditMode" class="input-group input-group-merge">
+                          <input
+                            :type="showPassword ? 'text' : 'password'"
+                            class="form-control"
+                            placeholder="Mặc định: Jpm@2026"
+                            v-model="formData.password"
+                            minlength="8"
+                            maxlength="25"
+                          />
+                          <span class="input-group-text cursor-pointer" @click="showPassword = !showPassword">
+                            <i class="bx" :class="showPassword ? 'bx-show' : 'bx-hide'"></i>
+                          </span>
+                        </div>
+                        <small v-if="!isEditMode" class="form-text text-muted mt-1">Mặc định: <strong>Jpm@2026</strong></small>
+                        <div v-else>
+                          <button type="button" class="btn btn-outline-warning w-100 shadow-sm" @click="resetPassword(formData.id)" style="font-size: 0.85rem;">
+                            <i class="bx bx-reset me-1"></i> Đặt lại về Jpm@2026
+                          </button>
+                        </div>
+                      </div>
+                      <div class="col-md-12 mb-3">
+                        <label class="form-label fw-medium text-dark">Vai Trò <span class="text-danger">*</span></label>
+                        <v-select
+                          v-model="formData.role"
+                          :options="roleOptions"
+                          placeholder="Chọn vai trò..."
+                          searchable
+                          required
+                          :can-clear="false"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <!-- Cột phải: Hình ảnh & Trạng thái -->
+                  <div class="col-md-5 border-start ps-md-4">
+                    <div class="row">
+                      <div class="col-md-12 mb-3">
+                        <label for="avatar" class="form-label fw-medium text-dark">Ảnh Đại Diện</label>
+                        <input
+                          type="file"
+                          id="avatar"
+                          class="form-control mb-2"
+                          accept="image/png, image/jpeg, image/gif, image/webp"
+                          @change="handleAvatarUpload"
+                        />
+                        <div class="d-flex justify-content-center align-items-center border rounded bg-light mb-3 position-relative" style="height: 180px;">
+                          <img v-if="avatarPreview || formData.avatar" :src="avatarPreview || formData.avatar" style="max-height: 160px; max-width: 100%; object-fit: contain;">
+                          <button v-if="avatarPreview || formData.avatar" type="button" class="btn btn-icon btn-sm bg-white text-danger position-absolute top-0 end-0 m-2 rounded-circle shadow-sm border" @click="removeAvatar" style="width: 28px; height: 28px; padding: 0;" title="Xóa avatar">
+                            <i class="bx bx-trash"></i>
+                          </button>
+                          <span class="text-muted" v-else><i class='bx bx-image fs-1'></i></span>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div class="row mt-3">
+                      <div class="col-md-12 mb-3">
+                        <label class="form-label fw-medium text-dark">Trạng Thái <span class="text-danger">*</span></label>
+                        <v-select
+                          v-model="formData.status"
+                          :options="statusOptions"
+                          :can-clear="false"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="modal-footer border-top py-3 mt-2 bg-light">
+              <button type="button" class="btn btn-outline-secondary px-4" data-bs-dismiss="modal">
+                Hủy
+              </button>
+              <button type="submit" class="btn btn-primary px-4 shadow-sm" :disabled="isSubmitting">
+                <span v-if="isSubmitting" class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+                {{ isEditMode ? 'Cập Nhật' : 'Thêm Mới' }}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+import { useQuery, useMutation, useQueryClient } from '@tanstack/vue-query';
+  import { computed } from 'vue';
+  import { useAuthStore } from '../../../stores/authStore';
+import vSelect from '@vueform/multiselect';
+import Swal from 'sweetalert2';
+import axiosClient from '../../../api/axiosClient';
+
+export default {
+  name: "NhanVien",
+  components: {
+    vSelect
+  },
+  setup() {
+    const queryClient = useQueryClient();
+    const authStore = useAuthStore();
+
+    // Fetch danh sách nhân viên với SWR cache
+    const { data: queryData, isFetching } = useQuery({
+      queryKey: ['nhan-vien'],
+      queryFn: async () => {
+        const response = await axiosClient.get('/admin/nhan-vien');
+        return response;
+      },
+      staleTime: 5 * 60 * 1000,
+      enabled: computed(() => !authStore.loading),
+    });
+
+    // Optimistic DELETE mutation
+    const deleteMutation = useMutation({
+      mutationFn: (id) => axiosClient.delete(`/admin/nhan-vien/${id}`),
+      onError: (err, id, context) => {
+      },
+      onSettled: () => queryClient.invalidateQueries({ queryKey: ['nhan-vien'] }),
+    });
+
+    // Optimistic SAVE mutation
+    const saveMutation = useMutation({
+      mutationFn: async ({ id, payload, isEditMode }) => {
+        if (isEditMode) {
+          return await axiosClient.post(`/admin/nhan-vien/${id}?_method=PUT`, payload, {
+            headers: { 'Content-Type': 'multipart/form-data' }
+          });
+        } else {
+          return await axiosClient.post('/admin/nhan-vien', payload, {
+            headers: { 'Content-Type': 'multipart/form-data' }
+          });
+        }
+      },
+      onError: (err, variables, context) => {
+      },
+      onSettled: () => queryClient.invalidateQueries({ queryKey: ['nhan-vien'] }),
+    });
+
+    return { queryData, isFetching, queryClient, deleteMutation, saveMutation };
+  },
+  data() {
+    return {
+      filters: {
+        search: "",
+        role: null,
+        status: null
+      },
+      isSubmitting: false,
+      isEditMode: false,
+      showPassword: false,
+      avatarFile: null,
+      avatarPreview: null,
+      formData: {
+        id: null,
+        user_code: '',
+        avatar: '',
+        name: '',
+        email: '',
+        phone: '',
+        password: '',
+        role: null,
+        status: 1
+      },
+      statusOptions: [
+        { value: 1, label: 'Hoạt Động' },
+        { value: 0, label: 'Đã Khóa' }
+      ]
+    };
+  },
+  computed: {
+    staffs() {
+      return this.queryData?.data || [];
+    },
+    roleOptions() {
+      return this.queryData?.roles || [];
+    },
+    filteredStaffs() {
+      const list = Array.isArray(this.staffs) ? this.staffs : [];
+      return list.filter(m => {
+        let match = true;
+        if (this.filters.search) {
+          const s = this.filters.search.toLowerCase();
+          match = match && (m.name.toLowerCase().includes(s) || m.email.toLowerCase().includes(s) || (m.phone && m.phone.includes(s)));
+        }
+        if (this.filters.role) {
+          match = match && m.role === this.filters.role;
+        }
+        if (this.filters.status !== null) {
+          match = match && m.status === this.filters.status;
+        }
+        return match;
+      });
+    }
+  },
+  methods: {
+    resetFilters() {
+      this.filters = {
+        search: "",
+        role: null,
+        status: null
+      };
+    },
+    openAddModal() {
+      this.isEditMode = false;
+      this.resetForm();
+    },
+    openEditModal(item) {
+      this.isEditMode = true;
+      this.resetForm();
+      this.formData = { ...item };
+      if (this.formData.status === true) this.formData.status = 1;
+      else if (this.formData.status === false) this.formData.status = 0;
+    },
+    removeAvatar() { this.avatarFile = null; this.avatarPreview = null; this.formData.avatar = ''; const fileInput = document.getElementById('avatar'); if (fileInput) fileInput.value = ''; }, handleAvatarUpload(event) {
+      const file = event.target.files[0];
+      if (file) {
+        this.avatarFile = file;
+        this.avatarPreview = URL.createObjectURL(file);
+      }
+    },
+    async saveData() {
+      if (!this.formData.name || !this.formData.email || !this.formData.phone || !this.formData.role) {
+        if (this.$toast) {
+          this.$toast.error("Vui lòng nhập đầy đủ các thông tin bắt buộc!");
+        } else {
+          Swal.fire('Lỗi', 'Vui lòng nhập đầy đủ các thông tin bắt buộc!', 'error');
+        }
+        return;
+      }
+      
+      this.isSubmitting = true;
+      try {
+        const payload = new FormData();
+        payload.append('name', this.formData.name);
+        payload.append('email', this.formData.email);
+        payload.append('phone', this.formData.phone);
+        payload.append('status', this.formData.status);
+        payload.append('role', this.formData.role);
+        
+        if (!this.isEditMode && this.formData.password) {
+          payload.append('password', this.formData.password);
+        }
+        
+        if (this.avatarFile) {
+          payload.append('avatar', this.avatarFile);
+        }
+        
+        const rawData = {
+          name: this.formData.name,
+          email: this.formData.email,
+          phone: this.formData.phone,
+          status: this.formData.status,
+          role: this.formData.role,
+          avatar: this.avatarPreview || this.formData.avatar
+        };
+
+        await this.saveMutation.mutateAsync({
+          id: this.formData.id,
+          payload,
+          rawData,
+          isEditMode: this.isEditMode
+        });
+        
+        if (this.$toast) this.$toast.success(this.isEditMode ? "Cập nhật thành công!" : "Đã thêm mới!");
+        this.closeModal();
+      } catch (error) {
+        if (this.$toast) this.$toast.error(error.response?.data?.message || "Đã có lỗi xảy ra!");
+      } finally {
+        this.isSubmitting = false;
+      }
+    },
+    async confirmDelete(item) {
+      const result = await Swal.fire({
+        title: 'Xác nhận xóa tài khoản',
+          html: `Bạn có chắc chắn muốn XÓA tài khoản nhân viên <b>"${item.name}"</b>?<br><br><small class="text-danger">CẢNH BÁO: Dữ liệu liên kết có thể bị ảnh hưởng.</small>` ,
+          icon: 'warning',
+          iconColor: '#ff3e1d',
+          showCancelButton: true,
+          confirmButtonText: 'XÓA tài khoản',
+          cancelButtonText: 'Hủy',
+          reverseButtons: true,
+          animation: false,
+          customClass: {
+            popup: 'swal-shift-up',
+            confirmButton: 'btn btn-danger px-4 shadow-sm',
+            cancelButton: 'btn btn-outline-secondary px-4 me-3'
+          },
+          buttonsStyling: false
+      });
+
+      if (result.isConfirmed) {
+        this.deleteMutation.mutate(item.id, {
+          onSuccess: () => { if (this.$toast) this.$toast.success("Đã XÓA tài khoản!"); },
+          onError: (err) => { if (this.$toast) this.$toast.error(err.response?.data?.message || "Đã có lỗi xảy ra!"); }
+        });
+      }
+    },
+    async resetPassword(id) {
+      const result = await Swal.fire({
+        title: 'Xác nhận Reset Mật Khẩu',
+          text: "Mật khẩu của nhân viên này sẽ được đặt lại thành Jpm@2026. Nhân viên sẽ bị đăng xuất ngay lập tức.",
+          icon: 'warning',
+          iconColor: '#ff3e1d',
+          showCancelButton: true,
+          confirmButtonText: 'Xác nhận Reset',
+          cancelButtonText: 'Hủy',
+          reverseButtons: true,
+          animation: false,
+          customClass: {
+            confirmButton: 'btn btn-warning px-4 shadow-sm',
+            cancelButton: 'btn btn-outline-secondary px-4 me-3'
+          },
+          buttonsStyling: false
+      });
+
+      if (result.isConfirmed) {
+        try {
+          const res = await axiosClient.post(`/admin/nhan-vien/${id}/reset-password`);
+          if (this.$toast) this.$toast.success(res.data?.message || res.message || "Đã reset mật khẩu thành công!");
+        } catch (error) {
+          if (this.$toast) this.$toast.error(error.response?.data?.message || "Đã có lỗi xảy ra!");
+        }
+      }
+    },
+    closeModal() {
+      const modalEl = document.getElementById('modalStaff');
+      if (modalEl) {
+        // eslint-disable-next-line no-undef
+        const modal = bootstrap.Modal.getInstance(modalEl);
+        if (modal) modal.hide();
+      }
+      const closeBtn = document.querySelector('#modalStaff .btn-close');
+      if (closeBtn) closeBtn.click();
+    },
+    resetForm() {
+      this.formData = {
+        id: null,
+        user_code: '',
+        avatar: '',
+        name: '',
+        email: '',
+        phone: '',
+        password: '',
+        role: null,
+        status: 1
+      };
+      this.avatarFile = null;
+      this.avatarPreview = null;
+      this.showPassword = false;
+      // Reset input file
+      const fileInput = document.getElementById('avatar');
+      if (fileInput) fileInput.value = '';
+    }
+  }
+};
+</script>
+
+<style scoped>
+</style>
+
+
+
+
+
+
+
