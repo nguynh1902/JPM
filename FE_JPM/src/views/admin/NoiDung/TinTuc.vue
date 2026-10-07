@@ -228,12 +228,12 @@
                 </div>
                 <div class="mb-3">
                   <div class="d-flex justify-content-between align-items-center mb-2">
-                    <label class="form-label fw-medium text-dark mb-0">Thư Viện Ảnh Phụ</label>
-                    <label for="gallery_upload" class="btn btn-sm btn-outline-primary py-0 px-2 mb-0" style="cursor: pointer">
-                      <i class="bx bx-upload"></i> Chọn nhiều ảnh
-                    </label>
-                  </div>
-                  <input type="file" id="gallery_upload" class="d-none" accept="image/*" multiple @change="handleGalleryUpload" />
+                          <label class="form-label fw-medium text-dark mb-0">Thư Viện Ảnh Phụ</label>
+                          <label for="gallery_upload" class="btn btn-sm btn-outline-primary py-0 px-2 mb-0" style="cursor: pointer; box-shadow: none;">
+                            <i class="bx bx-upload"></i> Chọn nhiều ảnh
+                          </label>
+                        </div>
+                        <input type="file" id="gallery_upload" class="d-none" accept="image/*" multiple @change="handleGalleryUpload" />
                   
                   <!-- Existing Gallery -->
                   <div v-if="formData.gallery && formData.gallery.length > 0">
@@ -308,24 +308,36 @@ export default {
 
     const deleteMutation = useMutation({
       mutationFn: async (id) => axiosClient.delete(`/admin/tin-tuc/${id}`),
+      onMutate: async (id) => {
+        await queryClient.cancelQueries({ queryKey: ["tin-tuc"] });
+        const previousData = queryClient.getQueryData(["tin-tuc"]);
+        queryClient.setQueryData(["tin-tuc"], (old) => {
+          const list = Array.isArray(old) ? old : (old?.data || []);
+          return list.filter(item => item.id !== id);
+        });
+        return { previousData };
+      },
       onError: (err, id, context) => {
         if(context?.previousData) {
+          queryClient.setQueryData(["tin-tuc"], context.previousData);
         }
+      },
+      onSettled: () => {
+        queryClient.invalidateQueries({ queryKey: ["tin-tuc"] });
       }
     });
 
     const saveMutation = useMutation({
       mutationFn: async ({ payload, isEdit, id }) => {
-          if (isEdit) {
-            payload.append('_method', 'PUT');
-            return axiosClient.post(`/admin/tin-tuc/${id}`, payload, { headers: { 'Content-Type': 'multipart/form-data' } });
-          } else {
-            return axiosClient.post('/admin/tin-tuc', payload, { headers: { 'Content-Type': 'multipart/form-data' } });
-          }
-        },
-      onError: (err, vars, context) => {
-        if(context?.previousData) {
+        if (isEdit) {
+          payload.append("_method", "PUT");
+          return axiosClient.post(`/admin/tin-tuc/${id}`, payload, { headers: { "Content-Type": "multipart/form-data" } });
+        } else {
+          return axiosClient.post("/admin/tin-tuc", payload, { headers: { "Content-Type": "multipart/form-data" } });
         }
+      },
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ["tin-tuc"] });
       }
     });
 
@@ -532,6 +544,7 @@ export default {
   cursor: pointer;
 }
 </style>
+
 
 
 

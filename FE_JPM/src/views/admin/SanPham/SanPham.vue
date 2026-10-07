@@ -171,25 +171,35 @@
                       <span class="text-muted" :style="{ display: (mainImagePreview || formData.hinh_anh_chinh) ? 'none' : 'inline-block' }"><i class='bx bx-image fs-1'></i></span>
                     </div>
                     <div class="mt-2">
-                      <div class="d-flex justify-content-between align-items-center mb-2">
-                        <label class="form-label fw-medium text-dark mb-0">Thư Viện Ảnh Phụ</label>
-                        <label for="thu_vien_anh" class="btn btn-sm btn-outline-primary py-0 px-2 mb-0" style="cursor: pointer;">
-                          <i class="bx bx-upload"></i> Chọn nhiều ảnh
-                        </label>
-                      </div>
-                      <input type="file" id="thu_vien_anh" class="d-none" accept="image/*" multiple @change="handleGalleryUpload">
-                      <div v-for="(img, idx) in formData.thu_vien_anh" :key="'old_'+idx" class="d-flex gap-2 mb-2 align-items-center">
-                        <a :href="getImageUrl(img)" target="_blank" class="text-truncate d-inline-block" style="max-width: 200px;">{{ img }}</a>
-                        <button type="button" class="btn btn-sm btn-icon btn-outline-danger ms-auto" style="flex-shrink: 0;" @click="formData.thu_vien_anh.splice(idx, 1)" title="Xóa"><i class="bx bx-trash"></i></button>
-                      </div>
-                      <div v-for="(file, idx) in galleryFiles" :key="'new_'+idx" class="d-flex gap-2 mb-2 align-items-center text-secondary">
-                        <span class="text-truncate d-inline-block" style="max-width: 200px;">{{ file.name }}</span>
-                        <button type="button" class="btn btn-sm btn-icon btn-outline-danger ms-auto" style="flex-shrink: 0;" @click="galleryFiles.splice(idx, 1)" title="Xóa"><i class="bx bx-trash"></i></button>
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                          <label class="form-label fw-medium text-dark mb-0">Thư Viện Ảnh Phụ</label>
+                          <label for="thu_vien_anh" class="btn btn-sm btn-outline-primary py-0 px-2 mb-0" style="cursor: pointer; box-shadow: none;">
+                            <i class="bx bx-upload"></i> Chọn nhiều ảnh
+                          </label>
+                        </div>
+                        <input type="file" id="thu_vien_anh" class="d-none" accept="image/*" multiple @change="handleGalleryUpload" />
+                        
+                        <!-- Existing Gallery -->
+                        <div v-if="formData.thu_vien_anh && formData.thu_vien_anh.length > 0">
+                          <div v-for="(img, idx) in formData.thu_vien_anh" :key="'old_'+idx" class="d-flex gap-2 mb-2 align-items-center bg-light p-1 rounded border">
+                            <img :src="getImageUrl(img)" style="height: 30px; width: 40px; object-fit: contain" />
+                            <span class="text-truncate text-secondary" style="font-size: 0.8rem; max-width: 150px;">{{ img }}</span>
+                            <button type="button" class="btn btn-sm btn-icon btn-outline-danger ms-auto" @click="formData.thu_vien_anh.splice(idx, 1)" title="Xóa"><i class="bx bx-trash"></i></button>
+                          </div>
+                        </div>
+
+                        <!-- New Uploads -->
+                        <div v-if="galleryFiles && galleryFiles.length > 0">
+                          <div v-for="(file, idx) in galleryFiles" :key="'new_'+idx" class="d-flex gap-2 mb-2 align-items-center bg-light p-1 rounded border">
+                            <img :src="getBlobUrl(file)" style="height: 30px; width: 40px; object-fit: contain" />
+                            <span class="text-truncate text-secondary" style="font-size: 0.8rem; max-width: 150px;">{{ file.name }}</span>
+                            <button type="button" class="btn btn-sm btn-icon btn-outline-danger ms-auto" style="flex-shrink: 0" @click="galleryFiles.splice(idx, 1)" title="Xóa"><i class="bx bx-trash"></i></button>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-                <div class="row mt-3">
+                  <div class="row mt-3">
                   <div class="col-md-6 mb-3">
                     <div class="d-flex justify-content-between align-items-center mb-1">
                       <label class="form-label fw-medium text-dark mb-0">Giá Bán</label>
@@ -409,6 +419,10 @@ export default {
       if (path.startsWith('blob:') || path.startsWith('http')) return path;
       return `http://localhost:8000${path}`;
     },
+    getBlobUrl(file) {
+      if (!file) return '';
+      return URL.createObjectURL(file);
+    },
     resetFilters() {
       this.filters = {
         search: "",
@@ -574,6 +588,8 @@ export default {
   color: #697a8d;
 }
 </style>
+
+
 
 
 

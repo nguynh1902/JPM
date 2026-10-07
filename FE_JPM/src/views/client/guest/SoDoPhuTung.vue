@@ -131,7 +131,7 @@
                       style="overflow: hidden; cursor: grab; width: 100%; flex: 1; min-height: 320px; display: flex; align-items: center; justify-content: center; background: #f8f9fa; user-select: none;"
                     >
                       <div :style="{ transform: `translate(${panX}px, ${panY}px) scale(${zoomLevel})`, transformOrigin: 'center center', transition: isPanning ? 'none' : 'transform 0.1s ease' }">
-                        <img v-if="activeDiagram?.hinh_anh" :src="activeDiagram.hinh_anh" alt="Sơ đồ phân rã" style="max-width: 100%; max-height: 400px; object-fit: contain; display: block; pointer-events: none;" draggable="false">
+                        <img v-if="activeDiagram?.hinh_anh" :src="getImageUrl(activeDiagram.hinh_anh)" alt="Sơ đồ phân rã" style="max-width: 100%; max-height: 400px; object-fit: contain; display: block; pointer-events: none;" draggable="false">
                         <div v-else class="text-center p-4">
                           <i class="bi bi-image text-muted" style="font-size: 5rem;"></i>
                           <p class="text-muted mt-2">Bản vẽ của {{ activeComponentName }} đang được cập nhật...</p>
@@ -237,6 +237,14 @@ import { useCartStore } from '../../../stores/cartStore';
 import { createToaster } from '@meforma/vue-toaster';
 
 const route = useRoute();
+
+const getImageUrl = (path) => {
+  if (!path) return '';
+  if (path.startsWith('blob:') || path.startsWith('http')) return path;
+  let cleanPath = path.replace(/^\/?storage\//, '');
+  return 'http://localhost:8000/storage/' + cleanPath;
+};
+
 const brandRoute = computed(() => route.params.brand || 'honda');
 const brandNameMap = {
     'mer': 'MERCURY',
@@ -533,6 +541,7 @@ const startSidebarDrag = () => {
   }
 }
 </style>
+
 
 
 
