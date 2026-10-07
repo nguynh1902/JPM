@@ -110,8 +110,47 @@
               {{ article.summary }}
             </p>
 
-            <!-- Main Content (HTML) -->
+                        <!-- Main Content (HTML) -->
             <div class="article-html-content text-secondary" style="font-size: 1.1rem; line-height: 1.8;" v-html="article.content || defaultContent">
+            </div>
+
+            <!-- YouTube Video -->
+            <div v-if="article.youtube_url && getYoutubeEmbedUrl(article.youtube_url)" class="mt-5 rounded-4 overflow-hidden shadow-sm">
+              <iframe 
+                width="100%" 
+                height="450" 
+                :src="getYoutubeEmbedUrl(article.youtube_url)" 
+                title="YouTube video player" 
+                frameborder="0" 
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                allowfullscreen>
+              </iframe>
+            </div>
+
+            <!-- Gallery -->
+            <div v-if="galleryImages.length > 0" class="mt-5">
+              <h4 class="fw-bold text-dark mb-4">Thư viện ảnh phụ</h4>
+              <div class="row g-3">
+                <div class="col-6 col-md-4" v-for="(img, idx) in galleryImages" :key="idx">
+                  <div class="rounded-3 overflow-hidden shadow-sm img-zoom-hover" style="aspect-ratio: 4/3; cursor: pointer;">
+                    <img :src="getImageUrl(img)" class="w-100 h-100 object-fit-cover transition-transform" data-bs-toggle="modal" :data-bs-target="'#galleryModal' + idx">
+                  </div>
+                  
+                  <!-- Modal cho từng ảnh -->
+                  <div class="modal fade" :id="'galleryModal' + idx" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-xl modal-dialog-centered">
+                      <div class="modal-content bg-transparent border-0">
+                        <div class="modal-header border-0 pb-0">
+                          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body text-center">
+                          <img :src="getImageUrl(img)" class="img-fluid rounded-3" style="max-height: 80vh;">
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
 
             <!-- Tags (Optional) -->
@@ -207,7 +246,7 @@ export default {
 
     const { data: fetchResult, isFetching, error, refetch } = useQuery({
       queryKey: ['public-news-detail-v2', articleId], // Changed to v2 to bust cache
-      queryFn: () => axiosClient.get(`/public/tin-tuc/${articleId.value}`).then(r => r.data),
+      queryFn: () => axiosClient.get(`/public/tin-tuc/${articleId.value}`),
       staleTime: 1000 * 60 * 5, // 5 phút
     });
 
@@ -219,6 +258,20 @@ export default {
 
     const article = computed(() => fetchResult.value?.data ?? null);
     const relatedArticles = computed(() => fetchResult.value?.related ?? []);
+
+    const getYoutubeEmbedUrl = (url) => {
+      if (!url) return null;
+      const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([^&]{11})/);
+      return match ? 'https://www.youtube.com/embed/' + match[1] : null;
+    };
+    
+    const galleryImages = computed(() => {
+      if (!article.value || !article.value.gallery) return [];
+      try {
+        const arr = typeof article.value.gallery === 'string' ? JSON.parse(article.value.gallery) : article.value.gallery;
+        return Array.isArray(arr) ? arr : [];
+      } catch (e) { return []; }
+    });
 
     const formatDate = (d) => {
       if (!d) return '';
@@ -239,6 +292,7 @@ export default {
     };
 
     return {
+      getImageUrl,
       article,
       relatedArticles,
       isFetching,
@@ -329,3 +383,7 @@ export default {
   overflow: hidden;
 }
 </style>
+
+
+
+

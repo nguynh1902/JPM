@@ -57,7 +57,7 @@
           <!-- Right: 4 side articles -->
           <div class="col-lg-5 ps-lg-4">
             <div class="d-flex flex-column justify-content-between h-100" :class="{'opacity-50': isFetching}" style="transition: opacity 0.2s;">
-              <a href="#" class="d-flex gap-4 align-items-start text-decoration-none group-hover" v-for="(art, index) in sideArticles" :key="index">
+              <router-link :to="`/tin-tuc/${art.id}`" class="d-flex gap-4 align-items-start text-decoration-none group-hover" v-for="(art, index) in sideArticles" :key="index">
                 <div class="d-flex flex-column h-100" style="flex: 1;">
                   <h3 class="fw-bold  lh-sm mb-2 hero-title-hover text-truncate-2" style="color: var(--heading-color); font-size: 1.25rem;">{{ art.title }}</h3>
                   <p class="text-muted mb-3 text-truncate-2" style="font-size: 0.95rem; line-height: 1.6;">{{ art.excerpt }}</p>
@@ -70,7 +70,7 @@
                 <div class="rounded-3 overflow-hidden flex-shrink-0 img-zoom-hover" style="width: 220px; height: 140px; background-color: #e5e7eb;">
                   <img :src="art.img" :alt="art.title" class="w-100 h-100 object-fit-cover transition-transform">
                 </div>
-              </a>
+              </router-link>
             </div>
           </div>
 

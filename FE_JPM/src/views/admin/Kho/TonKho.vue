@@ -318,6 +318,9 @@ export default {
     };
   },
   computed: {
+    productOptions() {
+      return [...(this.sanPhams || []), ...(this.phuTungs || [])];
+    },
     warehouseOptions() {
       return (this.warehouses || []).map(w => ({ value: w.id, label: w.ten_kho }));
     },
@@ -373,7 +376,7 @@ export default {
       this.resetForm();
     },
     async saveData() {
-      if (!this.formData.warehouse_id || !this.formData.ma_san_pham || !this.formData.ten_san_pham) {
+      if (!this.formData.warehouse_id || (!this.isEditMode && !this.formData.product_key)) {
         this.toaster.error("Vui lòng điền các trường bắt buộc!");
         return;
       }
