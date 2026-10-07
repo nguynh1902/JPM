@@ -200,21 +200,16 @@
                     </div>
                   </div>
                   <div class="row mt-3">
-                  <div class="col-md-6 mb-3">
-                    <div class="d-flex justify-content-between align-items-center mb-1">
-                      <label class="form-label fw-medium text-dark mb-0">Giá Bán</label>
-                      <div class="form-check mb-0 d-flex align-items-center gap-1">
-                        <input class="form-check-input m-0" type="checkbox" id="is_gia_lien_he" v-model="formData.is_gia_lien_he" :true-value="true" :false-value="false">
-                        <label class="form-check-label text-muted text-nowrap" for="is_gia_lien_he" style="font-size: 0.8rem; cursor: pointer;">Liên hệ</label>
+                  <div class="col-md-12 mb-3">
+                      <div class="d-flex justify-content-between align-items-center mb-1">
+                        <label class="form-label fw-medium text-dark mb-0">Giá Bán</label>
+                        <div class="form-check mb-0 d-flex align-items-center gap-1">
+                          <input class="form-check-input m-0" type="checkbox" id="is_gia_lien_he" v-model="formData.is_gia_lien_he" :true-value="true" :false-value="false">
+                          <label class="form-check-label text-muted text-nowrap" for="is_gia_lien_he" style="font-size: 0.8rem; cursor: pointer;">Liên hệ</label>
+                        </div>
                       </div>
+                      <input type="number" class="form-control" v-model="formData.gia_ban" min="0" placeholder="0" :disabled="formData.is_gia_lien_he === true">
                     </div>
-                    <input type="number" class="form-control" v-model="formData.gia_ban" min="0" placeholder="0" :disabled="formData.is_gia_lien_he === true">
-                  </div>
-                  <div class="col-md-6 mb-3">
-                    <label class="form-label fw-medium text-dark">Tồn Kho</label>
-                    <input type="number" class="form-control fw-bold text-secondary mt-1 bg-light" v-model="formData.so_luong_ton" readonly placeholder="0" title="Số lượng được tự động tính tổng từ các kho." style="cursor: not-allowed;">
-                    <small class="text-danger d-block mt-1 fw-bold" style="font-size: 0.75rem;"><i class="bx bx-lock-alt"></i> Quản lý số lượng tại trang Kho</small>
-                  </div>
                 </div>
                 <div class="row">
                   <div class="col-md-12 mb-3">
