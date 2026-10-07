@@ -46,8 +46,8 @@
                     <div class="d-flex align-items-center gap-3">
                       <!-- Model Image -->
                       <div class="d-flex align-items-center justify-content-center border rounded" style="width: 60px; height: 60px; background-color: #fff; flex-shrink: 0;">
-                        <img v-if="may.dong_co_model?.hinh_anh" :src="may.dong_co_model.hinh_anh" :alt="may.dong_co_model.ten_model" style="max-height: 50px; max-width: 50px; object-fit: contain;">
-                        <img v-else-if="may.dong_co_model?.thuong_hieu?.logo_path" :src="may.dong_co_model.thuong_hieu.logo_path" :alt="may.dong_co_model.thuong_hieu.name" style="max-height: 40px; max-width: 50px; object-fit: contain; opacity: 0.5;">
+                        <img v-if="may.dong_co_model?.hinh_anh" :src="getImageUrl(may.dong_co_model.hinh_anh)" :alt="may.dong_co_model.ten_model" style="max-height: 50px; max-width: 50px; object-fit: contain;">
+                        <img v-else-if="may.dong_co_model?.thuong_hieu?.logo_path" :src="getImageUrl(may.dong_co_model.thuong_hieu.logo_path)" :alt="may.dong_co_model.thuong_hieu.name" style="max-height: 40px; max-width: 50px; object-fit: contain; opacity: 0.5;">
                         <i v-else class="bi bi-gear text-muted" style="font-size: 1.5rem;"></i>
                       </div>
                       
@@ -108,7 +108,7 @@
             <div v-else class="row g-3">
                 <div class="col-12" v-for="item in savedParts" :key="item.id">
                     <div class="card border shadow-sm">
-                        <div class="card-body p-{{ garage.length }} động cơ trong Garagegn-items-center">
+                        <div class="card-body p-3 d-flex align-items-center">
                             <img :src="getImageUrl(item.phu_tung?.hinh_anh_chinh) || 'https://placehold.co/100x100'" alt="" class="rounded border" style="width: 80px; height: 80px; object-fit: cover;">
                             <div class="flex-grow-1">
                                 <h6 class="fw-bold mb-1"><router-link :to="`/chi-tiet-phu-tung/${item.phu_tung?.slug}`" class="text-dark text-decoration-none hover-red">{{ item.phu_tung?.ten_phu_tung }}</router-link></h6>
@@ -278,7 +278,7 @@ const addToCart = (item, qty = 1) => {
 const getImageUrl = (path) => {
   if (!path) return null;
   if (path.startsWith('http')) return path;
-  return `${import.meta.env.VITE_API_URL.replace('/api', '')}/storage/${path}`;
+  return `http://localhost:8000${path.startsWith("/") ? "" : "/"}${path}`;
 };
 </script>
 

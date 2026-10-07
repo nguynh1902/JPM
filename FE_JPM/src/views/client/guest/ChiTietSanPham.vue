@@ -61,7 +61,7 @@
                   <button class="btn btn-sm btn-light position-absolute border shadow-sm" style="top: 15px; left: 15px; z-index: 10;" title="Chia sẻ">
                     <i class="bi bi-share"></i>
                   </button>
-                  <img v-if="currentImage" :src="currentImage" alt="Product Image" class="w-100 h-100" style="object-fit: cover; cursor: pointer;" @click="openLightbox">
+                  <img v-if="currentImage" :src="getImageUrl(currentImage)" alt="Product Image" class="w-100 h-100" style="object-fit: cover; cursor: pointer;" @click="openLightbox">
                   <div v-else class="w-100 h-100 d-flex align-items-center justify-content-center bg-light">
                      <i class="bi bi-image text-muted" style="font-size: 4rem;"></i>
                   </div>
@@ -77,7 +77,7 @@
                     @click="currentImage = img"
                     style="width: 75px; height: 75px;"
                   >
-                    <img :src="img" class="w-100 h-100" style="object-fit: cover;">
+                    <img :src="getImageUrl(img)" class="w-100 h-100" style="object-fit: cover;">
                   </div>
                 </div>
               </div>

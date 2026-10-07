@@ -21,11 +21,11 @@
           <!-- Model Image -->
           <div class="flex-shrink-0 d-flex align-items-center justify-content-center border rounded" style="width: 64px; height: 64px; background: #fff;">
             <img v-if="garageData.dong_co_model?.hinh_anh"
-              :src="garageData.dong_co_model.hinh_anh"
+              :src="getImageUrl(garageData.dong_co_model.hinh_anh)"
               :alt="garageData.dong_co_model.ten_model"
               style="max-width: 54px; max-height: 54px; object-fit: contain;">
             <img v-else-if="garageData.dong_co_model?.thuong_hieu?.logo_path"
-              :src="garageData.dong_co_model.thuong_hieu.logo_path"
+              :src="getImageUrl(garageData.dong_co_model.thuong_hieu.logo_path)"
               :alt="garageData.dong_co_model.thuong_hieu.name"
               style="max-width: 50px; max-height: 42px; object-fit: contain; opacity: 0.5;">
             <i v-else class="bi bi-gear text-muted" style="font-size: 1.6rem;"></i>
@@ -127,7 +127,7 @@
                 <div class="flex-shrink-0 d-flex align-items-center justify-content-center border rounded" style="width: 60px; height: 60px; background: #fff;">
                   <img
                     v-if="item.phu_tung?.hinh_anh"
-                    :src="item.phu_tung.hinh_anh"
+                    :src="getImageUrl(item.phu_tung.hinh_anh)"
                     :alt="item.phu_tung.ten_phu_tung"
                     style="max-width: 50px; max-height: 48px; object-fit: contain;">
                   <i v-else class="bi bi-gear text-muted" style="font-size: 1.3rem; opacity: 0.4;"></i>
@@ -174,6 +174,13 @@
 </template>
 
 <script setup>
+
+const getImageUrl = (path) => {
+  if (!path) return "";
+  if (path.startsWith("blob:") || path.startsWith("http") || path.startsWith("data:")) return path;
+  return `http://localhost:8000${path.startsWith("/") ? "" : "/"}${path}`;
+};
+
 import { ref, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/vue-query';

@@ -41,7 +41,7 @@
             />
           </div>
 
-          <button class="btn btn-outline-secondary text-nowrap" @click="resetFilters">
+          <button class="btn btn-secondary text-nowrap" @click="resetFilters">
             Đặt lại
           </button>
           <button class="btn btn-primary text-nowrap" @click="openAddModal" data-bs-toggle="modal" data-bs-target="#modalNews">

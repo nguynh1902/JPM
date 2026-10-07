@@ -51,7 +51,7 @@
                   @change="handleLogoUpload"
                 />
                 <div v-if="formData.logo_path" class="mt-2 border rounded p-1 d-inline-block bg-white position-relative" style="padding-right: 30px !important;">
-                  <img :src="formData.logo_path" alt="Logo preview" style="height: 40px; object-fit: contain;">
+                  <img :src="getImageUrl(formData.logo_path)" alt="Logo preview" style="height: 40px; object-fit: contain;">
                   <button type="button" class="btn btn-icon btn-sm text-danger position-absolute top-50 translate-middle-y end-0" @click="removeLogo" title="Xóa ảnh"><i class="bx bx-trash"></i></button>
                 </div>
               </div>

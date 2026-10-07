@@ -46,7 +46,7 @@ class VatTuLuuTruController extends Controller
             $item = VatTuLuuTru::updateOrCreate(
                 [
                     'user_id' => $user->id,
-                    'id_san_pham' => $request->san_pham_id,
+                    'san_pham_id' => $request->san_pham_id,
                 ],
                 [
                     'ghi_chu' => $request->ghi_chu,
@@ -72,7 +72,7 @@ class VatTuLuuTruController extends Controller
         
         try {
             VatTuLuuTru::where('user_id', $user->id)
-                ->where('id_san_pham', $san_pham_id)
+                ->where('san_pham_id', $san_pham_id)
                 ->delete();
 
             return response()->json(['message' => 'Đã xóa vật tư khỏi danh sách lưu trữ!']);

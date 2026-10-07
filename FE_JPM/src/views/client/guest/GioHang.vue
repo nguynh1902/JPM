@@ -54,7 +54,7 @@
                         </td>
                         <td class="text-center">
                           <div class="d-inline-flex justify-content-center align-items-center border rounded bg-white" style="width: 60px; height: 60px;">
-                            <img v-if="item.hinh_anh" :src="item.hinh_anh" style="max-height: 40px; max-width: 50px; object-fit: contain;" :alt="item.ten_phu_tung">
+                            <img v-if="item.hinh_anh" :src="getImageUrl(item.hinh_anh)" style="max-height: 40px; max-width: 50px; object-fit: contain;" :alt="item.ten_phu_tung">
                             <i v-else class="bi bi-image text-muted fs-4"></i>
                           </div>
                         </td>

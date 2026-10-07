@@ -47,7 +47,7 @@
             />
           </div>
 
-          <button class="btn btn-outline-secondary text-nowrap" @click="resetFilters">
+          <button class="btn btn-secondary text-nowrap" @click="resetFilters">
             Đặt lại
           </button>
           <button

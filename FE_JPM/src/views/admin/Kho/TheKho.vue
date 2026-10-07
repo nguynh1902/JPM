@@ -36,7 +36,7 @@
               :can-clear="false"
             />
           </div>
-          <button class="btn btn-outline-secondary text-nowrap" @click="resetFilters">
+          <button class="btn btn-secondary text-nowrap" @click="resetFilters">
             <i class="bx bx-refresh me-1"></i> Đặt lại
           </button>
           <button class="btn btn-primary text-nowrap shadow-sm" @click="exportExcel">

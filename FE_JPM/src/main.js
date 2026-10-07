@@ -44,4 +44,14 @@ app.component("admin-layout", Admin);
 app.component("client-layout", Client);
 app.component("auth-layout", Auth);
 
+app.mixin({
+  methods: {
+    getImageUrl(path) {
+      if (!path) return "";
+      if (path.startsWith("blob:") || path.startsWith("http") || path.startsWith("data:")) return path;
+      return `http://localhost:8000${path.startsWith("/") ? "" : "/"}${path}`;
+    }
+  }
+});
+
 app.mount("#app")

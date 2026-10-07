@@ -23,7 +23,7 @@
               :can-clear="false"
             />
           </div>
-          <button class="btn btn-outline-secondary text-nowrap" @click="resetFilters">
+          <button class="btn btn-secondary text-nowrap" @click="resetFilters">
             <i class="bx bx-refresh me-1"></i> Đặt lại
           </button>
           <button v-if="currentUserRole === 'ADMIN'" class="btn btn-primary text-nowrap shadow-sm" @click="openAddModal">
@@ -60,7 +60,7 @@
               <td class="text-center"><strong>{{ index + 1 }}</strong></td>
               <td class="text-center">
                 <div class="d-inline-flex justify-content-center align-items-center border rounded" style="width: 60px; height: 60px; background-color: #fff;">
-                  <img v-if="item.hinh_anh" :src="item.hinh_anh" alt="img" style="max-height: 40px; max-width: 50px; object-fit: contain;" />
+                  <img v-if="item.hinh_anh" :src="getImageUrl(item.hinh_anh)" alt="img" style="max-height: 40px; max-width: 50px; object-fit: contain;" @error="$event.target.style.display='none'; $event.target.nextElementSibling.style.display='inline-block'" />
                   <i v-else class="bx bx-image text-muted fs-4"></i>
                 </div>
               </td>
@@ -78,16 +78,14 @@
                 <span class="fw-bold fs-6" :class="item.so_luong_cho_giao > 0 ? 'text-warning' : 'text-secondary'">{{ item.so_luong_cho_giao }}</span>
               </td>
               <td class="text-center" v-if="currentUserRole === 'ADMIN'">
-                <div class="d-flex align-items-center justify-content-center">
-                  <button 
-                    type="button"
-                    class="action-btn text-primary" 
-                    @click="openEditForm(item)" 
-                    title="Điều chỉnh số lượng"
-                  >
-                    <i class="bx bx-edit-alt"></i>
-                  </button>
-                </div>
+                <div class="d-flex align-items-center justify-content-center gap-2">
+                    <button type="button" class="action-btn text-primary" @click="openEditForm(item)" title="Điều chỉnh số lượng">
+                      <i class="bx bx-edit-alt"></i>
+                    </button>
+                    <button type="button" class="action-btn text-danger" @click="deleteItem(item)" title="Xóa tồn kho">
+                      <i class="bx bx-trash"></i>
+                    </button>
+                  </div>
               </td>
             </tr>
           </tbody>
@@ -123,9 +121,15 @@
         searchable
         required
       >
-        <template #option="option">
-          <span class="fw-bold">{{ option.code }}</span>
-        </template>
+        <template #option="{ option }">
+            <span>{{ option.code }}</span>
+          </template>
+          <template #noResults>
+            <span class="text-success fw-medium"><i class="bx bx-check-circle"></i> Đã chọn mã này</span>
+          </template>
+          <template #noOptions>
+            <span class="text-muted">Không có dữ liệu</span>
+          </template>
       </v-select>
     </div>
     <div class="col-md-7">
@@ -139,9 +143,15 @@
         searchable
         required
       >
-        <template #option="option">
-          <span class="text-primary">{{ option.name }}</span>
-        </template>
+        <template #option="{ option }">
+            <span>{{ option.name }}</span>
+          </template>
+          <template #noResults>
+            <span class="text-success fw-medium"><i class="bx bx-check-circle"></i> Đã chọn tên này</span>
+          </template>
+          <template #noOptions>
+            <span class="text-muted">Không có dữ liệu</span>
+          </template>
       </v-select>
     </div>
     <div class="col-12 mt-1">
@@ -340,6 +350,12 @@ export default {
     });
   },
   methods: {
+      getImageUrl(path) {
+        if (!path) return "";
+        if (path.startsWith("blob:") || path.startsWith("http")) return path;
+        // Ensure starting slash
+        return `http://localhost:8000${path.startsWith("/") ? "" : "/"}${path}`;
+      },
     resetFilters() {
       this.filters.search = '';
       this.filters.warehouse = '';
@@ -376,21 +392,29 @@ export default {
       this.resetForm();
     },
     async saveData() {
-      if (!this.formData.warehouse_id || (!this.isEditMode && !this.formData.product_key)) {
-        this.toaster.error("Vui lòng điền các trường bắt buộc!");
-        return;
-      }
-      
-      const payload = {
-        id: this.formData.id,
-        kho_id: this.formData.warehouse_id,
-        ma_san_pham: this.formData.ma_san_pham,
-        ten_san_pham: this.formData.ten_san_pham,
-        so_luong_ton: this.formData.so_luong_ton,
-        so_luong_cho_giao: this.formData.so_luong_cho_giao
-      };
-      
-      this.saveMutation.mutate(payload, {
+        if (!this.formData.warehouse_id || (!this.isEditMode && !this.formData.product_key)) {
+          this.toaster.error("Vui lòng điền các trường bắt buộc!");
+          return;
+        }
+
+        let id_san_pham = null;
+        let loai_san_pham = null;
+
+        if (!this.isEditMode && this.formData.product_key) {
+          const parts = this.formData.product_key.split("_");
+          id_san_pham = parts.pop();
+          loai_san_pham = parts.join("_");
+        }
+
+        const payload = {
+          id: this.formData.id,
+          id_kho: this.formData.warehouse_id, // Fix BUG-002: mapped to id_kho
+          id_san_pham: id_san_pham,           // Fix BUG-001
+          loai_san_pham: loai_san_pham,       // Fix BUG-001
+          so_luong_ton: this.formData.so_luong_ton
+        };
+
+        this.saveMutation.mutate(payload, {
         onSuccess: () => {
           this.toaster.success(this.isEditMode ? "Cập nhật tồn kho thành công!" : "Thêm tồn kho thành công!");
           this.closeModal();

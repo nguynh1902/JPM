@@ -241,7 +241,7 @@
               <div class="card h-100 premium-product-card group-hover position-relative" style="border: 1px solid #e5e7eb; border-radius: 0; box-shadow: none;">
                   <div class="card-img-wrapper overflow-hidden img-zoom-hover" style="border-radius: 0;">
                     <img
-                      :src="prod.hinh_anh_chinh || 'https://images.unsplash.com/photo-1559523161-0fc0d8b38a7a?auto=format&fit=crop&q=80&w=400'"
+                      :src="getImageUrl(prod.hinh_anh_chinh) || 'https://images.unsplash.com/photo-1559523161-0fc0d8b38a7a?auto=format&fit=crop&q=80&w=400'"
                       class="card-img-top w-100 transition-transform"
                       style="aspect-ratio: 4/3; object-fit: cover; border-radius: 0;"
                       :alt="prod.ten_san_pham"
@@ -369,7 +369,7 @@
             <div v-else-if="latestNews.length > 0" class="feature-news-item d-flex flex-column h-100 group-hover p-2">
               <div class="overflow-hidden mb-4 position-relative img-zoom-hover skeleton-box-md">
                 <img
-                  :src="latestNews[0].thumbnail || 'https://placehold.co/800x500/f1f3f5/a1acb8?text=JPM+Marine'"
+                  :src="getImageUrl(latestNews[0].thumbnail) || 'https://placehold.co/800x500/f1f3f5/a1acb8?text=JPM+Marine'"
                   class="img-fluid object-fit-cover h-100 w-100 transition-transform"
                   :alt="latestNews[0].title"
                   @error="$event.target.src='https://placehold.co/800x500/f1f3f5/a1acb8?text=JPM+Marine'"
@@ -413,7 +413,7 @@
               >
                 <div class="flex-shrink-0 overflow-hidden img-zoom-hover" style="border-radius: 4px; width: 140px; aspect-ratio: 16/9;">
                   <img
-                    :src="item.thumbnail || 'https://placehold.co/300x200/f1f3f5/a1acb8?text=JPM'"
+                    :src="getImageUrl(item.thumbnail) || 'https://placehold.co/300x200/f1f3f5/a1acb8?text=JPM'"
                     class="img-fluid object-fit-cover h-100 w-100 transition-transform"
                     :alt="item.title"
                     @error="$event.target.src='https://placehold.co/300x200/f1f3f5/a1acb8?text=JPM'"
@@ -556,6 +556,11 @@ export default {
     }
   },
   methods: {
+    getImageUrl(path) {
+      if (!path) return "";
+      if (path.startsWith("blob:") || path.startsWith("http")) return path;
+      return `http://localhost:8000${path.startsWith("/") ? "" : "/"}${path}`;
+    },
     searchParts() {
       if (!this.searchKeyword && !this.selectedBrand && !this.selectedEngineType && !this.selectedYear && !this.selectedModel) {
         this.$toast.error("Vui lòng nhập từ khóa hoặc chọn ít nhất 1 điều kiện để tìm kiếm!");

@@ -95,7 +95,7 @@
               <td class="text-center"><strong>{{ index + 1 }}</strong></td>
               <td class="text-center">
                 <div class="d-inline-flex justify-content-center align-items-center border rounded bg-white" style="width: 60px; height: 60px;">
-                  <img v-if="item.hinh_anh_url" :src="item.hinh_anh_url" style="max-height: 40px; max-width: 50px; object-fit: contain;" />
+                  <img v-if="item.hinh_anh_url" :src="getImageUrl(item.hinh_anh_url)" style="max-height: 40px; max-width: 50px; object-fit: contain;" />
                   <i v-else class="bx bx-image text-muted fs-3"></i>
                 </div>
               </td>
@@ -238,7 +238,7 @@
                     <label class="form-label fw-medium text-dark">Hình Ảnh Chính</label>
                     <input type="file" ref="fileInput" class="form-control mb-2" accept="image/*" @change="onFileChange">
                     <div class="d-flex justify-content-center align-items-center border rounded bg-light mb-3 position-relative" style="height: 180px;">
-                      <img v-if="hinh_anh_preview" :src="hinh_anh_preview" style="max-height: 160px; max-width: 100%; object-fit: contain;">
+                      <img v-if="hinh_anh_preview" :src="getImageUrl(hinh_anh_preview)" style="max-height: 160px; max-width: 100%; object-fit: contain;">
                       <button v-if="hinh_anh_preview" type="button" class="btn btn-icon btn-sm bg-white text-danger position-absolute top-0 end-0 m-2 rounded-circle shadow-sm border" @click="removeImage" style="width: 28px; height: 28px; padding: 0;" title="Xóa ảnh">
                         <i class="bx bx-trash"></i>
                       </button>

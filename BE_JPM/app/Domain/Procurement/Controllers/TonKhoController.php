@@ -48,4 +48,18 @@ use App\Http\Controllers\Controller; use App\Domain\Procurement\Models\TonKho; u
             return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
         }
     }
+
+
+    public function destroy($id) {
+        try {
+            $tonKho = TonKho::find($id);
+            if (!$tonKho) {
+                return response()->json(["success" => false, "message" => "Không tìm thấy bản ghi tồn kho"], 404);
+            }
+            $tonKho->delete();
+            return response()->json(["success" => true, "message" => "Xóa thành công"]);
+        } catch (\Exception $e) {
+            return response()->json(["success" => false, "message" => $e->getMessage()], 500);
+        }
+    }
 }

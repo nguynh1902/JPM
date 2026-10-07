@@ -12,7 +12,7 @@ class VatTuLuuTru extends Model
 
     protected $fillable = [
         'user_id',
-        'id_san_pham',
+        'san_pham_id',
         'ghi_chu',
     ];
 
@@ -23,6 +23,6 @@ class VatTuLuuTru extends Model
 
     public function sanPham()
     {
-        return $this->belongsTo(SanPham::class, 'id_san_pham');
+        return $this->belongsTo(SanPham::class, 'san_pham_id');
     }
 }

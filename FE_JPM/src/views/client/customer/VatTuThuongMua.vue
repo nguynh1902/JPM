@@ -37,7 +37,7 @@
             <div class="d-flex align-items-center gap-3">
               <!-- Image -->
               <div class="d-flex align-items-center justify-content-center border rounded" style="width: 60px; height: 60px; background-color: #fff; flex-shrink: 0;">
-                <img v-if="item.san_pham?.hinh_anh_chinh" :src="item.san_pham.hinh_anh_chinh" :alt="item.san_pham.ten_san_pham" style="max-height: 40px; max-width: 50px; object-fit: contain;">
+                <img v-if="item.san_pham?.hinh_anh_chinh" :src="getImageUrl(item.san_pham.hinh_anh_chinh)" :alt="item.san_pham.ten_san_pham" style="max-height: 40px; max-width: 50px; object-fit: contain;">
                 <i v-else class="bi bi-image text-muted" style="font-size: 1.5rem;"></i>
               </div>
               
@@ -78,6 +78,13 @@
 </template>
 
 <script setup>
+
+const getImageUrl = (path) => {
+  if (!path) return "";
+  if (path.startsWith("blob:") || path.startsWith("http") || path.startsWith("data:")) return path;
+  return `http://localhost:8000${path.startsWith("/") ? "" : "/"}${path}`;
+};
+
 import { computed } from "vue";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/vue-query";
 import axiosClient from "../../../api/axiosClient";

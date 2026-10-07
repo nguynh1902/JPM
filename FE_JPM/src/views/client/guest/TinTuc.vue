@@ -49,7 +49,7 @@
               
               <!-- Image -->
               <div class="mt-4 rounded-3 overflow-hidden img-zoom-hover" style="aspect-ratio: 16/9; background: #e5e7eb;">
-                <img :src="heroArticle.img" :alt="heroArticle.title" class="w-100 h-100 object-fit-cover transition-transform">
+                <img :src="getImageUrl(heroArticle.img)" :alt="heroArticle.title" class="w-100 h-100 object-fit-cover transition-transform">
               </div>
             </router-link>
           </div>
@@ -68,7 +68,7 @@
                   </div>
                 </div>
                 <div class="rounded-3 overflow-hidden flex-shrink-0 img-zoom-hover" style="width: 220px; height: 140px; background-color: #e5e7eb;">
-                  <img :src="art.img" :alt="art.title" class="w-100 h-100 object-fit-cover transition-transform">
+                  <img :src="getImageUrl(art.img)" :alt="art.title" class="w-100 h-100 object-fit-cover transition-transform">
                 </div>
               </router-link>
             </div>
@@ -84,7 +84,7 @@
         <div class="row g-4">
           <div class="col-md-6" v-for="h in highlights" :key="h.id">
             <router-link :to="`/tin-tuc/${h.id}`" class="news-overlay-card">
-              <img :src="h.img" :alt="h.title">
+              <img :src="getImageUrl(h.img)" :alt="h.title">
               <div class="overlay">
                 <div class="meta">
                   <span class="cat">{{ h.cat }}</span>
@@ -112,7 +112,7 @@
           <div class="col-6 col-lg-3" v-for="art in latestArticles" :key="art.id">
             <router-link :to="`/tin-tuc/${art.id}`" class="d-flex flex-column text-decoration-none group-hover">
               <div class="rounded-3 overflow-hidden mb-3 img-zoom-hover" style="aspect-ratio: 4/3; background: #e5e7eb;">
-                <img :src="art.img" :alt="art.title" class="w-100 h-100 object-fit-cover transition-transform">
+                <img :src="getImageUrl(art.img)" :alt="art.title" class="w-100 h-100 object-fit-cover transition-transform">
               </div>
               <div class="d-flex flex-column">
                 <div class="d-flex align-items-center gap-2 mb-2">
@@ -146,7 +146,7 @@
           <div class="col-lg-5 d-flex flex-column gap-4">
             <router-link :to="`/tin-tuc/${v.id}`" class="d-flex gap-3 text-decoration-none group-hover" v-for="v in techSmall" :key="v.id">
               <div class="rounded-3 overflow-hidden flex-shrink-0 position-relative img-zoom-hover" style="width: 160px; aspect-ratio: 16/9; background: #e5e7eb;">
-                <img :src="v.img" :alt="v.title" class="w-100 h-100 object-fit-cover transition-transform">
+                <img :src="getImageUrl(v.img)" :alt="v.title" class="w-100 h-100 object-fit-cover transition-transform">
                 <div class="position-absolute top-50 start-50 translate-middle bg-white rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 32px; height: 32px; color: #111827;">
                   <i class="bi bi-play-fill fs-5 ms-1"></i>
                 </div>
@@ -166,7 +166,7 @@
           <div class="col-lg-7" v-if="techBig">
             <router-link :to="`/tin-tuc/${techBig.id}`" class="d-flex flex-column text-decoration-none group-hover h-100" :class="{'opacity-50': isFetching}" style="transition: opacity 0.2s;">
               <div class="rounded-4 overflow-hidden mb-4 position-relative img-zoom-hover" style="aspect-ratio: 16/9; background: #e5e7eb;">
-                <img :src="techBig.img" class="w-100 h-100 object-fit-cover transition-transform" :alt="techBig.title">
+                <img :src="getImageUrl(techBig.img)" class="w-100 h-100 object-fit-cover transition-transform" :alt="techBig.title">
                 <div class="position-absolute top-50 start-50 translate-middle bg-white rounded-circle d-flex align-items-center justify-content-center shadow" style="width: 64px; height: 64px; color: #111827;">
                   <i class="bi bi-play-fill fs-2 ms-1"></i>
                 </div>
