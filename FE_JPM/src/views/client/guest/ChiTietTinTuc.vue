@@ -96,7 +96,7 @@
             <!-- Hero Image -->
             <div class="article-hero-img rounded-4 overflow-hidden shadow-sm mb-5 bg-white p-2">
               <img 
-                :src="article.thumbnail || fallback" 
+                :src="getImageUrl(article.thumbnail) || fallback" 
                 :alt="article.title"
                 class="w-100 h-100 object-fit-cover rounded-3"
                 @error="$event.target.src = fallback"
@@ -141,7 +141,7 @@
             <article class="article-card">
               <router-link :to="`/tin-tuc/${rel.id}`" class="d-block overflow-hidden rounded-3 mb-3 shadow-sm" style="aspect-ratio: 4/3;">
                 <img
-                  :src="rel.thumbnail || fallback"
+                  :src="getImageUrl(rel.thumbnail) || fallback"
                   :alt="rel.title"
                   class="w-100 h-100 object-fit-cover hover-zoom"
                   @error="$event.target.src = fallback"
@@ -197,6 +197,11 @@ const MOCK_HTML = `
 export default {
   name: 'ChiTietTinTuc',
   setup() {
+      const getImageUrl = (path) => {
+        if (!path) return '';
+        if (path.startsWith('http')) return path;
+        return `http://localhost:8000/${path.startsWith('/') ? path.substring(1) : path}`;
+      };
     const route = useRoute();
     const articleId = computed(() => route.params.id);
 

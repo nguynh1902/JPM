@@ -210,7 +210,19 @@ export default {
 
     const deleteMutation = useMutation({
       mutationFn: async (id) => axiosClient.delete(`/admin/faq/${id}`),
+      onMutate: async (id) => {
+        await queryClient.cancelQueries({ queryKey: ['faq'] });
+        const previousData = queryClient.getQueryData(['faq']);
+        queryClient.setQueryData(['faq'], (old) => {
+          const list = Array.isArray(old) ? old : (old?.data || []);
+          return list.filter(item => item.id !== id);
+        });
+        return { previousData };
+      },
       onError: (err, id, context) => {
+        if (context?.previousData) {
+          queryClient.setQueryData(['faq'], context.previousData);
+        }
       },
       onSettled: () => {
         queryClient.invalidateQueries({ queryKey: ['faq'] });
@@ -223,7 +235,22 @@ export default {
           ? axiosClient.put(`/admin/faq/${payload.id}`, payload)
           : axiosClient.post('/admin/faq', payload);
       },
+      onMutate: async (newRecord) => {
+        await queryClient.cancelQueries({ queryKey: ['faq'] });
+        const previousData = queryClient.getQueryData(['faq']);
+        queryClient.setQueryData(['faq'], (old) => {
+          const list = Array.isArray(old) ? old : (old?.data || []);
+          if (newRecord.id) {
+            return list.map(item => item.id === newRecord.id ? { ...item, ...newRecord } : item);
+          }
+          return [{ ...newRecord, id: Date.now() }, ...list]; // Prepend for new
+        });
+        return { previousData };
+      },
       onError: (err, vars, context) => {
+        if (context?.previousData) {
+          queryClient.setQueryData(['faq'], context.previousData);
+        }
       },
       onSettled: () => {
         queryClient.invalidateQueries({ queryKey: ['faq'] });
