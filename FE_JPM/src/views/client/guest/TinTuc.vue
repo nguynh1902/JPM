@@ -243,7 +243,7 @@ export default {
     const mapArticle = (art) => ({
       ...art,
       img: art.thumbnail
-        ? (art.thumbnail.startsWith('http') ? art.thumbnail : `http://localhost:8000/storage/${art.thumbnail}`)
+        ? (art.thumbnail.startsWith('http') ? art.thumbnail : `http://localhost:8000/${art.thumbnail.startsWith('/') ? art.thumbnail.substring(1) : art.thumbnail}`)
         : 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800&auto=format&fit=crop',
       cat: art.category || 'Tin tức',
       ago: formatTimeAgo(art.created_at),
