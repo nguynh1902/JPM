@@ -5,22 +5,22 @@
     </h4>
 
     <div class="card">
-      <div class="card-header border-bottom py-3">
-        <h5 class="mb-0 fw-bold text-dark fs-5">Tra Cứu Lịch Sử Giao Dịch Kho</h5>
+      <div class="card-header border-bottom d-flex justify-content-between align-items-center">
+        <h5 class="mb-0 fw-bold text-dark">Lịch Sử Xuất / Nhập / Tồn</h5>
       </div>
 
       <!-- Bộ lọc (Filters) -->
       <div class="card-body pt-3 pb-3">
-        <div class="d-flex align-items-center gap-2 flex-wrap">
-          <div class="flex-grow-1" style="min-width: 220px;">
+        <div class="d-flex align-items-center gap-2">
+          <div style="width: 220px; flex-shrink: 0;">
             <input
               type="text"
               class="form-control"
-              placeholder="Tìm kiếm mã, tên sản phẩm, mã tham chiếu..."
+              placeholder="Tìm mã, tên SP..."
               v-model="filters.ma_san_pham"
             />
           </div>
-          <div style="width: 18%; min-width: 150px;">
+          <div style="width: 170px; flex-shrink: 0;">
             <v-select
               v-model="filters.warehouse_id"
               :options="[{value: null, label: 'Tất cả Kho chứa'}, ...warehouseOptions]"
@@ -29,7 +29,7 @@
               :can-clear="false"
             />
           </div>
-          <div style="width: 18%; min-width: 160px;">
+          <div style="width: 185px; flex-shrink: 0;">
             <v-select
               v-model="filters.loai_giao_dich"
               :options="[
@@ -41,34 +41,34 @@
               :can-clear="false"
             />
           </div>
-          <div class="d-flex align-items-center gap-1">
+          <div class="d-flex align-items-center gap-1 flex-shrink-0">
             <input
               type="date"
-              class="form-control"
+              class="form-control px-2"
               v-model="filters.tu_ngay"
               title="Từ ngày"
-              style="width: 135px;"
+              style="width: 135px; font-size: 0.85rem;"
             />
             <span class="text-muted">-</span>
             <input
               type="date"
-              class="form-control"
+              class="form-control px-2"
               v-model="filters.den_ngay"
               title="Đến ngày"
-              style="width: 135px;"
+              style="width: 135px; font-size: 0.85rem;"
             />
           </div>
-          <button class="btn btn-secondary text-nowrap" @click="resetFilters">
+          <button class="btn btn-secondary text-nowrap flex-shrink-0" @click="resetFilters">
             Đặt lại
           </button>
-          <button class="btn btn-primary text-nowrap shadow-sm" @click="exportExcel">
+          <button class="btn btn-primary text-nowrap shadow-sm flex-shrink-0" @click="exportExcel">
             <i class="bx bx-export me-1"></i> Xuất Excel
           </button>
         </div>
       </div>
 
-      <!-- Bảng dữ liệu giao dịch -->
-      <div class="table-responsive text-nowrap custom-scroll" style="height: calc(100vh - 280px); min-height: 420px; overflow-y: auto;">
+      <!-- Bảng dữ liệu giao dịch cuộn toàn bộ chuẩn TonKho.vue & PhuTung.vue -->
+      <div class="table-responsive text-nowrap custom-scroll" style="height: calc(100vh - 270px); min-height: 400px; overflow-y: auto;">
         <table class="table table-hover mb-0">
           <thead style="position: sticky; top: 0; z-index: 1; background: #fff;">
             <tr>
@@ -102,8 +102,8 @@
             </tr>
 
             <!-- Rows -->
-            <tr v-for="(item, index) in paginatedTransactions" :key="item.id" v-else>
-              <td class="text-center"><strong>{{ (currentPage - 1) * pageSize + index + 1 }}</strong></td>
+            <tr v-for="(item, index) in filteredTransactions" :key="item.id" v-else>
+              <td class="text-center"><strong>{{ index + 1 }}</strong></td>
               <td>
                 <span class="fw-medium text-dark d-block" style="font-size: 0.95rem;">{{ item.date }}</span>
                 <span class="text-secondary" style="font-size: 0.8rem;">{{ item.time }}</span>
@@ -156,33 +156,9 @@
         </table>
       </div>
       
-      <!-- Footer & Phân trang -->
-      <div class="card-footer py-3 border-top d-flex flex-wrap justify-content-between align-items-center gap-2">
-        <span class="text-muted fw-medium">
-          Hiển thị {{ filteredTransactions.length > 0 ? (currentPage - 1) * pageSize + 1 : 0 }} - {{ Math.min(currentPage * pageSize, filteredTransactions.length) }} trên tổng số {{ filteredTransactions.length }} mục
-        </span>
-        <div class="d-flex align-items-center gap-2" v-if="totalPages > 1">
-          <ul class="pagination pagination-sm mb-0">
-            <li class="page-item" :class="{ disabled: currentPage === 1 }">
-              <button class="page-link shadow-none" @click="currentPage--" :disabled="currentPage === 1">
-                <i class="bx bx-chevron-left"></i>
-              </button>
-            </li>
-            <li
-              v-for="p in visiblePages"
-              :key="p"
-              class="page-item"
-              :class="{ active: currentPage === p }"
-            >
-              <button class="page-link shadow-none" @click="currentPage = p">{{ p }}</button>
-            </li>
-            <li class="page-item" :class="{ disabled: currentPage === totalPages }">
-              <button class="page-link shadow-none" @click="currentPage++" :disabled="currentPage === totalPages">
-                <i class="bx bx-chevron-right"></i>
-              </button>
-            </li>
-          </ul>
-        </div>
+      <!-- Tổng số mục -->
+      <div class="card-footer py-3 border-top">
+        <span class="text-muted fw-medium">Tổng cộng: {{ (filteredTransactions && filteredTransactions.length) ? filteredTransactions.length : 0 }} mục</span>
       </div>
     </div>
   </div>
@@ -264,18 +240,8 @@ export default {
         loai_giao_dich: "",
         tu_ngay: "",
         den_ngay: ""
-      },
-      currentPage: 1,
-      pageSize: 20
-    };
-  },
-  watch: {
-    filters: {
-      deep: true,
-      handler() {
-        this.currentPage = 1;
       }
-    }
+    };
   },
   computed: {
     warehouseOptions() {
@@ -309,30 +275,6 @@ export default {
         result = result.filter(t => t.raw_date <= denNgay);
       }
       return result;
-    },
-    totalPages() {
-      return Math.ceil(this.filteredTransactions.length / this.pageSize) || 1;
-    },
-    paginatedTransactions() {
-      const start = (this.currentPage - 1) * this.pageSize;
-      return this.filteredTransactions.slice(start, start + this.pageSize);
-    },
-    visiblePages() {
-      const pages = [];
-      const total = this.totalPages;
-      const current = this.currentPage;
-      let start = Math.max(1, current - 2);
-      let end = Math.min(total, current + 2);
-
-      if (end - start < 4) {
-        if (start === 1) end = Math.min(total, start + 4);
-        else if (end === total) start = Math.max(1, end - 4);
-      }
-
-      for (let i = start; i <= end; i++) {
-        pages.push(i);
-      }
-      return pages;
     }
   },
   methods: {
@@ -342,7 +284,6 @@ export default {
       this.filters.loai_giao_dich = '';
       this.filters.tu_ngay = '';
       this.filters.den_ngay = '';
-      this.currentPage = 1;
     },
     getTransactionBadgeClass(type) {
       switch (type) {
