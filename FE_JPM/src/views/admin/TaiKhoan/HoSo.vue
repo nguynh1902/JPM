@@ -11,10 +11,10 @@
       <div class="col-md-12">
         <ul class="nav nav-pills flex-column flex-md-row mb-4">
           <li class="nav-item">
-            <router-link class="nav-link active" to="/admin/taikhoan/hoso"><i class="bx bx-user me-1"></i> Hồ sơ</router-link>
+            <router-link class="nav-link active" to="/admin/ho-so"><i class="bx bx-user me-1"></i> Hồ sơ</router-link>
           </li>
           <li class="nav-item">
-            <router-link class="nav-link" to="/admin/taikhoan/doimatkhau"><i class="bx bx-lock-alt me-1"></i> Đổi mật khẩu</router-link>
+            <router-link class="nav-link" to="/admin/doi-mat-khau"><i class="bx bx-lock-alt me-1"></i> Đổi mật khẩu</router-link>
           </li>
         </ul>
         

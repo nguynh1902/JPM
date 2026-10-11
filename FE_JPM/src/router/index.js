@@ -63,6 +63,12 @@ const routes = [
     meta: { layout: "client" },
   },
   {
+    path: "/so-do/:model",
+    name: "SoDoPhuTungNgan",
+    component: () => import("../views/client/guest/SoDoPhuTung.vue"),
+    meta: { layout: "client" },
+  },
+  {
     path: "/chi-tiet-phu-tung/:code",
     component: () => import("../views/client/guest/ChiTietPhuTung.vue"),
     meta: { layout: "client" },
@@ -114,174 +120,226 @@ const routes = [
     component: () => import("../views/admin/Dashboard/DashboardAdmin.vue"),
     meta: { layout: "admin", requiresAuth: true, roles: ["admin", "staff"] },
   },
-  // BÁN HÀNG
+  // ================= ADMIN ROUTES (Chuẩn Kebab-case, Không lặp) =================
+  // BÁN HÀNG & ĐƠN HÀNG
   {
-    path: "/admin/banhang/donhang",
+    path: "/admin/don-hang",
+    name: "AdminDonHang",
     component: () => import("../views/admin/BanHang/DonHang.vue"),
     meta: { layout: "admin", requiresAuth: true, roles: ["admin", "staff"] },
   },
   {
-    path: "/admin/banhang/thanhtoan",
-    // component: () => import("../views/admin/BanHang/ThanhToan.vue"),
+    path: "/admin/thanh-toan",
+    name: "AdminThanhToan",
     meta: { layout: "admin", requiresAuth: true, roles: ["admin", "staff"] },
   },
 
-  // VẬN HÀNH (CHUỖI CUNG ỨNG)
+  // VẬN HÀNH & CHUỖI CUNG ỨNG (PO)
   {
-    path: "/admin/vanhanh/po",
+    path: "/admin/don-nhap-hang",
+    alias: ["/admin/po"],
+    name: "AdminPO",
     component: () => import("../views/admin/VanHanh/PO.vue"),
     meta: { layout: "admin", requiresAuth: true, roles: ["admin", "staff"] },
   },
 
   // QUẢN LÝ KHO
   {
-    path: "/admin/kho/kho",
+    path: "/admin/danh-sach-kho",
+    alias: ["/admin/kho"],
+    name: "AdminKho",
     component: () => import("../views/admin/Kho/Kho.vue"),
     meta: { layout: "admin", requiresAuth: true, roles: ["admin", "staff"] },
   },
   {
-    path: "/admin/kho/tonkho",
+    path: "/admin/ton-kho",
+    name: "AdminTonKho",
     component: () => import("../views/admin/Kho/TonKho.vue"),
     meta: { layout: "admin", requiresAuth: true, roles: ["admin", "staff"] },
   },
   {
-    path: "/admin/kho/thekho",
+    path: "/admin/the-kho",
+    name: "AdminTheKho",
     component: () => import("../views/admin/Kho/TheKho.vue"),
     meta: { layout: "admin", requiresAuth: true, roles: ["admin", "staff"] },
   },
-  {
-    path: "/admin/kho/cross-docking",
-    component: () => import("../views/admin/Kho/CrossDocking.vue"),
-    meta: { layout: "admin", requiresAuth: true, roles: ["admin", "staff"] },
-  },
 
-  // MÁY THỦY
+  // MÁY THỦY & ĐỘNG CƠ
   {
-    path: "/admin/maythuy/loaidongco",
+    path: "/admin/loai-dong-co",
+    name: "AdminLoaiDongCo",
     component: () => import("../views/admin/MayThuy/LoaiDongCo.vue"),
     meta: { layout: "admin", requiresAuth: true, roles: ["admin", "staff"] },
   },
   {
-    path: "/admin/maythuy/thuonghieu",
+    path: "/admin/thuong-hieu",
+    name: "AdminThuongHieu",
     component: () => import("../views/admin/MayThuy/ThuongHieu.vue"),
     meta: { layout: "admin", requiresAuth: true, roles: ["admin", "staff"] },
   },
   {
-    path: "/admin/maythuy/model",
+    path: "/admin/dong-co-model",
+    name: "AdminDongCoModel",
     component: () => import("../views/admin/MayThuy/DongCoModel.vue"),
     meta: { layout: "admin", requiresAuth: true, roles: ["admin"] },
   },
+
   // SẢN PHẨM PHỔ THÔNG
   {
-    path: "/admin/sanpham/danhmucsanpham",
+    path: "/admin/danh-muc-san-pham",
+    name: "AdminDanhMucSanPham",
     component: () => import("../views/admin/SanPham/DanhMucSanPham.vue"),
     meta: { layout: "admin", requiresAuth: true, roles: ["admin", "staff"] },
   },
   {
-    path: "/admin/sanpham/sanpham",
+    path: "/admin/san-pham",
+    name: "AdminSanPham",
     component: () => import("../views/admin/SanPham/SanPham.vue"),
     meta: { layout: "admin", requiresAuth: true, roles: ["admin", "staff"] },
   },
 
-  // LINH KIỆN (Thay thế cho Phụ tùng)
+  // PHỤ TÙNG & LINH KIỆN
   {
-    path: "/admin/phutung/nhomphutung",
+    path: "/admin/nhom-phu-tung",
+    name: "AdminNhomPhuTung",
     component: () => import("../views/admin/PhuTung/NhomPhuTung.vue"),
     meta: { layout: "admin", requiresAuth: true, roles: ["admin", "staff"] },
   },
   {
-    path: "/admin/phutung/phutung",
+    path: "/admin/phu-tung",
+    name: "AdminPhuTung",
     component: () => import("../views/admin/PhuTung/PhuTung.vue"),
     meta: { layout: "admin", requiresAuth: true, roles: ["admin"] },
   },
   {
-    path: "/admin/linhkien/capnhat",
+    path: "/admin/cap-nhat-linh-kien",
+    name: "AdminCapNhatLinhKien",
     component: () => import("../views/admin/LinhKien/CapNhatLinhKien.vue"),
     meta: { layout: "admin", requiresAuth: true, roles: ["admin", "staff"] },
   },
   {
-    path: "/admin/phutung/sodophutung",
+    path: "/admin/so-do-phu-tung",
+    name: "AdminSoDoPhuTung",
     component: () => import("../views/admin/PhuTung/SoDoPhuTung.vue"),
     meta: { layout: "admin", requiresAuth: true, roles: ["admin", "staff"] },
   },
   {
-    path: "/admin/linhkien/mathaythe",
+    path: "/admin/ma-thay-the",
+    name: "AdminMaThayThe",
     component: () => import("../views/admin/LinhKien/MaThayThe.vue"),
     meta: { layout: "admin", requiresAuth: true, roles: ["admin", "staff"] },
   },
-  
 
   // KHÁCH HÀNG & CRM
   {
-    path: "/admin/khachhang/khachhang",
+    path: "/admin/khach-hang",
+    name: "AdminKhachHang",
     component: () => import("../views/admin/KhachHang/KhachHang.vue"),
     meta: { layout: "admin", requiresAuth: true, roles: ["admin", "staff"] },
   },
   {
-    path: "/admin/khachhang/lichsumua",
-    // component: () => import("../views/admin/KhachHang/LichSuMua.vue"),
+    path: "/admin/lich-su-mua",
+    name: "AdminLichSuMua",
     meta: { layout: "admin", requiresAuth: true, roles: ["admin", "staff"] },
   },
 
-  // MARKETING (Đã ẩn theo yêu cầu)
-
-  // NHÂN SỰ
+  // NHÂN SỰ & PHÂN QUYỀN
   {
-    path: "/admin/nhansu/nhanvien",
+    path: "/admin/nhan-vien",
+    name: "AdminNhanVien",
     component: () => import("../views/admin/NhanSu/NhanVien.vue"),
     meta: { layout: "admin", requiresAuth: true, roles: ["admin", "staff"] },
   },
   {
-    path: "/admin/nhansu/phanquyen",
+    path: "/admin/phan-quyen",
+    name: "AdminPhanQuyen",
     component: () => import("../views/admin/NhanSu/PhanQuyen.vue"),
     meta: { layout: "admin", requiresAuth: true, roles: ["admin", "staff"] },
   },
 
-  // NỘI DUNG
+  // NỘI DUNG & TIN TỨC
   {
-    path: "/admin/noidung/chuyenmuc",
+    path: "/admin/chuyen-muc",
+    name: "AdminChuyenMuc",
     component: () => import("../views/admin/NoiDung/ChuyenMuc.vue"),
     meta: { layout: "admin", requiresAuth: true, roles: ["admin", "staff"] },
   },
   {
-    path: "/admin/noidung/tintuc",
+    path: "/admin/tin-tuc",
+    name: "AdminTinTuc",
     component: () => import("../views/admin/NoiDung/TinTuc.vue"),
     meta: { layout: "admin", requiresAuth: true, roles: ["admin", "staff"] },
   },
   {
-    path: "/admin/noidung/faq",
+    path: "/admin/faq",
+    name: "AdminFaq",
     component: () => import("../views/admin/NoiDung/Faq.vue"),
     meta: { layout: "admin", requiresAuth: true, roles: ["admin", "staff"] },
   },
 
   // HỆ THỐNG
   {
-    path: "/admin/caidat/cauhinhhethong",
+    path: "/admin/cau-hinh-he-thong",
+    name: "AdminCauHinhHeThong",
     component: () => import("../views/admin/HeThong/CauHinhHeThong.vue"),
     meta: { layout: "admin", requiresAuth: true, roles: ["admin", "staff"] },
   },
   {
-    path: "/admin/lichsu/hoatdong",
+    path: "/admin/lich-su-hoat-dong",
+    name: "AdminLichSuHoatDong",
     component: () => import("../views/admin/HeThong/LichSuHoatDong.vue"),
     meta: { layout: "admin", requiresAuth: true, roles: ["admin", "staff"] },
   },
   {
-    path: "/admin/hethong/thongbao",
+    path: "/admin/thong-bao",
+    name: "AdminThongBao",
     component: () => import("../views/admin/HeThong/DanhSachThongBao.vue"),
     meta: { layout: "admin", requiresAuth: true, roles: ["admin", "staff"] },
   },
 
-  // TÀI KHOẢN
+  // TÀI KHOẢN ADMIN
   {
-    path: "/admin/taikhoan/hoso",
+    path: "/admin/ho-so",
+    name: "AdminHoSo",
     component: () => import("../views/admin/TaiKhoan/HoSo.vue"),
     meta: { layout: "admin", requiresAuth: true, roles: ["admin", "staff"] },
   },
   {
-    path: "/admin/taikhoan/doimatkhau",
+    path: "/admin/doi-mat-khau",
+    name: "AdminDoiMatKhau",
     component: () => import("../views/admin/TaiKhoan/DoiMatKhau.vue"),
     meta: { layout: "admin", requiresAuth: true, roles: ["admin", "staff"] },
   },
+
+  // ================= TỰ ĐỘNG CHUYỂN HƯỚNG TỪ URL CŨ (BACKWARD COMPATIBILITY) =================
+  { path: "/admin/khachhang/khachhang", redirect: "/admin/khach-hang" },
+  { path: "/admin/khachhang/lichsumua", redirect: "/admin/lich-su-mua" },
+  { path: "/admin/banhang/donhang", redirect: "/admin/don-hang" },
+  { path: "/admin/banhang/thanhtoan", redirect: "/admin/thanh-toan" },
+  { path: "/admin/vanhanh/po", redirect: "/admin/don-nhap-hang" },
+  { path: "/admin/kho/kho", redirect: "/admin/danh-sach-kho" },
+  { path: "/admin/kho/tonkho", redirect: "/admin/ton-kho" },
+  { path: "/admin/kho/thekho", redirect: "/admin/the-kho" },
+  { path: "/admin/maythuy/thuonghieu", redirect: "/admin/thuong-hieu" },
+  { path: "/admin/maythuy/loaidongco", redirect: "/admin/loai-dong-co" },
+  { path: "/admin/maythuy/model", redirect: "/admin/dong-co-model" },
+  { path: "/admin/sanpham/danhmucsanpham", redirect: "/admin/danh-muc-san-pham" },
+  { path: "/admin/sanpham/sanpham", redirect: "/admin/san-pham" },
+  { path: "/admin/phutung/nhomphutung", redirect: "/admin/nhom-phu-tung" },
+  { path: "/admin/phutung/phutung", redirect: "/admin/phu-tung" },
+  { path: "/admin/phutung/sodophutung", redirect: "/admin/so-do-phu-tung" },
+  { path: "/admin/linhkien/capnhat", redirect: "/admin/cap-nhat-linh-kien" },
+  { path: "/admin/linhkien/mathaythe", redirect: "/admin/ma-thay-the" },
+  { path: "/admin/nhansu/nhanvien", redirect: "/admin/nhan-vien" },
+  { path: "/admin/nhansu/phanquyen", redirect: "/admin/phan-quyen" },
+  { path: "/admin/noidung/chuyenmuc", redirect: "/admin/chuyen-muc" },
+  { path: "/admin/noidung/tintuc", redirect: "/admin/tin-tuc" },
+  { path: "/admin/noidung/faq", redirect: "/admin/faq" },
+  { path: "/admin/caidat/cauhinhhethong", redirect: "/admin/cau-hinh-he-thong" },
+  { path: "/admin/lichsu/hoatdong", redirect: "/admin/lich-su-hoat-dong" },
+  { path: "/admin/hethong/thongbao", redirect: "/admin/thong-bao" },
+  { path: "/admin/taikhoan/hoso", redirect: "/admin/ho-so" },
+  { path: "/admin/taikhoan/doimatkhau", redirect: "/admin/doi-mat-khau" },
 
   // ================= STAFF ROUTES =================
   

@@ -2,7 +2,7 @@
   <!-- Menu -->
   <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
             <div class="app-brand demo py-3 position-relative" style="height: auto; padding-left: 1rem; padding-right: 1rem;">
-      <router-link to="/admin/taikhoan/hoso" class="d-flex align-items-center w-100 text-decoration-none" title="Xem Hồ sơ cá nhân">
+      <router-link to="/admin/ho-so" class="d-flex align-items-center w-100 text-decoration-none" title="Xem Hồ sơ cá nhân">
         <div class="avatar avatar-online me-3" style="width: 45px; height: 45px; min-width: 45px;">
           <img :src="userAvatar" alt="user-avatar" class="w-100 h-100 rounded-circle shadow-sm" style="object-fit: cover; border: 2px solid #fff;" />
         </div>
@@ -53,7 +53,7 @@
               <li 
                 class="menu-item" 
                 v-if="child.roles.includes(currentUserRole)"
-                :class="{ 'active': $route.path.includes(child.path) }"
+                :class="{ 'active': $route.path === child.path }"
               >
                 <router-link :to="child.path" class="menu-link">
                   <div>{{ child.title }}</div>
@@ -100,15 +100,15 @@ import { useAuthStore } from '../../stores/authStore';
           type: "submenu",
           roles: ["ADMIN", "STAFF"],
           children: [
-            { title: "Khách Hàng", path: "/admin/khachhang/khachhang", roles: ["ADMIN", "STAFF"] },
-            { title: "Nhân Viên", path: "/admin/nhansu/nhanvien", roles: ["ADMIN"] },
-            { title: "Phân Quyền", path: "/admin/nhansu/phanquyen", roles: ["ADMIN"] }
+            { title: "Khách Hàng", path: "/admin/khach-hang", roles: ["ADMIN", "STAFF"] },
+            { title: "Nhân Viên", path: "/admin/nhan-vien", roles: ["ADMIN"] },
+            { title: "Phân Quyền", path: "/admin/phan-quyen", roles: ["ADMIN"] }
           ]
         },
         {
           title: "Lịch Sử Hoạt Động",
           icon: "bx-history",
-          path: "/admin/lichsu/hoatdong",
+          path: "/admin/lich-su-hoat-dong",
           roles: ["ADMIN"],
           type: "item"
         },
@@ -123,13 +123,13 @@ import { useAuthStore } from '../../stores/authStore';
           type: "submenu",
           roles: ["ADMIN", "STAFF"],
           children: [
-            { title: "Thương Hiệu", path: "/admin/maythuy/thuonghieu", roles: ["ADMIN"] },
-            { title: "Loại Động Cơ", path: "/admin/maythuy/loaidongco", roles: ["ADMIN"] },
-            { title: "Model Động Cơ", path: "/admin/maythuy/model", roles: ["ADMIN", "STAFF"] },
-            { title: "Nhóm Phụ Tùng", path: "/admin/phutung/nhomphutung", roles: ["ADMIN"] },
-            { title: "Danh Sách Phụ Tùng", path: "/admin/phutung/phutung", roles: ["ADMIN", "STAFF"] },
-            { title: "Sơ Đồ Phụ Tùng", path: "/admin/phutung/sodophutung", roles: ["ADMIN", "STAFF"] },
-            { title: "Mã Thay Thế", path: "/admin/linhkien/mathaythe", roles: ["ADMIN"] }
+            { title: "Thương Hiệu", path: "/admin/thuong-hieu", roles: ["ADMIN"] },
+            { title: "Loại Động Cơ", path: "/admin/loai-dong-co", roles: ["ADMIN"] },
+            { title: "Model Động Cơ", path: "/admin/dong-co-model", roles: ["ADMIN", "STAFF"] },
+            { title: "Nhóm Phụ Tùng", path: "/admin/nhom-phu-tung", roles: ["ADMIN"] },
+            { title: "Danh Sách Phụ Tùng", path: "/admin/phu-tung", roles: ["ADMIN", "STAFF"] },
+            { title: "Sơ Đồ Phụ Tùng", path: "/admin/so-do-phu-tung", roles: ["ADMIN", "STAFF"] },
+            { title: "Mã Thay Thế", path: "/admin/ma-thay-the", roles: ["ADMIN"] }
           ]
         },
         {
@@ -138,8 +138,8 @@ import { useAuthStore } from '../../stores/authStore';
           type: "submenu",
           roles: ["ADMIN", "STAFF"],
           children: [
-            { title: "Danh Mục Sản Phẩm", path: "/admin/sanpham/danhmucsanpham", roles: ["ADMIN"] },
-            { title: "Danh Sách Sản Phẩm", path: "/admin/sanpham/sanpham", roles: ["ADMIN", "STAFF"] }
+            { title: "Danh Mục Sản Phẩm", path: "/admin/danh-muc-san-pham", roles: ["ADMIN"] },
+            { title: "Danh Sách Sản Phẩm", path: "/admin/san-pham", roles: ["ADMIN", "STAFF"] }
           ]
         },
         {
@@ -153,8 +153,8 @@ import { useAuthStore } from '../../stores/authStore';
           type: "submenu",
           roles: ["ADMIN", "STAFF"],
           children: [
-            { title: "Yêu Cầu & Đơn Khách", path: "/admin/banhang/donhang", roles: ["ADMIN", "STAFF"] },
-            { title: "Gom Đơn & PO", path: "/admin/vanhanh/po", roles: ["ADMIN"] }
+            { title: "Yêu Cầu & Đơn Khách", path: "/admin/don-hang", roles: ["ADMIN", "STAFF"] },
+            { title: "Gom Đơn & PO", path: "/admin/don-nhap-hang", roles: ["ADMIN"] }
           ]
         },
         {
@@ -163,10 +163,9 @@ import { useAuthStore } from '../../stores/authStore';
           type: "submenu",
           roles: ["ADMIN", "STAFF"],
           children: [
-            { title: "Danh Sách Kho", path: "/admin/kho/kho", roles: ["ADMIN"] },
-            { title: "Tồn Kho", path: "/admin/kho/tonkho", roles: ["ADMIN", "STAFF"] },
-            { title: "Xuất / Nhập / Tồn", path: "/admin/kho/thekho", roles: ["ADMIN"] },
-            { title: "Trạm Cross-Docking", path: "/admin/kho/cross-docking", roles: ["ADMIN"] }
+            { title: "Danh Sách Kho", path: "/admin/danh-sach-kho", roles: ["ADMIN"] },
+            { title: "Tồn Kho", path: "/admin/ton-kho", roles: ["ADMIN", "STAFF"] },
+            { title: "Xuất / Nhập / Tồn", path: "/admin/the-kho", roles: ["ADMIN"] }
           ]
         },
         {
@@ -175,9 +174,9 @@ import { useAuthStore } from '../../stores/authStore';
           type: "submenu",
           roles: ["ADMIN"],
           children: [
-            { title: "Chuyên Mục", path: "/admin/noidung/chuyenmuc", roles: ["ADMIN"] },
-            { title: "Tin Tức", path: "/admin/noidung/tintuc", roles: ["ADMIN"] },
-            { title: "FAQ", path: "/admin/noidung/faq", roles: ["ADMIN"] }
+            { title: "Chuyên Mục", path: "/admin/chuyen-muc", roles: ["ADMIN"] },
+            { title: "Tin Tức", path: "/admin/tin-tuc", roles: ["ADMIN"] },
+            { title: "FAQ", path: "/admin/faq", roles: ["ADMIN"] }
           ]
         }
       ]
@@ -261,7 +260,7 @@ import { useAuthStore } from '../../stores/authStore';
     // Kiểm tra xem có bất kỳ menu con nào đang được active không
     isSubmenuActive(children) {
       if (!children) return false;
-      return children.some(child => this.$route.path.includes(child.path));
+      return children.some(child => this.$route.path === child.path);
     }
   }
 };

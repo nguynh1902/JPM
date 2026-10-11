@@ -63,13 +63,16 @@ export const useCartStore = defineStore('cart', () => {
     if (existing) {
       existing.quantity += quantity
     } else {
+      const isSanPham = !!(product.ma_san_pham && !product.ma_phu_tung) || product.loai_san_pham === 'san_pham';
+      const hasGia = product.gia_ban && parseFloat(product.gia_ban) > 0;
       items.value.push({
         id: product.id,
         ma_phu_tung: ma_item,
         ten_phu_tung: product.ten_phu_tung || product.ten_san_pham,
         hinh_anh: product.hinh_anh || product.hinh_anh_chinh || null,
-        gia_ban: product.gia_ban || 0,
-        is_gia_lien_he: product.is_gia_lien_he ?? true,
+        gia_ban: hasGia ? parseFloat(product.gia_ban) : 0,
+        is_gia_lien_he: product.is_gia_lien_he !== undefined ? Boolean(product.is_gia_lien_he) : !hasGia,
+        loai_san_pham: isSanPham ? 'san_pham' : 'phu_tung',
         quantity,
       })
     }

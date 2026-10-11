@@ -4,8 +4,30 @@
       <span class="text-muted fw-light">Chuỗi Cung Ứng /</span> Gom Đơn & PO
     </h4>
 
-    <!-- Card danh sách -->
-    <div class="card">
+    <!-- Tabs Navigation -->
+    <div class="d-flex border-bottom mb-4 bg-white rounded shadow-sm px-3 pt-2">
+      <div 
+        class="custom-line-tab py-3 px-4 fw-bold fs-6 d-flex align-items-center gap-2"
+        :class="{ active: activeTab === 'pos' }"
+        @click="activeTab = 'pos'"
+      >
+        <i class="bx bx-receipt fs-5"></i>
+        <span>Danh Sách Đơn PO</span>
+        <span class="badge rounded-pill bg-label-primary ms-1">{{ pos?.length || 0 }}</span>
+      </div>
+      <div 
+        class="custom-line-tab py-3 px-4 fw-bold fs-6 d-flex align-items-center gap-2"
+        :class="{ active: activeTab === 'demand' }"
+        @click="activeTab = 'demand'"
+      >
+        <i class="bx bx-layer-plus fs-5"></i>
+        <span>Nhu Cầu Gom Hàng (Thiếu Kho)</span>
+        <span class="badge rounded-pill bg-danger ms-1" v-if="rawDemands?.length > 0">{{ rawDemands.length }}</span>
+      </div>
+    </div>
+
+    <!-- TAB 1: DANH SÁCH PO -->
+    <div class="card" v-if="activeTab === 'pos'">
       <div class="card-header border-bottom">
         <h5 class="mb-0 fw-bold text-dark">Danh sách Purchase Order (PO)</h5>
       </div>
@@ -98,6 +120,71 @@
             </tr>
             <tr v-if="filteredPOs.length === 0">
               <td colspan="8" class="text-center py-4 text-muted">Không tìm thấy Đơn hàng nào phù hợp.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- TAB 2: NHU CẦU GOM HÀNG (THIẾU KHO) -->
+    <div class="card" v-else-if="activeTab === 'demand'">
+      <div class="card-header border-bottom d-flex justify-content-between align-items-center">
+        <div>
+          <h5 class="mb-0 fw-bold text-dark">Nhu Cầu Linh Kiện Cần Gom Hàng (Thiếu Kho)</h5>
+          <small class="text-muted">Tổng hợp danh sách các mặt hàng khách đã đặt nhưng kho đang hết hoặc đang chờ nhập từ NCC.</small>
+        </div>
+        <div>
+          <button 
+            class="btn btn-warning shadow-sm fw-bold d-flex align-items-center gap-1"
+            :disabled="selectedDemands.length === 0"
+            @click="taoPOGomLo"
+          >
+            <i class="bx bx-package fs-5"></i>
+            <span>Gom vào 1 PO Mới ({{ selectedDemands.length }} món)</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="table-responsive text-nowrap">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th class="text-center" style="width: 5%">
+                <input class="form-check-input" type="checkbox" :checked="isAllDemandsSelected" @change="toggleSelectAllDemands">
+              </th>
+              <th>Mã Sản Phẩm / OEM</th>
+              <th>Tên Sản Phẩm / Phụ Tùng</th>
+              <th class="text-center">Tồn Hiện Tại</th>
+              <th class="text-center">Số Lượng Cần Nhập</th>
+              <th class="text-end">Đơn Giá Dự Kiến</th>
+              <th class="text-end">Thành Tiền Dự Kiến</th>
+              <th class="text-center">Kho</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-if="!rawDemands || rawDemands.length === 0">
+              <td colspan="8" class="text-center py-5 text-muted">
+                <i class="bx bx-check-circle text-success fs-1 d-block mb-2"></i>
+                Hiện tại không có mặt hàng nào bị thiếu kho cần gom nhập!
+              </td>
+            </tr>
+            <tr v-for="item in rawDemands" :key="item.id_ton_kho" :class="{'table-active': selectedDemands.includes(item.id_ton_kho)}">
+              <td class="text-center align-middle">
+                <input class="form-check-input" type="checkbox" :value="item.id_ton_kho" v-model="selectedDemands">
+              </td>
+              <td class="align-middle fw-bold text-primary">{{ item.ma_san_pham }}</td>
+              <td class="align-middle fw-medium text-dark">{{ item.ten_san_pham }}</td>
+              <td class="text-center align-middle">
+                <span class="badge bg-pastel-secondary text-secondary">{{ item.so_luong_ton }}</span>
+              </td>
+              <td class="text-center align-middle">
+                <span class="badge bg-danger fs-6 fw-bold">+{{ item.so_luong_can_nhap }}</span>
+              </td>
+              <td class="text-end align-middle">{{ formatCurrency(item.don_gia_du_kien) }}</td>
+              <td class="text-end align-middle fw-bold text-danger">
+                {{ formatCurrency(item.so_luong_can_nhap * item.don_gia_du_kien) }}
+              </td>
+              <td class="text-center align-middle text-muted">{{ item.kho }}</td>
             </tr>
           </tbody>
         </table>
@@ -202,7 +289,7 @@
                     <tr v-for="(ct, idx) in selectedPODetails" :key="idx">
                       <td class="text-center align-middle">{{ idx + 1 }}</td>
                       <td class="align-middle fw-medium text-dark">
-                        {{ ct.san_pham ? (ct.san_pham.ten_phu_tung || ct.san_pham.ten_san_pham) : 'Sản phẩm ID ' + ct.id_san_pham }}
+                        {{ ct.phu_tung ? ct.phu_tung.ten_phu_tung : (ct.san_pham ? ct.san_pham.ten_san_pham : 'Sản phẩm ID ' + ct.id_san_pham) }}
                       </td>
                       <td class="text-center align-middle">{{ ct.so_luong_nhap }}</td>
                       <td class="text-end align-middle text-secondary">{{ formatCurrency(ct.don_gia_nhap) }}</td>
@@ -252,6 +339,16 @@ export default {
       queryFn: fetchPOs
     });
 
+    const fetchDemands = async () => {
+      const response = await axiosClient.get('/admin/ton-kho/hang-can-nhap');
+      return response.data || [];
+    };
+
+    const { data: rawDemands, isFetching: isFetchingDemands } = useQuery({
+      queryKey: ['hang-can-nhap'],
+      queryFn: fetchDemands
+    });
+
     const deleteMutation = useMutation({
       mutationFn: async (id) => axiosClient.delete(`/admin/don-nhap-hang/${id}`),
       onError: (err, id, context) => {
@@ -278,11 +375,13 @@ export default {
       }
     });
 
-    return { pos, isFetching, queryClient, deleteMutation, saveMutation };
+    return { pos, isFetching, rawDemands, isFetchingDemands, queryClient, deleteMutation, saveMutation };
   },
 
   data() {
     return {
+      activeTab: 'pos', // 'pos' | 'demand'
+      selectedDemands: [],
       filters: {
         search: "",
         status: null
@@ -327,9 +426,75 @@ export default {
       }
       
       return result;
+    },
+    isAllDemandsSelected() {
+      return this.rawDemands && this.rawDemands.length > 0 && this.selectedDemands.length === this.rawDemands.length;
     }
   },
   methods: {
+    toggleSelectAllDemands() {
+      if (this.isAllDemandsSelected) {
+        this.selectedDemands = [];
+      } else {
+        this.selectedDemands = (this.rawDemands || []).map(i => i.id_ton_kho);
+      }
+    },
+    async taoPOGomLo() {
+      if (this.selectedDemands.length === 0) {
+        Swal.fire({ icon: 'warning', title: 'Chưa chọn mặt hàng', text: 'Vui lòng tích chọn ít nhất 1 mặt hàng cần gom!' });
+        return;
+      }
+
+      const itemsToOrder = (this.rawDemands || []).filter(d => this.selectedDemands.includes(d.id_ton_kho));
+      const totalEstimated = itemsToOrder.reduce((sum, i) => sum + (i.so_luong_can_nhap * i.don_gia_du_kien), 0);
+
+      const result = await Swal.fire({
+        title: 'Tạo PO Gom Lô Hàng?',
+        html: `Bạn đang gom <b>${itemsToOrder.length}</b> mặt hàng thiếu vào 1 Đơn Nhập Hàng (PO)?<br/>Tổng tiền dự kiến: <b class="text-danger">${this.formatCurrency(totalEstimated)}</b>`,
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Tạo PO Gom Lô',
+        cancelButtonText: 'Hủy',
+        reverseButtons: true,
+        animation: false,
+        customClass: {
+          popup: 'swal-shift-up',
+          confirmButton: 'btn btn-primary px-4 shadow-sm',
+          cancelButton: 'btn btn-outline-secondary px-4 me-3'
+        },
+        buttonsStyling: false
+      });
+
+      if (result.isConfirmed) {
+        try {
+          const payload = {
+            id_nha_cung_cap: 1,
+            id_kho: 1,
+            items: itemsToOrder.map(i => ({
+              id_san_pham: i.id_san_pham,
+              loai_san_pham: i.loai_san_pham,
+              so_luong: i.so_luong_can_nhap,
+              don_gia_nhap: i.don_gia_du_kien
+            }))
+          };
+          const res = await axiosClient.post('/admin/don-nhap-hang/gom-po', payload);
+          if (res.success || res.data) {
+            Swal.fire({
+              icon: 'success',
+              title: 'Gom PO Thành Công!',
+              text: res.message || 'Đã tạo PO gom lô thành công!'
+            });
+            this.selectedDemands = [];
+            this.activeTab = 'pos';
+            this.queryClient.invalidateQueries({ queryKey: ['pos'] });
+            this.queryClient.invalidateQueries({ queryKey: ['hang-can-nhap'] });
+          }
+        } catch (err) {
+          const msg = err.response?.data?.message || 'Không thể tạo PO gom lô.';
+          Swal.fire({ icon: 'error', title: 'Lỗi', text: msg });
+        }
+      }
+    },
     formatCurrency(value) {
       if (!value && value !== 0) return '';
       return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(value);
@@ -426,5 +591,23 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+.custom-line-tab {
+  cursor: pointer;
+  min-width: 180px;
+  text-align: center;
+  color: #a1acb8;
+  border-bottom: 3px solid transparent;
+  transition: all 0.2s ease;
+}
+.custom-line-tab.active {
+  color: var(--bs-primary);
+  border-bottom: 3px solid var(--bs-primary);
+}
+.custom-line-tab:hover:not(.active) {
+  color: #697a8d;
+}
+</style>
 
 

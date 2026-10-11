@@ -15,7 +15,7 @@ class PhuTung extends Model
     use Searchable;
 
     protected $table = 'phu_tungs';
-    protected $fillable = ['thuong_hieu_id', 'nhom_phu_tung_id', 'ma_phu_tung', 'ten_phu_tung', 'gia_ban', 'is_gia_lien_he', 'trang_thai', 'don_vi_tinh', 'hinh_anh', 'mo_ta', 'thong_so_ky_thuat', 'thu_vien_anh', 'video_url'];
+    protected $fillable = ['thuong_hieu_id', 'nhom_phu_tung_id', 'ma_phu_tung', 'ten_phu_tung', 'gia_ban', 'is_gia_lien_he', 'so_luong_ton', 'trang_thai', 'don_vi_tinh', 'hinh_anh', 'mo_ta', 'thong_so_ky_thuat', 'thu_vien_anh', 'video_url'];
 
 
     /**

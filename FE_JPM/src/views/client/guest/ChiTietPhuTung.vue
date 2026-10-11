@@ -383,7 +383,7 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted } from 'vue';
+import { ref, computed, watch, onMounted, onUnmounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/vue-query';
 import axiosClient from '../../../api/axiosClient';
@@ -522,8 +522,43 @@ watch(phuTung, (newPart) => {
       currentImage.value = null;
       images.value = [];
     }
+
+    // Dynamic Title & Structured Data (SEO JSON-LD)
+    document.title = `${newPart.ma_phu_tung} - ${newPart.ten_phu_tung} | Phụ Tùng JPM Marine`;
+    let script = document.getElementById('schema-part-ld');
+    if (!script) {
+      script = document.createElement('script');
+      script.id = 'schema-part-ld';
+      script.type = 'application/ld+json';
+      document.head.appendChild(script);
+    }
+    script.textContent = JSON.stringify({
+      "@context": "https://schema.org/",
+      "@type": "Product",
+      "name": `${newPart.ma_phu_tung} - ${newPart.ten_phu_tung}`,
+      "image": allImages.length > 0 ? allImages : undefined,
+      "description": newPart.mo_ta || `Phụ tùng chính hãng ${newPart.thuong_hieu?.name || 'Marine'} mã ${newPart.ma_phu_tung}. Tra cứu sơ đồ phân rã và đặt hàng tại JPM Marine.`,
+      "sku": newPart.ma_phu_tung,
+      "mpn": newPart.ma_phu_tung,
+      "brand": {
+        "@type": "Brand",
+        "name": newPart.thuong_hieu?.name || "Marine OEM"
+      },
+      "offers": {
+        "@type": "Offer",
+        "url": window.location.href,
+        "priceCurrency": "VND",
+        "price": Number(newPart.gia_ban) || 0,
+        "availability": (newPart.so_luong_ton > 0) ? "https://schema.org/InStock" : "https://schema.org/PreOrder"
+      }
+    });
   }
 }, { immediate: true });
+
+onUnmounted(() => {
+  const script = document.getElementById('schema-part-ld');
+  if (script) script.remove();
+});
 
 watch(partCode, () => {
   // Reset state when route changes

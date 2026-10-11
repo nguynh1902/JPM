@@ -288,7 +288,7 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted } from 'vue';
+import { ref, computed, watch, onMounted, onUnmounted } from 'vue';
 import { useRoute } from 'vue-router';
 import { useQuery, useMutation } from '@tanstack/vue-query';
 import axiosClient from '../../../api/axiosClient';
@@ -393,8 +393,44 @@ watch(sanPham, (newProduct) => {
       currentImage.value = null;
       images.value = [];
     }
+
+    // Dynamic Title & Structured Data (SEO JSON-LD)
+    document.title = `${newProduct.ten_san_pham} | JPM Marine`;
+    let script = document.getElementById('schema-product-ld');
+    if (!script) {
+      script = document.createElement('script');
+      script.id = 'schema-product-ld';
+      script.type = 'application/ld+json';
+      document.head.appendChild(script);
+    }
+    script.textContent = JSON.stringify({
+      "@context": "https://schema.org/",
+      "@type": "Product",
+      "name": newProduct.ten_san_pham,
+      "image": allImages.length > 0 ? allImages : undefined,
+      "description": newProduct.mo_ta || `Sản phẩm hàng hải chính hãng tại JPM Marine: ${newProduct.ten_san_pham}. Phân phối chính hãng, bảo hành toàn diện.`,
+      "sku": newProduct.ma_san_pham || newProduct.slug,
+      "mpn": newProduct.ma_san_pham || newProduct.slug,
+      "brand": {
+        "@type": "Brand",
+        "name": newProduct.thuong_hieu?.name || "JPM Marine"
+      },
+      "category": newProduct.danh_muc?.ten_danh_muc || "Vật tư & Phụ kiện",
+      "offers": {
+        "@type": "Offer",
+        "url": window.location.href,
+        "priceCurrency": "VND",
+        "price": Number(newProduct.gia_khuyen_mai || newProduct.gia_ban) || 0,
+        "availability": "https://schema.org/InStock"
+      }
+    });
   }
 }, { immediate: true });
+
+onUnmounted(() => {
+  const script = document.getElementById('schema-product-ld');
+  if (script) script.remove();
+});
 
 watch(productSlug, () => {
   qty.value = 1;

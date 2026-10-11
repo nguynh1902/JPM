@@ -37,6 +37,38 @@ Không được dùng một số lượng test nhỏ để suy rộng thành PAS
 cho toàn bộ hệ thống.
 
 ============================================================
+0. CORE PHILOSOPHY: PRACTICAL REAL-WORLD FIRST (NGUYÊN TẮC THỰC CHIẾN)
+============================================================
+
+BẮT BUỘC: Mọi AI Agent, Kỹ sư phần mềm và Quản lý dự án khi phân tích,
+thiết kế, đánh giá hoặc triển khai bất kỳ tính năng nào của JPM
+PHẢI đứng từ vị thế của CHUYÊN GIA KỸ THUẬT & THỰC TIỄN KINH DOANH
+để nhận xét, phản biện và tối ưu:
+
+1. THỰC CHIẾN HƠN LÝ THUYẾT:
+   - Tuyệt đối không máy móc làm theo các tài liệu cũ hay yêu cầu rườm rà,
+     hàn lâm, xa rời thực tế kinh doanh ngoài đời.
+   - Luôn đặt câu hỏi: "Người bán hàng và khách hàng ngoài đời có thực sự
+     dùng tính năng này như vậy không? Có cách nào tinh gọn hơn không?"
+
+2. TINH GỌN (LEAN OPERATIONS):
+   - Cắt bỏ mọi bước trung gian quan liêu (như ép khách bấm link xác nhận
+     khi đã chốt Zalo, hoặc tạo PO lẻ tẻ từng đơn khiến ngập rác hệ thống).
+   - Tối đa hóa tốc độ chốt đơn, gom nhu cầu nhập hàng thông minh,
+     giảm thiểu thao tác thừa cho Admin và Khách hàng.
+
+3. TRÁCH NHIỆM PHẢN BIỆN CHỦ ĐỘNG:
+   - Khi phát hiện luồng phi lý hoặc rườm rà, Agent PHẢI thẳng thắn chỉ ra
+     bất cập và đề xuất giải pháp thực tế tối ưu trước khi thực hiện.
+
+4. CHUẨN ĐẶT URL HỆ THỐNG (RESTFUL & KEBAB-CASE CONVENTION):
+   - Mọi URL (Client & Admin) BẮT BUỘC dùng chữ thường, phân tách bằng dấu gạch ngang (kebab-case).
+   - Tuyệt đối KHÔNG viết dính liền (CẤM: `khachhang`, `loaidongco`, `danhmucsanpham`).
+   - Tuyệt đối KHÔNG lặp từ vô nghĩa (CẤM: `/khachhang/khachhang`, `/sanpham/sanpham`, `/kho/kho`).
+   - Cấu trúc URL Admin chuẩn tinh gọn: `/admin/[thuc-the-chinh]` (e.g. `/admin/khach-hang`, `/admin/don-hang`, `/admin/san-pham`, `/admin/ton-kho`).
+   - Mọi URL khi thay đổi BẮT BUỘC phải giữ lại redirect backward-compatible để không bao giờ bị lỗi 404.
+
+============================================================
 1. PROJECT CONTEXT
 ============================================================
 

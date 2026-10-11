@@ -7,12 +7,17 @@ use Illuminate\Http\Request;
 use App\Domain\Sales\Models\YeuCauBaoGia;
 use App\Domain\Sales\Models\ChiTietBaoGia;
 use App\Domain\Sales\Models\DonHang;
+use App\Domain\Sales\Models\ChiTietDonHang;
+use App\Domain\IAM\Models\KhachHang;
 use App\Domain\Sales\Services\OrderService;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 
 class YeuCauBaoGiaController extends Controller
 {
+    /**
+     * API gửi yêu cầu báo giá hoặc tạo đơn trực tiếp từ Client (Public & Guest & Member)
+     */
     public function publicStore(Request $request)
     {
         $request->validate([
@@ -21,8 +26,7 @@ class YeuCauBaoGiaController extends Controller
             'khach_hang_ten'  => 'required|string|max:255',
             'khach_hang_sdt'  => 'required|string|max:20',
             'chi_tiet'        => 'required|array|min:1',
-            'chi_tiet.*.id_phu_tung'  => 'nullable|integer',
-            'chi_tiet.*.so_luong'     => 'required|integer|min:1',
+            'chi_tiet.*.so_luong' => 'required|integer|min:1',
         ]);
 
         $idempotencyKey = $request->header('Idempotency-Key');
@@ -37,38 +41,54 @@ class YeuCauBaoGiaController extends Controller
                     }
                     return response()->json(json_decode($existing->response_body, true), $existing->status_code);
                 }
-                
-                // C? g?ng insert d? ch?ng race condition
+
                 DB::table('idempotency_keys')->insert([
                     'key' => $idempotencyKey,
                     'request_hash' => $requestHash,
-                    'status_code' => 200, // s? update sau
+                    'status_code' => 200,
                     'created_at' => now(),
                     'updated_at' => now(),
                 ]);
             } catch (\Exception $e) {
-                // N?u l?i constraint, c nghia l d c request khc insert
                 return response()->json(['success' => false, 'message' => 'Concurrent request detected'], 409);
             }
         }
 
         DB::beginTransaction();
         try {
-            $loaiYeuCau = $request->input('loai_yeu_cau', 'bao_gia');
-            
+            $loaiYeuCau = $request->input('loai_yeu_cau', 'quote');
+
+            // Nhận diện khách hàng B2B vs B2C
+            $idKhachHang = null;
+            $loaiDon = 'b2c';
+            $khachTuTraCuoc = 1; // Mặc định B2C: Khách trả cước nội địa
+
+            if ($request->user_id) {
+                $kh = KhachHang::where('id_tai_khoan', $request->user_id)->first();
+                if ($kh) {
+                    $idKhachHang = $kh->id;
+                    if (!empty($kh->ten_cong_ty) || $request->input('loai_don') === 'b2b') {
+                        $loaiDon = 'b2b';
+                        $khachTuTraCuoc = 0; // Khách B2B: JPM tài trợ miễn phí cước nội địa
+                    }
+                }
+            }
+
             if ($loaiYeuCau === 'order') {
                 $maCode = 'DH-' . date('ymd') . '-' . strtoupper(substr(uniqid(), -4));
                 $donHang = DonHang::create([
-                    'ma_don_hang' => $maCode,
-                    'id_khach_hang' => $request->user_id ? \App\Domain\IAM\Models\KhachHang::where('id_tai_khoan', $request->user_id)->value('id') : null,
-                    'khach_hang_ten' => trim($request->khach_hang_ten),
-                    'khach_hang_sdt' => trim($request->khach_hang_sdt),
-                    'khach_hang_email' => trim($request->khach_hang_email),
-                    'dia_chi_text' => $request->dia_chi_giao_hang,
-                    'ghi_chu_khach_hang' => $request->ghi_chu_khach_hang,
-                    'tong_tien' => 0,
-                    'loai_don' => 'b2c',
-                    'trang_thai' => 0,
+                    'ma_don_hang'           => $maCode,
+                    'id_khach_hang'         => $idKhachHang,
+                    'khach_hang_ten'        => trim($request->khach_hang_ten),
+                    'khach_hang_sdt'        => trim($request->khach_hang_sdt),
+                    'khach_hang_email'      => trim($request->khach_hang_email),
+                    'dia_chi_text'          => $request->dia_chi_giao_hang,
+                    'ghi_chu_khach_hang'    => $request->ghi_chu_khach_hang,
+                    'tong_tien'             => 0,
+                    'loai_don'              => $loaiDon,
+                    'khach_tu_tra_cuoc'     => $khachTuTraCuoc,
+                    'phi_van_chuyen'        => 0,
+                    'trang_thai'            => 0, // Chờ xử lý / gom đơn
                     'trang_thai_thanh_toan' => 0,
                 ]);
 
@@ -76,12 +96,12 @@ class YeuCauBaoGiaController extends Controller
                 $processedData = $orderService->processItemsAndInventory($request->chi_tiet, $donHang->id, true);
 
                 foreach ($processedData['items'] as $itemData) {
-                    \App\Domain\Sales\Models\ChiTietDonHang::create($itemData);
+                    ChiTietDonHang::create($itemData);
                 }
-                
+
                 $donHang->tong_tien = $processedData['tong_tien'];
                 $donHang->save();
-                
+
                 $responseCode = $maCode;
             } else {
                 $maCode = 'YCBG-' . date('ymd') . '-' . strtoupper(substr(uniqid(), -4));
@@ -94,9 +114,12 @@ class YeuCauBaoGiaController extends Controller
                     'khach_hang_email'   => $request->khach_hang_email,
                     'ghi_chu_khach_hang' => $request->ghi_chu_khach_hang,
                     'tong_tien'          => 0,
-                    'trang_thai'         => 0,
+                    'khach_tu_tra_cuoc'  => $khachTuTraCuoc,
+                    'phi_van_chuyen'     => 0,
+                    'tien_coc_yeu_cau'   => 0,
+                    'trang_thai'         => 0, // 0 = Chờ báo giá
                     'user_id'            => $request->user_id,
-                    'token'              => \Illuminate\Support\Str::random(32),
+                    'token'              => Str::random(32),
                 ]);
 
                 foreach ($request->chi_tiet as $item) {
@@ -104,11 +127,11 @@ class YeuCauBaoGiaController extends Controller
                         'yeu_cau_bao_gia_id' => $quote->id,
                         'ten_phu_tung'       => $item['ten_phu_tung'] ?? 'Không rõ',
                         'ma_phu_tung'        => $item['ma_phu_tung'] ?? 'N/A',
-                        'so_luong'           => $item['so_luong'],
-                        'don_gia'            => 0
+                        'so_luong'           => (int) ($item['so_luong'] ?? 1),
+                        'don_gia'            => (float) ($item['gia_ban'] ?? 0)
                     ]);
                 }
-                
+
                 $responseCode = $maCode;
             }
 
@@ -116,41 +139,296 @@ class YeuCauBaoGiaController extends Controller
 
             $resBody = [
                 'success' => true,
-                'message' => 'G?i yu c?u thnh cng',
-                'code'    => $responseCode
+                'message' => 'Gửi yêu cầu thành công',
+                'code'    => $responseCode,
+                'data'    => [
+                    'code' => $responseCode,
+                    'ma_yeu_cau' => $responseCode
+                ]
             ];
-            
+
             if ($idempotencyKey) {
                 DB::table('idempotency_keys')->where('key', $idempotencyKey)->update([
                     'response_body' => json_encode($resBody),
-                    'status_code' => 200,
+                    'status_code'   => 200,
                 ]);
             }
 
             return response()->json($resBody, 200);
         } catch (\Exception $e) {
             DB::rollBack();
-            
-            $status = 500;
-            if (str_contains($e->getMessage(), 'Khng d? s? lu?ng') || str_contains($e->getMessage(), 'Khng th? h?y')) {
-                $status = 409; // Conflict
-            } elseif (str_contains($e->getMessage(), 'Khng tm th?y') || str_contains($e->getMessage(), 'khng h?p l?')) {
-                $status = 422; // Unprocessable
-            }
-            
+
             $resBody = [
                 'success' => false,
-                'message' => 'L?i x? ly: ' . $e->getMessage()
+                'message' => 'Lỗi xử lý: ' . $e->getMessage()
             ];
 
-            if ($idempotencyKey) {
-                DB::table('idempotency_keys')->where('key', $idempotencyKey)->update([
-                    'response_body' => json_encode($resBody),
-                    'status_code' => $status,
+            return response()->json($resBody, 500);
+        }
+    }
+
+    /**
+     * Admin: Danh sách toàn bộ yêu cầu báo giá
+     */
+    public function index()
+    {
+        try {
+            $quotes = YeuCauBaoGia::with('chiTiet')
+                ->orderBy('id', 'desc')
+                ->get();
+
+            return response()->json([
+                'success' => true,
+                'data'    => $quotes
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Lỗi tải danh sách báo giá: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Admin: Xem chi tiết 1 báo giá
+     */
+    public function show($id)
+    {
+        try {
+            $quote = YeuCauBaoGia::with('chiTiet')->findOrFail($id);
+            return response()->json([
+                'success' => true,
+                'data'    => $quote
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'Không tìm thấy yêu cầu báo giá.'], 404);
+        }
+    }
+
+    /**
+     * Admin: Cập nhật thông tin báo giá & đơn giá từng món
+     */
+    public function update(Request $request, $id)
+    {
+        DB::beginTransaction();
+        try {
+            $quote = YeuCauBaoGia::findOrFail($id);
+
+            $quote->update([
+                'tong_tien'         => $request->input('tong_tien', $quote->tong_tien),
+                'trang_thai'        => $request->input('trang_thai', $quote->trang_thai),
+                'ghi_chu_zalo'      => $request->input('ghi_chu_zalo', $quote->ghi_chu_zalo),
+                'phi_van_chuyen'    => $request->input('shipping_fee', $quote->phi_van_chuyen),
+                'khach_tu_tra_cuoc' => $request->input('freight_collect', $quote->khach_tu_tra_cuoc),
+                'tien_coc_yeu_cau'  => $request->input('deposit_required', $quote->tien_coc_yeu_cau),
+            ]);
+
+            // Cập nhật giá từng món hàng nếu có
+            if ($request->has('chi_tiet') && is_array($request->input('chi_tiet'))) {
+                foreach ($request->input('chi_tiet') as $item) {
+                    if (isset($item['id'])) {
+                        ChiTietBaoGia::where('id', $item['id'])
+                            ->where('yeu_cau_bao_gia_id', $quote->id)
+                            ->update([
+                                'don_gia'  => (float) ($item['price'] ?? $item['don_gia'] ?? 0),
+                                'so_luong' => (int) ($item['qty'] ?? $item['so_luong'] ?? 1),
+                            ]);
+                    }
+                }
+            }
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Cập nhật báo giá thành công',
+                'data'    => $quote->fresh('chiTiet')
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => 'Lỗi cập nhật báo giá: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Admin: Xóa yêu cầu báo giá
+     */
+    public function destroy($id)
+    {
+        DB::beginTransaction();
+        try {
+            ChiTietBaoGia::where('yeu_cau_bao_gia_id', $id)->delete();
+            YeuCauBaoGia::destroy($id);
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Đã xóa yêu cầu báo giá thành công.'
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => 'Lỗi xóa báo giá: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Khách hàng mở link xem báo giá qua Magic Token (Public)
+     */
+    public function showByToken($token)
+    {
+        try {
+            $quote = YeuCauBaoGia::with('chiTiet')->where('token', $token)->firstOrFail();
+            return response()->json([
+                'success' => true,
+                'data'    => $quote
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'Báo giá không tồn tại hoặc đã hết hạn.'], 404);
+        }
+    }
+
+    /**
+     * Khách hàng chốt / duyệt báo giá từ link Zalo
+     */
+    public function customerAction(Request $request, $token)
+    {
+        DB::beginTransaction();
+        try {
+            $quote = YeuCauBaoGia::with('chiTiet')->where('token', $token)->firstOrFail();
+            $action = $request->input('action', 'accept');
+
+            if ($action === 'accept') {
+                $quote->trang_thai = 1; // Khách đã chốt
+                $quote->save();
+                DB::commit();
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Quý khách đã xác nhận đồng ý báo giá thành công! JPM sẽ liên hệ sớm nhất.'
+                ]);
+            } else {
+                $quote->trang_thai = 3; // Hủy
+                $quote->save();
+                DB::commit();
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Đã từ chối báo giá.'
+                ]);
+            }
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['success' => false, 'message' => 'Lỗi xử lý: ' . $e->getMessage()], 500);
+        }
+    }
+
+    /**
+     * Admin: Chuyển Yêu Cầu Báo Giá thành Đơn Hàng chính thức (Convert to Order)
+     */
+    public function convertToOrder($id)
+    {
+        DB::beginTransaction();
+        try {
+            $quote = YeuCauBaoGia::with('chiTiet')->findOrFail($id);
+
+            // Kiểm tra nếu đã chuyển rồi
+            if ($quote->trang_thai == 2) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Yêu cầu báo giá này đã được tạo thành đơn hàng trước đó.'
+                ], 409);
+            }
+
+            // Nhận diện khách hàng B2B vs B2C
+            $idKhachHang = null;
+            $loaiDon = 'b2c';
+            if ($quote->user_id) {
+                $kh = KhachHang::where('id_tai_khoan', $quote->user_id)->first();
+                if ($kh) {
+                    $idKhachHang = $kh->id;
+                    if (!empty($kh->ten_cong_ty)) {
+                        $loaiDon = 'b2b';
+                    }
+                }
+            }
+
+            $maDonHang = 'DH-' . date('ymd') . '-' . strtoupper(substr(uniqid(), -4));
+            $donHang = DonHang::create([
+                'ma_don_hang'           => $maDonHang,
+                'id_khach_hang'         => $idKhachHang,
+                'khach_hang_ten'        => $quote->khach_hang_ten,
+                'khach_hang_sdt'        => $quote->khach_hang_sdt,
+                'khach_hang_email'      => $quote->khach_hang_email,
+                'dia_chi_text'          => $quote->dia_chi_giao_hang,
+                'ghi_chu_khach_hang'    => $quote->ghi_chu_khach_hang . ($quote->ghi_chu_zalo ? ' | ' . $quote->ghi_chu_zalo : ''),
+                'tong_tien'             => $quote->tong_tien,
+                'phi_van_chuyen'        => $quote->phi_van_chuyen,
+                'tien_coc_yeu_cau'      => $quote->tien_coc_yeu_cau,
+                'khach_tu_tra_cuoc'     => $quote->khach_tu_tra_cuoc,
+                'loai_don'              => $loaiDon,
+                'trang_thai'            => 0, // Chờ xác nhận
+                'trang_thai_thanh_toan' => 0, // Chờ thanh toán / cọc
+            ]);
+
+            // Sao chép chi tiết từ Báo giá sang Đơn hàng
+            foreach ($quote->chiTiet as $ct) {
+                $idSanPham = null;
+                $loaiSanPham = 'phu_tung';
+                if (!empty($ct->ma_phu_tung) && $ct->ma_phu_tung !== 'N/A') {
+                    $pt = \App\Domain\PIM\Models\PhuTung::where('ma_phu_tung', $ct->ma_phu_tung)->first();
+                    if ($pt) {
+                        $idSanPham = $pt->id;
+                        $loaiSanPham = 'phu_tung';
+                    } else {
+                        $sp = \App\Domain\CMS\Models\SanPham::where('ma_san_pham', $ct->ma_phu_tung)->first();
+                        if ($sp) {
+                            $idSanPham = $sp->id;
+                            $loaiSanPham = 'san_pham';
+                        }
+                    }
+                }
+
+                // Fallback nếu không tìm thấy mã
+                if (!$idSanPham) {
+                    $firstPt = \App\Domain\PIM\Models\PhuTung::first();
+                    $idSanPham = $firstPt ? $firstPt->id : 1;
+                }
+
+                ChiTietDonHang::create([
+                    'id_don_hang'   => $donHang->id,
+                    'id_san_pham'   => $idSanPham,
+                    'loai_san_pham' => $loaiSanPham,
+                    'ten_phu_tung'  => $ct->ten_phu_tung,
+                    'ma_phu_tung'   => $ct->ma_phu_tung,
+                    'so_luong'      => $ct->so_luong,
+                    'don_gia'       => $ct->don_gia,
+                    'thanh_tien'    => $ct->so_luong * $ct->don_gia,
                 ]);
             }
 
-            return response()->json($resBody, $status);
+            // Đổi trạng thái báo giá sang Đã chuyển đơn (2)
+            $quote->trang_thai = 2;
+            $quote->save();
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => "Đã chuyển đổi thành công sang Đơn hàng {$maDonHang}!",
+                'data'    => $donHang
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => 'Lỗi chuyển đổi đơn hàng: ' . $e->getMessage()
+            ], 500);
         }
     }
 }

@@ -32,6 +32,7 @@ Route::prefix('public')->group(function () {
     Route::get('/tra-cuu', [\App\Domain\Storefront\Controllers\TraCuuController::class, 'traCuu']);
     Route::get('/tra-cuu-so-do', [\App\Domain\Storefront\Controllers\TraCuuController::class, 'traCuuSoDo']);
     Route::post('/tra-cuu-nhanh', [\App\Domain\Storefront\Controllers\TraCuuController::class, 'traCuuNhanh']);
+    Route::get('/quick-search', [\App\Domain\Storefront\Controllers\TraCuuController::class, 'quickSearch']);
     Route::get('/phu-tung/{code}', [\App\Domain\Storefront\Controllers\TraCuuController::class, 'chiTietPhuTung']);
     Route::get('/phu-tung-noi-bat', [\App\Domain\Storefront\Controllers\TraCuuController::class, 'phuTungNoiBat']);
       Route::get('/san-pham-ban-chay', [\App\Domain\Storefront\Controllers\TraCuuController::class, 'sanPhamBanChay']);
@@ -131,10 +132,13 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('admin/yeu-cau-bao-gia/{id}/chuyen-don', [\App\Domain\Sales\Controllers\YeuCauBaoGiaController::class, 'convertToOrder']);
         
         // Kho & Orders (Giai đoạn 4)
+        Route::get('admin/ton-kho/hang-can-nhap', [\App\Domain\Procurement\Controllers\TonKhoController::class, 'hangCanNhap']);
         Route::apiResource('admin/kho', \App\Domain\Procurement\Controllers\KhoController::class);
         Route::apiResource('admin/ton-kho', \App\Domain\Procurement\Controllers\TonKhoController::class);
         Route::apiResource('admin/the-kho', \App\Domain\Procurement\Controllers\TheKhoController::class);
         Route::apiResource('admin/don-hang', \App\Domain\Sales\Controllers\DonHangController::class);
+        Route::post('admin/don-hang/{id}/tao-po', [\App\Domain\Sales\Controllers\DonHangController::class, 'convertToPO']);
+        Route::post('admin/don-nhap-hang/gom-po', [\App\Domain\Procurement\Controllers\DonNhapHangController::class, 'gomPO']);
         Route::apiResource('admin/don-nhap-hang', \App\Domain\Procurement\Controllers\DonNhapHangController::class);
         
         // Phụ tùng & Sơ đồ (Giai đoạn 4)
@@ -142,7 +146,6 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::apiResource('admin/phu-tung', \App\Domain\PIM\Controllers\PhuTungController::class);
         Route::apiResource('admin/nhom-phu-tung', \App\Domain\PIM\Controllers\NhomPhuTungController::class);
         Route::apiResource('admin/so-do', \App\Domain\PIM\Controllers\SoDoPhuTungController::class);
-        Route::apiResource('admin/cross-docking', \App\Domain\Procurement\Controllers\CrossDockingController::class);
 
         // Nội dung (Giai đoạn 4)
         Route::apiResource('admin/chuyen-muc', \App\Domain\CMS\Controllers\ChuyenMucController::class);

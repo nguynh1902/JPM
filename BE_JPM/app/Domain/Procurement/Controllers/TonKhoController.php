@@ -62,4 +62,44 @@ use App\Http\Controllers\Controller; use App\Domain\Procurement\Models\TonKho; u
             return response()->json(["success" => false, "message" => $e->getMessage()], 500);
         }
     }
+
+    public function hangCanNhap()
+    {
+        try {
+            $items = TonKho::with(['phuTung', 'sanPham', 'kho'])
+                ->where('so_luong_dang_giu', '>', 0)
+                ->orderBy('so_luong_dang_giu', 'desc')
+                ->get()
+                ->map(function ($t) {
+                    $ten = $t->loai_san_pham === 'san_pham' && $t->sanPham 
+                        ? $t->sanPham->ten_san_pham 
+                        : ($t->phuTung ? $t->phuTung->ten_phu_tung : 'Sản phẩm ID ' . $t->id_san_pham);
+                    $ma = $t->loai_san_pham === 'san_pham' && $t->sanPham 
+                        ? $t->sanPham->ma_san_pham 
+                        : ($t->phuTung ? $t->phuTung->ma_phu_tung : 'SKU-' . $t->id_san_pham);
+                    $giaNhap = $t->loai_san_pham === 'san_pham' && $t->sanPham 
+                        ? (float) ($t->sanPham->gia_nhap ?? ($t->sanPham->gia_ban * 0.7))
+                        : ($t->phuTung ? (float) ($t->phuTung->gia_nhap ?? ($t->phuTung->gia_ban * 0.7)) : 0);
+
+                    return [
+                        'id_ton_kho' => $t->id,
+                        'id_san_pham' => $t->id_san_pham,
+                        'loai_san_pham' => $t->loai_san_pham ?? 'phu_tung',
+                        'ten_san_pham' => $ten,
+                        'ma_san_pham' => $ma,
+                        'so_luong_ton' => $t->so_luong_ton,
+                        'so_luong_can_nhap' => $t->so_luong_dang_giu,
+                        'don_gia_du_kien' => $giaNhap,
+                        'kho' => $t->kho ? $t->kho->ten_kho : 'Kho Tổng',
+                    ];
+                });
+
+            return response()->json([
+                'success' => true,
+                'data' => $items
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+        }
+    }
 }

@@ -17,4 +17,9 @@ class ChiTietDonNhapHang extends Model
     {
         return $this->belongsTo(SanPham::class, 'id_san_pham');
     }
+
+    public function phuTung()
+    {
+        return $this->belongsTo(\App\Domain\PIM\Models\PhuTung::class, 'id_san_pham');
+    }
 }

@@ -101,6 +101,11 @@
                     <span class="text-muted fw-medium">Tổng sản phẩm:</span>
                     <strong class="text-dark">{{ totalQuantity }}</strong>
                   </div>
+                  <div class="d-flex justify-content-between align-items-center mb-2 small text-muted">
+                    <span><i class="bi bi-truck me-1"></i> Vận chuyển:</span>
+                    <span v-if="isB2B" class="text-success fw-bold">Ưu đãi B2B (Hỗ trợ chành xe)</span>
+                    <span v-else class="text-secondary">Theo cước nhà xe / chành xe</span>
+                  </div>
                   <div class="d-flex justify-content-between align-items-center pt-3 border-top">
                     <span class="text-muted fw-medium">Tạm tính:</span>
                     <strong class="text-danger fs-5 fw-bold">{{ totalAmount }}</strong>
@@ -331,6 +336,15 @@ export default {
           this.selectedItems = []
         }
       }
+    },
+    isB2B() {
+      if (!this.isAuthenticated || !this.userProfile) return false;
+      const roles = this.userProfile.roles || [];
+      const hasB2BRole = Array.isArray(roles) && roles.some(r => {
+        const s = typeof r === 'string' ? r.toLowerCase() : (r.name || '').toLowerCase();
+        return s.includes('đại lý') || s.includes('b2b');
+      });
+      return hasB2BRole || Boolean(this.userProfile.ten_cong_ty);
     }
   },
   mounted() {
@@ -500,6 +514,7 @@ export default {
       const payload = {
         user_id: this.userProfile ? this.userProfile.id : null,
         loai_yeu_cau: this.checkoutType, // 'quote' or 'order'
+        loai_don: this.isB2B ? 'b2b' : 'b2c',
         khach_hang_ten: finalName,
         khach_hang_sdt: finalPhone,
         dia_chi_giao_hang: finalAddress,
@@ -507,6 +522,8 @@ export default {
         ghi_chu_khach_hang: this.checkoutForm.note || null,
         chi_tiet: selectedCartItems.map(item => ({
           id_phu_tung:  item.id,
+          id_san_pham:  item.id,
+          loai_san_pham: item.loai_san_pham || (item.ma_san_pham && !item.ma_phu_tung ? 'san_pham' : 'phu_tung'),
           ten_phu_tung: item.ten_phu_tung,
           ma_phu_tung:  item.ma_phu_tung,
           so_luong:     item.quantity,

@@ -466,7 +466,7 @@ class TraCuuController extends Controller
     }
     public function soDoModel($modelCode)
     {
-        $model = DongCoModel::where('ma_model', strtoupper($modelCode))->first();
+        $model = DongCoModel::with('thuongHieu')->where('ma_model', strtoupper($modelCode))->first();
         if (!$model) {
             return response()->json(['success' => false, 'message' => 'Model not found'], 404);
         }
@@ -482,6 +482,140 @@ class TraCuuController extends Controller
             'data' => [
                 'model' => $model,
                 'diagrams' => $diagrams
+            ]
+        ]);
+    }
+
+    public function quickSearch(Request $request)
+    {
+        $q = trim($request->get('q', ''));
+        if (mb_strlen($q) < 2) {
+            return response()->json([
+                'success' => true,
+                'data' => [
+                    'query' => $q,
+                    'exact_match' => null,
+                    'models' => [],
+                    'phu_tungs' => [],
+                    'san_phams' => []
+                ]
+            ]);
+        }
+
+        $upperQ = strtoupper($q);
+
+        // 1. Check exact match
+        $exactMatch = null;
+
+        $exactPart = PhuTung::with('thuongHieu')
+            ->where('trang_thai', 1)
+            ->where('ma_phu_tung', $upperQ)
+            ->first();
+
+        if ($exactPart) {
+            $exactMatch = [
+                'type' => 'phu_tung',
+                'title' => $exactPart->ma_phu_tung . ' - ' . $exactPart->ten_phu_tung,
+                'code' => $exactPart->ma_phu_tung,
+                'url' => '/chi-tiet-phu-tung/' . $exactPart->ma_phu_tung,
+                'price' => $exactPart->gia_ban,
+                'is_contact_price' => (bool)$exactPart->is_gia_lien_he,
+                'brand' => $exactPart->thuongHieu?->name
+            ];
+        } else {
+            $exactModel = DongCoModel::with('thuongHieu')
+                ->where('trang_thai', 1)
+                ->where('ma_model', $upperQ)
+                ->first();
+
+            if ($exactModel) {
+                $exactMatch = [
+                    'type' => 'model',
+                    'title' => $exactModel->ten_model . ' (' . $exactModel->ma_model . ')',
+                    'code' => $exactModel->ma_model,
+                    'url' => '/so-do/' . $exactModel->ma_model,
+                    'brand' => $exactModel->thuongHieu?->name,
+                    'year' => $exactModel->nam_san_xuat
+                ];
+            }
+        }
+
+        // 2. Search DongCoModel (Engine Diagrams)
+        $models = DongCoModel::with('thuongHieu')
+            ->where('trang_thai', 1)
+            ->where(function ($sub) use ($q) {
+                $sub->where('ma_model', 'LIKE', "%{$q}%")
+                    ->orWhere('ten_model', 'LIKE', "%{$q}%");
+            })
+            ->limit(5)
+            ->get()
+            ->map(function ($m) {
+                return [
+                    'id' => $m->id,
+                    'code' => $m->ma_model,
+                    'name' => $m->ten_model,
+                    'hp' => $m->ma_luc,
+                    'year' => $m->nam_san_xuat,
+                    'brand' => $m->thuongHieu?->name,
+                    'brand_code' => $m->thuongHieu?->code,
+                    'url' => '/so-do/' . $m->ma_model
+                ];
+            });
+
+        // 3. Search PhuTung (OEM & Aftermarket Parts)
+        $phuTungs = PhuTung::with(['thuongHieu', 'nhomPhuTung'])
+            ->where('trang_thai', 1)
+            ->where(function ($sub) use ($q) {
+                $sub->where('ma_phu_tung', 'LIKE', "%{$q}%")
+                    ->orWhere('ten_phu_tung', 'LIKE', "%{$q}%");
+            })
+            ->limit(6)
+            ->get()
+            ->map(function ($p) {
+                return [
+                    'id' => $p->id,
+                    'code' => $p->ma_phu_tung,
+                    'name' => $p->ten_phu_tung,
+                    'price' => $p->gia_ban,
+                    'is_contact_price' => (bool)$p->is_gia_lien_he,
+                    'image' => $p->hinh_anh,
+                    'group' => $p->nhomPhuTung?->ten_nhom,
+                    'brand' => $p->thuongHieu?->name,
+                    'url' => '/chi-tiet-phu-tung/' . $p->ma_phu_tung
+                ];
+            });
+
+        // 4. Search General Products (SanPham CMS)
+        $sanPhams = \App\Domain\CMS\Models\SanPham::with('danhMuc')
+            ->where('trang_thai', 1)
+            ->where(function ($sub) use ($q) {
+                $sub->where('ma_san_pham', 'LIKE', "%{$q}%")
+                    ->orWhere('ten_san_pham', 'LIKE', "%{$q}%");
+            })
+            ->limit(4)
+            ->get()
+            ->map(function ($s) {
+                return [
+                    'id' => $s->id,
+                    'code' => $s->ma_san_pham,
+                    'name' => $s->ten_san_pham,
+                    'slug' => $s->slug,
+                    'price' => $s->gia_ban,
+                    'sale_price' => $s->gia_khuyen_mai,
+                    'image' => $s->hinh_anh,
+                    'category' => $s->danhMuc?->ten_danh_muc,
+                    'url' => '/chi-tiet-san-pham/' . $s->slug
+                ];
+            });
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'query' => $q,
+                'exact_match' => $exactMatch,
+                'models' => $models,
+                'phu_tungs' => $phuTungs,
+                'san_phams' => $sanPhams
             ]
         ]);
     }

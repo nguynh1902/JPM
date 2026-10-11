@@ -137,7 +137,7 @@ export default {
           id: 2,
           type: "warehouse",
           title: "Hàng từ Nhật cập cảng",
-          message: "Lô hàng mã #JP-1024 đã sẵn sàng để Cross-docking.",
+          message: "Lô hàng mã #JP-1024 đã sẵn sàng để nhập kho.",
           time: "3 giờ trước",
           avatar: "https://minhthanh.edu.vn/uploads/blog/2021/04/16/z2428581674488-dc7844093f4ecba039f21f1e3fb617fa-1618556637.jpg",
           isRead: true

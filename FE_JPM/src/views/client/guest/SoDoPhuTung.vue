@@ -184,7 +184,14 @@
                         <tr v-if="currentParts.length === 0">
                           <td colspan="6" class="text-center py-4 text-muted">Chưa có phụ tùng nào.</td>
                         </tr>
-                        <tr v-for="part in currentParts" :key="part.id" class="table-row-hover" style="transition: all 0.2s ease;">
+                        <tr 
+                          v-for="part in currentParts" 
+                          :key="part.id" 
+                          class="table-row-hover" 
+                          :class="{ 'highlighted-part-row': targetPartCode && part.phu_tung?.ma_phu_tung?.toUpperCase() === targetPartCode }"
+                          :data-part-code="part.phu_tung?.ma_phu_tung?.toUpperCase()"
+                          style="transition: all 0.2s ease;"
+                        >
                           <td class="text-center" style="padding-left: 1rem;">
                             <input class="form-check-input custom-checkbox" type="checkbox" :value="part.id" v-model="selectedParts">
                           </td>
@@ -193,7 +200,12 @@
                           </td>
                           <td>
                             <router-link :to="`/chi-tiet-phu-tung/${part.phu_tung?.ma_phu_tung}${diagramResponse?.data?.model?.id ? '?from_model_id=' + diagramResponse.data.model.id : ''}`" class="text-decoration-none d-block">
-                              <div class="fw-bold model-code" style="color: var(--heading-color);">{{ part.phu_tung?.ma_phu_tung }}</div>
+                              <div class="d-flex align-items-center gap-2">
+                                <span class="fw-bold model-code" style="color: var(--heading-color);">{{ part.phu_tung?.ma_phu_tung }}</span>
+                                <span v-if="targetPartCode && part.phu_tung?.ma_phu_tung?.toUpperCase() === targetPartCode" class="badge bg-danger text-white rounded-pill px-2 py-1" style="font-size: 0.7rem;">
+                                  <i class="bi bi-geo-alt-fill me-1"></i>Đang xem
+                                </span>
+                              </div>
                               <div class="text-muted small fw-medium">{{ part.phu_tung?.ten_phu_tung }}</div>
                             </router-link>
                           </td>
@@ -229,7 +241,7 @@
 </template>
 
 <script setup>
-import { computed, ref, watch } from 'vue';
+import { computed, ref, watch, nextTick, onUnmounted } from 'vue';
 import { useRoute } from 'vue-router';
 import { useQuery } from '@tanstack/vue-query';
 import axiosClient from '../../../api/axiosClient';
@@ -245,17 +257,10 @@ const getImageUrl = (path) => {
   return 'http://localhost:8000/storage/' + cleanPath;
 };
 
-const brandRoute = computed(() => route.params.brand || 'honda');
-const brandNameMap = {
-    'mer': 'MERCURY',
-    'yam': 'YAMAHA',
-    'hon': 'HONDA',
-    'suz': 'SUZUKI',
-    'toa': 'TOHATSU'
-  };
-  const brandName = computed(() => brandNameMap[brandRoute.value.toLowerCase()] || brandRoute.value.toUpperCase());
+const targetPartCode = computed(() => (route.query.part || '').toString().trim().toUpperCase());
+
 const modelName = computed(() => {
-  const raw = route.params.model || '';
+  const raw = route.params.model || route.params.modelCode || '';
   try { return decodeURIComponent(raw); } catch { return raw; }
 });
 
@@ -265,10 +270,29 @@ const { data: diagramResponse, isLoading } = useQuery({
   enabled: computed(() => !!modelName.value)
 });
 
+const brandRoute = computed(() => {
+  if (route.params.brand) return route.params.brand;
+  return diagramResponse.value?.data?.model?.thuong_hieu?.code?.toLowerCase() || 'mer';
+});
+
+const brandNameMap = {
+  'mer': 'MERCURY',
+  'yam': 'YAMAHA',
+  'hon': 'HONDA',
+  'suz': 'SUZUKI',
+  'toa': 'TOHATSU'
+};
+
+const brandName = computed(() => {
+  if (diagramResponse.value?.data?.model?.thuong_hieu?.name) {
+    return diagramResponse.value.data.model.thuong_hieu.name;
+  }
+  return brandNameMap[brandRoute.value.toLowerCase()] || brandRoute.value.toUpperCase();
+});
+
 const diagramsList = computed(() => {
   return diagramResponse.value?.data?.diagrams || [];
 });
-
 
 const toaster = createToaster({ position: "top-right" });
 const cartStore = useCartStore();
@@ -296,11 +320,76 @@ const addAllSelectedToCart = () => {
 
 const activeComponentId = ref(Number(route.query.diagram_id) || null);
 
-watch(diagramsList, (newVal) => {
-  if (newVal && newVal.length > 0 && !activeComponentId.value) {
+const scrollToHighlightedRow = (code) => {
+  if (!code) return;
+  nextTick(() => {
+    setTimeout(() => {
+      const targetEl = document.querySelector(`[data-part-code="${code}"]`);
+      if (targetEl) {
+        targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }, 300);
+  });
+};
+
+watch([diagramsList, targetPartCode], ([newVal, partCode]) => {
+  if (!newVal || newVal.length === 0) return;
+
+  if (partCode) {
+    const matchingDiagram = newVal.find(d => 
+      d.chi_tiets && d.chi_tiets.some(ct => ct.phu_tung?.ma_phu_tung?.toUpperCase() === partCode)
+    );
+    if (matchingDiagram) {
+      activeComponentId.value = matchingDiagram.id;
+      scrollToHighlightedRow(partCode);
+      return;
+    }
+  }
+
+  if (!activeComponentId.value) {
     activeComponentId.value = newVal[0].id;
   }
 }, { immediate: true });
+
+watch(activeComponentId, () => {
+  if (targetPartCode.value) {
+    scrollToHighlightedRow(targetPartCode.value);
+  }
+});
+
+// Dynamic SEO & Structured Data (Schema.org JSON-LD)
+watch([modelName, brandName, diagramResponse], () => {
+  if (modelName.value) {
+    document.title = `Sơ đồ phụ tùng ${modelName.value} - ${brandName.value} | JPM Marine`;
+    
+    let script = document.getElementById('schema-diagram-ld');
+    if (!script) {
+      script = document.createElement('script');
+      script.id = 'schema-diagram-ld';
+      script.type = 'application/ld+json';
+      document.head.appendChild(script);
+    }
+    script.textContent = JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "ItemPage",
+      "name": `Sơ đồ phân rã phụ tùng ${modelName.value}`,
+      "description": `Tra cứu sơ đồ phụ tùng máy thủy chính hãng ${brandName.value} model ${modelName.value}. Bản vẽ kỹ thuật phân rã cụm máy, mã OEM chuẩn xác.`,
+      "breadcrumb": {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          { "@type": "ListItem", "position": 1, "name": "Trang chủ", "item": window.location.origin },
+          { "@type": "ListItem", "position": 2, "name": brandName.value, "item": `${window.location.origin}/thuong-hieu/${brandRoute.value}` },
+          { "@type": "ListItem", "position": 3, "name": `Sơ đồ ${modelName.value}`, "item": window.location.href }
+        ]
+      }
+    });
+  }
+});
+
+onUnmounted(() => {
+  const script = document.getElementById('schema-diagram-ld');
+  if (script) script.remove();
+});
 
 const activeDiagram = computed(() => {
   return diagramsList.value.find(d => d.id === activeComponentId.value) || null;
@@ -533,6 +622,18 @@ const startSidebarDrag = () => {
 .btn-icon:hover {
   background: #f1f3f7;
   color: var(--accent-color);
+}
+
+.highlighted-part-row {
+  background-color: #fff4e5 !important;
+  border-left: 4px solid #f82249 !important;
+  box-shadow: inset 0 0 10px rgba(248, 34, 73, 0.12);
+  animation: pulse-part-bg 2s infinite alternate ease-in-out;
+}
+
+@keyframes pulse-part-bg {
+  0% { background-color: #fff4e5; }
+  100% { background-color: #ffe8cc; }
 }
 
 @media (max-width: 991px) {

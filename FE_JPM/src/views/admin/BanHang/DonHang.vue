@@ -667,7 +667,7 @@ export default {
             part_code: i.phu_tung ? i.phu_tung.ma_phu_tung : (i.san_pham ? i.san_pham.ma_san_pham : (i.loai_san_pham === 'phu_tung' ? 'PT-' + i.id_san_pham : 'SP-' + i.id_san_pham)),
             qty: i.so_luong || 0,
             price: Number(i.don_gia || 0),
-            in_stock: true
+            in_stock: Number(i.phu_tung ? i.phu_tung.so_luong_ton : (i.san_pham ? i.san_pham.so_luong_ton : 0)) >= Number(i.so_luong || 0)
           }))
         };
       });
@@ -865,8 +865,56 @@ export default {
 
       this.closeModal('orderModal');
     },
-    convertToPO() {
-      this.$toast?.info("Đã chuyển các sản phẩm thiếu sang hệ thống PO!") || alert("Đã chuyển các sản phẩm thiếu sang hệ thống PO!");
+    async convertToPO() {
+      if (!this.selectedOrder) return;
+      const result = await Swal.fire({
+        title: 'Chuyển sang PO (Gom đơn)?',
+        html: `Bạn muốn tạo Đơn Nhập Hàng (PO) gom cho các sản phẩm trong đơn <b>${this.selectedOrder.code}</b>?`,
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Tạo PO ngay',
+        cancelButtonText: 'Hủy',
+        reverseButtons: true,
+        animation: false,
+        customClass: {
+          popup: 'swal-shift-up',
+          confirmButton: 'btn btn-warning px-4 shadow-sm',
+          cancelButton: 'btn btn-outline-secondary px-4 me-3'
+        },
+        buttonsStyling: false
+      });
+
+      if (result.isConfirmed) {
+        try {
+          const res = await axiosClient.post(`/admin/don-hang/${this.selectedOrder.id}/tao-po`);
+          if (res.success || (res.data && res.data.success)) {
+            const poData = res.data?.data || res.data;
+            const maPO = poData.ma_po || 'Mới';
+            Swal.fire({
+              icon: 'success',
+              title: 'Tạo PO thành công!',
+              html: `Đã tạo Đơn nhập hàng mã <b>${maPO}</b>.<br/>Bạn có thể tiếp tục xử lý nhập hàng ở mục Quản lý PO.`,
+              confirmButtonText: 'Đến trang Quản lý PO',
+              showCancelButton: true,
+              cancelButtonText: 'Ở lại đây',
+              reverseButtons: true,
+              customClass: {
+                confirmButton: 'btn btn-primary px-4 shadow-sm',
+                cancelButton: 'btn btn-outline-secondary px-4 me-3'
+              },
+              buttonsStyling: false
+            }).then((nav) => {
+              if (nav.isConfirmed) {
+                this.$router.push('/admin/don-nhap-hang');
+              }
+            });
+            this.closeModal('orderModal');
+          }
+        } catch (err) {
+          const msg = err.response?.data?.message || 'Không thể tạo đơn PO.';
+          Swal.fire({ icon: 'error', title: 'Lỗi', text: msg });
+        }
+      }
     },
     closeModal(modalId) {
       const modalEl = document.getElementById(modalId);
