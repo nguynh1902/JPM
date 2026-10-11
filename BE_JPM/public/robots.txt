@@ -1,2 +1,20 @@
 User-agent: *
-Disallow:
+Allow: /
+Allow: /chi-tiet-phu-tung/
+Allow: /so-do/
+Allow: /chi-tiet-san-pham/
+Allow: /san-pham
+Allow: /thuong-hieu
+Allow: /tra-cuu
+Allow: /tin-tuc
+Allow: /ho-tro
+
+Disallow: /admin/
+Disallow: /tai-khoan
+Disallow: /gio-hang
+Disallow: /thanh-toan
+Disallow: /garage
+Disallow: /lich-su-don-hang
+Disallow: /api/
+
+Sitemap: http://localhost:8000/sitemap.xml

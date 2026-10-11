@@ -5,6 +5,7 @@ namespace App\Domain\MarineCatalog\Models;
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Scout\Searchable;
 use App\Domain\PIM\Models\PhuTung;
+use App\Domain\PIM\Models\SoDoPhuTung;
 
 class DongCoModel extends Model
 {
@@ -45,6 +46,9 @@ class DongCoModel extends Model
                     ->withPivot('nam_ap_dung')
                     ->withTimestamps();
     }
+
+    public function soDoPhuTungs()
+    {
+        return $this->hasMany(SoDoPhuTung::class, 'may_thuy_model_id');
+    }
 }
-
-

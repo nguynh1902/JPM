@@ -95,6 +95,49 @@
                   </div>
                 </div>
 
+                <!-- CẢNH BÁO MÃ THAY THẾ (SUPERSEDED / REPLACED BY) -->
+                <div v-if="phuTung.ma_thay_thes && phuTung.ma_thay_thes.length > 0" class="alert alert-warning border border-warning-subtle rounded-3 p-3 mb-4 shadow-sm">
+                  <div class="d-flex align-items-start gap-2">
+                    <i class="bi bi-arrow-repeat text-warning fs-4 flex-shrink-0"></i>
+                    <div>
+                      <div class="fw-bold text-dark mb-1" style="font-size: 0.95rem;">Lưu ý mã thay thế (Superseded Part):</div>
+                      <div class="small text-secondary mb-2">Mã <strong class="text-dark">{{ phuTung.ma_phu_tung }}</strong> đã được nhà sản xuất nâng cấp và thay thế bằng mã mới:</div>
+                      <div class="d-flex flex-wrap gap-2">
+                        <router-link 
+                          v-for="tt in phuTung.ma_thay_thes" 
+                          :key="tt.id" 
+                          :to="'/chi-tiet-phu-tung/' + (tt.phu_tung_moi?.ma_phu_tung || '')"
+                          class="btn btn-sm btn-outline-danger fw-bold rounded-pill px-3 py-1 bg-white"
+                        >
+                          <i class="bi bi-box-arrow-up-right me-1"></i>
+                          {{ tt.phu_tung_moi?.ma_phu_tung }} ({{ tt.phu_tung_moi?.ten_phu_tung }})
+                        </router-link>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- MÃ THAY THẾ CHO CÁC MÃ CŨ (INTERCHANGE / REPLACES) -->
+                <div v-if="phuTung.thay_the_chos && phuTung.thay_the_chos.length > 0" class="alert alert-info border border-info-subtle rounded-3 p-3 mb-4 shadow-sm">
+                  <div class="d-flex align-items-start gap-2">
+                    <i class="bi bi-shield-check text-primary fs-4 flex-shrink-0"></i>
+                    <div>
+                      <div class="fw-bold text-dark mb-1" style="font-size: 0.95rem;">Mã thay thế tương đương cho phụ tùng cũ:</div>
+                      <div class="small text-secondary mb-2">Phụ tùng này thay thế chuẩn OEM cho các mã cũ đã ngưng sản xuất:</div>
+                      <div class="d-flex flex-wrap gap-2">
+                        <span 
+                          v-for="tc in phuTung.thay_the_chos" 
+                          :key="tc.id" 
+                          class="badge bg-white text-dark border px-2 py-1 font-monospace"
+                          style="font-size: 0.85rem;"
+                        >
+                          {{ tc.phu_tung_cu?.ma_phu_tung }} ({{ tc.phu_tung_cu?.ten_phu_tung }})
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
                 <ul class="list-unstyled mb-4 text-muted lh-lg">
                   <li><i class="bi bi-check-circle-fill text-danger me-2"></i> Đảm bảo hoàn toàn tương thích (Fitment).</li>
                   <li><i class="bi bi-check-circle-fill text-danger me-2"></i> Phụ tùng OEM chính hãng, mới 100%.</li>
@@ -523,8 +566,15 @@ watch(phuTung, (newPart) => {
       images.value = [];
     }
 
-    // Dynamic Title & Structured Data (SEO JSON-LD)
-    document.title = `${newPart.ma_phu_tung} - ${newPart.ten_phu_tung} | Phụ Tùng JPM Marine`;
+    // Dynamic Title & Structured Data (SEO JSON-LD & Buyer Intent)
+    const brandName = newPart.thuong_hieu?.name || 'Marine';
+    document.title = `${newPart.ma_phu_tung} - ${newPart.ten_phu_tung} | Phụ tùng máy thủy ${brandName} chính hãng - JPM Marine`;
+    
+    let metaDesc = document.querySelector('meta[name="description"]');
+    if (metaDesc) {
+      metaDesc.setAttribute('content', `Tra cứu và mua phụ tùng máy thủy chính hãng mã ${newPart.ma_phu_tung} (${newPart.ten_phu_tung}) dùng cho động cơ ${brandName}. Sơ đồ rã máy, mã thay thế tương đương tại JPM Marine.`);
+    }
+
     let script = document.getElementById('schema-part-ld');
     if (!script) {
       script = document.createElement('script');
@@ -537,12 +587,12 @@ watch(phuTung, (newPart) => {
       "@type": "Product",
       "name": `${newPart.ma_phu_tung} - ${newPart.ten_phu_tung}`,
       "image": allImages.length > 0 ? allImages : undefined,
-      "description": newPart.mo_ta || `Phụ tùng chính hãng ${newPart.thuong_hieu?.name || 'Marine'} mã ${newPart.ma_phu_tung}. Tra cứu sơ đồ phân rã và đặt hàng tại JPM Marine.`,
+      "description": newPart.mo_ta || `Phụ tùng chính hãng ${brandName} mã ${newPart.ma_phu_tung}. Tra cứu sơ đồ phân rã và đặt hàng tại JPM Marine.`,
       "sku": newPart.ma_phu_tung,
       "mpn": newPart.ma_phu_tung,
       "brand": {
         "@type": "Brand",
-        "name": newPart.thuong_hieu?.name || "Marine OEM"
+        "name": brandName
       },
       "offers": {
         "@type": "Offer",
@@ -558,6 +608,10 @@ watch(phuTung, (newPart) => {
 onUnmounted(() => {
   const script = document.getElementById('schema-part-ld');
   if (script) script.remove();
+  let metaDesc = document.querySelector('meta[name="description"]');
+  if (metaDesc) {
+    metaDesc.setAttribute('content', 'JPM Marine - Đại lý phân phối phụ tùng máy thủy chính hãng Mercury, Yamaha, Honda Marine, Yanmar. Tra cứu mã OEM, sơ đồ bản vẽ rã máy chi tiết toàn quốc.');
+  }
 });
 
 watch(partCode, () => {

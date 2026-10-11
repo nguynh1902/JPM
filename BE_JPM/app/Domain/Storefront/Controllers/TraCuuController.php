@@ -622,7 +622,7 @@ class TraCuuController extends Controller
     // Lấy chi tiết phụ tùng
     public function chiTietPhuTung($code)
     {
-        $phuTung = PhuTung::with(['thuongHieu', 'nhomPhuTung', 'dongCoModels', 'soDoPhuTungs.model.thuongHieu', 'maThayThes.phuTungMoi'])
+        $phuTung = PhuTung::with(['thuongHieu', 'nhomPhuTung', 'dongCoModels', 'soDoPhuTungs.model.thuongHieu', 'maThayThes.phuTungMoi', 'thayTheChos.phuTungCu'])
             ->where('ma_phu_tung', strtoupper($code))
             ->first();
 

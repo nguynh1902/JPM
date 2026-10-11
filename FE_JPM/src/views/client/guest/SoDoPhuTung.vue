@@ -357,11 +357,16 @@ watch(activeComponentId, () => {
   }
 });
 
-// Dynamic SEO & Structured Data (Schema.org JSON-LD)
+// Dynamic SEO & Structured Data (Schema.org JSON-LD & Buyer Intent)
 watch([modelName, brandName, diagramResponse], () => {
   if (modelName.value) {
-    document.title = `Sơ đồ phụ tùng ${modelName.value} - ${brandName.value} | JPM Marine`;
+    document.title = `Sơ đồ phụ tùng ${modelName.value} (${brandName.value}) | Bản vẽ rã máy tra cứu JPM Marine`;
     
+    let metaDesc = document.querySelector('meta[name="description"]');
+    if (metaDesc) {
+      metaDesc.setAttribute('content', `Tra cứu sơ đồ phụ tùng máy thủy chính hãng ${brandName.value} model ${modelName.value}. Bản vẽ kỹ thuật phân rã cụm máy, tra mã OEM chuẩn xác tại JPM Marine.`);
+    }
+
     let script = document.getElementById('schema-diagram-ld');
     if (!script) {
       script = document.createElement('script');

@@ -78,6 +78,11 @@ class PhuTung extends Model
         return $this->hasMany(MaThayThe::class, 'phu_tung_cu_id');
     }
 
+    public function thayTheChos()
+    {
+        return $this->hasMany(MaThayThe::class, 'phu_tung_moi_id');
+    }
+
 }
 
 
