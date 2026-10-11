@@ -12,11 +12,11 @@
       <!-- Bộ lọc (Filters) -->
       <div class="card-body pt-3 pb-3">
         <div class="d-flex align-items-center gap-2">
-          <div style="width: 220px; flex-shrink: 0;">
+          <div class="flex-grow-1">
             <input
               type="text"
               class="form-control"
-              placeholder="Tìm mã, tên SP..."
+              placeholder="Tìm kiếm mã, tên sản phẩm, mã tham chiếu..."
               v-model="filters.ma_san_pham"
             />
           </div>
