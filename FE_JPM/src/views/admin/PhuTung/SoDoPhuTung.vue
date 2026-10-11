@@ -67,7 +67,10 @@
           </thead>
           <tbody class="table-border-bottom-0">
             <tr v-if="filteredDiagrams.length === 0">
-              <td :colspan="currentUserRole === 'ADMIN' ? 7 : 6" class="text-center py-4 text-muted">Chưa có dữ liệu cho Model này</td>
+              <td :colspan="currentUserRole === 'ADMIN' ? 7 : 6" class="text-center py-5 text-muted">
+                <i class="bx bx-folder-open text-secondary fs-1 d-block mb-2"></i>
+                Không có dữ liệu
+              </td>
             </tr>
             <tr v-for="(item, index) in filteredDiagrams" :key="item.id">
               <td class="text-center align-middle"><strong>{{ index + 1 }}</strong></td>
@@ -243,7 +246,10 @@
                       </thead>
                       <tbody>
                         <tr v-if="formData.chiTiet && formData.chiTiet.length === 0">
-                          <td colspan="4" class="text-center text-muted py-4">Chưa có phụ tùng nào được ráp nối. Bấm "Thêm dòng" để bắt đầu.</td>
+                          <td colspan="4" class="text-center text-muted py-4">
+                            <i class="bx bx-folder-open text-secondary fs-2 d-block mb-1"></i>
+                            Không có dữ liệu
+                          </td>
                         </tr>
                         <tr v-for="(item, index) in formData.chiTiet" :key="index">
                           <td class="align-middle px-2">

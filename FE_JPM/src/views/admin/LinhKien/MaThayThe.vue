@@ -90,10 +90,9 @@
               <input type="text" class="form-control form-control-sm" placeholder="Tìm kiếm mã phụ tùng..." v-model="searchQuery">
             </div>
           </div>
-          <div class="card-body p-0">
-            <div class="table-responsive">
+            <div class="table-responsive text-nowrap custom-scroll" style="height: calc(100vh - 230px); min-height: 400px; overflow-y: auto;">
               <table class="table table-hover mb-0">
-                <thead class="table-light">
+                <thead style="position: sticky; top: 0; z-index: 1; background: #fff;">
                   <tr>
                     <th class="text-center" style="width: 5%">STT</th>
                     <th style="width: 35%">Phụ Tùng Cũ</th>
@@ -109,8 +108,9 @@
                     </td>
                   </tr>
                   <tr v-else-if="filteredList.length === 0">
-                    <td colspan="5" class="text-center py-4 text-muted">
-                      Chưa có dữ liệu mã thay thế nào.
+                    <td colspan="5" class="text-center py-5 text-muted">
+                      <i class="bx bx-folder-open text-secondary fs-1 d-block mb-2"></i>
+                      Không có dữ liệu
                     </td>
                   </tr>
                   <tr v-else v-for="(item, index) in filteredList" :key="item.id">
@@ -149,7 +149,6 @@
         </div>
       </div>
     </div>
-  </div>
 </template>
 
 <script setup>

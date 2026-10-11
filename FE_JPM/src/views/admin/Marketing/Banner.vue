@@ -81,9 +81,9 @@
             <h5 class="mb-0 fw-bold text-dark">Danh sách Banner</h5>
           </div>
 
-          <div class="table-responsive text-nowrap">
-            <table class="table table-hover">
-              <thead>
+          <div class="table-responsive text-nowrap custom-scroll" style="height: calc(100vh - 230px); min-height: 400px; overflow-y: auto;">
+            <table class="table table-hover mb-0">
+              <thead style="position: sticky; top: 0; z-index: 1; background: #fff;">
                 <tr>
                   <th class="text-center" style="width: 5%">STT</th>
                   <th class="text-center" style="width: 25%">Hình Ảnh</th>
@@ -101,7 +101,10 @@
                   </td>
                 </tr>
                 <tr v-else-if="filteredBanners.length === 0">
-                  <td colspan="5" class="text-center py-4 text-muted">Chưa có dữ liệu</td>
+                  <td colspan="5" class="text-center py-5 text-muted">
+                    <i class="bx bx-folder-open text-secondary fs-1 d-block mb-2"></i>
+                    Không có dữ liệu
+                  </td>
                 </tr>
                 <tr v-for="(item, index) in filteredBanners" :key="item.id" v-else>
                   <td class="text-center"><strong>{{ index + 1 }}</strong></td>

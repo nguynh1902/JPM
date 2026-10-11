@@ -100,7 +100,10 @@
               </thead>
               <tbody class="table-border-bottom-0">
                 <tr v-if="filteredCategories.length === 0">
-                  <td colspan="5" class="text-center py-5 text-muted">Không tìm thấy chuyên mục nào.</td>
+                  <td colspan="5" class="text-center py-5 text-muted">
+                    <i class="bx bx-folder-open text-secondary fs-1 d-block mb-2"></i>
+                    Không có dữ liệu
+                  </td>
                 </tr>
                 <tr v-for="(item, index) in filteredCategories" :key="item.id" :class="{'table-active': isEditMode && formData.id === item.id}">
                   <td class="text-center"><strong>{{ index + 1 }}</strong></td>

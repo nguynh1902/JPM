@@ -89,7 +89,10 @@
               </td>
             </tr>
             <tr v-else-if="filteredModels.length === 0">
-              <td colspan="11" class="text-center py-4 text-muted">Không tìm thấy dữ liệu Model nào phù hợp.</td>
+              <td colspan="11" class="text-center py-5 text-muted">
+                <i class="bx bx-folder-open text-secondary fs-1 d-block mb-2"></i>
+                Không có dữ liệu
+              </td>
             </tr>
             <tr v-for="(item, index) in filteredModels" :key="item.id" v-else>
               <td class="text-center"><strong>{{ index + 1 }}</strong></td>

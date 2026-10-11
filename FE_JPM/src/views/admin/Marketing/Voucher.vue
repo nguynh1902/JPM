@@ -41,10 +41,9 @@
           </div>
         </div>
   
-        <!-- Bảng dữ liệu -->
-        <div class="table-responsive text-nowrap" style="min-height: 300px;">
-        <table class="table table-hover">
-          <thead class="table-light">
+        <div class="table-responsive text-nowrap custom-scroll" style="height: calc(100vh - 270px); min-height: 400px; overflow-y: auto;">
+        <table class="table table-hover mb-0">
+          <thead style="position: sticky; top: 0; z-index: 1; background: #fff;">
             <tr>
               <th class="text-center" style="width: 5%">STT</th>
               <th style="width: 20%">Mã Voucher</th>
@@ -63,7 +62,10 @@
               </td>
             </tr>
             <tr v-else-if="filteredVouchers.length === 0">
-              <td colspan="6" class="text-center py-5 text-muted">Không tìm thấy voucher nào.</td>
+              <td colspan="6" class="text-center py-5 text-muted">
+                <i class="bx bx-folder-open text-secondary fs-1 d-block mb-2"></i>
+                Không có dữ liệu
+              </td>
             </tr>
             <tr v-for="(item, index) in filteredVouchers" :key="item.id" v-else>
               <td class="text-center"><strong>{{ index + 1 }}</strong></td>

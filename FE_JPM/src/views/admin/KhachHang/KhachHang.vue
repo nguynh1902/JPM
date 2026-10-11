@@ -104,8 +104,9 @@
               </td>
             </tr>
             <tr v-else-if="filteredCustomers.length === 0">
-              <td colspan="9" class="text-center py-4 text-muted">
-                Không tìm thấy khách hàng nào.
+              <td colspan="9" class="text-center py-5 text-muted">
+                <i class="bx bx-folder-open text-secondary fs-1 d-block mb-2"></i>
+                Không có dữ liệu
               </td>
             </tr>
             <tr

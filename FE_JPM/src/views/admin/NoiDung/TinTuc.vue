@@ -72,7 +72,10 @@
               </td>
             </tr>
             <tr v-else-if="filteredArticles.length === 0">
-              <td colspan="7" class="text-center py-5 text-muted">Không tìm thấy bài viết nào.</td>
+              <td colspan="7" class="text-center py-5 text-muted">
+                <i class="bx bx-folder-open text-secondary fs-1 d-block mb-2"></i>
+                Không có dữ liệu
+              </td>
             </tr>
             <tr v-for="(item, index) in filteredArticles" :key="item.id">
               <td class="text-center align-middle"><strong>{{ index + 1 }}</strong></td>

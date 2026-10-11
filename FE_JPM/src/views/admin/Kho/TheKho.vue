@@ -96,8 +96,8 @@
             <!-- Empty State -->
             <tr v-else-if="filteredTransactions.length === 0">
               <td colspan="8" class="text-center py-5 text-muted">
-                <i class="bx bx-folder-open fs-1 d-block mb-2 text-secondary"></i>
-                Không tìm thấy lịch sử giao dịch phù hợp
+                <i class="bx bx-folder-open text-secondary fs-1 d-block mb-2"></i>
+                Không có dữ liệu
               </td>
             </tr>
 

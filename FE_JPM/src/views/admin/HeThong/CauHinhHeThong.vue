@@ -107,7 +107,10 @@
                   </td>
                 </tr>
                 <tr v-else-if="filteredBrands.length === 0">
-                  <td colspan="6" class="text-center py-4 text-muted">Chưa có dữ liệu cho hệ sinh thái này</td>
+                  <td colspan="6" class="text-center py-5 text-muted">
+                    <i class="bx bx-folder-open text-secondary fs-1 d-block mb-2"></i>
+                    Không có dữ liệu
+                  </td>
                 </tr>
                 <tr v-for="(item, index) in filteredBrands" :key="item.id" v-else>
                   <td class="text-center"><strong>{{ index + 1 }}</strong></td>

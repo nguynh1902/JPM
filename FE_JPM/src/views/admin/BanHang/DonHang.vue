@@ -45,9 +45,9 @@
                   </div>
                 </div>
               </div>
-              <div class="table-responsive text-nowrap">
-                <table class="table table-hover align-middle">
-                  <thead>
+              <div class="table-responsive text-nowrap custom-scroll" style="height: calc(100vh - 270px); min-height: 400px; overflow-y: auto;">
+                <table class="table table-hover align-middle mb-0">
+                  <thead style="position: sticky; top: 0; z-index: 1; background: #fff;">
                     <tr>
                       <th class="text-center text-uppercase" style="width: 5%">STT</th>
                       <th class="text-uppercase text-center" style="width: 10%">Phân Loại</th>
@@ -93,10 +93,16 @@
                       </td>
                     </tr>
                     <tr v-if="filteredInbox.length === 0">
-                      <td colspan="8" class="text-center py-4 text-muted">Tuyệt vời! Không còn giao dịch nào cần xử lý.</td>
+                      <td colspan="8" class="text-center py-5 text-muted">
+                        <i class="bx bx-folder-open text-secondary fs-1 d-block mb-2"></i>
+                        Không có dữ liệu
+                      </td>
                     </tr>
                   </tbody>
                 </table>
+              </div>
+              <div class="card-footer py-3 border-top">
+                <span class="text-muted fw-medium">Tổng cộng: {{ filteredInbox.length }} mục</span>
               </div>
             </div>
           </div>
@@ -114,9 +120,9 @@
                   </div>
                 </div>
               </div>
-              <div class="table-responsive text-nowrap">
-                <table class="table table-hover align-middle">
-                  <thead>
+              <div class="table-responsive text-nowrap custom-scroll" style="height: calc(100vh - 270px); min-height: 400px; overflow-y: auto;">
+                <table class="table table-hover align-middle mb-0">
+                  <thead style="position: sticky; top: 0; z-index: 1; background: #fff;">
                     <tr>
                       <th class="text-center text-uppercase" style="width: 5%">STT</th>
                       <th class="text-uppercase text-center" style="width: 10%">Phân Loại</th>
@@ -163,10 +169,16 @@
                       </td>
                     </tr>
                     <tr v-if="filteredArchive.length === 0">
-                      <td colspan="8" class="text-center py-4 text-muted">Không có dữ liệu.</td>
+                      <td colspan="8" class="text-center py-5 text-muted">
+                        <i class="bx bx-folder-open text-secondary fs-1 d-block mb-2"></i>
+                        Không có dữ liệu
+                      </td>
                     </tr>
                   </tbody>
                 </table>
+              </div>
+              <div class="card-footer py-3 border-top">
+                <span class="text-muted fw-medium">Tổng cộng: {{ filteredArchive.length }} mục</span>
               </div>
             </div>
           </div>
@@ -238,6 +250,12 @@
                         </tr>
                       </thead>
                       <tbody>
+                        <tr v-if="!selectedQuote.items || selectedQuote.items.length === 0">
+                          <td colspan="5" class="text-center py-4 text-muted">
+                            <i class="bx bx-folder-open text-secondary fs-2 d-block mb-1"></i>
+                            Không có dữ liệu
+                          </td>
+                        </tr>
                         <tr v-for="(detail, idx) in selectedQuote.items" :key="idx">
                           <td class="text-center">{{ idx + 1 }}</td>
                           <td>
@@ -394,6 +412,12 @@
                       </tr>
                     </thead>
                     <tbody>
+                      <tr v-if="!selectedOrder.items || selectedOrder.items.length === 0">
+                        <td colspan="5" class="text-center py-4 text-muted">
+                          <i class="bx bx-folder-open text-secondary fs-2 d-block mb-1"></i>
+                          Không có dữ liệu
+                        </td>
+                      </tr>
                       <tr v-for="(detail, idx) in selectedOrder.items" :key="idx">
                         <td class="text-center">{{ idx + 1 }}</td>
                         <td>

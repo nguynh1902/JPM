@@ -4,41 +4,46 @@
       <span class="text-muted fw-light">Chuỗi Cung Ứng /</span> Gom Đơn & PO
     </h4>
 
-    <!-- Tabs Navigation -->
-    <div class="d-flex border-bottom mb-4 bg-white rounded shadow-sm px-3 pt-2">
-      <div 
-        class="custom-line-tab py-3 px-4 fw-bold fs-6 d-flex align-items-center gap-2"
-        :class="{ active: activeTab === 'pos' }"
-        @click="activeTab = 'pos'"
-      >
-        <i class="bx bx-receipt fs-5"></i>
-        <span>Danh Sách Đơn PO</span>
-        <span class="badge rounded-pill bg-label-primary ms-1">{{ pos?.length || 0 }}</span>
-      </div>
-      <div 
-        class="custom-line-tab py-3 px-4 fw-bold fs-6 d-flex align-items-center gap-2"
-        :class="{ active: activeTab === 'demand' }"
-        @click="activeTab = 'demand'"
-      >
-        <i class="bx bx-layer-plus fs-5"></i>
-        <span>Nhu Cầu Gom Hàng (Thiếu Kho)</span>
-        <span class="badge rounded-pill bg-danger ms-1" v-if="rawDemands?.length > 0">{{ rawDemands.length }}</span>
+    <!-- Tabs Navigation chuẩn DonHang.vue -->
+    <div class="nav-align-top mb-4">
+      <div class="d-flex mb-4 gap-2" role="tablist">
+        <div 
+          class="fs-5 fw-bold pb-2 custom-line-tab" 
+          :class="{ active: activeTab === 'pos' }"
+          @click="activeTab = 'pos'"
+          style="min-width: 220px;"
+        >
+          DANH SÁCH ĐƠN PO
+        </div>
+        <div 
+          class="fs-5 fw-bold pb-2 custom-line-tab" 
+          :class="{ active: activeTab === 'demand' }"
+          @click="activeTab = 'demand'"
+          style="min-width: 280px;"
+        >
+          NHU CẦU GOM HÀNG (THIẾU KHO)
+        </div>
       </div>
     </div>
 
     <!-- TAB 1: DANH SÁCH PO -->
     <div class="card" v-if="activeTab === 'pos'">
       <div class="card-header border-bottom">
-        <h5 class="mb-0 fw-bold text-dark">Danh sách Purchase Order (PO)</h5>
+        <h5 class="mb-0 fw-bold text-dark">Danh Sách Purchase Order (PO)</h5>
       </div>
       
       <!-- Bộ lọc (Filters) -->
       <div class="card-body pt-3 pb-3">
         <div class="d-flex align-items-center gap-2">
           <div class="flex-grow-1">
-            <input type="text" class="form-control" placeholder="Tìm theo Mã PO, NCC..." v-model="filters.search">
+            <input
+              type="text"
+              class="form-control"
+              placeholder="Tìm kiếm mã PO, nhà cung cấp..."
+              v-model="filters.search"
+            />
           </div>
-          <div style="width: 20%;">
+          <div style="width: 22%;">
             <v-select
               v-model="filters.status"
               :options="[{value: null, label: 'Tất cả trạng thái'}, ...statusOptions]"
@@ -47,59 +52,67 @@
               :can-clear="false"
             />
           </div>
-          <div>
-            <button class="btn btn-primary text-nowrap" data-bs-toggle="modal" data-bs-target="#modalPO" @click="openAddModal">
-              <i class="bx bx-plus me-1"></i> Tạo PO Mới
-            </button>
-          </div>
+          <button class="btn btn-secondary text-nowrap" @click="resetFilters">
+            Đặt lại
+          </button>
+          <button class="btn btn-primary text-nowrap shadow-sm" data-bs-toggle="modal" data-bs-target="#modalPO" @click="openAddModal">
+            <i class="bx bx-plus me-1"></i> Tạo PO Mới
+          </button>
         </div>
       </div>
 
-      <div class="table-responsive text-nowrap">
-        <table class="table table-hover">
-          <thead>
+      <div class="table-responsive text-nowrap custom-scroll" style="height: calc(100vh - 270px); min-height: 400px; overflow-y: auto;">
+        <table class="table table-hover align-middle mb-0">
+          <thead style="position: sticky; top: 0; z-index: 1; background: #fff;">
             <tr>
-              <th class="text-center" style="width: 5%">STT</th>
-              <th style="width: 15%">Mã PO</th>
-              <th style="width: 25%">Nhà Cung Cấp</th>
-              <th class="text-center" style="width: 15%">Ngày Tạo</th>
-              <th class="text-center" style="width: 15%">Dự Kiến Giao</th>
-              <th class="text-end" style="width: 15%">Tổng Tiền</th>
-              <th class="text-center" style="width: 15%">Trạng thái</th>
-              <th class="text-center" style="width: 10%">Hành động</th>
+              <th class="text-center text-uppercase" style="width: 5%">STT</th>
+              <th class="text-uppercase" style="width: 15%">Mã PO</th>
+              <th class="text-uppercase" style="width: 25%">Nhà Cung Cấp</th>
+              <th class="text-uppercase" style="width: 15%">Ngày Tạo</th>
+              <th class="text-uppercase" style="width: 15%">Dự Kiến Giao</th>
+              <th class="text-end text-uppercase" style="width: 15%">Tổng Tiền</th>
+              <th class="text-center text-uppercase" style="width: 10%">Trạng thái</th>
+              <th class="text-center text-uppercase" style="width: 10%">Hành động</th>
             </tr>
           </thead>
           <tbody class="table-border-bottom-0">
             <tr v-for="(item, index) in filteredPOs" :key="item.id">
-              <td class="text-center align-middle"><strong>{{ index + 1 }}</strong></td>
-              <td class="align-middle"><span class="fw-bold text-primary">{{ item.ma_po }}</span></td>
-              <td class="align-middle">
-                <span class="fw-bold text-dark">{{ item.nha_cung_cap }}</span>
+              <td class="text-center"><strong>{{ index + 1 }}</strong></td>
+              <td><span class="fw-bold text-dark">{{ item.ma_po }}</span></td>
+              <td>
+                <span class="fw-bold text-dark d-block mb-1">{{ item.nha_cung_cap }}</span>
               </td>
-              <td class="text-center align-middle"><span class="text-secondary">{{ item.ngay_tao }}</span></td>
-              <td class="text-center align-middle"><span class="text-secondary">{{ item.ngay_du_kien || '?' }}</span></td>
-              <td class="text-end align-middle"><span class="fw-bold text-danger">{{ formatCurrency(item.tong_tien) }}</span></td>
-              <td class="text-center align-middle">
+              <td>
+                <span class="d-block text-dark fw-medium mb-1" style="font-size: 0.85rem;"><i class="bx bx-calendar-alt text-primary me-1"></i>{{ item.ngay_tao }}</span>
+              </td>
+              <td>
+                <span class="d-block text-dark fw-medium mb-1" style="font-size: 0.85rem;" v-if="item.ngay_du_kien && item.ngay_du_kien !== '?'"><i class="bx bx-calendar-check text-success me-1"></i>{{ item.ngay_du_kien }}</span>
+                <span class="text-muted" style="font-size: 0.85rem;" v-else>Chưa xác định</span>
+              </td>
+              <td class="text-end">
+                <span class="fw-bold text-danger">{{ formatCurrency(item.tong_tien) }}</span>
+              </td>
+              <td class="text-center">
                 <span v-if="item.trang_thai === 0" class="badge badge-custom bg-pastel-secondary">NHÁP</span>
                 <span v-else-if="item.trang_thai === 1" class="badge badge-custom bg-pastel-warning">ĐANG GIAO</span>
                 <span v-else-if="item.trang_thai === 2" class="badge badge-custom bg-pastel-success">HOÀN THÀNH</span>
                 <span v-else-if="item.trang_thai === 3" class="badge badge-custom bg-pastel-danger">ĐÃ HỦY</span>
               </td>
-              <td class="text-center align-middle">
-                <div class="d-flex align-items-center justify-content-center">
+              <td class="text-center">
+                <div class="d-flex justify-content-center gap-1">
                   <button 
                     type="button"
-                    class="action-btn text-info me-1" 
+                    class="btn btn-icon action-btn text-info" 
                     title="Xem chi tiết"
                     @click="viewDetails(item)"
                     data-bs-toggle="modal"
                     data-bs-target="#modalChiTietPO"
                   >
-                    <i class="bx bx-detail"></i>
+                    <i class="bx bx-show"></i>
                   </button>
                   <button 
                     type="button"
-                    class="action-btn text-primary me-1" 
+                    class="btn btn-icon action-btn text-primary" 
                     @click="openEditModal(item)" 
                     data-bs-toggle="modal" 
                     data-bs-target="#modalPO" 
@@ -109,7 +122,7 @@
                   </button>
                   <button 
                     type="button"
-                    class="action-btn text-danger" 
+                    class="btn btn-icon action-btn text-danger" 
                     @click="confirmDelete(item)" 
                     title="Xóa"
                   >
@@ -119,75 +132,103 @@
               </td>
             </tr>
             <tr v-if="filteredPOs.length === 0">
-              <td colspan="8" class="text-center py-4 text-muted">Không tìm thấy Đơn hàng nào phù hợp.</td>
+              <td colspan="8" class="text-center py-5 text-muted">
+                <i class="bx bx-folder-open text-secondary fs-1 d-block mb-2"></i>
+                Không có dữ liệu
+              </td>
             </tr>
           </tbody>
         </table>
+      </div>
+      
+      <!-- Footer -->
+      <div class="card-footer py-3 border-top">
+        <span class="text-muted fw-medium">Tổng cộng: {{ filteredPOs.length }} mục</span>
       </div>
     </div>
 
     <!-- TAB 2: NHU CẦU GOM HÀNG (THIẾU KHO) -->
     <div class="card" v-else-if="activeTab === 'demand'">
-      <div class="card-header border-bottom d-flex justify-content-between align-items-center">
-        <div>
-          <h5 class="mb-0 fw-bold text-dark">Nhu Cầu Linh Kiện Cần Gom Hàng (Thiếu Kho)</h5>
-          <small class="text-muted">Tổng hợp danh sách các mặt hàng khách đã đặt nhưng kho đang hết hoặc đang chờ nhập từ NCC.</small>
-        </div>
-        <div>
+      <div class="card-header border-bottom">
+        <h5 class="mb-0 fw-bold text-dark">Nhu Cầu Gom Hàng (Thiếu Kho)</h5>
+      </div>
+
+      <!-- Bộ lọc (Filters) cho Tab 2 -->
+      <div class="card-body pt-3 pb-3">
+        <div class="d-flex align-items-center gap-2">
+          <div class="flex-grow-1">
+            <input
+              type="text"
+              class="form-control"
+              placeholder="Tìm kiếm mã, tên sản phẩm thiếu kho..."
+              v-model="demandSearch"
+            />
+          </div>
+          <button class="btn btn-secondary text-nowrap" @click="demandSearch = ''">
+            Đặt lại
+          </button>
           <button 
-            class="btn btn-warning shadow-sm fw-bold d-flex align-items-center gap-1"
+            class="btn btn-primary text-nowrap shadow-sm"
             :disabled="selectedDemands.length === 0"
             @click="taoPOGomLo"
           >
-            <i class="bx bx-package fs-5"></i>
-            <span>Gom vào 1 PO Mới ({{ selectedDemands.length }} món)</span>
+            <i class="bx bx-package me-1"></i> Gom vào PO Mới ({{ selectedDemands.length }})
           </button>
         </div>
       </div>
 
-      <div class="table-responsive text-nowrap">
-        <table class="table table-hover">
-          <thead>
+      <div class="table-responsive text-nowrap custom-scroll" style="height: calc(100vh - 270px); min-height: 400px; overflow-y: auto;">
+        <table class="table table-hover align-middle mb-0">
+          <thead style="position: sticky; top: 0; z-index: 1; background: #fff;">
             <tr>
-              <th class="text-center" style="width: 5%">
+              <th class="text-center" style="width: 4%">
                 <input class="form-check-input" type="checkbox" :checked="isAllDemandsSelected" @change="toggleSelectAllDemands">
               </th>
-              <th>Mã Sản Phẩm / OEM</th>
-              <th>Tên Sản Phẩm / Phụ Tùng</th>
-              <th class="text-center">Tồn Hiện Tại</th>
-              <th class="text-center">Số Lượng Cần Nhập</th>
-              <th class="text-end">Đơn Giá Dự Kiến</th>
-              <th class="text-end">Thành Tiền Dự Kiến</th>
-              <th class="text-center">Kho</th>
+              <th class="text-center text-uppercase" style="width: 5%">STT</th>
+              <th class="text-uppercase" style="width: 15%">Mã Sản Phẩm / OEM</th>
+              <th class="text-uppercase" style="width: 25%">Tên Sản Phẩm / Phụ Tùng</th>
+              <th class="text-center text-uppercase" style="width: 10%">Tồn Kho</th>
+              <th class="text-center text-uppercase" style="width: 10%">SL Cần Nhập</th>
+              <th class="text-end text-uppercase" style="width: 12%">Đơn Giá Dự Kiến</th>
+              <th class="text-end text-uppercase" style="width: 13%">Thành Tiền Dự Kiến</th>
+              <th class="text-center text-uppercase" style="width: 10%">Kho</th>
             </tr>
           </thead>
-          <tbody>
-            <tr v-if="!rawDemands || rawDemands.length === 0">
-              <td colspan="8" class="text-center py-5 text-muted">
-                <i class="bx bx-check-circle text-success fs-1 d-block mb-2"></i>
-                Hiện tại không có mặt hàng nào bị thiếu kho cần gom nhập!
+          <tbody class="table-border-bottom-0">
+            <tr v-if="!filteredDemands || filteredDemands.length === 0">
+              <td colspan="9" class="text-center py-5 text-muted">
+                <i class="bx bx-folder-open text-secondary fs-1 d-block mb-2"></i>
+                Không có dữ liệu
               </td>
             </tr>
-            <tr v-for="item in rawDemands" :key="item.id_ton_kho" :class="{'table-active': selectedDemands.includes(item.id_ton_kho)}">
-              <td class="text-center align-middle">
+            <tr v-for="(item, index) in filteredDemands" :key="item.id_ton_kho" :class="{'table-active': selectedDemands.includes(item.id_ton_kho)}">
+              <td class="text-center">
                 <input class="form-check-input" type="checkbox" :value="item.id_ton_kho" v-model="selectedDemands">
               </td>
-              <td class="align-middle fw-bold text-primary">{{ item.ma_san_pham }}</td>
-              <td class="align-middle fw-medium text-dark">{{ item.ten_san_pham }}</td>
-              <td class="text-center align-middle">
-                <span class="badge bg-pastel-secondary text-secondary">{{ item.so_luong_ton }}</span>
+              <td class="text-center"><strong>{{ index + 1 }}</strong></td>
+              <td><span class="fw-bold text-dark">{{ item.ma_san_pham }}</span></td>
+              <td><span class="fw-medium text-dark">{{ item.ten_san_pham }}</span></td>
+              <td class="text-center">
+                <span class="fw-bold fs-6" :class="item.so_luong_ton > 0 ? 'text-dark' : 'text-secondary'">{{ item.so_luong_ton }}</span>
               </td>
-              <td class="text-center align-middle">
-                <span class="badge bg-danger fs-6 fw-bold">+{{ item.so_luong_can_nhap }}</span>
+              <td class="text-center">
+                <span class="fw-bold fs-6 text-danger">+{{ item.so_luong_can_nhap }}</span>
               </td>
-              <td class="text-end align-middle">{{ formatCurrency(item.don_gia_du_kien) }}</td>
-              <td class="text-end align-middle fw-bold text-danger">
+              <td class="text-end text-dark fw-medium">{{ formatCurrency(item.don_gia_du_kien) }}</td>
+              <td class="text-end fw-bold text-danger">
                 {{ formatCurrency(item.so_luong_can_nhap * item.don_gia_du_kien) }}
               </td>
-              <td class="text-center align-middle text-muted">{{ item.kho }}</td>
+              <td class="text-center">
+                <span class="text-secondary fw-bold text-uppercase" style="font-size: 0.75rem; letter-spacing: 0.5px;">{{ item.kho }}</span>
+              </td>
             </tr>
           </tbody>
         </table>
+      </div>
+      
+      <!-- Footer -->
+      <div class="card-footer py-3 border-top">
+        <span class="text-muted fw-medium">Tổng cộng: {{ filteredDemands.length }} mục</span>
       </div>
     </div>
 
@@ -284,7 +325,10 @@
                   </thead>
                   <tbody>
                     <tr v-if="selectedPODetails.length === 0">
-                      <td colspan="5" class="text-center text-muted py-3">Không có sản phẩm nào.</td>
+                      <td colspan="5" class="text-center text-muted py-4">
+                        <i class="bx bx-folder-open text-secondary fs-2 d-block mb-1"></i>
+                        Không có dữ liệu
+                      </td>
                     </tr>
                     <tr v-for="(ct, idx) in selectedPODetails" :key="idx">
                       <td class="text-center align-middle">{{ idx + 1 }}</td>
@@ -382,6 +426,7 @@ export default {
     return {
       activeTab: 'pos', // 'pos' | 'demand'
       selectedDemands: [],
+      demandSearch: "",
       filters: {
         search: "",
         status: null
@@ -429,9 +474,25 @@ export default {
     },
     isAllDemandsSelected() {
       return this.rawDemands && this.rawDemands.length > 0 && this.selectedDemands.length === this.rawDemands.length;
+    },
+    filteredDemands() {
+      let result = this.rawDemands || [];
+      if (this.demandSearch) {
+        const keyword = this.demandSearch.toLowerCase().trim();
+        result = result.filter(item =>
+          (item.ma_san_pham && item.ma_san_pham.toLowerCase().includes(keyword)) ||
+          (item.ten_san_pham && item.ten_san_pham.toLowerCase().includes(keyword)) ||
+          (item.kho && item.kho.toLowerCase().includes(keyword))
+        );
+      }
+      return result;
     }
   },
   methods: {
+    resetFilters() {
+      this.filters.search = '';
+      this.filters.status = null;
+    },
     toggleSelectAllDemands() {
       if (this.isAllDemandsSelected) {
         this.selectedDemands = [];

@@ -54,7 +54,10 @@
               </td>
             </tr>
             <tr v-else-if="filteredInventory.length === 0">
-              <td colspan="7" class="text-center py-4 text-muted">Không tìm thấy dữ liệu tồn kho phù hợp</td>
+              <td colspan="7" class="text-center py-5 text-muted">
+                <i class="bx bx-folder-open text-secondary fs-1 d-block mb-2"></i>
+                Không có dữ liệu
+              </td>
             </tr>
             <tr v-for="(item, index) in filteredInventory" :key="item.id" v-else>
               <td class="text-center"><strong>{{ index + 1 }}</strong></td>

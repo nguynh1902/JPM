@@ -63,7 +63,10 @@
                   </td>
                 </tr>
                 <tr v-else-if="treeCategories.length === 0">
-                  <td colspan="5" class="text-center py-4 text-muted">Chưa có danh mục nào</td>
+                  <td colspan="5" class="text-center py-5 text-muted">
+                    <i class="bx bx-folder-open text-secondary fs-1 d-block mb-2"></i>
+                    Không có dữ liệu
+                  </td>
                 </tr>
                 <tr v-for="(item, index) in treeCategories" :key="item.id" v-else>
                   <td class="text-center"><strong>{{ index + 1 }}</strong></td>
