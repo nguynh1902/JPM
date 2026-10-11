@@ -277,8 +277,12 @@ const addToCart = (item, qty = 1) => {
 
 const getImageUrl = (path) => {
   if (!path) return null;
-  if (path.startsWith('http')) return path;
-  return `http://localhost:8000${path.startsWith("/") ? "" : "/"}${path}`;
+  if (path.startsWith("blob:") || path.startsWith("http") || path.startsWith("data:")) return path;
+  const clean = path.startsWith("/") ? path.slice(1) : path;
+  if (clean.startsWith("storage/") || clean.startsWith("uploads/")) {
+    return `http://localhost:8000/${clean}`;
+  }
+  return `http://localhost:8000/storage/${clean}`;
 };
 </script>
 

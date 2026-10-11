@@ -173,28 +173,32 @@
                     <div class="mt-2">
                         <div class="d-flex justify-content-between align-items-center mb-2">
                           <label class="form-label fw-medium text-dark mb-0">Thư Viện Ảnh Phụ</label>
-                          <label for="thu_vien_anh" class="btn btn-sm btn-outline-primary py-0 px-2 mb-0" style="cursor: pointer; box-shadow: none;">
+                          <label for="thu_vien_anh" class="btn btn-sm btn-primary py-1 px-2 mb-0 d-inline-flex align-items-center gap-1" style="cursor: pointer; box-shadow: none;">
                             <i class="bx bx-upload"></i> Chọn nhiều ảnh
                           </label>
                         </div>
                         <input type="file" id="thu_vien_anh" class="d-none" accept="image/*" multiple @change="handleGalleryUpload" />
                         
                         <!-- Existing Gallery -->
-                        <div v-if="formData.thu_vien_anh && formData.thu_vien_anh.length > 0">
+                        <div v-if="formData.thu_vien_anh && formData.thu_vien_anh.length > 0" class="mb-2">
                           <div v-for="(img, idx) in formData.thu_vien_anh" :key="'old_'+idx" class="d-flex gap-2 mb-2 align-items-center">
-                              <img :src="getImageUrl(img)" class="rounded border" style="height: 32px; width: 40px; object-fit: contain; background: #fff;" />
-                              <a :href="getImageUrl(img)" target="_blank" class="text-primary text-decoration-none text-truncate flex-grow-1 fw-medium" style="font-size: 0.85rem;" title="Xem ảnh">{{ img }}</a>
-                              <button type="button" class="btn btn-sm btn-icon btn-outline-danger ms-auto" @click="formData.thu_vien_anh.splice(idx, 1)" title="Xóa"><i class="bx bx-trash"></i></button>
+                            <div class="d-flex align-items-center justify-content-center border rounded bg-white flex-shrink-0" style="width: 44px; height: 44px; overflow: hidden;">
+                              <img :src="getImageUrl(img)" style="width: 100%; height: 100%; object-fit: cover;" />
                             </div>
+                            <a :href="getImageUrl(img)" target="_blank" class="text-primary text-decoration-none text-truncate flex-grow-1 fw-medium" style="font-size: 0.85rem;" title="Xem ảnh">{{ img }}</a>
+                            <button type="button" class="btn btn-sm btn-icon btn-outline-danger ms-auto" @click="formData.thu_vien_anh.splice(idx, 1)" title="Xóa"><i class="bx bx-trash"></i></button>
+                          </div>
                         </div>
 
                         <!-- New Uploads -->
-                        <div v-if="galleryFiles && galleryFiles.length > 0">
+                        <div v-if="galleryFiles && galleryFiles.length > 0" class="mb-2">
                           <div v-for="(file, idx) in galleryFiles" :key="'new_'+idx" class="d-flex gap-2 mb-2 align-items-center">
-                              <img :src="getBlobUrl(file)" class="rounded border" style="height: 32px; width: 40px; object-fit: contain; background: #fff;" />
-                              <a :href="getBlobUrl(file)" target="_blank" class="text-primary text-decoration-none text-truncate flex-grow-1 fw-medium" style="font-size: 0.85rem;" title="Xem ảnh">{{ file.name }}</a>
-                              <button type="button" class="btn btn-sm btn-icon btn-outline-danger ms-auto" style="flex-shrink: 0" @click="galleryFiles.splice(idx, 1)" title="Xóa"><i class="bx bx-trash"></i></button>
+                            <div class="d-flex align-items-center justify-content-center border rounded bg-white flex-shrink-0" style="width: 44px; height: 44px; overflow: hidden;">
+                              <img :src="getBlobUrl(file)" style="width: 100%; height: 100%; object-fit: cover;" />
                             </div>
+                            <a :href="getBlobUrl(file)" target="_blank" class="text-primary text-decoration-none text-truncate flex-grow-1 fw-medium" style="font-size: 0.85rem;" title="Xem ảnh">{{ file.name }}</a>
+                            <button type="button" class="btn btn-sm btn-icon btn-outline-danger ms-auto" style="flex-shrink: 0" @click="galleryFiles.splice(idx, 1)" title="Xóa"><i class="bx bx-trash"></i></button>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -202,13 +206,13 @@
                   <div class="row mt-3">
                   <div class="col-md-12 mb-3">
                       <div class="d-flex justify-content-between align-items-center mb-1">
-                        <label class="form-label fw-medium text-dark mb-0">Giá Bán</label>
+                        <label class="form-label fw-medium text-dark mb-0">Giá Bán (VNĐ) <span v-if="!formData.is_gia_lien_he" class="text-danger">*</span></label>
                         <div class="form-check mb-0 d-flex align-items-center gap-1">
-                          <input class="form-check-input m-0" type="checkbox" id="is_gia_lien_he" v-model="formData.is_gia_lien_he" :true-value="true" :false-value="false">
+                          <input class="form-check-input m-0" type="checkbox" id="is_gia_lien_he" v-model="formData.is_gia_lien_he" :true-value="true" :false-value="false" @change="onGiaLienHeChange">
                           <label class="form-check-label text-muted text-nowrap" for="is_gia_lien_he" style="font-size: 0.8rem; cursor: pointer;">Liên hệ</label>
                         </div>
                       </div>
-                      <input type="number" class="form-control" v-model="formData.gia_ban" min="0" placeholder="0" :disabled="formData.is_gia_lien_he === true">
+                      <input type="number" class="form-control" v-model="formData.gia_ban" min="0" placeholder="Nhập giá bán..." :disabled="formData.is_gia_lien_he === true">
                     </div>
                 </div>
                 <div class="row">
@@ -318,7 +322,7 @@ export default {
         slug: "",
         mo_ta_chi_tiet: "",
         thong_so_ky_thuat: "",
-        gia_ban: 0,
+        gia_ban: null,
         is_gia_lien_he: false,
         so_luong_ton: 0,
         hinh_anh_chinh: "",
@@ -419,6 +423,13 @@ export default {
       if (!file) return '';
       return URL.createObjectURL(file);
     },
+    onGiaLienHeChange() {
+      if (this.formData.is_gia_lien_he) {
+        this.formData.gia_ban = 0;
+      } else {
+        this.formData.gia_ban = null;
+      }
+    },
     resetFilters() {
       this.filters = {
         search: "",
@@ -453,7 +464,7 @@ export default {
         slug: "",
         mo_ta_chi_tiet: "",
         thong_so_ky_thuat: "",
-        gia_ban: 0,
+        gia_ban: null,
         is_gia_lien_he: false,
         so_luong_ton: 0,
         hinh_anh_chinh: "",
@@ -478,7 +489,12 @@ export default {
         this.formData.thu_vien_anh = [];
       }
 
-      this.formData.is_gia_lien_he = !!item.is_gia_lien_he;
+      this.formData.is_gia_lien_he = item.is_gia_lien_he === 1 || item.is_gia_lien_he === true || item.gia_ban === 0 || item.gia_ban === "0.00" || item.gia_ban === "0";
+      if (this.formData.is_gia_lien_he) {
+        this.formData.gia_ban = 0;
+      } else {
+        this.formData.gia_ban = item.gia_ban ? Number(item.gia_ban) : null;
+      }
       this.mainImagePreview = null;
       this.mainImageFile = null;
       this.galleryFiles = [];
@@ -491,6 +507,13 @@ export default {
       if (!this.formData.ma_san_pham || !this.formData.ten_san_pham || !this.formData.danh_muc_san_pham_id) {
         this.$toast?.error("Vui lòng nhập đầy đủ thông tin bắt buộc!");
         return;
+      }
+
+      if (!this.formData.is_gia_lien_he) {
+        if (this.formData.gia_ban === null || this.formData.gia_ban === undefined || this.formData.gia_ban === "" || Number(this.formData.gia_ban) <= 0) {
+          this.$toast?.error("Vui lòng nhập giá bán lớn hơn 0 hoặc tích chọn 'Liên hệ'!");
+          return;
+        }
       }
 
       this.isSubmitting = true;

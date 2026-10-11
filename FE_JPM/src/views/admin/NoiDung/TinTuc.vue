@@ -229,25 +229,30 @@
                 <div class="mb-3">
                   <div class="d-flex justify-content-between align-items-center mb-2">
                           <label class="form-label fw-medium text-dark mb-0">Thư Viện Ảnh Phụ</label>
-                          <label for="gallery_upload" class="btn btn-sm btn-outline-primary py-0 px-2 mb-0" style="cursor: pointer; box-shadow: none;">
+                          <label for="gallery_upload" class="btn btn-sm btn-primary py-1 px-2 mb-0 d-inline-flex align-items-center gap-1" style="cursor: pointer; box-shadow: none;">
                             <i class="bx bx-upload"></i> Chọn nhiều ảnh
                           </label>
                         </div>
                         <input type="file" id="gallery_upload" class="d-none" accept="image/*" multiple @change="handleGalleryUpload" />
                   
                   <!-- Existing Gallery -->
-                  <div v-if="formData.gallery && formData.gallery.length > 0">
-                    <div v-for="(img, idx) in formData.gallery" :key="'old_'+idx" class="d-flex gap-2 mb-2 align-items-center bg-light p-1 rounded border">
-                      <img :src="getImageUrl(img)" style="height: 30px; width: 40px; object-fit: contain" />
-                      <span class="text-truncate text-secondary" style="font-size: 0.8rem; max-width: 150px;">{{ img }}</span>
+                  <div v-if="formData.gallery && formData.gallery.length > 0" class="mb-2">
+                    <div v-for="(img, idx) in formData.gallery" :key="'old_'+idx" class="d-flex gap-2 mb-2 align-items-center">
+                      <div class="d-flex align-items-center justify-content-center border rounded bg-white flex-shrink-0" style="width: 44px; height: 44px; overflow: hidden;">
+                        <img :src="getImageUrl(img)" style="width: 100%; height: 100%; object-fit: cover;" />
+                      </div>
+                      <a :href="getImageUrl(img)" target="_blank" class="text-primary text-decoration-none text-truncate flex-grow-1 fw-medium" style="font-size: 0.85rem;" title="Xem ảnh">{{ img }}</a>
                       <button type="button" class="btn btn-sm btn-icon btn-outline-danger ms-auto" @click="formData.gallery.splice(idx, 1)" title="Xóa"><i class="bx bx-trash"></i></button>
                     </div>
                   </div>
 
                   <!-- New Uploads -->
-                  <div v-if="galleryFiles && galleryFiles.length > 0">
-                    <div v-for="(file, idx) in galleryFiles" :key="'new_'+idx" class="d-flex gap-2 mb-2 align-items-center text-secondary">
-                      <span class="text-truncate d-inline-block" style="max-width: 200px">{{ file.name }}</span>
+                  <div v-if="galleryFiles && galleryFiles.length > 0" class="mb-2">
+                    <div v-for="(file, idx) in galleryFiles" :key="'new_'+idx" class="d-flex gap-2 mb-2 align-items-center">
+                      <div class="d-flex align-items-center justify-content-center border rounded bg-white flex-shrink-0" style="width: 44px; height: 44px; overflow: hidden;">
+                        <img :src="getBlobUrl(file)" style="width: 100%; height: 100%; object-fit: cover;" />
+                      </div>
+                      <a :href="getBlobUrl(file)" target="_blank" class="text-primary text-decoration-none text-truncate flex-grow-1 fw-medium" style="font-size: 0.85rem;" title="Xem ảnh">{{ file.name }}</a>
                       <button type="button" class="btn btn-sm btn-icon btn-outline-danger ms-auto" style="flex-shrink: 0" @click="galleryFiles.splice(idx, 1)" title="Xóa"><i class="bx bx-trash"></i></button>
                     </div>
                   </div>
@@ -405,7 +410,14 @@ export default {
     },
         handleGalleryUpload(event) {
       const files = Array.from(event.target.files);
-      this.galleryFiles = [...this.galleryFiles, ...files];
+      if (files && files.length > 0) {
+        this.galleryFiles = [...this.galleryFiles, ...files];
+      }
+      event.target.value = "";
+    },
+    getBlobUrl(file) {
+      if (!file) return "";
+      return URL.createObjectURL(file);
     },
     resetFilters() {
       this.filters = {

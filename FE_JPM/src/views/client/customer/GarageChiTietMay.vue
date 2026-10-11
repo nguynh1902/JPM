@@ -178,7 +178,11 @@
 const getImageUrl = (path) => {
   if (!path) return "";
   if (path.startsWith("blob:") || path.startsWith("http") || path.startsWith("data:")) return path;
-  return `http://localhost:8000${path.startsWith("/") ? "" : "/"}${path}`;
+  const clean = path.startsWith("/") ? path.slice(1) : path;
+  if (clean.startsWith("storage/") || clean.startsWith("uploads/")) {
+    return `http://localhost:8000/${clean}`;
+  }
+  return `http://localhost:8000/storage/${clean}`;
 };
 
 import { ref, computed } from 'vue';

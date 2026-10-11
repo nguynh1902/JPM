@@ -405,25 +405,29 @@
                       <div class="mt-2">
                           <div class="d-flex justify-content-between align-items-center mb-2">
                           <label class="form-label fw-medium text-dark mb-0">Thư Viện Ảnh Phụ</label>
-                          <label for="thu_vien_anh" class="btn btn-sm btn-outline-primary py-0 px-2 mb-0" style="cursor: pointer; box-shadow: none;">
+                          <label for="thu_vien_anh" class="btn btn-sm btn-primary py-1 px-2 mb-0 d-inline-flex align-items-center gap-1" style="cursor: pointer; box-shadow: none;">
                             <i class="bx bx-upload"></i> Chọn nhiều ảnh
                           </label>
                         </div>
                         <input type="file" id="thu_vien_anh" class="d-none" accept="image/*" multiple @change="handleGalleryUpload" />
                           
                           <!-- Existing Gallery -->
-                          <div v-if="formData.thu_vien_anh && formData.thu_vien_anh.length > 0">
+                          <div v-if="formData.thu_vien_anh && formData.thu_vien_anh.length > 0" class="mb-2">
                             <div v-for="(img, idx) in formData.thu_vien_anh" :key="'old_'+idx" class="d-flex gap-2 mb-2 align-items-center">
-                              <img :src="getImageUrl(img)" class="rounded border" style="height: 32px; width: 40px; object-fit: contain; background: #fff;" />
+                              <div class="d-flex align-items-center justify-content-center border rounded bg-white flex-shrink-0" style="width: 44px; height: 44px; overflow: hidden;">
+                                <img :src="getImageUrl(img)" style="width: 100%; height: 100%; object-fit: cover;" />
+                              </div>
                               <a :href="getImageUrl(img)" target="_blank" class="text-primary text-decoration-none text-truncate flex-grow-1 fw-medium" style="font-size: 0.85rem;" title="Xem ảnh">{{ img }}</a>
                               <button type="button" class="btn btn-sm btn-icon btn-outline-danger ms-auto" @click="formData.thu_vien_anh.splice(idx, 1)" title="Xóa"><i class="bx bx-trash"></i></button>
                             </div>
                           </div>
   
                           <!-- New Uploads -->
-                          <div v-if="galleryFiles && galleryFiles.length > 0">
+                          <div v-if="galleryFiles && galleryFiles.length > 0" class="mb-2">
                             <div v-for="(file, idx) in galleryFiles" :key="'new_'+idx" class="d-flex gap-2 mb-2 align-items-center">
-                              <img :src="getBlobUrl(file)" class="rounded border" style="height: 32px; width: 40px; object-fit: contain; background: #fff;" />
+                              <div class="d-flex align-items-center justify-content-center border rounded bg-white flex-shrink-0" style="width: 44px; height: 44px; overflow: hidden;">
+                                <img :src="getBlobUrl(file)" style="width: 100%; height: 100%; object-fit: cover;" />
+                              </div>
                               <a :href="getBlobUrl(file)" target="_blank" class="text-primary text-decoration-none text-truncate flex-grow-1 fw-medium" style="font-size: 0.85rem;" title="Xem ảnh">{{ file.name }}</a>
                               <button type="button" class="btn btn-sm btn-icon btn-outline-danger ms-auto" style="flex-shrink: 0" @click="galleryFiles.splice(idx, 1)" title="Xóa"><i class="bx bx-trash"></i></button>
                             </div>
@@ -438,7 +442,7 @@
                         class="d-flex justify-content-between align-items-center mb-1"
                       >
                         <label class="form-label fw-medium text-dark mb-0"
-                          >Giá Bán (VNĐ)</label
+                          >Giá Bán (VNĐ) <span v-if="!formData.is_gia_lien_he" class="text-danger">*</span></label
                         >
                         <div
                           class="form-check mb-0 d-flex align-items-center gap-1"
@@ -450,11 +454,7 @@
                             v-model="formData.is_gia_lien_he"
                             :true-value="true"
                             :false-value="false"
-                            @change="
-                              formData.is_gia_lien_he
-                                ? (formData.gia_ban = 0)
-                                : null
-                            "
+                            @change="onGiaLienHeChange"
                           />
                           <label
                             class="form-check-label text-muted text-nowrap"
@@ -469,7 +469,7 @@
                         class="form-control"
                         v-model="formData.gia_ban"
                         min="0"
-                        placeholder="0"
+                        placeholder="Nhập giá bán..."
                         :disabled="formData.is_gia_lien_he === true"
                       />
                     </div>
@@ -628,7 +628,7 @@ export default {
         nhom_phu_tung_id: null,
         ma_phu_tung: "",
         ten_phu_tung: "",
-        gia_ban: 0,
+        gia_ban: null,
         is_gia_lien_he: false,
         don_vi_tinh: "Cái",
 
@@ -736,6 +736,13 @@ export default {
       if (!file) return "";
       return URL.createObjectURL(file);
     },
+    onGiaLienHeChange() {
+      if (this.formData.is_gia_lien_he) {
+        this.formData.gia_ban = 0;
+      } else {
+        this.formData.gia_ban = null;
+      }
+    },
     clearMainImage() {
       this.mainImageFile = null;
       this.mainImagePreview = null;
@@ -765,7 +772,7 @@ export default {
         nhom_phu_tung_id: null,
         ma_phu_tung: "",
         ten_phu_tung: "",
-        gia_ban: 0,
+        gia_ban: null,
         is_gia_lien_he: false,
         don_vi_tinh: "Cái",
         hinh_anh: "",
@@ -793,7 +800,12 @@ export default {
       this.isEditMode = true;
       this.formData = { ...item };
       this.formData.is_gia_lien_he =
-        item.is_gia_lien_he === 1 || item.is_gia_lien_he === true;
+        item.is_gia_lien_he === 1 || item.is_gia_lien_he === true || item.gia_ban === 0 || item.gia_ban === "0.00" || item.gia_ban === "0";
+      if (this.formData.is_gia_lien_he) {
+        this.formData.gia_ban = 0;
+      } else {
+        this.formData.gia_ban = item.gia_ban ? Number(item.gia_ban) : null;
+      }
       this.formData.thu_vien_anh = item.thu_vien_anh || [];
       this.mainImageFile = null;
       this.mainImagePreview = item.hinh_anh
@@ -810,6 +822,13 @@ export default {
       ) {
         this.toaster.error("Vui lòng nhập đầy đủ thông tin bắt buộc!");
         return;
+      }
+
+      if (!this.formData.is_gia_lien_he) {
+        if (this.formData.gia_ban === null || this.formData.gia_ban === undefined || this.formData.gia_ban === "" || Number(this.formData.gia_ban) <= 0) {
+          this.toaster.error("Vui lòng nhập giá bán lớn hơn 0 hoặc tích chọn 'Liên hệ'!");
+          return;
+        }
       }
 
       this.isSubmitting = true;
