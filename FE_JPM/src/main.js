@@ -50,6 +50,10 @@ app.mixin({
       if (!path) return "";
       if (path.startsWith("blob:") || path.startsWith("http") || path.startsWith("data:")) return path;
       return `http://localhost:8000${path.startsWith("/") ? "" : "/"}${path}`;
+    },
+    getBlobUrl(file) {
+      if (!file) return "";
+      return URL.createObjectURL(file);
     }
   }
 });

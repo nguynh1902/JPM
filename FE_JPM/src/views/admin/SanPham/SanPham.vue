@@ -181,20 +181,20 @@
                         
                         <!-- Existing Gallery -->
                         <div v-if="formData.thu_vien_anh && formData.thu_vien_anh.length > 0">
-                          <div v-for="(img, idx) in formData.thu_vien_anh" :key="'old_'+idx" class="d-flex gap-2 mb-2 align-items-center bg-light p-1 rounded border">
-                            <img :src="getImageUrl(img)" style="height: 30px; width: 40px; object-fit: contain" />
-                            <span class="text-truncate text-secondary" style="font-size: 0.8rem; max-width: 150px;">{{ img }}</span>
-                            <button type="button" class="btn btn-sm btn-icon btn-outline-danger ms-auto" @click="formData.thu_vien_anh.splice(idx, 1)" title="Xóa"><i class="bx bx-trash"></i></button>
-                          </div>
+                          <div v-for="(img, idx) in formData.thu_vien_anh" :key="'old_'+idx" class="d-flex gap-2 mb-2 align-items-center">
+                              <img :src="getImageUrl(img)" class="rounded border" style="height: 32px; width: 40px; object-fit: contain; background: #fff;" />
+                              <a :href="getImageUrl(img)" target="_blank" class="text-primary text-decoration-none text-truncate flex-grow-1 fw-medium" style="font-size: 0.85rem;" title="Xem ảnh">{{ img }}</a>
+                              <button type="button" class="btn btn-sm btn-icon btn-outline-danger ms-auto" @click="formData.thu_vien_anh.splice(idx, 1)" title="Xóa"><i class="bx bx-trash"></i></button>
+                            </div>
                         </div>
 
                         <!-- New Uploads -->
                         <div v-if="galleryFiles && galleryFiles.length > 0">
-                          <div v-for="(file, idx) in galleryFiles" :key="'new_'+idx" class="d-flex gap-2 mb-2 align-items-center bg-light p-1 rounded border">
-                            <img :src="getBlobUrl(file)" style="height: 30px; width: 40px; object-fit: contain" />
-                            <span class="text-truncate text-secondary" style="font-size: 0.8rem; max-width: 150px;">{{ file.name }}</span>
-                            <button type="button" class="btn btn-sm btn-icon btn-outline-danger ms-auto" style="flex-shrink: 0" @click="galleryFiles.splice(idx, 1)" title="Xóa"><i class="bx bx-trash"></i></button>
-                          </div>
+                          <div v-for="(file, idx) in galleryFiles" :key="'new_'+idx" class="d-flex gap-2 mb-2 align-items-center">
+                              <img :src="getBlobUrl(file)" class="rounded border" style="height: 32px; width: 40px; object-fit: contain; background: #fff;" />
+                              <a :href="getBlobUrl(file)" target="_blank" class="text-primary text-decoration-none text-truncate flex-grow-1 fw-medium" style="font-size: 0.85rem;" title="Xem ảnh">{{ file.name }}</a>
+                              <button type="button" class="btn btn-sm btn-icon btn-outline-danger ms-auto" style="flex-shrink: 0" @click="galleryFiles.splice(idx, 1)" title="Xóa"><i class="bx bx-trash"></i></button>
+                            </div>
                         </div>
                       </div>
                     </div>
