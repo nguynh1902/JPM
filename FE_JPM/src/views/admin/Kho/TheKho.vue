@@ -59,7 +59,7 @@
             />
           </div>
           <button class="btn btn-secondary text-nowrap" @click="resetFilters">
-            <i class="bx bx-refresh me-1"></i> Đặt lại
+            Đặt lại
           </button>
           <button class="btn btn-primary text-nowrap shadow-sm" @click="exportExcel">
             <i class="bx bx-export me-1"></i> Xuất Excel

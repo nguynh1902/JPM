@@ -24,7 +24,7 @@
             />
           </div>
           <button class="btn btn-secondary text-nowrap" @click="resetFilters">
-            <i class="bx bx-refresh me-1"></i> Đặt lại
+            Đặt lại
           </button>
           <button v-if="currentUserRole === 'ADMIN'" class="btn btn-primary text-nowrap shadow-sm" @click="openAddModal">
             <i class="bx bx-plus me-1"></i> Thêm Tồn Kho
