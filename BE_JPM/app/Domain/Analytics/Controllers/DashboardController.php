@@ -116,18 +116,21 @@ class DashboardController extends Controller
                 $procurementData[] = round($monthlyProcurement / 1000000, 2); // Triệu VNĐ
             }
 
-            // 6. PHÂN BỔ KÊNH BÁN (DISTRIBUTION)
-            // 6. PHÂN BỔ LOẠI GIAO DỊCH (DISTRIBUTION: ĐƠN HÀNG VS BÁO GIÁ)
-            $orderCount = (int) DonHang::whereBetween('created_at', [$startDate, $endDate])
-                ->where('trang_thai', '!=', 4)
+            // 6. PHÂN BỔ LUỒNG GIAO DỊCH (DISTRIBUTION: ĐƠN HOÀN TẤT, ĐANG XỬ LÝ, YÊU CẦU BÁO GIÁ)
+            $completedOrderCount = (int) DonHang::whereBetween('created_at', [$startDate, $endDate])
+                ->where('trang_thai', 3)
+                ->count();
+            $processingOrderCount = (int) DonHang::whereBetween('created_at', [$startDate, $endDate])
+                ->whereIn('trang_thai', [0, 1, 2])
                 ->count();
             $quoteCount = (int) YeuCauBaoGia::whereBetween('created_at', [$startDate, $endDate])
                 ->where('trang_thai', '!=', 3)
                 ->count();
 
-            $totalDist = $orderCount + $quoteCount;
+            $totalDist = $completedOrderCount + $processingOrderCount + $quoteCount;
             $distPercentages = [
-                'order' => $totalDist > 0 ? round(($orderCount / $totalDist) * 100, 1) : 0,
+                'completed' => $totalDist > 0 ? round(($completedOrderCount / $totalDist) * 100, 1) : 0,
+                'processing' => $totalDist > 0 ? round(($processingOrderCount / $totalDist) * 100, 1) : 0,
                 'quote' => $totalDist > 0 ? round(($quoteCount / $totalDist) * 100, 1) : 0,
             ];
 
@@ -236,11 +239,12 @@ class DashboardController extends Controller
                         'growth_rate' => $salesGrowth,
                     ],
                     'distribution_chart' => [
-                        'series' => [$orderCount, $quoteCount],
-                        'labels' => ['Đơn Hàng Trực Tiếp', 'Yêu Cầu Báo Giá'],
+                        'series' => [$completedOrderCount, $processingOrderCount, $quoteCount],
+                        'labels' => ['Đơn Hoàn Tất', 'Đơn Đang Xử Lý', 'Yêu Cầu Báo Giá'],
                         'percentages' => $distPercentages,
                         'counts' => [
-                            'order' => $orderCount,
+                            'completed' => $completedOrderCount,
+                            'processing' => $processingOrderCount,
                             'quote' => $quoteCount,
                         ]
                     ],

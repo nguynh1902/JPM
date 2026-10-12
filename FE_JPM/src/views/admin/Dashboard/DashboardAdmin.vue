@@ -160,15 +160,15 @@
                 </span>
               </div>
             </div>
-            <!-- Legend góc phải thanh lịch -->
-            <div class="d-flex align-items-center gap-3" style="font-size: 0.75rem;">
-              <div class="d-flex align-items-center gap-1">
-                <span class="badge rounded-circle p-1" style="background-color: #696cff;"></span>
-                <span class="text-muted">Doanh thu bán</span>
+            <!-- Legend góc phải: Ô màu rồi tới chữ -->
+            <div class="d-flex align-items-center gap-3" style="font-size: 0.78rem;">
+              <div class="d-flex align-items-center gap-2">
+                <span style="display: inline-block; width: 13px; height: 13px; border-radius: 3px; background-color: #696cff;"></span>
+                <span class="text-muted fw-medium">Doanh thu bán</span>
               </div>
-              <div class="d-flex align-items-center gap-1">
-                <span class="badge rounded-circle p-1" style="background-color: #8592a3;"></span>
-                <span class="text-muted">Chi phí PO</span>
+              <div class="d-flex align-items-center gap-2">
+                <span style="display: inline-block; width: 13px; height: 13px; border-radius: 3px; background-color: #8592a3;"></span>
+                <span class="text-muted fw-medium">Chi phí PO</span>
               </div>
             </div>
           </div>
@@ -194,8 +194,9 @@
               <h5 class="card-title mb-0 fw-bold text-dark" style="font-size: 1rem;">Giao Dịch Gần Đây</h5>
               <small class="text-muted">Đơn hàng và yêu cầu báo giá mới nhất cần xử lý</small>
             </div>
-            <router-link to="/admin/don-hang" class="btn btn-sm btn-outline-primary">
-              Xem tất cả <i class="bx bx-right-arrow-alt ms-1"></i>
+            <router-link to="/admin/don-hang" class="text-primary fw-medium text-decoration-none d-inline-flex align-items-center" style="font-size: 0.85rem;">
+              <span>Xem tất cả</span>
+              <i class="bx bx-right-arrow-alt ms-1 fs-5"></i>
             </router-link>
           </div>
           <div class="table-responsive text-nowrap">
@@ -267,13 +268,13 @@
         <div class="card border-0 shadow-sm h-100">
           <div class="card-header pb-2 border-bottom">
             <h5 class="card-title mb-0 fw-bold text-dark" style="font-size: 1rem;">Cơ Cấu Giao Dịch</h5>
-            <small class="text-muted">Tỷ lệ đơn hàng trực tiếp & yêu cầu báo giá</small>
+            <small class="text-muted">Tỷ lệ đơn hoàn tất, đang xử lý & báo giá</small>
           </div>
           <div class="card-body d-flex flex-column justify-content-between pt-3">
-            <div v-if="hasDonutData" class="my-auto">
+            <div v-if="hasDonutData" class="my-auto text-center">
               <apexchart
                 type="donut"
-                height="230"
+                height="300"
                 :options="donutChartOptions"
                 :series="distributionChartData.series"
               ></apexchart>
@@ -283,24 +284,33 @@
               <span>Không có dữ liệu</span>
             </div>
             
-            <!-- Thống kê chi tiết từng loại giao dịch dưới biểu đồ -->
+            <!-- Thống kê chi tiết từng loại giao dịch dưới biểu đồ (3 nhóm: Hoàn tất, Đang xử lý, Báo giá) -->
             <div class="border-top pt-3 mt-2">
               <div class="d-flex justify-content-between align-items-center mb-2" style="font-size: 0.8rem;">
                 <div class="d-flex align-items-center">
-                  <span class="badge rounded-circle p-1 me-2" style="background-color: #696cff;"></span>
-                  <span class="text-dark fw-medium">Đơn Hàng Trực Tiếp</span>
+                  <span class="me-2" style="display: inline-block; width: 13px; height: 13px; border-radius: 3px; background-color: #03c3ec;"></span>
+                  <span class="text-dark fw-medium">Đơn Hoàn Tất</span>
                 </div>
                 <div class="fw-bold text-dark">
-                  {{ distributionChartData.counts.order || 0 }} đơn <span class="text-muted fw-normal">({{ distributionChartData.percentages.order || 0 }}%)</span>
+                  {{ distributionChartData.counts?.completed || 0 }} đơn <span class="text-muted fw-normal">({{ distributionChartData.percentages?.completed || 0 }}%)</span>
+                </div>
+              </div>
+              <div class="d-flex justify-content-between align-items-center mb-2" style="font-size: 0.8rem;">
+                <div class="d-flex align-items-center">
+                  <span class="me-2" style="display: inline-block; width: 13px; height: 13px; border-radius: 3px; background-color: #696cff;"></span>
+                  <span class="text-dark fw-medium">Đơn Đang Xử Lý</span>
+                </div>
+                <div class="fw-bold text-dark">
+                  {{ distributionChartData.counts?.processing || 0 }} đơn <span class="text-muted fw-normal">({{ distributionChartData.percentages?.processing || 0 }}%)</span>
                 </div>
               </div>
               <div class="d-flex justify-content-between align-items-center" style="font-size: 0.8rem;">
                 <div class="d-flex align-items-center">
-                  <span class="badge rounded-circle p-1 me-2" style="background-color: #ffab00;"></span>
+                  <span class="me-2" style="display: inline-block; width: 13px; height: 13px; border-radius: 3px; background-color: #ffab00;"></span>
                   <span class="text-dark fw-medium">Yêu Cầu Báo Giá</span>
                 </div>
                 <div class="fw-bold text-dark">
-                  {{ distributionChartData.counts.quote || 0 }} yêu cầu <span class="text-muted fw-normal">({{ distributionChartData.percentages.quote || 0 }}%)</span>
+                  {{ distributionChartData.counts?.quote || 0 }} yêu cầu <span class="text-muted fw-normal">({{ distributionChartData.percentages?.quote || 0 }}%)</span>
                 </div>
               </div>
             </div>
@@ -355,10 +365,10 @@ const revenueChartData = ref({
 });
 
 const distributionChartData = ref({
-  series: [0, 0],
-  labels: ['Đơn Hàng Trực Tiếp', 'Yêu Cầu Báo Giá'],
-  percentages: { order: 0, quote: 0 },
-  counts: { order: 0, quote: 0 }
+  series: [0, 0, 0],
+  labels: ['Đơn Hoàn Tất', 'Đơn Đang Xử Lý', 'Yêu Cầu Báo Giá'],
+  percentages: { completed: 0, processing: 0, quote: 0 },
+  counts: { completed: 0, processing: 0, quote: 0 }
 });
 
 const recentActivities = ref([]);
@@ -430,33 +440,34 @@ const barChartOptions = computed(() => ({
 const donutChartOptions = computed(() => ({
   chart: {
     type: 'donut',
+    height: 300,
     fontFamily: 'Public Sans, sans-serif'
   },
-  labels: distributionChartData.value.labels || ['Đơn Hàng Trực Tiếp', 'Yêu Cầu Báo Giá'],
-  colors: ['#696cff', '#ffab00'],
+  labels: distributionChartData.value.labels || ['Đơn Hoàn Tất', 'Đơn Đang Xử Lý', 'Yêu Cầu Báo Giá'],
+  colors: ['#03c3ec', '#696cff', '#ffab00'],
   stroke: { width: 3, colors: ['#fff'] },
   legend: { show: false },
   dataLabels: { enabled: false },
   plotOptions: {
     pie: {
       donut: {
-        size: '72%',
+        size: '68%',
         labels: {
           show: true,
           value: {
-            fontSize: '1.25rem',
-            fontWeight: 600,
-            color: '#566a7f',
-            offsetY: -5,
+            fontSize: '1.5rem',
+            fontWeight: 700,
+            color: '#233446',
+            offsetY: -6,
             formatter: (val) => val
           },
           name: {
-            offsetY: 20,
-            fontSize: '0.82rem'
+            offsetY: 22,
+            fontSize: '0.85rem'
           },
           total: {
             show: true,
-            fontSize: '0.75rem',
+            fontSize: '0.8rem',
             color: '#8592a3',
             label: 'Tổng giao dịch',
             formatter: (w) => {
