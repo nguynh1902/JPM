@@ -111,7 +111,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Admin Routes (Được bảo vệ bởi Role Admin & Staff)
     Route::middleware(['role:admin|Nhân viên PIM,sanctum'])->group(function () {
-
+        Route::get('admin/dashboard/stats', [\App\Domain\Analytics\Controllers\DashboardController::class, 'stats']);
         Route::apiResource('admin/banner', BannerController::class);
         Route::apiResource('admin/voucher', VoucherController::class);
         Route::apiResource('admin/system-logs', SystemLogController::class)->only(['index']);

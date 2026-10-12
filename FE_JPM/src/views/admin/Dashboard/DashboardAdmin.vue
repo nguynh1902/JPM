@@ -1,327 +1,315 @@
 <template>
   <div class="container-xxl flex-grow-1 container-p-y">
-    <div class="row">
-      <div class="col-lg-8 mb-4 order-0">
-        <div class="card">
-          <div class="d-flex align-items-end row">
-            <div class="col-sm-7">
-              <div class="card-body">
-                <h5 class="card-title text-primary">Congratulations John! 🎉</h5>
-                <p class="mb-4">You have done <span class="fw-bold">72%</span> more sales today. Check your new badge in your profile.</p>
-                <a href="javascript:;" class="btn btn-sm btn-outline-primary">View Badges</a>
-              </div>
-            </div>
-            <div class="col-sm-5 text-center text-sm-left">
-              <div class="card-body pb-0 px-0 px-md-4">
-                <img src="/admin/img/illustrations/man-with-laptop-light.png" height="140" alt="View Badge User" />
-              </div>
-            </div>
-          </div>
-        </div>
+    <!-- Header Page: Đồng bộ với chuẩn các trang Admin khác -->
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
+      <div>
+        <h4 class="fw-bold mb-1">
+          <span class="text-muted fw-light">Chuỗi Cung Ứng /</span> Tổng Quan Dashboard
+        </h4>
+        <p class="text-muted mb-0" style="font-size: 0.85rem;">Chỉ số hoạt động kinh doanh & vận hành chuỗi cung ứng phụ tùng</p>
       </div>
-      <div class="col-lg-4 col-md-4 order-1">
-        <div class="row">
-          <div class="col-lg-6 col-md-12 col-6 mb-4">
-            <div class="card">
-              <div class="card-body">
-                <div class="card-title d-flex align-items-start justify-content-between">
-                  <div class="avatar flex-shrink-0">
-                    <img src="/admin/img/icons/unicons/chart-success.png" alt="chart success" class="rounded" />
+      <div class="d-flex align-items-center gap-2">
+        <!-- Bộ lọc thời gian -->
+        <div class="dropdown">
+          <button class="btn btn-white bg-white border text-secondary btn-sm dropdown-toggle shadow-sm px-3" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="bx bx-calendar me-1 text-primary"></i> {{ periodLabels[currentPeriod] || 'Tháng này' }}
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0">
+            <li><a class="dropdown-item" href="javascript:void(0)" @click="changePeriod('today')" :class="{'active': currentPeriod === 'today'}">Hôm nay</a></li>
+            <li><a class="dropdown-item" href="javascript:void(0)" @click="changePeriod('week')" :class="{'active': currentPeriod === 'week'}">Tuần này</a></li>
+            <li><a class="dropdown-item" href="javascript:void(0)" @click="changePeriod('month')" :class="{'active': currentPeriod === 'month'}">Tháng này</a></li>
+            <li><a class="dropdown-item" href="javascript:void(0)" @click="changePeriod('year')" :class="{'active': currentPeriod === 'year'}">Năm nay</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="javascript:void(0)" @click="changePeriod('all')" :class="{'active': currentPeriod === 'all'}">Toàn thời gian</a></li>
+          </ul>
+        </div>
+        <!-- Nút Làm Mới -->
+        <button class="btn btn-primary btn-sm shadow-sm px-3" @click="fetchData" :disabled="isLoading">
+          <i class="bx bx-refresh me-1" :class="{'bx-spin': isLoading}"></i> Làm mới
+        </button>
+      </div>
+    </div>
+
+    <!-- TẦNG TRÊN: 4 THẺ KPI (COL-5) + BIỂU ĐỒ DOANH THU & CHI PHÍ PO (COL-7) -->
+    <div class="row g-3 mb-4">
+      <!-- Cột trái: 4 Thẻ KPI (Grid 2x2) -->
+      <div class="col-lg-5 col-12">
+        <div class="row g-3 h-100">
+          <!-- Card 1: Tổng Doanh Thu -->
+          <div class="col-sm-6 col-12">
+            <div class="card border-0 shadow-sm h-100 kpi-card">
+              <div class="card-body p-3 d-flex flex-column justify-content-between">
+                <div>
+                  <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="kpi-label">Tổng Doanh Thu</span>
+                    <span class="badge badge-custom bg-pastel-primary p-1">
+                      <i class="bx bx-dollar-circle fs-6"></i>
+                    </span>
                   </div>
-                  <div class="dropdown">
-                    <button class="btn p-0" type="button" data-bs-toggle="dropdown"><i class="bx bx-dots-vertical-rounded"></i></button>
-                    <div class="dropdown-menu dropdown-menu-end">
-                      <a class="dropdown-item" href="javascript:void(0);">View More</a>
-                      <a class="dropdown-item" href="javascript:void(0);">Delete</a>
-                    </div>
+                  <div class="kpi-value text-dark mb-1">{{ formatShortCurrency(kpis.total_sales) }}</div>
+                  <div class="d-flex align-items-center gap-1 kpi-subtext">
+                    <span :class="kpis.sales_growth >= 0 ? 'text-success' : 'text-danger'" class="fw-semibold">
+                      <i class="bx" :class="kpis.sales_growth >= 0 ? 'bx-up-arrow-alt' : 'bx-down-arrow-alt'"></i>
+                      {{ kpis.sales_growth >= 0 ? '+' : '' }}{{ kpis.sales_growth }}%
+                    </span>
+                    <span class="text-muted">| +{{ formatShortCurrency(kpis.sales_today) }} hôm nay</span>
                   </div>
                 </div>
-                <span class="fw-semibold d-block mb-1">Profit</span>
-                <h3 class="card-title mb-2">$12,628</h3>
-                <small class="text-success fw-semibold"><i class="bx bx-up-arrow-alt"></i> +72.80%</small>
+                <div class="border-top pt-2 mt-3">
+                  <router-link to="/admin/don-hang" class="text-primary fw-medium d-flex align-items-center justify-content-between text-decoration-none" style="font-size: 0.78rem;">
+                    <span>Xem chi tiết</span>
+                    <i class="bx bx-right-arrow-alt"></i>
+                  </router-link>
+                </div>
               </div>
             </div>
           </div>
-          <div class="col-lg-6 col-md-12 col-6 mb-4">
-            <div class="card">
-              <div class="card-body">
-                <div class="card-title d-flex align-items-start justify-content-between">
-                  <div class="avatar flex-shrink-0">
-                    <img src="/admin/img/icons/unicons/wallet-info.png" alt="Credit Card" class="rounded" />
+
+          <!-- Card 2: Tổng Đơn Hàng -->
+          <div class="col-sm-6 col-12">
+            <div class="card border-0 shadow-sm h-100 kpi-card">
+              <div class="card-body p-3 d-flex flex-column justify-content-between">
+                <div>
+                  <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="kpi-label">Tổng Đơn Hàng</span>
+                    <span class="badge badge-custom bg-pastel-info p-1">
+                      <i class="bx bx-shopping-bag fs-6"></i>
+                    </span>
                   </div>
-                  <div class="dropdown">
-                    <button class="btn p-0" type="button" data-bs-toggle="dropdown"><i class="bx bx-dots-vertical-rounded"></i></button>
-                    <div class="dropdown-menu dropdown-menu-end">
-                      <a class="dropdown-item" href="javascript:void(0);">View More</a>
-                      <a class="dropdown-item" href="javascript:void(0);">Delete</a>
-                    </div>
+                  <div class="kpi-value text-dark mb-1">{{ (kpis.total_orders || 0).toLocaleString() }}</div>
+                  <div class="d-flex align-items-center gap-1 kpi-subtext">
+                    <span :class="kpis.orders_growth >= 0 ? 'text-success' : 'text-danger'" class="fw-semibold">
+                      <i class="bx" :class="kpis.orders_growth >= 0 ? 'bx-up-arrow-alt' : 'bx-down-arrow-alt'"></i>
+                      {{ kpis.orders_growth >= 0 ? '+' : '' }}{{ kpis.orders_growth }}%
+                    </span>
+                    <span class="text-muted">| +{{ kpis.orders_today }} hôm nay</span>
                   </div>
                 </div>
-                <span>Sales</span>
-                <h3 class="card-title text-nowrap mb-1">$4,679</h3>
-                <small class="text-success fw-semibold"><i class="bx bx-up-arrow-alt"></i> +28.42%</small>
+                <div class="border-top pt-2 mt-3">
+                  <router-link to="/admin/don-hang" class="text-primary fw-medium d-flex align-items-center justify-content-between text-decoration-none" style="font-size: 0.78rem;">
+                    <span>Xem chi tiết</span>
+                    <i class="bx bx-right-arrow-alt"></i>
+                  </router-link>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 3: Yêu Cầu Báo Giá -->
+          <div class="col-sm-6 col-12">
+            <div class="card border-0 shadow-sm h-100 kpi-card">
+              <div class="card-body p-3 d-flex flex-column justify-content-between">
+                <div>
+                  <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="kpi-label">Yêu Cầu Báo Giá</span>
+                    <span class="badge badge-custom bg-pastel-warning p-1">
+                      <i class="bx bx-message-square-dots fs-6"></i>
+                    </span>
+                  </div>
+                  <div class="kpi-value text-dark mb-1">{{ (kpis.total_quotes || 0).toLocaleString() }}</div>
+                  <div class="d-flex align-items-center gap-1 kpi-subtext">
+                    <span class="text-warning fw-semibold">
+                      <i class="bx bx-time-five"></i> {{ kpis.pending_quotes }} chờ xử lý
+                    </span>
+                    <span class="text-muted">| +{{ kpis.quotes_today }} hôm nay</span>
+                  </div>
+                </div>
+                <div class="border-top pt-2 mt-3">
+                  <router-link to="/admin/don-hang" class="text-primary fw-medium d-flex align-items-center justify-content-between text-decoration-none" style="font-size: 0.78rem;">
+                    <span>Xem chi tiết</span>
+                    <i class="bx bx-right-arrow-alt"></i>
+                  </router-link>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 4: Cảnh Báo Gom Hàng PO -->
+          <div class="col-sm-6 col-12">
+            <div class="card border-0 shadow-sm h-100 kpi-card">
+              <div class="card-body p-3 d-flex flex-column justify-content-between">
+                <div>
+                  <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="kpi-label">Cần Gom Hàng PO</span>
+                    <span class="badge badge-custom bg-pastel-danger p-1">
+                      <i class="bx bx-error-circle fs-6"></i>
+                    </span>
+                  </div>
+                  <div class="kpi-value text-dark mb-1">
+                    {{ kpis.items_need_replenish }} <small class="text-muted fw-normal" style="font-size: 0.8rem;">mặt hàng</small>
+                  </div>
+                  <div class="d-flex align-items-center gap-1 kpi-subtext">
+                    <span class="text-muted">
+                      Thiếu: <strong class="text-dark">{{ kpis.total_qty_need_replenish }}</strong> cái | <strong class="text-dark">{{ kpis.open_po_count }}</strong> PO mở
+                    </span>
+                  </div>
+                </div>
+                <div class="border-top pt-2 mt-3">
+                  <router-link to="/admin/don-nhap-hang" class="text-primary fw-medium d-flex align-items-center justify-content-between text-decoration-none" style="font-size: 0.78rem;">
+                    <span>Gom đơn ngay</span>
+                    <i class="bx bx-right-arrow-alt"></i>
+                  </router-link>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Total Revenue -->
-      <div class="col-12 col-lg-8 order-2 order-md-3 order-lg-2 mb-4">
-        <div class="card">
-          <div class="row row-bordered g-0">
-            <div class="col-md-8">
-              <h5 class="card-header m-0 me-2 pb-3">Total Revenue</h5>
-              <div class="px-2">
-                <apexchart type="bar" height="300" :options="totalRevenueOptions" :series="totalRevenueSeries"></apexchart>
+      <!-- Cột phải: Biểu Đồ Doanh Thu & Chi Phí PO Lớn -->
+      <div class="col-lg-7 col-12">
+        <div class="card border-0 shadow-sm h-100">
+          <div class="card-header pb-2 d-flex justify-content-between align-items-start border-bottom-0">
+            <div>
+              <span class="kpi-label d-block mb-1">Doanh Thu & Chi Phí Nhập Kho (PO)</span>
+              <div class="d-flex align-items-baseline gap-2">
+                <h4 class="fw-bold text-dark mb-0">{{ formatCurrency(revenueChartData.current_period_revenue) }}</h4>
+                <span :class="revenueChartData.growth_rate >= 0 ? 'text-success' : 'text-danger'" class="fw-semibold" style="font-size: 0.82rem;">
+                  <i class="bx" :class="revenueChartData.growth_rate >= 0 ? 'bx-up-arrow-alt' : 'bx-down-arrow-alt'"></i>
+                  {{ revenueChartData.growth_rate >= 0 ? '+' : '' }}{{ revenueChartData.growth_rate }}%
+                </span>
               </div>
             </div>
-            <div class="col-md-4">
-              <div class="card-body">
-                <div class="text-center">
-                  <div class="dropdown">
-                    <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">2022</button>
-                    <div class="dropdown-menu dropdown-menu-end">
-                      <a class="dropdown-item" href="javascript:void(0);">2021</a>
-                      <a class="dropdown-item" href="javascript:void(0);">2020</a>
-                      <a class="dropdown-item" href="javascript:void(0);">2019</a>
-                    </div>
-                  </div>
-                </div>
+            <!-- Legend góc phải thanh lịch -->
+            <div class="d-flex align-items-center gap-3" style="font-size: 0.75rem;">
+              <div class="d-flex align-items-center gap-1">
+                <span class="badge rounded-circle p-1" style="background-color: #696cff;"></span>
+                <span class="text-muted">Doanh thu bán</span>
               </div>
-              <apexchart type="radialBar" height="240" :options="growthOptions" :series="growthSeries"></apexchart>
-              <div class="text-center fw-semibold pt-3 mb-2">62% Company Growth</div>
-              <div class="d-flex px-xxl-4 px-lg-2 p-4 gap-xxl-3 gap-lg-1 gap-3 justify-content-between">
-                <div class="d-flex">
-                  <div class="me-2"><span class="badge bg-label-primary p-2"><i class="bx bx-dollar text-primary"></i></span></div>
-                  <div class="d-flex flex-column"><small>2022</small><h6 class="mb-0">$32.5k</h6></div>
-                </div>
-                <div class="d-flex">
-                  <div class="me-2"><span class="badge bg-label-info p-2"><i class="bx bx-wallet text-info"></i></span></div>
-                  <div class="d-flex flex-column"><small>2021</small><h6 class="mb-0">$41.2k</h6></div>
-                </div>
+              <div class="d-flex align-items-center gap-1">
+                <span class="badge rounded-circle p-1" style="background-color: #8592a3;"></span>
+                <span class="text-muted">Chi phí PO</span>
               </div>
             </div>
           </div>
-        </div>
-      </div>
-
-      <div class="col-12 col-md-8 col-lg-4 order-3 order-md-2">
-        <div class="row">
-          <div class="col-6 mb-4">
-            <div class="card">
-              <div class="card-body">
-                <div class="card-title d-flex align-items-start justify-content-between">
-                  <div class="avatar flex-shrink-0"><img src="/admin/img/icons/unicons/paypal.png" alt="Credit Card" class="rounded" /></div>
-                  <div class="dropdown">
-                    <button class="btn p-0" type="button" data-bs-toggle="dropdown"><i class="bx bx-dots-vertical-rounded"></i></button>
-                    <div class="dropdown-menu dropdown-menu-end">
-                      <a class="dropdown-item" href="javascript:void(0);">View More</a>
-                      <a class="dropdown-item" href="javascript:void(0);">Delete</a>
-                    </div>
-                  </div>
-                </div>
-                <span class="d-block mb-1">Payments</span>
-                <h3 class="card-title text-nowrap mb-2">$2,456</h3>
-                <small class="text-danger fw-semibold"><i class="bx bx-down-arrow-alt"></i> -14.82%</small>
-              </div>
-            </div>
-          </div>
-          <div class="col-6 mb-4">
-            <div class="card">
-              <div class="card-body">
-                <div class="card-title d-flex align-items-start justify-content-between">
-                  <div class="avatar flex-shrink-0"><img src="/admin/img/icons/unicons/cc-primary.png" alt="Credit Card" class="rounded" /></div>
-                  <div class="dropdown">
-                    <button class="btn p-0" type="button" data-bs-toggle="dropdown"><i class="bx bx-dots-vertical-rounded"></i></button>
-                    <div class="dropdown-menu" ><a class="dropdown-item" href="javascript:void(0);">View More</a></div>
-                  </div>
-                </div>
-                <span class="fw-semibold d-block mb-1">Transactions</span>
-                <h3 class="card-title mb-2">$14,857</h3>
-                <small class="text-success fw-semibold"><i class="bx bx-up-arrow-alt"></i> +28.14%</small>
-              </div>
-            </div>
-          </div>
-          <div class="col-12 mb-4">
-            <div class="card">
-              <div class="card-body">
-                <div class="d-flex justify-content-between flex-sm-row flex-column gap-3">
-                  <div class="d-flex flex-sm-column flex-row align-items-start justify-content-between">
-                    <div class="card-title">
-                      <h5 class="text-nowrap mb-2">Profile Report</h5>
-                      <span class="badge bg-label-warning rounded-pill">Year 2021</span>
-                    </div>
-                    <div class="mt-sm-auto">
-                      <small class="text-success text-nowrap fw-semibold"><i class="bx bx-chevron-up"></i> 68.2%</small>
-                      <h3 class="mb-0">$84,686k</h3>
-                    </div>
-                  </div>
-                  <apexchart type="line" height="80" :options="profileReportOptions" :series="profileReportSeries"></apexchart>
-                </div>
-              </div>
-            </div>
+          <div class="card-body pt-0 px-2 pb-2">
+            <apexchart
+              type="bar"
+              height="260"
+              :options="barChartOptions"
+              :series="revenueChartData.series"
+            ></apexchart>
           </div>
         </div>
       </div>
     </div>
 
-    <div class="row">
-      <!-- Order Statistics -->
-      <div class="col-md-6 col-lg-4 col-xl-4 order-0 mb-4">
-        <div class="card h-100">
-          <div class="card-header d-flex align-items-center justify-content-between pb-0">
-            <div class="card-title mb-0">
-              <h5 class="m-0 me-2">Order Statistics</h5>
-              <small class="fw-semibold text-secondary">42.82k Total Sales</small>
+    <!-- TẦNG DƯỚI: GIAO DỊCH GẦN ĐÂY (COL-8) + CƠ CẤU GIAO DỊCH (COL-4) -->
+    <div class="row g-3">
+      <!-- Cột trái: Giao Dịch Gần Đây (Recent Activities) -->
+      <div class="col-lg-8 col-12">
+        <div class="card border-0 shadow-sm h-100">
+          <div class="card-header pb-3 d-flex justify-content-between align-items-center border-bottom">
+            <div>
+              <h5 class="card-title mb-0 fw-bold text-dark" style="font-size: 1rem;">Giao Dịch Gần Đây</h5>
+              <small class="text-muted">Đơn hàng và yêu cầu báo giá mới nhất cần xử lý</small>
             </div>
-            <div class="dropdown">
-              <button class="btn p-0" type="button" data-bs-toggle="dropdown"><i class="bx bx-dots-vertical-rounded"></i></button>
-              <div class="dropdown-menu dropdown-menu-end">
-                <a class="dropdown-item" href="javascript:void(0);">Select All</a>
-                <a class="dropdown-item" href="javascript:void(0);">Refresh</a>
-                <a class="dropdown-item" href="javascript:void(0);">Share</a>
-              </div>
-            </div>
+            <router-link to="/admin/don-hang" class="btn btn-sm btn-outline-primary">
+              Xem tất cả <i class="bx bx-right-arrow-alt ms-1"></i>
+            </router-link>
           </div>
-          <div class="card-body">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-              <div class="d-flex flex-column align-items-center gap-1">
-                <h2 class="mb-2">8,258</h2>
-                <span>Total Orders</span>
-              </div>
-              <apexchart type="donut" height="165" width="130" :options="orderStatOptions" :series="orderStatSeries"></apexchart>
-            </div>
-            <ul class="p-0 m-0">
-              <li class="d-flex mb-4 pb-1">
-                <div class="avatar flex-shrink-0 me-3"><span class="avatar-initial rounded bg-label-primary"><i class="bx bx-mobile-alt"></i></span></div>
-                <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
-                  <div class="me-2"><h6 class="mb-0">Electronic</h6><small class="fw-semibold text-secondary">Mobile, Earbuds, TV</small></div>
-                  <div class="user-progress"><small class="fw-semibold">82.5k</small></div>
-                </div>
-              </li>
-              <li class="d-flex mb-4 pb-1">
-                <div class="avatar flex-shrink-0 me-3"><span class="avatar-initial rounded bg-label-success"><i class="bx bx-closet"></i></span></div>
-                <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
-                  <div class="me-2"><h6 class="mb-0">Fashion</h6><small class="fw-semibold text-secondary">T-shirt, Jeans, Shoes</small></div>
-                  <div class="user-progress"><small class="fw-semibold">23.8k</small></div>
-                </div>
-              </li>
-              <li class="d-flex mb-4 pb-1">
-                <div class="avatar flex-shrink-0 me-3"><span class="avatar-initial rounded bg-label-info"><i class="bx bx-home-alt"></i></span></div>
-                <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
-                  <div class="me-2"><h6 class="mb-0">Decor</h6><small class="fw-semibold text-secondary">Fine Art, Dining</small></div>
-                  <div class="user-progress"><small class="fw-semibold">849k</small></div>
-                </div>
-              </li>
-              <li class="d-flex">
-                <div class="avatar flex-shrink-0 me-3"><span class="avatar-initial rounded bg-label-secondary"><i class="bx bx-football"></i></span></div>
-                <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
-                  <div class="me-2"><h6 class="mb-0">Sports</h6><small class="fw-semibold text-secondary">Football, Cricket Kit</small></div>
-                  <div class="user-progress"><small class="fw-semibold">99</small></div>
-                </div>
-              </li>
-            </ul>
+          <div class="table-responsive text-nowrap">
+            <table class="table table-hover align-middle mb-0">
+              <thead class="table-light">
+                <tr>
+                  <th class="text-center text-uppercase" style="width: 5%">STT</th>
+                  <th class="text-center text-uppercase" style="width: 14%">Phân Loại</th>
+                  <th class="text-uppercase" style="width: 22%">Mã & Trạng Thái</th>
+                  <th class="text-uppercase" style="width: 28%">Khách Hàng</th>
+                  <th class="text-uppercase" style="width: 16%">Thời Gian</th>
+                  <th class="text-end text-uppercase" style="width: 15%">Số Tiền</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-if="!recentActivities || recentActivities.length === 0">
+                  <td colspan="6" class="text-center py-5 text-muted">
+                    <i class="bx bx-folder-open text-secondary fs-1 d-block mb-2"></i>
+                    Không có dữ liệu
+                  </td>
+                </tr>
+                <tr v-for="(item, index) in recentActivities" :key="item.type + item.id">
+                  <td class="text-center">
+                    <strong>{{ index + 1 }}</strong>
+                  </td>
+                  <td class="text-center">
+                    <span class="badge badge-custom" :class="item.type === 'quote' ? 'bg-pastel-info' : 'bg-pastel-warning'">
+                      {{ item.type_label }}
+                    </span>
+                  </td>
+                  <td>
+                    <span class="fw-bold text-dark d-block" style="font-size: 0.85rem;">{{ item.code }}</span>
+                    <span class="badge badge-custom mt-1" :class="item.status_class">
+                      {{ item.status_label }}
+                    </span>
+                  </td>
+                  <td>
+                    <span class="fw-bold text-dark d-block mb-1" style="font-size: 0.85rem;">{{ item.customer_name }}</span>
+                    <div class="text-muted" style="font-size: 0.8rem;">
+                      <i class="bx bx-phone text-primary me-1"></i>{{ item.customer_phone }}
+                    </div>
+                  </td>
+                  <td>
+                    <span class="d-block text-dark fw-medium mb-1" style="font-size: 0.82rem;">
+                      <i class="bx bx-calendar-alt text-primary me-1"></i>{{ item.created_at }}
+                    </span>
+                    <span class="text-muted" style="font-size: 0.75rem;">
+                      <i class="bx bx-time-five me-1"></i>{{ item.time_ago }}
+                    </span>
+                  </td>
+                  <td class="text-end">
+                    <span class="fw-bold text-dark" style="font-size: 0.9rem;">
+                      {{ formatCurrency(item.amount) }}
+                    </span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
       </div>
 
-      <!-- Expense Overview -->
-      <div class="col-md-6 col-lg-4 order-1 mb-4">
-        <div class="card h-100">
-          <div class="card-header">
-            <ul class="nav nav-pills" role="tablist">
-              <li class="nav-item"><button type="button" class="nav-link active" role="tab">Income</button></li>
-              <li class="nav-item"><button type="button" class="nav-link" role="tab">Expenses</button></li>
-              <li class="nav-item"><button type="button" class="nav-link" role="tab">Profit</button></li>
-            </ul>
+      <!-- Cột phải: Cơ Cấu Giao Dịch (Donut Chart: Đơn Hàng vs Báo Giá) -->
+      <div class="col-lg-4 col-12">
+        <div class="card border-0 shadow-sm h-100">
+          <div class="card-header pb-2 border-bottom">
+            <h5 class="card-title mb-0 fw-bold text-dark" style="font-size: 1rem;">Cơ Cấu Giao Dịch</h5>
+            <small class="text-muted">Tỷ lệ đơn hàng trực tiếp & yêu cầu báo giá</small>
           </div>
-          <div class="card-body px-0">
-            <div class="d-flex p-4 pt-3">
-              <div class="avatar flex-shrink-0 me-3">
-                <img src="/admin/img/icons/unicons/wallet.png" alt="User" />
-              </div>
-              <div>
-                <small class="text-muted d-block">Total Balance</small>
+          <div class="card-body d-flex flex-column justify-content-between pt-3">
+            <div v-if="hasDonutData" class="my-auto">
+              <apexchart
+                type="donut"
+                height="230"
+                :options="donutChartOptions"
+                :series="distributionChartData.series"
+              ></apexchart>
+            </div>
+            <div v-else class="text-center py-5 my-auto text-muted">
+              <i class="bx bx-pie-chart-alt-2 fs-1 text-secondary d-block mb-2"></i>
+              <span>Không có dữ liệu</span>
+            </div>
+            
+            <!-- Thống kê chi tiết từng loại giao dịch dưới biểu đồ -->
+            <div class="border-top pt-3 mt-2">
+              <div class="d-flex justify-content-between align-items-center mb-2" style="font-size: 0.8rem;">
                 <div class="d-flex align-items-center">
-                  <h6 class="mb-0 me-1">$459.10</h6>
-                  <small class="text-success fw-semibold"><i class="bx bx-chevron-up"></i> 42.9%</small>
+                  <span class="badge rounded-circle p-1 me-2" style="background-color: #696cff;"></span>
+                  <span class="text-dark fw-medium">Đơn Hàng Trực Tiếp</span>
+                </div>
+                <div class="fw-bold text-dark">
+                  {{ distributionChartData.counts.order || 0 }} đơn <span class="text-muted fw-normal">({{ distributionChartData.percentages.order || 0 }}%)</span>
+                </div>
+              </div>
+              <div class="d-flex justify-content-between align-items-center" style="font-size: 0.8rem;">
+                <div class="d-flex align-items-center">
+                  <span class="badge rounded-circle p-1 me-2" style="background-color: #ffab00;"></span>
+                  <span class="text-dark fw-medium">Yêu Cầu Báo Giá</span>
+                </div>
+                <div class="fw-bold text-dark">
+                  {{ distributionChartData.counts.quote || 0 }} yêu cầu <span class="text-muted fw-normal">({{ distributionChartData.percentages.quote || 0 }}%)</span>
                 </div>
               </div>
             </div>
-            <apexchart type="area" height="215" :options="incomeOptions" :series="incomeSeries"></apexchart>
-            <div class="d-flex justify-content-center pt-4 gap-2">
-              <div class="flex-shrink-0">
-                <apexchart type="radialBar" width="60" height="60" :options="weeklyExpOptions" :series="weeklyExpSeries"></apexchart>
-              </div>
-              <div>
-                <p class="mb-n1 mt-1">Expenses This Week</p>
-                <small class="fw-semibold text-secondary">$39 less than last week</small>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Transactions -->
-      <div class="col-md-6 col-lg-4 order-2 mb-4">
-        <div class="card h-100">
-          <div class="card-header d-flex align-items-center justify-content-between">
-            <h5 class="card-title m-0 me-2">Transactions</h5>
-            <div class="dropdown">
-              <button class="btn p-0" type="button" data-bs-toggle="dropdown"><i class="bx bx-dots-vertical-rounded"></i></button>
-              <div class="dropdown-menu dropdown-menu-end">
-                <a class="dropdown-item" href="javascript:void(0);">Last 28 Days</a>
-                <a class="dropdown-item" href="javascript:void(0);">Last Month</a>
-                <a class="dropdown-item" href="javascript:void(0);">Last Year</a>
-              </div>
-            </div>
-          </div>
-          <div class="card-body">
-            <ul class="p-0 m-0">
-              <li class="d-flex mb-4 pb-1">
-                <div class="avatar flex-shrink-0 me-3"><img src="/admin/img/icons/unicons/paypal.png" alt="User" class="rounded" /></div>
-                <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
-                  <div class="me-2"><small class="text-muted d-block mb-1">Paypal</small><h6 class="mb-0">Send money</h6></div>
-                  <div class="user-progress d-flex align-items-center gap-1"><h6 class="mb-0">+82.6</h6><span class="fw-semibold text-secondary">USD</span></div>
-                </div>
-              </li>
-              <li class="d-flex mb-4 pb-1">
-                <div class="avatar flex-shrink-0 me-3"><img src="/admin/img/icons/unicons/wallet.png" alt="User" class="rounded" /></div>
-                <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
-                  <div class="me-2"><small class="text-muted d-block mb-1">Wallet</small><h6 class="mb-0">Mac D</h6></div>
-                  <div class="user-progress d-flex align-items-center gap-1"><h6 class="mb-0">+270.69</h6><span class="fw-semibold text-secondary">USD</span></div>
-                </div>
-              </li>
-              <li class="d-flex mb-4 pb-1">
-                <div class="avatar flex-shrink-0 me-3"><img src="/admin/img/icons/unicons/chart.png" alt="User" class="rounded" /></div>
-                <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
-                  <div class="me-2"><small class="text-muted d-block mb-1">Transfer</small><h6 class="mb-0">Refund</h6></div>
-                  <div class="user-progress d-flex align-items-center gap-1"><h6 class="mb-0">+637.91</h6><span class="fw-semibold text-secondary">USD</span></div>
-                </div>
-              </li>
-              <li class="d-flex mb-4 pb-1">
-                <div class="avatar flex-shrink-0 me-3"><img src="/admin/img/icons/unicons/cc-success.png" alt="User" class="rounded" /></div>
-                <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
-                  <div class="me-2"><small class="text-muted d-block mb-1">Credit Card</small><h6 class="mb-0">Ordered Food</h6></div>
-                  <div class="user-progress d-flex align-items-center gap-1"><h6 class="mb-0">-838.71</h6><span class="fw-semibold text-secondary">USD</span></div>
-                </div>
-              </li>
-              <li class="d-flex mb-4 pb-1">
-                <div class="avatar flex-shrink-0 me-3"><img src="/admin/img/icons/unicons/wallet.png" alt="User" class="rounded" /></div>
-                <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
-                  <div class="me-2"><small class="text-muted d-block mb-1">Wallet</small><h6 class="mb-0">Starbucks</h6></div>
-                  <div class="user-progress d-flex align-items-center gap-1"><h6 class="mb-0">+203.33</h6><span class="fw-semibold text-secondary">USD</span></div>
-                </div>
-              </li>
-              <li class="d-flex">
-                <div class="avatar flex-shrink-0 me-3"><img src="/admin/img/icons/unicons/cc-warning.png" alt="User" class="rounded" /></div>
-                <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
-                  <div class="me-2"><small class="text-muted d-block mb-1">Mastercard</small><h6 class="mb-0">Ordered Food</h6></div>
-                  <div class="user-progress d-flex align-items-center gap-1"><h6 class="mb-0">-92.45</h6><span class="fw-semibold text-secondary">USD</span></div>
-                </div>
-              </li>
-            </ul>
           </div>
         </div>
       </div>
@@ -329,167 +317,299 @@
   </div>
 </template>
 
-<script>
-import VueApexCharts from "vue3-apexcharts";
+<script setup>
+import { ref, onMounted, computed } from 'vue';
+import apexchart from 'vue3-apexcharts';
+import axiosClient from '../../../api/axiosClient';
 
-const primary      = "#696cff";
-const secondary    = "#8592a3";
-const info         = "#03c3ec";
-const success      = "#71dd37";
-const warning      = "#ffab00";
-const cardColor    = "#fff";
-const headingColor = "#233446";
-const axisColor    = "#a1acb8";
-const borderColor  = "#eceef1";
+// State
+const isLoading = ref(false);
+const currentPeriod = ref('month');
 
-export default {
-  name: "DashboardAdmin",
-  components: {
-    apexchart: VueApexCharts
+const periodLabels = {
+  today: 'Hôm nay',
+  week: 'Tuần này',
+  month: 'Tháng này',
+  year: 'Năm nay',
+  all: 'Toàn thời gian'
+};
+
+const kpis = ref({
+  total_sales: 0,
+  sales_today: 0,
+  sales_growth: 0,
+  total_orders: 0,
+  orders_today: 0,
+  orders_growth: 0,
+  total_quotes: 0,
+  pending_quotes: 0,
+  quotes_today: 0,
+  quotes_growth: 0,
+  items_need_replenish: 0,
+  total_qty_need_replenish: 0,
+  open_po_count: 0
+});
+
+const revenueChartData = ref({
+  categories: ['Tháng 05', 'Tháng 06', 'Tháng 07', 'Tháng 08', 'Tháng 09', 'Tháng 10'],
+  series: [
+    { name: 'Doanh Thu Bán Hàng (Tr.đ)', data: [0, 0, 0, 0, 0, 0] },
+    { name: 'Chi Phí Nhập Kho PO (Tr.đ)', data: [0, 0, 0, 0, 0, 0] }
+  ],
+  current_period_revenue: 0,
+  growth_rate: 0
+});
+
+const distributionChartData = ref({
+  series: [0, 0],
+  labels: ['Đơn Hàng Trực Tiếp', 'Yêu Cầu Báo Giá'],
+  percentages: { order: 0, quote: 0 },
+  counts: { order: 0, quote: 0 }
+});
+
+const recentActivities = ref([]);
+
+// Kiểm tra xem Donut chart có dữ liệu hay không
+const hasDonutData = computed(() => {
+  return distributionChartData.value.series &&
+         distributionChartData.value.series.length > 0 &&
+         distributionChartData.value.series.some(v => v > 0);
+});
+
+// Cấu hình Biểu đồ Cột Doanh Thu & PO (ApexCharts)
+const barChartOptions = computed(() => ({
+  chart: {
+    type: 'bar',
+    height: 260,
+    toolbar: { show: false },
+    fontFamily: 'Public Sans, sans-serif'
   },
-  data() {
-    return {
-      // 1. Total Revenue - Stacked Bar
-      totalRevenueSeries: [
-        { name: "2021", data: [18, 7, 15, 29, 18, 12, 9] },
-        { name: "2020", data: [-13, -18, -9, -14, -5, -17, -15] }
-      ],
-      totalRevenueOptions: {
-        chart: { height: 300, stacked: true, type: "bar", toolbar: { show: false } },
-        plotOptions: {
-          bar: { horizontal: false, columnWidth: "33%", borderRadius: 12, startingShape: "rounded", endingShape: "rounded" }
-        },
-        colors: [primary, info],
-        dataLabels: { enabled: false },
-        stroke: { curve: "smooth", width: 6, lineCap: "round", colors: [cardColor] },
-        legend: {
-          show: true, horizontalAlign: "left", position: "top",
-          markers: { height: 8, width: 8, radius: 12, offsetX: -3 },
-          labels: { colors: axisColor },
-          itemMargin: { horizontal: 10 }
-        },
-        grid: { borderColor: borderColor, padding: { top: 0, bottom: -8, left: 20, right: 20 } },
-        xaxis: {
-          categories: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul"],
-          labels: { style: { fontSize: "13px", colors: axisColor } },
-          axisTicks: { show: false }, axisBorder: { show: false }
-        },
-        yaxis: { labels: { style: { fontSize: "13px", colors: axisColor } } },
-        states: { hover: { filter: { type: "none" } }, active: { filter: { type: "none" } } }
+  plotOptions: {
+    bar: {
+      horizontal: false,
+      columnWidth: '36%',
+      borderRadius: 4
+    }
+  },
+  dataLabels: { enabled: false },
+  stroke: { show: true, width: 2, colors: ['transparent'] },
+  colors: ['#696cff', '#8592a3'],
+  xaxis: {
+    categories: revenueChartData.value.categories || [],
+    labels: {
+      style: { fontSize: '12px', colors: '#8592a3' }
+    },
+    axisBorder: { show: false },
+    axisTicks: { show: false }
+  },
+  yaxis: {
+    labels: {
+      formatter: (val) => {
+        if (typeof val === 'number') {
+          return (val % 1 === 0 ? val : val.toFixed(1)) + ' Tr';
+        }
+        return val + ' Tr';
       },
+      style: { fontSize: '11px', colors: '#8592a3' }
+    }
+  },
+  fill: { opacity: 1 },
+  legend: { show: false },
+  grid: {
+    borderColor: '#eceef1',
+    strokeDashArray: 4,
+    padding: { top: 0, right: 10, bottom: 0, left: 10 }
+  },
+  tooltip: {
+    y: {
+      formatter: (val) => {
+        if (typeof val === 'number') {
+          return val.toLocaleString('vi-VN') + ' Triệu VNĐ';
+        }
+        return val;
+      }
+    }
+  }
+}));
 
-      // 2. Growth - RadialBar
-      growthSeries: [78],
-      growthOptions: {
-        chart: { height: 240, type: "radialBar" },
-        labels: ["Growth"],
-        plotOptions: {
-          radialBar: {
-            size: 150, offsetY: 10, startAngle: -150, endAngle: 150,
-            hollow: { size: "55%" },
-            track: { background: cardColor, strokeWidth: "100%" },
-            dataLabels: {
-              name: { offsetY: 15, color: headingColor, fontSize: "15px", fontWeight: "600", fontFamily: "Public Sans" },
-              value: { offsetY: -25, color: headingColor, fontSize: "22px", fontWeight: "500", fontFamily: "Public Sans" }
-            }
-          }
-        },
-        colors: [primary],
-        fill: {
-          type: "gradient",
-          gradient: { shade: "dark", shadeIntensity: 0.5, gradientToColors: [primary], inverseColors: true, opacityFrom: 1, opacityTo: 0.6, stops: [30, 70, 100] }
-        },
-        stroke: { dashArray: 5 },
-        grid: { padding: { top: -35, bottom: -10 } },
-        states: { hover: { filter: { type: "none" } }, active: { filter: { type: "none" } } }
-      },
-
-      // 3. Profile Report Sparkline
-      profileReportSeries: [{ data: [110, 270, 145, 245, 205, 285] }],
-      profileReportOptions: {
-        chart: {
-          height: 80, type: "line", toolbar: { show: false },
-          dropShadow: { enabled: true, top: 10, left: 5, blur: 3, color: warning, opacity: 0.15 },
-          sparkline: { enabled: true }
-        },
-        grid: { show: false, padding: { right: 8 } },
-        colors: [warning],
-        dataLabels: { enabled: false },
-        stroke: { width: 5, curve: "smooth" },
-        xaxis: { show: false, lines: { show: false }, labels: { show: false }, axisBorder: { show: false } },
-        yaxis: { show: false }
-      },
-
-      // 4. Order Statistics - Donut
-      orderStatSeries: [85, 15, 50, 50],
-      orderStatOptions: {
-        chart: { height: 165, width: 130, type: "donut" },
-        labels: ["Electronic", "Sports", "Decor", "Fashion"],
-        colors: [primary, secondary, info, success],
-        stroke: { width: 5, colors: [cardColor] },
-        dataLabels: { enabled: false },
-        legend: { show: false },
-        grid: { padding: { top: 0, bottom: 0, right: 15 } },
-        plotOptions: {
-          pie: {
-            donut: {
-              size: "75%",
-              labels: {
-                show: true,
-                value: { fontSize: "1.5rem", fontFamily: "Public Sans", color: headingColor, offsetY: -15, formatter: (val) => parseInt(val) + "%" },
-                name: { offsetY: 20, fontFamily: "Public Sans" },
-                total: { show: true, fontSize: "0.8125rem", color: axisColor, label: "Weekly", formatter: () => "38%" }
+// Cấu hình Biểu đồ Tròn Donut Cơ Cấu Giao Dịch (ApexCharts)
+const donutChartOptions = computed(() => ({
+  chart: {
+    type: 'donut',
+    fontFamily: 'Public Sans, sans-serif'
+  },
+  labels: distributionChartData.value.labels || ['Đơn Hàng Trực Tiếp', 'Yêu Cầu Báo Giá'],
+  colors: ['#696cff', '#ffab00'],
+  stroke: { width: 3, colors: ['#fff'] },
+  legend: { show: false },
+  dataLabels: { enabled: false },
+  plotOptions: {
+    pie: {
+      donut: {
+        size: '72%',
+        labels: {
+          show: true,
+          value: {
+            fontSize: '1.25rem',
+            fontWeight: 600,
+            color: '#566a7f',
+            offsetY: -5,
+            formatter: (val) => val
+          },
+          name: {
+            offsetY: 20,
+            fontSize: '0.82rem'
+          },
+          total: {
+            show: true,
+            fontSize: '0.75rem',
+            color: '#8592a3',
+            label: 'Tổng giao dịch',
+            formatter: (w) => {
+              const totals = w?.globals?.seriesTotals;
+              if (totals && totals.length) {
+                return totals.reduce((a, b) => a + b, 0);
               }
+              return distributionChartData.value.series.reduce((a, b) => a + b, 0);
             }
           }
         }
-      },
-
-      // 5. Income - Area Chart
-      incomeSeries: [{ data: [24, 21, 30, 22, 42, 26, 35, 29] }],
-      incomeOptions: {
-        chart: { height: 215, parentHeightOffset: 0, toolbar: { show: false }, type: "area" },
-        dataLabels: { enabled: false },
-        stroke: { width: 2, curve: "smooth" },
-        legend: { show: false },
-        markers: {
-          size: 6, colors: "transparent", strokeColors: "transparent", strokeWidth: 4,
-          discrete: [{ fillColor: cardColor, seriesIndex: 0, dataPointIndex: 7, strokeColor: primary, strokeWidth: 2, size: 6, radius: 8 }],
-          hover: { size: 7 }
-        },
-        colors: [primary],
-        fill: { type: "gradient", gradient: { shade: "light", shadeIntensity: 0.6, opacityFrom: 0.5, opacityTo: 0.25, stops: [0, 95, 100] } },
-        grid: { borderColor: borderColor, strokeDashArray: 3, padding: { top: -20, bottom: -8, left: -10, right: 8 } },
-        xaxis: {
-          categories: ["", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul"],
-          axisBorder: { show: false }, axisTicks: { show: false },
-          labels: { show: true, style: { fontSize: "13px", colors: axisColor } }
-        },
-        yaxis: { labels: { show: false }, min: 10, max: 50, tickAmount: 4 }
-      },
-
-      // 6. Weekly Expenses - Mini RadialBar
-      weeklyExpSeries: [65],
-      weeklyExpOptions: {
-        chart: { width: 60, height: 60, type: "radialBar" },
-        plotOptions: {
-          radialBar: {
-            startAngle: 0, endAngle: 360, strokeWidth: "8",
-            hollow: { margin: 2, size: "45%" },
-            track: { strokeWidth: "50%", background: borderColor },
-            dataLabels: {
-              show: true,
-              name: { show: false },
-              value: { formatter: (val) => "$" + parseInt(val), offsetY: 5, color: "#697a8d", fontSize: "13px", show: true }
-            }
-          }
-        },
-        fill: { type: "solid", colors: [primary] },
-        stroke: { lineCap: "round" },
-        grid: { padding: { top: -10, bottom: -15, left: -10, right: -10 } },
-        states: { hover: { filter: { type: "none" } }, active: { filter: { type: "none" } } }
       }
-    };
+    }
+  },
+  tooltip: {
+    y: {
+      formatter: (val) => val + ' mục'
+    }
+  }
+}));
+
+// Format tiền tệ chuẩn VNĐ
+const formatCurrency = (val) => {
+  if (!val || isNaN(val)) return '0 ₫';
+  return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(val);
+};
+
+// Rút gọn tiền tệ (Tr / Tỷ)
+const formatShortCurrency = (val) => {
+  if (!val || isNaN(val)) return '0 ₫';
+  if (val >= 1000000000) {
+    return (val / 1000000000).toFixed(1) + ' Tỷ';
+  }
+  if (val >= 1000000) {
+    return (val / 1000000).toFixed(1) + ' Tr';
+  }
+  return new Intl.NumberFormat('vi-VN').format(val) + ' ₫';
+};
+
+// Đổi kỳ thời gian
+const changePeriod = (period) => {
+  currentPeriod.value = period;
+  fetchData();
+};
+
+// Fetch dữ liệu từ API
+const fetchData = async () => {
+  isLoading.value = true;
+  try {
+    const res = await axiosClient.get(`/admin/dashboard/stats?period=${currentPeriod.value}`);
+    if (res && res.success && res.data) {
+      kpis.value = res.data.kpis || kpis.value;
+      if (res.data.revenue_chart) {
+        revenueChartData.value = res.data.revenue_chart;
+      }
+      if (res.data.distribution_chart) {
+        distributionChartData.value = res.data.distribution_chart;
+      }
+      recentActivities.value = res.data.recent_activities || [];
+    }
+  } catch (error) {
+    console.error('Lỗi tải dữ liệu Dashboard:', error);
+  } finally {
+    isLoading.value = false;
   }
 };
+
+onMounted(() => {
+  fetchData();
+});
 </script>
+
+<style scoped>
+.kpi-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border-radius: 8px;
+}
+.kpi-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08) !important;
+}
+
+.kpi-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  color: #8592a3;
+}
+
+.kpi-value {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #566a7f;
+  line-height: 1.2;
+}
+
+.kpi-subtext {
+  font-size: 0.75rem;
+}
+
+/* Badge Pastel chuẩn theo JPM Master Standard & Sneat */
+.badge-custom {
+  padding: 5px 9px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  border-radius: 4px;
+  letter-spacing: 0.3px;
+}
+
+.bg-pastel-warning {
+  background-color: rgba(255, 171, 0, 0.12) !important;
+  color: #ffab00 !important;
+}
+
+.bg-pastel-info {
+  background-color: rgba(3, 195, 236, 0.12) !important;
+  color: #03c3ec !important;
+}
+
+.bg-pastel-success {
+  background-color: rgba(113, 221, 55, 0.12) !important;
+  color: #71dd37 !important;
+}
+
+.bg-pastel-danger {
+  background-color: rgba(255, 62, 29, 0.12) !important;
+  color: #ff3e1d !important;
+}
+
+.bg-pastel-primary {
+  background-color: rgba(105, 108, 255, 0.12) !important;
+  color: #696cff !important;
+}
+
+.bg-pastel-secondary {
+  background-color: rgba(133, 146, 163, 0.12) !important;
+  color: #8592a3 !important;
+}
+
+/* Custom Table header */
+.table th {
+  font-size: 0.75rem;
+  letter-spacing: 0.5px;
+  color: #566a7f !important;
+  font-weight: 600 !important;
+  padding-top: 12px;
+  padding-bottom: 12px;
+}
+</style>

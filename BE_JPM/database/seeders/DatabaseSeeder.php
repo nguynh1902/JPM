@@ -35,8 +35,7 @@ class DatabaseSeeder extends Seeder
             FaqSeeder::class,
             NhaCungCapSeeder::class,
             KhoSeeder::class,
-            // DonHangSeeder::class,
-            // YeuCauBaoGiaSeeder::class,
+            DashboardSeeder::class,
             SystemLogSeeder::class,
         ]);
     }

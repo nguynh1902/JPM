@@ -44,10 +44,8 @@ import jqueryJs from "../assets/admin/template/vendor/libs/jquery/jquery.js?url"
 import popperJs from "../assets/admin/template/vendor/libs/popper/popper.js?url";
 import bootstrapJs from "../assets/admin/template/vendor/js/bootstrap.js?url";
 import perfectScrollbarJs from "../assets/admin/template/vendor/libs/perfect-scrollbar/perfect-scrollbar.js?url";
-import apexchartsJs from "../assets/admin/template/vendor/libs/apex-charts/apexcharts.js?url";
 import menuJs from "../assets/admin/template/vendor/js/menu.js?url";
 import mainJs from "../assets/admin/template/js/main.js?url";
-import dashboardsAnalyticsJs from "../assets/admin/template/js/dashboards-analytics.js?url";
 
 export default {
   name: "LayoutAdmin",
@@ -122,10 +120,8 @@ export default {
           .then(() => loadScript(popperJs))
           .then(() => loadScript(bootstrapJs))
           .then(() => loadScript(perfectScrollbarJs))
-          .then(() => loadScript(apexchartsJs))
           .then(() => loadScript(menuJs))
           .then(() => loadScript(mainJs))
-          .then(() => loadScript(dashboardsAnalyticsJs))
           .then(() => loadScript("https://buttons.github.io/buttons.js"))
           .finally(() => {
             this.isLoading = false;
