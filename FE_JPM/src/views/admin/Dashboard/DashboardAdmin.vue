@@ -3,9 +3,7 @@
     <!-- Header Page: Đồng bộ với chuẩn các trang Admin khác -->
     <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
       <div>
-        <h4 class="fw-bold mb-1">
-          <span class="text-muted fw-light">Chuỗi Cung Ứng /</span> Tổng Quan Dashboard
-        </h4>
+        <h4 class="fw-bold mb-1 text-dark">Dashboard</h4>
         <p class="text-muted mb-0" style="font-size: 0.85rem;">Chỉ số hoạt động kinh doanh & vận hành chuỗi cung ứng phụ tùng</p>
       </div>
       <div class="d-flex align-items-center gap-2">
@@ -202,14 +200,14 @@
           </div>
           <div class="table-responsive text-nowrap">
             <table class="table table-hover align-middle mb-0">
-              <thead class="table-light">
+              <thead class="border-bottom">
                 <tr>
                   <th class="text-center text-uppercase" style="width: 5%">STT</th>
                   <th class="text-center text-uppercase" style="width: 10%">Phân Loại</th>
                   <th class="text-uppercase" style="width: 22%">Mã & Trạng Thái</th>
                   <th class="text-uppercase" style="width: 30%">Khách Hàng</th>
                   <th class="text-uppercase" style="width: 18%">Thời Gian</th>
-                  <th class="text-end text-uppercase" style="width: 15%">Số Tiền</th>
+                  <th class="text-center text-uppercase" style="width: 15%">Số Tiền</th>
                 </tr>
               </thead>
               <tbody>
@@ -252,8 +250,8 @@
                       <i class="bx bx-time-five me-1"></i>{{ item.time_ago }}
                     </span>
                   </td>
-                  <td class="text-end">
-                    <span class="fw-bold text-dark" style="font-size: 0.9rem;">
+                  <td class="text-center">
+                    <span class="fw-bold text-danger" style="font-size: 0.9rem;">
                       {{ formatCurrency(item.amount) }}
                     </span>
                   </td>
@@ -599,13 +597,13 @@ onMounted(() => {
   color: #8592a3 !important;
 }
 
-/* Custom Table header */
+/* Custom Table header - Đồng bộ chuẩn font-weight 700 và màu sắc với các trang khác */
 .table th {
   font-size: 0.75rem;
-  letter-spacing: 0.5px;
-  color: #566a7f !important;
-  font-weight: 600 !important;
-  padding-top: 12px;
-  padding-bottom: 12px;
+  letter-spacing: 1px;
+  color: #233446 !important;
+  font-weight: 700 !important;
+  padding-top: 13px;
+  padding-bottom: 13px;
 }
 </style>
