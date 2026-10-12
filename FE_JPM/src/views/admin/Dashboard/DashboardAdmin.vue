@@ -42,9 +42,7 @@
                 <div>
                   <div class="d-flex justify-content-between align-items-center mb-2">
                     <span class="kpi-label">Tổng Doanh Thu</span>
-                    <span class="badge badge-custom bg-pastel-primary p-1">
-                      <i class="bx bx-dollar-circle fs-6"></i>
-                    </span>
+                    <i class="bx bx-dollar-circle text-primary fs-4"></i>
                   </div>
                   <div class="kpi-value text-dark mb-1">{{ formatShortCurrency(kpis.total_sales) }}</div>
                   <div class="d-flex align-items-center gap-1 kpi-subtext">
@@ -72,9 +70,7 @@
                 <div>
                   <div class="d-flex justify-content-between align-items-center mb-2">
                     <span class="kpi-label">Tổng Đơn Hàng</span>
-                    <span class="badge badge-custom bg-pastel-info p-1">
-                      <i class="bx bx-shopping-bag fs-6"></i>
-                    </span>
+                    <i class="bx bx-shopping-bag text-info fs-4"></i>
                   </div>
                   <div class="kpi-value text-dark mb-1">{{ (kpis.total_orders || 0).toLocaleString() }}</div>
                   <div class="d-flex align-items-center gap-1 kpi-subtext">
@@ -102,9 +98,7 @@
                 <div>
                   <div class="d-flex justify-content-between align-items-center mb-2">
                     <span class="kpi-label">Yêu Cầu Báo Giá</span>
-                    <span class="badge badge-custom bg-pastel-warning p-1">
-                      <i class="bx bx-message-square-dots fs-6"></i>
-                    </span>
+                    <i class="bx bx-message-square-dots text-warning fs-4"></i>
                   </div>
                   <div class="kpi-value text-dark mb-1">{{ (kpis.total_quotes || 0).toLocaleString() }}</div>
                   <div class="d-flex align-items-center gap-1 kpi-subtext">
@@ -131,9 +125,7 @@
                 <div>
                   <div class="d-flex justify-content-between align-items-center mb-2">
                     <span class="kpi-label">Cần Gom Hàng PO</span>
-                    <span class="badge badge-custom bg-pastel-danger p-1">
-                      <i class="bx bx-error-circle fs-6"></i>
-                    </span>
+                    <i class="bx bx-error-circle text-danger fs-4"></i>
                   </div>
                   <div class="kpi-value text-dark mb-1">
                     {{ kpis.items_need_replenish }} <small class="text-muted fw-normal" style="font-size: 0.8rem;">mặt hàng</small>
@@ -213,10 +205,10 @@
               <thead class="table-light">
                 <tr>
                   <th class="text-center text-uppercase" style="width: 5%">STT</th>
-                  <th class="text-center text-uppercase" style="width: 14%">Phân Loại</th>
+                  <th class="text-center text-uppercase" style="width: 10%">Phân Loại</th>
                   <th class="text-uppercase" style="width: 22%">Mã & Trạng Thái</th>
-                  <th class="text-uppercase" style="width: 28%">Khách Hàng</th>
-                  <th class="text-uppercase" style="width: 16%">Thời Gian</th>
+                  <th class="text-uppercase" style="width: 30%">Khách Hàng</th>
+                  <th class="text-uppercase" style="width: 18%">Thời Gian</th>
                   <th class="text-end text-uppercase" style="width: 15%">Số Tiền</th>
                 </tr>
               </thead>
@@ -231,8 +223,12 @@
                   <td class="text-center">
                     <strong>{{ index + 1 }}</strong>
                   </td>
-                  <td class="text-center">
-                    <span class="badge badge-custom" :class="item.type === 'quote' ? 'bg-pastel-info' : 'bg-pastel-warning'">
+                  <td class="text-center text-nowrap">
+                    <span
+                      class="fw-bold"
+                      :class="item.type === 'quote' ? 'text-danger' : 'text-primary'"
+                      style="font-size: 0.8rem; letter-spacing: 0.3px;"
+                    >
                       {{ item.type_label }}
                     </span>
                   </td>
