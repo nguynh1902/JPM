@@ -16,7 +16,7 @@ class DashboardController extends Controller
     public function stats(Request $request)
     {
         try {
-            $period = $request->query('period', 'month');
+            $period = $request->query('period', 'year');
             $now = Carbon::now();
 
             // Xác định mốc thời gian lọc
@@ -93,27 +93,139 @@ class DashboardController extends Controller
             $totalQtyNeedReplenish = (int) TonKho::where('so_luong_dang_giu', '>', 0)->sum('so_luong_dang_giu');
             $openPOCount = (int) DonNhapHang::whereIn('trang_thai', [0, 1])->count();
 
-            // 5. BIỂU ĐỒ DOANH THU & CHI PHÍ NHẬP HÀNG (6 THÁNG GẦN NHẤT)
-            $months = [];
+            // 5. BIỂU ĐỒ DOANH THU & CHI PHÍ NHẬP HÀNG THEO KỲ LỌC ($period)
+            $chartCategories = [];
             $salesData = [];
             $procurementData = [];
 
-            for ($i = 5; $i >= 0; $i--) {
-                $m = $now->copy()->subMonths($i);
-                $mStart = $m->copy()->startOfMonth();
-                $mEnd = $m->copy()->endOfMonth();
-                $monthLabel = 'Tháng ' . $m->format('m');
-                $months[] = $monthLabel;
+            switch ($period) {
+                case 'today':
+                    // Chia theo 4 khung giờ trong ngày
+                    $slots = [
+                        ['label' => '00h - 06h', 'start' => 0, 'end' => 6],
+                        ['label' => '06h - 12h', 'start' => 6, 'end' => 12],
+                        ['label' => '12h - 18h', 'start' => 12, 'end' => 18],
+                        ['label' => '18h - 24h', 'start' => 18, 'end' => 24],
+                    ];
+                    foreach ($slots as $slot) {
+                        $chartCategories[] = $slot['label'];
+                        $slotStart = $now->copy()->startOfDay()->addHours($slot['start']);
+                        $slotEnd = $slot['end'] === 24
+                            ? $now->copy()->endOfDay()
+                            : $now->copy()->startOfDay()->addHours($slot['end'])->subSecond();
 
-                $monthlySale = (float) DonHang::whereBetween('created_at', [$mStart, $mEnd])
-                    ->where('trang_thai', '!=', 4)
-                    ->sum('tong_tien');
-                $salesData[] = round($monthlySale / 1000000, 2); // Quy về triệu VNĐ cho biểu đồ gọn
+                        $sVal = (float) DonHang::whereBetween('created_at', [$slotStart, $slotEnd])
+                            ->where('trang_thai', '!=', 4)
+                            ->sum('tong_tien');
+                        $pVal = (float) DonNhapHang::whereBetween('created_at', [$slotStart, $slotEnd])
+                            ->where('trang_thai', '!=', 3)
+                            ->sum('tong_tien');
 
-                $monthlyProcurement = (float) DonNhapHang::whereBetween('created_at', [$mStart, $mEnd])
-                    ->where('trang_thai', '!=', 3)
-                    ->sum('tong_tien');
-                $procurementData[] = round($monthlyProcurement / 1000000, 2); // Triệu VNĐ
+                        $salesData[] = round($sVal / 1000000, 2);
+                        $procurementData[] = round($pVal / 1000000, 2);
+                    }
+                    break;
+
+                case 'week':
+                    // Chia theo 7 ngày trong tuần hiện tại (Thứ 2 -> Chủ nhật)
+                    $dayNames = ['Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7', 'Chủ nhật'];
+                    $startOfWeek = $now->copy()->startOfWeek();
+                    for ($d = 0; $d < 7; $d++) {
+                        $targetDate = $startOfWeek->copy()->addDays($d);
+                        $chartCategories[] = $dayNames[$d] . ' (' . $targetDate->format('d/m') . ')';
+
+                        $dStart = $targetDate->copy()->startOfDay();
+                        $dEnd = $targetDate->copy()->endOfDay();
+
+                        $sVal = (float) DonHang::whereBetween('created_at', [$dStart, $dEnd])
+                            ->where('trang_thai', '!=', 4)
+                            ->sum('tong_tien');
+                        $pVal = (float) DonNhapHang::whereBetween('created_at', [$dStart, $dEnd])
+                            ->where('trang_thai', '!=', 3)
+                            ->sum('tong_tien');
+
+                        $salesData[] = round($sVal / 1000000, 2);
+                        $procurementData[] = round($pVal / 1000000, 2);
+                    }
+                    break;
+
+                case 'month':
+                    // Chia theo các tuần trong tháng hiện tại (Tuần 1 -> Tuần 4/5)
+                    $daysInMonth = $now->daysInMonth;
+                    $currentMonthStr = $now->format('m');
+                    $weeks = [
+                        ['label' => 'Tuần 1 (01-07)', 'start' => 1, 'end' => 7],
+                        ['label' => 'Tuần 2 (08-14)', 'start' => 8, 'end' => 14],
+                        ['label' => 'Tuần 3 (15-21)', 'start' => 15, 'end' => 21],
+                        ['label' => 'Tuần 4 (22-28)', 'start' => 22, 'end' => 28],
+                    ];
+                    if ($daysInMonth > 28) {
+                        $weeks[] = [
+                            'label' => 'Tuần 5 (29-' . $daysInMonth . ')',
+                            'start' => 29,
+                            'end' => $daysInMonth
+                        ];
+                    }
+
+                    foreach ($weeks as $w) {
+                        $chartCategories[] = $w['label'];
+                        $wStart = $now->copy()->day($w['start'])->startOfDay();
+                        $wEnd = $now->copy()->day($w['end'])->endOfDay();
+
+                        $sVal = (float) DonHang::whereBetween('created_at', [$wStart, $wEnd])
+                            ->where('trang_thai', '!=', 4)
+                            ->sum('tong_tien');
+                        $pVal = (float) DonNhapHang::whereBetween('created_at', [$wStart, $wEnd])
+                            ->where('trang_thai', '!=', 3)
+                            ->sum('tong_tien');
+
+                        $salesData[] = round($sVal / 1000000, 2);
+                        $procurementData[] = round($pVal / 1000000, 2);
+                    }
+                    break;
+
+                case 'all':
+                    // Hiển thị theo từng năm (từ 2024 đến năm hiện tại)
+                    $currentYear = $now->year;
+                    $startYear = max(2024, $currentYear - 2);
+                    for ($y = $startYear; $y <= $currentYear; $y++) {
+                        $chartCategories[] = 'Năm ' . $y;
+                        $yStart = Carbon::create($y, 1, 1)->startOfYear();
+                        $yEnd = Carbon::create($y, 12, 31)->endOfYear();
+
+                        $sVal = (float) DonHang::whereBetween('created_at', [$yStart, $yEnd])
+                            ->where('trang_thai', '!=', 4)
+                            ->sum('tong_tien');
+                        $pVal = (float) DonNhapHang::whereBetween('created_at', [$yStart, $yEnd])
+                            ->where('trang_thai', '!=', 3)
+                            ->sum('tong_tien');
+
+                        $salesData[] = round($sVal / 1000000, 2);
+                        $procurementData[] = round($pVal / 1000000, 2);
+                    }
+                    break;
+
+                case 'year':
+                default:
+                    // Từ Tháng 01 đến Tháng hiện tại của năm (tự thêm cột khi qua tháng mới đến khi đủ 12 tháng)
+                    $currentMonthNum = $now->month;
+                    $currentYear = $now->year;
+                    for ($m = 1; $m <= $currentMonthNum; $m++) {
+                        $chartCategories[] = 'Tháng ' . str_pad($m, 2, '0', STR_PAD_LEFT);
+                        $mStart = Carbon::create($currentYear, $m, 1)->startOfMonth();
+                        $mEnd = Carbon::create($currentYear, $m, 1)->endOfMonth();
+
+                        $sVal = (float) DonHang::whereBetween('created_at', [$mStart, $mEnd])
+                            ->where('trang_thai', '!=', 4)
+                            ->sum('tong_tien');
+                        $pVal = (float) DonNhapHang::whereBetween('created_at', [$mStart, $mEnd])
+                            ->where('trang_thai', '!=', 3)
+                            ->sum('tong_tien');
+
+                        $salesData[] = round($sVal / 1000000, 2);
+                        $procurementData[] = round($pVal / 1000000, 2);
+                    }
+                    break;
             }
 
             // 6. PHÂN BỔ LUỒNG GIAO DỊCH (DISTRIBUTION: ĐƠN HOÀN TẤT, ĐANG XỬ LÝ, YÊU CẦU BÁO GIÁ)
@@ -224,7 +336,7 @@ class DashboardController extends Controller
                         'open_po_count' => $openPOCount,
                     ],
                     'revenue_chart' => [
-                        'categories' => $months,
+                        'categories' => $chartCategories,
                         'series' => [
                             [
                                 'name' => 'Doanh Thu Bán Hàng (Tr.đ)',

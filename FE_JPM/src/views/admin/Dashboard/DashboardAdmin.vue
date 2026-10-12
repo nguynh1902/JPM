@@ -8,21 +8,81 @@
       </div>
       <div class="d-flex align-items-center gap-2">
         <!-- Bộ lọc thời gian -->
-        <div class="dropdown">
-          <button class="btn btn-white bg-white border text-secondary btn-sm dropdown-toggle shadow-sm px-3" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-            <i class="bx bx-calendar me-1 text-primary"></i> {{ periodLabels[currentPeriod] || 'Tháng này' }}
+        <div ref="dropdownRef" class="dropdown position-relative">
+          <button 
+            class="btn btn-white bg-white border text-secondary btn-sm dropdown-toggle shadow-sm px-3 d-flex align-items-center" 
+            type="button" 
+            @click.stop="toggleDropdown"
+            :aria-expanded="isDropdownOpen"
+          >
+            <i class="bx bx-calendar me-1 text-primary"></i> 
+            <span class="fw-medium text-dark">{{ periodLabels[currentPeriod] || 'Năm nay' }}</span>
           </button>
-          <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0">
-            <li><a class="dropdown-item" href="javascript:void(0)" @click="changePeriod('today')" :class="{'active': currentPeriod === 'today'}">Hôm nay</a></li>
-            <li><a class="dropdown-item" href="javascript:void(0)" @click="changePeriod('week')" :class="{'active': currentPeriod === 'week'}">Tuần này</a></li>
-            <li><a class="dropdown-item" href="javascript:void(0)" @click="changePeriod('month')" :class="{'active': currentPeriod === 'month'}">Tháng này</a></li>
-            <li><a class="dropdown-item" href="javascript:void(0)" @click="changePeriod('year')" :class="{'active': currentPeriod === 'year'}">Năm nay</a></li>
-            <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="javascript:void(0)" @click="changePeriod('all')" :class="{'active': currentPeriod === 'all'}">Toàn thời gian</a></li>
+          <ul 
+            class="dropdown-menu dropdown-menu-end shadow border-0 py-1" 
+            :class="{ 'show': isDropdownOpen }"
+            style="position: absolute; right: 0; top: 100%; z-index: 1050; min-width: 235px; margin-top: 4px;"
+          >
+            <li>
+              <a 
+                class="dropdown-item d-flex align-items-center justify-content-between py-2 px-3" 
+                href="javascript:void(0)" 
+                @click="selectPeriod('today')" 
+                :class="{'active': currentPeriod === 'today'}"
+              >
+                <span><i class="bx bx-time-five me-2 text-primary"></i>Hôm nay</span>
+                <small class="badge bg-light text-muted fw-normal" :class="{'text-white bg-transparent': currentPeriod === 'today'}">{{ todayFormatted }}</small>
+              </a>
+            </li>
+            <li>
+              <a 
+                class="dropdown-item d-flex align-items-center justify-content-between py-2 px-3" 
+                href="javascript:void(0)" 
+                @click="selectPeriod('week')" 
+                :class="{'active': currentPeriod === 'week'}"
+              >
+                <span><i class="bx bx-calendar-week me-2 text-info"></i>Tuần này</span>
+                <small class="badge bg-light text-muted fw-normal" :class="{'text-white bg-transparent': currentPeriod === 'week'}">{{ weekFormatted }}</small>
+              </a>
+            </li>
+            <li>
+              <a 
+                class="dropdown-item d-flex align-items-center justify-content-between py-2 px-3" 
+                href="javascript:void(0)" 
+                @click="selectPeriod('month')" 
+                :class="{'active': currentPeriod === 'month'}"
+              >
+                <span><i class="bx bx-calendar-alt me-2 text-warning"></i>Tháng này</span>
+                <small class="badge bg-light text-muted fw-normal" :class="{'text-white bg-transparent': currentPeriod === 'month'}">{{ monthFormatted }}</small>
+              </a>
+            </li>
+            <li>
+              <a 
+                class="dropdown-item d-flex align-items-center justify-content-between py-2 px-3" 
+                href="javascript:void(0)" 
+                @click="selectPeriod('year')" 
+                :class="{'active': currentPeriod === 'year'}"
+              >
+                <span><i class="bx bx-calendar-event me-2 text-success"></i>Năm nay</span>
+                <small class="badge bg-light text-muted fw-normal" :class="{'text-white bg-transparent': currentPeriod === 'year'}">{{ yearFormatted }}</small>
+              </a>
+            </li>
+            <li><hr class="dropdown-divider my-1"></li>
+            <li>
+              <a 
+                class="dropdown-item d-flex align-items-center justify-content-between py-2 px-3" 
+                href="javascript:void(0)" 
+                @click="selectPeriod('all')" 
+                :class="{'active': currentPeriod === 'all'}"
+              >
+                <span><i class="bx bx-history me-2 text-secondary"></i>Toàn thời gian</span>
+                <small class="badge bg-light text-muted fw-normal" :class="{'text-white bg-transparent': currentPeriod === 'all'}">Tất cả</small>
+              </a>
+            </li>
           </ul>
         </div>
         <!-- Nút Làm Mới -->
-        <button class="btn btn-primary btn-sm shadow-sm px-3" @click="fetchData" :disabled="isLoading">
+        <button class="btn btn-primary btn-sm shadow-sm px-3" @click="fetchData(true)" :disabled="isLoading">
           <i class="bx bx-refresh me-1" :class="{'bx-spin': isLoading}"></i> Làm mới
         </button>
       </div>
@@ -34,8 +94,8 @@
       <div class="col-lg-5 col-12">
         <div class="row g-3 h-100">
           <!-- Card 1: Tổng Doanh Thu -->
-          <div class="col-sm-6 col-12">
-            <div class="card border-0 shadow-sm h-100 kpi-card">
+          <div class="col-sm-6 col-12 d-flex">
+            <div class="card border-0 shadow-sm w-100 kpi-card">
               <div class="card-body p-3 d-flex flex-column justify-content-between">
                 <div>
                   <div class="d-flex justify-content-between align-items-center mb-2">
@@ -62,8 +122,8 @@
           </div>
 
           <!-- Card 2: Tổng Đơn Hàng -->
-          <div class="col-sm-6 col-12">
-            <div class="card border-0 shadow-sm h-100 kpi-card">
+          <div class="col-sm-6 col-12 d-flex">
+            <div class="card border-0 shadow-sm w-100 kpi-card">
               <div class="card-body p-3 d-flex flex-column justify-content-between">
                 <div>
                   <div class="d-flex justify-content-between align-items-center mb-2">
@@ -90,8 +150,8 @@
           </div>
 
           <!-- Card 3: Yêu Cầu Báo Giá -->
-          <div class="col-sm-6 col-12">
-            <div class="card border-0 shadow-sm h-100 kpi-card">
+          <div class="col-sm-6 col-12 d-flex">
+            <div class="card border-0 shadow-sm w-100 kpi-card">
               <div class="card-body p-3 d-flex flex-column justify-content-between">
                 <div>
                   <div class="d-flex justify-content-between align-items-center mb-2">
@@ -117,8 +177,8 @@
           </div>
 
           <!-- Card 4: Cảnh Báo Gom Hàng PO -->
-          <div class="col-sm-6 col-12">
-            <div class="card border-0 shadow-sm h-100 kpi-card">
+          <div class="col-sm-6 col-12 d-flex">
+            <div class="card border-0 shadow-sm w-100 kpi-card">
               <div class="card-body p-3 d-flex flex-column justify-content-between">
                 <div>
                   <div class="d-flex justify-content-between align-items-center mb-2">
@@ -149,15 +209,19 @@
       <!-- Cột phải: Biểu Đồ Doanh Thu & Chi Phí PO Lớn -->
       <div class="col-lg-7 col-12">
         <div class="card border-0 shadow-sm h-100">
-          <div class="card-header pb-2 d-flex justify-content-between align-items-start border-bottom-0">
+          <div class="card-header pt-3 pb-1 d-flex justify-content-between align-items-start border-bottom-0">
             <div>
-              <span class="kpi-label d-block mb-1">Doanh Thu & Chi Phí Nhập Kho (PO)</span>
+              <div class="d-flex align-items-center gap-2 mb-1">
+                <span class="kpi-label mb-0">Doanh Thu & Chi Phí Nhập Kho (PO)</span>
+                <span class="badge bg-pastel-primary text-primary" style="font-size: 0.68rem; padding: 2px 6px;">{{ chartGranularityLabel }}</span>
+              </div>
               <div class="d-flex align-items-baseline gap-2">
                 <h4 class="fw-bold text-dark mb-0">{{ formatCurrency(revenueChartData.current_period_revenue) }}</h4>
                 <span :class="revenueChartData.growth_rate >= 0 ? 'text-success' : 'text-danger'" class="fw-semibold" style="font-size: 0.82rem;">
                   <i class="bx" :class="revenueChartData.growth_rate >= 0 ? 'bx-up-arrow-alt' : 'bx-down-arrow-alt'"></i>
                   {{ revenueChartData.growth_rate >= 0 ? '+' : '' }}{{ revenueChartData.growth_rate }}%
                 </span>
+                <small class="text-muted fw-normal" style="font-size: 0.78rem;">({{ periodLabels[currentPeriod] || 'Năm nay' }})</small>
               </div>
             </div>
             <!-- Legend góc phải: Ô màu rồi tới chữ -->
@@ -172,10 +236,10 @@
               </div>
             </div>
           </div>
-          <div class="card-body pt-0 px-2 pb-2">
+          <div class="card-body pt-0 px-2 pb-0">
             <apexchart
               type="bar"
-              height="260"
+              height="255"
               :options="barChartOptions"
               :series="revenueChartData.series"
             ></apexchart>
@@ -322,13 +386,71 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted, onUnmounted, computed } from 'vue';
 import apexchart from 'vue3-apexcharts';
+import Swal from 'sweetalert2';
 import axiosClient from '../../../api/axiosClient';
+
+const Toast = Swal.mixin({
+  toast: true,
+  position: 'top-end',
+  showConfirmButton: false,
+  timer: 2000,
+  timerProgressBar: true
+});
+
+// Dropdown state & Date labels
+const dropdownRef = ref(null);
+const isDropdownOpen = ref(false);
+
+const toggleDropdown = () => {
+  isDropdownOpen.value = !isDropdownOpen.value;
+};
+
+const closeDropdown = () => {
+  isDropdownOpen.value = false;
+};
+
+const selectPeriod = (period) => {
+  isDropdownOpen.value = false;
+  changePeriod(period);
+};
+
+const handleOutsideClick = (e) => {
+  if (dropdownRef.value && !dropdownRef.value.contains(e.target)) {
+    isDropdownOpen.value = false;
+  }
+};
+
+const todayFormatted = computed(() => {
+  const d = new Date();
+  return `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`;
+});
+
+const weekFormatted = computed(() => {
+  const d = new Date();
+  const day = d.getDay();
+  const diffToMon = d.getDate() - day + (day === 0 ? -6 : 1);
+  const mon = new Date(d);
+  mon.setDate(diffToMon);
+  const sun = new Date(mon);
+  sun.setDate(mon.getDate() + 6);
+  const f = (date) => `${String(date.getDate()).padStart(2, '0')}/${String(date.getMonth() + 1).padStart(2, '0')}`;
+  return `${f(mon)} - ${f(sun)}`;
+});
+
+const monthFormatted = computed(() => {
+  const d = new Date();
+  return `Tháng ${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`;
+});
+
+const yearFormatted = computed(() => {
+  return `Năm ${new Date().getFullYear()}`;
+});
 
 // State
 const isLoading = ref(false);
-const currentPeriod = ref('month');
+const currentPeriod = ref('year');
 
 const periodLabels = {
   today: 'Hôm nay',
@@ -337,6 +459,23 @@ const periodLabels = {
   year: 'Năm nay',
   all: 'Toàn thời gian'
 };
+
+const chartGranularityLabel = computed(() => {
+  switch (currentPeriod.value) {
+    case 'today':
+      return 'Theo khung giờ hôm nay';
+    case 'week':
+      return 'Theo 7 ngày trong tuần';
+    case 'month':
+      return 'Theo các tuần trong tháng';
+    case 'year':
+      return `Từ Tháng 01 đến Tháng ${String(new Date().getMonth() + 1).padStart(2, '0')}`;
+    case 'all':
+      return 'Theo từng năm';
+    default:
+      return 'Theo kỳ lọc';
+  }
+});
 
 const kpis = ref({
   total_sales: 0,
@@ -355,10 +494,10 @@ const kpis = ref({
 });
 
 const revenueChartData = ref({
-  categories: ['Tháng 05', 'Tháng 06', 'Tháng 07', 'Tháng 08', 'Tháng 09', 'Tháng 10'],
+  categories: [],
   series: [
-    { name: 'Doanh Thu Bán Hàng (Tr.đ)', data: [0, 0, 0, 0, 0, 0] },
-    { name: 'Chi Phí Nhập Kho PO (Tr.đ)', data: [0, 0, 0, 0, 0, 0] }
+    { name: 'Doanh Thu Bán Hàng (Tr.đ)', data: [] },
+    { name: 'Chi Phí Nhập Kho PO (Tr.đ)', data: [] }
   ],
   current_period_revenue: 0,
   growth_rate: 0
@@ -384,15 +523,16 @@ const hasDonutData = computed(() => {
 const barChartOptions = computed(() => ({
   chart: {
     type: 'bar',
-    height: 260,
+    height: 255,
+    parentHeightOffset: 0,
     toolbar: { show: false },
     fontFamily: 'Public Sans, sans-serif'
   },
   plotOptions: {
     bar: {
       horizontal: false,
-      columnWidth: '36%',
-      borderRadius: 4
+      columnWidth: '56%',
+      borderRadius: 0
     }
   },
   dataLabels: { enabled: false },
@@ -401,7 +541,10 @@ const barChartOptions = computed(() => ({
   xaxis: {
     categories: revenueChartData.value.categories || [],
     labels: {
-      style: { fontSize: '12px', colors: '#8592a3' }
+      rotate: -45,
+      rotateAlways: true,
+      style: { fontSize: '11px', colors: '#8592a3', fontWeight: 500 },
+      trim: false
     },
     axisBorder: { show: false },
     axisTicks: { show: false }
@@ -511,10 +654,14 @@ const formatShortCurrency = (val) => {
 const changePeriod = (period) => {
   currentPeriod.value = period;
   fetchData();
+  Toast.fire({
+    icon: 'info',
+    title: `Đang lọc dữ liệu: ${periodLabels[period] || period}`
+  });
 };
 
 // Fetch dữ liệu từ API
-const fetchData = async () => {
+const fetchData = async (isManual = false) => {
   isLoading.value = true;
   try {
     const res = await axiosClient.get(`/admin/dashboard/stats?period=${currentPeriod.value}`);
@@ -527,16 +674,34 @@ const fetchData = async () => {
         distributionChartData.value = res.data.distribution_chart;
       }
       recentActivities.value = res.data.recent_activities || [];
+
+      if (isManual) {
+        Toast.fire({
+          icon: 'success',
+          title: 'Đã làm mới dữ liệu Dashboard thành công!'
+        });
+      }
     }
   } catch (error) {
     console.error('Lỗi tải dữ liệu Dashboard:', error);
+    if (isManual) {
+      Toast.fire({
+        icon: 'error',
+        title: 'Không thể làm mới dữ liệu. Vui lòng thử lại!'
+      });
+    }
   } finally {
     isLoading.value = false;
   }
 };
 
 onMounted(() => {
+  document.addEventListener('click', handleOutsideClick);
   fetchData();
+});
+
+onUnmounted(() => {
+  document.removeEventListener('click', handleOutsideClick);
 });
 </script>
 
