@@ -1,100 +1,184 @@
 <template>
   <main class="support-page pb-5">
 
-    <div class="container py-5 my-4">
-      
-      <!-- CONTACT SECTION (THE EVENT THEME) -->
-      <section id="contact" class="contact section mb-5 pb-5 border-bottom">
-        
-        <!-- SECTION 1: GIỮ KẾT NỐI (Layout 2 cột) -->
-        <div class="row align-items-center gx-lg-5 mb-5 pb-5">
-          <div class="col-lg-5 mb-5 mb-lg-0 pe-lg-5">
-            <div class="section-title text-start pb-0 mb-4">
-              <span class="overline">Liên Hệ</span>
-              <h2>Giữ Kết Nối</h2>
-              <p>JPM luôn sẵn sàng lắng nghe và hỗ trợ bạn trong mọi vấn đề liên quan đến phụ tùng, dịch vụ và chính sách bảo hành. Đừng ngần ngại liên hệ với chúng tôi.</p>
-            </div>
-            
-            <div class="d-flex flex-column gap-3 mt-4">
-              <div class="info-item d-flex align-items-center justify-content-start p-3 bg-white border-0 shadow-sm rounded" style="box-shadow: 0px 0px 15px rgba(0,0,0,0.05) !important;">
-                <i class="bi bi-geo-alt ms-2 me-4 flex-shrink-0"></i>
-                <div>
-                  <h3 class="mb-1 text-start" style="font-size: 16px;">Trụ Sở Chính</h3>
-                  <p class="text-start mb-0">123 Đường Hàng Hải, Quận 1, TP. HCM</p>
-                </div>
-              </div>
-              <div class="info-item d-flex align-items-center justify-content-start p-3 bg-white border-0 shadow-sm rounded" style="box-shadow: 0px 0px 15px rgba(0,0,0,0.05) !important;">
-                <i class="bi bi-telephone ms-2 me-4 flex-shrink-0"></i>
-                <div>
-                  <h3 class="mb-1 text-start" style="font-size: 16px;">Hotline Hỗ Trợ</h3>
-                  <p class="text-start mb-0">1900 xxxx - 0909 xxx xxx</p>
-                </div>
-              </div>
-              <div class="info-item d-flex align-items-center justify-content-start p-3 bg-white border-0 shadow-sm rounded" style="box-shadow: 0px 0px 15px rgba(0,0,0,0.05) !important;">
-                <i class="bi bi-envelope ms-2 me-4 flex-shrink-0"></i>
-                <div>
-                  <h3 class="mb-1 text-start" style="font-size: 16px;">Email</h3>
-                  <p class="text-start mb-0">support@jpm.vn</p>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="col-lg-7">
-            <!-- Marine Themed Image -->
-            <img src="https://images.unsplash.com/photo-1502680390469-be75c86b636f?q=80&w=800&auto=format&fit=crop" alt="Contact Us" class="img-fluid rounded" style="object-fit: cover; width: 100%; height: 500px; box-shadow: 0px 0px 20px rgba(0,0,0,0.1);">
-          </div>
-        </div>
+    <!-- ════════════════════════════════════════════════════════════════
+         SECTION 1: HERO BANNER WITH SUBMERGED WATERMARK IMAGE
+    ════════════════════════════════════════════════════════════════ -->
+    <section class="hero-editorial-section position-relative overflow-hidden">
+      <!-- Submerged Marine Image (Ảnh chìm trong nền) -->
+      <div class="hero-submerged-bg"></div>
+      <!-- Watermark dots background -->
+      <div class="hero-watermark-bg"></div>
 
-        <!-- SECTION 2: GỬI LỜI NHẮN (Layout 2 cột) -->
-        <div class="row align-items-center gx-lg-5 flex-lg-row">
+      <div class="container position-relative z-1 py-5">
+        <div class="row align-items-center py-lg-4">
+
+          <!-- Left Column: Big Title + Description + Pill Button -->
+          <div class="col-lg-6 text-start">
+            <h1 class="hero-main-heading mb-4">
+              Trung Tâm<br />
+              Hỗ Trợ <span class="text-secondary fw-bold">&amp; Kỹ Thuật</span><br />
+              Hàng Hải
+            </h1>
+            <p class="hero-subtext text-muted mb-4">
+              Đồng hành cùng mọi hải trình của bạn. Đội ngũ kỹ sư và chuyên viên JPM Marine luôn sẵn sàng tư vấn tra cứu mã phụ tùng OEM, hướng dẫn bảo dưỡng động cơ và giải đáp chính sách bảo hành 24/7.
+            </p>
+            <button type="button" class="btn btn-dark-pill px-4 py-2" @click="scrollToContact">
+              Gửi yêu cầu ngay
+            </button>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <div class="container py-4 my-2">
+      
+      <!-- 2. MAIN CONTACT SECTION (2-COLUMN LAYOUT MATCHING REFERENCE) -->
+      <section id="contact" class="contact section mb-5 pb-5 border-bottom">
+        <div class="row align-items-start gx-lg-5 gy-5">
           
-          <!-- Box Form (Bên trái) -->
-          <div class="col-lg-6 mb-5 mb-lg-0">
-            <form @submit.prevent="submitForm" class="php-email-form rounded" style="border: 1px solid rgba(0,0,0,0.05);">
-              <div class="row gy-4">
-                <div class="col-12">
-                  <input type="text" v-model="formData.ho_ten" class="form-control" placeholder="Họ và tên" required>
+          <!-- CỘT TRÁI: GIỮ KẾT NỐI + LƯỚI 2x2 THÔNG TIN + MẠNG XÃ HỘI -->
+          <div class="col-lg-6 pe-lg-4">
+            <div class="d-flex align-items-center gap-3 mb-2">
+              <span class="contact-overline-line"></span>
+              <span class="contact-overline-text">LIÊN HỆ</span>
+            </div>
+
+            <h2 class="contact-heading mb-3">Giữ Kết Nối</h2>
+
+            <p class="contact-desc text-muted mb-4">
+              JPM luôn sẵn sàng lắng nghe và hỗ trợ bạn trong mọi vấn đề liên quan đến phụ tùng, dịch vụ kỹ thuật và chính sách bảo hành. Đừng ngần ngại liên hệ với chúng tôi.
+            </p>
+
+            <!-- Lưới 2x2 thông tin liên hệ -->
+            <div class="row g-4 pt-2 pb-4 mb-4 border-bottom">
+              <!-- Địa chỉ -->
+              <div class="col-sm-6">
+                <div class="d-flex align-items-start gap-3">
+                  <i class="bi bi-map contact-grid-icon flex-shrink-0"></i>
+                  <div>
+                    <div class="contact-item-line fw-semibold text-dark">123 Đường Hàng Hải,</div>
+                    <div class="contact-item-line text-muted">Quận 1, TP. Hồ Chí Minh</div>
+                  </div>
                 </div>
+              </div>
+
+              <!-- Điện thoại -->
+              <div class="col-sm-6">
+                <div class="d-flex align-items-start gap-3">
+                  <i class="bi bi-telephone contact-grid-icon flex-shrink-0"></i>
+                  <div>
+                    <div class="contact-item-line fw-semibold text-dark">(+84) 1900 xxxx</div>
+                    <div class="contact-item-line text-muted">(+84) 0909 xxx xxx</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Email -->
+              <div class="col-sm-6">
+                <div class="d-flex align-items-start gap-3">
+                  <i class="bi bi-envelope-open contact-grid-icon flex-shrink-0"></i>
+                  <div>
+                    <div class="contact-item-line fw-semibold text-dark">support@jpm.vn</div>
+                    <div class="contact-item-line text-muted">cskh@jpm.vn</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Giờ làm việc -->
+              <div class="col-sm-6">
+                <div class="d-flex align-items-start gap-3">
+                  <i class="bi bi-clock contact-grid-icon flex-shrink-0"></i>
+                  <div>
+                    <div class="contact-item-line fw-semibold text-dark">Mở cửa 08:00 - 17:30</div>
+                    <div class="contact-item-line text-muted">Thứ 2 - Thứ 7 (CN: Nghỉ)</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Follow Us -->
+            <div>
+              <div class="text-uppercase fw-bold mb-3" style="font-size: 0.78rem; letter-spacing: 1.5px; color: #0e1b4d;">
+                Theo Dõi Chúng Tôi
+              </div>
+              <div class="d-flex align-items-center gap-3">
+                <a href="#" class="contact-social-link" title="Facebook"><i class="bi bi-facebook"></i></a>
+                <a href="#" class="contact-social-link" title="Instagram"><i class="bi bi-instagram"></i></a>
+                <a href="#" class="contact-social-link" title="Twitter / X"><i class="bi bi-twitter-x"></i></a>
+                <a href="#" class="contact-social-link" title="YouTube"><i class="bi bi-youtube"></i></a>
+              </div>
+            </div>
+          </div>
+
+          <!-- CỘT PHẢI: FORM GỬI LỜI NHẮN ("Your Details" EQUIVALENT) -->
+          <div class="col-lg-6 ps-lg-4">
+            <h2 class="contact-form-heading mb-1">Gửi Lời Nhắn</h2>
+            <p class="text-muted mb-4" style="font-size: 0.9rem;">
+              Nếu bạn cần hỗ trợ kỹ thuật hoặc kiểm tra đơn hàng, vui lòng để lại thông tin bên dưới.
+            </p>
+
+            <form @submit.prevent="submitForm" class="contact-detail-form">
+              <div class="row g-4">
                 <div class="col-md-6">
-                  <input type="email" v-model="formData.email" class="form-control" placeholder="Email" required>
+                  <label class="contact-field-label">HỌ VÀ TÊN <span class="text-danger">*</span></label>
+                  <input
+                    type="text"
+                    v-model="formData.ho_ten"
+                    class="form-control contact-field-input"
+                    placeholder="Nguyễn Văn A"
+                    required
+                  >
                 </div>
+
                 <div class="col-md-6">
-                  <input type="tel" v-model="formData.so_dien_thoai" class="form-control" placeholder="Số điện thoại" required>
+                  <label class="contact-field-label">ĐỊA CHỈ EMAIL <span class="text-danger">*</span></label>
+                  <input
+                    type="email"
+                    v-model="formData.email"
+                    class="form-control contact-field-input"
+                    placeholder="email@domain.com"
+                    required
+                  >
                 </div>
+
                 <div class="col-12">
-                  <textarea v-model="formData.noi_dung" class="form-control" rows="5" placeholder="Nội dung lời nhắn" required></textarea>
+                  <label class="contact-field-label">SỐ ĐIỆN THOẠI LIÊN HỆ <span class="text-danger">*</span></label>
+                  <input
+                    type="tel"
+                    v-model="formData.so_dien_thoai"
+                    class="form-control contact-field-input"
+                    placeholder="Nhập số điện thoại của bạn..."
+                    required
+                  >
                 </div>
-                <div class="col-12 text-center mt-4">
-                  <button type="submit" :disabled="isSubmitting" class="d-inline-flex align-items-center justify-content-center">
+
+                <div class="col-12">
+                  <label class="contact-field-label">NỘI DUNG CÂU HỎI / YÊU CẦU <span class="text-danger">*</span></label>
+                  <textarea
+                    v-model="formData.noi_dung"
+                    class="form-control contact-field-input"
+                    rows="5"
+                    placeholder="Nhập nội dung lời nhắn..."
+                    required
+                  ></textarea>
+                </div>
+
+                <div class="col-12 pt-1">
+                  <button
+                    type="submit"
+                    :disabled="isSubmitting"
+                    class="btn-contact-submit d-inline-flex align-items-center justify-content-center"
+                  >
                     <span v-if="isSubmitting" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                    {{ isSubmitting ? 'Đang gửi...' : 'Gửi lời nhắn' }}
+                    {{ isSubmitting ? 'ĐANG GỬI...' : 'GỬI LỜI NHẮN' }}
                   </button>
                 </div>
               </div>
             </form>
           </div>
 
-          <!-- Text (Bên phải) -->
-          <div class="col-lg-6 ps-lg-5">
-            <div class="section-title text-start pb-0 mb-4">
-              <span class="overline">Liên Hệ</span>
-              <h2>Gửi Lời Nhắn</h2>
-              <p>Nếu bạn cần hỗ trợ kỹ thuật, kiểm tra đơn hàng hoặc có bất kỳ câu hỏi nào, vui lòng để lại lời nhắn. Chuyên viên của chúng tôi sẽ phản hồi sớm nhất có thể.</p>
-            </div>
-            
-            <div class="mt-4">
-              <h3 style="font-size: 18px; font-weight: 700; color: var(--heading-color); margin-bottom: 10px;">Giờ Làm Việc</h3>
-              <p style="color: #6c757d; margin-bottom: 5px;">Thứ Hai - Thứ Bảy: <span style="font-weight: 500; color: var(--heading-color);">8:00 AM - 17:30 PM</span></p>
-              <p style="color: #6c757d;">Chủ Nhật: <span style="font-weight: 500; color: var(--accent-color);">Nghỉ</span></p>
-            </div>
-
-            <div class="d-flex gap-2 mt-4 social-links">
-              <a href="#" class="d-inline-flex align-items-center justify-content-center" style="width: 40px; height: 40px; background: color-mix(in srgb, var(--accent-color), transparent 90%); color: var(--accent-color); border-radius: 50%; transition: 0.3s;" onmouseover="this.style.background='var(--accent-color)'; this.style.color='#fff';" onmouseout="this.style.background='color-mix(in srgb, var(--accent-color), transparent 90%)'; this.style.color='var(--accent-color)';"><i class="bi bi-facebook"></i></a>
-              <a href="#" class="d-inline-flex align-items-center justify-content-center" style="width: 40px; height: 40px; background: color-mix(in srgb, var(--accent-color), transparent 90%); color: var(--accent-color); border-radius: 50%; transition: 0.3s;" onmouseover="this.style.background='var(--accent-color)'; this.style.color='#fff';" onmouseout="this.style.background='color-mix(in srgb, var(--accent-color), transparent 90%)'; this.style.color='var(--accent-color)';"><i class="bi bi-youtube"></i></a>
-              <a href="#" class="d-inline-flex align-items-center justify-content-center" style="width: 40px; height: 40px; background: color-mix(in srgb, var(--accent-color), transparent 90%); color: var(--accent-color); border-radius: 50%; transition: 0.3s;" onmouseover="this.style.background='var(--accent-color)'; this.style.color='#fff';" onmouseout="this.style.background='color-mix(in srgb, var(--accent-color), transparent 90%)'; this.style.color='var(--accent-color)';"><i class="bi bi-twitter"></i></a>
-            </div>
-          </div>
-          
         </div>
       </section>
 
@@ -106,7 +190,7 @@
       </section>
 
       <!-- 5. FAQS SECTION with Search -->
-      <section class="mb-5">
+      <section id="faq-section" class="mb-5">
         <div class="row gx-lg-5">
           <div class="col-lg-4 mb-4 mb-lg-0">
             <h6 class="text-uppercase fw-bold mb-3 text-danger" style="letter-spacing: 2px;">FAQs</h6>
@@ -177,6 +261,22 @@ export default {
       );
     });
 
+    const scrollToContact = () => {
+      const el = document.getElementById('contact');
+      if (el) {
+        const y = el.getBoundingClientRect().top + window.scrollY - 85;
+        window.scrollTo({ top: y, behavior: 'smooth' });
+      }
+    };
+
+    const scrollToFaq = () => {
+      const el = document.getElementById('faq-section');
+      if (el) {
+        const y = el.getBoundingClientRect().top + window.scrollY - 90;
+        window.scrollTo({ top: y, behavior: 'smooth' });
+      }
+    };
+
     const formData = ref({
       ho_ten: '',
       email: '',
@@ -216,6 +316,8 @@ export default {
       faqs, 
       faqSearchQuery, 
       filteredFaqs, 
+      scrollToContact,
+      scrollToFaq,
       isSubmitting, 
       formData,
       submitForm 
@@ -223,4 +325,203 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+.support-page {
+  min-height: 100vh;
+  padding-top: 70px;
+  background-color: #ffffff;
+}
+
+.support-page section:not(.hero-editorial-section) {
+  background-color: #ffffff !important;
+}
+
+/* ── SECTION 1: HERO BANNER WITH SUBMERGED WATERMARK IMAGE ── */
+.hero-editorial-section {
+  padding-top: 30px;
+  padding-bottom: 40px;
+}
+
+.hero-submerged-bg {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 62%;
+  height: 100%;
+  background-image: url('https://images.unsplash.com/photo-1567899378494-47b22a2ae96a?w=1600&auto=format&fit=crop&q=85');
+  background-size: cover;
+  background-position: center right;
+  opacity: 0.7;
+  mask-image: linear-gradient(to right, transparent 0%, rgba(0, 0, 0, 0.35) 28%, rgba(0, 0, 0, 0.85) 60%, rgba(0, 0, 0, 1) 100%);
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, rgba(0, 0, 0, 0.35) 28%, rgba(0, 0, 0, 0.85) 60%, rgba(0, 0, 0, 1) 100%);
+  pointer-events: none;
+}
+
+.hero-watermark-bg {
+  position: absolute;
+  top: 5%;
+  right: 2%;
+  width: 65%;
+  height: 90%;
+  background-image: radial-gradient(#d1d5db 1.5px, transparent 1.5px);
+  background-size: 22px 22px;
+  opacity: 0.45;
+  pointer-events: none;
+  border-radius: 40px;
+}
+
+.hero-main-heading {
+  font-size: clamp(2.2rem, 3.8vw, 3.3rem);
+  font-weight: 800;
+  color: #111827;
+  line-height: 1.18;
+  letter-spacing: -1px;
+}
+
+.hero-subtext {
+  font-size: 0.95rem;
+  line-height: 1.7;
+  max-width: 480px;
+}
+
+.btn-dark-pill {
+  background-color: #27272a;
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 0.88rem;
+  border-radius: 50rem;
+  border: none;
+  transition: all 0.25s ease;
+}
+.btn-dark-pill:hover {
+  background-color: #f82249;
+  color: #ffffff;
+  transform: translateY(-2px);
+}
+
+/* ── 2. LEFT COLUMN: KEEP CLOSE / GET IN TOUCH ── */
+.contact-overline-line {
+  display: inline-block;
+  width: 36px;
+  height: 2px;
+  background-color: #f82249;
+}
+
+.contact-overline-text {
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: #f82249;
+  text-transform: uppercase;
+}
+
+.contact-heading {
+  font-size: clamp(1.85rem, 3vw, 2.5rem);
+  font-weight: 800;
+  color: #0e1b4d;
+  letter-spacing: -0.5px;
+}
+
+.contact-desc {
+  font-size: 0.94rem;
+  line-height: 1.75;
+}
+
+.contact-grid-icon {
+  font-size: 1.55rem;
+  color: #f82249;
+  line-height: 1.1;
+  margin-top: 2px;
+}
+
+.contact-item-line {
+  font-size: 0.86rem;
+  line-height: 1.5;
+}
+
+.contact-social-link {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(248, 34, 73, 0.08);
+  color: #f82249;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.92rem;
+  text-decoration: none;
+  transition: all 0.25s ease;
+}
+
+.contact-social-link:hover {
+  background: #f82249;
+  color: #ffffff;
+  transform: translateY(-2px);
+}
+
+/* ── 3. RIGHT COLUMN: YOUR DETAILS FORM ── */
+.contact-form-heading {
+  font-size: clamp(1.65rem, 2.6vw, 2.15rem);
+  font-weight: 800;
+  color: #0e1b4d;
+  letter-spacing: -0.4px;
+}
+
+.contact-field-label {
+  display: block;
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: #0e1b4d;
+  text-transform: uppercase;
+  margin-bottom: 0.45rem;
+}
+
+.contact-field-input {
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 0.7rem 0.95rem;
+  font-size: 0.9rem;
+  color: #1e293b;
+  box-shadow: none !important;
+  transition: all 0.2s ease;
+}
+
+textarea.contact-field-input {
+  height: auto !important;
+  min-height: 150px !important;
+  resize: vertical;
+}
+
+.contact-field-input:focus {
+  background-color: #ffffff;
+  border-color: #f82249;
+}
+
+.btn-contact-submit {
+  background-color: #f82249;
+  color: #ffffff;
+  border: none;
+  border-radius: 4px;
+  padding: 0.78rem 2.2rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  transition: all 0.25s ease;
+}
+
+.btn-contact-submit:hover:not(:disabled) {
+  background-color: #d91639;
+  transform: translateY(-2px);
+}
+
+.btn-contact-submit:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+</style>
+
 

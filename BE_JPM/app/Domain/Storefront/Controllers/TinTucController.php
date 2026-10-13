@@ -107,6 +107,8 @@ class TinTucController extends Controller
         // Tăng view
         $news->increment('views');
 
+        $excluded = $this->getExcludedCategories();
+
         // Lấy 3 bài liên quan cùng danh mục
         $related = TinTuc::where('status', 'PUBLISHED')
             ->where('category', $news->category)
@@ -114,6 +116,23 @@ class TinTucController extends Controller
             ->latest()
             ->limit(3)
             ->get(['id', 'title', 'category', 'thumbnail', 'summary', 'views', 'author', 'created_at']);
+
+        // Nếu danh mục hiện tại chưa đủ 3 bài liên quan, lấy bù thêm bài mới nhất từ các chuyên mục NEWS khác
+        if ($related->count() < 3) {
+            $existingIds = $related->pluck('id')->push($news->id)->all();
+            $moreQuery = TinTuc::where('status', 'PUBLISHED')
+                ->whereNotIn('id', $existingIds);
+
+            if ($excluded->isNotEmpty()) {
+                $moreQuery->whereNotIn('category', $excluded);
+            }
+
+            $more = $moreQuery->latest()
+                ->limit(3 - $related->count())
+                ->get(['id', 'title', 'category', 'thumbnail', 'summary', 'views', 'author', 'created_at']);
+
+            $related = $related->concat($more)->values();
+        }
 
         return response()->json([
             'success' => true,

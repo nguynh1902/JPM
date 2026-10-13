@@ -559,12 +559,12 @@ export default {
 <style scoped>
 .news-wireframe-page {
   min-height: 100vh;
-  padding-top: 85px;
+  padding-top: 70px;
 }
 
 /* ── SECTION 1: HERO BANNER ── */
 .hero-editorial-section {
-  padding-top: 20px;
+  padding-top: 30px;
   padding-bottom: 30px;
 }
 
