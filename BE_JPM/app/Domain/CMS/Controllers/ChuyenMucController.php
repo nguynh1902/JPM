@@ -55,7 +55,21 @@ class ChuyenMucController extends Controller
     {
         try {
             $item = ChuyenMuc::findOrFail($id);
-            $item->update($request->validated());
+            $oldName = $item->name;
+            $oldType = $item->type;
+
+            $validated = $request->validated();
+            $item->update($validated);
+
+            if ($oldName && $oldName !== $item->name) {
+                if ($oldType === 'NEWS' || $item->type === 'NEWS') {
+                    \App\Domain\CMS\Models\TinTuc::where('category', $oldName)->update(['category' => $item->name]);
+                }
+                if ($oldType === 'FAQ' || $item->type === 'FAQ') {
+                    \App\Domain\CMS\Models\Faq::where('category', $oldName)->update(['category' => $item->name]);
+                }
+            }
+
             return response()->json([
                 'success' => true,
                 'data' => new ChuyenMucResource($item)

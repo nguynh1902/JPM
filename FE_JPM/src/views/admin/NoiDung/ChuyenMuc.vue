@@ -174,6 +174,8 @@ export default {
       },
       onSettled: () => {
         queryClient.invalidateQueries({ queryKey: ['chuyen-muc'] });
+        queryClient.invalidateQueries({ queryKey: ['client-tin-tuc-categories'] });
+        queryClient.invalidateQueries({ queryKey: ['client-tin-tuc'] });
       }
     });
 
@@ -188,6 +190,9 @@ export default {
       },
       onSettled: () => {
         queryClient.invalidateQueries({ queryKey: ['chuyen-muc'] });
+        queryClient.invalidateQueries({ queryKey: ['tin-tuc'] });
+        queryClient.invalidateQueries({ queryKey: ['client-tin-tuc-categories'] });
+        queryClient.invalidateQueries({ queryKey: ['client-tin-tuc'] });
       }
     });
 

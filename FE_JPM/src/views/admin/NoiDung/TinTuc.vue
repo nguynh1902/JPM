@@ -332,6 +332,8 @@ export default {
       },
       onSettled: () => {
         queryClient.invalidateQueries({ queryKey: ["tin-tuc"] });
+        queryClient.invalidateQueries({ queryKey: ["client-tin-tuc"] });
+        queryClient.invalidateQueries({ queryKey: ["client-tin-tuc-categories"] });
       }
     });
 
@@ -346,6 +348,9 @@ export default {
       },
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ["tin-tuc"] });
+        queryClient.invalidateQueries({ queryKey: ["client-tin-tuc"] });
+        queryClient.invalidateQueries({ queryKey: ["client-tin-tuc-categories"] });
+        queryClient.invalidateQueries({ queryKey: ["public-news-detail-v2"] });
       }
     });
 
@@ -461,18 +466,23 @@ export default {
     },
     openAddModal() {
       this.isEditMode = false;
+      this.thumbnailFile = null;
+      this.galleryFiles = [];
       this.formData = this.getInitialFormData();
     },
     openEditModal(item) {
       this.isEditMode = true;
       this.formData = { ...item };
       this.formData.gallery = item.gallery ? (Array.isArray(item.gallery) ? [...item.gallery] : JSON.parse(item.gallery)) : [];
+      this.thumbnailFile = null;
       this.galleryFiles = [];
       const gu = document.getElementById('gallery_upload');
       if (gu) gu.value = '';
     },
     resetForm() {
       this.isEditMode = false;
+      this.thumbnailFile = null;
+      this.galleryFiles = [];
       this.formData = this.getInitialFormData();
     },
     getImageUrl(path) {
@@ -491,23 +501,29 @@ export default {
       this.thumbnailFile = null;
       this.formData.thumbnail = '';
     },
-        async saveData() {
+    async saveData() {
       this.isSubmitting = true;
       try {
         const payload = new FormData();
-      Object.keys(this.formData).forEach(key => {
-        if (key !== 'gallery' && (key !== 'thumbnail' || !this.thumbnailFile)) {
-          payload.append(key, this.formData[key] || '');
+        Object.keys(this.formData).forEach(key => {
+          if (key !== 'gallery' && (key !== 'thumbnail' || !this.thumbnailFile)) {
+            payload.append(key, this.formData[key] || '');
+          }
+        });
+        if (this.thumbnailFile) {
+          payload.append('thumbnail', this.thumbnailFile);
         }
-      });
-      if (this.thumbnailFile) {
-        payload.append('thumbnail', this.thumbnailFile);
-      }
+        payload.append('existing_gallery', JSON.stringify(this.formData.gallery || []));
+        if (this.galleryFiles && this.galleryFiles.length > 0) {
+          this.galleryFiles.forEach(file => {
+            payload.append('gallery[]', file);
+          });
+        }
 
-              await this.saveMutation.mutateAsync({ payload, isEdit: this.isEditMode, id: this.formData.id, optimisticRecord: { ...this.formData, gallery: [...(this.formData.gallery || []), ...this.galleryFiles.map(f => URL.createObjectURL(f))] } });
+        await this.saveMutation.mutateAsync({ payload, isEdit: this.isEditMode, id: this.formData.id });
         this.$toast?.success(this.isEditMode ? 'Cập nhật thành công!' : 'Thêm mới thành công!');
         this.resetForm();
-                const closeBtn = document.querySelector("#modalNews .btn-close");
+        const closeBtn = document.querySelector("#modalNews .btn-close");
         if (closeBtn) closeBtn.click();
       } catch (error) {
         this.$toast?.error('Lỗi khi lưu bài viết!');

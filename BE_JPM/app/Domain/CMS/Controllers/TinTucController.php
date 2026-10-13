@@ -46,7 +46,8 @@ class TinTucController extends Controller
                     $galleryPaths[] = 'storage/' . $path;
                 }
             }
-            $data['gallery'] = json_encode($galleryPaths);
+            unset($data['existing_gallery']);
+            $data['gallery'] = json_encode(array_values($galleryPaths));
 
             $item = TinTuc::create($data);
             return response()->json([
@@ -93,7 +94,8 @@ class TinTucController extends Controller
                     $galleryPaths[] = 'storage/' . $path;
                 }
             }
-            $data['gallery'] = json_encode($galleryPaths);
+            unset($data['existing_gallery']);
+            $data['gallery'] = json_encode(array_values($galleryPaths));
 
             $item->update($data);
             return response()->json([

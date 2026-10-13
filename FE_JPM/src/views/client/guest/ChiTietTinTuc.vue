@@ -52,16 +52,16 @@
 
               <!-- Meta Top -->
               <div class="d-flex align-items-center gap-3 mb-3">
-                <span class="badge bg-danger bg-opacity-10 text-danger rounded-1 px-3 py-2 fw-bold text-uppercase" style="letter-spacing: 1px; font-size: 0.75rem;">
+                <router-link :to="{ path: '/tin-tuc', query: { category: article.category } }" class="badge bg-danger bg-opacity-10 text-danger rounded-1 px-3 py-2 fw-bold text-uppercase text-decoration-none" style="letter-spacing: 1px; font-size: 0.75rem;">
                   {{ article.category }}
-                </span>
+                </router-link>
                 <span class="text-muted fw-medium" style="font-size: 0.9rem;">
                   {{ formatDate(article.created_at) }}
                 </span>
               </div>
 
               <!-- Title -->
-              <h1 class="fw-bolder text-dark mb-4 article-title" style="letter-spacing: -1px; line-height: 1.3;">
+              <h1 class="fw-bolder text-dark mb-4 article-main-title" style="letter-spacing: -1px; line-height: 1.3;">
                 {{ article.title }}
               </h1>
 
@@ -75,12 +75,12 @@
                 </div>
                 <div class="d-flex align-items-center gap-2">
                   <i class="bi bi-eye"></i>
-                  <span>{{ Number(article.views).toLocaleString('vi-VN') }} lượt xem</span>
+                  <span>{{ Number(article.views || 0).toLocaleString('vi-VN') }} lượt xem</span>
                 </div>
                 <div class="d-flex align-items-center gap-2 ms-auto">
                   <span class="fw-medium">Chia sẻ:</span>
-                  <button class="btn btn-sm btn-light rounded-circle btn-share" @click="shareLink('facebook')"><i class="bi bi-facebook text-primary"></i></button>
-                  <button class="btn btn-sm btn-light rounded-circle btn-share" @click="copyLink"><i class="bi bi-link-45deg text-dark"></i></button>
+                  <button class="btn btn-sm btn-light rounded-circle btn-share" title="Chia sẻ Facebook" @click="shareLink('facebook')"><i class="bi bi-facebook text-primary"></i></button>
+                  <button class="btn btn-sm btn-light rounded-circle btn-share" title="Sao chép liên kết" @click="copyLink"><i class="bi bi-link-45deg text-dark"></i></button>
                 </div>
               </div>
 
@@ -110,8 +110,8 @@
               {{ article.summary }}
             </p>
 
-                        <!-- Main Content (HTML) -->
-            <div class="article-html-content text-secondary" style="font-size: 1.1rem; line-height: 1.8;" v-html="article.content || defaultContent">
+            <!-- Main Content (HTML) -->
+            <div class="article-html-content text-secondary" style="font-size: 1.1rem; line-height: 1.8;" v-html="safeHtmlContent">
             </div>
 
             <!-- YouTube Video -->
@@ -128,12 +128,12 @@
             </div>
 
             <!-- Gallery -->
-            <div v-if="galleryImages.length > 0" class="mt-5">
+            <div v-if="galleryImages && galleryImages.length > 0" class="mt-5">
               <h4 class="fw-bold text-dark mb-4">Thư viện ảnh phụ</h4>
               <div class="row g-3">
                 <div class="col-6 col-md-4" v-for="(img, idx) in galleryImages" :key="idx">
                   <div class="rounded-3 overflow-hidden shadow-sm img-zoom-hover" style="aspect-ratio: 4/3; cursor: pointer;">
-                    <img :src="getImageUrl(img)" class="w-100 h-100 object-fit-cover transition-transform" data-bs-toggle="modal" :data-bs-target="'#galleryModal' + idx">
+                    <img :src="getImageUrl(img)" class="w-100 h-100 object-fit-cover transition-transform" data-bs-toggle="modal" :data-bs-target="'#galleryModal' + idx" @error="$event.target.src = fallback">
                   </div>
                   
                   <!-- Modal cho từng ảnh -->
@@ -144,7 +144,7 @@
                           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body text-center">
-                          <img :src="getImageUrl(img)" class="img-fluid rounded-3" style="max-height: 80vh;">
+                          <img :src="getImageUrl(img)" class="img-fluid rounded-3" style="max-height: 80vh;" @error="$event.target.src = fallback">
                         </div>
                       </div>
                     </div>
@@ -153,12 +153,15 @@
               </div>
             </div>
 
-            <!-- Tags (Optional) -->
-            <div class="mt-5 pt-4 border-top d-flex gap-2 align-items-center">
+            <!-- Tags -->
+            <div class="mt-5 pt-4 border-top d-flex flex-wrap gap-2 align-items-center">
               <i class="bi bi-tags text-muted me-2"></i>
-              <span class="badge bg-light text-dark border px-3 py-2 fw-normal rounded-pill">Động cơ thủy</span>
-              <span class="badge bg-light text-dark border px-3 py-2 fw-normal rounded-pill">Bảo dưỡng</span>
-              <span class="badge bg-light text-dark border px-3 py-2 fw-normal rounded-pill">JPM Marine</span>
+              <router-link v-if="article.category" :to="{ path: '/tin-tuc', query: { category: article.category } }" class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 px-3 py-2 fw-medium rounded-pill text-decoration-none">
+                {{ article.category }}
+              </router-link>
+              <router-link :to="{ path: '/tin-tuc', query: { search: 'Động cơ' } }" class="badge bg-light text-dark border px-3 py-2 fw-normal rounded-pill text-decoration-none">Động cơ thủy</router-link>
+              <router-link :to="{ path: '/tin-tuc', query: { category: 'Bảo Dưỡng Động Cơ' } }" class="badge bg-light text-dark border px-3 py-2 fw-normal rounded-pill text-decoration-none">Bảo dưỡng</router-link>
+              <router-link to="/tin-tuc" class="badge bg-light text-dark border px-3 py-2 fw-normal rounded-pill text-decoration-none">JPM Marine</router-link>
             </div>
           </div>
         </div>
@@ -170,7 +173,7 @@
       <div class="container py-4">
         <div class="d-flex align-items-center justify-content-between mb-5">
           <h3 class="fw-bolder m-0" style="letter-spacing: -0.5px;">Bài viết cùng chuyên mục</h3>
-          <router-link to="/tin-tuc" class="btn btn-outline-dark rounded-pill px-4 btn-sm fw-medium">
+          <router-link :to="{ path: '/tin-tuc', query: article?.category ? { category: article.category } : {} }" class="btn btn-outline-dark rounded-pill px-4 btn-sm fw-medium">
             Xem tất cả
           </router-link>
         </div>
@@ -236,18 +239,13 @@ const MOCK_HTML = `
 export default {
   name: 'ChiTietTinTuc',
   setup() {
-      const getImageUrl = (path) => {
-        if (!path) return '';
-        if (path.startsWith('http')) return path;
-        return `http://localhost:8000/${path.startsWith('/') ? path.substring(1) : path}`;
-      };
     const route = useRoute();
     const articleId = computed(() => route.params.id);
 
     const { data: fetchResult, isFetching, error, refetch } = useQuery({
-      queryKey: ['public-news-detail-v2', articleId], // Changed to v2 to bust cache
+      queryKey: ['public-news-detail-v2', articleId],
       queryFn: () => axiosClient.get(`/public/tin-tuc/${articleId.value}`),
-      staleTime: 1000 * 60 * 5, // 5 phút
+      staleTime: 1000 * 60 * 5,
     });
 
     // Khi route thay đổi (click bài liên quan), scroll lên top và fetch lại
@@ -258,6 +256,11 @@ export default {
 
     const article = computed(() => fetchResult.value?.data ?? null);
     const relatedArticles = computed(() => fetchResult.value?.related ?? []);
+
+    const safeHtmlContent = computed(() => {
+      const raw = article.value?.content || MOCK_HTML;
+      return String(raw).replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
+    });
 
     const getYoutubeEmbedUrl = (url) => {
       if (!url) return null;
@@ -292,9 +295,11 @@ export default {
     };
 
     return {
-      getImageUrl,
       article,
       relatedArticles,
+      safeHtmlContent,
+      galleryImages,
+      getYoutubeEmbedUrl,
       isFetching,
       error,
       formatDate,
@@ -309,7 +314,7 @@ export default {
 
 <style scoped>
 /* ── TYPOGRAPHY & LAYOUT ── */
-.article-title {
+.article-main-title {
   font-size: clamp(2rem, 4vw, 3rem);
 }
 .article-hero-img {
