@@ -256,6 +256,21 @@ export default {
   --background-color: rgba(1, 8, 33, 0.82);
 }
 
+/* Ensure navbar links are immediately responsive to clicks */
+.navmenu a {
+  cursor: pointer;
+  position: relative;
+  z-index: 5;
+}
+
+/* Inactive dropdowns must not intercept pointer events */
+.navmenu .dropdown ul {
+  pointer-events: none;
+}
+.navmenu .dropdown:hover > ul {
+  pointer-events: auto !important;
+}
+
 /* Custom Nav Icons (Cart) */
 .navmenu .custom-nav-icon::before {
   display: none !important;

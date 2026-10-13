@@ -353,18 +353,17 @@ const router = createRouter({
   scrollBehavior(to, from, savedPosition) {
     if (savedPosition) {
       return savedPosition;
-    } else {
-      return { top: 0, behavior: "smooth" };
     }
+    if (to.hash) {
+      return { el: to.hash, behavior: "smooth" };
+    }
+    return { top: 0 };
   },
 });
 
 const PROTOTYPE_MODE = false; // Set false to enable Auth Guard
 
 router.beforeEach((to, from, next) => {
-  // Cuộn lên đầu trang mỗi khi chuyển route
-  window.scrollTo(0, 0);
-
   // Lấy store auth
   const authStore = useAuthStore();
 

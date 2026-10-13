@@ -349,10 +349,10 @@ export default {
   right: 0;
   width: 62%;
   height: 100%;
-  background-image: url('https://images.unsplash.com/photo-1567899378494-47b22a2ae96a?w=1600&auto=format&fit=crop&q=85');
+  background-image: url('https://images.unsplash.com/photo-1569263979104-865ab7cd8d13?w=1600&auto=format&fit=crop&q=85');
   background-size: cover;
   background-position: center right;
-  opacity: 0.7;
+  opacity: 0.75;
   mask-image: linear-gradient(to right, transparent 0%, rgba(0, 0, 0, 0.35) 28%, rgba(0, 0, 0, 0.85) 60%, rgba(0, 0, 0, 1) 100%);
   -webkit-mask-image: linear-gradient(to right, transparent 0%, rgba(0, 0, 0, 0.35) 28%, rgba(0, 0, 0, 0.85) 60%, rgba(0, 0, 0, 1) 100%);
   pointer-events: none;

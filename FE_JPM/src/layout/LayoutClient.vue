@@ -89,19 +89,8 @@ export default {
   data() {
     return {
       isScrolled: false,
-      isLoading: true
+      isLoading: false
     }
-  },
-  created() {
-    // Xử lý Preloader khi chuyển trang bằng Vue Router
-    this.$router.beforeEach((to, from, next) => {
-      this.isLoading = true;
-      next();
-    });
-    this.$router.afterEach(() => {
-      // Đợi trang mới tải xong, ẩn preloader và gọi lại template scripts
-      setTimeout(() => { this.isLoading = false; window.dispatchEvent(new Event('load')); }, 100); // 500ms đủ để DOM render xong các component nặng
-    });
   },
   methods: {
     handleScroll() {
