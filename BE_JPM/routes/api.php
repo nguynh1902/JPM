@@ -15,12 +15,12 @@ use App\Domain\CMS\Controllers\BannerController;
 use App\Domain\CMS\Controllers\VoucherController;
 use App\Domain\IAM\Controllers\SystemLogController;
 
-// Auth Routes (Public)
-Route::post('/login', [AuthController::class, 'login']);
-Route::post('/register', [AuthController::class, 'register']);
+// Auth Routes (Public) - Protected by Rate Limiting
+Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:login');
+Route::post('/register', [AuthController::class, 'register'])->middleware('throttle:register');
 
-// Public API Routes cho khách hàng (Không cần auth)
-Route::prefix('public')->group(function () {
+// Public API Routes cho khách hàng - Protected by public-api rate limit & Response Cache
+Route::prefix('public')->middleware(['throttle:public-api', 'cache.public'])->group(function () {
     Route::get('/thuong-hieu', [\App\Domain\Storefront\Controllers\TraCuuController::class, 'thuongHieu']);
     Route::get('/thuong-hieu/{code}', [\App\Domain\Storefront\Controllers\TraCuuController::class, 'thuongHieuChiTiet']);
     Route::get('/loai-dong-co', [\App\Domain\Storefront\Controllers\TraCuuController::class, 'loaiDongCo']);

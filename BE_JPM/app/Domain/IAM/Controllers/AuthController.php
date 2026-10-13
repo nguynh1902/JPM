@@ -231,12 +231,28 @@ class AuthController extends Controller
 
     public function logout(Request $request)
     {
-        $request->user()->currentAccessToken()->delete();
+        try {
+            // Lấy plain text token từ Authorization header để invalidate cache
+            $bearerToken = $request->bearerToken();
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Đăng xuất thành công'
-        ], 200);
+            // Xóa token khỏi Redis cache ngay lập tức
+            if ($bearerToken) {
+                \App\Domain\IAM\Services\CachedSanctumPersonalAccessToken::invalidateCache($bearerToken);
+            }
+
+            // Xóa token khỏi database
+            $request->user()->currentAccessToken()->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Đăng xuất thành công.',
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Lỗi khi đăng xuất.',
+            ], 500);
+        }
     }
 }
 

@@ -67,7 +67,9 @@ class AuthService
      */
     public function login(array $credentials): array
     {
-        $user = User::where('email', $credentials['login_id'])->orWhere('phone', $credentials['login_id'])->first();
+        $user = User::where('email', $credentials['login_id'])
+            ->orWhere('phone', $credentials['login_id'])
+            ->first();
 
         // Validate user existence and password
         if (!$user || !Hash::check($credentials['password'], $user->password)) {
@@ -79,16 +81,36 @@ class AuthService
             throw new Exception('Tài khoản của bạn đã bị khóa hoặc chưa kích hoạt.', 403);
         }
 
+        // Xóa token cũ (không giữ nhiều token, tiết kiệm bộ nhớ DB)
+        // Mỗi người chỉ giữ tối đa 3 token gần nhất (multi-device hợp lý)
+        $currentTokenCount = $user->tokens()->count();
+        if ($currentTokenCount >= 3) {
+            $user->tokens()->oldest()->limit($currentTokenCount - 2)->delete();
+        }
+
         // Create API Token
         $token = $user->createToken('auth_token')->plainTextToken;
 
-        // Update last login timestamp
-        $user->last_login_at = now();
-        $user->save();
+        // Cache user roles để không phải JOIN bảng permissions mỗi request
+        try {
+            $cacheKey = 'user_roles:' . $user->id;
+            \Illuminate\Support\Facades\Cache::put(
+                $cacheKey,
+                $user->getRoleNames()->toArray(),
+                now()->addHours(2)
+            );
+        } catch (\Throwable $e) {
+            // Silently ignore cache failure
+        }
+
+        // Update last login timestamp (async: không block response)
+        \Illuminate\Support\Facades\DB::table('users')
+            ->where('id', $user->id)
+            ->update(['last_login_at' => now()]);
 
         return [
-            'user' => $user,
-            'token' => $token
+            'user'  => $user,
+            'token' => $token,
         ];
     }
 }
