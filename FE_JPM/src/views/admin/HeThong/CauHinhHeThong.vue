@@ -1,362 +1,563 @@
 <template>
   <div class="container-xxl flex-grow-1 container-p-y">
-    <h4 class="fw-bold py-3 mb-4">
-      <span class="text-muted fw-light">Dữ Liệu Nền Tảng /</span> Cấu Hình Hệ Thống 
-    </h4>
+    <!-- Header Page & Action Buttons -->
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-2">
+      <div>
+        <h4 class="fw-bold mb-1">
+          <span class="text-muted fw-light">Cài Đặt /</span> Cấu Hình Hệ Thống & Thiết Lập Website
+        </h4>
+        <p class="text-muted mb-0" style="font-size: 0.9rem;">
+          Quản lý toàn bộ thông tin chung hiển thị tại Client (Video trang chủ, thông tin liên hệ, giờ mở cửa, mạng xã hội và chân trang).
+        </p>
+      </div>
+      <div class="d-flex gap-2">
+        <button 
+          type="button" 
+          class="btn btn-outline-secondary d-flex align-items-center"
+          @click="resetToInitial"
+          :disabled="isSubmitting"
+        >
+          <i class="bx bx-reset me-1"></i> Đặt Lại
+        </button>
+        <button 
+          type="button" 
+          class="btn btn-primary d-flex align-items-center shadow-sm px-4"
+          @click="saveSettings"
+          :disabled="isSubmitting"
+        >
+          <span v-if="isSubmitting" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+          <i v-else class="bx bx-save me-1"></i>
+          {{ isSubmitting ? 'Đang Lưu...' : 'Lưu Thay Đổi' }}
+        </button>
+      </div>
+    </div>
 
+    <!-- Loading State -->
+    <div v-if="isFetching" class="card p-5 text-center shadow-sm">
+      <div class="spinner-border text-primary mx-auto mb-3" role="status">
+        <span class="visually-hidden">Đang tải...</span>
+      </div>
+      <p class="text-muted mb-0">Đang tải dữ liệu cấu hình hệ thống...</p>
+    </div>
 
-    <div class="row">
-      <!-- Cột Form (Thêm/Sửa) -->
-      <div class="col-md-4 mb-4">
-        <div class="card">
-          <div class="card-header border-bottom">
-            <h5 class="mb-0 fw-bold text-dark">{{ isEditMode ? 'Cập Nhật Cấu Hình Hệ Thống' : 'Thêm Mới Cấu Hình Hệ Thống' }}</h5>
+    <!-- 1 PAGE DUY NHẤT VỚI 3 PHẦN NỐI TIẾP NHAU -->
+    <div v-else class="row g-4">
+      
+      <!-- PHẦN 1: TRANG CHỦ & VIDEO BANNER -->
+      <div class="col-12">
+        <div class="card shadow-sm border">
+          <div class="card-header bg-white border-bottom py-3 d-flex align-items-center">
+            <div class="avatar avatar-sm me-3 bg-label-danger rounded d-flex align-items-center justify-content-center">
+              <i class="bx bxl-youtube fs-4 text-danger"></i>
+            </div>
+            <div>
+              <h5 class="card-title mb-0 fw-bold text-dark">Phần 1: Trang Chủ & Video Banner (Hero)</h5>
+              <small class="text-muted">Tùy biến video YouTube nền chạy ngầm và slogan tiêu đề tại trang chủ Client</small>
+            </div>
           </div>
+
           <div class="card-body pt-4">
-            <form @submit.prevent="saveData">
-              <div class="row">
-                <div class="col-md-12 mb-4">
-                  <label for="code" class="form-label fw-medium text-dark">Mã Cấu Hình Hệ Thống <span class="text-danger">*</span></label>
-                  <input
-                    type="text"
-                    id="code"
-                    class="form-control text-uppercase"
-                    placeholder="VD: YAM"
-                    v-model="formData.code"
-                    required
-                    :disabled="isEditMode"
+            <div class="row g-4">
+              <!-- Cột nhập liệu -->
+              <div class="col-lg-7">
+                <!-- Đường dẫn YouTube -->
+                <div class="mb-4">
+                  <label for="homepage_youtube_url" class="form-label fw-bold text-dark">
+                    Đường Dẫn Video YouTube (Hero Background) <span class="text-danger">*</span>
+                  </label>
+                  <div class="input-group">
+                    <span class="input-group-text"><i class="bx bxl-youtube text-danger"></i></span>
+                    <input 
+                      type="text" 
+                      id="homepage_youtube_url" 
+                      class="form-control" 
+                      placeholder="VD: https://www.youtube.com/watch?v=5CVzOqvqI38 hoặc https://youtu.be/..." 
+                      v-model="formData.homepage_youtube_url"
+                      @input="updateYoutubePreview"
+                    />
+                  </div>
+                  <div class="form-text text-muted mt-1">
+                    <i class="bx bx-check-circle text-success me-1"></i>Hệ thống tự động trích xuất Video ID và phát ngầm lặp vô tận (tắt tiếng + tự động phát) phía sau banner trang chủ.
+                  </div>
+                </div>
+
+                <!-- Tiêu đề lớn -->
+                <div class="mb-4">
+                  <label for="homepage_hero_title" class="form-label fw-bold text-dark">
+                    Tiêu Đề Thương Hiệu Lớn (Hero Title)
+                  </label>
+                  <div class="input-group">
+                    <span class="input-group-text"><i class="bx bx-heading"></i></span>
+                    <input 
+                      type="text" 
+                      id="homepage_hero_title" 
+                      class="form-control" 
+                      placeholder="VD: JPM MARINE" 
+                      v-model="formData.homepage_hero_title"
+                    />
+                  </div>
+                  <div class="form-text text-muted">Dòng chữ màu đỏ nổi bật trên banner trang chủ.</div>
+                </div>
+
+                <!-- Slogan phụ -->
+                <div class="mb-2">
+                  <label for="homepage_hero_subtitle" class="form-label fw-bold text-dark">
+                    Slogan Phụ Banner (Hero Subtitle)
+                  </label>
+                  <div class="input-group">
+                    <span class="input-group-text"><i class="bx bx-text"></i></span>
+                    <input 
+                      type="text" 
+                      id="homepage_hero_subtitle" 
+                      class="form-control" 
+                      placeholder="VD: PHỤ TÙNG CHÍNH HÃNG" 
+                      v-model="formData.homepage_hero_subtitle"
+                    />
+                  </div>
+                  <div class="form-text text-muted">Dòng chữ in nghiêng màu trắng phía dưới tiêu đề.</div>
+                </div>
+              </div>
+
+              <!-- Cột Live Preview -->
+              <div class="col-lg-5">
+                <div class="border rounded p-3 bg-light text-center h-100 d-flex flex-column justify-content-between">
+                  <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="fw-bold text-dark" style="font-size: 0.9rem;">
+                      <i class="bx bx-tv text-primary me-1"></i>Xem Trước Video
+                    </span>
+                    <span v-if="previewVideoId" class="badge bg-label-success">Video ID: {{ previewVideoId }}</span>
+                    <span v-else class="badge bg-label-danger">Link không hợp lệ</span>
+                  </div>
+
+                  <div v-if="previewVideoId" class="ratio ratio-16x9 rounded overflow-hidden shadow-sm border bg-black my-auto">
+                    <iframe 
+                      :src="'https://www.youtube.com/embed/' + previewVideoId + '?autoplay=0&controls=1&rel=0'" 
+                      title="YouTube video player" 
+                      frameborder="0" 
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                      allowfullscreen
+                    ></iframe>
+                  </div>
+                  <div v-else class="p-4 bg-white rounded border text-muted my-auto">
+                    <i class="bx bx-video-off fs-1 mb-2 d-block text-secondary"></i>
+                    Vui lòng nhập đường dẫn YouTube hợp lệ để xem trước.
+                  </div>
+
+                  <small class="text-muted mt-2 d-block">
+                    <i class="bx bx-info-circle me-1"></i>Trên trang chủ Client, video sẽ tự phóng to toàn màn hình và chạy mượt mà phía sau nội dung.
+                  </small>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PHẦN 2: THÔNG TIN DOANH NGHIỆP & LIÊN HỆ -->
+      <div class="col-12">
+        <div class="card shadow-sm border">
+          <div class="card-header bg-white border-bottom py-3 d-flex align-items-center">
+            <div class="avatar avatar-sm me-3 bg-label-primary rounded d-flex align-items-center justify-content-center">
+              <i class="bx bx-buildings fs-4 text-primary"></i>
+            </div>
+            <div>
+              <h5 class="card-title mb-0 fw-bold text-dark">Phần 2: Thông Tin Doanh Nghiệp & Liên Hệ</h5>
+              <small class="text-muted">Cập nhật thông tin công ty, hotline gọi điện, email và giờ mở cửa trên toàn website Client</small>
+            </div>
+          </div>
+
+          <div class="card-body pt-4">
+            <div class="row g-4">
+              <!-- Tên Doanh Nghiệp -->
+              <div class="col-md-6">
+                <label for="company_name" class="form-label fw-bold text-dark">Tên Doanh Nghiệp / Thương Hiệu</label>
+                <div class="input-group">
+                  <span class="input-group-text"><i class="bx bx-building"></i></span>
+                  <input 
+                    type="text" 
+                    id="company_name" 
+                    class="form-control" 
+                    placeholder="VD: JPM Marine" 
+                    v-model="formData.company_name"
                   />
                 </div>
+                <div class="form-text text-muted">Hiển thị tại Header, Footer và các thông báo thương hiệu.</div>
+              </div>
+
+              <!-- Hotline -->
+              <div class="col-md-6">
+                <label for="company_hotline" class="form-label fw-bold text-dark">Hotline Tư Vấn / CSKH</label>
+                <div class="input-group">
+                  <span class="input-group-text"><i class="bx bx-phone-call text-success"></i></span>
+                  <input 
+                    type="text" 
+                    id="company_hotline" 
+                    class="form-control" 
+                    placeholder="VD: 0909 123 456" 
+                    v-model="formData.company_hotline"
+                  />
                 </div>
-              
-              <div class="mb-4">
-                <label for="name" class="form-label fw-medium text-dark">Tên Cấu Hình Hệ Thống <span class="text-danger">*</span></label>
-                <input
-                  type="text"
-                  id="name"
-                  class="form-control"
-                  placeholder="Nhập tên Cấu Hình Hệ Thống..."
-                  v-model="formData.name"
-                  required
-                />
+                <div class="form-text text-muted">Tự động gắn link gọi trực tiếp (tel:) khi khách dùng điện thoại.</div>
               </div>
 
-              <div class="mb-4">
-                <label for="logo" class="form-label fw-medium text-dark">Logo Cấu Hình Hệ Thống</label>
-                <input
-                  type="file"
-                  id="logo"
-                  class="form-control"
-                  accept="image/png, image/jpeg, image/svg+xml"
-                  @change="handleLogoUpload"
-                />
-                <div v-if="formData.logo_path" class="mt-2 border rounded p-1 d-inline-block bg-white position-relative" style="padding-right: 30px !important;">
-                  <img :src="getImageUrl(formData.logo_path)" alt="Logo preview" style="height: 40px; object-fit: contain;">
-                  <button type="button" class="btn btn-icon btn-sm text-danger position-absolute top-50 translate-middle-y end-0" @click="removeLogo" title="Xóa ảnh"><i class="bx bx-trash"></i></button>
+              <!-- Email -->
+              <div class="col-md-6">
+                <label for="company_email" class="form-label fw-bold text-dark">Hòm Thư Điện Tử (Email)</label>
+                <div class="input-group">
+                  <span class="input-group-text"><i class="bx bx-envelope text-info"></i></span>
+                  <input 
+                    type="email" 
+                    id="company_email" 
+                    class="form-control" 
+                    placeholder="VD: contact@jpm-marine.vn" 
+                    v-model="formData.company_email"
+                  />
                 </div>
+                <div class="form-text text-muted">Tự động gắn link gửi thư (mailto:) cho khách hàng.</div>
               </div>
 
-              <div class="mb-4">
-                <label for="status" class="form-label fw-medium text-dark">Trạng Thái <span class="text-danger">*</span></label>
-                <v-select
-                  v-model="formData.status"
-                  :options="[{value: 1, label: 'Hoạt Động'}, {value: 0, label: 'Tạm Khóa'}]"
-                  :can-clear="false"
-                />
+              <!-- Giờ làm việc -->
+              <div class="col-md-6">
+                <label for="business_hours" class="form-label fw-bold text-dark">Thời Gian Làm Việc / Giờ Mở Cửa</label>
+                <div class="input-group">
+                  <span class="input-group-text"><i class="bx bx-time-five text-warning"></i></span>
+                  <input 
+                    type="text" 
+                    id="business_hours" 
+                    class="form-control" 
+                    placeholder="VD: Thứ 2 - Thứ 7: 08:00 - 17:30 (Chủ nhật nghỉ)" 
+                    v-model="formData.business_hours"
+                  />
+                </div>
+                <div class="form-text text-muted">Hiển thị trực quan tại Chân trang (Footer) và Trang Hỗ Trợ.</div>
               </div>
 
-              <div class="mt-4 d-flex justify-content-end gap-2">
-                <button type="button" class="btn btn-outline-secondary px-4" @click="resetForm">
-                  Hủy
-                </button>
-                <button type="submit" class="btn btn-primary px-4 shadow-sm" :disabled="isSubmitting">
-                  <span v-if="isSubmitting" class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
-                  {{ isEditMode ? 'Cập Nhật' : 'Thêm Mới' }}
-                </button>
+              <!-- Địa chỉ -->
+              <div class="col-12">
+                <label for="company_address" class="form-label fw-bold text-dark">Địa Chỉ Trụ Sở / Cửa Hàng Chính</label>
+                <div class="input-group">
+                  <span class="input-group-text"><i class="bx bx-map-pin text-danger"></i></span>
+                  <input 
+                    type="text" 
+                    id="company_address" 
+                    class="form-control" 
+                    placeholder="VD: 123 Đường Bạch Đằng, Q. Bình Thạnh, TP. Hồ Chí Minh, Việt Nam" 
+                    v-model="formData.company_address"
+                  />
+                </div>
+                <div class="form-text text-muted">Địa chỉ đầy đủ hiển thị ở cột liên hệ Footer và mục Liên hệ Client.</div>
               </div>
-            </form>
+            </div>
           </div>
         </div>
       </div>
 
-      <!-- Cột Bảng (Danh sách) -->
-      <div class="col-md-8 mb-4">
-        <div class="card">
-          <div class="card-header border-bottom d-flex justify-content-between align-items-center">
-            <h5 class="mb-0 fw-bold text-dark">Danh sách Cấu hình</h5>
+      <!-- PHẦN 3: MẠNG XÃ HỘI & CHÂN TRANG (FOOTER) -->
+      <div class="col-12">
+        <div class="card shadow-sm border">
+          <div class="card-header bg-white border-bottom py-3 d-flex align-items-center">
+            <div class="avatar avatar-sm me-3 bg-label-info rounded d-flex align-items-center justify-content-center">
+              <i class="bx bx-share-alt fs-4 text-info"></i>
+            </div>
+            <div>
+              <h5 class="card-title mb-0 fw-bold text-dark">Phần 3: Mạng Xã Hội & Nội Dung Chân Trang (Footer)</h5>
+              <small class="text-muted">Thiết lập các liên kết mạng xã hội chính thức, mô tả ngắn và dòng chữ bản quyền bảo lưu</small>
+            </div>
           </div>
 
-          <div class="table-responsive text-nowrap custom-scroll" style="height: calc(100vh - 230px); min-height: 400px; overflow-y: auto;">
-            <table class="table table-hover mb-0">
-              <thead>
-                <tr>
-                  <th class="text-center" style="width: 5%">STT</th>
-                  <th class="text-center" style="width: 10%">Logo</th>
-                  <th style="width: 25%">Mã Cấu Hình Hệ Thống</th>
-                  <th style="width: 30%">Tên Cấu Hình Hệ Thống</th>
-                  <th class="text-center" style="width: 15%">Trạng thái</th>
-                  <th class="text-center" style="width: 15%">Hành động</th>
-                </tr>
-              </thead>
-              <tbody class="table-border-bottom-0">
-                <tr v-if="isPending">
-                  <td colspan="6" class="text-center py-4 text-muted">
-                    <div class="spinner-border text-primary" role="status">
-                      <span class="visually-hidden">Loading...</span>
-                    </div>
-                  </td>
-                </tr>
-                <tr v-else-if="filteredBrands.length === 0">
-                  <td colspan="6" class="text-center py-5 text-muted">
-                    <i class="bx bx-folder-open text-secondary fs-1 d-block mb-2"></i>
-                    Không có dữ liệu
-                  </td>
-                </tr>
-                <tr v-for="(item, index) in filteredBrands" :key="item.id" v-else>
-                  <td class="text-center"><strong>{{ index + 1 }}</strong></td>
-                  <td class="text-center">
-                    <div class="d-inline-flex justify-content-center align-items-center border rounded" style="width: 60px; height: 60px; background-color: #fff;">
-                      <img v-if="item.logo_path" :src="getImageUrl(item.logo_path)" alt="Logo" style="max-height: 40px; max-width: 50px; object-fit: contain;" @error="$event.target.style.display='none'; $event.target.nextElementSibling.style.display='inline-block'">
-                      <i class="bx bx-image text-muted fs-3" :style="{ display: item.logo_path ? 'none' : 'inline-block' }"></i>
-                    </div>
-                  </td>
-                  <td><span class="fw-bold text-primary">{{ item.code }}</span></td>
-                  <td>
-                    <span class="fw-bold text-dark">{{ item.name }}</span>
-                  </td>
-                  <td class="text-center">
-                    <span v-if="item.status === 1 || item.status === true" class="badge badge-custom bg-pastel-success">HOẠT ĐỘNG</span>
-                    <span v-else class="badge badge-custom bg-pastel-danger">TẠM KHÓA</span>
-                  </td>
-                  <td class="text-center">
-                    <div class="d-flex align-items-center justify-content-center">
-                      <button 
-                        type="button" 
-                        class="action-btn text-primary me-1" 
-                        @click="openEditModal(item)"
-                        title="Sửa"
-                      >
-                        <i class="bx bx-edit-alt"></i>
-                      </button>
-                      <button 
-                        type="button" 
-                        class="action-btn text-danger" 
-                        @click="confirmDelete(item)" 
-                        title="Xóa"
-                      >
-                        <i class="bx bx-trash"></i>
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+          <div class="card-body pt-4">
+            <div class="row g-4">
+              <!-- Facebook -->
+              <div class="col-md-6">
+                <label for="social_facebook" class="form-label fw-bold text-dark">Link Fanpage Facebook</label>
+                <div class="input-group">
+                  <span class="input-group-text"><i class="bx bxl-facebook text-primary"></i></span>
+                  <input 
+                    type="url" 
+                    id="social_facebook" 
+                    class="form-control" 
+                    placeholder="https://facebook.com/..." 
+                    v-model="formData.social_facebook"
+                  />
+                </div>
+              </div>
+
+              <!-- YouTube Channel -->
+              <div class="col-md-6">
+                <label for="social_youtube" class="form-label fw-bold text-dark">Link Kênh YouTube Doanh Nghiệp</label>
+                <div class="input-group">
+                  <span class="input-group-text"><i class="bx bxl-youtube text-danger"></i></span>
+                  <input 
+                    type="url" 
+                    id="social_youtube" 
+                    class="form-control" 
+                    placeholder="https://youtube.com/@..." 
+                    v-model="formData.social_youtube"
+                  />
+                </div>
+              </div>
+
+              <!-- Zalo -->
+              <div class="col-md-6">
+                <label for="social_zalo" class="form-label fw-bold text-dark">Link Zalo OA / Tư Vấn Trực Tuyến</label>
+                <div class="input-group">
+                  <span class="input-group-text"><i class="bx bx-message-rounded-dots text-info"></i></span>
+                  <input 
+                    type="url" 
+                    id="social_zalo" 
+                    class="form-control" 
+                    placeholder="https://zalo.me/..." 
+                    v-model="formData.social_zalo"
+                  />
+                </div>
+              </div>
+
+              <!-- Instagram -->
+              <div class="col-md-6">
+                <label for="social_instagram" class="form-label fw-bold text-dark">Link Instagram</label>
+                <div class="input-group">
+                  <span class="input-group-text"><i class="bx bxl-instagram text-danger"></i></span>
+                  <input 
+                    type="url" 
+                    id="social_instagram" 
+                    class="form-control" 
+                    placeholder="https://instagram.com/..." 
+                    v-model="formData.social_instagram"
+                  />
+                </div>
+              </div>
+
+              <!-- Giới thiệu ngắn Footer -->
+              <div class="col-12">
+                <label for="footer_about_text" class="form-label fw-bold text-dark">Đoạn Văn Giới Thiệu Chân Trang (Footer About)</label>
+                <textarea 
+                  id="footer_about_text" 
+                  class="form-control" 
+                  rows="3" 
+                  placeholder="Nhập 2-3 câu ngắn giới thiệu về doanh nghiệp ở chân trang..."
+                  v-model="formData.footer_about_text"
+                ></textarea>
+                <div class="form-text text-muted">Hiển thị dưới logo JPM Marine tại cột 1 của Chân trang.</div>
+              </div>
+
+              <!-- Bản quyền Copyright -->
+              <div class="col-12">
+                <label for="copyright_text" class="form-label fw-bold text-dark">Dòng Chữ Bản Quyền (Copyright Text)</label>
+                <div class="input-group">
+                  <span class="input-group-text"><i class="bx bx-copyright"></i></span>
+                  <input 
+                    type="text" 
+                    id="copyright_text" 
+                    class="form-control" 
+                    placeholder="VD: © 2026 JPM Marine. Bảo lưu mọi quyền." 
+                    v-model="formData.copyright_text"
+                  />
+                </div>
+                <div class="form-text text-muted">Dòng thông báo pháp lý và bản quyền tại đáy chân trang.</div>
+              </div>
+            </div>
           </div>
-            <!-- Tổng số mục -->
-      <div class="card-footer py-3 border-top">
-        <span class="text-muted fw-medium">Tổng cộng: {{ (filteredBrands && filteredBrands.length) ? filteredBrands.length : 0 }} mục</span>
-      </div>
         </div>
       </div>
+
+      <!-- BOTTOM ACTION BAR -->
+      <div class="col-12 text-end mb-4">
+        <div class="card shadow-sm border p-3">
+          <div class="d-flex justify-content-between align-items-center">
+            <span class="text-muted small">
+              <i class="bx bx-check-double text-success me-1"></i>Các thay đổi sẽ được đồng bộ ngay lập tức ra ngoài giao diện người dùng Client sau khi lưu.
+            </span>
+            <div class="d-flex gap-2">
+              <button 
+                type="button" 
+                class="btn btn-outline-secondary d-flex align-items-center"
+                @click="resetToInitial"
+                :disabled="isSubmitting"
+              >
+                <i class="bx bx-reset me-1"></i> Đặt Lại
+              </button>
+              <button 
+                type="button" 
+                class="btn btn-primary d-flex align-items-center shadow-sm px-4"
+                @click="saveSettings"
+                :disabled="isSubmitting"
+              >
+                <span v-if="isSubmitting" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                <i v-else class="bx bx-save me-1"></i>
+                {{ isSubmitting ? 'Đang Lưu...' : 'Lưu Thay Đổi' }}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </div>
   </div>
 </template>
 
 <script>
-import vSelect from '@vueform/multiselect';
+import { ref, reactive, watch, onMounted } from 'vue';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/vue-query';
 import axiosClient from '../../../api/axiosClient';
 import Swal from 'sweetalert2';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/vue-query';
 
 export default {
   name: "CauHinhHeThong",
-  components: {
-    vSelect
-  },
   setup() {
     const queryClient = useQueryClient();
-    const toaster = window.toaster || { success: () => {}, error: () => {} };
+    const isSubmitting = ref(false);
 
-    const fetchBrands = async () => {
-      const response = await axiosClient.get('/admin/thuong-hieu');
-      return response.data;
+    // Initial default state
+    const defaultData = {
+      homepage_youtube_url: 'https://www.youtube.com/watch?v=5CVzOqvqI38',
+      homepage_hero_title: 'JPM MARINE',
+      homepage_hero_subtitle: 'PHỤ TÙNG CHÍNH HÃNG',
+      company_name: 'JPM Marine',
+      company_address: '123 Đường Bạch Đằng, Q. Bình Thạnh, TP. Hồ Chí Minh, Việt Nam',
+      company_hotline: '0909 123 456',
+      company_email: 'contact@jpm-marine.vn',
+      business_hours: 'Thứ 2 - Thứ 7: 08:00 - 17:30 (Chủ nhật nghỉ)',
+      social_facebook: 'https://facebook.com/jpmmarine',
+      social_youtube: 'https://youtube.com/@jpmmarine',
+      social_zalo: 'https://zalo.me/0909123456',
+      social_instagram: 'https://instagram.com/jpmmarine',
+      footer_about_text: 'Nhà phân phối phụ tùng động cơ thủy gắn ngoài hàng đầu tại Việt Nam. Uy tín, chất lượng và đồng hành cùng bạn trên mọi hành trình vươn khơi.',
+      copyright_text: '© 2026 JPM Marine. Bảo lưu mọi quyền.'
     };
 
-    const { data: brands, isFetching, isPending } = useQuery({
-      queryKey: ['brands'],
-      queryFn: fetchBrands
+    const formData = reactive({ ...defaultData });
+    const initialSnapshot = ref({});
+
+    // Fetch Admin Settings
+    const { data: serverConfigs, isFetching } = useQuery({
+      queryKey: ['admin-site-settings'],
+      queryFn: async () => {
+        const res = await axiosClient.get('/admin/cau-hinh');
+        return res.data?.data || [];
+      }
     });
 
-    const deleteMutation = useMutation({
-      mutationFn: async (id) => axiosClient.delete(`/admin/thuong-hieu/${id}`),
-      onError: (err, id, context) => {
-      },
-      onSettled: () => queryClient.invalidateQueries({ queryKey: ['brands'] })
-    });
+    // Trích xuất YouTube Video ID từ link
+    const extractYoutubeId = (url) => {
+      if (!url) return '';
+      const pattern = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i;
+      const match = url.match(pattern);
+      if (match && match[1]) return match[1];
+      if (url.trim().length === 11 && !url.includes('/')) return url.trim();
+      return '';
+    };
 
+    const previewVideoId = ref('5CVzOqvqI38');
+
+    const updateYoutubePreview = () => {
+      previewVideoId.value = extractYoutubeId(formData.homepage_youtube_url);
+    };
+
+    // Khi server trả về dữ liệu -> đổ vào form
+    watch(serverConfigs, (newConfigs) => {
+      if (Array.isArray(newConfigs) && newConfigs.length > 0) {
+        newConfigs.forEach(item => {
+          if (formData.hasOwnProperty(item.khoa_cau_hinh)) {
+            formData[item.khoa_cau_hinh] = item.gia_tri || '';
+          }
+        });
+        initialSnapshot.value = JSON.parse(JSON.stringify(formData));
+        updateYoutubePreview();
+      }
+    }, { immediate: true });
+
+    // Save Mutation
     const saveMutation = useMutation({
-      mutationFn: async ({ id, payload }) => {
-        if (id) {
-          payload.append('_method', 'PUT');
-          return axiosClient.post(`/admin/thuong-hieu/${id}`, payload, {
-            headers: { 'Content-Type': 'multipart/form-data' }
-          });
-        }
-        return axiosClient.post('/admin/thuong-hieu', payload, {
-          headers: { 'Content-Type': 'multipart/form-data' }
+      mutationFn: async (payload) => {
+        return await axiosClient.post('/admin/cau-hinh', { settings: payload });
+      },
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ['admin-site-settings'] });
+        queryClient.invalidateQueries({ queryKey: ['public-site-settings'] });
+        initialSnapshot.value = JSON.parse(JSON.stringify(formData));
+        
+        Swal.fire({
+          icon: 'success',
+          title: 'Thành công!',
+          text: 'Đã lưu cấu hình hệ thống và cập nhật giao diện Client.',
+          timer: 2000,
+          showConfirmButton: false
         });
       },
-      onError: (err, vars, context) => {
-      },
-      onSettled: () => queryClient.invalidateQueries({ queryKey: ['brands'] })
+      onError: (err) => {
+        Swal.fire({
+          icon: 'error',
+          title: 'Lỗi khi lưu',
+          text: err.response?.data?.message || err.message || 'Không thể lưu cấu hình.'
+        });
+      }
     });
 
-    return { brands, isFetching, isPending, queryClient, deleteMutation, saveMutation };
-  },
-  data() {
-    return {
-      activeTab: 'MARINE',
-      isEditMode: false,
-      isSubmitting: false,
-      logoFile: null,
-      formData: {
-        id: null,
-        code: "",
-        name: "",
-        logo_path: "",
-        status: 1
+    const saveSettings = async () => {
+      isSubmitting.value = true;
+      try {
+        await saveMutation.mutateAsync({ ...formData });
+      } finally {
+        isSubmitting.value = false;
       }
     };
-  },
-  computed: {
-    filteredBrands() {
-      return (this.brands || []);
-    }
-  },
-  methods: {
-    switchTab(tab) {
-      this.activeTab = tab;
-      this.resetForm();
-    },
-    getImageUrl(path) {
-      if (!path) return '';
-      if (path.startsWith('blob:') || path.startsWith('http')) return path;
-      return `http://localhost:8000${path}`;
-    },
-    resetForm() {
-      this.isEditMode = false;
-      this.formData = {
-        id: null,
-        code: "",
-        name: "",
-        logo_path: "",
-        status: 1
-      };
-      this.logoFile = null;
-      const fileInput = document.getElementById('logo');
-      if (fileInput) fileInput.value = '';
-    },
-    removeLogo() {
-      this.logoFile = null;
-      this.formData.logo_path = null;
-      const fileInput = document.getElementById('logo');
-      if (fileInput) fileInput.value = '';
-    },
-    handleLogoUpload(event) {
-      const file = event.target.files[0];
-      if (file) {
-        this.logoFile = file;
-        this.formData.logo_path = URL.createObjectURL(file); 
-      } else {
-        this.logoFile = null;
-      }
-    },
-    openEditModal(item) {
-      this.isEditMode = true;
-      this.formData = { ...item };
-      this.logoFile = null;
-      const fileInput = document.getElementById('logo');
-      if (fileInput) fileInput.value = '';
-    },
-    async saveData() {
-      if (!this.formData.code || !this.formData.name) {
-        this.$toast?.error("Vui lòng nhập đầy đủ thông tin bắt buộc!");
-        return;
-      }
 
-      this.isSubmitting = true;
-      try {
-        const payload = new FormData();
-        payload.append('code', this.formData.code);
-        payload.append('name', this.formData.name);
-        payload.append('status', this.formData.status ? 1 : 0);
-        
-        if (this.logoFile) {
-          payload.append('logo', this.logoFile);
-        }
-
-        await this.saveMutation.mutateAsync({ id: this.isEditMode ? this.formData.id : null, payload, data: { ...this.formData } });
-        
-        this.$toast?.success(this.isEditMode ? "Cập nhật Cấu Hình Hệ Thống thành công!" : "Đã thêm Cấu Hình Hệ Thống mới!");
-        this.resetForm();
-      } catch (error) {
-        const msg = error.response?.data?.message || "Có lỗi xảy ra khi lưu dữ liệu";
-        this.$toast?.error(msg);
-      } finally {
-        this.isSubmitting = false;
+    const resetToInitial = () => {
+      if (Object.keys(initialSnapshot.value).length > 0) {
+        Object.assign(formData, JSON.parse(JSON.stringify(initialSnapshot.value)));
+        updateYoutubePreview();
       }
-    },
-    async confirmDelete(item) {
-      const result = await Swal.fire({
-        title: 'Xác nhận xóa',
-        html: `Bạn có chắc chắn muốn xóa Cấu Hình Hệ Thống <b>"${item.name}"</b>?`,
-        icon: 'warning',
-        iconColor: '#ff3e1d',
-        showCancelButton: true,
-        confirmButtonText: 'Xóa Cấu Hình Hệ Thống',
-        cancelButtonText: 'Hủy',
-        reverseButtons: true,
-        animation: false,
-        customClass: {
-            popup: 'swal-shift-up',
-            confirmButton: 'btn btn-danger px-4 shadow-sm',
-            cancelButton: 'btn btn-outline-secondary px-4 me-3'
-          },
-        buttonsStyling: false
-      });
+    };
 
-      if (result.isConfirmed) {
-        try {
-          await this.deleteMutation.mutateAsync(item.id);
-          this.$toast?.success("Đã xóa Cấu Hình Hệ Thống!");
-        } catch (error) {
-          const msg = error.response?.data?.message || "Lỗi khi xóa Cấu Hình Hệ Thống";
-          this.$toast?.error(msg);
-        }
-      }
-    }
+    onMounted(() => {
+      updateYoutubePreview();
+    });
+
+    return {
+      formData,
+      isFetching,
+      isSubmitting,
+      previewVideoId,
+      updateYoutubePreview,
+      saveSettings,
+      resetToInitial
+    };
   }
 };
 </script>
 
 <style scoped>
-.custom-line-tab {
-  cursor: pointer;
-  min-width: 160px;
-  text-align: center;
-  color: #a1acb8; /* text-muted */
-  border-bottom: 3px solid transparent;
-  transition: all 0.2s ease;
+.input-group-text {
+  background-color: #f8f9fa;
+  border-right: none;
 }
-.custom-line-tab.active {
-  color: var(--bs-primary);
-  border-bottom: 3px solid var(--bs-primary);
+
+.input-group .form-control {
+  border-left: none;
 }
-.custom-line-tab:hover:not(.active) {
-  color: #697a8d;
+
+.input-group .form-control:focus {
+  border-color: #696cff;
+}
+
+.card-header {
+  border-bottom: 1px solid rgba(67, 89, 113, 0.1) !important;
+}
+
+.avatar-sm {
+  width: 2.25rem;
+  height: 2.25rem;
+}
+
+.bg-label-danger {
+  background-color: #ffe0e3 !important;
+}
+
+.bg-label-primary {
+  background-color: #e7e7ff !important;
+}
+
+.bg-label-info {
+  background-color: #d7f5fc !important;
 }
 </style>
-
-
-
-

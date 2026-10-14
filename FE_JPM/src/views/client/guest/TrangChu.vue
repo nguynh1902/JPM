@@ -5,7 +5,7 @@
       <!-- Video Background (YouTube) -->
       <div style="position: absolute; inset: 0; z-index: 1; width: 100%; height: 100%; overflow: hidden; background: #000;">
         <iframe 
-          src="https://www.youtube.com/embed/5CVzOqvqI38?autoplay=1&mute=1&loop=1&playlist=5CVzOqvqI38&controls=0&showinfo=0&rel=0&modestbranding=1&playsinline=1&disablekb=1&fs=0&iv_load_policy=3" 
+          :src="youtubeEmbedUrl" 
           frameborder="0" 
           allow="autoplay; encrypted-media" 
           style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 100vw; height: 56.25vw; min-height: 100vh; min-width: 177.77vh; pointer-events: none;"
@@ -19,8 +19,8 @@
         <div class="row w-100">
           <div class="col-lg-8 text-start">
             <h1 data-aos="fade-up" data-aos-delay="100" style="font-size: 4.5rem; font-weight: 300; letter-spacing: 2px; color: #fff; line-height: 1.1; margin-bottom: 20px; text-transform: uppercase;">
-              <span style="color: var(--accent-color); font-weight: 600;">JPM MARINE</span><br />
-              <span style="font-style: italic; font-weight: 300; color: #ffffff;">PHỤ TÙNG CHÍNH HÃNG</span>
+              <span style="color: var(--accent-color); font-weight: 600;">{{ settings.homepage_hero_title || 'JPM MARINE' }}</span><br />
+              <span style="font-style: italic; font-weight: 300; color: #ffffff;">{{ settings.homepage_hero_subtitle || 'PHỤ TÙNG CHÍNH HÃNG' }}</span>
             </h1>
 
             <p data-aos="fade-up" data-aos-delay="150" style="font-size: 1.1rem; font-weight: 300; color: #e2e8f0; letter-spacing: 0.5px; margin-bottom: 40px; max-width: 600px; line-height: 1.6;">
@@ -445,14 +445,22 @@ import { ref, computed, watch } from 'vue';
 import { useQuery } from '@tanstack/vue-query';
 import axiosClient from '../../../api/axiosClient';
 import { useCartStore } from '../../../stores/cartStore';
+import { useSiteSettings } from '../../../composables/useSiteSettings';
 
 export default {
   name: "TrangChu",
   setup() {
-    const cartStore = useCartStore(); const selectedBrand = ref("");
+    const { settings } = useSiteSettings();
+    const cartStore = useCartStore(); 
+    const selectedBrand = ref("");
     const selectedEngineType = ref("");
     const selectedYear = ref("");
     const selectedModel = ref("");
+
+    const youtubeEmbedUrl = computed(() => {
+      const videoId = settings.value?.homepage_youtube_id || '5CVzOqvqI38';
+      return `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}&controls=0&showinfo=0&rel=0&modestbranding=1&playsinline=1&disablekb=1&fs=0&iv_load_policy=3`;
+    });
 
     const { data: brands, isLoading: isLoadingBrands } = useQuery({
       queryKey: ['public-brands-v4'],
@@ -526,7 +534,10 @@ export default {
       latestNews,
       formatDate,
       isPageLoading,
-      isLoadingBrands, cartStore,
+      isLoadingBrands, 
+      cartStore,
+      settings,
+      youtubeEmbedUrl,
     };
   },
   data() {
@@ -723,6 +734,48 @@ export default {
 .news-list-item:hover a.stretched-link,
 .list-item-hover:hover a {
   color: #0e1b4d !important;
+}
+
+/* =========================================
+   SPONSORS / BRAND LOGOS HOVER FIX
+   - Không bị cắt viền (overflow: visible)
+   - Không bị mờ/vỡ pixel khi hover (transform: none)
+   ========================================= */
+.sponsors .client-logo {
+  height: 95px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 10px 18px !important;
+  border-radius: 8px !important;
+  overflow: visible !important;
+  transition: all 0.3s ease !important;
+}
+
+.sponsors .client-logo:hover {
+  background-color: #ffffff !important;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.06) !important;
+  transform: translateY(-2px) !important;
+}
+
+.sponsors .client-logo img {
+  max-height: 52px !important;
+  max-width: 100% !important;
+  width: auto !important;
+  height: auto !important;
+  object-fit: contain !important;
+  padding: 0 !important;
+  opacity: 0.8 !important;
+  transition: opacity 0.3s ease !important;
+  image-rendering: -webkit-optimize-contrast !important;
+  backface-visibility: hidden !important;
+  -webkit-backface-visibility: hidden !important;
+  transform: none !important;
+}
+
+.sponsors .client-logo:hover img {
+  opacity: 1 !important;
+  transform: none !important;
 }
 
 </style>

@@ -21,6 +21,7 @@ Route::post('/register', [AuthController::class, 'register'])->middleware('throt
 
 // Public API Routes cho khách hàng - Protected by public-api rate limit & Response Cache
 Route::prefix('public')->middleware(['throttle:public-api', 'cache.public'])->group(function () {
+    Route::get('/cau-hinh', [\App\Domain\Core\Controllers\CauHinhController::class, 'publicIndex']);
     Route::get('/thuong-hieu', [\App\Domain\Storefront\Controllers\TraCuuController::class, 'thuongHieu']);
     Route::get('/thuong-hieu/{code}', [\App\Domain\Storefront\Controllers\TraCuuController::class, 'thuongHieuChiTiet']);
     Route::get('/loai-dong-co', [\App\Domain\Storefront\Controllers\TraCuuController::class, 'loaiDongCo']);
@@ -112,6 +113,8 @@ Route::middleware('auth:sanctum')->group(function () {
     // Admin Routes (Được bảo vệ bởi Role Admin & Staff)
     Route::middleware(['role:admin|Nhân viên PIM,sanctum'])->group(function () {
         Route::get('admin/dashboard/stats', [\App\Domain\Analytics\Controllers\DashboardController::class, 'stats']);
+        Route::get('admin/cau-hinh', [\App\Domain\Core\Controllers\CauHinhController::class, 'adminIndex']);
+        Route::post('admin/cau-hinh', [\App\Domain\Core\Controllers\CauHinhController::class, 'adminUpdate']);
         Route::apiResource('admin/banner', BannerController::class);
         Route::apiResource('admin/voucher', VoucherController::class);
         Route::apiResource('admin/system-logs', SystemLogController::class)->only(['index']);

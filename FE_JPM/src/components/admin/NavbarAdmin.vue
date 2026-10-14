@@ -113,6 +113,13 @@ import { useAuthStore } from '../../stores/authStore';
           type: "item"
         },
         {
+          title: "Cấu Hình Hệ Thống",
+          icon: "bx-cog",
+          path: "/admin/cau-hinh-he-thong",
+          roles: ["ADMIN"],
+          type: "item"
+        },
+        {
           title: "Dữ Liệu Nền Tảng",
           type: "header",
           roles: ["ADMIN", "STAFF"]
