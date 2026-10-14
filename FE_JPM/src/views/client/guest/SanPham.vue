@@ -1,25 +1,47 @@
 <template>
-  <main class="main-page">
-    <section class="section" style="padding-top: 110px; padding-bottom: 80px;">
-      <div class="container">
-        
-                <!-- Title -->
-        <div class="page-title-box mb-2">
-          <h2 class="jpm-page-title" style="text-transform: uppercase; font-size: 1.8rem; font-weight: 700; color: var(--heading-color); letter-spacing: 1px;">
-            BỘ SƯU TẬP <span class="text-danger">SẢN PHẨM</span>
-          </h2>
-          <p class="text-muted mb-0">
-            Khám phá các sản phẩm, dầu nhớt và vật tư phụ trợ chất lượng cao.
-          </p>
+  <main class="main-page bg-white" style="padding-top: 70px;">
+
+    <!-- ════════════════════════════════════════════════════════════════
+         SECTION 1: HERO BANNER WITH SUBMERGED WATERMARK IMAGE
+    ════════════════════════════════════════════════════════════════ -->
+    <section class="hero-editorial-section position-relative overflow-hidden">
+      <!-- Submerged Marine Image (Ảnh chìm trong nền) -->
+      <div class="hero-submerged-bg"></div>
+      <!-- Watermark dots background -->
+      <div class="hero-watermark-bg"></div>
+
+      <div class="container position-relative z-1 py-5">
+        <div class="row align-items-center py-lg-4">
+
+          <!-- Left Column: Big Title + Description + Pill Button -->
+          <div class="col-lg-6 text-start">
+            <h1 class="hero-main-heading mb-4">
+              Cửa Hàng<br />
+              Phụ Tùng <span class="text-secondary fw-bold">&amp; Thiết Bị</span><br />
+              Hàng Hải
+            </h1>
+            <p class="hero-subtext text-muted mb-4">
+              Khám phá hệ sinh thái phụ tùng động cơ thủy, dầu nhớt và vật tư hàng hải chính hãng từ các thương hiệu dẫn đầu: Yamaha, Mercury, Suzuki, Honda, Tohatsu.
+            </p>
+            <button type="button" class="btn btn-dark-pill px-4 py-2" @click="scrollToProducts">
+              Khám phá sản phẩm
+            </button>
+          </div>
+
         </div>
+      </div>
+    </section>
+
+    <section id="products-section" class="section py-4">
+      <div class="container">
 
         <!-- Modern Breadcrumb -->
-        <nav aria-label="breadcrumb" class="custom-breadcrumb pt-2 mb-5">
+        <nav aria-label="breadcrumb" class="custom-breadcrumb pt-2 mb-4 border-bottom pb-3">
           <ol class="breadcrumb mb-0 align-items-center" style="font-size: 0.85rem;">
             <li class="breadcrumb-item">
               <router-link to="/" class="text-muted text-decoration-none"><i class="bi bi-house-door-fill me-1"></i> Trang chủ</router-link>
             </li>
-            <li class="breadcrumb-item active fw-bold text-dark" aria-current="page">Bộ sưu tập</li>
+            <li class="breadcrumb-item active fw-bold text-dark" aria-current="page">Cửa hàng</li>
           </ol>
         </nav>
 
@@ -398,7 +420,77 @@ const addToCart = (item) => {
     cartStore.addItem(item, 1);
     toaster.success("Thêm sản phẩm thành công");
 };
+
+const scrollToProducts = () => {
+  const el = document.getElementById('products-section');
+  if (el) el.scrollIntoView({ behavior: 'smooth' });
+};
 </script>
+
+<style scoped>
+/* ── SECTION 1: HERO BANNER WITH SUBMERGED WATERMARK IMAGE ── */
+.hero-editorial-section {
+  padding-top: 30px;
+  padding-bottom: 40px;
+}
+
+.hero-submerged-bg {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 62%;
+  height: 100%;
+  background-image: url('https://images.unsplash.com/photo-1567899378494-47b22a2ae96a?w=1600&auto=format&fit=crop&q=85');
+  background-size: cover;
+  background-position: center right;
+  opacity: 0.75;
+  mask-image: linear-gradient(to right, transparent 0%, rgba(0, 0, 0, 0.35) 28%, rgba(0, 0, 0, 0.85) 60%, rgba(0, 0, 0, 1) 100%);
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, rgba(0, 0, 0, 0.35) 28%, rgba(0, 0, 0, 0.85) 60%, rgba(0, 0, 0, 1) 100%);
+  pointer-events: none;
+}
+
+.hero-watermark-bg {
+  position: absolute;
+  top: 5%;
+  right: 2%;
+  width: 65%;
+  height: 90%;
+  background-image: radial-gradient(#d1d5db 1.5px, transparent 1.5px);
+  background-size: 22px 22px;
+  opacity: 0.45;
+  pointer-events: none;
+  border-radius: 40px;
+}
+
+.hero-main-heading {
+  font-size: clamp(2.2rem, 3.8vw, 3.3rem);
+  font-weight: 800;
+  color: #111827;
+  line-height: 1.18;
+  letter-spacing: -1px;
+}
+
+.hero-subtext {
+  font-size: 0.95rem;
+  line-height: 1.7;
+  max-width: 480px;
+}
+
+.btn-dark-pill {
+  background-color: #27272a;
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 0.88rem;
+  border-radius: 50rem;
+  border: none;
+  transition: all 0.25s ease;
+}
+.btn-dark-pill:hover {
+  background-color: #f82249;
+  color: #ffffff;
+  transform: translateY(-2px);
+}
+</style>
 
 <style>
 .premium-product-card:hover .action-overlay {

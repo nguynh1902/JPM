@@ -2,17 +2,19 @@
   <main class="news-wireframe-page bg-white">
 
     <!-- ════════════════════════════════════════════════════════════════
-         SECTION 1: HERO BANNER (LEFT EDITORIAL TEXT + RIGHT 3-CARD COLLAGE)
+         SECTION 1: HERO BANNER WITH SUBMERGED WATERMARK IMAGE
     ════════════════════════════════════════════════════════════════ -->
     <section class="hero-editorial-section position-relative overflow-hidden">
+      <!-- Submerged Marine Image (Ảnh chìm trong nền) -->
+      <div class="hero-submerged-bg"></div>
       <!-- Subtle World / Marine Map Watermark Background -->
       <div class="hero-watermark-bg"></div>
 
-      <div class="container position-relative z-1 py-4 py-lg-5">
-        <div class="row align-items-center gy-5 gx-lg-5">
+      <div class="container position-relative z-1 py-5">
+        <div class="row align-items-center py-lg-4">
 
           <!-- Left Column: Big Title + Description + Pill Button -->
-          <div class="col-lg-5 text-start">
+          <div class="col-lg-6 text-start">
             <h1 class="hero-main-heading mb-4">
               Khám Phá<br />
               Thế Giới <span class="text-secondary fw-bold">Công Nghệ</span><br />
@@ -24,48 +26,6 @@
             <button type="button" class="btn btn-dark-pill px-4 py-2" @click="scrollToSection('top-destinations')">
               Khám phá ngay
             </button>
-          </div>
-
-          <!-- Right Column: Staggered 3-Card Image Collage -->
-          <div class="col-lg-7">
-            <div v-if="isFetching && allNews.length === 0" class="row g-3 g-md-4 align-items-center">
-              <div class="col-6">
-                <div class="skeleton-box rounded-4" style="height: 360px; background: #e5e7eb;"></div>
-              </div>
-              <div class="col-6 d-flex flex-column gap-3 gap-md-4">
-                <div class="skeleton-box rounded-4" style="height: 210px; background: #e5e7eb;"></div>
-                <div class="skeleton-box rounded-4" style="height: 210px; background: #e5e7eb;"></div>
-              </div>
-            </div>
-
-            <div v-else class="row g-3 g-md-4 align-items-center">
-              <!-- Collage Left: 1 Tall Card -->
-              <div class="col-6" v-if="collageCards[0]">
-                <router-link :to="`/tin-tuc/${collageCards[0].id}`" class="collage-card collage-card--tall d-block position-relative rounded-4 overflow-hidden shadow-sm group-hover">
-                  <img :src="getImageUrl(collageCards[0].img)" :alt="collageCards[0].title" class="w-100 h-100 object-fit-cover transition-transform" @error="onImgError" />
-                  <div class="collage-card-overlay p-3 d-flex flex-column justify-content-end">
-                    <span class="badge bg-danger align-self-start mb-1" style="font-size: 0.68rem;">{{ collageCards[0].cat }}</span>
-                    <h6 class="text-white fw-bold mb-0 text-truncate-2" style="font-size: 0.95rem; line-height: 1.35;">{{ collageCards[0].title }}</h6>
-                  </div>
-                </router-link>
-              </div>
-
-              <!-- Collage Right: 2 Stacked Cards -->
-              <div class="col-6 d-flex flex-column gap-3 gap-md-4">
-                <router-link
-                  v-for="card in collageCards.slice(1, 3)"
-                  :key="card.id"
-                  :to="`/tin-tuc/${card.id}`"
-                  class="collage-card collage-card--stacked d-block position-relative rounded-4 overflow-hidden shadow-sm group-hover"
-                >
-                  <img :src="getImageUrl(card.img)" :alt="card.title" class="w-100 h-100 object-fit-cover transition-transform" @error="onImgError" />
-                  <div class="collage-card-overlay p-3 d-flex flex-column justify-content-end">
-                    <span class="badge bg-dark bg-opacity-75 align-self-start mb-1" style="font-size: 0.65rem;">{{ card.cat }}</span>
-                    <h6 class="text-white fw-bold mb-0 text-truncate-2" style="font-size: 0.88rem; line-height: 1.35;">{{ card.title }}</h6>
-                  </div>
-                </router-link>
-              </div>
-            </div>
           </div>
 
         </div>
@@ -565,7 +525,22 @@ export default {
 /* ── SECTION 1: HERO BANNER ── */
 .hero-editorial-section {
   padding-top: 30px;
-  padding-bottom: 30px;
+  padding-bottom: 40px;
+}
+
+.hero-submerged-bg {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 62%;
+  height: 100%;
+  background-image: url('https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=1600&auto=format&fit=crop&q=85');
+  background-size: cover;
+  background-position: center right;
+  opacity: 0.75;
+  mask-image: linear-gradient(to right, transparent 0%, rgba(0, 0, 0, 0.35) 28%, rgba(0, 0, 0, 0.85) 60%, rgba(0, 0, 0, 1) 100%);
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, rgba(0, 0, 0, 0.35) 28%, rgba(0, 0, 0, 0.85) 60%, rgba(0, 0, 0, 1) 100%);
+  pointer-events: none;
 }
 
 .hero-watermark-bg {
