@@ -1488,7 +1488,7 @@ section,
   align-items: center;
   border: 1px solid transparent;
   border-radius: 4px;
-  overflow: hidden;
+  overflow: visible;
   transition: all 0.4s ease;
   cursor: pointer;
 }

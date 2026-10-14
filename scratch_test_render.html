@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+body { background: #f8f9fa; margin: 0; padding: 30px; font-family: sans-serif; }
+.grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+.card { background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.06); }
+.box { width: 280px; height: 110px; display: flex; align-items: center; justify-content: center; }
+
+/* Technique 1: Scale parent router-link (a) instead of img */
+.tech1 a { display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; transition: transform 0.3s ease; }
+.tech1 img { padding: 15px 30px; max-width: 80%; width: auto; height: auto; opacity: 0.85; transition: opacity 0.3s ease; }
+.tech1.hover a { transform: scale(1.08); }
+.tech1.hover img { opacity: 1; }
+
+/* Technique 2: Parent translateY(-5px) + subtle scale(1.04) */
+.tech2 { transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1); }
+.tech2 img { padding: 15px 30px; max-width: 80%; width: auto; height: auto; opacity: 0.85; transition: opacity 0.3s ease; }
+.tech2.hover { transform: translateY(-5px) scale(1.04); }
+.tech2.hover img { opacity: 1; }
+
+/* Technique 3: filter: drop-shadow on hover (no scale) */
+.tech3 img { padding: 15px 30px; max-width: 80%; width: auto; height: auto; opacity: 0.85; transition: all 0.3s ease; }
+.tech3.hover img { opacity: 1; filter: drop-shadow(0 4px 12px rgba(0,0,0,0.15)); }
+
+/* Technique 4: will-change + filter: blur(0px) fix for Chrome transform scale */
+.tech4 img {
+  padding: 15px 30px;
+  max-width: 80%;
+  width: auto;
+  height: auto;
+  opacity: 0.85;
+  transition: transform 0.4s ease, opacity 0.3s ease;
+  will-change: transform;
+  filter: blur(0px);
+}
+.tech4.hover img {
+  transform: scale(1.08);
+  opacity: 1;
+}
+
+/* Technique 5: Scale down initially, scale to 1.0 on hover */
+.tech5 img {
+  padding: 10px 20px;
+  max-width: 90%;
+  width: auto;
+  height: auto;
+  opacity: 0.85;
+  transform: scale(0.9);
+  transition: transform 0.4s ease, opacity 0.3s ease;
+}
+.tech5.hover img {
+  transform: scale(1);
+  opacity: 1;
+}
+</style>
+</head>
+<body>
+  <div class="grid">
+    <div class="card">
+      <h4>Tech 1: Scale <a> container (1.08)</h4>
+      <div class="box tech1 hover"><a><img src="FE_JPM/public/client/image/mecury_thuonghieu.png"></a></div>
+    </div>
+    <div class="card">
+      <h4>Tech 2: translateY(-5px) + scale(1.04)</h4>
+      <div class="box tech2 hover"><img src="FE_JPM/public/client/image/mecury_thuonghieu.png"></div>
+    </div>
+    <div class="card">
+      <h4>Tech 3: Drop-shadow + Opacity 1 (No scale)</h4>
+      <div class="box tech3 hover"><img src="FE_JPM/public/client/image/mecury_thuonghieu.png"></div>
+    </div>
+    <div class="card">
+      <h4>Tech 4: will-change + blur(0) on img</h4>
+      <div class="box tech4 hover"><img src="FE_JPM/public/client/image/mecury_thuonghieu.png"></div>
+    </div>
+    <div class="card">
+      <h4>Tech 5: scale(0.9) normal -> scale(1.0) hover</h4>
+      <div class="box tech5 hover"><img src="FE_JPM/public/client/image/mecury_thuonghieu.png"></div>
+    </div>
+  </div>
+</body>
+</html>

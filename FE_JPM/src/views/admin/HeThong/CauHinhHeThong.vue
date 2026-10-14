@@ -3,11 +3,11 @@
     <!-- Header Page & Action Buttons -->
     <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-2">
       <div>
-        <h4 class="fw-bold mb-1">
-          <span class="text-muted fw-light">Cài Đặt /</span> Cấu Hình Hệ Thống & Thiết Lập Website
+        <h4 class="fw-bold mb-1 text-dark">
+          Cấu Hình Hệ Thống & Thiết Lập Website
         </h4>
         <p class="text-muted mb-0" style="font-size: 0.9rem;">
-          Quản lý toàn bộ thông tin chung hiển thị tại Client (Video trang chủ, thông tin liên hệ, giờ mở cửa, mạng xã hội và chân trang).
+          Quản lý thông tin chung, video trang chủ và thông tin liên hệ hiển thị tại Client.
         </p>
       </div>
       <div class="d-flex gap-2">
@@ -43,7 +43,7 @@
     <!-- 1 PAGE DUY NHẤT VỚI 3 PHẦN NỐI TIẾP NHAU -->
     <div v-else class="row g-4">
       
-      <!-- PHẦN 1: TRANG CHỦ & VIDEO BANNER -->
+      <!-- PHẦN 1: BANNER TRANG CHỦ & VIDEO -->
       <div class="col-12">
         <div class="card shadow-sm border">
           <div class="card-header bg-white border-bottom py-3 d-flex align-items-center">
@@ -51,8 +51,8 @@
               <i class="bx bxl-youtube fs-4 text-danger"></i>
             </div>
             <div>
-              <h5 class="card-title mb-0 fw-bold text-dark">Phần 1: Trang Chủ & Video Banner (Hero)</h5>
-              <small class="text-muted">Tùy biến video YouTube nền chạy ngầm và slogan tiêu đề tại trang chủ Client</small>
+              <h5 class="card-title mb-0 fw-bold text-dark">Phần 1: Banner Trang Chủ & Video</h5>
+              <small class="text-muted">Cài đặt video nền YouTube và slogan tại trang chủ Client</small>
             </div>
           </div>
 
@@ -63,7 +63,7 @@
                 <!-- Đường dẫn YouTube -->
                 <div class="mb-4">
                   <label for="homepage_youtube_url" class="form-label fw-bold text-dark">
-                    Đường Dẫn Video YouTube (Hero Background) <span class="text-danger">*</span>
+                    Link Carousel Youtube <span class="text-danger">*</span>
                   </label>
                   <div class="input-group">
                     <span class="input-group-text"><i class="bx bxl-youtube text-danger"></i></span>
@@ -71,20 +71,20 @@
                       type="text" 
                       id="homepage_youtube_url" 
                       class="form-control" 
-                      placeholder="VD: https://www.youtube.com/watch?v=5CVzOqvqI38 hoặc https://youtu.be/..." 
+                      placeholder="https://www.youtube.com/watch?v=5CVzOqvqI38" 
                       v-model="formData.homepage_youtube_url"
                       @input="updateYoutubePreview"
                     />
                   </div>
                   <div class="form-text text-muted mt-1">
-                    <i class="bx bx-check-circle text-success me-1"></i>Hệ thống tự động trích xuất Video ID và phát ngầm lặp vô tận (tắt tiếng + tự động phát) phía sau banner trang chủ.
+                    <i class="bx bx-check-circle text-success me-1"></i>Hệ thống tự nhận Video ID và phát lặp nền tự động.
                   </div>
                 </div>
 
                 <!-- Tiêu đề lớn -->
                 <div class="mb-4">
                   <label for="homepage_hero_title" class="form-label fw-bold text-dark">
-                    Tiêu Đề Thương Hiệu Lớn (Hero Title)
+                    Tiêu Đề Thương Hiệu
                   </label>
                   <div class="input-group">
                     <span class="input-group-text"><i class="bx bx-heading"></i></span>
@@ -92,17 +92,17 @@
                       type="text" 
                       id="homepage_hero_title" 
                       class="form-control" 
-                      placeholder="VD: JPM MARINE" 
+                      placeholder="JPM MARINE" 
                       v-model="formData.homepage_hero_title"
                     />
                   </div>
-                  <div class="form-text text-muted">Dòng chữ màu đỏ nổi bật trên banner trang chủ.</div>
+                  <div class="form-text text-muted">Dòng chữ màu đỏ nổi bật trên banner.</div>
                 </div>
 
                 <!-- Slogan phụ -->
                 <div class="mb-2">
                   <label for="homepage_hero_subtitle" class="form-label fw-bold text-dark">
-                    Slogan Phụ Banner (Hero Subtitle)
+                    Slogan Phụ
                   </label>
                   <div class="input-group">
                     <span class="input-group-text"><i class="bx bx-text"></i></span>
@@ -110,11 +110,11 @@
                       type="text" 
                       id="homepage_hero_subtitle" 
                       class="form-control" 
-                      placeholder="VD: PHỤ TÙNG CHÍNH HÃNG" 
+                      placeholder="PHỤ TÙNG CHÍNH HÃNG" 
                       v-model="formData.homepage_hero_subtitle"
                     />
                   </div>
-                  <div class="form-text text-muted">Dòng chữ in nghiêng màu trắng phía dưới tiêu đề.</div>
+                  <div class="form-text text-muted">Dòng chữ in nghiêng màu trắng dưới tiêu đề.</div>
                 </div>
               </div>
 
@@ -144,7 +144,7 @@
                   </div>
 
                   <small class="text-muted mt-2 d-block">
-                    <i class="bx bx-info-circle me-1"></i>Trên trang chủ Client, video sẽ tự phóng to toàn màn hình và chạy mượt mà phía sau nội dung.
+                    <i class="bx bx-info-circle me-1"></i>Video phát nền tự động toàn màn hình tại trang chủ Client.
                   </small>
                 </div>
               </div>
@@ -162,7 +162,7 @@
             </div>
             <div>
               <h5 class="card-title mb-0 fw-bold text-dark">Phần 2: Thông Tin Doanh Nghiệp & Liên Hệ</h5>
-              <small class="text-muted">Cập nhật thông tin công ty, hotline gọi điện, email và giờ mở cửa trên toàn website Client</small>
+              <small class="text-muted">Thông tin công ty, hotline, email và giờ mở cửa trên toàn website Client</small>
             </div>
           </div>
 
@@ -170,89 +170,89 @@
             <div class="row g-4">
               <!-- Tên Doanh Nghiệp -->
               <div class="col-md-6">
-                <label for="company_name" class="form-label fw-bold text-dark">Tên Doanh Nghiệp / Thương Hiệu</label>
+                <label for="company_name" class="form-label fw-bold text-dark">Tên Doanh Nghiệp</label>
                 <div class="input-group">
                   <span class="input-group-text"><i class="bx bx-building"></i></span>
                   <input 
                     type="text" 
                     id="company_name" 
                     class="form-control" 
-                    placeholder="VD: JPM Marine" 
+                    placeholder="JPM Marine" 
                     v-model="formData.company_name"
                   />
                 </div>
-                <div class="form-text text-muted">Hiển thị tại Header, Footer và các thông báo thương hiệu.</div>
+                <div class="form-text text-muted">Hiển thị tại Header, Footer và các thông báo.</div>
               </div>
 
               <!-- Hotline -->
               <div class="col-md-6">
-                <label for="company_hotline" class="form-label fw-bold text-dark">Hotline Tư Vấn / CSKH</label>
+                <label for="company_hotline" class="form-label fw-bold text-dark">Hotline CSKH</label>
                 <div class="input-group">
                   <span class="input-group-text"><i class="bx bx-phone-call text-success"></i></span>
                   <input 
                     type="text" 
                     id="company_hotline" 
                     class="form-control" 
-                    placeholder="VD: 0909 123 456" 
+                    placeholder="0909 123 456" 
                     v-model="formData.company_hotline"
                   />
                 </div>
-                <div class="form-text text-muted">Tự động gắn link gọi trực tiếp (tel:) khi khách dùng điện thoại.</div>
+                <div class="form-text text-muted">Tự động gắn link gọi trực tiếp (tel:).</div>
               </div>
 
               <!-- Email -->
               <div class="col-md-6">
-                <label for="company_email" class="form-label fw-bold text-dark">Hòm Thư Điện Tử (Email)</label>
+                <label for="company_email" class="form-label fw-bold text-dark">Email Liên Hệ</label>
                 <div class="input-group">
                   <span class="input-group-text"><i class="bx bx-envelope text-info"></i></span>
                   <input 
                     type="email" 
                     id="company_email" 
                     class="form-control" 
-                    placeholder="VD: contact@jpm-marine.vn" 
+                    placeholder="contact@jpm-marine.vn" 
                     v-model="formData.company_email"
                   />
                 </div>
-                <div class="form-text text-muted">Tự động gắn link gửi thư (mailto:) cho khách hàng.</div>
+                <div class="form-text text-muted">Tự động gắn link gửi thư (mailto:).</div>
               </div>
 
               <!-- Giờ làm việc -->
               <div class="col-md-6">
-                <label for="business_hours" class="form-label fw-bold text-dark">Thời Gian Làm Việc / Giờ Mở Cửa</label>
+                <label for="business_hours" class="form-label fw-bold text-dark">Giờ Mở Cửa</label>
                 <div class="input-group">
                   <span class="input-group-text"><i class="bx bx-time-five text-warning"></i></span>
                   <input 
                     type="text" 
                     id="business_hours" 
                     class="form-control" 
-                    placeholder="VD: Thứ 2 - Thứ 7: 08:00 - 17:30 (Chủ nhật nghỉ)" 
+                    placeholder="Thứ 2 - Thứ 7: 08:00 - 17:30 (Chủ nhật nghỉ)" 
                     v-model="formData.business_hours"
                   />
                 </div>
-                <div class="form-text text-muted">Hiển thị trực quan tại Chân trang (Footer) và Trang Hỗ Trợ.</div>
+                <div class="form-text text-muted">Hiển thị tại Chân trang (Footer) và Trang Hỗ Trợ.</div>
               </div>
 
               <!-- Địa chỉ -->
               <div class="col-12">
-                <label for="company_address" class="form-label fw-bold text-dark">Địa Chỉ Trụ Sở / Cửa Hàng Chính</label>
+                <label for="company_address" class="form-label fw-bold text-dark">Địa Chỉ Doanh Nghiệp</label>
                 <div class="input-group">
                   <span class="input-group-text"><i class="bx bx-map-pin text-danger"></i></span>
                   <input 
                     type="text" 
                     id="company_address" 
                     class="form-control" 
-                    placeholder="VD: 123 Đường Bạch Đằng, Q. Bình Thạnh, TP. Hồ Chí Minh, Việt Nam" 
+                    placeholder="123 Đường Bạch Đằng, Q. Bình Thạnh, TP. Hồ Chí Minh" 
                     v-model="formData.company_address"
                   />
                 </div>
-                <div class="form-text text-muted">Địa chỉ đầy đủ hiển thị ở cột liên hệ Footer và mục Liên hệ Client.</div>
+                <div class="form-text text-muted">Địa chỉ đầy đủ hiển thị ở cột liên hệ Footer.</div>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- PHẦN 3: MẠNG XÃ HỘI & CHÂN TRANG (FOOTER) -->
+      <!-- PHẦN 3: MẠNG XÃ HỘI & CHÂN TRANG -->
       <div class="col-12">
         <div class="card shadow-sm border">
           <div class="card-header bg-white border-bottom py-3 d-flex align-items-center">
@@ -260,8 +260,8 @@
               <i class="bx bx-share-alt fs-4 text-info"></i>
             </div>
             <div>
-              <h5 class="card-title mb-0 fw-bold text-dark">Phần 3: Mạng Xã Hội & Nội Dung Chân Trang (Footer)</h5>
-              <small class="text-muted">Thiết lập các liên kết mạng xã hội chính thức, mô tả ngắn và dòng chữ bản quyền bảo lưu</small>
+              <h5 class="card-title mb-0 fw-bold text-dark">Phần 3: Mạng Xã Hội & Chân Trang</h5>
+              <small class="text-muted">Liên kết mạng xã hội chính thức, mô tả ngắn và bản quyền website</small>
             </div>
           </div>
 
@@ -269,7 +269,7 @@
             <div class="row g-4">
               <!-- Facebook -->
               <div class="col-md-6">
-                <label for="social_facebook" class="form-label fw-bold text-dark">Link Fanpage Facebook</label>
+                <label for="social_facebook" class="form-label fw-bold text-dark">Facebook Fanpage</label>
                 <div class="input-group">
                   <span class="input-group-text"><i class="bx bxl-facebook text-primary"></i></span>
                   <input 
@@ -284,7 +284,7 @@
 
               <!-- YouTube Channel -->
               <div class="col-md-6">
-                <label for="social_youtube" class="form-label fw-bold text-dark">Link Kênh YouTube Doanh Nghiệp</label>
+                <label for="social_youtube" class="form-label fw-bold text-dark">Kênh YouTube</label>
                 <div class="input-group">
                   <span class="input-group-text"><i class="bx bxl-youtube text-danger"></i></span>
                   <input 
@@ -299,7 +299,7 @@
 
               <!-- Zalo -->
               <div class="col-md-6">
-                <label for="social_zalo" class="form-label fw-bold text-dark">Link Zalo OA / Tư Vấn Trực Tuyến</label>
+                <label for="social_zalo" class="form-label fw-bold text-dark">Zalo</label>
                 <div class="input-group">
                   <span class="input-group-text"><i class="bx bx-message-rounded-dots text-info"></i></span>
                   <input 
@@ -314,7 +314,7 @@
 
               <!-- Instagram -->
               <div class="col-md-6">
-                <label for="social_instagram" class="form-label fw-bold text-dark">Link Instagram</label>
+                <label for="social_instagram" class="form-label fw-bold text-dark">Instagram</label>
                 <div class="input-group">
                   <span class="input-group-text"><i class="bx bxl-instagram text-danger"></i></span>
                   <input 
@@ -329,20 +329,20 @@
 
               <!-- Giới thiệu ngắn Footer -->
               <div class="col-12">
-                <label for="footer_about_text" class="form-label fw-bold text-dark">Đoạn Văn Giới Thiệu Chân Trang (Footer About)</label>
+                <label for="footer_about_text" class="form-label fw-bold text-dark">Giới Thiệu Chân Trang</label>
                 <textarea 
                   id="footer_about_text" 
                   class="form-control" 
                   rows="3" 
-                  placeholder="Nhập 2-3 câu ngắn giới thiệu về doanh nghiệp ở chân trang..."
+                  placeholder="Nhập giới thiệu ngắn về doanh nghiệp ở chân trang..."
                   v-model="formData.footer_about_text"
                 ></textarea>
-                <div class="form-text text-muted">Hiển thị dưới logo JPM Marine tại cột 1 của Chân trang.</div>
+                <div class="form-text text-muted">Hiển thị dưới logo JPM Marine tại chân trang.</div>
               </div>
 
               <!-- Bản quyền Copyright -->
               <div class="col-12">
-                <label for="copyright_text" class="form-label fw-bold text-dark">Dòng Chữ Bản Quyền (Copyright Text)</label>
+                <label for="copyright_text" class="form-label fw-bold text-dark">Bản Quyền Website</label>
                 <div class="input-group">
                   <span class="input-group-text"><i class="bx bx-copyright"></i></span>
                   <input 
@@ -353,7 +353,7 @@
                     v-model="formData.copyright_text"
                   />
                 </div>
-                <div class="form-text text-muted">Dòng thông báo pháp lý và bản quyền tại đáy chân trang.</div>
+                <div class="form-text text-muted">Dòng thông báo pháp lý tại đáy chân trang.</div>
               </div>
             </div>
           </div>

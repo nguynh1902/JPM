@@ -735,49 +735,6 @@ export default {
 .list-item-hover:hover a {
   color: #0e1b4d !important;
 }
-
-/* =========================================
-   SPONSORS / BRAND LOGOS HOVER FIX
-   - Không bị cắt viền (overflow: visible)
-   - Không bị mờ/vỡ pixel khi hover (transform: none)
-   ========================================= */
-.sponsors .client-logo {
-  height: 95px !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  padding: 10px 18px !important;
-  border-radius: 8px !important;
-  overflow: visible !important;
-  transition: all 0.3s ease !important;
-}
-
-.sponsors .client-logo:hover {
-  background-color: #ffffff !important;
-  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.06) !important;
-  transform: translateY(-2px) !important;
-}
-
-.sponsors .client-logo img {
-  max-height: 52px !important;
-  max-width: 100% !important;
-  width: auto !important;
-  height: auto !important;
-  object-fit: contain !important;
-  padding: 0 !important;
-  opacity: 0.8 !important;
-  transition: opacity 0.3s ease !important;
-  image-rendering: -webkit-optimize-contrast !important;
-  backface-visibility: hidden !important;
-  -webkit-backface-visibility: hidden !important;
-  transform: none !important;
-}
-
-.sponsors .client-logo:hover img {
-  opacity: 1 !important;
-  transform: none !important;
-}
-
 </style>
 
 
