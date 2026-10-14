@@ -307,7 +307,7 @@
     padding: 0 !important;
 }
 
-/* JPM Enterprise Unified Input Group Merge (Password Toggle) */
+/* JPM Enterprise Unified Input Group Merge (Password Toggle & Icon Inputs) */
 .input-group-merge:focus-within .form-control,
 .input-group-merge:focus-within .input-group-text {
   border-color: #17a2b8 !important;
@@ -315,15 +315,22 @@
 .input-group-merge:focus-within {
   box-shadow: 0 0 0.25rem 0.05rem rgba(23, 162, 184, 0.1) !important;
 }
-.input-group-merge .form-control {
+.input-group-merge > :first-child {
   border-right: 0 !important;
   border-top-right-radius: 0 !important;
   border-bottom-right-radius: 0 !important;
 }
-.input-group-merge .input-group-text {
+.input-group-merge > :last-child {
   border-left: 0 !important;
   border-top-left-radius: 0 !important;
   border-bottom-left-radius: 0 !important;
+}
+.input-group-merge > :not(:first-child):not(:last-child) {
+  border-left: 0 !important;
+  border-right: 0 !important;
+  border-radius: 0 !important;
+}
+.input-group-merge .input-group-text {
   background-color: transparent !important;
 }
 
