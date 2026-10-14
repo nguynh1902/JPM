@@ -13,15 +13,15 @@
       <div class="d-flex gap-2">
         <button 
           type="button" 
-          class="btn btn-outline-secondary d-flex align-items-center"
+          class="btn btn-secondary text-nowrap"
           @click="resetToInitial"
           :disabled="isSubmitting"
         >
-          <i class="bx bx-reset me-1"></i> Đặt Lại
+          Đặt lại
         </button>
         <button 
           type="button" 
-          class="btn btn-primary d-flex align-items-center shadow-sm px-4"
+          class="btn btn-primary shadow-sm text-nowrap"
           @click="saveSettings"
           :disabled="isSubmitting"
         >
@@ -60,7 +60,7 @@
                   <label for="homepage_youtube_url" class="form-label fw-bold text-dark">
                     Link Carousel Youtube <span class="text-danger">*</span>
                   </label>
-                  <div class="input-group">
+                  <div class="input-group input-group-merge">
                     <span class="input-group-text"><i class="bx bxl-youtube text-danger"></i></span>
                     <input 
                       type="text" 
@@ -81,7 +81,7 @@
                   <label for="homepage_hero_title" class="form-label fw-bold text-dark">
                     Tiêu Đề Thương Hiệu
                   </label>
-                  <div class="input-group">
+                  <div class="input-group input-group-merge">
                     <span class="input-group-text"><i class="bx bx-heading"></i></span>
                     <input 
                       type="text" 
@@ -99,7 +99,7 @@
                   <label for="homepage_hero_subtitle" class="form-label fw-bold text-dark">
                     Slogan Phụ
                   </label>
-                  <div class="input-group">
+                  <div class="input-group input-group-merge">
                     <span class="input-group-text"><i class="bx bx-text"></i></span>
                     <input 
                       type="text" 
@@ -161,7 +161,7 @@
               <!-- Tên Doanh Nghiệp -->
               <div class="col-md-6">
                 <label for="company_name" class="form-label fw-bold text-dark">Tên Doanh Nghiệp</label>
-                <div class="input-group">
+                <div class="input-group input-group-merge">
                   <span class="input-group-text"><i class="bx bx-building"></i></span>
                   <input 
                     type="text" 
@@ -177,7 +177,7 @@
               <!-- Hotline -->
               <div class="col-md-6">
                 <label for="company_hotline" class="form-label fw-bold text-dark">Hotline CSKH</label>
-                <div class="input-group">
+                <div class="input-group input-group-merge">
                   <span class="input-group-text"><i class="bx bx-phone-call text-success"></i></span>
                   <input 
                     type="text" 
@@ -193,7 +193,7 @@
               <!-- Email -->
               <div class="col-md-6">
                 <label for="company_email" class="form-label fw-bold text-dark">Email Liên Hệ</label>
-                <div class="input-group">
+                <div class="input-group input-group-merge">
                   <span class="input-group-text"><i class="bx bx-envelope text-info"></i></span>
                   <input 
                     type="email" 
@@ -209,7 +209,7 @@
               <!-- Giờ làm việc -->
               <div class="col-md-6">
                 <label for="business_hours" class="form-label fw-bold text-dark">Giờ Mở Cửa</label>
-                <div class="input-group">
+                <div class="input-group input-group-merge">
                   <span class="input-group-text"><i class="bx bx-time-five text-warning"></i></span>
                   <input 
                     type="text" 
@@ -225,7 +225,7 @@
               <!-- Địa chỉ -->
               <div class="col-12">
                 <label for="company_address" class="form-label fw-bold text-dark">Địa Chỉ Doanh Nghiệp</label>
-                <div class="input-group">
+                <div class="input-group input-group-merge">
                   <span class="input-group-text"><i class="bx bx-map-pin text-danger"></i></span>
                   <input 
                     type="text" 
@@ -242,12 +242,12 @@
         </div>
       </div>
 
-      <!-- MẠNG XÃ HỘI & CHÂN TRANG -->
+      <!-- MẠNG XÃ HỘI -->
       <div class="col-12">
         <div class="card shadow-sm border">
           <div class="card-header bg-white border-bottom py-3">
-            <h5 class="card-title mb-1 fw-bold text-dark">Mạng Xã Hội & Chân Trang</h5>
-            <small class="text-muted">Liên kết mạng xã hội chính thức, mô tả ngắn và bản quyền website</small>
+            <h5 class="card-title mb-1 fw-bold text-dark">Mạng Xã Hội</h5>
+            <small class="text-muted">Liên kết các kênh mạng xã hội chính thức của doanh nghiệp</small>
           </div>
 
           <div class="card-body pt-4">
@@ -255,7 +255,7 @@
               <!-- Facebook -->
               <div class="col-md-6">
                 <label for="social_facebook" class="form-label fw-bold text-dark">Facebook Fanpage</label>
-                <div class="input-group">
+                <div class="input-group input-group-merge">
                   <span class="input-group-text"><i class="bx bxl-facebook text-primary"></i></span>
                   <input 
                     type="url" 
@@ -270,7 +270,7 @@
               <!-- YouTube Channel -->
               <div class="col-md-6">
                 <label for="social_youtube" class="form-label fw-bold text-dark">Kênh YouTube</label>
-                <div class="input-group">
+                <div class="input-group input-group-merge">
                   <span class="input-group-text"><i class="bx bxl-youtube text-danger"></i></span>
                   <input 
                     type="url" 
@@ -285,7 +285,7 @@
               <!-- Zalo -->
               <div class="col-md-6">
                 <label for="social_zalo" class="form-label fw-bold text-dark">Zalo</label>
-                <div class="input-group">
+                <div class="input-group input-group-merge">
                   <span class="input-group-text"><i class="bx bx-message-rounded-dots text-info"></i></span>
                   <input 
                     type="url" 
@@ -300,7 +300,7 @@
               <!-- Instagram -->
               <div class="col-md-6">
                 <label for="social_instagram" class="form-label fw-bold text-dark">Instagram</label>
-                <div class="input-group">
+                <div class="input-group input-group-merge">
                   <span class="input-group-text"><i class="bx bxl-instagram text-danger"></i></span>
                   <input 
                     type="url" 
@@ -310,35 +310,6 @@
                     v-model="formData.social_instagram"
                   />
                 </div>
-              </div>
-
-              <!-- Giới thiệu ngắn Footer -->
-              <div class="col-12">
-                <label for="footer_about_text" class="form-label fw-bold text-dark">Giới Thiệu Chân Trang</label>
-                <textarea 
-                  id="footer_about_text" 
-                  class="form-control" 
-                  rows="3" 
-                  placeholder="Nhập giới thiệu ngắn về doanh nghiệp ở chân trang..."
-                  v-model="formData.footer_about_text"
-                ></textarea>
-                <div class="form-text text-muted">Hiển thị dưới logo JPM Marine tại chân trang.</div>
-              </div>
-
-              <!-- Bản quyền Copyright -->
-              <div class="col-12">
-                <label for="copyright_text" class="form-label fw-bold text-dark">Bản Quyền Website</label>
-                <div class="input-group">
-                  <span class="input-group-text"><i class="bx bx-copyright"></i></span>
-                  <input 
-                    type="text" 
-                    id="copyright_text" 
-                    class="form-control" 
-                    placeholder="VD: © 2026 JPM Marine. Bảo lưu mọi quyền." 
-                    v-model="formData.copyright_text"
-                  />
-                </div>
-                <div class="form-text text-muted">Dòng thông báo pháp lý tại đáy chân trang.</div>
               </div>
             </div>
           </div>
@@ -374,9 +345,7 @@ export default {
       social_facebook: 'https://facebook.com/jpmmarine',
       social_youtube: 'https://youtube.com/@jpmmarine',
       social_zalo: 'https://zalo.me/0909123456',
-      social_instagram: 'https://instagram.com/jpmmarine',
-      footer_about_text: 'Nhà phân phối phụ tùng động cơ thủy gắn ngoài hàng đầu tại Việt Nam. Uy tín, chất lượng và đồng hành cùng bạn trên mọi hành trình vươn khơi.',
-      copyright_text: '© 2026 JPM Marine. Bảo lưu mọi quyền.'
+      social_instagram: 'https://instagram.com/jpmmarine'
     };
 
     const formData = reactive({ ...defaultData });
@@ -481,37 +450,26 @@ export default {
 </script>
 
 <style scoped>
-.input-group-text {
-  background-color: #f8f9fa;
-  border-right: none;
-}
-
-.input-group .form-control {
-  border-left: none;
-}
-
-.input-group .form-control:focus {
-  border-color: #696cff;
-}
-
 .card-header {
   border-bottom: 1px solid rgba(67, 89, 113, 0.1) !important;
 }
 
-.avatar-sm {
-  width: 2.25rem;
-  height: 2.25rem;
+/* Chuẩn hóa Sneat Input Group Merge: Loại bỏ triệt để bo tròn tại cạnh tiếp xúc */
+.input-group-merge .input-group-text {
+  background-color: transparent !important;
+  border-right: 0 !important;
+  border-top-right-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
 }
 
-.bg-label-danger {
-  background-color: #ffe0e3 !important;
+.input-group-merge .form-control {
+  border-left: 0 !important;
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
 }
 
-.bg-label-primary {
-  background-color: #e7e7ff !important;
-}
-
-.bg-label-info {
-  background-color: #d7f5fc !important;
+.input-group-merge:focus-within .input-group-text,
+.input-group-merge:focus-within .form-control {
+  border-color: #17a2b8 !important;
 }
 </style>

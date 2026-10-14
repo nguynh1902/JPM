@@ -73,7 +73,7 @@
       <div class="container d-flex flex-column flex-lg-row justify-content-center justify-content-lg-between align-items-center">
         <div class="d-flex flex-column align-items-center align-items-lg-start mb-3 mb-lg-0">
           <div class="text-white-50" style="font-size: 0.9rem;">
-            {{ settings.copyright_text || '© 2026 JPM Marine. Bảo lưu mọi quyền.' }}
+            © {{ currentYear }} {{ settings.company_name || 'JPM Marine' }}. Bảo lưu mọi quyền.
           </div>
           <div class="text-white-50 mt-1" style="font-size: 0.85rem;">
             Vận hành và phát triển bởi <a href="#" class="text-danger text-decoration-none fw-semibold hover-white">JPM Marine Team</a>
@@ -98,7 +98,8 @@ export default {
   name: "FooterClient",
   setup() {
     const { settings } = useSiteSettings();
-    return { settings };
+    const currentYear = new Date().getFullYear();
+    return { settings, currentYear };
   }
 };
 </script>
