@@ -8,30 +8,30 @@
     </main>
   <!-- Floating Contact Action Buttons -->
   <div class="floating-contact-actions">
-    <div class="contact-btn-wrap messenger-wrap">
-      <div class="contact-btn-tooltip">Chat Messenger</div>
-      <a href="#" class="contact-btn messenger">
-        <i class="bi bi-messenger"></i>
+    <div v-if="settings.social_instagram" class="contact-btn-wrap instagram-wrap">
+      <div class="contact-btn-tooltip">Instagram</div>
+      <a :href="settings.social_instagram" target="_blank" rel="noopener noreferrer" class="contact-btn instagram">
+        <i class="bi bi-instagram"></i>
       </a>
     </div>
 
-    <div class="contact-btn-wrap facebook-wrap">
+    <div v-if="settings.social_facebook" class="contact-btn-wrap facebook-wrap">
       <div class="contact-btn-tooltip">Facebook Fanpage</div>
-      <a href="#" class="contact-btn facebook">
+      <a :href="settings.social_facebook" target="_blank" rel="noopener noreferrer" class="contact-btn facebook">
         <i class="bi bi-facebook"></i>
       </a>
     </div>
 
-    <div class="contact-btn-wrap zalo-wrap">
+    <div v-if="settings.social_zalo" class="contact-btn-wrap zalo-wrap">
       <div class="contact-btn-tooltip">Chat Zalo</div>
-      <a href="#" class="contact-btn zalo">
+      <a :href="settings.social_zalo" target="_blank" rel="noopener noreferrer" class="contact-btn zalo">
         <span style="font-weight: 900; font-size: 13px; font-family: Arial, sans-serif;">Zalo</span>
       </a>
     </div>
 
-    <div class="contact-btn-wrap phone-wrap">
-      <div class="contact-btn-tooltip">Gọi Ngay: 0987.654.321</div>
-      <a href="tel:0987654321" class="contact-btn phone">
+    <div v-if="settings.company_hotline" class="contact-btn-wrap phone-wrap">
+      <div class="contact-btn-tooltip">Gọi Ngay: {{ settings.company_hotline }}</div>
+      <a :href="'tel:' + settings.company_hotline.replace(/\s+/g, '')" class="contact-btn phone">
         <i class="bi bi-telephone-fill"></i>
       </a>
     </div>
@@ -79,12 +79,18 @@ import '../assets/client/vendor/glightbox/js/glightbox.min.js'
 import '../assets/client/vendor/php-email-form/validate.js'
 
 
+import { useSiteSettings } from '../composables/useSiteSettings'
+
 export default {
   name: 'LayoutClient',
 
   components: {
     NavbarClient,
     FooterClient
+  },
+  setup() {
+    const { settings } = useSiteSettings();
+    return { settings };
   },
   data() {
     return {
@@ -166,14 +172,16 @@ export default {
   .contact-btn.phone { background-color: #00a65a; }
   .contact-btn.zalo { background-color: #0068ff; }
   .contact-btn.facebook { background-color: #1877f2; }
-  .contact-btn.messenger { background-color: #0099ff; }
+  .contact-btn.instagram { 
+    background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%); 
+  }
 
 
 /* Reveal colors on hover */
 .contact-btn.phone:hover { box-shadow: 0 4px 15px rgba(0, 166, 90, 0.4); }
 .contact-btn.zalo:hover { box-shadow: 0 4px 15px rgba(0, 104, 255, 0.4); }
 .contact-btn.facebook:hover { box-shadow: 0 4px 15px rgba(24, 119, 242, 0.4); }
-.contact-btn.messenger:hover { box-shadow: 0 4px 15px rgba(0, 153, 255, 0.4); }
+.contact-btn.instagram:hover { box-shadow: 0 4px 15px rgba(214, 36, 159, 0.5); }
 
 /* Radar Ripple Effect (ONLY FOR PHONE) */
 .contact-btn-wrap.phone-wrap::before, .contact-btn-wrap.phone-wrap::after {
