@@ -43,17 +43,12 @@
     <!-- 1 PAGE DUY NHẤT VỚI 3 PHẦN NỐI TIẾP NHAU -->
     <div v-else class="row g-4">
       
-      <!-- PHẦN 1: BANNER TRANG CHỦ & VIDEO -->
+      <!-- BANNER TRANG CHỦ & VIDEO -->
       <div class="col-12">
         <div class="card shadow-sm border">
-          <div class="card-header bg-white border-bottom py-3 d-flex align-items-center">
-            <div class="avatar avatar-sm me-3 bg-label-danger rounded d-flex align-items-center justify-content-center">
-              <i class="bx bxl-youtube fs-4 text-danger"></i>
-            </div>
-            <div>
-              <h5 class="card-title mb-0 fw-bold text-dark">Phần 1: Banner Trang Chủ & Video</h5>
-              <small class="text-muted">Cài đặt video nền YouTube và slogan tại trang chủ Client</small>
-            </div>
+          <div class="card-header bg-white border-bottom py-3">
+            <h5 class="card-title mb-1 fw-bold text-dark">Banner Trang Chủ & Video</h5>
+            <small class="text-muted">Cài đặt video nền YouTube và slogan tại trang chủ Client</small>
           </div>
 
           <div class="card-body pt-4">
@@ -153,17 +148,12 @@
         </div>
       </div>
 
-      <!-- PHẦN 2: THÔNG TIN DOANH NGHIỆP & LIÊN HỆ -->
+      <!-- THÔNG TIN DOANH NGHIỆP & LIÊN HỆ -->
       <div class="col-12">
         <div class="card shadow-sm border">
-          <div class="card-header bg-white border-bottom py-3 d-flex align-items-center">
-            <div class="avatar avatar-sm me-3 bg-label-primary rounded d-flex align-items-center justify-content-center">
-              <i class="bx bx-buildings fs-4 text-primary"></i>
-            </div>
-            <div>
-              <h5 class="card-title mb-0 fw-bold text-dark">Phần 2: Thông Tin Doanh Nghiệp & Liên Hệ</h5>
-              <small class="text-muted">Thông tin công ty, hotline, email và giờ mở cửa trên toàn website Client</small>
-            </div>
+          <div class="card-header bg-white border-bottom py-3">
+            <h5 class="card-title mb-1 fw-bold text-dark">Thông Tin Doanh Nghiệp & Liên Hệ</h5>
+            <small class="text-muted">Thông tin công ty, hotline, email và giờ mở cửa trên toàn website Client</small>
           </div>
 
           <div class="card-body pt-4">
@@ -252,17 +242,12 @@
         </div>
       </div>
 
-      <!-- PHẦN 3: MẠNG XÃ HỘI & CHÂN TRANG -->
+      <!-- MẠNG XÃ HỘI & CHÂN TRANG -->
       <div class="col-12">
         <div class="card shadow-sm border">
-          <div class="card-header bg-white border-bottom py-3 d-flex align-items-center">
-            <div class="avatar avatar-sm me-3 bg-label-info rounded d-flex align-items-center justify-content-center">
-              <i class="bx bx-share-alt fs-4 text-info"></i>
-            </div>
-            <div>
-              <h5 class="card-title mb-0 fw-bold text-dark">Phần 3: Mạng Xã Hội & Chân Trang</h5>
-              <small class="text-muted">Liên kết mạng xã hội chính thức, mô tả ngắn và bản quyền website</small>
-            </div>
+          <div class="card-header bg-white border-bottom py-3">
+            <h5 class="card-title mb-1 fw-bold text-dark">Mạng Xã Hội & Chân Trang</h5>
+            <small class="text-muted">Liên kết mạng xã hội chính thức, mô tả ngắn và bản quyền website</small>
           </div>
 
           <div class="card-body pt-4">
@@ -355,37 +340,6 @@
                 </div>
                 <div class="form-text text-muted">Dòng thông báo pháp lý tại đáy chân trang.</div>
               </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- BOTTOM ACTION BAR -->
-      <div class="col-12 text-end mb-4">
-        <div class="card shadow-sm border p-3">
-          <div class="d-flex justify-content-between align-items-center">
-            <span class="text-muted small">
-              <i class="bx bx-check-double text-success me-1"></i>Các thay đổi sẽ được đồng bộ ngay lập tức ra ngoài giao diện người dùng Client sau khi lưu.
-            </span>
-            <div class="d-flex gap-2">
-              <button 
-                type="button" 
-                class="btn btn-outline-secondary d-flex align-items-center"
-                @click="resetToInitial"
-                :disabled="isSubmitting"
-              >
-                <i class="bx bx-reset me-1"></i> Đặt Lại
-              </button>
-              <button 
-                type="button" 
-                class="btn btn-primary d-flex align-items-center shadow-sm px-4"
-                @click="saveSettings"
-                :disabled="isSubmitting"
-              >
-                <span v-if="isSubmitting" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                <i v-else class="bx bx-save me-1"></i>
-                {{ isSubmitting ? 'Đang Lưu...' : 'Lưu Thay Đổi' }}
-              </button>
             </div>
           </div>
         </div>
