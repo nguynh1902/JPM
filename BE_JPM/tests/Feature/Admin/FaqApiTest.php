@@ -2,14 +2,17 @@
 
 namespace Tests\Feature\Admin;
 
-use App\Models\Faq;
-use App\Models\User;
+use App\Domain\CMS\Models\Faq;
+use App\Domain\IAM\Models\User;
+use Spatie\Permission\Models\Role;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
     $this->user = User::factory()->create();
+    $role = Role::firstOrCreate(['name' => 'admin']);
+    $this->user->assignRole($role);
 });
 
 it('can fetch all faqs', function () {

@@ -2,14 +2,17 @@
 
 namespace Tests\Feature\Admin;
 
-use App\Models\ThuongHieu;
-use App\Models\User;
+use App\Domain\MarineCatalog\Models\ThuongHieu;
+use App\Domain\IAM\Models\User;
+use Spatie\Permission\Models\Role;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
     $this->user = User::factory()->create();
+    $role = Role::firstOrCreate(['name' => 'admin']);
+    $this->user->assignRole($role);
 });
 
 it('can fetch all thuong hieus', function () {
@@ -29,7 +32,6 @@ it('can create a thuong hieu', function () {
         'code' => 'TH001',
         'name' => 'Yamaha',
         'logo_path' => 'yamaha.png',
-        'loai_ung_dung' => 'MARINE',
         'status' => true,
     ];
 
@@ -42,7 +44,7 @@ it('can create a thuong hieu', function () {
              ->assertJsonPath('data.name', 'Yamaha');
 
     $this->assertDatabaseHas('thuong_hieus', [
-        'code' => 'TH001',
+        'name' => 'Yamaha',
     ]);
 });
 
@@ -55,7 +57,6 @@ it('can update a thuong hieu', function () {
         'code' => $brand->code,
         'name' => 'New Name',
         'logo_path' => 'new.png',
-        'loai_ung_dung' => 'MARINE',
         'status' => true,
     ];
 

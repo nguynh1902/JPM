@@ -2,7 +2,7 @@
 
 namespace Database\Factories;
 
-use App\Models\Faq;
+use App\Domain\CMS\Models\Faq;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -10,6 +10,8 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class FaqFactory extends Factory
 {
+    protected $model = Faq::class;
+
     /**
      * Define the model's default state.
      *

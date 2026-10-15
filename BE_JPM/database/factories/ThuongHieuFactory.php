@@ -2,7 +2,7 @@
 
 namespace Database\Factories;
 
-use App\Models\ThuongHieu;
+use App\Domain\MarineCatalog\Models\ThuongHieu;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -10,6 +10,8 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class ThuongHieuFactory extends Factory
 {
+    protected $model = ThuongHieu::class;
+
     /**
      * Define the model's default state.
      *
@@ -21,7 +23,6 @@ class ThuongHieuFactory extends Factory
             'code' => fake()->unique()->lexify('TH???'),
             'name' => fake()->company(),
             'logo_path' => fake()->imageUrl(),
-            'loai_ung_dung' => fake()->randomElement(['MARINE', 'AUTO']),
             'status' => true,
         ];
     }

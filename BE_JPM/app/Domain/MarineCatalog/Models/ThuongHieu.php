@@ -1,7 +1,22 @@
-<?php namespace App\Domain\MarineCatalog\Models; use Illuminate\Database\Eloquent\Model; use Illuminate\Database\Eloquent\Factories\HasFactory; class ThuongHieu extends Model {
+<?php
+
+namespace App\Domain\MarineCatalog\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+
+class ThuongHieu extends Model
+{
     use \App\Domain\Core\Traits\LogsActivity;
- use HasFactory; protected $table = 'thuong_hieus';
+    use HasFactory;
+
+    protected $table = 'thuong_hieus';
     protected $fillable = ['code', 'name', 'logo_path', 'status'];
+
+    protected static function newFactory()
+    {
+        return \Database\Factories\ThuongHieuFactory::new();
+    }
 
     public function phuTungs()
     {
@@ -13,4 +28,3 @@
         return $this->hasMany(DongCoModel::class, 'thuong_hieu_id');
     }
 }
-

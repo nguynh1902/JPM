@@ -105,14 +105,10 @@ return new class extends Migration
     }
 
     /**
-     * Kiểm tra index đã tồn tại chưa để tránh lỗi khi migrate.
+     * Kiểm tra index đã tồn tại chưa để tránh lỗi khi migrate (tương thích cả MySQL và SQLite).
      */
     private function indexExists(string $table, string $indexName): bool
     {
-        $exists = DB::select(
-            "SHOW INDEX FROM `{$table}` WHERE Key_name = ?",
-            [$indexName]
-        );
-        return !empty($exists);
+        return Schema::hasIndex($table, $indexName);
     }
 };
