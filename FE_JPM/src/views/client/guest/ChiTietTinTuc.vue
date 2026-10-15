@@ -603,9 +603,11 @@ export default {
 }
 
 .article-main-title {
-  font-size: clamp(1.85rem, 3.6vw, 2.75rem);
-  line-height: 1.22;
-  letter-spacing: -0.7px;
+  font-family: var(--heading-font);
+  font-size: clamp(1.6rem, 2.6vw, 2.1rem);
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: normal;
   max-width: 920px;
 }
 

@@ -28,8 +28,8 @@
             </p>
 
             <div data-aos="fade-up" data-aos-delay="200">
-              <router-link to="/tra-cuu" class="btn btn-hero-cta rounded-0 text-white text-uppercase d-inline-flex align-items-center justify-content-center">
-                TRA CỨU PHỤ TÙNG
+              <router-link to="/tra-cuu" class="btn btn-hero-cta text-white d-inline-flex align-items-center justify-content-center">
+                Tra Cứu Phụ Tùng
               </router-link>
             </div>
           </div>
@@ -62,7 +62,6 @@
     <section id="search-parts" class="search-parts-section section" style="overflow: visible !important; position: relative; z-index: 99;">
       <div class="container" data-aos="fade-up">
         <div class="section-title" data-aos="fade-up">
-          <span class="overline">TÌM KIẾM DỄ DÀNG</span>
           <h2>Tra Cứu Phụ Tùng Nhanh</h2>
           <p>Chọn thông số phương tiện của bạn để tìm đúng phụ tùng cần thiết</p>
         </div>
@@ -180,7 +179,6 @@
     <!-- Sponsors Section -->
     <section id="sponsors" class="sponsors section bg-light py-5">
       <div class="container section-title" data-aos="fade-up">
-        <span class="overline">Đối Tác Tin Cậy</span>
         <h2>Phụ Tùng Theo Thương Hiệu</h2>
         <p>Đa dạng các loại phụ tùng chính hãng từ những thương hiệu hàng đầu thế giới</p>
       </div>
@@ -215,7 +213,6 @@
     <!-- Sản phẩm nổi bật -->
     <section class="products-section section">
       <div class="container section-title" data-aos="fade-up">
-        <span class="overline">Lựa chọn hàng đầu</span>
         <h2>Sản Phẩm Bán Chạy</h2>
         <p>Những linh kiện phụ tùng được khách hàng tin dùng nhiều nhất tại JPM Marine</p>
       </div>
@@ -271,7 +268,7 @@
         </div>
 
         <div class="text-center mt-5">
-          <router-link to="/san-pham" class="btn btn-outline-danger rounded-0 px-4 py-2 fw-medium text-uppercase btn-view-all" style="letter-spacing: 2px; border-width: 1px;">Xem tất cả sản phẩm <i class="bi bi-arrow-right ms-2"></i></router-link>
+          <router-link to="/san-pham" class="btn btn-outline-danger px-4 py-2 fw-semibold btn-view-all">Xem tất cả sản phẩm <i class="bi bi-arrow-right ms-2"></i></router-link>
         </div>
       </div>
     </section>
@@ -284,14 +281,14 @@
           <!-- Cột Trái (5 phần): Tiêu đề và Mô tả -->
           <div class="col-lg-5 mb-5 mb-lg-0 pe-lg-5" data-aos="fade-right">
             <div class="mb-3">
-              <span style="color: var(--accent-color); font-size: 0.9rem; font-weight: 600; text-transform: uppercase; letter-spacing: 3px;">Thế mạnh vượt trội</span>
+              <span style="color: var(--accent-color); font-size: 0.85rem; font-weight: 600;">Thế mạnh vượt trội</span>
             </div>
-            <h2 class="mb-4" style="color: #fff; font-size: 2.8rem; line-height: 1.2; font-family: var(--heading-font);">
+            <h2 class="mb-4" style="color: #fff; font-size: 2rem; line-height: 1.3; font-family: var(--heading-font);">
               <span class="fw-light" style="opacity: 0.9;">Tại Sao Chọn</span> <br>
               <span class="fw-bold" style="color: var(--accent-color);">JPM Marine</span>
             </h2>
-            <p class="mb-4" style="color: rgba(255,255,255,0.85); font-size: 1.05rem; line-height: 1.7; font-weight: 400;">Chúng tôi không chỉ cung cấp phụ tùng, chúng tôi mang đến sự an tâm tuyệt đối cho mỗi chuyến ra khơi với dịch vụ tiêu chuẩn quốc tế.</p>
-            <router-link to="/ho-tro" class="btn btn-outline-pulse rounded-0 px-4 py-3 mt-3 fw-medium text-uppercase" style="letter-spacing: 2px; transition: 0.3s; font-size: 0.9rem;">Nhận Tư Vấn Ngay <i class="bi bi-arrow-right ms-2"></i></router-link>
+            <p class="mb-4" style="color: rgba(255,255,255,0.85); font-size: 1rem; line-height: 1.6; font-weight: 400;">Chúng tôi không chỉ cung cấp phụ tùng, chúng tôi mang đến sự an tâm tuyệt đối cho mỗi chuyến ra khơi với dịch vụ tiêu chuẩn quốc tế.</p>
+            <router-link to="/ho-tro" class="btn btn-outline-pulse rounded-0 px-4 py-2 mt-2 fw-medium" style="letter-spacing: 1px; transition: 0.3s; font-size: 0.85rem;">Nhận Tư Vấn Ngay <i class="bi bi-arrow-right ms-2"></i></router-link>
           </div>
 
           <!-- Cột Phải (7 phần): List 4 Items -->
@@ -346,7 +343,6 @@
     <!-- Tin tức & Kinh nghiệm -->
     <section class="news-section section py-5">
       <div class="container section-title" data-aos="fade-up">
-        <span class="overline">Cập nhật kiến thức</span>
         <h2>Tin tức & Kinh nghiệm</h2>
         <p>Cập nhật kiến thức bảo dưỡng và tin tức mới nhất về thiết bị tàu thuyền</p>
       </div>
@@ -433,7 +429,7 @@
         </div>
 
         <div class="text-center mt-5">
-          <router-link to="/tin-tuc" class="btn btn-outline-danger rounded-0 px-4 py-2 fw-medium text-uppercase btn-view-all" style="letter-spacing: 2px; border-width: 1px;">Xem tất cả bài viết <i class="bi bi-arrow-right ms-2"></i></router-link>
+          <router-link to="/tin-tuc" class="btn btn-outline-danger px-4 py-2 fw-semibold btn-view-all">Xem tất cả bài viết <i class="bi bi-arrow-right ms-2"></i></router-link>
         </div>
       </div>
     </section>

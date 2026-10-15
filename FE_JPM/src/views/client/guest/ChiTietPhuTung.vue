@@ -24,7 +24,7 @@
           <div class="mb-4" data-aos="fade-down">
             <!-- Title -->
             <div class="page-title-box mb-2">
-              <h2 class="jpm-page-title text-uppercase" style="font-size: 1.8rem; line-height: 1.3;">
+              <h2 class="jpm-page-title" style="font-size: 1.6rem; line-height: 1.3;">
                 {{ phuTung.ten_phu_tung }} | {{ phuTung.ma_phu_tung }}
               </h2>
               <p class="text-muted mb-2 fw-medium" style="font-size: 1.1rem;">

@@ -372,11 +372,12 @@ export default {
 }
 
 .hero-main-heading {
-  font-size: clamp(2.2rem, 3.8vw, 3.3rem);
-  font-weight: 800;
+  font-family: var(--heading-font);
+  font-size: clamp(1.8rem, 2.6vw, 2.2rem);
+  font-weight: 700;
   color: #111827;
-  line-height: 1.18;
-  letter-spacing: -1px;
+  line-height: 1.25;
+  letter-spacing: normal;
 }
 
 .hero-subtext {
@@ -409,18 +410,18 @@ export default {
 }
 
 .contact-overline-text {
-  font-size: 0.78rem;
-  font-weight: 700;
-  letter-spacing: 2px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
   color: #f82249;
-  text-transform: uppercase;
 }
 
 .contact-heading {
-  font-size: clamp(1.85rem, 3vw, 2.5rem);
-  font-weight: 800;
+  font-family: var(--heading-font);
+  font-size: clamp(1.5rem, 2.2vw, 1.85rem);
+  font-weight: 700;
   color: #0e1b4d;
-  letter-spacing: -0.5px;
+  letter-spacing: normal;
 }
 
 .contact-desc {
@@ -462,19 +463,18 @@ export default {
 
 /* ── 3. RIGHT COLUMN: YOUR DETAILS FORM ── */
 .contact-form-heading {
-  font-size: clamp(1.65rem, 2.6vw, 2.15rem);
-  font-weight: 800;
+  font-family: var(--heading-font);
+  font-size: clamp(1.4rem, 2vw, 1.7rem);
+  font-weight: 700;
   color: #0e1b4d;
-  letter-spacing: -0.4px;
+  letter-spacing: normal;
 }
 
 .contact-field-label {
   display: block;
-  font-size: 0.74rem;
-  font-weight: 700;
-  letter-spacing: 1px;
+  font-size: 0.85rem;
+  font-weight: 600;
   color: #0e1b4d;
-  text-transform: uppercase;
   margin-bottom: 0.45rem;
 }
 
@@ -506,10 +506,8 @@ textarea.contact-field-input {
   border: none;
   border-radius: 4px;
   padding: 0.78rem 2.2rem;
-  font-size: 0.82rem;
-  font-weight: 700;
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
+  font-size: 0.88rem;
+  font-weight: 600;
   transition: all 0.25s ease;
 }
 

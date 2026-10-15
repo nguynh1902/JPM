@@ -7,24 +7,24 @@
         <div class="mb-4" data-aos="fade-down">
           <div class="page-title-box mb-2">
             <template v-if="isFilterEmpty">
-              <h2 class="jpm-page-title text-uppercase">
-                TRA CỨU <span class="text-danger">PHỤ TÙNG</span>
+              <h2 class="jpm-page-title">
+                Tra Cứu <span class="text-danger">Phụ Tùng</span>
               </h2>
               <p class="text-muted mb-0">
                 Lựa chọn chính xác phụ tùng thay thế cho động cơ của bạn.
               </p>
             </template>
             <template v-else-if="filters.dong_co_model_id && !filters.nhom_phu_tung_id && !filters.keyword">
-              <h2 class="jpm-page-title text-uppercase">
-                SƠ ĐỒ PHỤ TÙNG <span class="text-danger">MODEL {{ modelLabel }}</span>
+              <h2 class="jpm-page-title">
+                Sơ Đồ Phụ Tùng <span class="text-danger">Model {{ modelLabel }}</span>
               </h2>
               <p class="text-muted mb-0">
                 Hiển thị danh sách các nhóm sơ đồ phụ tùng cho model này.
               </p>
             </template>
             <template v-else>
-              <h2 class="jpm-page-title text-uppercase">
-                KẾT QUẢ TRA CỨU <span class="text-danger">PHỤ TÙNG</span>
+              <h2 class="jpm-page-title">
+                Kết Quả Tra Cứu <span class="text-danger">Phụ Tùng</span>
               </h2>
               <p class="text-muted mb-0">
                 Tìm thấy <strong class="text-danger">{{ pagination.total }}</strong> kết quả cho tìm kiếm của bạn.

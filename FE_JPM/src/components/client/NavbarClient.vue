@@ -10,18 +10,18 @@
           <path d="M14.5 1 L14.5 19 L2 19 Z" fill="white" />
           <path d="M17.5 1 L30 19 L17.5 19 Z" fill="white" />
         </svg>
-        <span style="font-family: 'Montserrat', sans-serif; font-size: 13px; font-weight: 600; letter-spacing: 6px; color: white; line-height: 1; margin-left: 6px;">JPM</span>
+        <span style="font-family: var(--heading-font); font-size: 14px; font-weight: 700; letter-spacing: 4px; color: white; line-height: 1; margin-left: 6px;">JPM</span>
       </router-link>
       <nav id="navmenu" class="navmenu">
         <ul>
           <li>
-            <router-link to="/" exact-active-class="active">TRANG CHỦ</router-link>
+            <router-link to="/" exact-active-class="active">Trang chủ</router-link>
           </li>
           
           <!-- CỬA HÀNG -->
           <li class="dropdown">
             <router-link to="/san-pham" :class="{ active: $route.path.startsWith('/san-pham') }">
-              CỬA HÀNG
+              Cửa hàng
             </router-link>
             <ul class="store-dropdown">
                 <li v-for="cat in navCategories" :key="cat.id">
@@ -39,7 +39,7 @@
 
           <!-- THƯƠNG HIỆU -->
           <li class="dropdown">
-            <a href="#" @click.prevent :class="{ active: $route.path.includes('/thuong-hieu') }">THƯƠNG HIỆU</a>
+            <a href="#" @click.prevent :class="{ active: $route.path.includes('/thuong-hieu') }">Thương hiệu</a>
             <ul class="store-dropdown">
               <li v-for="brand in navBrands" :key="brand.id">
                 <router-link :to="'/thuong-hieu/' + brand.code.toLowerCase()" >
@@ -56,16 +56,16 @@
 
           <!-- TRA CỨU -->
           <li>
-            <router-link to="/tra-cuu" >TRA CỨU</router-link>
+            <router-link to="/tra-cuu" >Tra cứu</router-link>
           </li>
 
           <!-- TIN TỨC -->
           <li>
-            <router-link to="/tin-tuc" >TIN TỨC</router-link>
+            <router-link to="/tin-tuc" >Tin tức</router-link>
           </li>
 
           <li>
-            <router-link to="/ho-tro" >HỖ TRỢ</router-link>
+            <router-link to="/ho-tro" >Hỗ trợ</router-link>
           </li>
 
           <!-- Divider -->

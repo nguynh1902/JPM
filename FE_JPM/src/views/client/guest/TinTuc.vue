@@ -557,11 +557,12 @@ export default {
 }
 
 .hero-main-heading {
-  font-size: clamp(2.2rem, 3.8vw, 3.3rem);
-  font-weight: 800;
+  font-family: var(--heading-font);
+  font-size: clamp(1.8rem, 2.6vw, 2.2rem);
+  font-weight: 700;
   color: #111827;
-  line-height: 1.18;
-  letter-spacing: -1px;
+  line-height: 1.25;
+  letter-spacing: normal;
 }
 
 .hero-subtext {
@@ -592,10 +593,11 @@ export default {
 
 /* ── TYPOGRAPHY & BUTTONS (WIREFRAME STYLE) ── */
 .section-editorial-title {
-  font-size: clamp(1.5rem, 2.5vw, 2rem);
-  font-weight: 800;
+  font-family: var(--heading-font);
+  font-size: clamp(1.4rem, 2.2vw, 1.75rem);
+  font-weight: 700;
   color: #111827;
-  letter-spacing: -0.5px;
+  letter-spacing: normal;
 }
 
 .btn-dark-pill {

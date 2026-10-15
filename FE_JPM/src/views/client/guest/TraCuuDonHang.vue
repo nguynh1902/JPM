@@ -5,7 +5,7 @@
         <div class="col-md-8 col-lg-6">
           <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
             <div class="card-header bg-white border-bottom-0 pt-5 pb-3 text-center">
-              <h2 class="fw-light text-uppercase mb-2" style="letter-spacing: 2px;">Tra Cứu Giao Dịch</h2>
+              <h2 class="fw-bold mb-2" style="font-family: var(--heading-font); font-size: 28px;">Tra Cứu Giao Dịch</h2>
               <p class="text-muted small">Vui lòng nhập thông tin để kiểm tra trạng thái đơn hàng hoặc báo giá của bạn</p>
             </div>
             <div class="card-body px-5 pb-5">
