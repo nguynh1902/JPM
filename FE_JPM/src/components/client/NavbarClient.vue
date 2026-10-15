@@ -83,7 +83,7 @@
             </a>
             <ul class="user-menu-dropdown notif-dropdown dropdown-menu-end">
               <li class="px-3 py-2 d-flex justify-content-between align-items-center bg-light border-bottom">
-                <span class="fw-bold text-dark text-uppercase" style="font-size: 0.8rem; letter-spacing: 1px;">Thông báo của bạn</span>
+                <span class="fw-bold text-dark" style="font-size: 0.85rem;">Thông báo của bạn</span>
                 <span v-if="unreadCount > 0" class="badge bg-danger rounded-pill" style="font-size: 0.7rem;">{{ unreadCount }} mới</span>
               </li>
               
@@ -108,8 +108,8 @@
               </li>
 
               <li>
-                <router-link to="/tai-khoan" class="d-block text-center py-2 bg-light text-primary fw-bold text-decoration-none" style="font-size: 0.8rem; letter-spacing: 1px;">
-                  XEM TẤT CẢ
+                <router-link to="/tai-khoan" class="d-block text-center py-2 bg-light text-primary fw-bold text-decoration-none" style="font-size: 0.85rem;">
+                  Xem tất cả
                 </router-link>
               </li>
             </ul>

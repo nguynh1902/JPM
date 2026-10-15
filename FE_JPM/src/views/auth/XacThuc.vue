@@ -33,10 +33,10 @@
               <path d="M14.5 1 L14.5 19 L2 19 Z" fill="white" />
               <path d="M17.5 1 L30 19 L17.5 19 Z" fill="white" />
             </svg>
-            <span style="font-size: 16px; font-weight: 800; letter-spacing: 8px; color: white; line-height: 1; margin-left: 8px;">JPM</span>
+            <span style="font-size: 16px; font-weight: 800; letter-spacing: 2px; color: white; line-height: 1;">JPM</span>
           </router-link>
 
-          <router-link to="/" class="text-white text-decoration-none hover-lift d-flex align-items-center gap-2 mt-2" style="font-size: 0.8rem; letter-spacing: 2px; opacity: 1; font-weight: 600; text-transform: uppercase;">
+          <router-link to="/" class="text-white text-decoration-none hover-lift d-flex align-items-center gap-2 mt-2" style="font-size: 0.85rem; opacity: 1; font-weight: 500;">
             <i class="bi bi-arrow-left"></i> Trang chủ
           </router-link>
         </div>
@@ -44,22 +44,22 @@
         <div class="mt-auto mb-auto pb-5">
           <!-- BADGE -->
           <div class="d-inline-flex align-items-center mb-4" style="border-left: 3px solid var(--accent-color); padding-left: 14px;">
-            <span class="text-uppercase" style="color: rgba(255, 255, 255, 0.85); font-size: 13px; font-weight: 500; letter-spacing: 2px; line-height: 1;">Đơn vị uy tín hàng đầu Việt Nam</span>
+            <span style="color: rgba(255, 255, 255, 0.9); font-size: 14px; font-weight: 500; line-height: 1;">Đơn vị uy tín hàng đầu Việt Nam</span>
           </div>
           
           <!-- HEADLINE -->
-          <h1 data-aos="fade-up" data-aos-delay="100" style="font-size: 58px; font-weight: 300; letter-spacing: 2px; color: #fff; line-height: 1.1; margin-bottom: 24px; text-transform: uppercase; text-shadow: 0 4px 24px rgba(0, 0, 0, 0.5);">
-            Hệ thống Phụ tùng<br />
-            <span style="color: var(--accent-color); font-weight: 700;">Tàu Thuyền</span>
+          <h1 data-aos="fade-up" data-aos-delay="100" style="font-family: var(--heading-font); font-size: clamp(32px, 3.2vw, 44px); font-weight: 700; color: #fff; line-height: 1.2; margin-bottom: 24px; text-shadow: 0 4px 24px rgba(0, 0, 0, 0.5);">
+            Hệ Thống Phụ Tùng<br />
+            <span style="color: var(--accent-color);">Tàu Thuyền</span>
           </h1>
           
           <!-- PARAGRAPH -->
-          <p data-aos="fade-up" data-aos-delay="150" style="font-size: 15px; color: rgba(255, 255, 255, 0.8); line-height: 1.7; margin-bottom: 32px; max-width: 460px; font-weight: 400;">
+          <p data-aos="fade-up" data-aos-delay="150" style="font-size: 15px; color: rgba(255, 255, 255, 0.85); line-height: 1.7; margin-bottom: 32px; max-width: 460px; font-weight: 400;">
             Cung cấp phụ tùng chính hãng cho JPM Marine, Yamaha, Suzuki, Honda Marine và nhiều thương hiệu uy tín khác.
           </p>
           
           <!-- BULLETS -->
-          <ul data-aos="fade-up" data-aos-delay="200" class="list-unstyled d-flex flex-column gap-3" style="font-size: 15px; color: rgba(255, 255, 255, 0.8); font-weight: 500; margin: 0;">
+          <ul data-aos="fade-up" data-aos-delay="200" class="list-unstyled d-flex flex-column gap-3" style="font-size: 15px; color: rgba(255, 255, 255, 0.85); font-weight: 500; margin: 0;">
             <li class="d-flex align-items-center gap-3">
               <i class="bi bi-check2-circle text-danger fs-5"></i> Phụ tùng chính hãng 100%
             </li>
@@ -80,17 +80,17 @@
           <transition name="fade" mode="out-in">
             <!-- FORM ĐĂNG NHẬP -->
             <div v-if="activeForm === 'login'" key="login">
-              <h2 class="text-white mb-4 auth-heading">ĐĂNG NHẬP</h2>
-              <p class="mb-5 auth-subtext">Chưa có tài khoản? <a href="#" @click.prevent="switchToRegister" class="text-decoration-none ms-1" style="color: var(--accent-color); font-weight: 500;">Đăng ký ngay</a>
+              <h2 class="text-white mb-3 auth-heading">Đăng Nhập</h2>
+              <p class="mb-4 auth-subtext">Chưa có tài khoản? <a href="#" @click.prevent="switchToRegister" class="text-decoration-none ms-1" style="color: var(--accent-color); font-weight: 500;">Đăng ký ngay</a>
               </p>
 
               <form @submit.prevent="handleLogin">
-                <div class="mb-4">
-                  <label class="form-label text-white auth-label">SỐ ĐIỆN THOẠI / EMAIL</label>
+                <div class="mb-3">
+                  <label class="form-label text-white auth-label">Số điện thoại / Email</label>
                   <input type="text" class="form-control minimal-input" placeholder="Nhập số điện thoại hoặc email" v-model="loginForm.login_id" required />
                 </div>
 
-                <div class="mb-4">
+                <div class="mb-3">
                   <label class="form-label text-white auth-label">Mật khẩu</label>
                   <div class="position-relative">
                     <input :type="showPw ? 'text' : 'password'" class="form-control minimal-input pe-5" placeholder="Nhập mật khẩu" v-model="loginForm.password" required />
@@ -98,12 +98,12 @@
                   </div>
                 </div>
 
-                <div class="d-flex justify-content-between align-items-center mb-5 mt-4">
+                <div class="d-flex justify-content-between align-items-center mb-4 mt-3">
                   <div class="form-check m-0 ps-0 d-flex align-items-center gap-2">
                     <input class="form-check-input minimal-checkbox m-0" type="checkbox" id="rememberMe">
-                    <label class="form-check-label text-white m-0" for="rememberMe" style="font-size: 0.8rem; font-weight: 300; opacity: 0.6;">Ghi nhớ</label>
+                    <label class="form-check-label text-white m-0" for="rememberMe" style="font-size: 0.85rem; font-weight: 400; opacity: 0.8;">Ghi nhớ</label>
                   </div>
-                  <a href="#" @click.prevent="switchToForgot" class="text-white text-decoration-none hover-lift" style="font-size: 0.8rem; font-weight: 300; opacity: 0.8;">Quên mật khẩu?</a>
+                  <a href="#" @click.prevent="switchToForgot" class="text-white text-decoration-none hover-lift" style="font-size: 0.85rem; font-weight: 400; opacity: 0.85;">Quên mật khẩu?</a>
                 </div>
 
                 <button type="submit" class="btn w-100 text-white fw-bold hover-lift-btn auth-submit-btn" :disabled="isLoading">
@@ -114,11 +114,11 @@
 
               <div class="d-flex align-items-center my-4">
                 <hr class="flex-grow-1 m-0 auth-divider">
-                <span class="px-3" style="color: rgba(255,255,255,0.4); font-size: 0.75rem; letter-spacing: 0.5px; font-weight: 300;">Hoặc tiếp tục với</span>
+                <span class="px-3" style="color: rgba(255,255,255,0.5); font-size: 0.8rem; font-weight: 400;">Hoặc tiếp tục với</span>
                 <hr class="flex-grow-1 m-0 auth-divider">
               </div>
 
-              <button type="button" class="btn w-100 text-white d-flex justify-content-center align-items-center gap-2 hover-bg-google" style="padding: 12px; font-size: 0.85rem; font-weight: 400; letter-spacing: 0.5px; border: 1px solid rgba(255,255,255,0.15); background: rgba(255,255,255,0.02); border-radius: 4px;">
+              <button type="button" class="btn w-100 text-white d-flex justify-content-center align-items-center gap-2 hover-bg-google" style="padding: 11px; font-size: 0.9rem; font-weight: 500; border: 1px solid rgba(255,255,255,0.18); background: rgba(255,255,255,0.03); border-radius: 6px;">
                 <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="G" style="width: 18px;">
                 Google
               </button>
@@ -126,12 +126,12 @@
 
             <!-- FORM ĐĂNG KÝ -->
             <div v-else-if="activeForm === 'register'" key="register">
-              <h2 class="text-white mb-4 auth-heading">TẠO TÀI KHOẢN</h2>
-              <p class="mb-5 auth-subtext">Đã có tài khoản? <a href="#" @click.prevent="switchToLogin" class="text-decoration-none ms-1" style="color: var(--accent-color); font-weight: 500;">Đăng nhập ngay</a>
+              <h2 class="text-white mb-3 auth-heading">Tạo Tài Khoản</h2>
+              <p class="mb-4 auth-subtext">Đã có tài khoản? <a href="#" @click.prevent="switchToLogin" class="text-decoration-none ms-1" style="color: var(--accent-color); font-weight: 500;">Đăng nhập ngay</a>
               </p>
 
               <form @submit.prevent="handleRegister">
-                <div class="row g-3 mb-4">
+                <div class="row g-3 mb-3">
                   <div class="col-6">
                     <label class="form-label text-white auth-label">Họ</label>
                     <input type="text" class="form-control minimal-input" placeholder="Nhập họ của bạn" v-model="registerForm.ho" required />
@@ -142,17 +142,17 @@
                   </div>
                 </div>
 
-                <div class="mb-4">
+                <div class="mb-3">
                   <label class="form-label text-white auth-label">Email</label>
                   <input type="email" class="form-control minimal-input" placeholder="Nhập địa chỉ email" v-model="registerForm.email" required />
                 </div>
 
-                <div class="mb-4">
+                <div class="mb-3">
                   <label class="form-label text-white auth-label">Số điện thoại</label>
                   <input type="tel" class="form-control minimal-input" placeholder="Nhập số điện thoại" v-model="registerForm.phone" required />
                 </div>
 
-                <div class="mb-4">
+                <div class="mb-3">
                   <label class="form-label text-white auth-label">Mật khẩu</label>
                   <div class="position-relative">
                     <input :type="showRegPw ? 'text' : 'password'" class="form-control minimal-input pe-5" placeholder="Tối thiểu 8 ký tự" v-model="registerForm.password" required />
@@ -160,9 +160,9 @@
                   </div>
                 </div>
 
-                <div class="form-check mb-5 mt-4 ps-0 d-flex align-items-center gap-2">
+                <div class="form-check mb-4 mt-3 ps-0 d-flex align-items-center gap-2">
                   <input class="form-check-input minimal-checkbox m-0" type="checkbox" id="terms" required>
-                  <label class="form-check-label text-white m-0" for="terms" style="font-size: 0.8rem; font-weight: 300; opacity: 0.6;">
+                  <label class="form-check-label text-white m-0" for="terms" style="font-size: 0.85rem; font-weight: 400; opacity: 0.8;">
                     Tôi đồng ý với <a href="#" class="text-white text-decoration-none" style="font-weight: 500;">Điều khoản & Chính sách</a>
                   </label>
                 </div>
@@ -175,23 +175,23 @@
               
               <div class="d-flex align-items-center my-4">
                 <hr class="flex-grow-1 m-0 auth-divider">
-                <span class="px-3" style="color: rgba(255,255,255,0.4); font-size: 0.75rem; letter-spacing: 0.5px; font-weight: 300;">Hoặc tiếp tục với</span>
+                <span class="px-3" style="color: rgba(255,255,255,0.5); font-size: 0.8rem; font-weight: 400;">Hoặc tiếp tục với</span>
                 <hr class="flex-grow-1 m-0 auth-divider">
               </div>
 
-              <button type="button" class="btn w-100 text-white d-flex justify-content-center align-items-center gap-2 hover-bg-google" style="padding: 12px; font-size: 0.85rem; font-weight: 400; letter-spacing: 0.5px; border: 1px solid rgba(255,255,255,0.15); background: rgba(255,255,255,0.02); border-radius: 4px;">
+              <button type="button" class="btn w-100 text-white d-flex justify-content-center align-items-center gap-2 hover-bg-google" style="padding: 11px; font-size: 0.9rem; font-weight: 500; border: 1px solid rgba(255,255,255,0.18); background: rgba(255,255,255,0.03); border-radius: 6px;">
                 <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="G" style="width: 18px;">
                 Google
               </button>
             </div>
             <!-- FORM QUÊN MẬT KHẨU -->
             <div v-else-if="activeForm === 'forgot'" key="forgot">
-              <h2 class="text-white mb-4 auth-heading">QUÊN MẬT KHẨU?</h2>
-              <p class="mb-5 auth-subtext">Đừng lo lắng! Vui lòng nhập địa chỉ email liên kết với tài khoản của bạn.
+              <h2 class="text-white mb-3 auth-heading">Quên Mật Khẩu?</h2>
+              <p class="mb-4 auth-subtext">Vui lòng nhập địa chỉ email liên kết với tài khoản của bạn để nhận liên kết khôi phục.
               </p>
 
               <form @submit.prevent="handleForgot">
-                <div class="mb-4">
+                <div class="mb-3">
                   <label class="form-label text-white auth-label">Địa chỉ Email</label>
                   <input type="email" class="form-control minimal-input" placeholder="Nhập địa chỉ email của bạn" v-model="forgotForm.email" required />
                 </div>
@@ -202,20 +202,20 @@
                 </button>
               </form>
 
-              <div class="text-center mt-4 pt-2">
-                <a href="#" @click.prevent="switchToLogin" class="text-white text-decoration-none hover-lift d-inline-flex align-items-center gap-2" style="font-weight: 400; font-size: 0.85rem; opacity: 0.7;">
+              <div class="text-center mt-3 pt-2">
+                <a href="#" @click.prevent="switchToLogin" class="text-white text-decoration-none hover-lift d-inline-flex align-items-center gap-2" style="font-weight: 400; font-size: 0.88rem; opacity: 0.85;">
                   <i class="bi bi-arrow-left"></i> Quay lại Đăng nhập
                 </a>
               </div>
             </div>
             <!-- FORM ĐẶT LẠI MẬT KHẨU -->
             <div v-else-if="activeForm === 'reset'" key="reset">
-              <h2 class="text-white mb-4 auth-heading">MẬT KHẨU MỚI</h2>
-              <p class="mb-5 auth-subtext">Vui lòng nhập mật khẩu mới cho tài khoản của bạn.
+              <h2 class="text-white mb-3 auth-heading">Mật Khẩu Mới</h2>
+              <p class="mb-4 auth-subtext">Vui lòng nhập mật khẩu mới cho tài khoản của bạn.
               </p>
 
               <form @submit.prevent="handleReset">
-                <div class="mb-4">
+                <div class="mb-3">
                   <label class="form-label text-white auth-label">Mật khẩu mới</label>
                   <div class="position-relative">
                     <input :type="showResetPw ? 'text' : 'password'" class="form-control minimal-input pe-5" placeholder="Tối thiểu 8 ký tự" v-model="resetForm.password" required />
@@ -223,7 +223,7 @@
                   </div>
                 </div>
 
-                <div class="mb-4">
+                <div class="mb-3">
                   <label class="form-label text-white auth-label">Xác nhận mật khẩu</label>
                   <div class="position-relative">
                     <input :type="showResetConfirmPw ? 'text' : 'password'" class="form-control minimal-input pe-5" placeholder="Nhập lại mật khẩu mới" v-model="resetForm.password_confirmation" required />
@@ -238,7 +238,7 @@
               </form>
 
               <div class="text-center mt-2">
-                <a href="#" @click.prevent="switchToLogin" class="text-white text-decoration-none hover-lift d-inline-flex align-items-center gap-2" style="font-weight: 400; font-size: 0.85rem; opacity: 0.7;">
+                <a href="#" @click.prevent="switchToLogin" class="text-white text-decoration-none hover-lift d-inline-flex align-items-center gap-2" style="font-weight: 400; font-size: 0.88rem; opacity: 0.85;">
                   <i class="bi bi-arrow-left"></i> Quay lại Đăng nhập
                 </a>
               </div>
@@ -338,19 +338,21 @@ export default {
 <style scoped>
 
 .auth-label {
-  font-size: 0.7rem;
-  letter-spacing: 2px;
-  text-transform: uppercase;
+  font-size: 0.85rem;
+  letter-spacing: normal;
+  text-transform: none;
   font-weight: 500;
-  opacity: 0.6;
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 0.35rem;
 }
 .auth-submit-btn {
   background-color: var(--accent-color);
-  padding: 14px;
-  font-size: 0.9rem;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  border-radius: 4px;
+  padding: 12px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: normal;
+  text-transform: none;
+  border-radius: 6px;
   box-shadow: 0 4px 15px rgba(239, 35, 60, 0.2);
   border: none;
   transition: all 0.3s ease;
@@ -360,28 +362,30 @@ export default {
   box-shadow: 0 6px 20px rgba(239, 35, 60, 0.3);
 }
 .auth-pw-icon {
-  opacity: 0.4;
+  opacity: 0.5;
   cursor: pointer;
   font-size: 1.1rem;
-  padding-right: 5px;
+  padding-right: 12px;
   transition: opacity 0.3s ease;
 }
 .auth-pw-icon:hover {
-  opacity: 0.8;
+  opacity: 0.9;
 }
 .auth-divider {
   border-color: rgba(255,255,255,0.15);
 }
 .auth-heading {
-  font-weight: 300;
-  letter-spacing: 2px;
-  text-transform: uppercase;
+  font-family: var(--heading-font);
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: normal;
+  text-transform: none;
 }
 .auth-subtext {
-  color: rgba(255,255,255,0.5);
-  font-size: 0.85rem;
-  letter-spacing: 0.5px;
-  font-weight: 300;
+  color: rgba(255,255,255,0.65);
+  font-size: 0.88rem;
+  letter-spacing: normal;
+  font-weight: 400;
 }
 
 /* Transisiton form */
@@ -389,25 +393,25 @@ export default {
 .fade-enter-from, .fade-leave-to { opacity: 0; }
     /* ORIGINAL GLASSMORPHISM INPUTS */
     .minimal-input {
-      background: rgba(255, 255, 255, 0.05) !important;
-      border: 1px solid rgba(255, 255, 255, 0.15) !important;
-      border-radius: 10px !important;
+      background: rgba(255, 255, 255, 0.08) !important;
+      border: 1px solid rgba(255, 255, 255, 0.2) !important;
+      border-radius: 6px !important;
       color: #fff !important;
-      padding: 12px 16px !important;
-      font-size: 0.95rem;
-      font-weight: 300;
+      padding: 10px 14px !important;
+      font-size: 0.92rem;
+      font-weight: 400;
       box-shadow: none !important;
-      transition: all 0.3s ease;
+      transition: all 0.2s ease;
     }
     
     .minimal-input:focus {
       border-color: var(--accent-color) !important;
       background: rgba(239, 35, 60, 0.05) !important;
-      box-shadow: 0 0 0 3px rgba(239, 35, 60, 0.15) !important;
+      box-shadow: 0 0 0 3px rgba(239, 35, 60, 0.2) !important;
     }
     
     .minimal-input::placeholder {
-      color: rgba(255, 255, 255, 0.4) !important;
+      color: rgba(255, 255, 255, 0.45) !important;
     }
     
     /* FIX AUTOFILL */

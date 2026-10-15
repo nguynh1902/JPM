@@ -52,21 +52,21 @@
           <div class="jpm-split-sidebar mb-4 mb-lg-0">
             <div class="card sticky-top border-0 shadow-sm" style="border-radius: 16px; overflow: visible; top: 110px; z-index: 10;">
               <div class="card-header bg-white border-bottom py-3 px-4 d-flex justify-content-between align-items-center" style="border-radius: 16px 16px 0 0;">
-                <h4 class="mb-0 jpm-card-title" style="font-size: 1rem;"><i class="bi bi-funnel-fill me-2" style="color: var(--accent-color);"></i>BỘ LỌC</h4>
+                <h4 class="mb-0 jpm-card-title" style="font-size: 1rem;"><i class="bi bi-funnel-fill me-2" style="color: var(--accent-color);"></i>Bộ Lọc</h4>
                 <button class="btn btn-sm btn-link text-danger text-decoration-none p-0 shadow-none fw-bold" @click="resetFilters">Xóa tất cả</button>
                 </div>
                 
                 <div class="card-body p-4 custom-scrollbar" style="max-height: calc(100vh - 180px); overflow-y: auto;">
                 <!-- TIM KIEM -->
                 <div class="mb-4 pb-4 border-bottom">
-                  <h6 class="section-label mb-3 fw-bold text-uppercase" style="font-size: 0.85rem; color: var(--heading-color); letter-spacing: 1px;"><i class="bi bi-search me-1 text-muted"></i> Tìm Sản Phẩm</h6>
+                  <h6 class="section-label mb-3 fw-bold" style="font-size: 0.85rem; color: var(--heading-color);"><i class="bi bi-search me-1 text-muted"></i> Tìm Sản Phẩm</h6>
                   <div class="input-group">
                     <span class="input-group-text bg-white border-end-0" style="border-radius: 8px 0 0 8px;"><i class="bi bi-search text-muted"></i></span>
                     <input type="text" class="form-control border-start-0 shadow-none" style="border-radius: 0 8px 8px 0; background-color: #fff;" placeholder="Nhập tên hoặc mã..." v-model="searchInput" @keyup.enter="performSearch">
                   </div>
                 </div>
                 <div class="mb-4">
-                  <h6 class="section-label mb-3 fw-bold text-uppercase" style="font-size: 0.85rem; color: var(--heading-color); letter-spacing: 1px;"><i class="bi bi-tags-fill me-1 text-muted"></i> Danh Mục</h6>
+                  <h6 class="section-label mb-3 fw-bold" style="font-size: 0.85rem; color: var(--heading-color);"><i class="bi bi-tags-fill me-1 text-muted"></i> Danh Mục</h6>
                   <div v-if="isLoadingCategories" class="text-center py-4">
                     <div class="spinner-border spinner-border-sm text-secondary" style="color: var(--accent-color) !important;"></div>
                   </div>
@@ -98,7 +98,7 @@
               <div v-else-if="groupedCategories.length > 0">
                 <div v-for="cat in groupedCategories" :key="cat.id" class="mb-5">
                   <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-2">
-                    <h4 class="fw-bold text-uppercase mb-0" style="color: var(--heading-color);">{{ cat.ten_danh_muc }}</h4>
+                    <h4 class="fw-bold mb-0" style="color: var(--heading-color); font-size: 1.25rem;">{{ cat.ten_danh_muc }}</h4>
                     <button class="btn btn-link text-danger fw-bold text-decoration-none d-flex align-items-center gap-1 p-0 shadow-none hover-underline" @click="viewCategory(cat.slug)">
                       Xem thêm <i class="bi bi-arrow-right"></i>
                     </button>

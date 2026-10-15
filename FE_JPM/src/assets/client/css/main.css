@@ -2138,18 +2138,20 @@ section,
   margin-bottom: 30px;
 }
 .filter-group label, .search-input-wrap label {
-  display: block;
-  margin-bottom: 10px;
-  font-size: 10px;
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+  font-size: 13px;
   font-weight: 600;
-  color: #495057;
-  letter-spacing: 1.2px;
-  text-transform: uppercase;
+  color: #1e293b;
+  letter-spacing: normal;
+  text-transform: none;
+  font-family: var(--default-font);
 }
 .filter-group label i, .search-input-wrap label i {
   color: var(--accent-color);
   margin-right: 6px;
-  font-size: 11px;
+  font-size: 13px;
 }
 
 /* Custom Select & Inputs */
@@ -2159,86 +2161,93 @@ section,
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 16px;
-  height: 46px;
-  border-radius: 4px !important;
-  border: 1px solid #dee2e6;
-  background: transparent;
+  padding: 0 14px;
+  height: 44px;
+  border-radius: 6px !important;
+  border: 1px solid #d1d5db;
+  background: #ffffff;
   cursor: pointer;
-  transition: all 0.25s ease;
-  font-size: 13px;
-  font-weight: 300;
-  color: #6c757d;
+  transition: all 0.2s ease;
+  font-size: 14px;
+  font-weight: 400;
+  color: #374151;
+  font-family: var(--default-font);
 }
 .custom-select-box:hover, .search-input-box:hover {
-  border-color: #adb5bd;
+  border-color: #9ca3af;
 }
 .custom-select-box.is-focused, .search-input-box:focus-within {
   border-color: var(--accent-color);
-  box-shadow: none;
+  box-shadow: 0 0 0 3px rgba(248, 34, 73, 0.15);
 }
 .custom-select-box.disabled-box {
-  background: #f8f9fa;
-  color: #adb5bd;
+  background: #f9fafb;
+  color: #9ca3af;
   cursor: not-allowed;
+  border-color: #e5e7eb;
 }
 .custom-select-box.has-value {
-  color: #212529;
-  font-weight: 400;
+  color: #111827;
+  font-weight: 500;
 }
 .select-arrow {
-  transition: transform 0.25s ease;
-  font-size: 10px;
-  color: #6c757d;
+  transition: transform 0.2s ease;
+  font-size: 11px;
+  color: #6b7280;
 }
-.select-arrow.rotated {
+.select-arrow.rotated, .custom-select-box.is-focused .select-arrow {
   transform: rotate(180deg);
   color: var(--accent-color);
 }
 
 /* Dropdown List */
-.custom-dropdown-list { position: absolute; min-width: 100%; width: max-content;
+.custom-dropdown-list {
+  position: absolute;
+  min-width: 100%;
+  width: max-content;
+  max-width: 320px;
   top: calc(100% + 4px);
-   
   list-style: none;
-  margin: 0; padding: 4px;
+  margin: 0;
+  padding: 6px;
   background: #ffffff;
-  border: 1px solid #dee2e6;
-  border-radius: 4px;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.06);
   z-index: 200;
-  max-height: 400px;
+  max-height: 320px;
   overflow-y: auto;
   overflow-x: hidden;
+  font-family: var(--default-font);
 }
 
 /* Elegant Scrollbar for Dropdown */
-.custom-dropdown-list::-webkit-scrollbar { width: 8px; }
-.custom-dropdown-list::-webkit-scrollbar-track { background: #f8f9fa; border-radius: 4px; margin: 4px; }
-.custom-dropdown-list::-webkit-scrollbar-thumb { background: #adb5bd; border-radius: 10px; }
-.custom-dropdown-list::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
-}
+.custom-dropdown-list::-webkit-scrollbar { width: 6px; }
+.custom-dropdown-list::-webkit-scrollbar-track { background: #f9fafb; border-radius: 4px; }
+.custom-dropdown-list::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+.custom-dropdown-list::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
-.custom-dropdown-list li { white-space: nowrap; 
-  padding: 10px 14px;
+.custom-dropdown-list li {
+  white-space: nowrap;
+  padding: 8px 12px;
   cursor: pointer;
-  font-size: 13px;
-  font-weight: 300;
-  color: #495057;
+  font-size: 14px;
+  font-weight: 400;
+  color: #374151;
   display: flex;
   align-items: center;
   gap: 8px;
   transition: all 0.15s ease;
-  border-radius: 2px;
+  border-radius: 4px;
 }
 .custom-dropdown-list li:hover {
-  background: #f8f9fa;
-  color: #212529;
+  background: #f3f4f6;
+  color: #111827;
 }
 .custom-dropdown-list li.active {
   background: var(--accent-color);
   color: #ffffff;
+  font-weight: 600;
 }
 .check-icon { opacity: 0; font-size: 12px; }
 .active .check-icon { opacity: 1; }
@@ -2589,273 +2598,6 @@ input[type="number"] {
   outline: none !important;
 }
 
-/* =========================================
-   CUSTOM DROPDOWN CSS
-   ========================================= */
-.dropdown-overlay {
-  position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  z-index: 100;
-}
-.custom-select-wrapper { position: relative; }
-.custom-select-wrapper.z-active { z-index: 101; }
-
-.custom-select-box {
-  width: 100%;
-  padding: 14px 16px;
-  background: #f8f9fa;
-  border: 1.5px solid #eef0f5;
-  border-radius: 4px;
-  color: #1f2937;
-  font-size: 14.5px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.25s ease;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-}
-.custom-select-box:hover {
-  background: #ffffff;
-  border-color: #d1d5db;
-}
-.custom-select-box.is-focused {
-  background: #ffffff;
-  border-color: #f82249;
-  box-shadow: 0 0 0 4px rgba(248, 34, 73, 0.1);
-}
-.custom-select-box .select-arrow {
-  color: #8899aa;
-  transition: transform 0.2s;
-}
-.custom-select-box.is-focused .select-arrow {
-  transform: rotate(180deg);
-}
-
-.custom-dropdown-list { position: absolute; min-width: 100%; width: max-content;
-  top: calc(100% + 5px);
-  
-  
-  background: #fff;
-  border: 1px solid #eee;
-  border-radius: 4px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  max-height: 400px;
-  overflow-y: auto;
-}
-.custom-dropdown-list li { white-space: nowrap; 
-  padding: 10px 16px;
-  font-size: 14px;
-  color: #333;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-.custom-dropdown-list li:hover {
-  background: rgba(248, 34, 73, 0.05);
-  color: #f82249;
-}
-.custom-dropdown-list li.active {
-  background: rgba(248, 34, 73, 0.1);
-  color: #f82249;
-  font-weight: 600;
-}
-
-/* =========================================
-   JPM GLOBAL COMPONENTS (Table, Pagination, Sidebar)
-   ========================================= */
-
-/* Category List (Sidebar Menu) */
-.category-list .list-group-item {
-  color: #555;
-  border-left: 4px solid transparent;
-  border-right: none;
-  border-top: none;
-  border-bottom: 1px solid #f1f3f7;
-  transition: all 0.25s ease;
-  font-weight: 600;
-}
-.category-list .list-group-item:last-child {
-  border-bottom: none;
-}
-.category-list .list-group-item:hover {
-  background-color: #f8f9fa;
-  color: #0e1b4d;
-}
-.category-list .list-group-item.active {
-  background-color: transparent;
-  color: var(--accent-color);
-  border-left: 4px solid var(--accent-color);
-  font-weight: 700;
-  z-index: 1;
-}
-.category-list .list-group-item i {
-  color: #888;
-  transition: all 0.2s;
-}
-.category-list .list-group-item:hover i {
-  transform: scale(1.1);
-}
-.category-list .list-group-item.active i {
-  color: var(--accent-color) !important;
-}
-.category-list .list-group-item .chevron-icon {
-  font-size: 0.8rem;
-  opacity: 0;
-  transform: translateX(-10px);
-  transition: all 0.2s;
-}
-.category-list .list-group-item.active .chevron-icon {
-  opacity: 1;
-  transform: translateX(0);
-  color: var(--accent-color) !important;
-}
-
-/* Data Table */
-.custom-table {
-  color: #444;
-}
-.custom-table thead th {
-  text-transform: uppercase;
-  font-size: 0.8rem;
-  letter-spacing: 0.5px;
-  color: #0e1b4d;
-  font-weight: 700;
-  border-bottom: 2px solid #e2e8f0 !important;
-  padding-top: 12px;
-  padding-bottom: 12px;
-  background-color: #fff;
-}
-.custom-table tbody tr {
-  transition: background-color 0.2s;
-}
-.custom-table tbody tr:hover {
-  background-color: #fcfcfc;
-}
-.custom-table td {
-  padding-top: 12px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid #f1f1f1;
-}
-
-/* Pagination */
-.custom-pagination .page-link {
-  color: #555;
-  border: none;
-  margin: 0 2px;
-  border-radius: 4px;
-  padding: 8px 16px;
-  font-weight: 500;
-  transition: all 0.2s;
-}
-.custom-pagination .page-link:hover {
-  background-color: #f1f1f1;
-  color: var(--heading-color);
-}
-.custom-pagination .page-item.active .page-link {
-  background-color: var(--accent-color);
-  color: #fff;
-  box-shadow: 0 2px 4px rgba(248,34,73,0.3);
-}
-.custom-pagination .page-item.disabled .page-link {
-  color: #bbb;
-  background-color: transparent;
-}
-
-/* JPM Custom Global UI Elements */
-.text-danger { color: var(--accent-color, #f82249) !important; }
-.btn-danger { background-color: var(--accent-color, #f82249); color: white; border: none; }
-.btn-danger:hover { background-color: color-mix(in srgb, var(--accent-color, #f82249) 85%, black); color: white; }
-.btn-outline-danger { color: var(--accent-color, #f82249); border-color: var(--accent-color, #f82249); background-color: transparent; }
-.btn-outline-danger:hover { background-color: var(--accent-color, #f82249); color: #fff; }
-.bg-danger { background-color: var(--accent-color, #f82249) !important; }
-
-/* Pastel Badges */
-.text-warning { color: #f6c000 !important; }
-.bg-pastel-warning { background-color: rgba(246, 192, 0, 0.15) !important; }
-.text-success { color: #198754 !important; }
-.bg-pastel-success { background-color: rgba(25, 135, 84, 0.15) !important; }
-.text-info { color: #0dcaf0 !important; }
-.bg-pastel-info { background-color: rgba(13, 202, 240, 0.15) !important; }
-.bg-pastel-danger { background-color: rgba(248, 34, 73, 0.1) !important; }
-
-/* Sidebar */
-.active-menu { color: var(--accent-color, #f82249) !important; border-left: 3px solid var(--accent-color, #f82249) !important; background: rgba(248, 34, 73, 0.05); }
-
-/* Line Tabs */
-.jpm-line-tabs .nav-link { color: #6c757d; border-bottom: 2px solid transparent !important; transition: all 0.3s ease; }
-.jpm-line-tabs .nav-link:hover { color: var(--accent-color, #f82249) !important; }
-.jpm-line-tabs .nav-link.active { color: var(--accent-color, #f82249) !important; border-bottom: 2px solid var(--accent-color, #f82249) !important; }
-
-.custom-select-wrapper { position: relative; }
-.custom-select-wrapper.z-active { z-index: 101; }
-
-.custom-select-box {
-  width: 100%;
-  padding: 14px 16px;
-  background: #f8f9fa;
-  border: 1.5px solid #eef0f5;
-  border-radius: 4px;
-  color: #1f2937;
-  font-size: 14.5px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.25s ease;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-}
-.custom-select-box:hover {
-  background: #ffffff;
-  border-color: #d1d5db;
-}
-.custom-select-box.is-focused {
-  background: #ffffff;
-  border-color: #f82249;
-  box-shadow: 0 0 0 4px rgba(248, 34, 73, 0.1);
-}
-.custom-select-box .select-arrow {
-  color: #8899aa;
-  transition: transform 0.2s;
-}
-.custom-select-box.is-focused .select-arrow {
-  transform: rotate(180deg);
-}
-
-.custom-dropdown-list { position: absolute; min-width: 100%; width: max-content;
-  top: calc(100% + 5px);
-  
-  
-  background: #fff;
-  border: 1px solid #eee;
-  border-radius: 4px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  max-height: 400px;
-  overflow-y: auto;
-}
-.custom-dropdown-list li { white-space: nowrap; 
-  padding: 10px 16px;
-  font-size: 14px;
-  color: #333;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-.custom-dropdown-list li:hover {
-  background: rgba(248, 34, 73, 0.05);
-  color: #f82249;
-}
-.custom-dropdown-list li.active {
-  background: rgba(248, 34, 73, 0.1);
-  color: #f82249;
-  font-weight: 600;
-}
 
 /* =========================================
    JPM GLOBAL COMPONENTS (Table, Pagination, Sidebar)

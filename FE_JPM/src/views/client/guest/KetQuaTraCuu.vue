@@ -602,7 +602,7 @@ export default {
 }
 
 /* Section Labels */
-.section-label { font-size: 0.8rem; font-weight: 700; text-transform: uppercase; color: #6c757d; letter-spacing: 0.5px; margin-bottom: 15px; }
+.section-label { font-size: 0.85rem; font-weight: 600; text-transform: none; color: #1e293b; letter-spacing: normal; margin-bottom: 12px; }
 
 /* Filter List */
 .filter-list { list-style: none; padding: 0; margin: 0; }
