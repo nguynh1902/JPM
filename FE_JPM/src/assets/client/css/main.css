@@ -222,12 +222,12 @@ h6 {
   100% {
     transform: scale(1, 1);
     opacity: 0;
-    }
-  
-  /* Mega Menu: Vertical line for items in the 2nd column and beyond */
-  .navmenu .dropdown ul li:nth-child(n+7) a {
-    border-left: 1px solid rgba(0, 0, 0, 0.04) !important;
   }
+}
+
+/* Mega Menu: Vertical line for items in the 2nd column and beyond */
+.navmenu .dropdown ul li:nth-child(n+7) a {
+  border-left: 1px solid rgba(0, 0, 0, 0.04) !important;
 }
 
 /* PHP Email Form Messages

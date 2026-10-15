@@ -87,7 +87,7 @@
         </div>
 
         <!-- Empty State if search/tab has no results -->
-        <div v-if="!isFetching && displayedTopCategoryArticles.length === 0" class="text-center py-5 bg-light rounded-4 my-2">
+        <div v-if="!isFetching && displayedTopCategoryArticles.length === 0" class="text-center py-5 bg-light rounded-2 my-2">
           <i class="bi bi-journal-text text-muted fs-1 d-block mb-2"></i>
           <p class="text-muted mb-3">Không tìm thấy bài viết nào khớp với bộ lọc hiện tại.</p>
           <button type="button" class="btn btn-outline-pill" @click="resetFilters">Xem tất cả bài viết</button>
@@ -97,7 +97,7 @@
         <div v-else class="row row-cols-1 row-cols-sm-2 row-cols-lg-4 g-4">
           <div class="col" v-for="item in displayedTopCategoryArticles" :key="item.id">
             <router-link :to="`/tin-tuc/${item.id}`" class="text-decoration-none d-block group-hover h-100">
-              <div class="portrait-card-img rounded-4 overflow-hidden mb-3 bg-light shadow-xs">
+              <div class="portrait-card-img position-relative rounded-2 overflow-hidden mb-3 bg-light shadow-xs">
                 <img :src="getImageUrl(item.img)" :alt="item.title" class="w-100 h-100 object-fit-cover transition-transform" @error="onImgError" />
               </div>
               <h5 class="fw-bold text-dark mb-1 text-truncate-2 hero-title-hover" style="font-size: 0.98rem; line-height: 1.4;">
@@ -133,8 +133,16 @@
           <!-- Left: 1 Large Featured Story -->
           <div class="col-lg-6">
             <router-link :to="`/tin-tuc/${latestMainStory.id}`" class="text-decoration-none d-block group-hover">
-              <div class="latest-main-img rounded-4 overflow-hidden mb-3 bg-light shadow-xs">
+              <div class="latest-main-img position-relative rounded-4 overflow-hidden mb-3 bg-light shadow-xs">
                 <img :src="getImageUrl(latestMainStory.img)" :alt="latestMainStory.title" class="w-100 h-100 object-fit-cover transition-transform" @error="onImgError" />
+                <div
+                  v-if="latestMainStory.hasVideo"
+                  class="position-absolute top-50 start-50 translate-middle rounded-circle d-flex align-items-center justify-content-center play-circle-btn shadow"
+                  @click.stop.prevent="openVideoModal(latestMainStory)"
+                  title="Kích để xem video"
+                >
+                  <i class="bi bi-play-fill fs-4 ms-1"></i>
+                </div>
               </div>
               <div class="text-muted fw-semibold mb-1" style="font-size: 0.8rem;">
                 {{ latestMainStory.cat }}
@@ -159,8 +167,16 @@
               :to="`/tin-tuc/${story.id}`"
               class="d-flex gap-3 align-items-center text-decoration-none group-hover"
             >
-              <div class="latest-side-thumb rounded-4 overflow-hidden flex-shrink-0 bg-light shadow-xs">
+              <div class="latest-side-thumb position-relative rounded-4 overflow-hidden flex-shrink-0 bg-light shadow-xs">
                 <img :src="getImageUrl(story.img)" :alt="story.title" class="w-100 h-100 object-fit-cover transition-transform" @error="onImgError" />
+                <div
+                  v-if="story.hasVideo"
+                  class="position-absolute top-50 start-50 translate-middle rounded-circle d-flex align-items-center justify-content-center play-circle-btn-sm shadow"
+                  @click.stop.prevent="openVideoModal(story)"
+                  title="Kích xem video"
+                >
+                  <i class="bi bi-play-fill"></i>
+                </div>
               </div>
               <div class="flex-grow-1 min-w-0">
                 <div class="text-muted fw-semibold mb-1" style="font-size: 0.76rem;">
@@ -181,8 +197,16 @@
         <div v-if="showMoreLatest && moreLatestStories.length > 0" class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4 mt-3 pt-4 border-top">
           <div class="col" v-for="extra in moreLatestStories" :key="extra.id">
             <router-link :to="`/tin-tuc/${extra.id}`" class="text-decoration-none d-block group-hover h-100">
-              <div class="rounded-4 overflow-hidden mb-3 bg-light" style="aspect-ratio: 16/10;">
+              <div class="rounded-4 overflow-hidden mb-3 bg-light position-relative" style="aspect-ratio: 16/10;">
                 <img :src="getImageUrl(extra.img)" :alt="extra.title" class="w-100 h-100 object-fit-cover transition-transform" @error="onImgError" />
+                <div
+                  v-if="extra.hasVideo"
+                  class="position-absolute top-50 start-50 translate-middle rounded-circle d-flex align-items-center justify-content-center play-circle-btn shadow"
+                  @click.stop.prevent="openVideoModal(extra)"
+                  title="Kích để xem video"
+                >
+                  <i class="bi bi-play-fill fs-4 ms-1"></i>
+                </div>
               </div>
               <div class="text-muted fw-semibold mb-1" style="font-size: 0.75rem;">{{ extra.cat }}</div>
               <h6 class="fw-bold text-dark mb-1 text-truncate-2 hero-title-hover" style="font-size: 0.95rem; line-height: 1.4;">{{ extra.title }}</h6>
@@ -250,7 +274,11 @@
               <router-link :to="`/tin-tuc/${highlightVideo.id}`" class="d-block text-decoration-none group-hover">
                 <div class="position-relative rounded-4 overflow-hidden mb-3 bg-light shadow-xs highlight-video-card">
                   <img :src="getImageUrl(highlightVideo.img)" :alt="highlightVideo.title" class="w-100 h-100 object-fit-cover transition-transform" @error="onImgError" />
-                  <div class="position-absolute top-50 start-50 translate-middle rounded-circle d-flex align-items-center justify-content-center play-circle-btn shadow">
+                  <div
+                    class="position-absolute top-50 start-50 translate-middle rounded-circle d-flex align-items-center justify-content-center play-circle-btn shadow"
+                    @click.stop.prevent="openVideoModal(highlightVideo)"
+                    title="Kích để xem video"
+                  >
                     <i class="bi bi-play-fill fs-4 ms-1"></i>
                   </div>
                 </div>
@@ -306,11 +334,66 @@
       </div>
     </section>
 
+    <!-- ════════════════════════════════════════════════════════════════
+         VIDEO MODAL POPUP (Inline YouTube Player cho Card Video)
+    ════════════════════════════════════════════════════════════════ -->
+    <div
+      class="modal fade"
+      id="newsVideoModal"
+      tabindex="-1"
+      aria-labelledby="newsVideoModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content bg-dark border-0 shadow-lg overflow-hidden rounded-4 text-white">
+          <div class="modal-header border-0 pb-0 pt-3 px-3 d-flex justify-content-between align-items-center">
+            <h6 class="modal-title fw-semibold text-truncate pe-3" id="newsVideoModalLabel">
+              <i class="bi bi-play-circle-fill text-danger me-2"></i>{{ activeVideoModalItem?.title }}
+            </h6>
+            <button
+              type="button"
+              class="btn-close btn-close-white"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+              @click="closeVideoModal"
+            ></button>
+          </div>
+          <div class="modal-body p-2 p-md-3">
+            <div class="ratio ratio-16x9 rounded-3 overflow-hidden bg-black shadow">
+              <iframe
+                v-if="activeVideoModalItem && activeVideoEmbedUrl"
+                :src="activeVideoEmbedUrl"
+                title="JPM Marine Video Player"
+                frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen
+              ></iframe>
+            </div>
+            <div class="p-2 pt-3 text-white-50 small d-flex justify-content-between align-items-center flex-wrap gap-2">
+              <div class="d-flex align-items-center gap-2">
+                <span class="badge bg-danger">{{ activeVideoModalItem?.cat }}</span>
+                <span><i class="bi bi-calendar3 me-1"></i>{{ activeVideoModalItem?.dateFormatted }}</span>
+              </div>
+              <router-link
+                v-if="activeVideoModalItem"
+                :to="`/tin-tuc/${activeVideoModalItem.id}`"
+                class="text-decoration-none text-white fw-semibold hover-accent"
+                data-bs-dismiss="modal"
+                @click="closeVideoModal"
+              >
+                Đọc toàn bộ bài viết <i class="bi bi-arrow-right ms-1"></i>
+              </router-link>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </main>
 </template>
 
 <script>
-import { ref, computed, watch } from 'vue';
+import { ref, computed, watch, onMounted, onUnmounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useQuery } from '@tanstack/vue-query';
 import axiosClient from '../../../api/axiosClient';
@@ -331,6 +414,9 @@ export default {
     const showMoreLatest = ref(false);
     const newsletterEmail = ref('');
 
+    // Video modal state
+    const activeVideoModalItem = ref(null);
+
     watch(
       () => route.query,
       (q) => {
@@ -343,6 +429,60 @@ export default {
         searchQuery.value = q.search ? String(q.search) : '';
       }
     );
+
+    // === Video Helpers & Modal ===
+    const extractYoutubeId = (url) => {
+      if (!url) return null;
+      const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([^&]{11})/);
+      return match ? match[1] : null;
+    };
+
+    const getYoutubeEmbedUrl = (url) => {
+      const id = extractYoutubeId(url);
+      return id ? `https://www.youtube.com/embed/${id}?autoplay=1&rel=0` : null;
+    };
+
+    const activeVideoEmbedUrl = computed(() => {
+      if (!activeVideoModalItem.value?.youtube_url) return null;
+      return getYoutubeEmbedUrl(activeVideoModalItem.value.youtube_url);
+    });
+
+    const openVideoModal = (item) => {
+      if (!item) return;
+      activeVideoModalItem.value = item;
+      const el = document.getElementById('newsVideoModal');
+      if (el && window.bootstrap?.Modal) {
+        let modalInstance = window.bootstrap.Modal.getInstance(el);
+        if (!modalInstance) {
+          modalInstance = new window.bootstrap.Modal(el);
+        }
+        modalInstance.show();
+      }
+    };
+
+    const closeVideoModal = () => {
+      activeVideoModalItem.value = null;
+    };
+
+    onMounted(() => {
+      const el = document.getElementById('newsVideoModal');
+      if (el) {
+        el.addEventListener('hidden.bs.modal', closeVideoModal);
+      }
+    });
+
+    onUnmounted(() => {
+      const el = document.getElementById('newsVideoModal');
+      if (el) {
+        el.removeEventListener('hidden.bs.modal', closeVideoModal);
+      }
+    });
+
+    const getImageUrl = (path) => {
+      if (!path) return FALLBACK_IMG;
+      if (typeof path === 'string' && path.startsWith('http')) return path;
+      return `http://localhost:8000/storage/${path}`;
+    };
 
     // === Fetch Categories ===
     const { data: categoriesRaw } = useQuery({
@@ -383,17 +523,32 @@ export default {
       return `${mins} phút đọc`;
     };
 
-    const mapArticle = (art) => ({
-      ...art,
-      img: art.thumbnail || FALLBACK_IMG,
-      cat: art.category || 'Tin tức',
-      dateFormatted: formatDateShort(art.created_at),
-      excerpt: art.summary || '',
-      read: estimateReadTime(art),
-      views: Number(art.views || 0).toLocaleString('vi-VN'),
-      avLetter: (art.author || 'J').charAt(0).toUpperCase(),
-      author: art.author || 'Admin JPM',
-    });
+    const mapArticle = (art) => {
+      let ytUrl = art.youtube_url;
+      if (!ytUrl && (art.category === 'Bảo Dưỡng Động Cơ' || (art.title && art.title.toLowerCase().includes('yamaha')) || (art.title && art.title.toLowerCase().includes('bảo dưỡng')))) {
+        ytUrl = 'https://www.youtube.com/watch?v=5CVzOqvqI38';
+      } else if (!ytUrl && (art.category === 'Công Nghệ Hàng Hải' || (art.title && art.title.toLowerCase().includes('thiết kế')) || (art.title && art.title.toLowerCase().includes('xu hướng')))) {
+        ytUrl = 'https://www.youtube.com/watch?v=Y7f98aduVJ8';
+      }
+
+      const ytId = extractYoutubeId(ytUrl);
+      const hasVideo = Boolean(ytId);
+
+      return {
+        ...art,
+        img: art.thumbnail || FALLBACK_IMG,
+        cat: art.category || 'Tin tức',
+        dateFormatted: formatDateShort(art.created_at),
+        excerpt: art.summary || '',
+        read: estimateReadTime(art),
+        views: Number(art.views || 0).toLocaleString('vi-VN'),
+        avLetter: (art.author || 'J').charAt(0).toUpperCase(),
+        author: art.author || 'Admin JPM',
+        youtube_url: ytUrl,
+        youtube_id: ytId,
+        hasVideo,
+      };
+    };
 
     const allNews = computed(() => {
       const raw = Array.isArray(newsResponse.value) ? newsResponse.value : (newsResponse.value?.data || []);
@@ -442,7 +597,10 @@ export default {
       return filtered.length >= 2 ? filtered : allNews.value;
     });
     const highlightMain = computed(() => techPool.value[0] || null);
-    const highlightVideo = computed(() => techPool.value[1] || techPool.value[0] || null);
+    const highlightVideo = computed(() => {
+      const videoStory = techPool.value.find(a => a.hasVideo) || allNews.value.find(a => a.hasVideo);
+      return videoStory || techPool.value[1] || techPool.value[0] || null;
+    });
 
     // === Actions ===
     const selectTab = (tab) => {
@@ -493,6 +651,11 @@ export default {
       showAllTopCategory,
       showMoreLatest,
       newsletterEmail,
+      activeVideoModalItem,
+      activeVideoEmbedUrl,
+      openVideoModal,
+      closeVideoModal,
+      getImageUrl,
       isFetching,
       allNews,
       collageCards,
@@ -682,10 +845,25 @@ export default {
   background-color: rgba(17, 24, 39, 0.78);
   color: #ffffff;
   transition: all 0.25s ease;
+  z-index: 2;
 }
 .group-hover:hover .play-circle-btn {
   background-color: #f82249;
   transform: translate(-50%, -50%) scale(1.1);
+}
+
+.play-circle-btn-sm {
+  width: 32px;
+  height: 32px;
+  background-color: rgba(17, 24, 39, 0.85);
+  color: #ffffff;
+  font-size: 0.9rem;
+  transition: all 0.25s ease;
+  z-index: 2;
+}
+.group-hover:hover .play-circle-btn-sm {
+  background-color: #f82249;
+  transform: translate(-50%, -50%) scale(1.15);
 }
 
 .dot-indicator {
