@@ -12,9 +12,9 @@
 --------------------------------------------------------------*/
 /* Fonts */
 :root {
-  --default-font: "Inter", system-ui, -apple-system, sans-serif;
-  --heading-font: "Inter", system-ui, -apple-system, sans-serif;
-  --nav-font: "Inter", system-ui, -apple-system, sans-serif;
+  --default-font: "Roboto", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --heading-font: "Raleway", sans-serif;
+  --nav-font: "Raleway", sans-serif;
 }
 
 /* Global Colors - The following color variables are used throughout the website. Updating them here will change the color scheme of the entire website */
@@ -397,12 +397,12 @@ h6 {
   .navmenu a,
   .navmenu a:focus {
     color: var(--nav-color);
-    font-size: 11px;
+    font-size: 14px;
     padding: 0 2px;
     font-family: var(--nav-font);
     font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 2.5px;
+    letter-spacing: 0.5px;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -955,10 +955,11 @@ section,
 }
 
 .section-title h2 {
-  font-size: 34px;
-  font-weight: 500;
+  font-family: var(--heading-font);
+  font-size: 32px;
+  font-weight: 700;
   margin-bottom: 16px;
-  letter-spacing: 2px;
+  letter-spacing: 1px;
   text-transform: uppercase;
   color: var(--heading-color);
 }
@@ -1016,37 +1017,75 @@ section,
   z-index: 3;
 }
 
-.hero h2 {
-  margin: 0;
-  font-size: 48px;
+.hero h1,
+.hero h2,
+.hero-main-title {
+  margin: 0 0 20px 0;
+  font-family: var(--heading-font);
+  font-size: 52px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  line-height: 1.15;
+  text-transform: uppercase;
+  color: #fff;
+}
+
+.hero h1 span,
+.hero h2 span,
+.hero-main-title .hero-title-accent {
+  color: var(--accent-color);
   font-weight: 700;
 }
 
-.hero h2 span {
-  color: var(--accent-color);
+.hero-main-title .hero-title-white {
+  color: #ffffff;
+  font-weight: 700;
+  font-style: normal;
 }
 
-.hero p {
-  color: color-mix(in srgb, var(--default-color), transparent 20%);
-  margin: 10px 0 0 0;
-  font-size: 24px;
+.hero p,
+.hero-subtitle {
+  font-family: var(--default-font);
+  color: rgba(255, 255, 255, 0.85);
+  margin: 0 0 35px 0;
+  font-size: 20px;
+  line-height: 1.6;
+}
+
+.btn-hero-cta {
+  font-family: var(--heading-font);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 3px;
+  padding: 16px 48px;
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  transition: all 0.3s ease;
+}
+
+.btn-hero-cta:hover {
+  background: var(--accent-color);
+  border-color: var(--accent-color);
+  color: #fff;
 }
 
 @media (max-width: 768px) {
-  .hero h2 {
+  .hero h1,
+  .hero h2,
+  .hero-main-title {
     font-size: 32px;
-    line-height: 36px;
+    line-height: 38px;
   }
 
-  .hero p {
-    font-size: 18px;
+  .hero p,
+  .hero-subtitle {
+    font-size: 16px;
     line-height: 24px;
-    }
-  
-  /* Mega Menu: Vertical line for items in the 2nd column and beyond */
-  .navmenu .dropdown ul li:nth-child(n+7) a {
-    border-left: 1px solid rgba(0, 0, 0, 0.04) !important;
   }
+}
+
+/* Mega Menu: Vertical line for items in the 2nd column and beyond */
+.navmenu .dropdown ul li:nth-child(n+7) a {
+  border-left: 1px solid rgba(0, 0, 0, 0.04) !important;
 }
 
 .hero .about-info {
@@ -2088,9 +2127,9 @@ section,
 }
 .section-title h2 {
   font-family: var(--heading-font);
-  font-weight: 500;
-  font-size: 34px;
-  letter-spacing: 2px;
+  font-weight: 700;
+  font-size: 32px;
+  letter-spacing: 1px;
   text-transform: uppercase;
   color: var(--heading-color);
   margin-top: 0.5rem;

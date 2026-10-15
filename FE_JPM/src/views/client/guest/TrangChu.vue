@@ -18,17 +18,17 @@
       <div class="container flex-grow-1 d-flex align-items-center" style="position: relative; z-index: 3;">
         <div class="row w-100">
           <div class="col-lg-8 text-start">
-            <h1 data-aos="fade-up" data-aos-delay="100" style="font-size: 4.5rem; font-weight: 300; letter-spacing: 2px; color: #fff; line-height: 1.1; margin-bottom: 20px; text-transform: uppercase;">
-              <span style="color: var(--accent-color); font-weight: 600;">{{ settings.homepage_hero_title || 'JPM MARINE' }}</span><br />
-              <span style="font-style: italic; font-weight: 300; color: #ffffff;">{{ settings.homepage_hero_subtitle || 'PHỤ TÙNG CHÍNH HÃNG' }}</span>
+            <h1 data-aos="fade-up" data-aos-delay="100" class="hero-main-title">
+              <span class="hero-title-accent">{{ settings.homepage_hero_title || 'JPM MARINE' }}</span><br />
+              <span class="hero-title-white">{{ settings.homepage_hero_subtitle || 'PHỤ TÙNG CHÍNH HÃNG' }}</span>
             </h1>
 
-            <p data-aos="fade-up" data-aos-delay="150" style="font-size: 1.1rem; font-weight: 300; color: #e2e8f0; letter-spacing: 0.5px; margin-bottom: 40px; max-width: 600px; line-height: 1.6;">
+            <p data-aos="fade-up" data-aos-delay="150" class="hero-subtitle">
               Đồng hành cùng mọi chuyến ra khơi. Cung cấp động cơ, hệ thống lái & thiết bị tàu thủy đạt chuẩn quốc tế.
             </p>
 
             <div data-aos="fade-up" data-aos-delay="200">
-              <router-link to="/tra-cuu" class="btn btn-outline-pulse rounded-0 text-white text-uppercase d-inline-flex align-items-center justify-content-center fw-normal" style="padding: 16px 50px; font-size: 0.9rem; letter-spacing: 5px; border: 1px solid rgba(255,255,255,0.8);">
+              <router-link to="/tra-cuu" class="btn btn-hero-cta rounded-0 text-white text-uppercase d-inline-flex align-items-center justify-content-center">
                 TRA CỨU PHỤ TÙNG
               </router-link>
             </div>
@@ -290,7 +290,7 @@
               <span class="fw-light" style="opacity: 0.9;">Tại Sao Chọn</span> <br>
               <span class="fw-bold" style="color: var(--accent-color);">JPM Marine</span>
             </h2>
-            <p class="mb-4" style="color: rgba(255,255,255,0.8); font-size: 1.05rem; line-height: 1.7; font-weight: 300;">Chúng tôi không chỉ cung cấp phụ tùng, chúng tôi mang đến sự an tâm tuyệt đối cho mỗi chuyến ra khơi với dịch vụ tiêu chuẩn quốc tế.</p>
+            <p class="mb-4" style="color: rgba(255,255,255,0.85); font-size: 1.05rem; line-height: 1.7; font-weight: 400;">Chúng tôi không chỉ cung cấp phụ tùng, chúng tôi mang đến sự an tâm tuyệt đối cho mỗi chuyến ra khơi với dịch vụ tiêu chuẩn quốc tế.</p>
             <router-link to="/ho-tro" class="btn btn-outline-pulse rounded-0 px-4 py-3 mt-3 fw-medium text-uppercase" style="letter-spacing: 2px; transition: 0.3s; font-size: 0.9rem;">Nhận Tư Vấn Ngay <i class="bi bi-arrow-right ms-2"></i></router-link>
           </div>
 
