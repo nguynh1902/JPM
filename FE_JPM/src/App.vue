@@ -6,6 +6,7 @@
 
 <script>
 import { useAuthStore } from './stores/authStore'
+import { useCartStore } from './stores/cartStore'
 import { setupOfflineListener, syncOfflineData } from './utils/offlineSyncService'
 import { createToaster } from '@meforma/vue-toaster'
 
@@ -26,9 +27,7 @@ export default {
     // Luôn gọi ngầm API để lấy dữ liệu User mới nhất (Stale-While-Revalidate)
     if (this.authStore.token) {
       this.authStore.fetchProfile();
-      import('./stores/cartStore').then(({ useCartStore }) => {
-        useCartStore().fetchFromCloud();
-      });
+      useCartStore().fetchFromCloud();
     }
   },
   watch: {

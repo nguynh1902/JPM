@@ -36,8 +36,7 @@ const routes = [
   },
   {
     path: "/danh-sach-phu-tung",
-    component: () => import("../views/client/guest/DanhSachPhuTung.vue"),
-    meta: { layout: "client" },
+    redirect: "/tra-cuu",
   },
   {
     path: "/ho-tro",

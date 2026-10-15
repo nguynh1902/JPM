@@ -260,4 +260,26 @@ class ProfileController extends Controller
         $user->save();
         return response()->json(['message' => 'Cart updated successfully.']);
     }
+
+    public function getNotifications(Request $request)
+    {
+        $user = $request->user();
+        $notifications = $user->notifications()->latest()->limit(20)->get();
+
+        return response()->json([
+            'success' => true,
+            'data' => $notifications
+        ]);
+    }
+
+    public function markNotificationsAsRead(Request $request)
+    {
+        $user = $request->user();
+        $user->unreadNotifications->markAsRead();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Đã đánh dấu đã đọc tất cả thông báo.'
+        ]);
+    }
 }

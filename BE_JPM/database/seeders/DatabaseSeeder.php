@@ -36,6 +36,7 @@ class DatabaseSeeder extends Seeder
             NhaCungCapSeeder::class,
             KhoSeeder::class,
             DashboardSeeder::class,
+            NotificationSeeder::class,
             SystemLogSeeder::class,
         ]);
     }
