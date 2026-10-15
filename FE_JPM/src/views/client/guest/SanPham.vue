@@ -7,8 +7,6 @@
     <section class="hero-editorial-section position-relative overflow-hidden">
       <!-- Submerged Marine Image (Ảnh chìm trong nền) -->
       <div class="hero-submerged-bg"></div>
-      <!-- Watermark dots background -->
-      <div class="hero-watermark-bg"></div>
 
       <div class="container position-relative z-1 py-5">
         <div class="row align-items-center py-lg-4">
@@ -438,28 +436,15 @@ const scrollToProducts = () => {
   position: absolute;
   top: 0;
   right: 0;
-  width: 62%;
+  width: 65%;
   height: 100%;
   background-image: url('https://images.unsplash.com/photo-1567899378494-47b22a2ae96a?w=1600&auto=format&fit=crop&q=85');
   background-size: cover;
   background-position: center right;
-  opacity: 0.75;
-  mask-image: linear-gradient(to right, transparent 0%, rgba(0, 0, 0, 0.35) 28%, rgba(0, 0, 0, 0.85) 60%, rgba(0, 0, 0, 1) 100%);
-  -webkit-mask-image: linear-gradient(to right, transparent 0%, rgba(0, 0, 0, 0.35) 28%, rgba(0, 0, 0, 0.85) 60%, rgba(0, 0, 0, 1) 100%);
+  opacity: 0.95;
+  mask-image: linear-gradient(to right, transparent 0%, transparent 15%, rgba(0, 0, 0, 0.45) 45%, rgba(0, 0, 0, 1) 80%);
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, transparent 15%, rgba(0, 0, 0, 0.45) 45%, rgba(0, 0, 0, 1) 80%);
   pointer-events: none;
-}
-
-.hero-watermark-bg {
-  position: absolute;
-  top: 5%;
-  right: 2%;
-  width: 65%;
-  height: 90%;
-  background-image: radial-gradient(#d1d5db 1.5px, transparent 1.5px);
-  background-size: 22px 22px;
-  opacity: 0.45;
-  pointer-events: none;
-  border-radius: 40px;
 }
 
 .hero-main-heading {
