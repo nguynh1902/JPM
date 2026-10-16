@@ -117,7 +117,7 @@ const routes = [
   {
     path: "/admin/dashboard",
     component: () => import("../views/admin/Dashboard/DashboardAdmin.vue"),
-    meta: { layout: "admin", requiresAuth: true, roles: ["admin", "staff"] },
+    meta: { layout: "admin", requiresAuth: true, roles: ["admin"] },
   },
   // ================= ADMIN ROUTES (Chuẩn Kebab-case, Không lặp) =================
   // BÁN HÀNG & ĐƠN HÀNG
@@ -125,12 +125,12 @@ const routes = [
     path: "/admin/don-hang",
     name: "AdminDonHang",
     component: () => import("../views/admin/BanHang/DonHang.vue"),
-    meta: { layout: "admin", requiresAuth: true, roles: ["admin", "staff"] },
+    meta: { layout: "admin", requiresAuth: true, roles: ["admin"] },
   },
   {
     path: "/admin/thanh-toan",
     name: "AdminThanhToan",
-    meta: { layout: "admin", requiresAuth: true, roles: ["admin", "staff"] },
+    meta: { layout: "admin", requiresAuth: true, roles: ["admin"] },
   },
 
   // VẬN HÀNH & CHUỖI CUNG ỨNG (PO)
@@ -139,7 +139,7 @@ const routes = [
     alias: ["/admin/po"],
     name: "AdminPO",
     component: () => import("../views/admin/VanHanh/PO.vue"),
-    meta: { layout: "admin", requiresAuth: true, roles: ["admin", "staff"] },
+    meta: { layout: "admin", requiresAuth: true, roles: ["admin"] },
   },
 
   // QUẢN LÝ KHO
@@ -148,19 +148,19 @@ const routes = [
     alias: ["/admin/kho"],
     name: "AdminKho",
     component: () => import("../views/admin/Kho/Kho.vue"),
-    meta: { layout: "admin", requiresAuth: true, roles: ["admin", "staff"] },
+    meta: { layout: "admin", requiresAuth: true, roles: ["admin"] },
   },
   {
     path: "/admin/ton-kho",
     name: "AdminTonKho",
     component: () => import("../views/admin/Kho/TonKho.vue"),
-    meta: { layout: "admin", requiresAuth: true, roles: ["admin", "staff"] },
+    meta: { layout: "admin", requiresAuth: true, roles: ["admin"] },
   },
   {
     path: "/admin/the-kho",
     name: "AdminTheKho",
     component: () => import("../views/admin/Kho/TheKho.vue"),
-    meta: { layout: "admin", requiresAuth: true, roles: ["admin", "staff"] },
+    meta: { layout: "admin", requiresAuth: true, roles: ["admin"] },
   },
 
   // MÁY THỦY & ĐỘNG CƠ
@@ -168,13 +168,13 @@ const routes = [
     path: "/admin/loai-dong-co",
     name: "AdminLoaiDongCo",
     component: () => import("../views/admin/MayThuy/LoaiDongCo.vue"),
-    meta: { layout: "admin", requiresAuth: true, roles: ["admin", "staff"] },
+    meta: { layout: "admin", requiresAuth: true, roles: ["admin"] },
   },
   {
     path: "/admin/thuong-hieu",
     name: "AdminThuongHieu",
     component: () => import("../views/admin/MayThuy/ThuongHieu.vue"),
-    meta: { layout: "admin", requiresAuth: true, roles: ["admin", "staff"] },
+    meta: { layout: "admin", requiresAuth: true, roles: ["admin"] },
   },
   {
     path: "/admin/dong-co-model",
@@ -188,13 +188,13 @@ const routes = [
     path: "/admin/danh-muc-san-pham",
     name: "AdminDanhMucSanPham",
     component: () => import("../views/admin/SanPham/DanhMucSanPham.vue"),
-    meta: { layout: "admin", requiresAuth: true, roles: ["admin", "staff"] },
+    meta: { layout: "admin", requiresAuth: true, roles: ["admin"] },
   },
   {
     path: "/admin/san-pham",
     name: "AdminSanPham",
     component: () => import("../views/admin/SanPham/SanPham.vue"),
-    meta: { layout: "admin", requiresAuth: true, roles: ["admin", "staff"] },
+    meta: { layout: "admin", requiresAuth: true, roles: ["admin"] },
   },
 
   // PHỤ TÙNG & LINH KIỆN
@@ -202,7 +202,7 @@ const routes = [
     path: "/admin/nhom-phu-tung",
     name: "AdminNhomPhuTung",
     component: () => import("../views/admin/PhuTung/NhomPhuTung.vue"),
-    meta: { layout: "admin", requiresAuth: true, roles: ["admin", "staff"] },
+    meta: { layout: "admin", requiresAuth: true, roles: ["admin"] },
   },
   {
     path: "/admin/phu-tung",
@@ -214,19 +214,19 @@ const routes = [
     path: "/admin/cap-nhat-linh-kien",
     name: "AdminCapNhatLinhKien",
     component: () => import("../views/admin/LinhKien/CapNhatLinhKien.vue"),
-    meta: { layout: "admin", requiresAuth: true, roles: ["admin", "staff"] },
+    meta: { layout: "admin", requiresAuth: true, roles: ["admin"] },
   },
   {
     path: "/admin/so-do-phu-tung",
     name: "AdminSoDoPhuTung",
     component: () => import("../views/admin/PhuTung/SoDoPhuTung.vue"),
-    meta: { layout: "admin", requiresAuth: true, roles: ["admin", "staff"] },
+    meta: { layout: "admin", requiresAuth: true, roles: ["admin"] },
   },
   {
     path: "/admin/ma-thay-the",
     name: "AdminMaThayThe",
     component: () => import("../views/admin/LinhKien/MaThayThe.vue"),
-    meta: { layout: "admin", requiresAuth: true, roles: ["admin", "staff"] },
+    meta: { layout: "admin", requiresAuth: true, roles: ["admin"] },
   },
 
   // KHÁCH HÀNG & CRM
@@ -234,12 +234,12 @@ const routes = [
     path: "/admin/khach-hang",
     name: "AdminKhachHang",
     component: () => import("../views/admin/KhachHang/KhachHang.vue"),
-    meta: { layout: "admin", requiresAuth: true, roles: ["admin", "staff"] },
+    meta: { layout: "admin", requiresAuth: true, roles: ["admin"] },
   },
   {
     path: "/admin/lich-su-mua",
     name: "AdminLichSuMua",
-    meta: { layout: "admin", requiresAuth: true, roles: ["admin", "staff"] },
+    meta: { layout: "admin", requiresAuth: true, roles: ["admin"] },
   },
 
   // NHÂN SỰ & PHÂN QUYỀN
@@ -247,13 +247,13 @@ const routes = [
     path: "/admin/nhan-vien",
     name: "AdminNhanVien",
     component: () => import("../views/admin/NhanSu/NhanVien.vue"),
-    meta: { layout: "admin", requiresAuth: true, roles: ["admin", "staff"] },
+    meta: { layout: "admin", requiresAuth: true, roles: ["admin"] },
   },
   {
     path: "/admin/phan-quyen",
     name: "AdminPhanQuyen",
     component: () => import("../views/admin/NhanSu/PhanQuyen.vue"),
-    meta: { layout: "admin", requiresAuth: true, roles: ["admin", "staff"] },
+    meta: { layout: "admin", requiresAuth: true, roles: ["admin"] },
   },
 
   // NỘI DUNG & TIN TỨC
@@ -261,19 +261,19 @@ const routes = [
     path: "/admin/chuyen-muc",
     name: "AdminChuyenMuc",
     component: () => import("../views/admin/NoiDung/ChuyenMuc.vue"),
-    meta: { layout: "admin", requiresAuth: true, roles: ["admin", "staff"] },
+    meta: { layout: "admin", requiresAuth: true, roles: ["admin"] },
   },
   {
     path: "/admin/tin-tuc",
     name: "AdminTinTuc",
     component: () => import("../views/admin/NoiDung/TinTuc.vue"),
-    meta: { layout: "admin", requiresAuth: true, roles: ["admin", "staff"] },
+    meta: { layout: "admin", requiresAuth: true, roles: ["admin"] },
   },
   {
     path: "/admin/faq",
     name: "AdminFaq",
     component: () => import("../views/admin/NoiDung/Faq.vue"),
-    meta: { layout: "admin", requiresAuth: true, roles: ["admin", "staff"] },
+    meta: { layout: "admin", requiresAuth: true, roles: ["admin"] },
   },
 
   // HỆ THỐNG
@@ -281,19 +281,19 @@ const routes = [
     path: "/admin/cau-hinh-he-thong",
     name: "AdminCauHinhHeThong",
     component: () => import("../views/admin/HeThong/CauHinhHeThong.vue"),
-    meta: { layout: "admin", requiresAuth: true, roles: ["admin", "staff"] },
+    meta: { layout: "admin", requiresAuth: true, roles: ["admin"] },
   },
   {
     path: "/admin/lich-su-hoat-dong",
     name: "AdminLichSuHoatDong",
     component: () => import("../views/admin/HeThong/LichSuHoatDong.vue"),
-    meta: { layout: "admin", requiresAuth: true, roles: ["admin", "staff"] },
+    meta: { layout: "admin", requiresAuth: true, roles: ["admin"] },
   },
   {
     path: "/admin/thong-bao",
     name: "AdminThongBao",
     component: () => import("../views/admin/HeThong/DanhSachThongBao.vue"),
-    meta: { layout: "admin", requiresAuth: true, roles: ["admin", "staff"] },
+    meta: { layout: "admin", requiresAuth: true, roles: ["admin"] },
   },
 
   // TÀI KHOẢN ADMIN
@@ -301,13 +301,13 @@ const routes = [
     path: "/admin/ho-so",
     name: "AdminHoSo",
     component: () => import("../views/admin/TaiKhoan/HoSo.vue"),
-    meta: { layout: "admin", requiresAuth: true, roles: ["admin", "staff"] },
+    meta: { layout: "admin", requiresAuth: true, roles: ["admin"] },
   },
   {
     path: "/admin/doi-mat-khau",
     name: "AdminDoiMatKhau",
     component: () => import("../views/admin/TaiKhoan/DoiMatKhau.vue"),
-    meta: { layout: "admin", requiresAuth: true, roles: ["admin", "staff"] },
+    meta: { layout: "admin", requiresAuth: true, roles: ["admin"] },
   },
 
   // ================= TỰ ĐỘNG CHUYỂN HƯỚNG TỪ URL CŨ (BACKWARD COMPATIBILITY) =================
@@ -341,8 +341,77 @@ const routes = [
   { path: "/admin/taikhoan/doimatkhau", redirect: "/admin/doi-mat-khau" },
 
   // ================= STAFF ROUTES =================
-  
-  ];
+  {
+    path: "/staff",
+    redirect: "/staff/dashboard",
+  },
+  {
+    path: "/staff/dashboard",
+    name: "StaffDashboard",
+    component: () => import("../views/admin/Dashboard/DashboardAdmin.vue"),
+    meta: { layout: "staff", requiresAuth: true, roles: ["admin", "staff"] },
+  },
+  {
+    path: "/staff/don-hang",
+    name: "StaffDonHang",
+    component: () => import("../views/admin/BanHang/DonHang.vue"),
+    meta: { layout: "staff", requiresAuth: true, roles: ["admin", "staff"] },
+  },
+  {
+    path: "/staff/khach-hang",
+    name: "StaffKhachHang",
+    component: () => import("../views/admin/KhachHang/KhachHang.vue"),
+    meta: { layout: "staff", requiresAuth: true, roles: ["admin", "staff"] },
+  },
+  {
+    path: "/staff/phu-tung",
+    name: "StaffPhuTung",
+    component: () => import("../views/admin/PhuTung/PhuTung.vue"),
+    meta: { layout: "staff", requiresAuth: true, roles: ["admin", "staff"] },
+  },
+  {
+    path: "/staff/so-do-phu-tung",
+    name: "StaffSoDoPhuTung",
+    component: () => import("../views/admin/PhuTung/SoDoPhuTung.vue"),
+    meta: { layout: "staff", requiresAuth: true, roles: ["admin", "staff"] },
+  },
+  {
+    path: "/staff/dong-co-model",
+    name: "StaffDongCoModel",
+    component: () => import("../views/admin/MayThuy/DongCoModel.vue"),
+    meta: { layout: "staff", requiresAuth: true, roles: ["admin", "staff"] },
+  },
+  {
+    path: "/staff/san-pham",
+    name: "StaffSanPham",
+    component: () => import("../views/admin/SanPham/SanPham.vue"),
+    meta: { layout: "staff", requiresAuth: true, roles: ["admin", "staff"] },
+  },
+  {
+    path: "/staff/ton-kho",
+    name: "StaffTonKho",
+    component: () => import("../views/admin/Kho/TonKho.vue"),
+    meta: { layout: "staff", requiresAuth: true, roles: ["admin", "staff"] },
+  },
+  {
+    path: "/staff/the-kho",
+    name: "StaffTheKho",
+    component: () => import("../views/admin/Kho/TheKho.vue"),
+    meta: { layout: "staff", requiresAuth: true, roles: ["admin", "staff"] },
+  },
+  {
+    path: "/staff/ho-so",
+    name: "StaffHoSo",
+    component: () => import("../views/admin/TaiKhoan/HoSo.vue"),
+    meta: { layout: "staff", requiresAuth: true, roles: ["admin", "staff"] },
+  },
+  {
+    path: "/staff/doi-mat-khau",
+    name: "StaffDoiMatKhau",
+    component: () => import("../views/admin/TaiKhoan/DoiMatKhau.vue"),
+    meta: { layout: "staff", requiresAuth: true, roles: ["admin", "staff"] },
+  },
+];
 
 import { useAuthStore } from "../stores/authStore";
 
@@ -373,6 +442,8 @@ router.beforeEach((to, from, next) => {
 
   // Chặn đăng nhập nếu đã đăng nhập rồi
   if (to.path === "/dang-nhap" && authStore.isLoggedIn) {
+    if (authStore.hasRole('admin')) return next("/admin/dashboard");
+    if (authStore.hasRole('staff')) return next("/staff/dashboard");
     return next("/");
   }
 
@@ -381,6 +452,18 @@ router.beforeEach((to, from, next) => {
     if (!authStore.isLoggedIn) {
       // Chưa đăng nhập, đẩy về trang đăng nhập
       return next("/dang-nhap");
+    }
+
+    // Nếu user là staff và cố truy cập khu vực admin (/admin/...)
+    if (to.path.startsWith('/admin') && !authStore.hasRole('admin') && authStore.hasRole('staff')) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Chuyển hướng khu vực Nhân viên',
+        text: 'Bạn đang đăng nhập với tư cách Nhân viên. Hệ thống tự động chuyển bạn về giao diện làm việc phù hợp.',
+        confirmButtonColor: '#696cff',
+        confirmButtonText: 'Đã hiểu'
+      });
+      return next("/staff/dashboard");
     }
 
     // Kiểm tra phân quyền (Role-based)

@@ -7,7 +7,7 @@
         <p class="text-muted mb-0" style="font-size: 0.85rem;">Chỉ số hoạt động kinh doanh & vận hành chuỗi cung ứng phụ tùng</p>
       </div>
       <div class="d-flex align-items-center gap-2">
-        <!-- Bộ lọc thời gian -->
+        <!-- Bộ lọc thời gian chuẩn Sneat Admin (Tinh gọn, 1 cột ~280px) -->
         <div ref="dropdownRef" class="dropdown position-relative">
           <button 
             class="btn btn-white bg-white border text-secondary btn-sm dropdown-toggle shadow-sm px-3 d-flex align-items-center" 
@@ -15,71 +15,97 @@
             @click.stop="toggleDropdown"
             :aria-expanded="isDropdownOpen"
           >
-            <i class="bx bx-calendar me-1 text-primary"></i> 
-            <span class="fw-medium text-dark">{{ periodLabels[currentPeriod] || 'Năm nay' }}</span>
+            <i class="bx bx-calendar me-2 text-primary fs-6"></i> 
+            <span class="fw-medium text-dark">{{ currentRangeLabel }}</span>
           </button>
-          <ul 
-            class="dropdown-menu dropdown-menu-end shadow border-0 py-1" 
+          
+          <!-- Dropdown Menu 1 Cột chuẩn Sneat (~280px) -->
+          <div 
+            class="dropdown-menu dropdown-menu-end shadow-sm border p-3" 
             :class="{ 'show': isDropdownOpen }"
-            style="position: absolute; right: 0; top: 100%; z-index: 1050; min-width: 235px; margin-top: 4px;"
+            style="position: absolute; right: 0; top: 100%; z-index: 1050; width: 285px; margin-top: 6px; border-radius: 8px;"
           >
-            <li>
+            <!-- 1. Mốc chọn nhanh cốt lõi -->
+            <div class="text-uppercase text-muted fw-bold mb-2" style="font-size: 0.68rem; letter-spacing: 0.5px;">
+              Mốc xem nhanh
+            </div>
+            <div class="d-flex flex-column gap-1 mb-2">
               <a 
-                class="dropdown-item d-flex align-items-center justify-content-between py-2 px-3" 
                 href="javascript:void(0)" 
-                @click="selectPeriod('today')" 
-                :class="{'active': currentPeriod === 'today'}"
+                class="dropdown-item d-flex align-items-center justify-content-between py-1 px-2 rounded"
+                :class="{'active-sneat-item': currentPeriod === 'today'}"
+                @click="selectPreset('today')"
               >
-                <span><i class="bx bx-time-five me-2 text-primary"></i>Hôm nay</span>
-                <small class="badge bg-light text-muted fw-normal" :class="{'text-white bg-transparent': currentPeriod === 'today'}">{{ todayFormatted }}</small>
+                <span>Hôm nay</span>
+                <small class="text-muted" :class="{'text-white': currentPeriod === 'today'}">{{ todayFormatted }}</small>
               </a>
-            </li>
-            <li>
               <a 
-                class="dropdown-item d-flex align-items-center justify-content-between py-2 px-3" 
                 href="javascript:void(0)" 
-                @click="selectPeriod('week')" 
-                :class="{'active': currentPeriod === 'week'}"
+                class="dropdown-item d-flex align-items-center justify-content-between py-1 px-2 rounded"
+                :class="{'active-sneat-item': currentPeriod === 'week'}"
+                @click="selectPreset('week')"
               >
-                <span><i class="bx bx-calendar-week me-2 text-info"></i>Tuần này</span>
-                <small class="badge bg-light text-muted fw-normal" :class="{'text-white bg-transparent': currentPeriod === 'week'}">{{ weekFormatted }}</small>
+                <span>Tuần này</span>
+                <small class="text-muted" :class="{'text-white': currentPeriod === 'week'}">{{ weekFormatted }}</small>
               </a>
-            </li>
-            <li>
               <a 
-                class="dropdown-item d-flex align-items-center justify-content-between py-2 px-3" 
                 href="javascript:void(0)" 
-                @click="selectPeriod('month')" 
-                :class="{'active': currentPeriod === 'month'}"
+                class="dropdown-item d-flex align-items-center justify-content-between py-1 px-2 rounded"
+                :class="{'active-sneat-item': currentPeriod === 'month'}"
+                @click="selectPreset('month')"
               >
-                <span><i class="bx bx-calendar-alt me-2 text-warning"></i>Tháng này</span>
-                <small class="badge bg-light text-muted fw-normal" :class="{'text-white bg-transparent': currentPeriod === 'month'}">{{ monthFormatted }}</small>
+                <span>Tháng này</span>
+                <small class="text-muted" :class="{'text-white': currentPeriod === 'month'}">{{ monthFormatted }}</small>
               </a>
-            </li>
-            <li>
               <a 
-                class="dropdown-item d-flex align-items-center justify-content-between py-2 px-3" 
                 href="javascript:void(0)" 
-                @click="selectPeriod('year')" 
-                :class="{'active': currentPeriod === 'year'}"
+                class="dropdown-item d-flex align-items-center justify-content-between py-1 px-2 rounded"
+                :class="{'active-sneat-item': currentPeriod === 'year'}"
+                @click="selectPreset('year')"
               >
-                <span><i class="bx bx-calendar-event me-2 text-success"></i>Năm nay</span>
-                <small class="badge bg-light text-muted fw-normal" :class="{'text-white bg-transparent': currentPeriod === 'year'}">{{ yearFormatted }}</small>
+                <span>Năm nay</span>
+                <small class="text-muted" :class="{'text-white': currentPeriod === 'year'}">{{ yearFormatted }}</small>
               </a>
-            </li>
-            <li><hr class="dropdown-divider my-1"></li>
-            <li>
-              <a 
-                class="dropdown-item d-flex align-items-center justify-content-between py-2 px-3" 
-                href="javascript:void(0)" 
-                @click="selectPeriod('all')" 
-                :class="{'active': currentPeriod === 'all'}"
-              >
-                <span><i class="bx bx-history me-2 text-secondary"></i>Toàn thời gian</span>
-                <small class="badge bg-light text-muted fw-normal" :class="{'text-white bg-transparent': currentPeriod === 'all'}">Tất cả</small>
-              </a>
-            </li>
-          </ul>
+            </div>
+
+            <!-- Phân cách mỏng -->
+            <hr class="my-2 border-light">
+
+            <!-- 2. Chọn khoảng ngày tùy chỉnh -->
+            <div class="text-uppercase text-muted fw-bold mb-2" style="font-size: 0.68rem; letter-spacing: 0.5px;">
+              Khoảng ngày tùy chọn
+            </div>
+            
+            <div class="mb-2">
+              <label class="form-label text-muted mb-1" style="font-size: 0.72rem;">Từ ngày</label>
+              <input 
+                type="date" 
+                class="form-control form-control-sm" 
+                v-model="customStartDate" 
+                :max="customEndDate || todayIso"
+              />
+            </div>
+            
+            <div class="mb-3">
+              <label class="form-label text-muted mb-1" style="font-size: 0.72rem;">Đến ngày</label>
+              <input 
+                type="date" 
+                class="form-control form-control-sm" 
+                v-model="customEndDate" 
+                :min="customStartDate" 
+                :max="todayIso"
+              />
+            </div>
+
+            <button 
+              type="button" 
+              class="btn btn-primary btn-sm w-100 shadow-sm d-flex align-items-center justify-content-center" 
+              @click="applyCustomRange"
+              :disabled="!isValidCustomRange || isLoading"
+            >
+              <i class="bx bx-check me-1"></i> Áp dụng
+            </button>
+          </div>
         </div>
         <!-- Nút Làm Mới -->
         <button class="btn btn-primary btn-sm shadow-sm px-3" @click="fetchData(true)" :disabled="isLoading">
@@ -112,7 +138,7 @@
                   </div>
                 </div>
                 <div class="border-top pt-2 mt-3">
-                  <router-link to="/admin/don-hang" class="text-primary fw-medium d-flex align-items-center justify-content-between text-decoration-none" style="font-size: 0.78rem;">
+                  <router-link :to="`${basePath}/don-hang`" class="text-primary fw-medium d-flex align-items-center justify-content-between text-decoration-none" style="font-size: 0.78rem;">
                     <span>Xem chi tiết</span>
                     <i class="bx bx-right-arrow-alt"></i>
                   </router-link>
@@ -140,7 +166,7 @@
                   </div>
                 </div>
                 <div class="border-top pt-2 mt-3">
-                  <router-link to="/admin/don-hang" class="text-primary fw-medium d-flex align-items-center justify-content-between text-decoration-none" style="font-size: 0.78rem;">
+                  <router-link :to="`${basePath}/don-hang`" class="text-primary fw-medium d-flex align-items-center justify-content-between text-decoration-none" style="font-size: 0.78rem;">
                     <span>Xem chi tiết</span>
                     <i class="bx bx-right-arrow-alt"></i>
                   </router-link>
@@ -167,7 +193,7 @@
                   </div>
                 </div>
                 <div class="border-top pt-2 mt-3">
-                  <router-link to="/admin/don-hang" class="text-primary fw-medium d-flex align-items-center justify-content-between text-decoration-none" style="font-size: 0.78rem;">
+                  <router-link :to="`${basePath}/don-hang`" class="text-primary fw-medium d-flex align-items-center justify-content-between text-decoration-none" style="font-size: 0.78rem;">
                     <span>Xem chi tiết</span>
                     <i class="bx bx-right-arrow-alt"></i>
                   </router-link>
@@ -195,7 +221,7 @@
                   </div>
                 </div>
                 <div class="border-top pt-2 mt-3">
-                  <router-link to="/admin/don-nhap-hang" class="text-primary fw-medium d-flex align-items-center justify-content-between text-decoration-none" style="font-size: 0.78rem;">
+                  <router-link :to="basePath === '/staff' ? '/staff/ton-kho' : '/admin/don-nhap-hang'" class="text-primary fw-medium d-flex align-items-center justify-content-between text-decoration-none" style="font-size: 0.78rem;">
                     <span>Gom đơn ngay</span>
                     <i class="bx bx-right-arrow-alt"></i>
                   </router-link>
@@ -258,7 +284,7 @@
               <h5 class="card-title mb-0 fw-bold text-dark" style="font-size: 1rem;">Giao Dịch Gần Đây</h5>
               <small class="text-muted">Đơn hàng và yêu cầu báo giá mới nhất cần xử lý</small>
             </div>
-            <router-link to="/admin/don-hang" class="text-primary fw-medium text-decoration-none d-inline-flex align-items-center" style="font-size: 0.85rem;">
+            <router-link :to="`${basePath}/don-hang`" class="text-primary fw-medium text-decoration-none d-inline-flex align-items-center" style="font-size: 0.85rem;">
               <span>Xem tất cả</span>
               <i class="bx bx-right-arrow-alt ms-1 fs-5"></i>
             </router-link>
@@ -387,9 +413,13 @@
 
 <script setup>
 import { ref, onMounted, onUnmounted, computed } from 'vue';
+import { useRoute } from 'vue-router';
 import apexchart from 'vue3-apexcharts';
 import Swal from 'sweetalert2';
 import axiosClient from '../../../api/axiosClient';
+
+const route = useRoute();
+const basePath = computed(() => (route.path.startsWith('/staff') ? '/staff' : '/admin'));
 
 const Toast = Swal.mixin({
   toast: true,
@@ -411,19 +441,67 @@ const closeDropdown = () => {
   isDropdownOpen.value = false;
 };
 
-const selectPeriod = (period) => {
-  isDropdownOpen.value = false;
-  changePeriod(period);
-};
-
 const handleOutsideClick = (e) => {
   if (dropdownRef.value && !dropdownRef.value.contains(e.target)) {
     isDropdownOpen.value = false;
   }
 };
 
+// Date helpers
+const toIsoDate = (d) => {
+  const pad = (n) => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+};
+
+const todayObj = new Date();
+const todayIso = toIsoDate(todayObj);
+
+// Custom date range state
+const customStartDate = ref(toIsoDate(new Date(todayObj.getFullYear(), todayObj.getMonth(), 1)));
+const customEndDate = ref(todayIso);
+const activeStartDate = ref('');
+const activeEndDate = ref('');
+
+const formatDisplayDate = (isoStr) => {
+  if (!isoStr) return '';
+  const parts = isoStr.split('-');
+  if (parts.length === 3) {
+    return `${parts[2]}/${parts[1]}/${parts[0]}`;
+  }
+  return isoStr;
+};
+
+const formatDisplayRange = (start, end) => {
+  if (!start || !end) return '';
+  return `${formatDisplayDate(start)} - ${formatDisplayDate(end)}`;
+};
+
+const customDaysCount = computed(() => {
+  if (!customStartDate.value || !customEndDate.value) return 0;
+  const start = new Date(customStartDate.value);
+  const end = new Date(customEndDate.value);
+  const diffTime = end - start;
+  if (diffTime < 0) return 0;
+  return Math.round(diffTime / (1000 * 60 * 60 * 24)) + 1;
+});
+
+const selectedDaysCount = computed(() => {
+  if (currentPeriod.value !== 'custom') return 0;
+  return customDaysCount.value;
+});
+
+const isValidCustomRange = computed(() => {
+  return customStartDate.value && customEndDate.value && customStartDate.value <= customEndDate.value;
+});
+
 const todayFormatted = computed(() => {
   const d = new Date();
+  return `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`;
+});
+
+const yesterdayFormatted = computed(() => {
+  const d = new Date();
+  d.setDate(d.getDate() - 1);
   return `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`;
 });
 
@@ -444,6 +522,12 @@ const monthFormatted = computed(() => {
   return `Tháng ${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`;
 });
 
+const lastMonthFormatted = computed(() => {
+  const d = new Date();
+  d.setMonth(d.getMonth() - 1);
+  return `Tháng ${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`;
+});
+
 const yearFormatted = computed(() => {
   return `Năm ${new Date().getFullYear()}`;
 });
@@ -454,28 +538,76 @@ const currentPeriod = ref('year');
 
 const periodLabels = {
   today: 'Hôm nay',
+  yesterday: 'Hôm qua',
+  last_7_days: '7 ngày qua',
+  last_30_days: '30 ngày qua',
   week: 'Tuần này',
   month: 'Tháng này',
+  last_month: 'Tháng trước',
   year: 'Năm nay',
-  all: 'Toàn thời gian'
+  all: 'Toàn thời gian',
+  custom: 'Tùy chọn khoảng ngày'
 };
+
+const currentRangeLabel = computed(() => {
+  if (currentPeriod.value === 'custom') {
+    return formatDisplayRange(activeStartDate.value || customStartDate.value, activeEndDate.value || customEndDate.value);
+  }
+  return periodLabels[currentPeriod.value] || 'Năm nay';
+});
 
 const chartGranularityLabel = computed(() => {
   switch (currentPeriod.value) {
     case 'today':
       return 'Theo khung giờ hôm nay';
+    case 'yesterday':
+      return 'Theo khung giờ hôm qua';
+    case 'last_7_days':
+      return 'Theo 7 ngày gần nhất';
+    case 'last_30_days':
+      return 'Theo 30 ngày gần nhất';
     case 'week':
       return 'Theo 7 ngày trong tuần';
     case 'month':
       return 'Theo các tuần trong tháng';
+    case 'last_month':
+      return 'Theo các tuần tháng trước';
     case 'year':
       return `Từ Tháng 01 đến Tháng ${String(new Date().getMonth() + 1).padStart(2, '0')}`;
     case 'all':
       return 'Theo từng năm';
+    case 'custom':
+      if (customDaysCount.value <= 1) return 'Theo khung giờ trong ngày';
+      if (customDaysCount.value <= 31) return `Theo từng ngày (${customDaysCount.value} ngày)`;
+      if (customDaysCount.value <= 120) return `Theo từng tuần (${customDaysCount.value} ngày)`;
+      return `Theo từng tháng (${customDaysCount.value} ngày)`;
     default:
       return 'Theo kỳ lọc';
   }
 });
+
+const selectPreset = (period) => {
+  isDropdownOpen.value = false;
+  currentPeriod.value = period;
+  fetchData();
+  Toast.fire({
+    icon: 'info',
+    title: `Đang lọc dữ liệu: ${periodLabels[period] || period}`
+  });
+};
+
+const applyCustomRange = () => {
+  if (!isValidCustomRange.value) return;
+  activeStartDate.value = customStartDate.value;
+  activeEndDate.value = customEndDate.value;
+  currentPeriod.value = 'custom';
+  isDropdownOpen.value = false;
+  fetchData();
+  Toast.fire({
+    icon: 'info',
+    title: `Lọc từ ${formatDisplayDate(activeStartDate.value)} đến ${formatDisplayDate(activeEndDate.value)}`
+  });
+};
 
 const kpis = ref({
   total_sales: 0,
@@ -553,6 +685,9 @@ const barChartOptions = computed(() => ({
     labels: {
       formatter: (val) => {
         if (typeof val === 'number') {
+          if (val >= 1000) {
+            return (val / 1000).toFixed(1).replace('.0', '') + ' Tỷ';
+          }
           return (val % 1 === 0 ? val : val.toFixed(1)) + ' Tr';
         }
         return val + ' Tr';
@@ -650,21 +785,15 @@ const formatShortCurrency = (val) => {
   return new Intl.NumberFormat('vi-VN').format(val) + ' ₫';
 };
 
-// Đổi kỳ thời gian
-const changePeriod = (period) => {
-  currentPeriod.value = period;
-  fetchData();
-  Toast.fire({
-    icon: 'info',
-    title: `Đang lọc dữ liệu: ${periodLabels[period] || period}`
-  });
-};
-
 // Fetch dữ liệu từ API
 const fetchData = async (isManual = false) => {
   isLoading.value = true;
   try {
-    const res = await axiosClient.get(`/admin/dashboard/stats?period=${currentPeriod.value}`);
+    let url = `/admin/dashboard/stats?period=${currentPeriod.value}`;
+    if (currentPeriod.value === 'custom' && activeStartDate.value && activeEndDate.value) {
+      url += `&start_date=${activeStartDate.value}&end_date=${activeEndDate.value}`;
+    }
+    const res = await axiosClient.get(url);
     if (res && res.success && res.data) {
       kpis.value = res.data.kpis || kpis.value;
       if (res.data.revenue_chart) {
@@ -781,5 +910,15 @@ onUnmounted(() => {
   font-weight: 700 !important;
   padding-top: 13px;
   padding-bottom: 13px;
+}
+
+/* Sneat Active Item styling */
+.active-sneat-item {
+  background-color: rgba(105, 108, 255, 0.12) !important;
+  color: #696cff !important;
+  font-weight: 600;
+}
+.dropdown-item:hover:not(.active-sneat-item) {
+  background-color: #f5f5f9;
 }
 </style>

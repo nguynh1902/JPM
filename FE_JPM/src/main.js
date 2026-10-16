@@ -3,6 +3,7 @@ import App from './App.vue'
 import './style.css'
 import router from './router'
 import Admin from './layout/LayoutAdmin.vue'
+import Staff from './layout/LayoutStaff.vue'
 import Client from './layout/LayoutClient.vue'
 import Auth from './layout/LayoutAuth.vue'
 import Toaster from "@meforma/vue-toaster"
@@ -41,6 +42,7 @@ import VueApexCharts from "vue3-apexcharts";
 app.use(VueApexCharts);
 
 app.component("admin-layout", Admin);
+app.component("staff-layout", Staff);
 app.component("client-layout", Client);
 app.component("auth-layout", Auth);
 

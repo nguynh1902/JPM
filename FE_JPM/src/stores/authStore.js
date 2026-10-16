@@ -16,7 +16,17 @@ export const useAuthStore = defineStore("auth", {
     // Kiểm tra xem User có quyền/role gì (dùng để chặn Route)
     hasRole: (state) => (roleName) => {
       if (!state.user || !state.user.roles) return false;
-      return state.user.roles.includes(roleName);
+      const target = String(roleName).toLowerCase().trim();
+      return state.user.roles.some((r) => {
+        const current = String(typeof r === 'string' ? r : (r?.name || '')).toLowerCase().trim();
+        if (target === 'staff') {
+          return current === 'staff' || current.includes('nhân viên') || current === 'nhân viên pim';
+        }
+        if (target === 'admin') {
+          return current === 'admin' || current === 'super admin' || current === 'quản trị viên';
+        }
+        return current === target;
+      });
     },
   },
 

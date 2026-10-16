@@ -320,8 +320,15 @@ export default {
       const success = await authStore.login(this.loginForm);
       if (success) {
         const cartStore = useCartStore();
-          await cartStore.fetchFromCloud();
+        await cartStore.fetchFromCloud();
+
+        if (authStore.hasRole('admin')) {
+          this.$router.push('/admin/dashboard');
+        } else if (authStore.hasRole('staff')) {
+          this.$router.push('/staff/dashboard');
+        } else {
           this.$router.push('/');
+        }
       } else {
         alert(authStore.error || "Đăng nhập thất bại");
       }

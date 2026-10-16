@@ -6,10 +6,10 @@
       <div class="col-md-12">
         <ul class="nav nav-pills flex-column flex-md-row mb-4">
           <li class="nav-item">
-            <router-link class="nav-link" to="/admin/ho-so"><i class="bx bx-user me-1"></i> Hồ sơ</router-link>
+            <router-link class="nav-link" :to="`${basePath}/ho-so`"><i class="bx bx-user me-1"></i> Hồ sơ</router-link>
           </li>
           <li class="nav-item">
-            <router-link class="nav-link active" to="/admin/doi-mat-khau"><i class="bx bx-lock-alt me-1"></i> Đổi mật khẩu</router-link>
+            <router-link class="nav-link active" :to="`${basePath}/doi-mat-khau`"><i class="bx bx-lock-alt me-1"></i> Đổi mật khẩu</router-link>
           </li>
         </ul>
         <div class="card mb-4">
@@ -97,10 +97,14 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
+import { useRoute } from 'vue-router';
 import axiosClient from '../../../api/axiosClient';
 import { createToaster } from "@meforma/vue-toaster";
 import { useMutation } from '@tanstack/vue-query';
+
+const route = useRoute();
+const basePath = computed(() => (route.path.startsWith('/staff') ? '/staff' : '/admin'));
 
 const toaster = createToaster({ position: "top-right", duration: 3000 });
 
