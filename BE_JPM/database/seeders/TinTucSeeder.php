@@ -226,9 +226,26 @@ class TinTucSeeder extends Seeder
             ]
         ];
 
+        $normalizedTinTucs = array_map(function ($item) {
+            return [
+                'title' => $item['title'] ?? null,
+                'category' => $item['category'] ?? 'Tin Tức',
+                'thumbnail' => $item['thumbnail'] ?? null,
+                'gallery' => isset($item['gallery']) ? json_encode($item['gallery']) : null,
+                'youtube_url' => $item['youtube_url'] ?? null,
+                'summary' => $item['summary'] ?? null,
+                'content' => $item['content'] ?? null,
+                'status' => $item['status'] ?? 'PUBLISHED',
+                'views' => $item['views'] ?? 0,
+                'author' => $item['author'] ?? 'Admin JPM',
+                'created_at' => $item['created_at'] ?? now(),
+                'updated_at' => $item['updated_at'] ?? now(),
+            ];
+        }, $tinTucs);
+
         \Illuminate\Support\Facades\Schema::disableForeignKeyConstraints();
         DB::table('tin_tucs')->truncate();
-        DB::table('tin_tucs')->insert($tinTucs);
+        DB::table('tin_tucs')->insert($normalizedTinTucs);
         \Illuminate\Support\Facades\Schema::enableForeignKeyConstraints();
     }
 }

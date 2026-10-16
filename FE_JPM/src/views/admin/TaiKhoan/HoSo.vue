@@ -1,10 +1,10 @@
 <template>
   <div class="container-xxl flex-grow-1 container-p-y">
-        <div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
       <h4 class="fw-bold py-3 mb-0"><span class="text-muted fw-light">Tài khoản /</span> Hồ sơ cá nhân</h4>
-      <button type="button" @click="confirmLogout" class="btn btn-outline-danger px-4 shadow-sm" style="height: 40px;">
-        <i class="bx bx-power-off me-1"></i> Đăng xuất
-      </button>
+      <a href="javascript:void(0)" class="btn btn-sm btn-outline-danger" @click="confirmLogout">
+        <i class="icon-base bx bx-log-out-circle icon-sm me-1"></i>Logout
+      </a>
     </div>
 
     <div class="row">

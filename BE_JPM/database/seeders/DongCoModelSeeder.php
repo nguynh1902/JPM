@@ -36,6 +36,6 @@ class DongCoModelSeeder extends Seeder
             ['thuong_hieu_id' => 7, 'loai_dong_co_id' => 1, 'ma_model' => 'MERC-300-VERADO', 'ten_model' => '300HP Verado (L6) 2B529482 & Up', 'nam_san_xuat' => 2018, 'ma_luc' => 300, 'loai_nhip' => '4 STROKE', 'trang_thai' => 1, 'created_at' => $now, 'updated_at' => $now],
             ['thuong_hieu_id' => 7, 'loai_dong_co_id' => 1, 'ma_model' => 'MERC-300-R', 'ten_model' => '300HP R V8 2B529482 & Up', 'nam_san_xuat' => 2018, 'ma_luc' => 300, 'loai_nhip' => '4 STROKE', 'trang_thai' => 1, 'created_at' => $now, 'updated_at' => $now]
         ];
-        DB::table('dong_co_models')->insert($data);
+        DB::table('dong_co_models')->upsert($data, ['ma_model'], ['thuong_hieu_id', 'loai_dong_co_id', 'ten_model', 'nam_san_xuat', 'ma_luc', 'loai_nhip', 'trang_thai', 'updated_at']);
     }
 }

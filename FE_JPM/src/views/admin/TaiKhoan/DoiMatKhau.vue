@@ -1,6 +1,11 @@
 <template>
   <div class="container-xxl flex-grow-1 container-p-y">
-    <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Tài khoản /</span> Đổi mật khẩu</h4>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h4 class="fw-bold py-3 mb-0"><span class="text-muted fw-light">Tài khoản /</span> Đổi mật khẩu</h4>
+      <a href="javascript:void(0)" class="btn btn-sm btn-outline-danger" @click="confirmLogout">
+        <i class="icon-base bx bx-log-out-circle icon-sm me-1"></i>Logout
+      </a>
+    </div>
 
     <div class="row">
       <div class="col-md-12">
@@ -99,12 +104,37 @@
 <script setup>
 import { ref, computed } from 'vue';
 import { useRoute } from 'vue-router';
+import Swal from 'sweetalert2';
 import axiosClient from '../../../api/axiosClient';
+import { useAuthStore } from '../../../stores/authStore';
 import { createToaster } from "@meforma/vue-toaster";
 import { useMutation } from '@tanstack/vue-query';
 
 const route = useRoute();
 const basePath = computed(() => (route.path.startsWith('/staff') ? '/staff' : '/admin'));
+const authStore = useAuthStore();
+
+const confirmLogout = async () => {
+  const result = await Swal.fire({
+    title: 'Xác nhận đăng xuất?',
+    text: 'Bạn có chắc chắn muốn đăng xuất khỏi hệ thống?',
+    icon: 'question',
+    showCancelButton: true,
+    confirmButtonText: 'Đăng xuất',
+    cancelButtonText: 'Hủy bỏ',
+    customClass: {
+      confirmButton: 'btn btn-danger px-4',
+      cancelButton: 'btn btn-outline-secondary px-4 me-3'
+    },
+    reverseButtons: true,
+    buttonsStyling: false
+  });
+
+  if (result.isConfirmed) {
+    await authStore.logout();
+    window.location.href = '/dang-nhap';
+  }
+};
 
 const toaster = createToaster({ position: "top-right", duration: 3000 });
 

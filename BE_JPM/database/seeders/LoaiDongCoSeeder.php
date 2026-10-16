@@ -20,6 +20,6 @@ class LoaiDongCoSeeder extends Seeder
             $item['updated_at'] = $now;
         }
 
-        DB::table('loai_dong_cos')->insert($data);
+        DB::table('loai_dong_cos')->upsert($data, ['ma_loai_dong_co'], ['ten_loai_dong_co', 'trang_thai', 'updated_at']);
     }
 }
