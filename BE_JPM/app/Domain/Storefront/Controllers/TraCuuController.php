@@ -340,8 +340,59 @@ class TraCuuController extends Controller
             $query->where('nhom_phu_tung_id', $request->nhom_phu_tung_id);
         }
 
-        if ($request->has('keyword') && $request->keyword != '') {
-            $query->where('ten_so_do', 'like', '%' . $request->keyword . '%');
+        if ($request->has('keyword') && trim($request->keyword) != '') {
+            $kw = trim($request->keyword);
+            $cleanKw = str_replace([' ', '-', '_', '.'], '', $kw);
+            $lowerKw = mb_strtolower($kw);
+            
+            $synonyms = [
+                'canh quat' => 'propeller', 'cánh quạt' => 'propeller',
+                'chan vit' => 'propeller', 'chân vịt' => 'propeller',
+                'bugi' => 'spark plug', 'loc dau' => 'oil filter', 'lọc dầu' => 'oil filter',
+                'bom nhien lieu' => 'fuel pump', 'bơm nhiên liệu' => 'fuel pump',
+                'may phat' => 'alternator', 'máy phát' => 'alternator',
+                'nap may' => 'cowling', 'nắp máy' => 'cowling',
+                'vo may' => 'cowling', 'vỏ máy' => 'cowling',
+                'ron' => 'gasket', 'gioang' => 'gasket', 'gioăng' => 'gasket',
+                'bu long' => 'bolt', 'bù lông' => 'bolt',
+                'oc vit' => 'screw', 'ốc vít' => 'screw',
+                'vong bi' => 'bearing', 'vòng bi' => 'bearing',
+                'bac dan' => 'bearing', 'bạc đạn' => 'bearing',
+                'puly' => 'pulley', 'day curoa' => 'belt', 'dây curoa' => 'belt',
+            ];
+            $translatedKw = $synonyms[$lowerKw] ?? null;
+
+            $query->where(function($subQ) use ($kw, $cleanKw, $translatedKw) {
+                $subQ->where('ten_so_do', 'like', '%' . $kw . '%')
+                     ->orWhereHas('model', function($mQ) use ($kw, $cleanKw) {
+                         $mQ->where('ma_model', 'like', '%' . $kw . '%')
+                            ->orWhere('ten_model', 'like', '%' . $kw . '%')
+                            ->orWhereRaw("REPLACE(REPLACE(REPLACE(ma_model, '-', ''), ' ', ''), '.', '') LIKE ?", ["%{$cleanKw}%"]);
+                     })
+                     ->orWhereHas('model.thuongHieu', function($bQ) use ($kw) {
+                         $bQ->where('name', 'like', '%' . $kw . '%')
+                            ->orWhere('code', 'like', '%' . $kw . '%');
+                     })
+                     ->orWhereHas('nhomPhuTung', function($nQ) use ($kw) {
+                         $nQ->where('ten_nhom', 'like', '%' . $kw . '%')
+                            ->orWhere('ma_nhom', 'like', '%' . $kw . '%');
+                     })
+                     ->orWhereHas('chiTiets.phuTung', function($pQ) use ($kw, $cleanKw, $translatedKw) {
+                         $pQ->where('ma_phu_tung', 'like', '%' . $kw . '%')
+                            ->orWhereRaw("REPLACE(REPLACE(REPLACE(ma_phu_tung, '-', ''), ' ', ''), '.', '') LIKE ?", ["%{$cleanKw}%"])
+                            ->orWhere('ten_phu_tung', 'like', '%' . $kw . '%');
+                         if ($translatedKw) {
+                             $pQ->orWhere('ten_phu_tung', 'like', '%' . $translatedKw . '%');
+                         }
+                     });
+
+                if ($translatedKw) {
+                    $subQ->orWhere('ten_so_do', 'like', '%' . $translatedKw . '%')
+                         ->orWhereHas('nhomPhuTung', function($nQ) use ($translatedKw) {
+                             $nQ->where('ten_nhom', 'like', '%' . $translatedKw . '%');
+                         });
+                }
+            });
         }
 
         $perPage = $request->per_page ?? 24;
@@ -353,81 +404,128 @@ class TraCuuController extends Controller
         ]);
     }
 
-    public function traCuu(Request $request)
+        public function traCuu(Request $request)
     {
-        $keyword = $request->keyword ?? '';
-        
-        $query = PhuTung::search($keyword);
+        $keyword = trim($request->keyword ?? '');
+        $thuongHieuId = $request->thuong_hieu_id;
+        $loaiDongCoId = $request->loai_dong_co_id;
+        $dongCoModelId = $request->dong_co_model_id;
+        $namSx = $request->nam_sx;
+        $nhomPhuTungId = $request->nhom_phu_tung_id;
 
-        $query->where('trang_thai', 1);
+        $query = PhuTung::with(['thuongHieu', 'nhomPhuTung'])
+            ->where('trang_thai', 1);
 
-        if ($request->has('thuong_hieu_id') && $request->thuong_hieu_id != '') {
-            $query->where('thuong_hieu_id', $request->thuong_hieu_id);
-        }
+        if (!empty($keyword)) {
+            $cleanKw = str_replace([' ', '-', '_', '.'], '', $keyword);
+            $lowerKw = mb_strtolower($keyword);
+            
+            $synonyms = [
+                'canh quat' => 'propeller', 'cánh quạt' => 'propeller',
+                'chan vit' => 'propeller', 'chân vịt' => 'propeller',
+                'bugi' => 'spark plug', 'loc dau' => 'oil filter', 'lọc dầu' => 'oil filter',
+                'bom nhien lieu' => 'fuel pump', 'bơm nhiên liệu' => 'fuel pump',
+                'may phat' => 'alternator', 'máy phát' => 'alternator',
+                'nap may' => 'cowling', 'nắp máy' => 'cowling',
+                'vo may' => 'cowling', 'vỏ máy' => 'cowling',
+                'ron' => 'gasket', 'gioang' => 'gasket', 'gioăng' => 'gasket',
+                'bu long' => 'bolt', 'bù lông' => 'bolt',
+                'oc vit' => 'screw', 'ốc vít' => 'screw',
+                'vong bi' => 'bearing', 'vòng bi' => 'bearing',
+                'bac dan' => 'bearing', 'bạc đạn' => 'bearing',
+                'puly' => 'pulley', 'day curoa' => 'belt', 'dây curoa' => 'belt',
+            ];
+            $translatedKw = $synonyms[$lowerKw] ?? null;
 
-        if (config('scout.driver') === 'database') {
-            $query->query(function($q) use ($request) {
-                $q->with(['thuongHieu', 'nhomPhuTung']);
-                
-                if ($request->has('nhom_phu_tung_id') && $request->nhom_phu_tung_id != '') {
-                    $q->where(function($q3) use ($request) {
-                        if (is_array($request->nhom_phu_tung_id)) {
-                            $q3->whereIn('nhom_phu_tung_id', $request->nhom_phu_tung_id);
-                        } else {
-                            $q3->where('nhom_phu_tung_id', $request->nhom_phu_tung_id);
-                        }
-                        
-                        $q3->orWhereHas('soDoPhuTungs', function($q4) use ($request) {
-                            if (is_array($request->nhom_phu_tung_id)) {
-                                $q4->whereIn('nhom_phu_tung_id', $request->nhom_phu_tung_id);
-                            } else {
-                                $q4->where('nhom_phu_tung_id', $request->nhom_phu_tung_id);
-                            }
-                        });
-                    });
-                }
+            $query->where(function($q) use ($keyword, $cleanKw, $translatedKw) {
+                $q->where('ma_phu_tung', 'like', "%{$keyword}%")
+                  ->orWhereRaw("REPLACE(REPLACE(REPLACE(ma_phu_tung, '-', ''), ' ', ''), '.', '') LIKE ?", ["%{$cleanKw}%"])
+                  ->orWhere('ten_phu_tung', 'like', "%{$keyword}%")
+                  ->orWhere('mo_ta', 'like', "%{$keyword}%")
+                  ->orWhere('thong_so_ky_thuat', 'like', "%{$keyword}%")
+                  ->orWhereHas('thuongHieu', function($b) use ($keyword) {
+                      $b->where('name', 'like', "%{$keyword}%")
+                        ->orWhere('code', 'like', "%{$keyword}%");
+                  })
+                  ->orWhereHas('nhomPhuTung', function($n) use ($keyword, $translatedKw) {
+                      $n->where('ten_nhom', 'like', "%{$keyword}%")
+                        ->orWhere('ma_nhom', 'like', "%{$keyword}%");
+                      if ($translatedKw) {
+                          $n->orWhere('ten_nhom', 'like', "%{$translatedKw}%");
+                      }
+                  })
+                  ->orWhereHas('dongCoModels', function($m) use ($keyword, $cleanKw) {
+                      $m->where('ten_model', 'like', "%{$keyword}%")
+                        ->orWhere('ma_model', 'like', "%{$keyword}%")
+                        ->orWhereRaw("REPLACE(REPLACE(REPLACE(ma_model, '-', ''), ' ', ''), '.', '') LIKE ?", ["%{$cleanKw}%"]);
+                  })
+                  ->orWhereHas('soDoPhuTungs.model', function($m) use ($keyword, $cleanKw) {
+                      $m->where('ten_model', 'like', "%{$keyword}%")
+                        ->orWhere('ma_model', 'like', "%{$keyword}%")
+                        ->orWhereRaw("REPLACE(REPLACE(REPLACE(ma_model, '-', ''), ' ', ''), '.', '') LIKE ?", ["%{$cleanKw}%"]);
+                  })
+                  ->orWhereHas('soDoPhuTungs', function($sd) use ($keyword, $translatedKw) {
+                      $sd->where('ten_so_do', 'like', "%{$keyword}%");
+                      if ($translatedKw) {
+                          $sd->orWhere('ten_so_do', 'like', "%{$translatedKw}%");
+                      }
+                  })
+                  ->orWhereHas('maThayThes.phuTungMoi', function($sub) use ($keyword) {
+                      $sub->where('ma_phu_tung', 'like', "%{$keyword}%");
+                  })
+                  ->orWhereHas('thayTheChos.phuTungCu', function($sub) use ($keyword) {
+                      $sub->where('ma_phu_tung', 'like', "%{$keyword}%");
+                  });
 
-                if ($request->has('dong_co_model_id') && $request->dong_co_model_id != '') {
-                    $q->where(function($q3) use ($request) {
-                        $q3->whereHas('dongCoModels', function($q2) use ($request) {
-                            $q2->where('dong_co_models.id', $request->dong_co_model_id);
-                        })->orWhereHas('soDoPhuTungs', function($q4) use ($request) {
-                            $q4->where('may_thuy_model_id', $request->dong_co_model_id)
-                               ->where('trang_thai', 1);
-                        });
-                    });
-                }
-
-                if ($request->has('nam_sx') && $request->nam_sx != '') {
-                    $q->where(function($q3) use ($request) {
-                        $q3->whereHas('dongCoModels', function($q2) use ($request) {
-                            $q2->where('nam_san_xuat', $request->nam_sx);
-                        })->orWhereHas('soDoPhuTungs', function($q4) use ($request) {
-                            $q4->whereHas('model', function($q5) use ($request) {
-                                $q5->where('nam_san_xuat', $request->nam_sx);
-                            });
-                        });
-                    });
+                if ($translatedKw) {
+                    $q->orWhere('ten_phu_tung', 'like', "%{$translatedKw}%")
+                      ->orWhere('mo_ta', 'like', "%{$translatedKw}%")
+                      ->orWhere('thong_so_ky_thuat', 'like', "%{$translatedKw}%");
                 }
             });
-        } else {
-            $query->query(fn ($q) => $q->with(['thuongHieu', 'nhomPhuTung']));
-            
-            if ($request->has('nhom_phu_tung_id') && $request->nhom_phu_tung_id != '') {
-                if (is_array($request->nhom_phu_tung_id)) {
-                    $query->whereIn('nhom_phu_tung_id', $request->nhom_phu_tung_id);
+        }
+
+        if (!empty($thuongHieuId)) {
+            $query->where('thuong_hieu_id', $thuongHieuId);
+        }
+
+        if (!empty($nhomPhuTungId)) {
+            $query->where(function($q) use ($nhomPhuTungId) {
+                if (is_array($nhomPhuTungId)) {
+                    $q->whereIn('nhom_phu_tung_id', $nhomPhuTungId);
                 } else {
-                    $query->where('nhom_phu_tung_id', $request->nhom_phu_tung_id);
+                    $q->where('nhom_phu_tung_id', $nhomPhuTungId);
                 }
-            }
+                $q->orWhereHas('soDoPhuTungs', function($q2) use ($nhomPhuTungId) {
+                    if (is_array($nhomPhuTungId)) {
+                        $q2->whereIn('nhom_phu_tung_id', $nhomPhuTungId);
+                    } else {
+                        $q2->where('nhom_phu_tung_id', $nhomPhuTungId);
+                    }
+                });
+            });
+        }
 
-            if ($request->has('dong_co_model_id') && $request->dong_co_model_id != '') {
-                $query->whereIn('dong_co_model_ids', [(int)$request->dong_co_model_id]);
-            }
+        if (!empty($dongCoModelId)) {
+            $query->where(function($q) use ($dongCoModelId) {
+                $q->whereHas('dongCoModels', function($q2) use ($dongCoModelId) {
+                    $q2->where('dong_co_models.id', $dongCoModelId);
+                })->orWhereHas('soDoPhuTungs', function($q3) use ($dongCoModelId) {
+                    $q3->where('may_thuy_model_id', $dongCoModelId)->where('trang_thai', 1);
+                });
+            });
+        }
 
-            if ($request->has('nam_sx') && $request->nam_sx != '') {
-                $query->whereIn('applicable_years', [(int)$request->nam_sx]);
-            }
+        if (!empty($namSx)) {
+            $query->where(function($q) use ($namSx) {
+                $q->whereHas('dongCoModels', function($q2) use ($namSx) {
+                    $q2->where('nam_san_xuat', $namSx);
+                })->orWhereHas('soDoPhuTungs', function($q3) use ($namSx) {
+                    $q3->whereHas('model', function($q4) use ($namSx) {
+                        $q4->where('nam_san_xuat', $namSx);
+                    });
+                });
+            });
         }
 
         if ($request->has('min_price') && $request->min_price != '') {
@@ -437,7 +535,13 @@ class TraCuuController extends Controller
             $query->where('gia_ban', '<=', (float)$request->max_price);
         }
 
-        if ($request->has('sort_by') && $request->sort_by != '') {
+        $sort = $request->get('sort_by', 'newest');
+        if ($sort === 'price_asc') {
+            $query->orderBy('gia_ban', 'asc');
+        } elseif ($sort === 'price_desc') {
+            $query->orderBy('gia_ban', 'desc');
+        } else {
+            $query->orderBy('id', 'desc');
         }
 
         $perPage = $request->has('per_page') ? (int) $request->per_page : 12;
@@ -503,13 +607,17 @@ class TraCuuController extends Controller
         }
 
         $upperQ = strtoupper($q);
+        $cleanQ = str_replace(['-', ' ', '.', '_'], '', $upperQ);
 
         // 1. Check exact match
         $exactMatch = null;
 
         $exactPart = PhuTung::with('thuongHieu')
             ->where('trang_thai', 1)
-            ->where('ma_phu_tung', $upperQ)
+            ->where(function($pQ) use ($upperQ, $cleanQ) {
+                $pQ->where('ma_phu_tung', $upperQ)
+                   ->orWhereRaw("REPLACE(REPLACE(REPLACE(ma_phu_tung, '-', ''), ' ', ''), '.', '') = ?", [$cleanQ]);
+            })
             ->first();
 
         if ($exactPart) {
@@ -565,8 +673,9 @@ class TraCuuController extends Controller
         // 3. Search PhuTung (OEM & Aftermarket Parts)
         $phuTungs = PhuTung::with(['thuongHieu', 'nhomPhuTung'])
             ->where('trang_thai', 1)
-            ->where(function ($sub) use ($q) {
+            ->where(function ($sub) use ($q, $cleanQ) {
                 $sub->where('ma_phu_tung', 'LIKE', "%{$q}%")
+                    ->orWhereRaw("REPLACE(REPLACE(REPLACE(ma_phu_tung, '-', ''), ' ', ''), '.', '') LIKE ?", ["%{$cleanQ}%"])
                     ->orWhere('ten_phu_tung', 'LIKE', "%{$q}%");
             })
             ->limit(6)
@@ -622,9 +731,20 @@ class TraCuuController extends Controller
     // Lấy chi tiết phụ tùng
     public function chiTietPhuTung($code)
     {
-        $phuTung = PhuTung::with(['thuongHieu', 'nhomPhuTung', 'dongCoModels', 'soDoPhuTungs.model.thuongHieu', 'maThayThes.phuTungMoi', 'thayTheChos.phuTungCu'])
-            ->where('ma_phu_tung', strtoupper($code))
-            ->first();
+        $code = trim($code);
+        $upperCode = strtoupper($code);
+        $cleanCode = str_replace(['-', ' ', '.', '_'], '', $upperCode);
+
+        $query = PhuTung::with(['thuongHieu', 'nhomPhuTung', 'dongCoModels', 'soDoPhuTungs.model.thuongHieu', 'maThayThes.phuTungMoi', 'thayTheChos.phuTungCu'])
+            ->where(function($q) use ($upperCode, $cleanCode, $code) {
+                $q->where('ma_phu_tung', $upperCode)
+                  ->orWhereRaw("REPLACE(REPLACE(REPLACE(ma_phu_tung, '-', ''), ' ', ''), '.', '') = ?", [$cleanCode]);
+                if (is_numeric($code)) {
+                    $q->orWhere('id', (int)$code);
+                }
+            });
+
+        $phuTung = $query->first();
 
         if (!$phuTung) {
             return response()->json(['success' => false, 'message' => 'Phụ tùng không tồn tại'], 404);

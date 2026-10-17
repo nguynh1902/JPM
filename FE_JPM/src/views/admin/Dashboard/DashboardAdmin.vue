@@ -4,7 +4,7 @@
     <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
       <div>
         <h4 class="fw-bold mb-1 text-dark">Dashboard</h4>
-        <p class="text-muted mb-0" style="font-size: 0.85rem;">Chỉ số hoạt động kinh doanh & vận hành chuỗi cung ứng phụ tùng</p>
+        <p class="text-muted mb-0" style="font-size: 0.85rem;">Tổng quan chỉ số hoạt động kinh doanh & bán hàng</p>
       </div>
       <div class="d-flex align-items-center gap-2">
         <!-- Bộ lọc thời gian chuẩn Sneat Admin (Tinh gọn, 1 cột ~280px) -->
@@ -202,13 +202,13 @@
             </div>
           </div>
 
-          <!-- Card 4: Cảnh Báo Gom Hàng PO -->
+          <!-- Card 4: Cảnh Báo Tồn Kho -->
           <div class="col-sm-6 col-12 d-flex">
             <div class="card border-0 shadow-sm w-100 kpi-card">
               <div class="card-body p-3 d-flex flex-column justify-content-between">
                 <div>
                   <div class="d-flex justify-content-between align-items-center mb-2">
-                    <span class="kpi-label">Cần Gom Hàng PO</span>
+                    <span class="kpi-label">Hàng Sắp Hết</span>
                     <i class="bx bx-error-circle text-danger fs-4"></i>
                   </div>
                   <div class="kpi-value text-dark mb-1">
@@ -216,13 +216,13 @@
                   </div>
                   <div class="d-flex align-items-center gap-1 kpi-subtext">
                     <span class="text-muted">
-                      Thiếu: <strong class="text-dark">{{ kpis.total_qty_need_replenish }}</strong> cái | <strong class="text-dark">{{ kpis.open_po_count }}</strong> PO mở
+                      Cần bổ sung: <strong class="text-dark">{{ kpis.total_qty_need_replenish }}</strong> cái
                     </span>
                   </div>
                 </div>
                 <div class="border-top pt-2 mt-3">
-                  <router-link :to="basePath === '/staff' ? '/staff/ton-kho' : '/admin/don-nhap-hang'" class="text-primary fw-medium d-flex align-items-center justify-content-between text-decoration-none" style="font-size: 0.78rem;">
-                    <span>Gom đơn ngay</span>
+                  <router-link :to="`${basePath}/ton-kho`" class="text-primary fw-medium d-flex align-items-center justify-content-between text-decoration-none" style="font-size: 0.78rem;">
+                    <span>Xem tồn kho</span>
                     <i class="bx bx-right-arrow-alt"></i>
                   </router-link>
                 </div>
@@ -232,13 +232,13 @@
         </div>
       </div>
 
-      <!-- Cột phải: Biểu Đồ Doanh Thu & Chi Phí PO Lớn -->
+      <!-- Cột phải: Biểu Đồ Doanh Thu & Chi Phí Nhập Kho -->
       <div class="col-lg-7 col-12">
         <div class="card border-0 shadow-sm h-100">
           <div class="card-header pt-3 pb-1 d-flex justify-content-between align-items-start border-bottom-0">
             <div>
               <div class="d-flex align-items-center gap-2 mb-1">
-                <span class="kpi-label mb-0">Doanh Thu & Chi Phí Nhập Kho (PO)</span>
+                <span class="kpi-label mb-0">Doanh Thu & Chi Phí Nhập Kho</span>
                 <span class="badge bg-pastel-primary text-primary" style="font-size: 0.68rem; padding: 2px 6px;">{{ chartGranularityLabel }}</span>
               </div>
               <div class="d-flex align-items-baseline gap-2">
@@ -258,7 +258,7 @@
               </div>
               <div class="d-flex align-items-center gap-2">
                 <span style="display: inline-block; width: 13px; height: 13px; border-radius: 3px; background-color: #8592a3;"></span>
-                <span class="text-muted fw-medium">Chi phí PO</span>
+                <span class="text-muted fw-medium">Chi phí nhập</span>
               </div>
             </div>
           </div>
@@ -315,8 +315,8 @@
                   <td class="text-center text-nowrap">
                     <span
                       class="fw-bold"
-                      :class="item.type === 'quote' ? 'text-danger' : 'text-primary'"
-                      style="font-size: 0.8rem; letter-spacing: 0.3px;"
+                      style="font-size: 0.85rem;"
+                      :style="{ color: item.type === 'quote' ? '#17a2b8' : '#696cff' }"
                     >
                       {{ item.type_label }}
                     </span>
@@ -419,7 +419,7 @@ import Swal from 'sweetalert2';
 import axiosClient from '../../../api/axiosClient';
 
 const route = useRoute();
-const basePath = computed(() => (route.path.startsWith('/staff') ? '/staff' : '/admin'));
+const basePath = computed(() => '/portal');
 
 const Toast = Swal.mixin({
   toast: true,
@@ -629,7 +629,7 @@ const revenueChartData = ref({
   categories: [],
   series: [
     { name: 'Doanh Thu Bán Hàng (Tr.đ)', data: [] },
-    { name: 'Chi Phí Nhập Kho PO (Tr.đ)', data: [] }
+    { name: 'Chi Phí Nhập Kho (Tr.đ)', data: [] }
   ],
   current_period_revenue: 0,
   growth_rate: 0

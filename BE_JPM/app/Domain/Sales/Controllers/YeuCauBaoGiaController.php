@@ -18,6 +18,11 @@ class YeuCauBaoGiaController extends Controller
     /**
      * API gửi yêu cầu báo giá hoặc tạo đơn trực tiếp từ Client (Public & Guest & Member)
      */
+    public function store(Request $request)
+    {
+        return $this->publicStore($request);
+    }
+
     public function publicStore(Request $request)
     {
         $request->validate([
@@ -142,8 +147,10 @@ class YeuCauBaoGiaController extends Controller
                 'message' => 'Gửi yêu cầu thành công',
                 'code'    => $responseCode,
                 'data'    => [
-                    'code' => $responseCode,
-                    'ma_yeu_cau' => $responseCode
+                    'id'         => $loaiYeuCau === 'order' ? $donHang->id : $quote->id,
+                    'code'       => $responseCode,
+                    'ma_yeu_cau' => $responseCode,
+                    'token'      => $loaiYeuCau === 'order' ? null : $quote->token,
                 ]
             ];
 
@@ -394,10 +401,17 @@ class YeuCauBaoGiaController extends Controller
                     }
                 }
 
-                // Fallback nếu không tìm thấy mã
+                // Fallback an toàn cho hàng đặt riêng (Custom / Bespoke SKU)
                 if (!$idSanPham) {
-                    $firstPt = \App\Domain\PIM\Models\PhuTung::first();
-                    $idSanPham = $firstPt ? $firstPt->id : 1;
+                    $idSanPham = null;
+                    $loaiSanPham = "custom";
+                } else {
+                    // Giữ hàng trong kho đối với linh kiện có sẵn trong catalog
+                    $tonKho = \App\Domain\Procurement\Models\TonKho::where("id_san_pham", $idSanPham)->first();
+                    if ($tonKho) {
+                        $tonKho->so_luong_dang_giu = ($tonKho->so_luong_dang_giu ?? 0) + $ct->so_luong;
+                        $tonKho->save();
+                    }
                 }
 
                 ChiTietDonHang::create([

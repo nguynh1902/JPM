@@ -167,10 +167,12 @@
           <!-- FOOTER: Tags phổ biến -->
           <div class="search-tags-footer">
             <span class="tags-label"><i class="bi bi-lightning-charge-fill"></i> Phổ biến:</span>
-            <a href="javascript:void(0)" class="search-tag" @click="quickSearch('Cánh quạt Yamaha F40')">Cánh quạt Yamaha F40</a>
-            <a href="javascript:void(0)" class="search-tag" @click="quickSearch('Bugi Honda BF25')">Bugi Honda BF25</a>
-            <a href="javascript:void(0)" class="search-tag" @click="quickSearch('Lọc dầu Suzuki DF150')">Lọc dầu Suzuki DF150</a>
-            <a href="javascript:void(0)" class="search-tag" @click="quickSearch('Bơm nhiên liệu')">Bơm nhiên liệu</a>
+            <a href="javascript:void(0)" class="search-tag" @click="quickSearch('F250TUR')">Yamaha F250TUR</a>
+            <a href="javascript:void(0)" class="search-tag" @click="quickSearch('300HP')">Mercury 300HP V8</a>
+            <a href="javascript:void(0)" class="search-tag" @click="quickSearch('Bottom Cowling')">Bottom Cowling</a>
+            <a href="javascript:void(0)" class="search-tag" @click="quickSearch('Accent Panel')">Accent Panel</a>
+            <a href="javascript:void(0)" class="search-tag" @click="quickSearch('máy phát')">Máy phát Alternator</a>
+            <a href="javascript:void(0)" class="search-tag" @click="quickSearch('8M0142205')">8M0142205</a>
           </div>
         </div>
       </div>

@@ -13,6 +13,16 @@ class TheKhoController extends Controller
     /**
      * Danh sách lịch sử giao dịch kho (Thẻ kho)
      */
+    public function show($id)
+    {
+        try {
+            $item = TheKho::with(['kho', 'sanPham', 'phuTung', 'nguoiThucHien'])->findOrFail($id);
+            return response()->json(['success' => true, 'data' => new TheKhoResource($item)]);
+        } catch (Exception $e) {
+            return response()->json(['success' => false, 'message' => 'Không tìm thấy thẻ kho.'], 404);
+        }
+    }
+
     public function index(Request $request)
     {
         try {

@@ -167,6 +167,22 @@ class DonHangController extends Controller
         }
     }
 
+    public function show($id)
+    {
+        try {
+            $donHang = DonHang::with(['khachHang.user', 'diaChi', 'chiTiet.phuTung', 'chiTiet.sanPham'])->findOrFail($id);
+            return response()->json([
+                'success' => true,
+                'data' => $donHang
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Không tìm thấy đơn hàng: ' . $e->getMessage()
+            ], 404);
+        }
+    }
+
     public function destroy($id)
     {
         DB::beginTransaction();
@@ -185,78 +201,13 @@ class DonHangController extends Controller
             DB::commit();
             return response()->json([
                 'success' => true,
-                'message' => 'Xoa don hng thnh cng (Soft Delete)'
+                'message' => 'Xóa đơn hàng thành công (Soft Delete)'
             ]);
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json([
                 'success' => false,
-                'message' => 'L?i xoa don hng: ' . $e->getMessage()
-            ], 500);
-        }
-    }
-
-    public function convertToPO(Request $request, $id)
-    {
-        DB::beginTransaction();
-        try {
-            $donHang = DonHang::with(['chiTiet.phuTung', 'chiTiet.sanPham'])->findOrFail($id);
-
-            if ($donHang->chiTiet->isEmpty()) {
-                throw new \Exception("Đơn hàng không có sản phẩm nào để tạo PO.");
-            }
-
-            // Tạo PO mới
-            $maPO = 'PO' . strtoupper(substr(uniqid(), -6));
-            $donNhapHang = \App\Domain\Procurement\Models\DonNhapHang::create([
-                'ma_po'           => $maPO,
-                'trang_thai'      => 0, // 0 = Nháp
-                'id_nha_cung_cap' => $request->id_nha_cung_cap ?? 1,
-                'id_kho'          => $request->id_kho ?? 1,
-                'ngay_du_kien'    => now()->addDays(7)->toDateString(),
-                'tong_tien'       => 0,
-                'ghi_chu'         => 'Gom đơn từ đơn hàng ' . ($donHang->ma_don_hang ?? ('DH-' . $donHang->id)),
-            ]);
-
-            $tongTien = 0;
-            foreach ($donHang->chiTiet as $item) {
-                $giaNhap = 0;
-                if ($item->loai_san_pham === 'san_pham' && $item->sanPham) {
-                    $giaNhap = (float) ($item->sanPham->gia_nhap ?? ($item->don_gia * 0.7));
-                } elseif ($item->phuTung) {
-                    $giaNhap = (float) ($item->phuTung->gia_nhap ?? ($item->don_gia * 0.7));
-                } else {
-                    $giaNhap = (float) ($item->don_gia * 0.7);
-                }
-
-                $thanhTien = $item->so_luong * $giaNhap;
-                $tongTien += $thanhTien;
-
-                \App\Domain\Procurement\Models\ChiTietDonNhapHang::create([
-                    'id_don_nhap_hang' => $donNhapHang->id,
-                    'id_san_pham'      => $item->id_san_pham,
-                    'loai_san_pham'    => $item->loai_san_pham ?? 'phu_tung',
-                    'so_luong_nhap'    => $item->so_luong,
-                    'don_gia_nhap'     => $giaNhap,
-                    'thanh_tien'       => $thanhTien,
-                ]);
-            }
-
-            $donNhapHang->tong_tien = $tongTien;
-            $donNhapHang->save();
-
-            DB::commit();
-
-            return response()->json([
-                'success' => true,
-                'message' => "Đã tạo PO gom đơn {$maPO} thành công!",
-                'data'    => $donNhapHang
-            ], 201);
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return response()->json([
-                'success' => false,
-                'message' => 'Lỗi tạo PO gom đơn: ' . $e->getMessage()
+                'message' => 'Lỗi xóa đơn hàng: ' . $e->getMessage()
             ], 500);
         }
     }

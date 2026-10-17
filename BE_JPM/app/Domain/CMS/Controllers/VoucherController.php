@@ -9,6 +9,12 @@ use Illuminate\Http\Request;
 
 class VoucherController extends Controller
 {
+    public function show($id)
+    {
+        $voucher = Voucher::findOrFail($id);
+        return response()->json(['success' => true, 'data' => $voucher]);
+    }
+
     public function index()
     {
         $vouchers = Voucher::orderBy('id', 'desc')->cursorPaginate(50);

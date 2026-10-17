@@ -15,6 +15,29 @@ use Illuminate\Support\Facades\File;
 
 class NhanVienController extends Controller
 {
+    public function show($id): JsonResponse
+    {
+        try {
+            $nv = NhanVien::with('user.roles')->findOrFail($id);
+            return response()->json([
+                'success' => true,
+                'data' => [
+                    'id' => $nv->id,
+                    'id_tai_khoan' => $nv->id_tai_khoan,
+                    'user_code' => $nv->ma_nhan_vien ?? ('NV' . str_pad($nv->id, 2, '0', STR_PAD_LEFT)),
+                    'name' => $nv->ho_ten,
+                    'phone' => $nv->so_dien_thoai,
+                    'email' => $nv->user->email ?? '',
+                    'avatar' => !empty($nv->user->avatar) ? (str_starts_with($nv->user->avatar, 'http') ? $nv->user->avatar : asset($nv->user->avatar)) : '',
+                    'role' => $nv->user->roles->first()?->name ?? 'N/A',
+                    'status' => $nv->user->status ?? 1,
+                ]
+            ]);
+        } catch (Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 404);
+        }
+    }
+
     public function index(): JsonResponse
     {
         try {

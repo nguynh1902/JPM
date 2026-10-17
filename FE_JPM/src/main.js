@@ -3,11 +3,9 @@ import App from './App.vue'
 import './style.css'
 import router from './router'
 import Admin from './layout/LayoutAdmin.vue'
-import Staff from './layout/LayoutStaff.vue'
 import Client from './layout/LayoutClient.vue'
 import Auth from './layout/LayoutAuth.vue'
 import Toaster from "@meforma/vue-toaster"
-
 
 import { createPinia } from 'pinia'
 import { VueQueryPlugin } from '@tanstack/vue-query'
@@ -42,9 +40,10 @@ import VueApexCharts from "vue3-apexcharts";
 app.use(VueApexCharts);
 
 app.component("admin-layout", Admin);
-app.component("staff-layout", Staff);
 app.component("client-layout", Client);
 app.component("auth-layout", Auth);
+
+const BACKEND_BASE = (import.meta.env.VITE_API_BASE_URL || "http://localhost:8000/api").replace(/\/api\/?$/, "");
 
 app.mixin({
   methods: {
@@ -53,9 +52,9 @@ app.mixin({
       if (path.startsWith("blob:") || path.startsWith("http") || path.startsWith("data:")) return path;
       const clean = path.startsWith("/") ? path.slice(1) : path;
       if (clean.startsWith("storage/") || clean.startsWith("uploads/")) {
-        return `http://localhost:8000/${clean}`;
+        return `${BACKEND_BASE}/${clean}`;
       }
-      return `http://localhost:8000/storage/${clean}`;
+      return `${BACKEND_BASE}/storage/${clean}`;
     },
     getBlobUrl(file) {
       if (!file) return "";

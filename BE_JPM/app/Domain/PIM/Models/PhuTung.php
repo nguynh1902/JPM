@@ -23,28 +23,15 @@ class PhuTung extends Model
      *
      * @return array<string, mixed>
      */
-    public function toSearchableArray()
+        public function toSearchableArray()
     {
-        $array = $this->toArray();
-
-        // Customize the data array...
-        // Tích hợp dữ liệu thuộc tính quan hệ (để search được bằng tên thương hiệu hoặc tên nhóm phụ tùng)
-        $array['thuong_hieu_ten'] = $this->thuongHieu ? $this->thuongHieu->name : null;
-        $array['nhom_phu_tung_ten'] = $this->nhomPhuTung ? $this->nhomPhuTung->ten_nhom : null;
-        
-        // Arrays for Meilisearch filtering
-        $array['dong_co_model_ids'] = $this->dongCoModels->pluck('id')->toArray();
-        
-        $years = [];
-        foreach ($this->dongCoModels as $model) {
-             $year = $model->pivot->nam_ap_dung ?? $model->nam_san_xuat;
-             if ($year) {
-                 $years[] = (int)$year;
-             }
-        }
-        $array['applicable_years'] = array_values(array_unique($years));
-
-        return $array;
+        return [
+            'id' => (int) $this->id,
+            'ma_phu_tung' => (string) $this->ma_phu_tung,
+            'ten_phu_tung' => (string) $this->ten_phu_tung,
+            'mo_ta' => (string) ($this->mo_ta ?? ''),
+            'thong_so_ky_thuat' => (string) ($this->thong_so_ky_thuat ?? ''),
+        ];
     }
 
         protected $casts = [

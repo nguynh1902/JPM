@@ -11,6 +11,11 @@ use Illuminate\Support\Facades\Storage;
 
 class KhachHangService
 {
+    public function getById($id)
+    {
+        return KhachHang::with('user')->findOrFail($id);
+    }
+
     public function getAll()
     {
         return KhachHang::with('user')->orderBy('id', 'desc')->cursorPaginate(50);

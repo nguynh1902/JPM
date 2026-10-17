@@ -14,6 +14,26 @@ use App\Domain\IAM\Models\SystemLog;
 
 class VaiTroController extends Controller
 {
+    public function show($id): JsonResponse
+    {
+        try {
+            $role = Role::with('permissions')->findOrFail($id);
+            return response()->json([
+                'success' => true,
+                'data' => [
+                    'id' => $role->id,
+                    'name' => $role->name,
+                    'description' => $role->description,
+                    'is_system' => strtolower($role->name) === 'admin',
+                    'permissions' => $role->permissions->pluck('id')->toArray(),
+                    'status' => $role->status ?? 1,
+                ]
+            ]);
+        } catch (Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 404);
+        }
+    }
+
     public function index(): JsonResponse
     {
         try {
@@ -69,12 +89,11 @@ class VaiTroController extends Controller
                 ],
                 [
                     'id' => 'warehouse',
-                    'name' => 'Kho & Vận Hành',
+                    'name' => 'Kho Hàng',
                     'permissions' => [
                         $allPermissions->get('Xem Tồn kho'),
                         $allPermissions->get('Cập nhật Tồn kho'),
                         $allPermissions->get('Xem Thẻ kho'),
-                        $allPermissions->get('Quản lý Đơn nhập PO'),
                         $allPermissions->get('Quản lý Danh sách kho'),
                     ]
                 ],

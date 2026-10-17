@@ -19,6 +19,11 @@ class ProfileController extends Controller
         return response()->json($user);
     }
 
+    public function changeEmail(Request $request)
+    {
+        return $this->updateProfile($request);
+    }
+
     public function updateProfile(Request $request)
     {
         $user = $request->user();

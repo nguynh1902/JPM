@@ -323,7 +323,7 @@ export default {
         await cartStore.fetchFromCloud();
 
         if (authStore.isStaffOrAdmin) {
-          this.$router.push('/admin/dashboard');
+          this.$router.push('/portal/dashboard');
         } else {
           this.$router.push('/');
         }

@@ -19,6 +19,19 @@ class KhachHangController extends Controller
         $this->khachHangService = $khachHangService;
     }
 
+    public function show($id): JsonResponse
+    {
+        try {
+            $kh = $this->khachHangService->getById($id);
+            return response()->json([
+                'success' => true,
+                'data' => new KhachHangResource($kh)
+            ]);
+        } catch (Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 404);
+        }
+    }
+
     public function index(): JsonResponse
     {
         try {

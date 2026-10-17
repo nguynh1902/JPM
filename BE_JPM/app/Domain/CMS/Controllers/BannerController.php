@@ -10,6 +10,12 @@ use Illuminate\Support\Facades\Storage;
 
 class BannerController extends Controller
 {
+    public function show($id)
+    {
+        $banner = Banner::findOrFail($id);
+        return response()->json(['success' => true, 'data' => $banner]);
+    }
+
     public function index()
     {
         $banners = Banner::orderBy('id', 'desc')->cursorPaginate(50);

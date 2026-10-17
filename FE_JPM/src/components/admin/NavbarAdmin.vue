@@ -2,7 +2,7 @@
   <!-- Menu Admin / Backoffice Hợp Nhất (Phân quyền động theo RBAC) -->
   <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
     <div class="app-brand demo py-3 position-relative" style="height: auto; padding-left: 1rem; padding-right: 1rem;">
-      <router-link to="/admin/ho-so" class="d-flex align-items-center w-100 text-decoration-none p-2 rounded user-profile-box" title="Xem Hồ sơ cá nhân">
+      <router-link to="/portal/ho-so" class="d-flex align-items-center w-100 text-decoration-none p-2 rounded user-profile-box" title="Xem Hồ sơ cá nhân">
         <div class="avatar avatar-online me-3" style="width: 44px; height: 44px; min-width: 44px;">
           <img :src="userAvatar" alt="user-avatar" class="w-100 h-100 rounded-circle shadow-sm" style="object-fit: cover; border: 2px solid #e7e7ff;" />
         </div>
@@ -30,7 +30,7 @@
         <li 
           class="menu-item" 
           v-else-if="item.type === 'item'" 
-          :class="{ 'active': $route.path === item.path || ($route.path.startsWith(item.path + '/') && item.path !== '/admin') }"
+          :class="{ 'active': $route.path === item.path || ($route.path.startsWith(item.path + '/') && item.path !== '/portal') }"
         >
           <router-link :to="item.path" class="menu-link">
             <i class="menu-icon tf-icons bx" :class="item.icon"></i>
@@ -55,14 +55,14 @@ export default {
         {
           title: "Dashboard",
           icon: "bx-home-circle",
-          path: "/admin/dashboard",
+          path: "/portal/dashboard",
           type: "item"
           // Không yêu cầu permission -> Mọi nhân sự nội bộ đều truy cập được
         },
         {
           title: "Cấu Hình Hệ Thống",
           icon: "bx-cog",
-          path: "/admin/cau-hinh-he-thong",
+          path: "/portal/cau-hinh-he-thong",
           permission: "Cấu hình chung",
           type: "item"
         },
@@ -73,28 +73,28 @@ export default {
         {
           title: "Khách Hàng",
           icon: "bx-group",
-          path: "/admin/khach-hang",
+          path: "/portal/khach-hang",
           permission: "Xem Khách hàng",
           type: "item"
         },
         {
           title: "Nhân Viên",
           icon: "bx-user-pin",
-          path: "/admin/nhan-vien",
+          path: "/portal/nhan-vien",
           permission: "Quản lý Nhân sự",
           type: "item"
         },
         {
           title: "Phân Quyền",
           icon: "bx-shield-quarter",
-          path: "/admin/phan-quyen",
+          path: "/portal/phan-quyen",
           permission: "Quản lý Vai trò",
           type: "item"
         },
         {
           title: "Lịch Sử Hoạt Động",
           icon: "bx-history",
-          path: "/admin/lich-su-hoat-dong",
+          path: "/portal/lich-su-hoat-dong",
           permission: "Cấu hình chung",
           type: "item"
         },
@@ -105,49 +105,49 @@ export default {
         {
           title: "Thương Hiệu",
           icon: "bx-purchase-tag-alt",
-          path: "/admin/thuong-hieu",
+          path: "/portal/thuong-hieu",
           permission: "Quản lý Model & Động cơ",
           type: "item"
         },
         {
           title: "Loại Động Cơ",
           icon: "bx-cube",
-          path: "/admin/loai-dong-co",
+          path: "/portal/loai-dong-co",
           permission: "Quản lý Model & Động cơ",
           type: "item"
         },
         {
           title: "Model Động Cơ",
           icon: "bx-layer",
-          path: "/admin/dong-co-model",
+          path: "/portal/dong-co-model",
           permission: "Quản lý Model & Động cơ",
           type: "item"
         },
         {
           title: "Nhóm Phụ Tùng",
           icon: "bx-category",
-          path: "/admin/nhom-phu-tung",
+          path: "/portal/nhom-phu-tung",
           permission: "Xem Phụ tùng",
           type: "item"
         },
         {
           title: "Danh Sách Phụ Tùng",
           icon: "bx-wrench",
-          path: "/admin/phu-tung",
+          path: "/portal/phu-tung",
           permission: "Xem Phụ tùng",
           type: "item"
         },
         {
           title: "Sơ Đồ Phụ Tùng",
           icon: "bx-sitemap",
-          path: "/admin/so-do-phu-tung",
+          path: "/portal/so-do-phu-tung",
           permission: "Xem Phụ tùng",
           type: "item"
         },
         {
           title: "Mã Thay Thế",
           icon: "bx-git-compare",
-          path: "/admin/ma-thay-the",
+          path: "/portal/ma-thay-the",
           permission: "Xem Phụ tùng",
           type: "item"
         },
@@ -158,14 +158,14 @@ export default {
         {
           title: "Danh Mục Sản Phẩm",
           icon: "bx-collection",
-          path: "/admin/danh-muc-san-pham",
+          path: "/portal/danh-muc-san-pham",
           permission: "Quản lý Sản phẩm",
           type: "item"
         },
         {
           title: "Danh Sách Sản Phẩm",
           icon: "bx-cart",
-          path: "/admin/san-pham",
+          path: "/portal/san-pham",
           permission: "Quản lý Sản phẩm",
           type: "item"
         },
@@ -176,35 +176,29 @@ export default {
         {
           title: "Yêu Cầu & Đơn Khách",
           icon: "bx-receipt",
-          path: "/admin/don-hang",
+          path: "/portal/don-hang",
           permission: "Xem Đơn hàng",
           type: "item"
         },
-        {
-          title: "Gom Đơn & PO",
-          icon: "bx-archive-out",
-          path: "/admin/don-nhap-hang",
-          permission: "Quản lý Đơn nhập PO",
-          type: "item"
-        },
+
         {
           title: "Danh Sách Kho",
           icon: "bx-store-alt",
-          path: "/admin/danh-sach-kho",
+          path: "/portal/danh-sach-kho",
           permission: "Quản lý Danh sách kho",
           type: "item"
         },
         {
           title: "Tồn Kho",
           icon: "bx-building-house",
-          path: "/admin/ton-kho",
+          path: "/portal/ton-kho",
           permission: "Xem Tồn kho",
           type: "item"
         },
         {
           title: "Xuất / Nhập / Tồn",
           icon: "bx-transfer-alt",
-          path: "/admin/the-kho",
+          path: "/portal/the-kho",
           permission: "Quản lý Thẻ kho",
           type: "item"
         },
@@ -215,21 +209,21 @@ export default {
         {
           title: "Chuyên Mục",
           icon: "bx-folder",
-          path: "/admin/chuyen-muc",
+          path: "/portal/chuyen-muc",
           permission: "Quản lý Tin tức & CMS",
           type: "item"
         },
         {
           title: "Tin Tức",
           icon: "bx-news",
-          path: "/admin/tin-tuc",
+          path: "/portal/tin-tuc",
           permission: "Quản lý Tin tức & CMS",
           type: "item"
         },
         {
           title: "FAQ",
           icon: "bx-help-circle",
-          path: "/admin/faq",
+          path: "/portal/faq",
           permission: "Quản lý Tin tức & CMS",
           type: "item"
         }

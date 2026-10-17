@@ -53,6 +53,19 @@ class DanhMucSanPhamController extends Controller
         return response()->json(['success' => true, 'data' => $data]);
     }
 
+    public function show($id): JsonResponse
+    {
+        try {
+            $danhMuc = $this->danhMucService->getById($id);
+            return response()->json([
+                'success' => true,
+                'data' => new DanhMucSanPhamResource($danhMuc)
+            ]);
+        } catch (Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 404);
+        }
+    }
+
     public function index(): JsonResponse
     {
         $data = $this->danhMucService->getAll();

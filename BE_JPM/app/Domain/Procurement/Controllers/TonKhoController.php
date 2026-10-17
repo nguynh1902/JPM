@@ -1,6 +1,15 @@
 <?php namespace App\Domain\Procurement\Controllers;
 
-use App\Http\Controllers\Controller; use App\Domain\Procurement\Models\TonKho; use App\Domain\Core\Resources\TonKhoResource; use Exception; class TonKhoController extends Controller { public function index() { try { return response()->json(["success" => true, "data" => TonKhoResource::collection(TonKho::with(["kho", "sanPham", "phuTung"])->orderBy('id', 'desc')->cursorPaginate(50))]); } catch (Exception $e) { return response()->json(['success' => false, 'message' => $e->getMessage()], 500); } }
+use App\Http\Controllers\Controller; use App\Domain\Procurement\Models\TonKho; use App\Domain\Core\Resources\TonKhoResource; use Exception; class TonKhoController extends Controller { public function show($id) {
+        try {
+            $item = TonKho::with(['kho', 'sanPham', 'phuTung'])->findOrFail($id);
+            return response()->json(['success' => true, 'data' => new TonKhoResource($item)]);
+        } catch (Exception $e) {
+            return response()->json(['success' => false, 'message' => 'Không tìm thấy tồn kho.'], 404);
+        }
+    }
+
+    public function index() { try { return response()->json(["success" => true, "data" => TonKhoResource::collection(TonKho::with(["kho", "sanPham", "phuTung"])->orderBy('id', 'desc')->cursorPaginate(50))]); } catch (Exception $e) { return response()->json(['success' => false, 'message' => $e->getMessage()], 500); } }
             public function store(\Illuminate\Http\Request $request) {
         try {
             // Validate

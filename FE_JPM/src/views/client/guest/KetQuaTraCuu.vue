@@ -183,24 +183,49 @@
 
               </div>
               <div v-if="!isFilterEmpty">
+                
+                <!-- TAB SWITCHER: Phụ tùng vs Sơ đồ -->
+                <div class="d-flex align-items-center gap-2 mb-4 border-bottom pb-3" v-if="products.length > 0 || diagramsList.length > 0 || isFetchingGlobal">
+                  <button 
+                    type="button"
+                    class="btn btn-sm d-flex align-items-center gap-2 px-3 py-2 fw-bold"
+                    :class="activeTab === 'products' ? 'btn-danger shadow-sm' : 'btn-light border text-muted'"
+                    style="border-radius: 8px;"
+                    @click="activeTab = 'products'"
+                  >
+                    <i class="bi bi-box-seam"></i>
+                    <span>Phụ tùng chi tiết</span>
+                    <span class="badge" :class="activeTab === 'products' ? 'bg-white text-danger' : 'bg-secondary-subtle text-secondary'">{{ searchResult?.total || products.length }}</span>
+                  </button>
 
-                <!-- HIỂN THỊ DIAGRAMS (khi không có keyword) -->
-                <div v-if="!filters.keyword">
-                  
-                  <!-- HIỂN THỊ SƠ ĐỒ TRỰC TIẾP -->
-                  <div>
-                    <div v-if="isFetchingGlobal" class="row g-4">
-                    <div class="col-md-4 col-sm-6" v-for="i in 6" :key="i">
-                      <div class="skeleton-card">
-                        <div class="skeleton-img skeleton-box"></div>
-                        <div class="p-3">
-                          <div class="skeleton-box mx-auto" style="height: 16px; width: 60%;"></div>
-                        </div>
+                  <button 
+                    type="button"
+                    class="btn btn-sm d-flex align-items-center gap-2 px-3 py-2 fw-bold"
+                    :class="activeTab === 'diagrams' ? 'btn-danger shadow-sm' : 'btn-light border text-muted'"
+                    style="border-radius: 8px;"
+                    @click="activeTab = 'diagrams'"
+                  >
+                    <i class="bi bi-diagram-3"></i>
+                    <span>Sơ đồ bản vẽ máy</span>
+                    <span class="badge" :class="activeTab === 'diagrams' ? 'bg-white text-danger' : 'bg-secondary-subtle text-secondary'">{{ searchDiagrams?.total || diagramsList.length }}</span>
+                  </button>
+                </div>
+
+                <!-- LOADING SKELETON -->
+                <div v-if="isFetchingGlobal" class="row g-4">
+                  <div class="col-md-4 col-sm-6" v-for="i in 6" :key="i">
+                    <div class="skeleton-card">
+                      <div class="skeleton-img skeleton-box"></div>
+                      <div class="p-3">
+                        <div class="skeleton-box mx-auto" style="height: 16px; width: 60%;"></div>
                       </div>
                     </div>
                   </div>
+                </div>
 
-                  <div class="row g-4" v-else-if="diagramsList.length > 0">
+                <!-- TAB 1: SƠ ĐỒ BẢN VẼ -->
+                <div v-else-if="activeTab === 'diagrams'">
+                  <div class="row g-4" v-if="diagramsList.length > 0">
                     <div class="col-md-4 col-sm-6" v-for="diag in diagramsList" :key="diag.id">
                       <div class="card h-100 premium-product-card group-hover" @click="goToDiagram(diag)" @mouseenter="prefetchDiagram(diag)" style="cursor: pointer; border: 1px solid #e5e7eb; border-radius: 0; box-shadow: none;">
                         <div class="card-img-wrapper overflow-hidden img-zoom-hover" style="border-radius: 0;">
@@ -224,59 +249,45 @@
                       </div>
                     </div>
                   </div>
-
+                  
                   <div class="text-center py-5" v-else>
                     <i class="bi bi-images text-muted mb-3 d-block" style="font-size: 48px; opacity: 0.3;"></i>
-                    <h5 class="fw-bold mb-2" style="color: var(--heading-color);">Chưa có sơ đồ phụ tùng</h5>
-                    <p class="text-muted mb-0">Vui lòng chọn thương hiệu hoặc bộ lọc để xem danh sách sơ đồ.</p>
-                  </div>
+                    <h5 class="fw-bold mb-2" style="color: var(--heading-color);">Chưa có sơ đồ phụ tùng cho tìm kiếm này</h5>
+                    <p class="text-muted mb-0">Bạn có thể bấm sang tab "Phụ tùng chi tiết" để xem các linh kiện tương thích.</p>
                   </div>
                 </div>
 
-                <!-- HIỂN THỊ PRODUCTS (khi có keyword) -->
-                <div v-else>
-                  <div v-if="isFetchingGlobal" class="row g-4">
-                    <div class="col-md-4 col-sm-6" v-for="i in 6" :key="i">
-                      <div class="skeleton-card">
-                        <div class="skeleton-img skeleton-box"></div>
-                        <div class="p-3">
-                          <div class="skeleton-box mx-auto" style="height: 16px; width: 60%;"></div>
+                <!-- TAB 2: PHỤ TÙNG CHI TIẾT -->
+                <div v-else-if="activeTab === 'products'">
+                  <div class="row g-4" v-if="products.length > 0">
+                    <div class="col-md-4 col-sm-6" v-for="prod in products" :key="prod.id">
+                      <div class="card h-100 premium-product-card group-hover position-relative" style="border: 1px solid #e5e7eb; border-radius: 0; box-shadow: none;">
+                        <div class="card-img-wrapper overflow-hidden img-zoom-hover" style="border-radius: 0;">
+                          <img :src="prod.hinh_anh ? prod.hinh_anh : 'https://placehold.co/400x300/f8f9fa/a1acb8?text=No+Image'" class="card-img-top w-100 transition-transform" style="aspect-ratio: 4/3; object-fit: cover; border-radius: 0;" :alt="prod.ten_phu_tung">
+                          <div class="position-absolute" style="top: 10px; right: 10px; z-index: 10;">
+                            <button class="btn bg-white shadow-sm" style="width: 32px; height: 32px; padding: 0; display: flex; align-items: center; justify-content: center; border: 1px solid #e5e7eb; border-radius: 4px;" title="Thêm vào giỏ" @click.prevent="addToCart(prod)">
+                              <i class="bi bi-cart-plus" style="color: #dc3545; font-size: 1.1rem;"></i>
+                            </button>
+                          </div>
+                        </div>
+                        <div class="card-body text-start p-3 d-flex flex-column bg-white">
+                          <div class="d-flex justify-content-between align-items-start mb-2">
+                            <span class="text-muted fw-bold text-uppercase" style="letter-spacing: 0.5px; font-size: 0.75rem;">{{ prod.thuong_hieu ? prod.thuong_hieu.name : 'OEM' }}</span>
+                          </div>
+                          <h5 class="card-title mb-1" style="font-size: 0.95rem; line-height: 1.5; font-weight: 500; color: #1e293b;">
+                            <router-link :to="`/chi-tiet-phu-tung/${prod.ma_phu_tung || prod.id}`" class="text-decoration-none stretched-link" style="color: inherit;">{{ prod.ten_phu_tung }}</router-link>
+                          </h5>
+                          <p class="text-muted mb-3" style="font-size: 0.75rem;">Mã OEM: <strong style="color: #334155;">{{ prod.ma_phu_tung }}</strong></p>
+                          <div class="mt-auto d-flex align-items-center contact-action" style="border-top: 1px solid #f1f5f9; padding-top: 0.75rem; justify-content: flex-end;">
+                            <span v-if="prod.is_gia_lien_he || !prod.gia_ban" class="text-danger fw-bold" style="font-size: 1.1rem;">Liên hệ</span>
+                            <span v-else class="text-danger fw-bold" style="font-size: 1.1rem;">{{ Number(prod.gia_ban).toLocaleString('vi-VN') }} đ</span>
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
 
-                  
-
-                  <div class="row g-4" v-else-if="products.length > 0">
-                    <div class="col-md-4 col-sm-6" v-for="prod in products" :key="prod.id">
-                      <div class="card h-100 premium-product-card group-hover position-relative" style="border: 1px solid #e5e7eb; border-radius: 0; box-shadow: none;">
-                            <div class="card-img-wrapper overflow-hidden img-zoom-hover" style="border-radius: 0;">
-                              <img :src="prod.hinh_anh ? prod.hinh_anh : 'https://placehold.co/400x300/f8f9fa/a1acb8?text=No+Image'" class="card-img-top w-100 transition-transform" style="aspect-ratio: 4/3; object-fit: cover; border-radius: 0;" :alt="prod.ten_phu_tung">
-                              <div class="position-absolute" style="top: 10px; right: 10px; z-index: 10;">
-                                <button class="btn bg-white shadow-sm" style="width: 32px; height: 32px; padding: 0; display: flex; align-items: center; justify-content: center; border: 1px solid #e5e7eb; border-radius: 4px;" title="Thêm vào giỏ" @click.prevent="addToCart(prod)">
-                                  <i class="bi bi-cart-plus" style="color: #dc3545; font-size: 1.1rem;"></i>
-                                </button>
-                              </div>
-                            </div>
-                            <div class="card-body text-start p-3 d-flex flex-column bg-white">
-                              <div class="d-flex justify-content-between align-items-start mb-2">
-                                <span class="text-muted fw-bold text-uppercase" style="letter-spacing: 0.5px; font-size: 0.75rem;">{{ prod.thuong_hieu ? prod.thuong_hieu.name : 'OEM' }}</span>
-                              </div>
-                              <h5 class="card-title mb-1" style="font-size: 0.95rem; line-height: 1.5; font-weight: 500; color: #1e293b;">
-                                <router-link :to="`/chi-tiet-phu-tung/${prod.id}`" class="text-decoration-none stretched-link" style="color: inherit;">{{ prod.ten_phu_tung }}</router-link>
-                              </h5>
-                              <p class="text-muted mb-3" style="font-size: 0.75rem;">Mã OEM: <strong style="color: #334155;">{{ prod.ma_phu_tung }}</strong></p>
-                              <div class="mt-auto d-flex align-items-center contact-action" style="border-top: 1px solid #f1f5f9; padding-top: 0.75rem; justify-content: flex-end;">
-                                <span v-if="prod.is_gia_lien_he || !prod.gia_ban" class="text-danger fw-bold" style="font-size: 1.1rem;">Liên hệ</span>
-                                <span v-else class="text-danger fw-bold" style="font-size: 1.1rem;">{{ Number(prod.gia_ban).toLocaleString('vi-VN') }} đ</span>
-                              </div>
-                            </div>
-                          </div>
-                    </div>
-                  </div>
-
-                  <!-- Gộp Empty State + CTA -->
+                  <!-- Empty State cho Products -->
                   <div class="py-5 text-center" v-else>
                     <div class="mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 80px; height: 80px; background: rgba(248,34,73,0.07); border-radius: 50%;">
                       <i class="bi bi-search" style="font-size: 36px; color: var(--accent-color); opacity: 0.65;"></i>
@@ -298,24 +309,24 @@
                       </div>
                     </div>
                   </div>
+                </div>
 
-                  <!-- Footer Phân Trang -->
-                  <div class="d-flex justify-content-between align-items-center mt-4 pt-4 border-top" v-if="products.length > 0">
-                    <span class="text-muted small">Hiển thị {{ products.length }} của {{ pagination.total }} phụ tùng</span>
-                    <ul class="pagination custom-pagination-rounded mb-0" v-if="pagination.last_page > 1">
-                      <li class="page-item" :class="{ disabled: pagination.current_page === 1 }">
-                        <a class="page-link" href="#" @click.prevent="changePage(pagination.current_page - 1)"><i class="bi bi-chevron-left"></i></a>
-                      </li>
-                      <li class="page-item" v-for="page in pagination.last_page" :key="page" :class="{ active: pagination.current_page === page }">
-                        <a class="page-link" href="#" @click.prevent="changePage(page)">{{ page }}</a>
-                      </li>
-                      <li class="page-item" :class="{ disabled: pagination.current_page === pagination.last_page }">
-                        <a class="page-link" href="#" @click.prevent="changePage(pagination.current_page + 1)"><i class="bi bi-chevron-right"></i></a>
-                      </li>
-                    </ul>
-                  </div>
+                <!-- Footer Phân Trang -->
+                <div class="d-flex justify-content-between align-items-center mt-4 pt-4 border-top" v-if="(activeTab === 'products' ? products.length : diagramsList.length) > 0">
+                  <span class="text-muted small">Hiển thị {{ activeTab === 'products' ? products.length : diagramsList.length }} của {{ pagination.total }} {{ activeTab === 'products' ? 'phụ tùng' : 'sơ đồ' }}</span>
+                  <ul class="pagination custom-pagination-rounded mb-0" v-if="pagination.last_page > 1">
+                    <li class="page-item" :class="{ disabled: pagination.current_page === 1 }">
+                      <a class="page-link" href="#" @click.prevent="changePage(pagination.current_page - 1)"><i class="bi bi-chevron-left"></i></a>
+                    </li>
+                    <li class="page-item" v-for="page in pagination.last_page" :key="page" :class="{ active: pagination.current_page === page }">
+                      <a class="page-link" href="#" @click.prevent="changePage(page)">{{ page }}</a>
+                    </li>
+                    <li class="page-item" :class="{ disabled: pagination.current_page === pagination.last_page }">
+                      <a class="page-link" href="#" @click.prevent="changePage(pagination.current_page + 1)"><i class="bi bi-chevron-right"></i></a>
+                    </li>
+                  </ul>
+                </div>
 
-                                </div>
               </div>
             </div>
           </div>
@@ -358,6 +369,19 @@ export default {
       per_page: 12
     });
 
+    watch(() => route.query, (newQuery) => {
+      if (newQuery.keyword !== undefined && newQuery.keyword !== filters.keyword) {
+        localKeyword.value = newQuery.keyword || "";
+        filters.keyword = newQuery.keyword || "";
+      }
+      if (newQuery.brand !== undefined) filters.thuong_hieu_id = newQuery.brand ? Number(newQuery.brand) : '';
+      if (newQuery.engineType !== undefined) filters.loai_dong_co_id = newQuery.engineType ? Number(newQuery.engineType) : '';
+      if (newQuery.part !== undefined) filters.nhom_phu_tung_id = newQuery.part ? Number(newQuery.part) : '';
+      if (newQuery.model !== undefined) filters.dong_co_model_id = newQuery.model ? Number(newQuery.model) : '';
+      if (newQuery.year !== undefined) filters.nam_sx = newQuery.year ? Number(newQuery.year) : '';
+      if (newQuery.page !== undefined) filters.page = newQuery.page ? parseInt(newQuery.page) : 1;
+    }, { deep: true });
+
     const isFilterEmpty = computed(() => {
       return !filters.keyword && !filters.thuong_hieu_id && !filters.loai_dong_co_id && !filters.dong_co_model_id && !filters.nhom_phu_tung_id && !filters.nam_sx;
     });
@@ -396,28 +420,39 @@ export default {
         enabled: computed(() => !!filters.thuong_hieu_id)
       });
 
-    // Diagrams Search Query (dùng khi KHÔNG có keyword - lọc động theo brand/engineType/year/model)
+    // Diagrams Search Query (bản vẽ sơ đồ phụ tùng của máy)
     const { data: searchDiagrams, isFetching: isFetchingDiagrams } = useQuery({
       queryKey: computed(() => ['tra-cuu-so-do', { ...filters }]),
       queryFn: () => axiosClient.get('/public/tra-cuu-so-do', { params: filters }).then(res => res.data || res),
       keepPreviousData: true,
-      enabled: computed(() => !filters.keyword)
+      enabled: computed(() => !isFilterEmpty.value)
     });
 
-    // Parts Search Query (chỉ dùng khi CÓ keyword)
+    // Parts Search Query (danh sách chi tiết phụ tùng)
     const { data: searchResult, isFetching } = useQuery({
       queryKey: computed(() => ['tra-cuu', { ...filters }]),
       queryFn: () => axiosClient.get('/public/tra-cuu', { params: filters }).then(res => res.data || res),
       keepPreviousData: true,
-      enabled: computed(() => !!filters.keyword)
+      enabled: computed(() => !isFilterEmpty.value)
     });
 
     const products = computed(() => searchResult.value?.data || []);
     const diagramsList = computed(() => searchDiagrams.value?.data || []);
     const isFetchingGlobal = computed(() => isFetching.value || isFetchingDiagrams.value);
 
+    const activeTab = ref(filters.keyword ? 'products' : 'diagrams');
+
+    // Tự động chuyển tab thông minh nếu tab hiện tại trống mà tab kia có kết quả
+    watch([products, diagramsList], ([newProds, newDiags]) => {
+      if (newProds.length > 0 && newDiags.length === 0) {
+        activeTab.value = 'products';
+      } else if (newDiags.length > 0 && newProds.length === 0) {
+        activeTab.value = 'diagrams';
+      }
+    });
+
     const pagination = computed(() => {
-      if (filters.keyword) {
+      if (activeTab.value === 'products') {
         return {
           current_page: searchResult.value?.current_page || 1,
           last_page: searchResult.value?.last_page || 1,
@@ -576,6 +611,7 @@ export default {
     return {
       localKeyword,
       filters, brands, partGroups, engineTypes, engineModels, products, diagramsList, pagination, isFetchingGlobal,
+      activeTab, searchResult, searchDiagrams,
       goToDiagram, prefetchDiagram,
       resetFilters, changePage, openDropdown, toggleDropdown, selectOption,
       brandLabel, engineTypeLabel, modelLabel, yearLabel, years, activeFilters, removeFilter, toggleCategory, isFilterEmpty

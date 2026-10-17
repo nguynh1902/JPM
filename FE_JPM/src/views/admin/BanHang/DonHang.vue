@@ -1,7 +1,7 @@
 <template>
   <div class="container-xxl flex-grow-1 container-p-y">
     <h4 class="fw-bold py-3 mb-4">
-      <span class="text-muted fw-light">Chuỗi Cung Ứng /</span> Yêu Cầu & Đơn Khách
+      <span class="text-muted fw-light">Kinh Doanh & Bán Hàng /</span> Yêu Cầu & Đơn Khách
     </h4>
 
     <div class="nav-align-top mb-4">
@@ -63,7 +63,9 @@
                     <tr v-for="(item, index) in filteredInbox" :key="item._type + item.id">
                       <td class="text-center"><strong>{{ index + 1 }}</strong></td>
                       <td class="text-center">
-                        <span class="badge badge-custom" :class="item._type === 'quote' ? 'bg-pastel-info' : 'bg-pastel-warning'">{{ item._type === 'quote' ? 'BÁO GIÁ' : 'ĐƠN HÀNG' }}</span>
+                        <span class="fw-bold" style="font-size: 0.85rem;" :style="{ color: item._type === 'quote' ? '#17a2b8' : '#696cff' }">
+                          {{ item._type === 'quote' ? 'BÁO GIÁ' : 'ĐƠN HÀNG' }}
+                        </span>
                       </td>
                       <td><span class="fw-bold text-dark">{{ item.code }}</span></td>
                       <td>
@@ -138,7 +140,9 @@
                     <tr v-for="(item, index) in filteredArchive" :key="item._type + item.id">
                       <td class="text-center"><strong>{{ index + 1 }}</strong></td>
                       <td class="text-center">
-                        <span class="badge badge-custom" :class="item._type === 'quote' ? 'bg-pastel-info' : 'bg-pastel-warning'">{{ item._type === 'quote' ? 'BÁO GIÁ' : 'ĐƠN HÀNG' }}</span>
+                        <span class="fw-bold" style="font-size: 0.85rem;" :style="{ color: item._type === 'quote' ? '#17a2b8' : '#696cff' }">
+                          {{ item._type === 'quote' ? 'BÁO GIÁ' : 'ĐƠN HÀNG' }}
+                        </span>
                       </td>
                       <td><span class="fw-bold text-dark">{{ item.code }}</span></td>
                       <td>
@@ -389,12 +393,6 @@
                       :can-clear="false"
                     />
                   </div>
-                </div>
-                <div class="mb-4 mt-4">
-                   <button class="btn btn-warning w-100 shadow-sm" @click="convertToPO" v-if="!isOrderReadOnly">
-                     <i class="bx bx-transfer me-1"></i> Chuyển sang PO (Gom đơn)
-                   </button>
-                   <small class="text-muted d-block mt-1 text-center">Tạo Yêu cầu Nhập hàng (PO) cho các món thiếu.</small>
                 </div>
               </div>
 
@@ -906,57 +904,7 @@ export default {
 
       this.closeModal('orderModal');
     },
-    async convertToPO() {
-      if (!this.selectedOrder) return;
-      const result = await Swal.fire({
-        title: 'Chuyển sang PO (Gom đơn)?',
-        html: `Bạn muốn tạo Đơn Nhập Hàng (PO) gom cho các sản phẩm trong đơn <b>${this.selectedOrder.code}</b>?`,
-        icon: 'question',
-        showCancelButton: true,
-        confirmButtonText: 'Tạo PO ngay',
-        cancelButtonText: 'Hủy',
-        reverseButtons: true,
-        animation: false,
-        customClass: {
-          popup: 'swal-shift-up',
-          confirmButton: 'btn btn-warning px-4 shadow-sm',
-          cancelButton: 'btn btn-outline-secondary px-4 me-3'
-        },
-        buttonsStyling: false
-      });
 
-      if (result.isConfirmed) {
-        try {
-          const res = await axiosClient.post(`/admin/don-hang/${this.selectedOrder.id}/tao-po`);
-          if (res.success || (res.data && res.data.success)) {
-            const poData = res.data?.data || res.data;
-            const maPO = poData.ma_po || 'Mới';
-            Swal.fire({
-              icon: 'success',
-              title: 'Tạo PO thành công!',
-              html: `Đã tạo Đơn nhập hàng mã <b>${maPO}</b>.<br/>Bạn có thể tiếp tục xử lý nhập hàng ở mục Quản lý PO.`,
-              confirmButtonText: 'Đến trang Quản lý PO',
-              showCancelButton: true,
-              cancelButtonText: 'Ở lại đây',
-              reverseButtons: true,
-              customClass: {
-                confirmButton: 'btn btn-primary px-4 shadow-sm',
-                cancelButton: 'btn btn-outline-secondary px-4 me-3'
-              },
-              buttonsStyling: false
-            }).then((nav) => {
-              if (nav.isConfirmed) {
-                this.$router.push('/admin/don-nhap-hang');
-              }
-            });
-            this.closeModal('orderModal');
-          }
-        } catch (err) {
-          const msg = err.response?.data?.message || 'Không thể tạo đơn PO.';
-          Swal.fire({ icon: 'error', title: 'Lỗi', text: msg });
-        }
-      }
-    },
     closeModal(modalId) {
       const modalEl = document.getElementById(modalId);
       if (modalEl) {

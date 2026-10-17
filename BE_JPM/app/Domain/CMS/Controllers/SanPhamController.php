@@ -21,6 +21,19 @@ class SanPhamController extends Controller
         $this->sanPhamService = $sanPhamService;
     }
 
+    public function show($id): JsonResponse
+    {
+        try {
+            $sanPham = $this->sanPhamService->getById($id);
+            return response()->json([
+                'success' => true,
+                'data' => new SanPhamResource($sanPham)
+            ]);
+        } catch (Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 404);
+        }
+    }
+
     public function index(): JsonResponse
     {
         $data = $this->sanPhamService->getAll();

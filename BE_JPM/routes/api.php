@@ -130,10 +130,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::apiResource('admin/banner', BannerController::class);
         Route::apiResource('admin/voucher', VoucherController::class);
 
-        // Quản lý chuỗi cung ứng PO nhập khẩu
-        Route::post('admin/don-hang/{id}/tao-po', [\App\Domain\Sales\Controllers\DonHangController::class, 'convertToPO']);
-        Route::post('admin/don-nhap-hang/gom-po', [\App\Domain\Procurement\Controllers\DonNhapHangController::class, 'gomPO']);
-        Route::apiResource('admin/don-nhap-hang', \App\Domain\Procurement\Controllers\DonNhapHangController::class);
+
 
         // Quản trị Danh mục Kho (Thêm/Sửa/Xóa Kho chứa)
         Route::post('admin/kho', [\App\Domain\Procurement\Controllers\KhoController::class, 'store']);
