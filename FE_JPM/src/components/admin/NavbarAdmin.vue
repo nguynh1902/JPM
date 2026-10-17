@@ -90,6 +90,13 @@ import { useAuthStore } from '../../stores/authStore';
           type: "item"
         },
         {
+          title: "Cấu Hình Hệ Thống",
+          icon: "bx-cog",
+          path: "/admin/cau-hinh-he-thong",
+          roles: ["ADMIN"],
+          type: "item"
+        },
+        {
           title: "Quản Trị & Nhân Sự",
           type: "header",
           roles: ["ADMIN"]
@@ -109,13 +116,6 @@ import { useAuthStore } from '../../stores/authStore';
           title: "Lịch Sử Hoạt Động",
           icon: "bx-history",
           path: "/admin/lich-su-hoat-dong",
-          roles: ["ADMIN"],
-          type: "item"
-        },
-        {
-          title: "Cấu Hình Hệ Thống",
-          icon: "bx-cog",
-          path: "/admin/cau-hinh-he-thong",
           roles: ["ADMIN"],
           type: "item"
         },
