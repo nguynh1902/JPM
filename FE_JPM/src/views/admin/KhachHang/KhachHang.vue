@@ -40,16 +40,15 @@
           >
             Đặt lại
           </button>
-          <div v-if="currentUserRole === 'ADMIN'">
-            <button
-              class="btn btn-primary px-4 shadow-sm text-nowrap"
-              data-bs-toggle="modal"
-              data-bs-target="#modalCustomer"
-              @click="openAddModal"
-            >
-              <i class="bx bx-plus me-1"></i> Thêm Mới
-            </button>
-          </div>
+          <button
+            v-if="canAddCustomer"
+            class="btn btn-primary px-4 shadow-sm text-nowrap"
+            data-bs-toggle="modal"
+            data-bs-target="#modalCustomer"
+            @click="openAddModal"
+          >
+            <i class="bx bx-plus me-1"></i> Thêm Mới
+          </button>
         </div>
       </div>
 
@@ -68,28 +67,28 @@
               <th class="text-center" style="width: 5%">Avatar</th>
               <th style="width: 10%">Mã KH</th>
               <th
-                :style="{ width: currentUserRole === 'ADMIN' ? '20%' : '30%' }"
+                :style="{ width: canManageCustomer ? '20%' : '30%' }"
               >
                 Khách Hàng
               </th>
               <th style="width: 15%">Số điện thoại</th>
               <th style="width: 15%">Email</th>
               <th
-                :style="{ width: currentUserRole === 'ADMIN' ? '10%' : '20%' }"
+                :style="{ width: canManageCustomer ? '10%' : '20%' }"
               >
                 Địa Chỉ
               </th>
               <th
                 class="text-center"
                 style="width: 10%"
-                v-if="currentUserRole === 'ADMIN'"
+                v-if="canManageCustomer"
               >
                 Trạng thái
               </th>
               <th
                 class="text-center"
                 style="width: 10%"
-                v-if="currentUserRole === 'ADMIN'"
+                v-if="canManageCustomer"
               >
                 Hành động
               </th>
@@ -97,14 +96,14 @@
           </thead>
           <tbody class="table-border-bottom-0">
             <tr v-if="isFetching && filteredCustomers.length === 0">
-              <td colspan="9" class="text-center py-5">
+              <td :colspan="canManageCustomer ? 9 : 7" class="text-center py-5">
                 <div class="spinner-border text-primary" role="status">
                   <span class="visually-hidden">Loading...</span>
                 </div>
               </td>
             </tr>
             <tr v-else-if="filteredCustomers.length === 0">
-              <td colspan="9" class="text-center py-5 text-muted">
+              <td :colspan="canManageCustomer ? 9 : 7" class="text-center py-5 text-muted">
                 <i class="bx bx-folder-open text-secondary fs-1 d-block mb-2"></i>
                 Không có dữ liệu
               </td>
@@ -142,7 +141,7 @@
               <td>{{ item.phone }}</td>
               <td class="fw-semibold text-secondary">{{ item.email }}</td>
               <td class="fw-semibold text-secondary">{{ item.address || "N/A" }}</td>
-              <td class="text-center" v-if="currentUserRole === 'ADMIN'">
+              <td class="text-center" v-if="canManageCustomer">
                 <span
                   class="badge badge-custom"
                   :class="
@@ -152,9 +151,10 @@
                   {{ item.status === 1 ? "HOẠT ĐỘNG" : "ĐÃ KHÓA" }}
                 </span>
               </td>
-              <td class="text-center" v-if="currentUserRole === 'ADMIN'">
+              <td class="text-center" v-if="canManageCustomer">
                 <div class="d-flex justify-content-center">
                   <button
+                    v-if="canEditCustomer"
                     type="button"
                     class="action-btn text-primary me-1"
                     @click="openEditModal(item)"
@@ -165,10 +165,11 @@
                     <i class="bx bx-edit-alt"></i>
                   </button>
                   <button
+                    v-if="canLockCustomer"
                     type="button"
                     class="action-btn text-danger"
                     @click="confirmDelete(item)"
-                    title="Xóa"
+                    title="Khóa/Xóa"
                   >
                     <i class="bx bx-trash"></i>
                   </button>
@@ -459,7 +460,7 @@ export default {
         queryClient.invalidateQueries({ queryKey: ["khach-hang"] }),
     });
 
-    return { customers, isFetching, queryClient, deleteMutation, saveMutation };
+    return { authStore, customers, isFetching, queryClient, deleteMutation, saveMutation };
   },
   data() {
     return {
@@ -494,6 +495,18 @@ export default {
     };
   },
   computed: {
+    canAddCustomer() {
+      return this.authStore?.isAdmin || this.authStore?.hasPermission('Thêm Khách hàng');
+    },
+    canEditCustomer() {
+      return this.authStore?.isAdmin || this.authStore?.hasPermission('Sửa Khách hàng');
+    },
+    canLockCustomer() {
+      return this.authStore?.isAdmin || this.authStore?.hasPermission('Khóa Khách hàng');
+    },
+    canManageCustomer() {
+      return this.canEditCustomer || this.canLockCustomer;
+    },
     filteredCustomers() {
       const list = Array.isArray(this.customers) ? this.customers : [];
       return list.filter((m) => {

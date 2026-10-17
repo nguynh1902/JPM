@@ -8,17 +8,14 @@
 
     <div class="row">
       <!-- Cột Form (Thêm/Sửa) -->
-      <div class="col-md-4 mb-4">
+      <div class="col-md-4 mb-4" v-if="showForm">
         <div class="card">
           <div class="card-header border-bottom">
             <h5 class="mb-0 fw-bold text-dark">{{ isEditMode ? 'Cập Nhật Thương Hiệu' : 'Thêm Mới Thương Hiệu' }}</h5>
           </div>
           <div class="card-body pt-4">
             <form @submit.prevent="saveData">
-              
-              
-
-<div class="mb-4">
+              <div class="mb-4">
                 <label for="name" class="form-label fw-medium text-dark">Tên Thương Hiệu <span class="text-danger">*</span></label>
                 <input
                   type="text"
@@ -72,12 +69,11 @@
       </div>
 
       <!-- Cột Bảng (Danh sách) -->
-        <div class="col-md-8 mb-4">
-          <div class="card">
-            <div class="card-header border-bottom d-flex justify-content-between align-items-center">
-              <h5 class="mb-0 fw-bold text-dark">Danh sách Thương Hiệu</h5>
-              
-            </div>
+      <div :class="showForm ? 'col-md-8' : 'col-md-12'" class="mb-4">
+        <div class="card">
+          <div class="card-header border-bottom d-flex justify-content-between align-items-center">
+            <h5 class="mb-0 fw-bold text-dark">Danh sách Thương Hiệu</h5>
+          </div>
 
           <div class="table-responsive text-nowrap custom-scroll" style="height: calc(100vh - 230px); min-height: 400px; overflow-y: auto;">
             <table class="table table-hover mb-0">
@@ -86,21 +82,21 @@
                   <th class="text-center" style="width: 5%">STT</th>
                   <th class="text-center" style="width: 10%">Logo</th>
                   <th style="width: 25%">Mã Thương Hiệu</th>
-                  <th style="width: 30%">Tên Thương Hiệu</th>
+                  <th :style="{ width: canManage ? '30%' : '45%' }">Tên Thương Hiệu</th>
                   <th class="text-center" style="width: 15%">Trạng thái</th>
-                  <th class="text-center" style="width: 15%">Hành động</th>
+                  <th class="text-center" style="width: 15%" v-if="canManage">Hành động</th>
                 </tr>
               </thead>
               <tbody class="table-border-bottom-0">
                 <tr v-if="isPending">
-                  <td colspan="6" class="text-center py-4 text-muted">
+                  <td :colspan="canManage ? 6 : 5" class="text-center py-4 text-muted">
                     <div class="spinner-border text-primary" role="status">
                       <span class="visually-hidden">Loading...</span>
                     </div>
                   </td>
                 </tr>
                 <tr v-else-if="(!brands || brands.length === 0)">
-                  <td colspan="6" class="text-center py-5 text-muted">
+                  <td :colspan="canManage ? 6 : 5" class="text-center py-5 text-muted">
                     <i class="bx bx-folder-open text-secondary fs-1 d-block mb-2"></i>
                     Không có dữ liệu
                   </td>
@@ -121,9 +117,10 @@
                     <span v-if="item.status === 1 || item.status === true" class="badge badge-custom bg-pastel-success">HOẠT ĐỘNG</span>
                     <span v-else class="badge badge-custom bg-pastel-danger">TẠM KHÓA</span>
                   </td>
-                  <td class="text-center">
+                  <td class="text-center" v-if="canManage">
                     <div class="d-flex align-items-center justify-content-center">
                       <button 
+                        v-if="canEdit"
                         type="button" 
                         class="action-btn text-primary me-1" 
                         @click="openEditModal(item)"
@@ -132,6 +129,7 @@
                         <i class="bx bx-edit-alt"></i>
                       </button>
                       <button 
+                        v-if="canDelete"
                         type="button" 
                         class="action-btn text-danger" 
                         @click="confirmDelete(item)" 
@@ -161,6 +159,7 @@ export default { name: 'ThuongHieu' }
 
 <script setup>
 import { ref, computed, watch } from 'vue';
+import { useAuthStore } from '../../../stores/authStore';
 import vSelect from '@vueform/multiselect';
 import axiosClient from '../../../api/axiosClient';
 import Swal from 'sweetalert2';
@@ -169,6 +168,13 @@ import { createToaster } from "@meforma/vue-toaster";
 
 const toaster = createToaster({ position: "top-right", duration: 3000 });
 const queryClient = useQueryClient();
+const authStore = useAuthStore();
+
+const canAdd = computed(() => authStore.isAdmin || authStore.hasPermission('Thêm Động cơ & Thương hiệu') || authStore.hasPermission('Quản lý Model & Động cơ'));
+const canEdit = computed(() => authStore.isAdmin || authStore.hasPermission('Sửa Động cơ & Thương hiệu') || authStore.hasPermission('Quản lý Model & Động cơ'));
+const canDelete = computed(() => authStore.isAdmin || authStore.hasPermission('Xóa Động cơ & Thương hiệu') || authStore.hasPermission('Quản lý Model & Động cơ'));
+const canManage = computed(() => canEdit.value || canDelete.value);
+const showForm = computed(() => canAdd.value || (canEdit.value && isEditMode.value));
 
 // State
 const activeTab = ref('MARINE');

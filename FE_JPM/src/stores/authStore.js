@@ -13,6 +13,71 @@ export const useAuthStore = defineStore("auth", {
     // Trả về true nếu đã đăng nhập (có token)
     isLoggedIn: (state) => !!state.token,
     
+    // Kiểm tra xem User có phải là Super Admin không (Bypass mọi quyền)
+    isAdmin: (state) => {
+      if (!state.user || !state.user.roles) return false;
+      return state.user.roles.some((r) => {
+        const current = String(typeof r === 'string' ? r : (r?.name || '')).toLowerCase().trim();
+        return current === 'admin' || current === 'super admin' || current === 'quản trị viên';
+      });
+    },
+
+    // Kiểm tra xem User có phải là nhân sự nội bộ (Admin hoặc Staff hoặc các vai trò nhân sự)
+    isStaffOrAdmin: (state) => {
+      if (!state.user || !state.user.roles) return false;
+      return state.user.roles.some((r) => {
+        const current = String(typeof r === 'string' ? r : (r?.name || '')).toLowerCase().trim();
+        return current !== 'customer' && current !== 'khách hàng';
+      });
+    },
+
+    // Lấy danh sách toàn bộ Permissions của User
+    userPermissions: (state) => {
+      if (!state.user || !state.user.permissions) return [];
+      return state.user.permissions.map(p => String(typeof p === 'string' ? p : (p?.name || '')).trim());
+    },
+
+    // Kiểm tra xem User có quyền cụ thể nào không (Admin luôn có quyền)
+    hasPermission: (state) => (permissionName) => {
+      if (!state.user) return false;
+      // Admin tối cao luôn có mọi quyền
+      if (state.user.roles && state.user.roles.some(r => {
+        const cur = String(typeof r === 'string' ? r : (r?.name || '')).toLowerCase().trim();
+        return cur === 'admin' || cur === 'super admin';
+      })) {
+        return true;
+      }
+      if (!state.user.permissions || !Array.isArray(state.user.permissions)) return false;
+      const target = String(permissionName).toLowerCase().trim();
+      return state.user.permissions.some(p => {
+        const cur = String(typeof p === 'string' ? p : (p?.name || '')).toLowerCase().trim();
+        return cur === target;
+      });
+    },
+
+    // Kiểm tra xem User có ít nhất 1 trong danh sách quyền không
+    hasAnyPermission: (state) => (permissionList) => {
+      if (!state.user) return false;
+      // Admin tối cao luôn có mọi quyền
+      if (state.user.roles && state.user.roles.some(r => {
+        const cur = String(typeof r === 'string' ? r : (r?.name || '')).toLowerCase().trim();
+        return cur === 'admin' || cur === 'super admin';
+      })) {
+        return true;
+      }
+      if (!state.user.permissions || !Array.isArray(state.user.permissions)) return false;
+      if (!Array.isArray(permissionList) || permissionList.length === 0) return true;
+      
+      const userPerms = state.user.permissions.map(p => 
+        String(typeof p === 'string' ? p : (p?.name || '')).toLowerCase().trim()
+      );
+
+      return permissionList.some(item => {
+        const target = String(item).toLowerCase().trim();
+        return userPerms.includes(target);
+      });
+    },
+    
     // Kiểm tra xem User có quyền/role gì (dùng để chặn Route)
     hasRole: (state) => (roleName) => {
       if (!state.user || !state.user.roles) return false;

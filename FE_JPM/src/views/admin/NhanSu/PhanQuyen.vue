@@ -66,7 +66,12 @@
             <tr v-else v-for="(item, index) in filteredRoles" :key="item.id">
               <td class="text-center"><strong>{{ index + 1 }}</strong></td>
               <td>
-                <span class="fw-bold text-primary text-capitalize">{{ item.name }}</span>
+                <span 
+                  class="fw-bold text-capitalize"
+                  :class="(item.is_system || item.name.toLowerCase() === 'admin') ? 'text-danger' : 'text-primary'"
+                >
+                  {{ item.name }}
+                </span>
               </td>
               <td><span :class="!item.description ? 'text-muted' : 'text-secondary'">{{ item.description || "N/A" }}</span></td>
               <td class="text-center">
@@ -89,6 +94,7 @@
                     <i class="bx bx-edit-alt"></i>
                   </button>
                   <button 
+                    v-if="!item.is_system && item.name.toLowerCase() !== 'admin'"
                     type="button"
                     class="action-btn text-danger" 
                     @click="confirmDelete(item)" 
@@ -96,6 +102,9 @@
                   >
                     <i class="bx bx-trash"></i>
                   </button>
+                  <span v-else class="text-muted ms-1" title="Vai trò hệ thống được bảo vệ">
+                    <i class="bx bx-lock-alt text-secondary" style="font-size: 1.1rem;"></i>
+                  </span>
                 </div>
               </td>
             </tr>
@@ -128,8 +137,12 @@
                       class="form-control"
                       placeholder="VD: Quản lý Kho"
                       v-model="formData.name"
+                      :disabled="isEditMode && (formData.is_system || formData.name.toLowerCase() === 'admin')"
                       required
                     />
+                    <small v-if="isEditMode && (formData.is_system || formData.name.toLowerCase() === 'admin')" class="text-primary mt-1 d-block fw-semibold">
+                      <i class="bx bx-shield-quarter me-1"></i> Vai trò Quản trị viên hệ thống (Super Admin).
+                    </small>
                   </div>
                   <div class="col-md-5 mb-3">
                     <label class="form-label fw-medium text-dark">Trạng Thái <span class="text-danger">*</span></label>
@@ -137,6 +150,7 @@
                       v-model="formData.status"
                       :options="statusOptions"
                       :can-clear="false"
+                      :disabled="isEditMode && (formData.is_system || formData.name.toLowerCase() === 'admin')"
                     />
                   </div>
                 </div>
@@ -157,7 +171,7 @@
 
               <!-- Danh sách quyền hạn -->
               <h6 class="mt-3 fw-bold text-dark text-uppercase fs-6">Thiết lập Quyền Hạn (Permissions)</h6>
-              <div class="border rounded p-3 bg-lighter" style="max-height: 350px; overflow-y: auto;">
+              <div class="border rounded p-3 bg-lighter" style="max-height: 400px; overflow-y: auto;">
                 
                 <div class="mb-4" v-for="module in permissionModules" :key="module.id">
                   <div class="d-flex align-items-center mb-2 border-bottom pb-2">
@@ -184,7 +198,7 @@
                           :id="'perm_' + perm.id" 
                           v-model="formData.permissions"
                         >
-                        <label class="form-check-label text-dark" :for="'perm_' + perm.id">
+                        <label class="form-check-label text-dark" :for="'perm_' + perm.id" style="cursor: pointer;">
                           {{ perm.name }}
                         </label>
                       </div>
@@ -320,7 +334,7 @@ export default {
   },
   methods: {
     isModuleFullyChecked(module) {
-      if (!this.formData.permissions) return false;
+      if (!this.formData.permissions || !module.permissions || module.permissions.length === 0) return false;
       return module.permissions.every(p => this.formData.permissions.includes(p.id));
     },
     toggleModule(module, isChecked) {

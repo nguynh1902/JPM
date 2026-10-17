@@ -46,7 +46,7 @@
           <button class="btn btn-secondary text-nowrap" @click="resetFilters">
             Đặt lại
           </button>
-          <button class="btn btn-primary text-nowrap" data-bs-toggle="modal" data-bs-target="#modalSoDo" @click="openAddModal">
+          <button v-if="canAdd" class="btn btn-primary text-nowrap" data-bs-toggle="modal" data-bs-target="#modalSoDo" @click="openAddModal">
             <i class="bx bx-plus me-1"></i> Thêm Mới
           </button>
         </div>
@@ -58,16 +58,16 @@
             <tr>
               <th class="text-center" style="width: 5%">STT</th>
               <th class="text-center" style="width: 10%">Hình Sơ Đồ</th>
-              <th :style="{ width: currentUserRole === 'ADMIN' ? '25%' : '35%' }">Nhóm Phụ Tùng</th>
+              <th :style="{ width: canManage ? '25%' : '35%' }">Nhóm Phụ Tùng</th>
               <th style="width: 25%">Model Động Cơ</th>
                 <th style="width: 15%">Thương Hiệu / Loại</th>
-              <th class="text-center" style="width: 10%" v-if="currentUserRole === 'ADMIN'">Trạng thái</th>
-              <th class="text-center" :style="{ width: currentUserRole === 'ADMIN' ? '10%' : '15%' }">Hành động</th>
+              <th class="text-center" style="width: 10%" v-if="canManage">Trạng thái</th>
+              <th class="text-center" :style="{ width: canManage ? '10%' : '15%' }" v-if="canManage">Hành động</th>
             </tr>
           </thead>
           <tbody class="table-border-bottom-0">
             <tr v-if="filteredDiagrams.length === 0">
-              <td :colspan="currentUserRole === 'ADMIN' ? 7 : 6" class="text-center py-5 text-muted">
+              <td :colspan="canManage ? 7 : 5" class="text-center py-5 text-muted">
                 <i class="bx bx-folder-open text-secondary fs-1 d-block mb-2"></i>
                 Không có dữ liệu
               </td>
@@ -103,33 +103,32 @@
                   </div>
                 </td>
 
-              <td class="text-center align-middle" v-if="currentUserRole === 'ADMIN'">
+              <td class="text-center align-middle" v-if="canManage">
                 <span v-if="item.trang_thai === 1" class="badge badge-custom bg-pastel-success">HOẠT ĐỘNG</span>
                 <span v-else class="badge badge-custom bg-pastel-danger">TẠM KHÓA</span>
               </td>
-              <td class="text-center align-middle">
+              <td class="text-center align-middle" v-if="canManage">
                 <div class="d-flex align-items-center justify-content-center">
-                  <template v-if="currentUserRole === 'ADMIN'">
-                    
-                    <button 
-                      type="button" 
-                      class="action-btn text-primary me-1" 
-                      @click="openEditModal(item)"
-                      data-bs-toggle="modal" 
-                      data-bs-target="#modalSoDo"
-                      title="Sửa"
-                    >
-                      <i class="bx bx-edit-alt"></i>
-                    </button>
-                    <button 
-                      type="button" 
-                      class="action-btn text-danger" 
-                      @click="confirmDelete(item)"
-                      title="Xóa"
-                    >
-                      <i class="bx bx-trash"></i>
-                    </button>
-                  </template>
+                  <button 
+                    v-if="canEdit"
+                    type="button" 
+                    class="action-btn text-primary me-1" 
+                    @click="openEditModal(item)"
+                    data-bs-toggle="modal" 
+                    data-bs-target="#modalSoDo"
+                    title="Sửa"
+                  >
+                    <i class="bx bx-edit-alt"></i>
+                  </button>
+                  <button 
+                    v-if="canDelete"
+                    type="button" 
+                    class="action-btn text-danger" 
+                    @click="confirmDelete(item)" 
+                    title="Xóa"
+                  >
+                    <i class="bx bx-trash"></i>
+                  </button>
                 </div>
               </td>
             </tr>
@@ -296,6 +295,7 @@ import vSelect from '@vueform/multiselect';
 import axiosClient from '../../../api/axiosClient';
 import Swal from 'sweetalert2';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/vue-query';
+import { useAuthStore } from '../../../stores/authStore';
 
 export default {
   name: "SoDoPhuTung",
@@ -338,6 +338,18 @@ export default {
     }
   },
   computed: {
+    canAdd() {
+      return this.authStore?.isAdmin || this.authStore?.hasPermission('Thêm Phụ tùng');
+    },
+    canEdit() {
+      return this.authStore?.isAdmin || this.authStore?.hasPermission('Sửa Phụ tùng');
+    },
+    canDelete() {
+      return this.authStore?.isAdmin || this.authStore?.hasPermission('Xóa Phụ tùng');
+    },
+    canManage() {
+      return this.canEdit || this.canDelete;
+    },
     isGlobalFetching() {
       return this.isFetchingBrands || this.isFetchingTypes || this.isFetchingModels || this.isFetchingNhom || this.isFetchingPhuTungs || this.isFetchingDiagrams;
     },
@@ -435,6 +447,7 @@ export default {
   },
   setup() {
     const queryClient = useQueryClient();
+    const authStore = useAuthStore();
     
     const fetchApi = async (url) => (await axiosClient.get(url)).data;
     
@@ -483,7 +496,7 @@ export default {
         queryClient.invalidateQueries({ queryKey: ['so-do'] });
       }
     });
-    return { queryClient, brands, isFetchingBrands, equipmentTypes, isFetchingTypes, engineModels, isFetchingModels, nhomPhuTungs, isFetchingNhom, phuTungs, isFetchingPhuTungs, diagrams, isFetchingDiagrams , deleteMutation, saveMutation };
+    return { authStore, queryClient, brands, isFetchingBrands, equipmentTypes, isFetchingTypes, engineModels, isFetchingModels, nhomPhuTungs, isFetchingNhom, phuTungs, isFetchingPhuTungs, diagrams, isFetchingDiagrams , deleteMutation, saveMutation };
   },
   methods: {
     getImageUrl(path) {

@@ -322,10 +322,8 @@ export default {
         const cartStore = useCartStore();
         await cartStore.fetchFromCloud();
 
-        if (authStore.hasRole('admin')) {
+        if (authStore.isStaffOrAdmin) {
           this.$router.push('/admin/dashboard');
-        } else if (authStore.hasRole('staff')) {
-          this.$router.push('/staff/dashboard');
         } else {
           this.$router.push('/');
         }

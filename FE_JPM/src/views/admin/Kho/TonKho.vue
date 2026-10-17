@@ -26,7 +26,7 @@
           <button class="btn btn-secondary text-nowrap" @click="resetFilters">
             Đặt lại
           </button>
-          <button v-if="currentUserRole === 'ADMIN'" class="btn btn-primary text-nowrap shadow-sm" @click="openAddModal">
+          <button v-if="canUpdateInventory" class="btn btn-primary text-nowrap shadow-sm" @click="openAddModal">
             <i class="bx bx-plus me-1"></i> Thêm Tồn Kho
           </button>
         </div>
@@ -38,23 +38,23 @@
             <tr>
               <th class="text-center text-uppercase" style="width: 5%">STT</th>
               <th class="text-center text-uppercase" style="width: 10%">Hình ảnh</th>
-              <th class="text-uppercase" :style="{ width: currentUserRole === 'ADMIN' ? '35%' : '45%' }">Sản Phẩm</th>
+              <th class="text-uppercase" :style="{ width: canUpdateInventory ? '35%' : '45%' }">Sản Phẩm</th>
               <th class="text-uppercase" style="width: 20%">Kho Chứa</th>
               <th class="text-center text-uppercase" style="width: 10%">SL Tồn</th>
               <th class="text-center text-uppercase" style="width: 10%">Chờ giao</th>
-              <th class="text-center text-uppercase" style="width: 10%" v-if="currentUserRole === 'ADMIN'">Hành động</th>
+              <th class="text-center text-uppercase" style="width: 10%" v-if="canUpdateInventory">Hành động</th>
             </tr>
           </thead>
           <tbody class="table-border-bottom-0">
             <tr v-if="isLoading">
-              <td :colspan="currentUserRole === 'ADMIN' ? 7 : 6" class="text-center py-4 text-muted">
+              <td :colspan="canUpdateInventory ? 7 : 6" class="text-center py-4 text-muted">
                 <div class="spinner-border text-primary" role="status">
                   <span class="visually-hidden">Loading...</span>
                 </div>
               </td>
             </tr>
             <tr v-else-if="filteredInventory.length === 0">
-              <td :colspan="currentUserRole === 'ADMIN' ? 7 : 6" class="text-center py-5 text-muted">
+              <td :colspan="canUpdateInventory ? 7 : 6" class="text-center py-5 text-muted">
                 <i class="bx bx-folder-open text-secondary fs-1 d-block mb-2"></i>
                 Không có dữ liệu
               </td>
@@ -80,7 +80,7 @@
               <td class="text-center">
                 <span class="fw-bold fs-6" :class="item.so_luong_cho_giao > 0 ? 'text-warning' : 'text-secondary'">{{ item.so_luong_cho_giao }}</span>
               </td>
-              <td class="text-center" v-if="currentUserRole === 'ADMIN'">
+              <td class="text-center" v-if="canUpdateInventory">
                 <div class="d-flex align-items-center justify-content-center gap-2">
                     <button type="button" class="action-btn text-primary" @click="openEditForm(item)" title="Điều chỉnh số lượng">
                       <i class="bx bx-edit-alt"></i>
@@ -217,6 +217,7 @@ import vSelect from '@vueform/multiselect';
 import axiosClient from '../../../api/axiosClient';
 import Swal from 'sweetalert2';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/vue-query';
+import { useAuthStore } from '../../../stores/authStore';
 import { createToaster } from "@meforma/vue-toaster";
 
 export default {
@@ -226,6 +227,7 @@ export default {
   },
   setup() {
     const queryClient = useQueryClient();
+    const authStore = useAuthStore();
     const toaster = createToaster({ position: "top-right", duration: 3000 });
 
     const fetchTonKho = async () => {
@@ -316,7 +318,7 @@ export default {
       }
     });
 
-    return { inventory, isLoading, warehouses, sanPhams, phuTungs, queryClient, deleteMutation, saveMutation, toaster };
+    return { authStore, inventory, isLoading, warehouses, sanPhams, phuTungs, queryClient, deleteMutation, saveMutation, toaster };
   },
   data() {
     return {
@@ -331,6 +333,9 @@ export default {
     };
   },
   computed: {
+    canUpdateInventory() {
+      return this.authStore?.isAdmin || this.authStore?.hasPermission('Cập nhật Tồn kho');
+    },
     productOptions() {
       return [...(this.sanPhams || []), ...(this.phuTungs || [])];
     },

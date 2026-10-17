@@ -58,7 +58,7 @@
             <button class="btn btn-secondary text-nowrap" @click="resetFilters">
               Đặt lại
             </button>
-            <button v-if="currentUserRole === 'ADMIN'" class="btn btn-primary text-nowrap" data-bs-toggle="modal" data-bs-target="#modalModel" @click="openAddModal">
+            <button v-if="canAdd" class="btn btn-primary text-nowrap" data-bs-toggle="modal" data-bs-target="#modalModel" @click="openAddModal">
               <i class="bx bx-plus me-1"></i> Thêm Mới
             </button>
           </div>
@@ -76,19 +76,19 @@
                 <th class="text-center" style="width: 8%">Mã Lực</th>
                 <th class="text-center" style="width: 7%">Loại Thì</th>
                 <th class="text-center" style="width: 7%">Trạng thái</th>
-                <th class="text-center" style="width: 5%" v-if="currentUserRole === 'ADMIN'">Hành động</th>
+                <th class="text-center" style="width: 5%" v-if="canManage">Hành động</th>
             </tr>
           </thead>
           <tbody class="table-border-bottom-0">
             <tr v-if="isPending">
-              <td :colspan="currentUserRole === 'ADMIN' ? 9 : 8" class="text-center py-4 text-muted">
+              <td :colspan="canManage ? 9 : 8" class="text-center py-4 text-muted">
                 <div class="spinner-border text-primary" role="status">
                   <span class="visually-hidden">Loading...</span>
                 </div>
               </td>
             </tr>
             <tr v-else-if="filteredModels.length === 0">
-              <td :colspan="currentUserRole === 'ADMIN' ? 9 : 8" class="text-center py-5 text-muted">
+              <td :colspan="canManage ? 9 : 8" class="text-center py-5 text-muted">
                 <i class="bx bx-folder-open text-secondary fs-1 d-block mb-2"></i>
                 Không có dữ liệu
               </td>
@@ -112,10 +112,11 @@
                 <span v-if="item.trang_thai === 1 || item.trang_thai === true" class="badge badge-custom text-uppercase bg-pastel-success">HOẠT ĐỘNG</span>
                 <span v-else class="badge badge-custom text-uppercase bg-pastel-danger">TẠM KHÓA</span>
               </td>
-              <td class="text-center" v-if="currentUserRole === 'ADMIN'">
+              <td class="text-center" v-if="canManage">
                 <div class="d-flex align-items-center justify-content-center">
                   
                   <button 
+                    v-if="canEdit"
                     type="button"
                     class="action-btn text-primary me-1" 
                     @click="openEditModal(item)" 
@@ -126,6 +127,7 @@
                     <i class="bx bx-edit-alt"></i>
                   </button>
                   <button 
+                    v-if="canDelete"
                     type="button"
                     class="action-btn text-danger" 
                     @click="confirmDelete(item)" 
@@ -317,13 +319,13 @@ export default {
 
     return { 
       queryClient, models, isFetchingModels, brands, isFetchingBrands, 
-      equipmentTypes, isFetchingTypes, deleteMutation, saveMutation, toaster 
+      equipmentTypes, isFetchingTypes, deleteMutation, saveMutation, toaster,
+      authStore
     };
   },
   data() {
     return {
       activeTab: 'MARINE',
-      currentUserRole: JSON.parse(localStorage.getItem('auth_user') || '{}').roles?.[0]?.toUpperCase() || 'ADMIN',
       filters: {
         search: "",
         thuong_hieu_id: null,
@@ -342,12 +344,23 @@ export default {
         nam_san_xuat: null,
         ma_luc: "",
         loai_nhip: null,
-        
         trang_thai: 1
       }
     };
   },
   computed: {
+    canAdd() {
+      return this.authStore.isAdmin || this.authStore.hasPermission('Thêm Động cơ & Thương hiệu') || this.authStore.hasPermission('Quản lý Model & Động cơ');
+    },
+    canEdit() {
+      return this.authStore.isAdmin || this.authStore.hasPermission('Sửa Động cơ & Thương hiệu') || this.authStore.hasPermission('Quản lý Model & Động cơ');
+    },
+    canDelete() {
+      return this.authStore.isAdmin || this.authStore.hasPermission('Xóa Động cơ & Thương hiệu') || this.authStore.hasPermission('Quản lý Model & Động cơ');
+    },
+    canManage() {
+      return this.canEdit || this.canDelete;
+    },
     isFetching() {
       return this.isFetchingModels || this.isFetchingBrands || this.isFetchingTypes;
     },

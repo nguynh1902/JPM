@@ -87,8 +87,8 @@
                       </td>
                       <td class="text-center">
                         <div class="d-flex justify-content-center gap-1">
-                            <button type="button" class="btn btn-icon action-btn text-primary" @click="handleAction(item)" data-bs-toggle="modal" :data-bs-target="item._type === 'quote' ? '#quoteModal' : '#orderModal'" title="Xử lý"><i class="bx bx-edit-alt"></i></button>
-                            <button type="button" class="btn btn-icon action-btn text-danger" @click="handleDelete(item)" title="Xóa"><i class="bx bx-trash"></i></button>
+                            <button type="button" class="btn btn-icon action-btn text-primary" @click="handleAction(item)" data-bs-toggle="modal" :data-bs-target="item._type === 'quote' ? '#quoteModal' : '#orderModal'" :title="canProcessOrders ? 'Xử lý' : 'Xem chi tiết'"><i :class="canProcessOrders ? 'bx bx-edit-alt' : 'bx bx-show'"></i></button>
+                            <button v-if="canDeleteOrders" type="button" class="btn btn-icon action-btn text-danger" @click="handleDelete(item)" title="Xóa"><i class="bx bx-trash"></i></button>
                           </div>
                       </td>
                     </tr>
@@ -164,7 +164,7 @@
                       <td class="text-center">
                         <div class="d-flex justify-content-center gap-1">
                             <button type="button" class="btn btn-icon action-btn text-secondary" @click="handleAction(item)" data-bs-toggle="modal" :data-bs-target="item._type === 'quote' ? '#quoteModal' : '#orderModal'" title="Xem chi tiết"><i class="bx bx-show"></i></button>
-                            <button type="button" class="btn btn-icon action-btn text-danger" @click="handleDelete(item)" title="Xóa"><i class="bx bx-trash"></i></button>
+                            <button v-if="canDeleteOrders" type="button" class="btn btn-icon action-btn text-danger" @click="handleDelete(item)" title="Xóa"><i class="bx bx-trash"></i></button>
                           </div>
                       </td>
                     </tr>
@@ -308,16 +308,16 @@
             </div>
             <div class="modal-footer border-top py-2 mt-2 d-flex justify-content-between align-items-center">
               <div>
-                <button type="button" class="btn btn-success px-3 me-2 shadow-sm" v-if="selectedQuote && selectedQuote.status === 1 && !isQuoteReadOnly" @click.prevent="copyMagicLink">
+                <button type="button" class="btn btn-success px-3 me-2 shadow-sm" v-if="selectedQuote && selectedQuote.status === 1 && !isQuoteReadOnly && canProcessOrders" @click.prevent="copyMagicLink">
                   <i class="bx bx-link me-1"></i> Copy Link Zalo
                 </button>
-                <button type="button" class="btn btn-info px-3 text-white shadow-sm" v-if="selectedQuote && selectedQuote.status === 1 && !isQuoteReadOnly" @click.prevent="adminChotDon">
+                <button type="button" class="btn btn-info px-3 text-white shadow-sm" v-if="selectedQuote && selectedQuote.status === 1 && !isQuoteReadOnly && canProcessOrders" @click.prevent="adminChotDon">
                   <i class="bx bx-check-double me-1"></i> Khách Đã Chốt (Tạo Đơn)
                 </button>
               </div>
               <div>
                 <button type="button" class="btn btn-outline-secondary px-4 me-2" data-bs-dismiss="modal">Đóng</button>
-                <button type="submit" class="btn btn-primary px-4 shadow-sm" v-if="selectedQuote && !isQuoteReadOnly">Lưu Báo Giá</button>
+                <button type="submit" class="btn btn-primary px-4 shadow-sm" v-if="selectedQuote && !isQuoteReadOnly && canProcessOrders">Lưu Báo Giá</button>
               </div>
             </div>
           </form>
@@ -483,7 +483,7 @@
           </div>
           <div class="modal-footer border-top py-3 mt-2">
               <button type="button" class="btn btn-outline-secondary px-4" data-bs-dismiss="modal">Đóng</button>
-              <button type="button" class="btn btn-primary px-4 shadow-sm" @click="saveOrder" v-if="!isOrderReadOnly">Lưu Thay Đổi</button>
+              <button type="button" class="btn btn-primary px-4 shadow-sm" @click="saveOrder" v-if="!isOrderReadOnly && canEditOrders">Lưu Thay Đổi</button>
               <button type="button" class="btn btn-primary px-4 shadow-sm">
                 <i class="bx bx-printer me-1"></i> In Hóa Đơn
               </button>
@@ -498,6 +498,7 @@
 import vSelect from '@vueform/multiselect';
 import axiosClient from '../../../api/axiosClient';
 import { useQuery, useQueryClient, useMutation } from '@tanstack/vue-query';
+import { useAuthStore } from '../../../stores/authStore';
 import Swal from 'sweetalert2';
 
 export default {
@@ -507,6 +508,7 @@ export default {
   },
   setup() {
     const queryClient = useQueryClient();
+    const authStore = useAuthStore();
     
     const { data: rawOrders, isFetching: isFetchingOrders } = useQuery({
       queryKey: ['don-hang'],
@@ -561,7 +563,7 @@ export default {
       onSettled: () => queryClient.invalidateQueries({ queryKey: ['don-hang'] })
     });
 
-    return { queryClient, rawOrders, rawQuotes, isFetchingOrders, isFetchingQuotes, deleteQuoteMutation, deleteOrderMutation, saveQuoteMutation, saveOrderMutation };
+    return { authStore, queryClient, rawOrders, rawQuotes, isFetchingOrders, isFetchingQuotes, deleteQuoteMutation, deleteOrderMutation, saveQuoteMutation, saveOrderMutation };
   },
   data() {
     return {
@@ -573,6 +575,21 @@ export default {
     };
   },
   computed: {
+    canViewOrders() {
+      return this.authStore?.isAdmin || this.authStore?.hasPermission('Xem Đơn hàng');
+    },
+    canApproveOrders() {
+      return this.authStore?.isAdmin || this.authStore?.hasPermission('Duyệt Đơn hàng');
+    },
+    canEditOrders() {
+      return this.authStore?.isAdmin || this.authStore?.hasPermission('Sửa Đơn hàng');
+    },
+    canDeleteOrders() {
+      return this.authStore?.isAdmin || this.authStore?.hasPermission('Xóa Đơn hàng');
+    },
+    canProcessOrders() {
+      return this.authStore?.isAdmin || this.canApproveOrders || this.canEditOrders;
+    },
     isQuoteReadOnly() {
       return this.selectedQuote && this.selectedQuote.status >= 2;
     },

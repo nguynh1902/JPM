@@ -51,7 +51,7 @@
             Đặt lại
           </button>
           <button
-            v-if="currentUserRole === 'ADMIN'"
+            v-if="canAdd"
             class="btn btn-primary text-nowrap"
             data-bs-toggle="modal"
             data-bs-target="#modalPhuTung"
@@ -80,7 +80,7 @@
               <th
                 class="text-center"
                 style="width: 10%"
-                v-if="currentUserRole === 'ADMIN'"
+                v-if="canManage"
               >
                 Hành động
               </th>
@@ -89,7 +89,7 @@
           <tbody class="table-border-bottom-0">
             <tr v-if="isPending">
               <td
-                :colspan="currentUserRole === 'ADMIN' ? 9 : 8"
+                :colspan="canManage ? 9 : 8"
                 class="text-center py-5"
               >
                 <div class="spinner-border text-primary" role="status">
@@ -99,7 +99,7 @@
             </tr>
             <tr v-else-if="filteredPhuTung.length === 0">
               <td
-                :colspan="currentUserRole === 'ADMIN' ? 9 : 8"
+                :colspan="canManage ? 9 : 8"
                 class="text-center py-5 text-muted"
               >
                 <i class="bx bx-folder-open text-secondary fs-1 d-block mb-2"></i>
@@ -174,10 +174,11 @@
               </td>
               <td
                 class="text-center align-middle"
-                v-if="currentUserRole === 'ADMIN'"
+                v-if="canManage"
               >
                 <div class="d-flex align-items-center justify-content-center">
                   <button
+                    v-if="canEdit"
                     type="button"
                     class="action-btn text-primary me-1"
                     @click="openEditModal(item)"
@@ -188,6 +189,7 @@
                     <i class="bx bx-edit-alt"></i>
                   </button>
                   <button
+                    v-if="canDelete"
                     type="button"
                     class="action-btn text-danger"
                     @click="confirmDelete(item)"
@@ -596,6 +598,7 @@ export default {
 
     return {
       queryClient,
+      authStore,
       rawPhuTungList,
       isFetchingPhuTungs,
       rawThuongHieuList,
@@ -643,6 +646,18 @@ export default {
     };
   },
   computed: {
+    canAdd() {
+      return this.authStore.isAdmin || this.authStore.hasPermission('Thêm Phụ tùng');
+    },
+    canEdit() {
+      return this.authStore.isAdmin || this.authStore.hasPermission('Sửa Phụ tùng');
+    },
+    canDelete() {
+      return this.authStore.isAdmin || this.authStore.hasPermission('Xóa Phụ tùng');
+    },
+    canManage() {
+      return this.canEdit || this.canDelete;
+    },
     isFetching() {
       return (
         this.isFetchingPhuTungs || this.isFetchingBrands || this.isFetchingNhom
