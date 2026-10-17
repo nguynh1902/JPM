@@ -15,8 +15,6 @@ class DongCoModelResource extends JsonResource
             'loai_dong_co_id' => $this->loai_dong_co_id,
             'ma_model' => $this->ma_model,
             'ten_model' => $this->ten_model,
-            'hinh_anh' => $this->hinh_anh,
-            'hinh_anh_url' => $this->hinh_anh ? asset('storage/' . $this->hinh_anh) : null,
             'nam_san_xuat' => $this->nam_san_xuat,
             'ma_luc' => $this->ma_luc,
             'loai_nhip' => $this->loai_nhip,

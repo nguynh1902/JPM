@@ -48,9 +48,6 @@ class DongCoModelService
         DB::beginTransaction();
         try {
             $model = $this->getById($id);
-            if (array_key_exists('hinh_anh', $data) && $model->hinh_anh) {
-                Storage::disk('public')->delete($model->hinh_anh);
-            }
             $model->update($data);
             $this->clearPublicCache();
             DB::commit();
@@ -68,9 +65,6 @@ class DongCoModelService
             $model = $this->getById($id);
             if ($model->phuTungs()->exists()) {
                 throw new Exception("Không thể xóa! Model này đang được sử dụng bởi các Phụ tùng.");
-            }
-            if ($model->hinh_anh) {
-                Storage::disk('public')->delete($model->hinh_anh);
             }
             $deleted = $model->delete();
             $this->clearPublicCache();

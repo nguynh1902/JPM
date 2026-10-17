@@ -18,7 +18,6 @@ class StoreDongCoModelRequest extends FormRequest
             'loai_dong_co_id' => 'required|exists:loai_dong_cos,id',
             'ma_model' => 'required|string|max:255|unique:dong_co_models,ma_model',
             'ten_model' => 'required|string|max:255',
-            'hinh_anh' => 'nullable|file|image|mimes:jpeg,png,jpg,webp|max:2048',
             'nam_san_xuat' => 'nullable|integer',
             'ma_luc' => 'nullable|integer',
             'loai_nhip' => 'nullable|string|max:255',

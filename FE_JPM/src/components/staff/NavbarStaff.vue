@@ -2,12 +2,12 @@
   <!-- Menu Nhân Viên (Staff Sidebar - Chuẩn 100% Sneat Admin) -->
   <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
     <div class="app-brand demo py-3 position-relative" style="height: auto; padding-left: 1rem; padding-right: 1rem;">
-      <router-link to="/staff/ho-so" class="d-flex align-items-center w-100 text-decoration-none" title="Xem Hồ sơ cá nhân">
-        <div class="avatar avatar-online me-3" style="width: 45px; height: 45px; min-width: 45px;">
-          <img :src="userAvatar" alt="user-avatar" class="w-100 h-100 rounded-circle shadow-sm" style="object-fit: cover; border: 2px solid #fff;" />
+      <router-link to="/staff/ho-so" class="d-flex align-items-center w-100 text-decoration-none p-2 rounded user-profile-box" title="Xem Hồ sơ cá nhân">
+        <div class="avatar avatar-online me-3" style="width: 44px; height: 44px; min-width: 44px;">
+          <img :src="userAvatar" alt="user-avatar" class="w-100 h-100 rounded-circle shadow-sm" style="object-fit: cover; border: 2px solid #e7e7ff;" />
         </div>
         <div class="d-flex flex-column align-items-start overflow-hidden">
-          <span class="fw-bold text-body text-truncate w-100" style="font-size: 15px; line-height: 1.2;">{{ userName }}</span>
+          <span class="fw-bold text-dark text-truncate w-100" style="font-size: 15px; line-height: 1.2;">{{ userName }}</span>
           <small class="text-muted" style="font-size: 12px;">{{ roleName }}</small>
         </div>
       </router-link>
@@ -164,6 +164,14 @@ export default {
       const store = useAuthStore();
       if (!store.user || !store.user.roles || store.user.roles.length === 0) return 'Nhân viên';
       return store.user.roles[0];
+    },
+    displayRoleName() {
+      const store = useAuthStore();
+      if (!store.user || !store.user.roles || store.user.roles.length === 0) return 'Nhân Viên';
+      const role = store.user.roles[0];
+      if (role.toLowerCase() === 'admin') return 'Quản Trị Viên';
+      if (role.toLowerCase() === 'staff') return 'Nhân Viên';
+      return role;
     }
   },
   methods: {

@@ -46,9 +46,6 @@ class DongCoModelController extends Controller
     {
         try {
             $data = $request->validated();
-            if ($request->hasFile('hinh_anh')) {
-                $data['hinh_anh'] = $request->file('hinh_anh')->store('dong_co_models', 'public');
-            }
             $model = $this->DongCoModelService->create($data);
             $model->load(['thuongHieu', 'loaiDongCo']);
             return response()->json([
@@ -65,9 +62,6 @@ class DongCoModelController extends Controller
     {
         try {
             $data = $request->validated();
-            if ($request->hasFile('hinh_anh')) {
-                $data['hinh_anh'] = $request->file('hinh_anh')->store('dong_co_models', 'public');
-            }
             $model = $this->DongCoModelService->update($id, $data);
             return response()->json([
                 'success' => true,

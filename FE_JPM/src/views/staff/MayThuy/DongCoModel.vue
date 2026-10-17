@@ -69,39 +69,32 @@
           <thead>
             <tr>
               <th class="text-center" style="width: 5%">STT</th>
-                <th class="text-center" style="width: 8%">Hình Ảnh</th>
-                <th style="width: 27%">Model Động Cơ</th>
-                <th style="width: 12%">Thương Hiệu</th>
-                <th style="width: 13%">Loại Động Cơ</th>
-                <th class="text-center" style="width: 7%">Năm</th>
+                <th style="width: 32%">Model Động Cơ</th>
+                <th style="width: 14%">Thương Hiệu</th>
+                <th style="width: 14%">Loại Động Cơ</th>
+                <th class="text-center" style="width: 8%">Năm</th>
                 <th class="text-center" style="width: 8%">Mã Lực</th>
-                <th class="text-center" style="width: 8%">Loại Thì</th>
+                <th class="text-center" style="width: 7%">Loại Thì</th>
                 <th class="text-center" style="width: 7%">Trạng thái</th>
                 <th class="text-center" style="width: 5%" v-if="currentUserRole === 'ADMIN'">Hành động</th>
             </tr>
           </thead>
           <tbody class="table-border-bottom-0">
             <tr v-if="isPending">
-              <td :colspan="currentUserRole === 'ADMIN' ? 10 : 9" class="text-center py-4 text-muted">
+              <td :colspan="currentUserRole === 'ADMIN' ? 9 : 8" class="text-center py-4 text-muted">
                 <div class="spinner-border text-primary" role="status">
                   <span class="visually-hidden">Loading...</span>
                 </div>
               </td>
             </tr>
             <tr v-else-if="filteredModels.length === 0">
-              <td :colspan="currentUserRole === 'ADMIN' ? 10 : 9" class="text-center py-5 text-muted">
+              <td :colspan="currentUserRole === 'ADMIN' ? 9 : 8" class="text-center py-5 text-muted">
                 <i class="bx bx-folder-open text-secondary fs-1 d-block mb-2"></i>
                 Không có dữ liệu
               </td>
             </tr>
             <tr v-for="(item, index) in filteredModels" :key="item.id" v-else>
               <td class="text-center"><strong>{{ index + 1 }}</strong></td>
-              <td class="text-center">
-                <div class="d-inline-flex justify-content-center align-items-center border rounded bg-white" style="width: 60px; height: 60px;">
-                  <img v-if="item.hinh_anh_url" :src="getImageUrl(item.hinh_anh_url)" style="max-height: 40px; max-width: 50px; object-fit: contain;" />
-                  <i v-else class="bx bx-image text-muted fs-3"></i>
-                </div>
-              </td>
               <td>
                 <span class="fw-bold text-primary">{{ item.ten_model }}</span>
               </td>
@@ -236,19 +229,7 @@
                   </div>
                 </div>
 
-                <div class="row">
-                  <div class="col-md-12 mb-3">
-                    <label class="form-label fw-medium text-dark">Hình Ảnh Chính</label>
-                    <input type="file" ref="fileInput" class="form-control mb-2" accept="image/*" @change="onFileChange">
-                    <div class="d-flex justify-content-center align-items-center border rounded bg-light mb-3 position-relative" style="height: 180px;">
-                      <img v-if="hinh_anh_preview" :src="getImageUrl(hinh_anh_preview)" style="max-height: 160px; max-width: 100%; object-fit: contain;">
-                      <button v-if="hinh_anh_preview" type="button" class="btn btn-icon btn-sm bg-white text-danger position-absolute top-0 end-0 m-2 rounded-circle shadow-sm border" @click="removeImage" style="width: 28px; height: 28px; padding: 0;" title="Xóa ảnh">
-                        <i class="bx bx-trash"></i>
-                      </button>
-                      <span class="text-muted" v-else><i class='bx bx-image fs-1'></i></span>
-                    </div>
-                  </div>
-                </div>
+
               </div>
 
               <div class="modal-footer border-top py-3 mt-2 bg-light">
@@ -321,14 +302,9 @@ export default {
     const saveMutation = useMutation({
       mutationFn: async ({ id, payload }) => {
         if (id) {
-          payload.append('_method', 'PUT');
-          return await axiosClient.post(`/admin/dong-co-model/${id}`, payload, {
-            headers: { 'Content-Type': 'multipart/form-data' }
-          });
+          return await axiosClient.put(`/admin/dong-co-model/${id}`, payload);
         }
-        return await axiosClient.post('/admin/dong-co-model', payload, {
-          headers: { 'Content-Type': 'multipart/form-data' }
-        });
+        return await axiosClient.post('/admin/dong-co-model', payload);
       },
       onError: (err, vars, context) => {
         toaster.error(err.response?.data?.message || "Lỗi khi lưu model");
@@ -357,8 +333,6 @@ export default {
       },
       isSubmitting: false,
       isEditMode: false,
-      hinh_anh_preview: null,
-      hinh_anh_file: null,
       formData: {
         id: null,
         thuong_hieu_id: null,
@@ -466,23 +440,8 @@ export default {
       const type = (this.equipmentTypes || []).find(t => t.id === id);
       return type ? type.ten_loai_dong_co : 'N/A';
     },
-    onFileChange(event) {
-      const file = event.target.files[0];
-      if (file) {
-        this.hinh_anh_file = file;
-        this.hinh_anh_preview = URL.createObjectURL(file);
-      }
-    },
-    removeImage() {
-      this.hinh_anh_file = null;
-      this.hinh_anh_preview = null;
-      if (this.$refs.fileInput) this.$refs.fileInput.value = '';
-    },
     resetForm() {
       this.isEditMode = false;
-      this.hinh_anh_file = null;
-      this.hinh_anh_preview = null;
-      if (this.$refs.fileInput) this.$refs.fileInput.value = '';
       this.formData = {
         id: null,
         thuong_hieu_id: null,
@@ -500,9 +459,6 @@ export default {
     },
     async openEditModal(item) {
       this.isEditMode = true;
-      this.hinh_anh_file = null;
-      this.hinh_anh_preview = item.hinh_anh_url || null;
-      if (this.$refs.fileInput) this.$refs.fileInput.value = '';
       this.formData = { ...item };
     },
     async saveData() {
@@ -513,24 +469,14 @@ export default {
 
       this.isSubmitting = true;
       try {
-        const payload = new FormData();
-        Object.keys(this.formData).forEach(key => {
-          if (this.formData[key] !== null && this.formData[key] !== undefined && key !== 'hinh_anh_url' && key !== 'hinh_anh') {
-            payload.append(key, this.formData[key]);
-          }
-        });
-        
-        if (this.hinh_anh_file) {
-          payload.append('hinh_anh', this.hinh_anh_file);
-        } else if (this.isEditMode && !this.hinh_anh_preview) {
-          // Explicitly delete image
-          payload.append('hinh_anh', '');
-        }
+        const payload = { ...this.formData };
+        delete payload.hinh_anh;
+        delete payload.hinh_anh_url;
         
         if (this.isEditMode) {
-          await this.saveMutation.mutateAsync({ id: this.formData.id, payload, data: { ...this.formData } });
+          await this.saveMutation.mutateAsync({ id: this.formData.id, payload });
         } else {
-          await this.saveMutation.mutateAsync({ payload, data: { ...this.formData } });
+          await this.saveMutation.mutateAsync({ payload });
         }
 
         document.getElementById('btnCloseModal')?.click();

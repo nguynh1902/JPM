@@ -13,7 +13,7 @@ class DongCoModel extends Model
 
     use Searchable;
 
-    protected $fillable = ['thuong_hieu_id', 'loai_dong_co_id', 'ma_model', 'ten_model', 'hinh_anh', 'nam_san_xuat', 'ma_luc', 'loai_nhip', 'trang_thai'];
+    protected $fillable = ['thuong_hieu_id', 'loai_dong_co_id', 'ma_model', 'ten_model', 'nam_san_xuat', 'ma_luc', 'loai_nhip', 'trang_thai'];
 
     /**
      * Get the indexable data array for the model.

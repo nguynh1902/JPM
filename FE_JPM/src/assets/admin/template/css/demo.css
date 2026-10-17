@@ -410,3 +410,35 @@
 #admin-layout .bg-menu-theme .menu-inner .menu-item.active > .menu-link:before {
   box-shadow: 0 0 0 2px rgba(23, 162, 184, 0.2) !important;
 }
+
+/* Tùy chỉnh Thẻ tiêu đề nhóm (Menu Header) trong Sidebar cho Admin & Staff: Đậm rõ, tương phản cao, dễ nhìn */
+#admin-layout .bg-menu-theme .menu-header {
+  margin-top: 1.35rem !important;
+  margin-bottom: 0.35rem !important;
+}
+
+#admin-layout .bg-menu-theme .menu-header .menu-header-text {
+  color: #384d66 !important;
+  font-weight: 700 !important;
+  font-size: 0.78rem !important;
+  letter-spacing: 0.8px !important;
+}
+
+#admin-layout .bg-menu-theme .menu-header:before {
+  background-color: #17a2b8 !important;
+  height: 2.5px !important;
+  width: 1.25rem !important;
+  border-radius: 2px !important;
+}
+
+/* User Profile Box at top of sidebar */
+#admin-layout .user-profile-box {
+  transition: all 0.2s ease-in-out;
+  border: 1px solid transparent;
+}
+#admin-layout .user-profile-box:hover {
+  background-color: rgba(67, 89, 113, 0.05);
+  border-color: rgba(67, 89, 113, 0.08);
+}
+
+

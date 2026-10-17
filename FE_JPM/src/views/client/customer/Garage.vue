@@ -44,10 +44,9 @@
                     
                                         <!-- Left: Machine Info -->
                     <div class="d-flex align-items-center gap-3">
-                      <!-- Model Image -->
+                      <!-- Machine Icon / Brand Logo -->
                       <div class="d-flex align-items-center justify-content-center border rounded" style="width: 60px; height: 60px; background-color: #fff; flex-shrink: 0;">
-                        <img v-if="may.dong_co_model?.hinh_anh" :src="getImageUrl(may.dong_co_model.hinh_anh)" :alt="may.dong_co_model.ten_model" style="max-height: 50px; max-width: 50px; object-fit: contain;">
-                        <img v-else-if="may.dong_co_model?.thuong_hieu?.logo_path" :src="getImageUrl(may.dong_co_model.thuong_hieu.logo_path)" :alt="may.dong_co_model.thuong_hieu.name" style="max-height: 40px; max-width: 50px; object-fit: contain; opacity: 0.5;">
+                        <img v-if="may.dong_co_model?.thuong_hieu?.logo_path" :src="getImageUrl(may.dong_co_model.thuong_hieu.logo_path)" :alt="may.dong_co_model.thuong_hieu.name" style="max-height: 40px; max-width: 50px; object-fit: contain;">
                         <i v-else class="bi bi-gear text-muted" style="font-size: 1.5rem;"></i>
                       </div>
                       

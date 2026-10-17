@@ -168,6 +168,21 @@ export default {
     font-weight: 700 !important;
     color: #435971 !important;
 }
+
+/* Thẻ tiêu đề nhóm Sidebar đậm rõ, tương phản cao, dễ nhìn */
+.layout-wrapper .bg-menu-theme .menu-header .menu-header-text {
+    color: #384d66 !important;
+    font-weight: 700 !important;
+    font-size: 0.78rem !important;
+    letter-spacing: 0.8px !important;
+}
+
+.layout-wrapper .bg-menu-theme .menu-header:before {
+    background-color: #17a2b8 !important;
+    height: 2.5px !important;
+    width: 1.25rem !important;
+    border-radius: 2px !important;
+}
 </style>
 
 

@@ -18,16 +18,12 @@
             <!-- Machine Header Card -->
       <div v-else-if="garageData" class="p-4 border rounded-2 bg-white d-flex align-items-start justify-content-between flex-column flex-md-row gap-3" style="border-radius: 12px !important;">
         <div class="d-flex align-items-start gap-3">
-          <!-- Model Image -->
+          <!-- Model Brand Logo / Icon -->
           <div class="flex-shrink-0 d-flex align-items-center justify-content-center border rounded" style="width: 64px; height: 64px; background: #fff;">
-            <img v-if="garageData.dong_co_model?.hinh_anh"
-              :src="getImageUrl(garageData.dong_co_model.hinh_anh)"
-              :alt="garageData.dong_co_model.ten_model"
-              style="max-width: 54px; max-height: 54px; object-fit: contain;">
-            <img v-else-if="garageData.dong_co_model?.thuong_hieu?.logo_path"
+            <img v-if="garageData.dong_co_model?.thuong_hieu?.logo_path"
               :src="getImageUrl(garageData.dong_co_model.thuong_hieu.logo_path)"
               :alt="garageData.dong_co_model.thuong_hieu.name"
-              style="max-width: 50px; max-height: 42px; object-fit: contain; opacity: 0.5;">
+              style="max-width: 50px; max-height: 42px; object-fit: contain; opacity: 0.85;">
             <i v-else class="bi bi-gear text-muted" style="font-size: 1.6rem;"></i>
           </div>
           <div>

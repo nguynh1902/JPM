@@ -1,13 +1,13 @@
 <template>
-  <!-- Menu -->
+  <!-- Menu Admin (Phẳng trực quan - Click chuyển trang ngay) -->
   <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
-            <div class="app-brand demo py-3 position-relative" style="height: auto; padding-left: 1rem; padding-right: 1rem;">
-      <router-link to="/admin/ho-so" class="d-flex align-items-center w-100 text-decoration-none" title="Xem Hồ sơ cá nhân">
-        <div class="avatar avatar-online me-3" style="width: 45px; height: 45px; min-width: 45px;">
-          <img :src="userAvatar" alt="user-avatar" class="w-100 h-100 rounded-circle shadow-sm" style="object-fit: cover; border: 2px solid #fff;" />
+    <div class="app-brand demo py-3 position-relative" style="height: auto; padding-left: 1rem; padding-right: 1rem;">
+      <router-link to="/admin/ho-so" class="d-flex align-items-center w-100 text-decoration-none p-2 rounded user-profile-box" title="Xem Hồ sơ cá nhân">
+        <div class="avatar avatar-online me-3" style="width: 44px; height: 44px; min-width: 44px;">
+          <img :src="userAvatar" alt="user-avatar" class="w-100 h-100 rounded-circle shadow-sm" style="object-fit: cover; border: 2px solid #e7e7ff;" />
         </div>
         <div class="d-flex flex-column align-items-start overflow-hidden">
-          <span class="fw-bold text-body text-truncate w-100" style="font-size: 15px; line-height: 1.2;">{{ userName }}</span>
+          <span class="fw-bold text-dark text-truncate w-100" style="font-size: 15px; line-height: 1.2;">{{ userName }}</span>
           <small class="text-muted" style="font-size: 12px;">{{ roleName }}</small>
         </div>
       </router-link>
@@ -21,16 +21,16 @@
 
     <ul class="menu-inner py-1">
       <template v-for="(item, index) in filteredMenus" :key="index">
-        <!-- 1. Header (Label) -->
+        <!-- 1. Header (Label nhóm) -->
         <li class="menu-header small text-uppercase" v-if="item.type === 'header'">
           <span class="menu-header-text">{{ item.title }}</span>
         </li>
 
-        <!-- 2. Single Menu Item -->
+        <!-- 2. Single Menu Item (Kích vào là qua page luôn) -->
         <li 
           class="menu-item" 
           v-else-if="item.type === 'item'" 
-          :class="{ 'active': $route.path === item.path || $route.path.startsWith(item.path) && item.path !== '/admin' }"
+          :class="{ 'active': $route.path === item.path || ($route.path.startsWith(item.path + '/') && item.path !== '/admin') }"
         >
           <router-link :to="item.path" class="menu-link">
             <i class="menu-icon tf-icons bx" :class="item.icon"></i>
@@ -38,7 +38,7 @@
           </router-link>
         </li>
 
-        <!-- 3. Submenu Group -->
+        <!-- 3. Submenu Group (Dự phòng mở rộng) -->
         <li 
           class="menu-item" 
           v-else-if="item.type === 'submenu'" 
@@ -71,16 +71,13 @@
 <script>
 import { useAuthStore } from '../../stores/authStore';
 
-  export default {
+export default {
   name: "NavbarAdmin",
   data() {
     return {
-      isProfileOpen: false,
-      // Giả lập quyền của người dùng hiện tại (Lấy từ localStorage/Pinia)
-      // Mặc định là ADMIN để hiển thị UI trong quá trình phát triển
-      
-
-      // Cấu hình toàn bộ Menu dựa trên mảng Dữ Liệu (Data-driven)
+      // Menu phẳng trực quan cho Admin:
+      // Các mục được hiển thị trực tiếp dưới Thẻ tên nhóm (Header),
+      // bấm vào là chuyển trang ngay lập tức mà không cần qua dropdown accordion
       menus: [
         {
           title: "Dashboard",
@@ -102,15 +99,25 @@ import { useAuthStore } from '../../stores/authStore';
           roles: ["ADMIN"]
         },
         {
-          title: "CRM & Nhân Sự",
+          title: "Khách Hàng",
           icon: "bx-group",
-          type: "submenu",
+          path: "/admin/khach-hang",
           roles: ["ADMIN", "STAFF"],
-          children: [
-            { title: "Khách Hàng", path: "/admin/khach-hang", roles: ["ADMIN", "STAFF"] },
-            { title: "Nhân Viên", path: "/admin/nhan-vien", roles: ["ADMIN"] },
-            { title: "Phân Quyền", path: "/admin/phan-quyen", roles: ["ADMIN"] }
-          ]
+          type: "item"
+        },
+        {
+          title: "Nhân Viên",
+          icon: "bx-user-pin",
+          path: "/admin/nhan-vien",
+          roles: ["ADMIN"],
+          type: "item"
+        },
+        {
+          title: "Phân Quyền",
+          icon: "bx-shield-quarter",
+          path: "/admin/phan-quyen",
+          roles: ["ADMIN"],
+          type: "item"
         },
         {
           title: "Lịch Sử Hoạt Động",
@@ -120,34 +127,77 @@ import { useAuthStore } from '../../stores/authStore';
           type: "item"
         },
         {
-          title: "Dữ Liệu Nền Tảng",
+          title: "Động Cơ & Phụ Tùng",
           type: "header",
           roles: ["ADMIN", "STAFF"]
         },
         {
-          title: "Động Cơ & Phụ Tùng",
-          icon: "bx-category",
-          type: "submenu",
-          roles: ["ADMIN", "STAFF"],
-          children: [
-            { title: "Thương Hiệu", path: "/admin/thuong-hieu", roles: ["ADMIN"] },
-            { title: "Loại Động Cơ", path: "/admin/loai-dong-co", roles: ["ADMIN"] },
-            { title: "Model Động Cơ", path: "/admin/dong-co-model", roles: ["ADMIN", "STAFF"] },
-            { title: "Nhóm Phụ Tùng", path: "/admin/nhom-phu-tung", roles: ["ADMIN"] },
-            { title: "Danh Sách Phụ Tùng", path: "/admin/phu-tung", roles: ["ADMIN", "STAFF"] },
-            { title: "Sơ Đồ Phụ Tùng", path: "/admin/so-do-phu-tung", roles: ["ADMIN", "STAFF"] },
-            { title: "Mã Thay Thế", path: "/admin/ma-thay-the", roles: ["ADMIN"] }
-          ]
+          title: "Thương Hiệu",
+          icon: "bx-purchase-tag-alt",
+          path: "/admin/thuong-hieu",
+          roles: ["ADMIN"],
+          type: "item"
         },
         {
-          title: "Cửa Hàng",
-          icon: "bx-cart",
-          type: "submenu",
+          title: "Loại Động Cơ",
+          icon: "bx-cube",
+          path: "/admin/loai-dong-co",
+          roles: ["ADMIN"],
+          type: "item"
+        },
+        {
+          title: "Model Động Cơ",
+          icon: "bx-layer",
+          path: "/admin/dong-co-model",
           roles: ["ADMIN", "STAFF"],
-          children: [
-            { title: "Danh Mục Sản Phẩm", path: "/admin/danh-muc-san-pham", roles: ["ADMIN"] },
-            { title: "Danh Sách Sản Phẩm", path: "/admin/san-pham", roles: ["ADMIN", "STAFF"] }
-          ]
+          type: "item"
+        },
+        {
+          title: "Nhóm Phụ Tùng",
+          icon: "bx-category",
+          path: "/admin/nhom-phu-tung",
+          roles: ["ADMIN"],
+          type: "item"
+        },
+        {
+          title: "Danh Sách Phụ Tùng",
+          icon: "bx-wrench",
+          path: "/admin/phu-tung",
+          roles: ["ADMIN", "STAFF"],
+          type: "item"
+        },
+        {
+          title: "Sơ Đồ Phụ Tùng",
+          icon: "bx-sitemap",
+          path: "/admin/so-do-phu-tung",
+          roles: ["ADMIN", "STAFF"],
+          type: "item"
+        },
+        {
+          title: "Mã Thay Thế",
+          icon: "bx-git-compare",
+          path: "/admin/ma-thay-the",
+          roles: ["ADMIN"],
+          type: "item"
+        },
+        {
+          title: "Cửa Hàng & Bán Hàng",
+          type: "header",
+          roles: ["ADMIN", "STAFF"]
+        },
+        {
+          title: "Danh Mục Sản Phẩm",
+          icon: "bx-collection",
+          path: "/admin/danh-muc-san-pham",
+          roles: ["ADMIN"],
+          type: "item"
+        },
+        {
+          title: "Danh Sách Sản Phẩm",
+          icon: "bx-cart",
+          path: "/admin/san-pham",
+          roles: ["ADMIN", "STAFF"],
+          type: "item"
         },
         {
           title: "Kinh Doanh & Vận Hành",
@@ -155,36 +205,65 @@ import { useAuthStore } from '../../stores/authStore';
           roles: ["ADMIN", "STAFF"]
         },
         {
-          title: "Quản Lý Đơn Hàng",
+          title: "Yêu Cầu & Đơn Khách",
           icon: "bx-receipt",
-          type: "submenu",
+          path: "/admin/don-hang",
           roles: ["ADMIN", "STAFF"],
-          children: [
-            { title: "Yêu Cầu & Đơn Khách", path: "/admin/don-hang", roles: ["ADMIN", "STAFF"] },
-            { title: "Gom Đơn & PO", path: "/admin/don-nhap-hang", roles: ["ADMIN"] }
-          ]
+          type: "item"
         },
         {
-          title: "Quản Lý Kho",
-          icon: "bx-building-house",
-          type: "submenu",
-          roles: ["ADMIN", "STAFF"],
-          children: [
-            { title: "Danh Sách Kho", path: "/admin/danh-sach-kho", roles: ["ADMIN"] },
-            { title: "Tồn Kho", path: "/admin/ton-kho", roles: ["ADMIN", "STAFF"] },
-            { title: "Xuất / Nhập / Tồn", path: "/admin/the-kho", roles: ["ADMIN"] }
-          ]
-        },
-        {
-          title: "Nội Dung",
-          icon: "bx-news",
-          type: "submenu",
+          title: "Gom Đơn & PO",
+          icon: "bx-archive-out",
+          path: "/admin/don-nhap-hang",
           roles: ["ADMIN"],
-          children: [
-            { title: "Chuyên Mục", path: "/admin/chuyen-muc", roles: ["ADMIN"] },
-            { title: "Tin Tức", path: "/admin/tin-tuc", roles: ["ADMIN"] },
-            { title: "FAQ", path: "/admin/faq", roles: ["ADMIN"] }
-          ]
+          type: "item"
+        },
+        {
+          title: "Danh Sách Kho",
+          icon: "bx-store-alt",
+          path: "/admin/danh-sach-kho",
+          roles: ["ADMIN"],
+          type: "item"
+        },
+        {
+          title: "Tồn Kho",
+          icon: "bx-building-house",
+          path: "/admin/ton-kho",
+          roles: ["ADMIN", "STAFF"],
+          type: "item"
+        },
+        {
+          title: "Xuất / Nhập / Tồn",
+          icon: "bx-transfer-alt",
+          path: "/admin/the-kho",
+          roles: ["ADMIN"],
+          type: "item"
+        },
+        {
+          title: "Nội Dung & CMS",
+          type: "header",
+          roles: ["ADMIN"]
+        },
+        {
+          title: "Chuyên Mục",
+          icon: "bx-folder",
+          path: "/admin/chuyen-muc",
+          roles: ["ADMIN"],
+          type: "item"
+        },
+        {
+          title: "Tin Tức",
+          icon: "bx-news",
+          path: "/admin/tin-tuc",
+          roles: ["ADMIN"],
+          type: "item"
+        },
+        {
+          title: "FAQ",
+          icon: "bx-help-circle",
+          path: "/admin/faq",
+          roles: ["ADMIN"],
+          type: "item"
         }
       ]
     };
@@ -194,13 +273,7 @@ import { useAuthStore } from '../../stores/authStore';
       const store = useAuthStore();
       return store.user && store.user.roles && store.user.roles.length > 0 ? store.user.roles[0].toUpperCase() : 'STAFF';
     },
-    
-  mounted() {
-    document.addEventListener('click', this.handleClickOutside);
-  },
-  unmounted() {
-    document.removeEventListener('click', this.handleClickOutside);
-  },userName() {
+    userName() {
       const store = useAuthStore();
       return store.user ? store.user.name : 'Đang tải...';
     },
@@ -218,52 +291,33 @@ import { useAuthStore } from '../../stores/authStore';
       if (!store.user || !store.user.roles) return 'admin';
       return store.user.roles[0];
     },
+    displayRoleName() {
+      const store = useAuthStore();
+      if (!store.user || !store.user.roles || store.user.roles.length === 0) return 'Quản Trị Viên';
+      const role = store.user.roles[0];
+      if (role.toLowerCase() === 'admin') return 'Quản Trị Viên';
+      if (role.toLowerCase() === 'staff') return 'Nhân Viên';
+      return role;
+    },
     // Chỉ trả về những Menu mà user có quyền truy cập
-    // Nâng cấp: Tự động gộp menu con thành menu đơn nếu chỉ còn 1 mục
     filteredMenus() {
       return this.menus.reduce((result, menu) => {
-        // Nếu menu cha không có quyền -> Bỏ qua
-        if (!menu.roles.includes(this.currentUserRole)) return result;
+        // Nếu mục có roles quy định và user không có quyền -> Bỏ qua
+        if (menu.roles && !menu.roles.includes(this.currentUserRole)) return result;
 
         if (menu.type === 'submenu') {
-          // Lọc các menu con có quyền
-          const visibleChildren = menu.children.filter(child => child.roles.includes(this.currentUserRole));
-          
-          if (visibleChildren.length === 0) {
-            // Nếu không có menu con nào được phép xem -> Ẩn luôn menu cha
-            return result;
-          } else {
-            // Vẫn giữ nguyên dạng dropdown (submenu) cho dù có 1 hay nhiều con
-            // Đảm bảo cấu trúc UI của Nhân viên hoàn toàn GIỐNG Admin
-            result.push({
-              ...menu,
-              children: visibleChildren
-            });
+          const visibleChildren = menu.children ? menu.children.filter(child => !child.roles || child.roles.includes(this.currentUserRole)) : [];
+          if (visibleChildren.length > 0) {
+            result.push({ ...menu, children: visibleChildren });
           }
         } else {
-          // Nếu là header hoặc item thông thường thì cho qua
           result.push(menu);
         }
-        
         return result;
       }, []);
     }
   },
-    methods: {
-    async logout() {
-      const store = useAuthStore();
-      await store.logout();
-    },
-    toggleProfile() {
-      this.isProfileOpen = !this.isProfileOpen;
-    },
-    handleClickOutside(event) {
-      // close if clicked outside
-      const el = this.$el.querySelector('.app-brand');
-      if (el && !el.contains(event.target)) {
-        this.isProfileOpen = false;
-      }
-    },
+  methods: {
     // Kiểm tra xem có bất kỳ menu con nào đang được active không
     isSubmenuActive(children) {
       if (!children) return false;
@@ -272,13 +326,3 @@ import { useAuthStore } from '../../stores/authStore';
   }
 };
 </script>
-
-<style>
-</style>
-
-
-
-
-
-
-
