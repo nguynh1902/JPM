@@ -26,11 +26,11 @@
           <span class="menu-header-text">{{ item.title }}</span>
         </li>
 
-        <!-- 2. Single Menu Item -->
+        <!-- 2. Single Menu Item (Kích vào là qua page luôn) -->
         <li 
           class="menu-item" 
           v-else-if="item.type === 'item'" 
-          :class="{ 'active': $route.path === item.path || ($route.path.startsWith(item.path) && item.path !== '/staff') }"
+          :class="{ 'active': $route.path === item.path || ($route.path.startsWith(item.path + '/') && item.path !== '/staff') }"
         >
           <router-link :to="item.path" class="menu-link">
             <i class="menu-icon tf-icons bx" :class="item.icon"></i>
@@ -38,7 +38,7 @@
           </router-link>
         </li>
 
-        <!-- 3. Submenu Group (Dropdown) -->
+        <!-- 3. Submenu Group (Dự phòng) -->
         <li 
           class="menu-item" 
           v-else-if="item.type === 'submenu'" 
@@ -73,8 +73,9 @@ export default {
   name: "NavbarStaff",
   data() {
     return {
-      // Menu Nhân viên kế thừa 100% cấu trúc, tên mục và icon từ NavbarAdmin
-      // Chỉ giữ lại những nghiệp vụ nhân viên được phân công vận hành
+      // Menu phẳng trực quan cho Nhân Viên:
+      // Các mục được hiển thị trực tiếp dưới Thẻ tên nhóm (Header),
+      // bấm vào là chuyển trang ngay lập tức mà không cần qua dropdown accordion
       menus: [
         {
           title: "Dashboard",
@@ -87,68 +88,60 @@ export default {
           type: "header"
         },
         {
-          title: "CRM & Nhân Sự",
+          title: "Khách Hàng",
           icon: "bx-group",
-          type: "submenu",
-          children: [
-            { title: "Khách Hàng", path: "/staff/khach-hang" }
-          ]
+          path: "/staff/khach-hang",
+          type: "item"
         },
         {
           title: "Dữ Liệu Nền Tảng",
           type: "header"
         },
         {
-          title: "Động Cơ & Phụ Tùng",
-          icon: "bx-category",
-          type: "submenu",
-          children: [
-            { title: "Model Động Cơ", path: "/staff/dong-co-model" },
-            { title: "Danh Sách Phụ Tùng", path: "/staff/phu-tung" },
-            { title: "Sơ Đồ Phụ Tùng", path: "/staff/so-do-phu-tung" }
-          ]
+          title: "Model Động Cơ",
+          icon: "bx-layer",
+          path: "/staff/dong-co-model",
+          type: "item"
         },
         {
-          title: "Cửa Hàng",
+          title: "Danh Sách Phụ Tùng",
+          icon: "bx-cog",
+          path: "/staff/phu-tung",
+          type: "item"
+        },
+        {
+          title: "Sơ Đồ Phụ Tùng",
+          icon: "bx-sitemap",
+          path: "/staff/so-do-phu-tung",
+          type: "item"
+        },
+        {
+          title: "Danh Sách Sản Phẩm",
           icon: "bx-cart",
-          type: "submenu",
-          children: [
-            { title: "Danh Sách Sản Phẩm", path: "/staff/san-pham" }
-          ]
+          path: "/staff/san-pham",
+          type: "item"
         },
         {
           title: "Kinh Doanh & Vận Hành",
           type: "header"
         },
         {
-          title: "Quản Lý Đơn Hàng",
+          title: "Yêu Cầu & Đơn Khách",
           icon: "bx-receipt",
-          type: "submenu",
-          children: [
-            { title: "Yêu Cầu & Đơn Khách", path: "/staff/don-hang" }
-          ]
+          path: "/staff/don-hang",
+          type: "item"
         },
         {
-          title: "Quản Lý Kho",
+          title: "Tồn Kho",
           icon: "bx-building-house",
-          type: "submenu",
-          children: [
-            { title: "Tồn Kho", path: "/staff/ton-kho" },
-            { title: "Xuất / Nhập / Tồn", path: "/staff/the-kho" }
-          ]
+          path: "/staff/ton-kho",
+          type: "item"
         },
         {
-          title: "Tài Khoản",
-          type: "header"
-        },
-        {
-          title: "Tài Khoản Cá Nhân",
-          icon: "bx-user-circle",
-          type: "submenu",
-          children: [
-            { title: "Hồ Sơ", path: "/staff/ho-so" },
-            { title: "Đổi Mật Khẩu", path: "/staff/doi-mat-khau" }
-          ]
+          title: "Xuất / Nhập / Tồn",
+          icon: "bx-transfer-alt",
+          path: "/staff/the-kho",
+          type: "item"
         }
       ]
     };

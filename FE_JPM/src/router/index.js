@@ -340,7 +340,7 @@ const routes = [
   { path: "/admin/taikhoan/hoso", redirect: "/admin/ho-so" },
   { path: "/admin/taikhoan/doimatkhau", redirect: "/admin/doi-mat-khau" },
 
-  // ================= STAFF ROUTES =================
+  // ================= STAFF ROUTES (Riêng biệt 100% với Admin) =================
   {
     path: "/staff",
     redirect: "/staff/dashboard",
@@ -348,67 +348,67 @@ const routes = [
   {
     path: "/staff/dashboard",
     name: "StaffDashboard",
-    component: () => import("../views/admin/Dashboard/DashboardAdmin.vue"),
+    component: () => import("../views/staff/Dashboard/DashboardStaff.vue"),
     meta: { layout: "staff", requiresAuth: true, roles: ["admin", "staff"] },
   },
   {
     path: "/staff/don-hang",
     name: "StaffDonHang",
-    component: () => import("../views/admin/BanHang/DonHang.vue"),
+    component: () => import("../views/staff/BanHang/DonHang.vue"),
     meta: { layout: "staff", requiresAuth: true, roles: ["admin", "staff"] },
   },
   {
     path: "/staff/khach-hang",
     name: "StaffKhachHang",
-    component: () => import("../views/admin/KhachHang/KhachHang.vue"),
+    component: () => import("../views/staff/KhachHang/KhachHang.vue"),
     meta: { layout: "staff", requiresAuth: true, roles: ["admin", "staff"] },
   },
   {
     path: "/staff/phu-tung",
     name: "StaffPhuTung",
-    component: () => import("../views/admin/PhuTung/PhuTung.vue"),
+    component: () => import("../views/staff/PhuTung/PhuTung.vue"),
     meta: { layout: "staff", requiresAuth: true, roles: ["admin", "staff"] },
   },
   {
     path: "/staff/so-do-phu-tung",
     name: "StaffSoDoPhuTung",
-    component: () => import("../views/admin/PhuTung/SoDoPhuTung.vue"),
+    component: () => import("../views/staff/PhuTung/SoDoPhuTung.vue"),
     meta: { layout: "staff", requiresAuth: true, roles: ["admin", "staff"] },
   },
   {
     path: "/staff/dong-co-model",
     name: "StaffDongCoModel",
-    component: () => import("../views/admin/MayThuy/DongCoModel.vue"),
+    component: () => import("../views/staff/MayThuy/DongCoModel.vue"),
     meta: { layout: "staff", requiresAuth: true, roles: ["admin", "staff"] },
   },
   {
     path: "/staff/san-pham",
     name: "StaffSanPham",
-    component: () => import("../views/admin/SanPham/SanPham.vue"),
+    component: () => import("../views/staff/SanPham/SanPham.vue"),
     meta: { layout: "staff", requiresAuth: true, roles: ["admin", "staff"] },
   },
   {
     path: "/staff/ton-kho",
     name: "StaffTonKho",
-    component: () => import("../views/admin/Kho/TonKho.vue"),
+    component: () => import("../views/staff/Kho/TonKho.vue"),
     meta: { layout: "staff", requiresAuth: true, roles: ["admin", "staff"] },
   },
   {
     path: "/staff/the-kho",
     name: "StaffTheKho",
-    component: () => import("../views/admin/Kho/TheKho.vue"),
+    component: () => import("../views/staff/Kho/TheKho.vue"),
     meta: { layout: "staff", requiresAuth: true, roles: ["admin", "staff"] },
   },
   {
     path: "/staff/ho-so",
     name: "StaffHoSo",
-    component: () => import("../views/admin/TaiKhoan/HoSo.vue"),
+    component: () => import("../views/staff/TaiKhoan/HoSo.vue"),
     meta: { layout: "staff", requiresAuth: true, roles: ["admin", "staff"] },
   },
   {
     path: "/staff/doi-mat-khau",
     name: "StaffDoiMatKhau",
-    component: () => import("../views/admin/TaiKhoan/DoiMatKhau.vue"),
+    component: () => import("../views/staff/TaiKhoan/DoiMatKhau.vue"),
     meta: { layout: "staff", requiresAuth: true, roles: ["admin", "staff"] },
   },
 ];

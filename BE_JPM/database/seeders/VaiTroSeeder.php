@@ -39,6 +39,11 @@ class VaiTroSeeder extends Seeder
             'Xem Phụ tùng', 'Thêm Phụ tùng', 'Sửa Phụ tùng', 'Xóa Phụ tùng'
         ]);
 
+        $roleStaff = Role::firstOrCreate(['name' => 'staff']);
+        $roleStaff->givePermissionTo([
+            'Xem Phụ tùng'
+        ]);
+
         $roleKhachHang = Role::firstOrCreate(['name' => 'customer']);
         // Khách hàng mặc định chưa có quyền quản trị
 
@@ -67,6 +72,7 @@ class VaiTroSeeder extends Seeder
             ]
         );
         $staff->assignRole('Nhân viên PIM');
+        $staff->assignRole('staff');
 
         $customer1 = User::firstOrCreate(
             ['email' => 'haiduong@abc-marine.com'],

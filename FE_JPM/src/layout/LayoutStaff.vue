@@ -1,5 +1,5 @@
 <template>
-  <div id="staff-layout" class="layout-wrapper layout-content-navbar">
+  <div id="admin-layout" class="layout-wrapper layout-content-navbar staff-layout">
     
     <!-- Preloader to prevent FOUC -->
     <div v-if="isLoading" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: #f4f5fb; z-index: 99999; display: flex; justify-content: center; align-items: center;">
@@ -11,10 +11,10 @@
     <div class="layout-container" v-show="!isLoading">
       <NavbarStaff />
       <div class="layout-page">
-        <HeaderAdmin />
+        <HeaderStaff />
         <div class="content-wrapper">
           <router-view />
-          <FooterAdmin />
+          <FooterStaff />
           <div class="content-backdrop fade"></div>
         </div>
       </div>
@@ -25,9 +25,9 @@
 </template>
 
 <script>
-import HeaderAdmin from "../components/admin/HeaderAdmin.vue";
+import HeaderStaff from "../components/staff/HeaderStaff.vue";
 import NavbarStaff from "../components/staff/NavbarStaff.vue";
-import FooterAdmin from "../components/admin/FooterAdmin.vue";
+import FooterStaff from "../components/staff/FooterStaff.vue";
 
 // CSS URLs
 import boxiconsCss from "../assets/admin/template/vendor/fonts/boxicons.css?url";
@@ -58,8 +58,8 @@ export default {
 
   components: {
     NavbarStaff,
-    HeaderAdmin,
-    FooterAdmin,
+    HeaderStaff,
+    FooterStaff,
   },
 
   mounted() {
@@ -121,10 +121,11 @@ export default {
           .then(() => loadScript(bootstrapJs))
           .then(() => loadScript(perfectScrollbarJs))
           .then(() => loadScript(menuJs))
-          .then(() => loadScript(mainJs));
-      })
-      .then(() => {
-        this.isLoading = false;
+          .then(() => loadScript(mainJs))
+          .then(() => loadScript("https://buttons.github.io/buttons.js"))
+          .finally(() => {
+            this.isLoading = false;
+          });
       })
       .catch((err) => {
         console.error("Lỗi khi load assets cho LayoutStaff:", err);

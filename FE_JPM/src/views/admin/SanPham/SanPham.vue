@@ -26,7 +26,7 @@
           <button class="btn btn-secondary text-nowrap" @click="resetFilters">
             Đặt lại
           </button>
-          <button class="btn btn-primary text-nowrap" data-bs-toggle="modal" data-bs-target="#modalSanPham" @click="openAddModal">
+          <button v-if="currentUserRole === 'ADMIN'" class="btn btn-primary text-nowrap" data-bs-toggle="modal" data-bs-target="#modalSanPham" @click="openAddModal">
             <i class="bx bx-plus me-1"></i> Thêm Mới
           </button>
         </div>
@@ -43,19 +43,19 @@
               <th style="width: 20%">Danh Mục</th>
               <th class="text-end" style="width: 10%">Giá Bán</th>
               <th class="text-center" style="width: 10%">Trạng thái</th>
-              <th class="text-center" style="width: 10%">Hành động</th>
+              <th class="text-center" style="width: 10%" v-if="currentUserRole === 'ADMIN'">Hành động</th>
             </tr>
           </thead>
           <tbody class="table-border-bottom-0">
             <tr v-if="isPending">
-              <td colspan="8" class="text-center py-4 text-muted">
+              <td :colspan="currentUserRole === 'ADMIN' ? 8 : 7" class="text-center py-4 text-muted">
                 <div class="spinner-border text-primary" role="status">
                   <span class="visually-hidden">Loading...</span>
                 </div>
               </td>
             </tr>
             <tr v-else-if="filteredSanPhams.length === 0">
-              <td colspan="8" class="text-center py-5 text-muted">
+              <td :colspan="currentUserRole === 'ADMIN' ? 8 : 7" class="text-center py-5 text-muted">
                 <i class="bx bx-folder-open text-secondary fs-1 d-block mb-2"></i>
                 Không có dữ liệu
               </td>
@@ -85,7 +85,7 @@
                 <span v-if="item.trang_thai === 1" class="badge badge-custom bg-pastel-success">HOẠT ĐỘNG</span>
                 <span v-else class="badge badge-custom bg-pastel-danger">TẠM KHÓA</span>
               </td>
-              <td class="text-center align-middle">
+              <td class="text-center align-middle" v-if="currentUserRole === 'ADMIN'">
                 <div class="d-flex align-items-center justify-content-center">
                   <button type="button" class="action-btn text-primary me-1" @click="openEditModal(item)" data-bs-toggle="modal" data-bs-target="#modalSanPham">
                     <i class="bx bx-edit-alt"></i>
@@ -307,6 +307,7 @@ export default {
   },
   data() {
     return {
+      currentUserRole: JSON.parse(localStorage.getItem('auth_user') || '{}').roles?.[0]?.toUpperCase() || 'ADMIN',
       activeTab: 'MARINE',
       filters: {
         search: "",

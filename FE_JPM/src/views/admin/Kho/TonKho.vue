@@ -47,14 +47,14 @@
           </thead>
           <tbody class="table-border-bottom-0">
             <tr v-if="isLoading">
-              <td colspan="7" class="text-center py-4 text-muted">
+              <td :colspan="currentUserRole === 'ADMIN' ? 7 : 6" class="text-center py-4 text-muted">
                 <div class="spinner-border text-primary" role="status">
                   <span class="visually-hidden">Loading...</span>
                 </div>
               </td>
             </tr>
             <tr v-else-if="filteredInventory.length === 0">
-              <td colspan="7" class="text-center py-5 text-muted">
+              <td :colspan="currentUserRole === 'ADMIN' ? 7 : 6" class="text-center py-5 text-muted">
                 <i class="bx bx-folder-open text-secondary fs-1 d-block mb-2"></i>
                 Không có dữ liệu
               </td>

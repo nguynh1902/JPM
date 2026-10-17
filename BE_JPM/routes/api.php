@@ -110,50 +110,140 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('/garage-phu-tung/{id}', [\App\Domain\Storefront\Controllers\GaragePhuTungController::class, 'destroy']);
     });
 
-    // Admin Routes (Được bảo vệ bởi Role Admin & Staff)
-    Route::middleware(['role:admin|Nhân viên PIM,sanctum'])->group(function () {
-        Route::get('admin/dashboard/stats', [\App\Domain\Analytics\Controllers\DashboardController::class, 'stats']);
+    // =========================================================================
+    // 1. STRICTLY ADMIN-ONLY ROUTES (Chỉ Admin mới có quyền truy cập)
+    // =========================================================================
+    Route::middleware(['role:admin,sanctum'])->group(function () {
+        // Cấu hình hệ thống (API keys, cổng thanh toán, email...)
         Route::get('admin/cau-hinh', [\App\Domain\Core\Controllers\CauHinhController::class, 'adminIndex']);
         Route::post('admin/cau-hinh', [\App\Domain\Core\Controllers\CauHinhController::class, 'adminUpdate']);
-        Route::apiResource('admin/banner', BannerController::class);
-        Route::apiResource('admin/voucher', VoucherController::class);
-        Route::apiResource('admin/system-logs', SystemLogController::class)->only(['index']);
-        Route::apiResource('admin/thuong-hieu', ThuongHieuController::class);
-        Route::apiResource('admin/loai-dong-co', \App\Domain\MarineCatalog\Controllers\LoaiDongCoController::class);
-        Route::apiResource('admin/dong-co-model', \App\Domain\MarineCatalog\Controllers\DongCoModelController::class);
-        Route::apiResource('admin/danh-muc-san-pham', DanhMucSanPhamController::class);
-        Route::apiResource('admin/san-pham', SanPhamController::class);
 
-        // HR & Customers
-        Route::post('admin/khach-hang/{id}/reset-password', [\App\Domain\IAM\Controllers\KhachHangController::class, 'resetPassword']);
-        Route::apiResource('admin/khach-hang', \App\Domain\IAM\Controllers\KhachHangController::class);
-        
+        // Quản lý Nhân sự & Phân quyền
         Route::post('admin/nhan-vien/{id}/reset-password', [\App\Domain\IAM\Controllers\NhanVienController::class, 'resetPassword']);
         Route::apiResource('admin/nhan-vien', \App\Domain\IAM\Controllers\NhanVienController::class);
         Route::apiResource('admin/vai-tro', \App\Domain\IAM\Controllers\VaiTroController::class);
-        Route::apiResource('admin/yeu-cau-bao-gia', \App\Domain\Sales\Controllers\YeuCauBaoGiaController::class);
-        Route::post('admin/yeu-cau-bao-gia/{id}/chuyen-don', [\App\Domain\Sales\Controllers\YeuCauBaoGiaController::class, 'convertToOrder']);
-        
-        // Kho & Orders (Giai đoạn 4)
-        Route::get('admin/ton-kho/hang-can-nhap', [\App\Domain\Procurement\Controllers\TonKhoController::class, 'hangCanNhap']);
-        Route::apiResource('admin/kho', \App\Domain\Procurement\Controllers\KhoController::class);
-        Route::apiResource('admin/ton-kho', \App\Domain\Procurement\Controllers\TonKhoController::class);
-        Route::apiResource('admin/the-kho', \App\Domain\Procurement\Controllers\TheKhoController::class);
-        Route::apiResource('admin/don-hang', \App\Domain\Sales\Controllers\DonHangController::class);
+
+        // Nhật ký hệ thống / Audit Logs
+        Route::apiResource('admin/system-logs', SystemLogController::class)->only(['index']);
+
+        // Marketing, Banner, Voucher
+        Route::apiResource('admin/banner', BannerController::class);
+        Route::apiResource('admin/voucher', VoucherController::class);
+
+        // Quản lý chuỗi cung ứng PO nhập khẩu
         Route::post('admin/don-hang/{id}/tao-po', [\App\Domain\Sales\Controllers\DonHangController::class, 'convertToPO']);
         Route::post('admin/don-nhap-hang/gom-po', [\App\Domain\Procurement\Controllers\DonNhapHangController::class, 'gomPO']);
         Route::apiResource('admin/don-nhap-hang', \App\Domain\Procurement\Controllers\DonNhapHangController::class);
-        
-        // Phụ tùng & Sơ đồ (Giai đoạn 4)
-        Route::apiResource('admin/ma-thay-the', \App\Domain\PIM\Controllers\MaThayTheController::class);
-        Route::apiResource('admin/phu-tung', \App\Domain\PIM\Controllers\PhuTungController::class);
-        Route::apiResource('admin/nhom-phu-tung', \App\Domain\PIM\Controllers\NhomPhuTungController::class);
-        Route::apiResource('admin/so-do', \App\Domain\PIM\Controllers\SoDoPhuTungController::class);
 
-        // Nội dung (Giai đoạn 4)
+        // Quản trị Danh mục Kho (Thêm/Sửa/Xóa Kho chứa)
+        Route::post('admin/kho', [\App\Domain\Procurement\Controllers\KhoController::class, 'store']);
+        Route::put('admin/kho/{id}', [\App\Domain\Procurement\Controllers\KhoController::class, 'update']);
+        Route::delete('admin/kho/{id}', [\App\Domain\Procurement\Controllers\KhoController::class, 'destroy']);
+
+        // Nội dung & Tin tức & FAQ
         Route::apiResource('admin/chuyen-muc', \App\Domain\CMS\Controllers\ChuyenMucController::class);
         Route::apiResource('admin/tin-tuc', \App\Domain\CMS\Controllers\TinTucController::class);
         Route::apiResource('admin/faq', \App\Domain\CMS\Controllers\FaqController::class);
+
+        // Master Catalog: Thêm/Sửa/Xóa Thương hiệu, Loại động cơ, Nhóm phụ tùng, Danh mục SP
+        Route::post('admin/thuong-hieu', [ThuongHieuController::class, 'store']);
+        Route::put('admin/thuong-hieu/{id}', [ThuongHieuController::class, 'update']);
+        Route::delete('admin/thuong-hieu/{id}', [ThuongHieuController::class, 'destroy']);
+
+        Route::post('admin/loai-dong-co', [\App\Domain\MarineCatalog\Controllers\LoaiDongCoController::class, 'store']);
+        Route::put('admin/loai-dong-co/{id}', [\App\Domain\MarineCatalog\Controllers\LoaiDongCoController::class, 'update']);
+        Route::delete('admin/loai-dong-co/{id}', [\App\Domain\MarineCatalog\Controllers\LoaiDongCoController::class, 'destroy']);
+
+        Route::post('admin/nhom-phu-tung', [\App\Domain\PIM\Controllers\NhomPhuTungController::class, 'store']);
+        Route::put('admin/nhom-phu-tung/{id}', [\App\Domain\PIM\Controllers\NhomPhuTungController::class, 'update']);
+        Route::delete('admin/nhom-phu-tung/{id}', [\App\Domain\PIM\Controllers\NhomPhuTungController::class, 'destroy']);
+
+        Route::post('admin/danh-muc-san-pham', [DanhMucSanPhamController::class, 'store']);
+        Route::put('admin/danh-muc-san-pham/{id}', [DanhMucSanPhamController::class, 'update']);
+        Route::delete('admin/danh-muc-san-pham/{id}', [DanhMucSanPhamController::class, 'destroy']);
+
+        // Hành động Quản trị nhạy cảm: Reset mật khẩu KH, Thêm/Sửa/Xóa KH
+        Route::post('admin/khach-hang/{id}/reset-password', [\App\Domain\IAM\Controllers\KhachHangController::class, 'resetPassword']);
+        Route::post('admin/khach-hang', [\App\Domain\IAM\Controllers\KhachHangController::class, 'store']);
+        Route::put('admin/khach-hang/{id}', [\App\Domain\IAM\Controllers\KhachHangController::class, 'update']);
+        Route::patch('admin/khach-hang/{id}', [\App\Domain\IAM\Controllers\KhachHangController::class, 'update']);
+        Route::delete('admin/khach-hang/{id}', [\App\Domain\IAM\Controllers\KhachHangController::class, 'destroy']);
+
+        // Thêm/Sửa/Xóa Sản phẩm & Phụ tùng & Model & Sơ đồ & Tồn kho & Xóa đơn
+        Route::post('admin/san-pham', [SanPhamController::class, 'store']);
+        Route::put('admin/san-pham/{id}', [SanPhamController::class, 'update']);
+        Route::delete('admin/san-pham/{id}', [SanPhamController::class, 'destroy']);
+
+        Route::post('admin/phu-tung', [\App\Domain\PIM\Controllers\PhuTungController::class, 'store']);
+        Route::put('admin/phu-tung/{id}', [\App\Domain\PIM\Controllers\PhuTungController::class, 'update']);
+        Route::delete('admin/phu-tung/{id}', [\App\Domain\PIM\Controllers\PhuTungController::class, 'destroy']);
+
+        Route::post('admin/dong-co-model', [\App\Domain\MarineCatalog\Controllers\DongCoModelController::class, 'store']);
+        Route::put('admin/dong-co-model/{id}', [\App\Domain\MarineCatalog\Controllers\DongCoModelController::class, 'update']);
+        Route::delete('admin/dong-co-model/{id}', [\App\Domain\MarineCatalog\Controllers\DongCoModelController::class, 'destroy']);
+
+        Route::post('admin/so-do', [\App\Domain\PIM\Controllers\SoDoPhuTungController::class, 'store']);
+        Route::put('admin/so-do/{id}', [\App\Domain\PIM\Controllers\SoDoPhuTungController::class, 'update']);
+        Route::delete('admin/so-do/{id}', [\App\Domain\PIM\Controllers\SoDoPhuTungController::class, 'destroy']);
+
+        Route::post('admin/ton-kho', [\App\Domain\Procurement\Controllers\TonKhoController::class, 'store']);
+        Route::put('admin/ton-kho/{id}', [\App\Domain\Procurement\Controllers\TonKhoController::class, 'update']);
+        Route::delete('admin/ton-kho/{id}', [\App\Domain\Procurement\Controllers\TonKhoController::class, 'destroy']);
+
+        Route::delete('admin/don-hang/{id}', [\App\Domain\Sales\Controllers\DonHangController::class, 'destroy']);
+    });
+
+    // =========================================================================
+    // 2. OPERATIONS ROUTES (Dành cho cả ADMIN và STAFF / Nhân viên vận hành)
+    // =========================================================================
+    Route::middleware(['role:admin|staff|Nhân viên PIM,sanctum'])->group(function () {
+        // Dashboard Stats
+        Route::get('admin/dashboard/stats', [\App\Domain\Analytics\Controllers\DashboardController::class, 'stats']);
+
+        // Tra cứu Khách hàng (Xem danh sách & Chi tiết để giao hàng/tư vấn)
+        Route::get('admin/khach-hang', [\App\Domain\IAM\Controllers\KhachHangController::class, 'index']);
+        Route::get('admin/khach-hang/{id}', [\App\Domain\IAM\Controllers\KhachHangController::class, 'show']);
+
+        // Tra cứu Catalog, Sản phẩm, Phụ tùng, Sơ đồ, Model (Read-Only đối với Staff)
+        Route::get('admin/thuong-hieu', [ThuongHieuController::class, 'index']);
+        Route::get('admin/thuong-hieu/{id}', [ThuongHieuController::class, 'show']);
+        Route::get('admin/loai-dong-co', [\App\Domain\MarineCatalog\Controllers\LoaiDongCoController::class, 'index']);
+        Route::get('admin/loai-dong-co/{id}', [\App\Domain\MarineCatalog\Controllers\LoaiDongCoController::class, 'show']);
+        Route::get('admin/nhom-phu-tung', [\App\Domain\PIM\Controllers\NhomPhuTungController::class, 'index']);
+        Route::get('admin/nhom-phu-tung/{id}', [\App\Domain\PIM\Controllers\NhomPhuTungController::class, 'show']);
+        Route::get('admin/danh-muc-san-pham', [DanhMucSanPhamController::class, 'index']);
+        Route::get('admin/danh-muc-san-pham/{id}', [DanhMucSanPhamController::class, 'show']);
+        Route::get('admin/san-pham', [SanPhamController::class, 'index']);
+        Route::get('admin/san-pham/{id}', [SanPhamController::class, 'show']);
+        Route::get('admin/phu-tung', [\App\Domain\PIM\Controllers\PhuTungController::class, 'index']);
+        Route::get('admin/phu-tung/{id}', [\App\Domain\PIM\Controllers\PhuTungController::class, 'show']);
+        Route::get('admin/dong-co-model', [\App\Domain\MarineCatalog\Controllers\DongCoModelController::class, 'index']);
+        Route::get('admin/dong-co-model/{id}', [\App\Domain\MarineCatalog\Controllers\DongCoModelController::class, 'show']);
+        Route::get('admin/so-do', [\App\Domain\PIM\Controllers\SoDoPhuTungController::class, 'index']);
+        Route::get('admin/so-do/{id}', [\App\Domain\PIM\Controllers\SoDoPhuTungController::class, 'show']);
+        Route::get('admin/ma-thay-the', [\App\Domain\PIM\Controllers\MaThayTheController::class, 'index']);
+        Route::get('admin/ma-thay-the/{id}', [\App\Domain\PIM\Controllers\MaThayTheController::class, 'show']);
+
+        // Nghiệp vụ Bán hàng & Báo giá (Staff thao tác trực tiếp)
+        Route::get('admin/yeu-cau-bao-gia', [\App\Domain\Sales\Controllers\YeuCauBaoGiaController::class, 'index']);
+        Route::get('admin/yeu-cau-bao-gia/{id}', [\App\Domain\Sales\Controllers\YeuCauBaoGiaController::class, 'show']);
+        Route::post('admin/yeu-cau-bao-gia', [\App\Domain\Sales\Controllers\YeuCauBaoGiaController::class, 'store']);
+        Route::put('admin/yeu-cau-bao-gia/{id}', [\App\Domain\Sales\Controllers\YeuCauBaoGiaController::class, 'update']);
+        Route::post('admin/yeu-cau-bao-gia/{id}/chuyen-don', [\App\Domain\Sales\Controllers\YeuCauBaoGiaController::class, 'convertToOrder']);
+
+        // Nghiệp vụ Đơn hàng
+        Route::get('admin/don-hang', [\App\Domain\Sales\Controllers\DonHangController::class, 'index']);
+        Route::get('admin/don-hang/{id}', [\App\Domain\Sales\Controllers\DonHangController::class, 'show']);
+        Route::put('admin/don-hang/{id}', [\App\Domain\Sales\Controllers\DonHangController::class, 'update']);
+
+        // Nghiệp vụ Kho (Xem tồn kho, cảnh báo cạn, xem thẻ kho & xuất file)
+        Route::get('admin/kho', [\App\Domain\Procurement\Controllers\KhoController::class, 'index']);
+        Route::get('admin/kho/{id}', [\App\Domain\Procurement\Controllers\KhoController::class, 'show']);
+        Route::get('admin/ton-kho', [\App\Domain\Procurement\Controllers\TonKhoController::class, 'index']);
+        Route::get('admin/ton-kho/{id}', [\App\Domain\Procurement\Controllers\TonKhoController::class, 'show']);
+        Route::get('admin/ton-kho/hang-can-nhap', [\App\Domain\Procurement\Controllers\TonKhoController::class, 'hangCanNhap']);
+        Route::get('admin/the-kho', [\App\Domain\Procurement\Controllers\TheKhoController::class, 'index']);
+        Route::get('admin/the-kho/{id}', [\App\Domain\Procurement\Controllers\TheKhoController::class, 'show']);
     });
 });
 

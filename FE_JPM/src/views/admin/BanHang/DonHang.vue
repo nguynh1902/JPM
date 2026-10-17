@@ -317,7 +317,7 @@
               </div>
               <div>
                 <button type="button" class="btn btn-outline-secondary px-4 me-2" data-bs-dismiss="modal">Đóng</button>
-                <button type="submit" class="btn btn-primary px-4 shadow-sm" v-if="currentUserRole === 'ADMIN' && selectedQuote && !isQuoteReadOnly">Lưu Báo Giá</button>
+                <button type="submit" class="btn btn-primary px-4 shadow-sm" v-if="selectedQuote && !isQuoteReadOnly">Lưu Báo Giá</button>
               </div>
             </div>
           </form>
@@ -483,7 +483,7 @@
           </div>
           <div class="modal-footer border-top py-3 mt-2">
               <button type="button" class="btn btn-outline-secondary px-4" data-bs-dismiss="modal">Đóng</button>
-              <button type="button" class="btn btn-primary px-4 shadow-sm" @click="saveOrder" v-if="currentUserRole === 'ADMIN' && !isOrderReadOnly">Lưu Thay Đổi</button>
+              <button type="button" class="btn btn-primary px-4 shadow-sm" @click="saveOrder" v-if="!isOrderReadOnly">Lưu Thay Đổi</button>
               <button type="button" class="btn btn-primary px-4 shadow-sm">
                 <i class="bx bx-printer me-1"></i> In Hóa Đơn
               </button>
