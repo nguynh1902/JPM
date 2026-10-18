@@ -707,11 +707,11 @@ export default {
 
       // Lọc theo từ khóa (Mã hoặc Tên)
       if (this.searchKeyword) {
-        const keyword = this.searchKeyword.toLowerCase();
+        const keyword = this.searchKeyword.toLowerCase().trim();
         result = result.filter(
           (p) =>
-            p.ma_phu_tung.toLowerCase().includes(keyword) ||
-            p.ten_phu_tung.toLowerCase().includes(keyword),
+            String(p.ma_phu_tung || '').toLowerCase().includes(keyword) ||
+            String(p.ten_phu_tung || '').toLowerCase().includes(keyword),
         );
       }
 

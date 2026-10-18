@@ -79,6 +79,9 @@
         <div class="card">
           <div class="card-header border-bottom d-flex justify-content-between align-items-center">
             <h5 class="mb-0 fw-bold text-dark">Danh sách Banner</h5>
+            <div style="width: 250px;">
+              <input type="text" class="form-control form-control-sm" placeholder="Tìm kiếm tiêu đề, link..." v-model="searchKeyword">
+            </div>
           </div>
 
           <div class="table-responsive text-nowrap custom-scroll" style="height: calc(100vh - 230px); min-height: 400px; overflow-y: auto;">
@@ -213,6 +216,7 @@ export default {
   data() {
     return {
       activeTab: 'MARINE', // Tab mặc định
+      searchKeyword: "",
       isEditMode: false,
       isSubmitting: false,
       imageFile: null,
@@ -227,7 +231,15 @@ export default {
   },
   computed: {
     filteredBanners() {
-      return this.bannersData || [];
+      let list = this.bannersData || [];
+      if (this.searchKeyword) {
+        const q = this.searchKeyword.toLowerCase().trim();
+        list = list.filter(b => 
+          String(b.title || '').toLowerCase().includes(q) ||
+          String(b.link_url || '').toLowerCase().includes(q)
+        );
+      }
+      return list;
     }
   },
   methods: {

@@ -322,17 +322,26 @@ export default {
       return this.roles.filter(r => {
         let match = true;
         if (this.filters.search) {
-          const s = this.filters.search.toLowerCase();
-          match = match && (r.name.toLowerCase().includes(s) || r.description.toLowerCase().includes(s));
+          const s = this.filters.search.toLowerCase().trim();
+          match = match && (
+            String(r.name || '').toLowerCase().includes(s) || 
+            String(r.description || '').toLowerCase().includes(s)
+          );
         }
-        if (this.filters.status !== null) {
-          match = match && r.status === this.filters.status;
+        if (this.filters.status !== null && this.filters.status !== undefined && this.filters.status !== '') {
+          match = match && Number(r.status) === Number(this.filters.status);
         }
         return match;
       });
     }
   },
   methods: {
+    resetFilters() {
+      this.filters = {
+        search: '',
+        status: null
+      };
+    },
     isModuleFullyChecked(module) {
       if (!this.formData.permissions || !module.permissions || module.permissions.length === 0) return false;
       return module.permissions.every(p => this.formData.permissions.includes(p.id));

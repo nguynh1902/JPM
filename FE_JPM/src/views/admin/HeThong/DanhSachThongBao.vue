@@ -297,9 +297,11 @@ export default {
   },
   computed: {
     filteredNotifications() {
+      const s = (this.filters.search || '').toLowerCase().trim();
       return this.notifications.filter(item => {
-        const matchSearch = item.title.toLowerCase().includes(this.filters.search.toLowerCase()) || 
-                            item.message.toLowerCase().includes(this.filters.search.toLowerCase());
+        const matchSearch = !s ||
+                            String(item.title || '').toLowerCase().includes(s) || 
+                            String(item.message || '').toLowerCase().includes(s);
         const matchStatus = this.filters.status === 'all' || 
                             (this.filters.status === 'read' && item.isRead) || 
                             (this.filters.status === 'unread' && !item.isRead);
@@ -311,12 +313,12 @@ export default {
     filteredTelecomLogs() {
       let list = this.telecomLogs;
       if (this.telecomSearch) {
-        const s = this.telecomSearch.toLowerCase();
+        const s = this.telecomSearch.toLowerCase().trim();
         list = list.filter(l => 
-          (l.so_dien_thoai && l.so_dien_thoai.includes(s)) ||
-          (l.ten_nguoi_nhan && l.ten_nguoi_nhan.toLowerCase().includes(s)) ||
-          (l.ma_tham_chieu && l.ma_tham_chieu.toLowerCase().includes(s)) ||
-          (l.noi_dung && l.noi_dung.toLowerCase().includes(s))
+          (l.so_dien_thoai && String(l.so_dien_thoai).includes(s)) ||
+          (l.ten_nguoi_nhan && String(l.ten_nguoi_nhan).toLowerCase().includes(s)) ||
+          (l.ma_tham_chieu && String(l.ma_tham_chieu).toLowerCase().includes(s)) ||
+          (l.noi_dung && String(l.noi_dung).toLowerCase().includes(s))
         );
       }
       if (this.telecomType !== 'all') {

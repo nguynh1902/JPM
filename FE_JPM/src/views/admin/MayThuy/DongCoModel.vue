@@ -395,8 +395,11 @@ export default {
         if (!match) return false;
 
         if (this.filters.search) {
-          const s = this.filters.search.toLowerCase();
-          match = match && (m.ten_model.toLowerCase().includes(s) || m.ma_model.toLowerCase().includes(s));
+          const s = this.filters.search.toLowerCase().trim();
+          match = match && (
+            String(m.ten_model || '').toLowerCase().includes(s) || 
+            String(m.ma_model || '').toLowerCase().includes(s)
+          );
         }
         if (this.filters.thuong_hieu_id) {
           match = match && m.thuong_hieu_id === this.filters.thuong_hieu_id;

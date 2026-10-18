@@ -291,10 +291,10 @@ export default {
     filteredFaqs() {
       let result = this.faqs || [];
       if (this.filters.search) {
-        const lowerQuery = this.filters.search.toLowerCase();
+        const lowerQuery = this.filters.search.toLowerCase().trim();
         result = result.filter(item => 
-          item.question.toLowerCase().includes(lowerQuery) || 
-          item.answer.toLowerCase().includes(lowerQuery)
+          String(item.question || '').toLowerCase().includes(lowerQuery) || 
+          String(item.answer || '').toLowerCase().includes(lowerQuery)
         );
       }
       if (this.filters.category) {

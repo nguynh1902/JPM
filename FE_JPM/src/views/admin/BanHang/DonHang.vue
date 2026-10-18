@@ -943,11 +943,11 @@ export default {
     filteredInbox() {
       let result = this.inboxItems;
       if (this.inboxSearch) {
-        const s = this.inboxSearch.toLowerCase();
+        const s = this.inboxSearch.toLowerCase().trim();
         result = result.filter(item => 
-          (item.code && item.code.toLowerCase().includes(s)) ||
-          (item.customer_name && item.customer_name.toLowerCase().includes(s)) ||
-          (item.customer_phone && item.customer_phone.includes(s))
+          (item.code && String(item.code).toLowerCase().includes(s)) ||
+          (item.customer_name && String(item.customer_name).toLowerCase().includes(s)) ||
+          (item.customer_phone && String(item.customer_phone).includes(s))
         );
       }
       return result;
@@ -955,11 +955,11 @@ export default {
     filteredArchive() {
       let result = this.archiveItems;
       if (this.archiveSearch) {
-        const s = this.archiveSearch.toLowerCase();
+        const s = this.archiveSearch.toLowerCase().trim();
         result = result.filter(item => 
-          (item.code && item.code.toLowerCase().includes(s)) ||
-          (item.customer_name && item.customer_name.toLowerCase().includes(s)) ||
-          (item.customer_phone && item.customer_phone.includes(s))
+          (item.code && String(item.code).toLowerCase().includes(s)) ||
+          (item.customer_name && String(item.customer_name).toLowerCase().includes(s)) ||
+          (item.customer_phone && String(item.customer_phone).includes(s))
         );
       }
       return result;
@@ -968,11 +968,11 @@ export default {
     filteredTransactions() {
       let list = this.transactions || [];
       if (this.txSearch) {
-        const s = this.txSearch.toLowerCase();
+        const s = this.txSearch.toLowerCase().trim();
         list = list.filter(t => 
-          (t.ma_giao_dich && t.ma_giao_dich.toLowerCase().includes(s)) ||
-          (t.ma_tham_chieu && t.ma_tham_chieu.toLowerCase().includes(s)) ||
-          (t.noi_dung && t.noi_dung.toLowerCase().includes(s))
+          (t.ma_giao_dich && String(t.ma_giao_dich).toLowerCase().includes(s)) ||
+          (t.ma_tham_chieu && String(t.ma_tham_chieu).toLowerCase().includes(s)) ||
+          (t.noi_dung && String(t.noi_dung).toLowerCase().includes(s))
         );
       }
       if (this.txStatus !== 'all') {

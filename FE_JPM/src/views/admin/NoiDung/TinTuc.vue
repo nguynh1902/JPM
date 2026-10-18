@@ -387,7 +387,10 @@ export default {
     filteredArticles() {
       return (this.articles || []).filter(item => {
         let match = true;
-        if (this.filters.title && !item.title.toLowerCase().includes(this.filters.title.toLowerCase())) match = false;
+        if (this.filters.title) {
+          const s = this.filters.title.toLowerCase().trim();
+          if (!String(item.title || '').toLowerCase().includes(s)) match = false;
+        }
         if (this.filters.category && item.category !== this.filters.category) match = false;
         if (this.filters.status && item.status !== this.filters.status) match = false;
         return match;

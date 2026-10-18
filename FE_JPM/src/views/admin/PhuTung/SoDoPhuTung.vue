@@ -434,11 +434,13 @@ export default {
         result = result.filter(d => d.nhom_phu_tung_id === this.filterNhomId);
       }
       if (this.filters.search) {
-        const keyword = this.filters.search.toLowerCase();
+        const keyword = this.filters.search.toLowerCase().trim();
         result = result.filter(d => {
-          const modelName = this.getModelName(d.may_thuy_model_id).toLowerCase();
-          const nhomName = (d.nhom_phu_tung?.ten_nhom || this.getNhomName(d.nhom_phu_tung_id)).toLowerCase();
-          return modelName.includes(keyword) || nhomName.includes(keyword);
+          const modelName = String(this.getModelName(d.may_thuy_model_id) || '').toLowerCase();
+          const fullModel = String(this.getFullModelName(d.may_thuy_model_id) || '').toLowerCase();
+          const brand = String(this.getModelBrand(d.may_thuy_model_id) || '').toLowerCase();
+          const nhomName = String(d.nhom_phu_tung?.ten_nhom || this.getNhomName(d.nhom_phu_tung_id) || '').toLowerCase();
+          return modelName.includes(keyword) || fullModel.includes(keyword) || brand.includes(keyword) || nhomName.includes(keyword);
         });
       }
       // Sắp xếp theo thứ tự hiển thị

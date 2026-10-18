@@ -73,6 +73,9 @@
         <div class="card">
           <div class="card-header border-bottom d-flex justify-content-between align-items-center">
             <h5 class="mb-0 fw-bold text-dark">Danh sách Thương Hiệu</h5>
+            <div style="width: 250px;">
+              <input type="text" class="form-control form-control-sm" placeholder="Tìm kiếm mã, tên..." v-model="searchQuery">
+            </div>
           </div>
 
           <div class="table-responsive text-nowrap custom-scroll" style="height: calc(100vh - 230px); min-height: 400px; overflow-y: auto;">
@@ -95,13 +98,13 @@
                     </div>
                   </td>
                 </tr>
-                <tr v-else-if="(!brands || brands.length === 0)">
+                <tr v-else-if="(!filteredBrands || filteredBrands.length === 0)">
                   <td :colspan="canManage ? 6 : 5" class="text-center py-5 text-muted">
                     <i class="bx bx-folder-open text-secondary fs-1 d-block mb-2"></i>
                     Không có dữ liệu
                   </td>
                 </tr>
-                <tr v-for="(item, index) in brands" :key="item.id" v-else>
+                <tr v-for="(item, index) in filteredBrands" :key="item.id" v-else>
                   <td class="text-center"><strong>{{ index + 1 }}</strong></td>
                   <td class="text-center">
                     <div class="d-inline-flex justify-content-center align-items-center border rounded" style="width: 60px; height: 60px; background-color: #fff;">
@@ -145,7 +148,7 @@
           </div>
         <!-- Tổng số mục -->
         <div class="card-footer py-3 border-top">
-          <span class="text-muted fw-medium">Tổng cộng: {{ (brands ? brands.length : 0) }} mục</span>
+          <span class="text-muted fw-medium">Tổng cộng: {{ (filteredBrands ? filteredBrands.length : 0) }} mục</span>
         </div>
         </div>
       </div>
@@ -256,10 +259,9 @@ const { data: brands, isFetching, isPending } = useQuery({
 
 const filteredBrands = computed(() => {
   let list = Array.isArray(brands.value) ? brands.value : (brands.value?.data || []);
-  list = list;
   if (searchQuery.value) {
-    const q = searchQuery.value.toLowerCase();
-    list = list.filter(b => b.code?.toLowerCase().includes(q) || b.name?.toLowerCase().includes(q));
+    const q = searchQuery.value.toLowerCase().trim();
+    list = list.filter(b => String(b.code || '').toLowerCase().includes(q) || String(b.name || '').toLowerCase().includes(q));
   }
   return list;
 });

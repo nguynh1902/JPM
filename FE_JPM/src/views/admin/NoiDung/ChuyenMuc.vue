@@ -70,20 +70,23 @@
       <!-- Cột phải: Bảng dữ liệu -->
       <div class="col-md-8 mb-4">
         <div class="card">
-          <div class="card-header border-bottom d-flex justify-content-between align-items-center" >
+          <div class="card-header border-bottom d-flex justify-content-between align-items-center flex-wrap gap-2">
             <h5 class="mb-0 fw-bold text-dark">Danh Sách Chuyên Mục</h5>
             
-            <div class="d-flex gap-2" style="width: 250px;">
-              <v-select
-                v-model="filterType"
-                :options="[
-                  {value: '', label: 'Tất cả ứng dụng'},
-                  {value: 'NEWS', label: 'Chỉ Tin Tức'},
-                  {value: 'FAQ', label: 'Chỉ FAQ'}
-                ]"
-                :can-clear="false"
-                class="w-100"
-              />
+            <div class="d-flex gap-2" style="max-width: 420px; width: 100%;">
+              <input type="text" class="form-control form-control-sm" placeholder="Tìm kiếm tên..." v-model="searchKeyword">
+              <div style="min-width: 170px;">
+                <v-select
+                  v-model="filterType"
+                  :options="[
+                    {value: '', label: 'Tất cả ứng dụng'},
+                    {value: 'NEWS', label: 'Chỉ Tin Tức'},
+                    {value: 'FAQ', label: 'Chỉ FAQ'}
+                  ]"
+                  :can-clear="false"
+                  class="w-100"
+                />
+              </div>
             </div>
           </div>
 
@@ -200,6 +203,7 @@ export default {
   },
   data() {
     return {
+      searchKeyword: '',
       filterType: '',
       isEditMode: false,
       formData: this.getInitialFormData()
@@ -207,8 +211,15 @@ export default {
   },
   computed: {
     filteredCategories() {
-      if (!this.filterType) return this.categories || [];
-      return (this.categories || []).filter(item => item.type === this.filterType);
+      let list = this.categories || [];
+      if (this.filterType) {
+        list = list.filter(item => item.type === this.filterType);
+      }
+      if (this.searchKeyword) {
+        const q = this.searchKeyword.toLowerCase().trim();
+        list = list.filter(item => String(item.name || '').toLowerCase().includes(q));
+      }
+      return list;
     }
   },
   methods: {

@@ -205,7 +205,14 @@ export default {
   },
   computed: {
     filteredNhomPhuTung() {
-      const items = Array.isArray(this.nhomPhuTung) ? this.nhomPhuTung : (this.nhomPhuTung?.data || []);
+      let items = Array.isArray(this.nhomPhuTung) ? this.nhomPhuTung : (this.nhomPhuTung?.data || []);
+      if (this.searchKeyword) {
+        const q = this.searchKeyword.toLowerCase().trim();
+        items = items.filter(item => 
+          String(item.ma_nhom || '').toLowerCase().includes(q) ||
+          String(item.ten_nhom || '').toLowerCase().includes(q)
+        );
+      }
       return items;
     }
   },

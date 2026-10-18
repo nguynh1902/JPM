@@ -344,8 +344,10 @@ export default {
     },
     filteredInventory() {
       return (this.inventory || []).filter(item => {
-        const searchRegex = new RegExp(this.filters.search, 'i');
-        const matchSearch = searchRegex.test(item.ma_san_pham) || searchRegex.test(item.ten_san_pham);
+        const s = (this.filters.search || '').toLowerCase().trim();
+        const matchSearch = !s ||
+          String(item.ma_san_pham || '').toLowerCase().includes(s) ||
+          String(item.ten_san_pham || '').toLowerCase().includes(s);
         const matchWarehouse = this.filters.warehouse ? item.warehouse_id === this.filters.warehouse : true;
         return matchSearch && matchWarehouse;
       });

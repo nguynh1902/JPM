@@ -379,10 +379,10 @@ export default {
         let match = true;
 
         if (this.filters.search) {
-          const s = this.filters.search.toLowerCase();
+          const s = this.filters.search.toLowerCase().trim();
           match = match && (
-            (item.ten_san_pham && item.ten_san_pham.toLowerCase().includes(s)) || 
-            (item.ma_san_pham && item.ma_san_pham.toLowerCase().includes(s))
+            (item.ten_san_pham && String(item.ten_san_pham).toLowerCase().includes(s)) || 
+            (item.ma_san_pham && String(item.ma_san_pham).toLowerCase().includes(s))
           );
         }
         if (this.filters.danh_muc_san_pham_id) {

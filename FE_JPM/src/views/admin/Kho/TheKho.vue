@@ -255,10 +255,10 @@ export default {
       if (this.filters.ma_san_pham) {
         const kw = this.filters.ma_san_pham.toLowerCase().trim();
         result = result.filter(t =>
-          (t.ma_san_pham && t.ma_san_pham.toLowerCase().includes(kw)) ||
-          (t.ten_san_pham && t.ten_san_pham.toLowerCase().includes(kw)) ||
-          (t.tham_chieu && t.tham_chieu.toLowerCase().includes(kw)) ||
-          (t.ghi_chu && t.ghi_chu.toLowerCase().includes(kw))
+          String(t.ma_san_pham || '').toLowerCase().includes(kw) ||
+          String(t.ten_san_pham || '').toLowerCase().includes(kw) ||
+          String(t.tham_chieu || '').toLowerCase().includes(kw) ||
+          String(t.ghi_chu || '').toLowerCase().includes(kw)
         );
       }
       if (this.filters.loai_giao_dich) {

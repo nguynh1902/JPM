@@ -187,8 +187,11 @@ const { data: loaiDongCos, isFetching, isPending } = useQuery({
 const filteredLoaiDongCos = computed(() => {
   let list = Array.isArray(loaiDongCos.value) ? loaiDongCos.value : (loaiDongCos.value?.data || []);
   if (searchQuery.value) {
-    const q = searchQuery.value.toLowerCase();
-    list = list.filter(item => item.ma_loai_dong_co?.toLowerCase().includes(q) || item.ten_loai_dong_co?.toLowerCase().includes(q));
+    const q = searchQuery.value.toLowerCase().trim();
+    list = list.filter(item => 
+      String(item.ma_loai_dong_co || '').toLowerCase().includes(q) || 
+      String(item.ten_loai_dong_co || '').toLowerCase().includes(q)
+    );
   }
   return list;
 });

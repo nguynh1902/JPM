@@ -65,6 +65,9 @@
         <div class="card">
           <div class="card-header border-bottom d-flex justify-content-between align-items-center">
             <h5 class="mb-0 fw-bold text-dark">Danh sách Kho Bãi</h5>
+            <div style="width: 250px;">
+              <input type="text" class="form-control form-control-sm" placeholder="Tìm kiếm tên kho, địa chỉ..." v-model="searchKeyword">
+            </div>
           </div>
 
           <div class="table-responsive text-nowrap custom-scroll" style="height: calc(100vh - 230px); min-height: 400px; overflow-y: auto;">
@@ -86,13 +89,13 @@
                     </div>
                   </td>
                 </tr>
-                <tr v-else-if="(!warehouses || warehouses.length === 0)">
+                <tr v-else-if="(!filteredWarehouses || filteredWarehouses.length === 0)">
                   <td colspan="5" class="text-center py-5 text-muted">
                     <i class="bx bx-folder-open text-secondary fs-1 d-block mb-2"></i>
                     Không có dữ liệu
                   </td>
                 </tr>
-                <tr v-for="(item, index) in warehouses" :key="item.id" v-else>
+                <tr v-for="(item, index) in filteredWarehouses" :key="item.id" v-else>
                   <td class="text-center"><strong>{{ index + 1 }}</strong></td>
                   <td>
                     <span class="fw-bold text-dark">{{ item.ten_kho }}</span>
@@ -132,7 +135,7 @@
           </div>
             <!-- Tổng số mục -->
       <div class="card-footer py-3 border-top">
-        <span class="text-muted fw-medium">Tổng cộng: {{ (warehouses && warehouses.length) ? warehouses.length : 0 }} mục</span>
+        <span class="text-muted fw-medium">Tổng cộng: {{ (filteredWarehouses && filteredWarehouses.length) ? filteredWarehouses.length : 0 }} mục</span>
       </div>
         </div>
       </div>
@@ -212,9 +215,23 @@ export default {
   },
   data() {
     return {
+      searchKeyword: "",
       isEditMode: false,
       formData: this.getInitialFormData()
     };
+  },
+  computed: {
+    filteredWarehouses() {
+      let list = Array.isArray(this.warehouses) ? this.warehouses : (this.warehouses?.data || []);
+      if (this.searchKeyword) {
+        const q = this.searchKeyword.toLowerCase().trim();
+        list = list.filter(w =>
+          String(w.ten_kho || '').toLowerCase().includes(q) ||
+          String(w.dia_chi || '').toLowerCase().includes(q)
+        );
+      }
+      return list;
+    }
   },
   methods: {
     getInitialFormData() {

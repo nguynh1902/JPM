@@ -44,6 +44,9 @@
         <div class="card">
           <div class="card-header border-bottom d-flex justify-content-between align-items-center">
             <h5 class="mb-0 fw-medium text-dark">Danh Sách Danh Mục</h5>
+            <div style="width: 250px;">
+              <input type="text" class="form-control form-control-sm" placeholder="Tìm kiếm mã, tên..." v-model="searchKeyword">
+            </div>
           </div>
           <div class="table-responsive text-nowrap custom-scroll" style="height: calc(100vh - 230px); min-height: 400px; overflow-y: auto;">
             <table class="table table-hover mb-0">
@@ -62,13 +65,13 @@
                     <div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div>
                   </td>
                 </tr>
-                <tr v-else-if="treeCategories.length === 0">
+                <tr v-else-if="filteredCategories.length === 0">
                   <td colspan="5" class="text-center py-5 text-muted">
                     <i class="bx bx-folder-open text-secondary fs-1 d-block mb-2"></i>
                     Không có dữ liệu
                   </td>
                 </tr>
-                <tr v-for="(item, index) in treeCategories" :key="item.id" v-else>
+                <tr v-for="(item, index) in filteredCategories" :key="item.id" v-else>
                   <td class="text-center"><strong>{{ index + 1 }}</strong></td>
                   <td><span class="fw-bold text-primary">{{ item.ma_danh_muc || "N/A" }}</span></td>
                   <td><span class="fw-bold text-dark">{{ item.display_name }}</span></td>
@@ -88,7 +91,7 @@
           </div>
         <!-- Tổng số mục -->
         <div class="card-footer py-3 border-top">
-          <span class="text-muted fw-medium">Tổng cộng: {{ treeCategories.length }} mục</span>
+          <span class="text-muted fw-medium">Tổng cộng: {{ filteredCategories.length }} mục</span>
         </div>
         </div>
       </div>
@@ -142,6 +145,7 @@ export default {
   },
   data() {
     return {
+      searchKeyword: "",
       isEditMode: false,
       isSubmitting: false,
       formData: { id: null, parent_id: null, ma_danh_muc: "", ten_danh_muc: "", slug: "", trang_thai: 1 }
@@ -161,6 +165,14 @@ export default {
         return result;
       };
       return buildTree(null);
+    },
+    filteredCategories() {
+      if (!this.searchKeyword) return this.treeCategories;
+      const q = this.searchKeyword.toLowerCase().trim();
+      return this.treeCategories.filter(c =>
+        String(c.ma_danh_muc || '').toLowerCase().includes(q) ||
+        String(c.ten_danh_muc || '').toLowerCase().includes(q)
+      );
     },
     parentOptions() {
       return this.treeCategories

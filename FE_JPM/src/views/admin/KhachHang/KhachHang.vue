@@ -512,21 +512,28 @@ export default {
       return list.filter((m) => {
         let match = true;
         if (this.filters.search) {
-          const s = this.filters.search.toLowerCase();
+          const s = this.filters.search.toLowerCase().trim();
           match =
             match &&
-            (m.name.toLowerCase().includes(s) ||
-              m.email.toLowerCase().includes(s) ||
-              (m.phone && m.phone.includes(s)));
+            (String(m.name || '').toLowerCase().includes(s) ||
+              String(m.email || '').toLowerCase().includes(s) ||
+              String(m.phone || '').includes(s) ||
+              String(m.user_code || '').toLowerCase().includes(s));
         }
-        if (this.filters.status !== null) {
-          match = match && m.status === this.filters.status;
+        if (this.filters.status !== null && this.filters.status !== undefined && this.filters.status !== '') {
+          match = match && Number(m.status) === Number(this.filters.status);
         }
         return match;
       });
     },
   },
   methods: {
+    resetFilters() {
+      this.filters = {
+        search: "",
+        status: null,
+      };
+    },
     openAddModal() {
       this.isEditMode = false;
       this.resetForm();

@@ -267,7 +267,10 @@ export default {
       const allVouchers = this.vouchersData || [];
       return allVouchers.filter(item => {
         let match = true;
-        if (this.filters.code && !item.code.toLowerCase().includes(this.filters.code.toLowerCase())) match = false;
+        if (this.filters.code) {
+          const s = this.filters.code.toLowerCase().trim();
+          if (!String(item.code || '').toLowerCase().includes(s)) match = false;
+        }
         if (this.filters.status !== '') {
           const s = parseInt(this.filters.status);
           if ((item.status ? 1 : 0) !== s) match = false;

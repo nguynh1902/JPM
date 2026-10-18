@@ -84,6 +84,9 @@
         <div class="card">
           <div class="card-header border-bottom d-flex justify-content-between align-items-center">
             <h5 class="mb-0 fw-bold text-dark">Danh sách Linh Kiện</h5>
+            <div style="width: 250px;">
+              <input type="text" class="form-control form-control-sm" placeholder="Tìm kiếm mã, tên..." v-model="searchKeyword">
+            </div>
           </div>
 
           <div class="table-responsive text-nowrap custom-scroll" style="height: calc(100vh - 230px); min-height: 400px; overflow-y: auto;">
@@ -191,6 +194,7 @@ export default {
   data() {
     return {
       activeTab: 'MARINE',
+      searchKeyword: "",
       isEditMode: false,
       isSubmitting: false,
       logoFile: null,
@@ -206,7 +210,15 @@ export default {
   },
   computed: {
     filteredBrands() {
-      return (this.brands || []);
+      let list = this.brands || [];
+      if (this.searchKeyword) {
+        const q = this.searchKeyword.toLowerCase().trim();
+        list = list.filter(b =>
+          String(b.code || '').toLowerCase().includes(q) ||
+          String(b.name || '').toLowerCase().includes(q)
+        );
+      }
+      return list;
     }
   },
   methods: {
