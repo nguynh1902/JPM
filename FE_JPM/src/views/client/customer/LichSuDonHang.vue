@@ -50,7 +50,7 @@
     </div>
 
     <!-- ========================================================================= -->
-    <!-- NỘI DUNG ĐƠN HÀNG DẠNG CARD CHUẨN SHOPEE -->
+    <!-- NỘI DUNG ĐƠN HÀNG DẠNG THẺ ĐƠN CHUẨN SHOPEE -->
     <!-- ========================================================================= -->
 
     <!-- Loading Skeleton -->
@@ -67,7 +67,7 @@
       </div>
     </div>
 
-    <!-- Empty State (Giống hệt ảnh Shopee người dùng cung cấp) -->
+    <!-- Empty State (Giống hệt ảnh Shopee) -->
     <div class="shopee-empty-state" v-else-if="displayedOrders.length === 0">
       <div class="empty-icon-box">
         <svg class="empty-clipboard-icon" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -75,14 +75,12 @@
           <circle cx="28" cy="30" r="4" fill="#E8B86D" opacity="0.6"/>
           <circle cx="74" cy="48" r="3" fill="#E8B86D" opacity="0.6"/>
           <circle cx="34" cy="22" r="5" fill="#88D4D0" opacity="0.5"/>
-          <!-- Clipboard body -->
           <rect x="30" y="24" width="40" height="52" rx="4" fill="#FFFFFF" stroke="#CCD5DD" stroke-width="2"/>
           <rect x="42" y="20" width="16" height="7" rx="3" fill="#5EAAAC"/>
           <line x1="38" y1="36" x2="62" y2="36" stroke="#E1E6EB" stroke-width="2.5" stroke-linecap="round"/>
           <line x1="38" y1="44" x2="58" y2="44" stroke="#E1E6EB" stroke-width="2.5" stroke-linecap="round"/>
           <line x1="38" y1="52" x2="62" y2="52" stroke="#E1E6EB" stroke-width="2.5" stroke-linecap="round"/>
           <line x1="38" y1="60" x2="52" y2="60" stroke="#E1E6EB" stroke-width="2.5" stroke-linecap="round"/>
-          <!-- Pencil -->
           <path d="M60 68 L68 56 L72 60 L64 72 Z" fill="#4B9DA0"/>
           <path d="M58 70 L60 68 L64 72 L60 74 Z" fill="#E59866"/>
         </svg>
@@ -90,14 +88,14 @@
       <p class="empty-text">Chưa có đơn hàng</p>
     </div>
 
-    <!-- DANH SÁCH ĐƠN HÀNG DẠNG SHOPEE CARDS -->
+    <!-- DANH SÁCH THẺ ĐƠN HÀNG -->
     <div class="d-flex flex-column gap-3 mt-3" v-else>
       <div 
         v-for="order in displayedOrders" 
         :key="order._type + order.id" 
         class="shopee-order-card"
       >
-        <!-- Card Header: Tên Đơn / Mã Đơn + Trạng Thái Phía Phải -->
+        <!-- Card Header: Tag + Mã đơn + Trạng thái -->
         <div class="card-head">
           <div class="head-left">
             <span class="type-tag" :class="order._type === 'quote' ? 'quote-tag' : 'order-tag'">
@@ -118,26 +116,46 @@
           <span>{{ getLogisticsStatus(order) }}</span>
         </div>
 
-        <!-- Danh sách sản phẩm của đơn (Kiểu Shopee) -->
-        <div class="order-items-list">
-          <div 
-            v-for="(prod, idx) in getItemProducts(order)" 
-            :key="idx" 
-            class="item-row"
-          >
-            <div class="item-thumb">
-              <i class="bi bi-gear-wide-connected"></i>
+        <!-- THẺ ĐƠN TÓM TẮT: KÍCH VÀO MỞ MODAL XEM TẤT CẢ SẢN PHẨM -->
+        <div 
+          class="card-summary-row cursor-pointer" 
+          @click="openProductModal(order)"
+          title="Nhấp để xem danh sách chi tiết các sản phẩm trong đơn"
+        >
+          <div class="item-thumb">
+            <i class="bi bi-gear-wide-connected"></i>
+          </div>
+          
+          <div class="item-details">
+            <div class="item-name">
+              {{ getItemProducts(order)[0]?.name || 'Phụ tùng máy thủy' }}
             </div>
-            
-            <div class="item-details">
-              <div class="item-name">{{ prod.name }}</div>
-              <div class="item-oem text-muted">Mã OEM: {{ prod.code || 'N/A' }}</div>
-              <div class="item-qty">x{{ prod.qty }}</div>
+            <div class="item-oem text-muted">
+              Mã OEM: {{ getItemProducts(order)[0]?.code || 'N/A' }}
             </div>
+            <div class="item-qty mt-1">
+              Số lượng: <strong>x{{ getItemProducts(order)[0]?.qty || 1 }}</strong>
+              <span v-if="getItemProducts(order).length > 1" class="text-danger ms-2 fw-medium">
+                (+{{ getItemProducts(order).length - 1 }} phụ tùng khác)
+              </span>
+            </div>
+          </div>
 
-            <div class="item-price">
-              <span v-if="prod.price > 0">{{ formatPrice(prod.price) }}₫</span>
-              <span v-else class="text-muted fst-italic">Đang đợi báo giá</span>
+          <!-- Đơn giá: Nếu là chờ báo giá thì hiển thị 'Liên hệ' -->
+          <div class="item-price text-end">
+            <template v-if="getStage(order) === 1">
+              <span class="price-contact">Liên hệ</span>
+            </template>
+            <template v-else-if="getItemProducts(order)[0]?.price > 0">
+              <span class="price-num">{{ formatPrice(getItemProducts(order)[0]?.price) }}₫</span>
+            </template>
+            <template v-else>
+              <span class="price-contact">Liên hệ</span>
+            </template>
+
+            <div class="view-detail-hint">
+              <span>Xem chi tiết</span>
+              <i class="bi bi-chevron-right ms-1"></i>
             </div>
           </div>
         </div>
@@ -146,8 +164,8 @@
         <div v-if="activeQrOrderCode === order.code" class="qr-deposit-box">
           <div class="qr-inner">
             <div class="text-center qr-img-col">
-              <img :src="getVietQrImageUrl(order)" alt="VietQR" class="qr-img">
-              <div class="qr-subtext text-muted">
+              <img :src="getVietQrImageUrl(order)" alt="VietQR" class="img-fluid rounded border p-1" style="max-width: 190px;">
+              <div class="mt-2 text-muted small d-flex align-items-center justify-content-center gap-1">
                 <span class="spinner-grow spinner-grow-sm text-danger me-1"></span>
                 <span>Chờ thanh toán...</span>
               </div>
@@ -188,15 +206,16 @@
           </div>
         </div>
 
-        <!-- Card Footer: Tổng tiền & Nút thao tác chuẩn Shopee -->
+        <!-- Card Footer: Tổng tiền & Nút thao tác -->
         <div class="card-bottom">
           <div class="price-section">
             <span class="label">
               {{ getStage(order) === 2 ? 'Tiền cọc yêu cầu:' : (getStage(order) === 3 ? 'Còn lại khi nhận hàng:' : 'Thành tiền:') }}
             </span>
             <span class="total-amount">
+              <!-- NẾU LÀ ĐỢI BÁO GIÁ THÌ GIÁ PHẢI LÀ 'LIÊN HỆ' -->
               <template v-if="getStage(order) === 1">
-                <span class="text-muted fs-6 fw-normal">Chờ báo giá</span>
+                <span class="price-contact-lg">Liên hệ</span>
               </template>
               <template v-else-if="getStage(order) === 2">
                 {{ formatPrice(order.tien_coc_yeu_cau || 0) }}₫
@@ -211,6 +230,11 @@
           </div>
 
           <div class="action-buttons">
+            <!-- Nút xem sản phẩm (Mở Modal) -->
+            <button type="button" class="btn-shopee btn-shopee-outline" @click="openProductModal(order)">
+              <i class="bi bi-list-ul me-1"></i> Xem Sản Phẩm ({{ getItemProducts(order).length }})
+            </button>
+
             <!-- Bước 1: Liên hệ hỗ trợ -->
             <template v-if="getStage(order) === 1">
               <a :href="'https://zalo.me/0123456789?text=' + encodeURIComponent('Chào JPM, tôi muốn hỏi giá yêu cầu mã #' + order.code)" target="_blank" class="btn-shopee btn-shopee-outline">
@@ -248,17 +272,121 @@
       </div>
     </div>
 
+    <!-- ========================================================================= -->
+    <!-- MODAL DANH SÁCH SẢN PHẨM CỦA ĐƠN HÀNG (KÍCH VÀO CHI TIẾT & CÓ THÊM GIỎ HÀNG) -->
+    <!-- ========================================================================= -->
+    <div v-if="selectedOrderForModal" class="modal-backdrop fade show" style="z-index: 1050;" @click="closeProductModal"></div>
+    <div v-if="selectedOrderForModal" class="modal fade show d-block" tabindex="-1" style="z-index: 1055;" @click.self="closeProductModal">
+      <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 8px; overflow: hidden;">
+          
+          <!-- Modal Header -->
+          <div class="modal-header border-bottom py-3 px-4 bg-white d-flex justify-content-between align-items-center">
+            <div>
+              <h5 class="modal-title fw-bold mb-1" style="color: var(--heading-color); font-size: 16px;">
+                <i class="bi bi-box-seam text-danger me-2"></i>DANH SÁCH SẢN PHẨM - ĐƠN #{{ selectedOrderForModal.code }}
+              </h5>
+              <div class="text-muted small">
+                Trạng thái: <strong class="text-danger text-uppercase">{{ getStatusText(selectedOrderForModal) }}</strong>
+                <span class="mx-2">|</span>
+                <span>Nhấp vào tên để xem chi tiết hoặc bấm icon thêm vào giỏ hàng</span>
+              </div>
+            </div>
+            <button type="button" class="btn-close" @click="closeProductModal"></button>
+          </div>
+
+          <!-- Modal Body: Danh sách phụ tùng -->
+          <div class="modal-body p-0" style="max-height: 60vh; overflow-y: auto;">
+            <div class="list-group list-group-flush">
+              <div 
+                v-for="(prod, idx) in getItemProducts(selectedOrderForModal)" 
+                :key="idx"
+                class="list-group-item p-3 d-flex align-items-center justify-content-between gap-3 border-bottom modal-item-row"
+              >
+                <!-- Bên trái: Hình ảnh + Tên (Click mở trang chi tiết) -->
+                <div class="d-flex align-items-center gap-3 flex-grow-1" style="cursor: pointer;" @click="goToProductDetail(prod)" title="Bấm để xem trang chi tiết sản phẩm này">
+                  <div class="modal-thumb">
+                    <i class="bi bi-gear-wide-connected text-secondary fs-4"></i>
+                  </div>
+                  <div>
+                    <div class="fw-bold text-dark hover-red d-flex align-items-center gap-1 product-link" style="font-size: 14.5px;">
+                      <span>{{ prod.name }}</span>
+                      <i class="bi bi-box-arrow-up-right small text-muted" style="font-size: 11px;"></i>
+                    </div>
+                    <div class="text-muted small mt-1">
+                      <span>Mã OEM: <code class="text-secondary">{{ prod.code || 'N/A' }}</code></span>
+                      <span class="mx-2">|</span>
+                      <span>Số lượng: <strong class="text-dark">x{{ prod.qty }}</strong></span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Bên phải: Giá (Liên hệ nếu bước 1) + Icon Thêm Giỏ Hàng -->
+                <div class="d-flex align-items-center gap-3">
+                  <div class="text-end">
+                    <template v-if="getStage(selectedOrderForModal) === 1">
+                      <span class="price-contact">Liên hệ</span>
+                    </template>
+                    <template v-else-if="prod.price > 0">
+                      <span class="price-num">{{ formatPrice(prod.price) }}₫</span>
+                    </template>
+                    <template v-else>
+                      <span class="price-contact">Liên hệ</span>
+                    </template>
+                  </div>
+
+                  <!-- ICON / NÚT THÊM VÀO GIỎ HÀNG -->
+                  <button 
+                    type="button" 
+                    class="btn btn-outline-danger btn-sm d-inline-flex align-items-center gap-1 px-3 py-1 btn-add-cart"
+                    title="Thêm phụ tùng này vào giỏ hàng"
+                    @click.stop="handleAddToCart(prod)"
+                  >
+                    <i class="bi bi-cart-plus fs-6"></i>
+                    <span class="small fw-semibold">Thêm giỏ</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Modal Footer: Tổng tiền + Đóng -->
+          <div class="modal-footer bg-light py-2 px-4 d-flex justify-content-between align-items-center">
+            <div class="small">
+              <span class="text-muted me-1">Tổng cộng:</span>
+              <strong v-if="getStage(selectedOrderForModal) === 1" class="text-danger fs-6">Liên hệ</strong>
+              <strong v-else-if="getStage(selectedOrderForModal) === 2" class="text-danger fs-6">
+                {{ formatPrice(selectedOrderForModal.tien_coc_yeu_cau || 0) }}₫ (Cọc) / {{ formatPrice(calculateItemTotal(selectedOrderForModal)) }}₫
+              </strong>
+              <strong v-else-if="getStage(selectedOrderForModal) === 3" class="text-danger fs-6">
+                {{ formatPrice(calculateRemaining(selectedOrderForModal)) }}₫ (Còn lại)
+              </strong>
+              <strong v-else class="text-danger fs-6">
+                {{ formatPrice(calculateItemTotal(selectedOrderForModal)) }}₫
+              </strong>
+            </div>
+            <button type="button" class="btn btn-secondary btn-sm px-3" @click="closeProductModal">Đóng</button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
   </div>
 </template>
 
 <script setup>
 import { ref, computed, onBeforeUnmount, watch, inject } from "vue";
+import { useRouter } from "vue-router";
 import { useAuthStore } from "../../../stores/authStore";
+import { useCartStore } from "../../../stores/cartStore";
 import Swal from "sweetalert2";
 import axiosClient from "../../../api/axiosClient";
 import { useQuery, useQueryClient } from "@tanstack/vue-query";
 
+const router = useRouter();
 const authStore = useAuthStore();
+const cartStore = useCartStore();
 const queryClient = useQueryClient();
 
 // ===================== DATA FETCHING =====================
@@ -284,6 +412,7 @@ watch(isLoading, (val) => setPageLoading(val), { immediate: true });
 const currentTab = ref('all'); // 'all' | '1' | '2' | '3' | '4' | '-1'
 const activeQrOrderCode = ref(null);
 const pollingTimer = ref(null);
+const selectedOrderForModal = ref(null);
 
 const allOrders = computed(() => {
   const qList = (quotes.value || []).map(q => ({
@@ -370,8 +499,11 @@ const getItemProducts = (order) => {
   if (!order) return [];
   const list = order.items || order.chi_tiet || [];
   return list.map(p => ({
+    id: p.id || p.phu_tung_id || p.san_pham_id,
     name: p.ten_phu_tung || p.ten_san_pham || 'Phụ tùng máy thủy',
     code: p.ma_phu_tung || p.ma_san_pham || '',
+    slug: p.slug || p.san_pham?.slug || '',
+    image: p.hinh_anh || p.hinh_anh_chinh || p.san_pham?.hinh_anh || null,
     qty: p.so_luong || 1,
     price: Number(p.don_gia || p.gia_ban || 0)
   }));
@@ -391,9 +523,49 @@ const calculateRemaining = (order) => {
   return Math.max(0, total - paid);
 };
 
+// ===================== MODAL SẢN PHẨM & NAVIGATION =====================
+const openProductModal = (order) => {
+  selectedOrderForModal.value = order;
+};
+
+const closeProductModal = () => {
+  selectedOrderForModal.value = null;
+};
+
+const goToProductDetail = (prod) => {
+  closeProductModal();
+  if (prod.slug) {
+    router.push(`/chi-tiet-san-pham/${prod.slug}`);
+  } else if (prod.code) {
+    router.push(`/chi-tiet-phu-tung/${prod.code}`);
+  } else if (prod.id) {
+    router.push(`/chi-tiet-phu-tung/${prod.id}`);
+  }
+};
+
+const handleAddToCart = (prod) => {
+  cartStore.addItem({
+    id: prod.id,
+    ma_phu_tung: prod.code,
+    ten_phu_tung: prod.name,
+    hinh_anh: prod.image,
+    gia_ban: prod.price > 0 ? prod.price : 0,
+    is_gia_lien_he: prod.price <= 0
+  }, prod.qty || 1);
+
+  Swal.fire({
+    toast: true,
+    position: 'top-end',
+    icon: 'success',
+    title: `Đã thêm "${prod.name}" vào giỏ hàng`,
+    showConfirmButton: false,
+    timer: 2000
+  });
+};
+
 // ===================== VIETQR & ACTIONS =====================
 const toggleVietQR = (order) => {
-  if (activeQrOrderCode.value === order.code) {
+  if (activeQrOrderCode === order.code) {
     activeQrOrderCode.value = null;
     stopPolling();
   } else {
@@ -514,6 +686,14 @@ const formatDate = (dateStr) => {
 <style scoped>
 .shopee-orders-wrapper {
   width: 100%;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.hover-red:hover {
+  color: var(--accent-color, #f82249) !important;
 }
 
 /* ========================================================================= */
@@ -650,17 +830,17 @@ const formatDate = (dateStr) => {
   color: rgba(0, 0, 0, 0.7);
 }
 
-/* Items List */
-.order-items-list {
-  padding: 0;
-}
-
-.item-row {
+/* Card Summary Row */
+.card-summary-row {
   padding: 14px 20px;
   display: flex;
   align-items: center;
   gap: 14px;
   border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  transition: background-color 0.2s;
+}
+.card-summary-row:hover {
+  background-color: #fafbfc;
 }
 
 .item-thumb {
@@ -682,9 +862,7 @@ const formatDate = (dateStr) => {
 
 .item-name {
   font-size: 14px;
-  font-weight: 500;
   color: rgba(0, 0, 0, 0.87);
-  margin-bottom: 2px;
 }
 
 .item-oem {
@@ -694,15 +872,33 @@ const formatDate = (dateStr) => {
 .item-qty {
   font-size: 12px;
   color: rgba(0, 0, 0, 0.6);
-  margin-top: 2px;
 }
 
 .item-price {
+  min-width: 120px;
+}
+
+.price-contact {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--accent-color, #f82249);
+}
+
+.price-num {
   font-size: 14px;
   font-weight: 600;
   color: var(--accent-color, #f82249);
-  text-align: right;
-  min-width: 110px;
+}
+
+.view-detail-hint {
+  font-size: 11.5px;
+  color: #888;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+.card-summary-row:hover .view-detail-hint {
+  color: var(--accent-color, #f82249);
 }
 
 /* Card Bottom */
@@ -729,6 +925,12 @@ const formatDate = (dateStr) => {
 
 .price-section .total-amount {
   font-size: 20px;
+  font-weight: 700;
+  color: var(--accent-color, #f82249);
+}
+
+.price-contact-lg {
+  font-size: 18px;
   font-weight: 700;
   color: var(--accent-color, #f82249);
 }
@@ -827,5 +1029,34 @@ const formatDate = (dateStr) => {
 }
 .btn-copy:hover {
   background-color: #f1f5f9;
+}
+
+/* Modal Styling */
+.modal-thumb {
+  width: 50px;
+  height: 50px;
+  background-color: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.modal-item-row:hover {
+  background-color: #fcfcfc;
+}
+
+.product-link {
+  transition: color 0.2s;
+}
+
+.btn-add-cart {
+  transition: all 0.2s;
+}
+.btn-add-cart:hover {
+  background-color: var(--accent-color, #f82249);
+  color: #ffffff;
 }
 </style>
