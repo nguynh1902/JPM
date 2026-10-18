@@ -23,7 +23,7 @@ class UpdateThuongHieuRequest extends FormRequest
                 'max:255',
                 Rule::unique('thuong_hieus', 'name')->ignore($brandId)
             ],
-            'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp,bmp|max:5120',
             'status' => 'required|boolean',
         ];
     }
@@ -38,7 +38,7 @@ class UpdateThuongHieuRequest extends FormRequest
             'loai_ung_dung.required' => 'Loại ứng dụng là bắt buộc.',
             'status.required' => 'Trạng thái là bắt buộc.',
             'logo.image' => 'Logo phải là định dạng hình ảnh.',
-            'logo.max' => 'Logo không được vượt quá 2MB.',
+            'logo.max' => 'Logo không được vượt quá 5MB.',
         ];
     }
 }

@@ -25,8 +25,8 @@ class UpdatePhuTungRequest extends FormRequest
             'video_url'              => 'nullable|string|max:500',
             'hinh_anh'               => 'nullable|string',
             'thu_vien_anh_kept'      => 'nullable|string',
-            'hinh_anh_file'          => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp|max:2048',
-            'thu_vien_anh_files.*'   => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp|max:2048',
+            'hinh_anh_file'          => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp,bmp|max:5120',
+            'thu_vien_anh_files.*'   => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp,bmp|max:5120',
         ];
     }
 

@@ -31,7 +31,7 @@ class BannerController extends Controller
             'title' => 'nullable|string|max:255',
             'link_url' => 'nullable|string',
             'status' => 'required|boolean',
-            'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048'
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg,webp,bmp|max:5120'
         ]);
 
         $imageUrl = '';
@@ -61,7 +61,7 @@ class BannerController extends Controller
             'title' => 'nullable|string|max:255',
             'link_url' => 'nullable|string',
             'status' => 'required|boolean',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048'
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp,bmp|max:5120'
         ]);
 
         $imageUrl = $banner->image_url;

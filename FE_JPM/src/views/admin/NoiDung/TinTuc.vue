@@ -218,7 +218,7 @@
                   <input
                     type="file"
                     class="form-control mb-2"
-                    accept="image/png, image/jpeg, image/svg+xml"
+                    accept="image/*"
                     @change="handleThumbnailUpload"
                   />
                   <div class="d-flex justify-content-center align-items-center border rounded bg-light mt-2 position-relative" style="height: 180px;">

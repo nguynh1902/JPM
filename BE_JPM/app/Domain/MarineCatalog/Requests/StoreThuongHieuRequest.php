@@ -15,7 +15,7 @@ class StoreThuongHieuRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:255',
-            'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp,bmp|max:5120',
             'status' => 'required|boolean',
         ];
     }

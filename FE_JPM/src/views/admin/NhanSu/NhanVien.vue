@@ -221,7 +221,7 @@
                           type="file"
                           id="avatar"
                           class="form-control mb-2"
-                          accept="image/png, image/jpeg, image/gif, image/webp"
+                          accept="image/*"
                           @change="handleAvatarUpload"
                         />
                         <div class="d-flex justify-content-center align-items-center border rounded bg-light mb-3 position-relative" style="height: 180px;">
@@ -398,9 +398,21 @@ export default {
       if (this.formData.status === true) this.formData.status = 1;
       else if (this.formData.status === false) this.formData.status = 0;
     },
-    removeAvatar() { this.avatarFile = null; this.avatarPreview = null; this.formData.avatar = ''; const fileInput = document.getElementById('avatar'); if (fileInput) fileInput.value = ''; }, handleAvatarUpload(event) {
+    removeAvatar() {
+      this.avatarFile = null;
+      this.avatarPreview = null;
+      this.formData.avatar = '';
+      const fileInput = document.getElementById('avatar');
+      if (fileInput) fileInput.value = '';
+    },
+    handleAvatarUpload(event) {
       const file = event.target.files[0];
       if (file) {
+        if (file.size > 5 * 1024 * 1024) {
+          if (this.$toast) this.$toast.error("Ảnh quá lớn! Tối đa 5MB.");
+          event.target.value = "";
+          return;
+        }
         this.avatarFile = file;
         this.avatarPreview = URL.createObjectURL(file);
       }

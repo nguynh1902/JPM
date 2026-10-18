@@ -323,7 +323,7 @@
                         type="file"
                         id="avatar"
                         class="form-control mb-2"
-                        accept="image/png, image/jpeg, image/gif, image/webp"
+                        accept="image/*"
                         @change="handleAvatarUpload"
                       />
                       <div
@@ -713,8 +713,8 @@ export default {
     handleAvatarUpload(event) {
       const file = event.target.files[0];
       if (file) {
-        if (file.size > 800 * 1024) {
-          if (this.$toast) this.$toast.error("Ảnh quá lớn! Tối đa 800KB.");
+        if (file.size > 5 * 1024 * 1024) {
+          if (this.$toast) this.$toast.error("Ảnh quá lớn! Tối đa 5MB.");
           event.target.value = "";
           return;
         }

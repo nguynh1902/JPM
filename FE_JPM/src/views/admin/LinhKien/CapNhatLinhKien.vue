@@ -47,7 +47,7 @@
                   type="file"
                   id="logo"
                   class="form-control"
-                  accept="image/png, image/jpeg, image/svg+xml"
+                  accept="image/*"
                   @change="handleLogoUpload"
                 />
                 <div v-if="formData.logo_path" class="mt-2 border rounded p-1 d-inline-block bg-white position-relative" style="padding-right: 30px !important;">

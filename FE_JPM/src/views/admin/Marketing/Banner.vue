@@ -37,12 +37,12 @@
 
               <div class="mb-4">
                 <label for="image" class="form-label fw-medium text-dark">Hình Ảnh Banner <span class="text-danger" v-if="!isEditMode">*</span></label>
-                <input
-                  type="file"
-                  id="image"
-                  class="form-control mb-2"
-                    accept="image/png, image/jpeg, image/svg+xml"
-                  @change="handleImageUpload"
+                  <input
+                    type="file"
+                    id="image"
+                    class="form-control mb-2"
+                    accept="image/*"
+                    @change="handleImageUpload"
                   :required="!isEditMode && !formData.image_url"
                 />
                 <div class="d-flex justify-content-center align-items-center border rounded bg-light mt-2" style="height: 180px;">

@@ -89,11 +89,11 @@ class AuthController extends Controller
                 'name' => 'required|string|max:100',
                 'email' => 'required|email|max:100|unique:users,email,' . $user->id,
                 'phone' => 'nullable|string|regex:/^[0-9]{9,15}$/',
-                'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:800',
+                'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp,svg,bmp|max:5120',
             ], [
                 'name.max' => 'Họ và tên không được vượt quá 100 ký tự.',
                 'phone.regex' => 'Số điện thoại không hợp lệ.',
-                'avatar.max' => 'Ảnh đại diện không được vượt quá 800KB.',
+                'avatar.max' => 'Ảnh đại diện không được vượt quá 5MB.',
             ]);
 
             if ($request->hasFile('avatar')) {

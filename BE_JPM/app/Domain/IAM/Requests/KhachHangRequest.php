@@ -37,7 +37,7 @@ class KhachHangRequest extends FormRequest
             'name' => 'required|string|max:100',
             'phone' => $phoneRule,
             'email' => $emailRule,
-            'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:800',
+            'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp,svg,bmp|max:5120',
             'status' => 'nullable|integer|in:0,1',
             'password' => ['nullable', 'string', 'min:8', 'max:25', 'regex:/^[\x20-\x7E]+$/']
         ];
@@ -55,8 +55,8 @@ class KhachHangRequest extends FormRequest
             'email.email' => 'Email không đúng định dạng.',
             'email.unique' => 'Email đã được đăng ký.',
             'avatar.image' => 'Ảnh đại diện phải là một tệp hình ảnh.',
-            'avatar.mimes' => 'Ảnh đại diện chỉ chấp nhận định dạng: jpeg, png, jpg, gif, webp.',
-            'avatar.max' => 'Ảnh đại diện không được vượt quá 800KB.',
+            'avatar.mimes' => 'Ảnh đại diện chỉ chấp nhận định dạng: jpeg, png, jpg, gif, webp, svg, bmp.',
+            'avatar.max' => 'Ảnh đại diện không được vượt quá 5MB.',
             'password.min' => 'Mật khẩu phải dài ít nhất 8 ký tự.',
             'password.max' => 'Mật khẩu tối đa là 25 ký tự.',
             'password.regex' => 'Mật khẩu không được chứa dấu Tiếng Việt.'

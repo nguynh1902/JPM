@@ -45,7 +45,7 @@
                         id="upload"
                         class="account-file-input"
                         hidden
-                        accept="image/png, image/jpeg, image/gif"
+                        accept="image/*"
                         @change="handleAvatarUpload"
                       />
                     </label>
@@ -54,7 +54,7 @@
                   <h6 class="fw-bold mb-1 text-dark">{{ profile.name || 'Admin Manager' }}</h6>
                                     <span class="badge bg-label-primary mt-1">Quản trị viên</span>
 
-                  <p v-if="isEditing" class="text-muted mt-3 mb-0" style="font-size: 0.8rem;">Cho phép JPG, GIF, PNG.<br>Tối đa 800K</p>
+                  <p v-if="isEditing" class="text-muted mt-3 mb-0" style="font-size: 0.8rem;">Cho phép mọi định dạng ảnh (JPG, PNG, GIF, WEBP, SVG...).<br>Tối đa 5MB</p>
                 </div>
               </div>
               
@@ -215,8 +215,8 @@ const getAvatarUrl = (path) => {
 const handleAvatarUpload = (event) => {
   const file = event.target.files[0];
   if (file) {
-    if (file.size > 800 * 1024) {
-      toaster.error("Kích thước file vượt quá 800KB");
+    if (file.size > 5 * 1024 * 1024) {
+      toaster.error("Kích thước file vượt quá 5MB");
       event.target.value = '';
       return;
     }
