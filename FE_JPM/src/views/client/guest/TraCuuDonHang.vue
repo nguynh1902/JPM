@@ -110,16 +110,67 @@
               </div>
 
               <!-- Payment Section for Unpaid Orders -->
-              <div v-if="result.type === 'order' && result.data.trang_thai_thanh_toan === 0 && result.data.trang_thai !== 3 && result.data.trang_thai !== 4" class="bg-light p-4 rounded-4 text-center mt-4">
-                <h6 class="fw-bold text-uppercase text-dark mb-3"><i class='bx bx-qr-scan me-2'></i>Thanh Toán Nhanh Qua VietQR</h6>
-                <p class="text-muted small mb-4">Mở ứng dụng ngân hàng và quét mã QR bên dưới để thanh toán.</p>
-                <div class="d-inline-block bg-white p-3 rounded-4 shadow-sm mb-3">
-                  <img :src="getVietQrUrl()" alt="VietQR" class="img-fluid" style="max-width: 250px;">
+              <div v-if="result.type === 'order' && result.data.trang_thai_thanh_toan === 0 && result.data.trang_thai !== 3 && result.data.trang_thai !== 4" class="bg-light p-4 rounded-4 text-center mt-4 border border-primary border-opacity-25">
+                <div class="d-flex align-items-center justify-content-center gap-2 mb-2">
+                  <span class="badge bg-primary px-3 py-2 rounded-pill"><i class='bx bx-qr-scan me-1'></i> VIETQR NAPAS247 TỰ ĐỘNG</span>
+                  <span class="badge bg-success-subtle text-success px-3 py-2 rounded-pill"><i class='bx bx-wifi me-1'></i> ĐỐI SOÁT TỨC THÌ</span>
                 </div>
-                <div class="text-muted small">
-                  <p class="mb-1">Ngân hàng: <strong>MB Bank</strong></p>
-                  <p class="mb-1">STK: <strong>123456789</strong> (JPM MARINE)</p>
-                  <p class="mb-0">Nội dung: <strong>Thanh toan {{ result.data.ma_don_hang }}</strong></p>
+                <h5 class="fw-bold text-dark mb-2">Thanh Toán / Đặt Cọc Chuyển Khoản</h5>
+                <p class="text-muted small mb-4">Mở ứng dụng Mobile Banking của mọi ngân hàng (VietinBank, Vietcombank, MB, Techcombank...) quét mã bên dưới để thanh toán tự động trong vài giây.</p>
+                
+                <div v-if="vietQrData" class="row justify-content-center align-items-center g-4">
+                  <div class="col-md-5 text-center">
+                    <div class="d-inline-block bg-white p-3 rounded-4 shadow-sm border">
+                      <img :src="vietQrData.qr_url" alt="VietQR Napas247" class="img-fluid" style="max-width: 240px; border-radius: 8px;">
+                    </div>
+                    <div class="mt-2 text-muted small d-flex align-items-center justify-content-center gap-2">
+                      <span class="spinner-grow spinner-grow-sm text-success" role="status"></span>
+                      <span>Đang chờ chuyển khoản...</span>
+                    </div>
+                  </div>
+                  
+                  <div class="col-md-7 text-start">
+                    <div class="bg-white p-3 rounded-3 shadow-sm border">
+                      <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
+                        <span class="text-muted small">Ngân Hàng Thụ Hưởng:</span>
+                        <span class="fw-bold text-dark">{{ vietQrData.bank_name }} ({{ vietQrData.bank_id }})</span>
+                      </div>
+                      <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
+                        <span class="text-muted small">Số Tài Khoản:</span>
+                        <div class="d-flex align-items-center gap-2">
+                          <span class="fw-bold text-primary fs-6">{{ vietQrData.account_no }}</span>
+                          <button type="button" class="btn btn-sm btn-outline-secondary py-0 px-2" @click="copyText(vietQrData.account_no, 'Đã copy số tài khoản')">
+                            <i class='bx bx-copy'></i>
+                          </button>
+                        </div>
+                      </div>
+                      <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
+                        <span class="text-muted small">Tên Chủ Tài Khoản:</span>
+                        <span class="fw-bold text-dark">{{ vietQrData.account_name }}</span>
+                      </div>
+                      <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
+                        <span class="text-muted small">Số Tiền:</span>
+                        <span class="fw-bold text-danger fs-5">{{ vietQrData.amount_formatted }}</span>
+                      </div>
+                      <div class="d-flex justify-content-between align-items-center py-2">
+                        <span class="text-muted small">Nội Dung CK (Bắt buộc):</span>
+                        <div class="d-flex align-items-center gap-2">
+                          <span class="fw-bold text-dark bg-light px-2 py-1 rounded border">{{ vietQrData.transfer_content }}</span>
+                          <button type="button" class="btn btn-sm btn-outline-primary py-0 px-2" @click="copyText(vietQrData.transfer_content, 'Đã copy nội dung chuyển khoản')">
+                            <i class='bx bx-copy'></i>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                    <small class="text-muted d-block mt-2 fst-italic">
+                      * Vui lòng giữ nguyên nội dung chuyển khoản để hệ thống ngân hàng đối soát tự động kích hoạt xuất kho.
+                    </small>
+                  </div>
+                </div>
+
+                <div v-else class="py-4">
+                  <div class="spinner-border text-primary" role="status"></div>
+                  <p class="text-muted small mt-2">Đang kết nối cổng VietQR...</p>
                 </div>
               </div>
               
@@ -153,8 +204,13 @@ export default {
         phone: ''
       },
       isLoading: false,
-      result: null
+      result: null,
+      vietQrData: null,
+      pollingTimer: null
     }
+  },
+  beforeUnmount() {
+    this.stopPolling();
   },
   computed: {
     statusText() {
@@ -195,6 +251,20 @@ export default {
       if (!value) return '0 ₫';
       return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(value);
     },
+    copyText(text, msg) {
+      if (!text) return;
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(text);
+      }
+      Swal.fire({
+        toast: true,
+        position: 'top-end',
+        icon: 'success',
+        title: msg || 'Đã sao chép!',
+        showConfirmButton: false,
+        timer: 2000
+      });
+    },
     calculateItemsTotal() {
       if (!this.result || !this.result.data.chi_tiet) return 0;
       return this.result.data.chi_tiet.reduce((sum, item) => {
@@ -208,20 +278,68 @@ export default {
       const paid = this.result.data.da_thu || 0;
       return subtotal + shipping - paid;
     },
-    getVietQrUrl() {
-      if (!this.result || this.result.type !== 'order') return '';
-      const amount = this.calculateGrandTotal();
-      const addInfo = `Thanh toan ${this.result.data.ma_don_hang}`;
-      return `https://img.vietqr.io/image/970422-123456789-compact2.png?amount=${amount}&addInfo=${encodeURIComponent(addInfo)}&accountName=JPM%20MARINE`;
+    async loadVietQR() {
+      if (!this.result || this.result.type !== 'order') return;
+      try {
+        const res = await axiosClient.get(`/public/vietqr/don-hang/${this.result.data.ma_don_hang}`);
+        if (res.data && res.data.success) {
+          this.vietQrData = res.data;
+        }
+      } catch (err) {
+        console.error('Không thể tải mã VietQR:', err);
+      }
+    },
+    startPolling() {
+      this.stopPolling();
+      if (!this.result || this.result.type !== 'order') return;
+      if (this.result.data.trang_thai_thanh_toan === 2 || this.result.data.trang_thai === 3 || this.result.data.trang_thai === 4) return;
+
+      const orderCode = this.result.data.ma_don_hang;
+      this.pollingTimer = setInterval(async () => {
+        try {
+          const res = await axiosClient.get(`/public/vietqr/check-status/order/${orderCode}`);
+          if (res.data && res.data.success) {
+            const currentPaid = parseFloat(this.result.data.da_thu || 0);
+            const newPaid = parseFloat(res.data.paid_amount || 0);
+
+            if (newPaid > currentPaid || res.data.is_paid || res.data.is_deposit_paid) {
+              this.result.data.da_thu = newPaid;
+              this.result.data.trang_thai_thanh_toan = res.data.payment_status;
+              this.stopPolling();
+
+              Swal.fire({
+                icon: 'success',
+                title: 'Thanh Toán Thành Công!',
+                text: `Hệ thống đã nhận ${this.formatCurrency(newPaid)} và hoàn tất đối soát tự động.`,
+                confirmButtonColor: '#0d6efd'
+              });
+            }
+          }
+        } catch (e) {
+          // Silent polling errors
+        }
+      }, 4000);
+    },
+    stopPolling() {
+      if (this.pollingTimer) {
+        clearInterval(this.pollingTimer);
+        this.pollingTimer = null;
+      }
     },
     async searchTransaction() {
       if (!this.form.code || !this.form.phone) return;
+      this.stopPolling();
       this.isLoading = true;
       this.result = null;
+      this.vietQrData = null;
       try {
         const res = await axiosClient.post('/public/tra-cuu-nhanh', this.form);
         if (res.data.success) {
           this.result = res.data;
+          if (this.result.type === 'order' && this.result.data.trang_thai_thanh_toan === 0) {
+            await this.loadVietQR();
+            this.startPolling();
+          }
           setTimeout(() => {
             window.scrollTo({ top: 500, behavior: 'smooth' });
           }, 100);

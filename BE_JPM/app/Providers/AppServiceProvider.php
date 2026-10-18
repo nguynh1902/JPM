@@ -38,6 +38,14 @@ class AppServiceProvider extends ServiceProvider
         \Laravel\Sanctum\Sanctum::usePersonalAccessTokenModel(
             \App\Domain\IAM\Services\CachedSanctumPersonalAccessToken::class
         );
+
+        // 4. Automatic Catalog Cache Invalidation Observers
+        \App\Domain\MarineCatalog\Models\ThuongHieu::observe(\App\Domain\MarineCatalog\Observers\CatalogModelObserver::class);
+        \App\Domain\MarineCatalog\Models\DongCoModel::observe(\App\Domain\MarineCatalog\Observers\CatalogModelObserver::class);
+        \App\Domain\MarineCatalog\Models\LoaiDongCo::observe(\App\Domain\MarineCatalog\Observers\CatalogModelObserver::class);
+        \App\Domain\PIM\Models\NhomPhuTung::observe(\App\Domain\MarineCatalog\Observers\CatalogModelObserver::class);
+        \App\Domain\PIM\Models\SoDoPhuTung::observe(\App\Domain\MarineCatalog\Observers\CatalogModelObserver::class);
+        \App\Domain\PIM\Models\PhuTung::observe(\App\Domain\MarineCatalog\Observers\CatalogModelObserver::class);
     }
 
     /**

@@ -60,6 +60,20 @@ Route::prefix('public')->middleware(['throttle:public-api', 'cache.public'])->gr
     Route::get('/san-pham/{slug}', [\App\Domain\CMS\Controllers\SanPhamController::class, 'publicShow']);
 });
 
+// VietQR Payment & Polling (Public, No Response Cache)
+Route::prefix('public/vietqr')->group(function () {
+    Route::get('/don-hang/{code}', [\App\Domain\Sales\Controllers\PaymentController::class, 'getDonHangQR']);
+    Route::get('/bao-gia/{code}', [\App\Domain\Sales\Controllers\PaymentController::class, 'getBaoGiaQR']);
+    Route::get('/check-status/{type}/{code}', [\App\Domain\Sales\Controllers\PaymentController::class, 'checkStatus']);
+});
+
+// Payment Gateway Webhooks (Banking / SePay / Casso IPN)
+Route::prefix('webhooks')->group(function () {
+    Route::post('/payment/reconciliation', [\App\Domain\Sales\Controllers\PaymentController::class, 'webhookReconciliation']);
+    Route::post('/sepay', [\App\Domain\Sales\Controllers\PaymentController::class, 'webhookReconciliation']);
+    Route::post('/casso', [\App\Domain\Sales\Controllers\PaymentController::class, 'webhookReconciliation']);
+});
+
 // Auth Routes (Protected)
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/me', [AuthController::class, 'me']);
@@ -188,6 +202,26 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('admin/ton-kho/{id}', [\App\Domain\Procurement\Controllers\TonKhoController::class, 'destroy']);
 
         Route::delete('admin/don-hang/{id}', [\App\Domain\Sales\Controllers\DonHangController::class, 'destroy']);
+
+        // Tiện ích Cache & Tối ưu hóa Catalog
+        Route::post('admin/he-thong/clear-cache', function (\Illuminate\Http\Request $request, \App\Domain\MarineCatalog\Services\CatalogCacheService $cacheService) {
+            $warmup = $request->boolean('warmup', true);
+            if ($warmup) {
+                $result = $cacheService->warmUpCatalogCache();
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Đã xóa toàn bộ và làm ấm lại Redis/File Cache cho Catalog',
+                    'stats' => $result['stats'] ?? [],
+                ]);
+            } else {
+                $cleared = $cacheService->clearAllCatalogCache();
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Đã xóa toàn bộ Cache Catalog',
+                    'cleared' => $cleared,
+                ]);
+            }
+        });
     });
 
     // =========================================================================
@@ -229,6 +263,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('admin/yeu-cau-bao-gia/{id}/chuyen-don', [\App\Domain\Sales\Controllers\YeuCauBaoGiaController::class, 'convertToOrder']);
 
         // Nghiệp vụ Đơn hàng
+        Route::get('admin/don-hang/xuat-excel-po-nhat', [\App\Domain\Sales\Controllers\DonHangController::class, 'exportJapanPO']);
         Route::get('admin/don-hang', [\App\Domain\Sales\Controllers\DonHangController::class, 'index']);
         Route::get('admin/don-hang/{id}', [\App\Domain\Sales\Controllers\DonHangController::class, 'show']);
         Route::put('admin/don-hang/{id}', [\App\Domain\Sales\Controllers\DonHangController::class, 'update']);
@@ -241,6 +276,15 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('admin/ton-kho/hang-can-nhap', [\App\Domain\Procurement\Controllers\TonKhoController::class, 'hangCanNhap']);
         Route::get('admin/the-kho', [\App\Domain\Procurement\Controllers\TheKhoController::class, 'index']);
         Route::get('admin/the-kho/{id}', [\App\Domain\Procurement\Controllers\TheKhoController::class, 'show']);
+
+        // Nghiệp vụ VietQR & Đối soát thanh toán
+        Route::get('admin/thanh-toan/giao-dich', [\App\Domain\Sales\Controllers\PaymentController::class, 'adminTransactions']);
+        Route::post('admin/thanh-toan/mo-phong', [\App\Domain\Sales\Controllers\PaymentController::class, 'adminSimulatePayment']);
+
+        // Nghiệp vụ Thông báo Zalo ZNS / SMS Chành xe & Khách hàng
+        Route::get('admin/thong-bao/lich-su', [\App\Domain\Communication\Controllers\NotificationController::class, 'adminNotifications']);
+        Route::post('admin/thong-bao/gui-tin', [\App\Domain\Communication\Controllers\NotificationController::class, 'sendCustom']);
+        Route::post('admin/thong-bao/gui-chanh-xe/{orderId}', [\App\Domain\Communication\Controllers\NotificationController::class, 'sendOrderShippingNotice']);
     });
 });
 

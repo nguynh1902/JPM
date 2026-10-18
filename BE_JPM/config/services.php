@@ -35,4 +35,34 @@ return [
         ],
     ],
 
+    'vietqr' => [
+        'bank_id' => env('VIETQR_BANK_ID', 'ICB'), // Mã ngân hàng Napas (ICB: Vietinbank, VCB: Vietcombank, MB: MBBank)
+        'bank_name' => env('VIETQR_BANK_NAME', 'VietinBank'),
+        'account_no' => env('VIETQR_ACCOUNT_NO', '108876543210'),
+        'account_name' => env('VIETQR_ACCOUNT_NAME', 'CONG TY PHU TUNG MAY THUY JPM'),
+        'template' => env('VIETQR_TEMPLATE', 'compact2'), // compact, compact2, qr_only, print
+    ],
+
+    'sepay' => [
+        'api_key' => env('SEPAY_API_KEY', ''),
+        'webhook_token' => env('SEPAY_WEBHOOK_TOKEN', 'jpm_secure_webhook_token_2026'),
+    ],
+
+    'zalo_zns' => [
+        'app_id' => env('ZALO_ZNS_APP_ID', ''),
+        'secret_key' => env('ZALO_ZNS_SECRET_KEY', ''),
+        'oa_id' => env('ZALO_OA_ID', ''),
+        'template_quote_ready' => env('ZALO_ZNS_TEMPLATE_QUOTE', '123456'),
+        'template_deposit_success' => env('ZALO_ZNS_TEMPLATE_DEPOSIT', '123457'),
+        'template_shipping' => env('ZALO_ZNS_TEMPLATE_SHIPPING', '123458'),
+        'sandbox' => env('ZALO_ZNS_SANDBOX', true),
+    ],
+
+    'sms_brandname' => [
+        'provider' => env('SMS_PROVIDER', 'mock'), // mock, speedsms, esms, viettel
+        'api_key' => env('SMS_API_KEY', ''),
+        'brandname' => env('SMS_BRANDNAME', 'JPM_MARINE'),
+        'sandbox' => env('SMS_SANDBOX', true),
+    ],
+
 ];

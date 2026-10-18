@@ -316,6 +316,62 @@
         </div>
       </div>
 
+      <!-- HIỆU NĂNG & REDIS CACHE -->
+      <div class="col-12">
+        <div class="card shadow-sm border">
+          <div class="card-header bg-white border-bottom py-3 d-flex justify-content-between align-items-center">
+            <div>
+              <h5 class="card-title mb-1 fw-bold text-dark">Hiệu Năng & Bộ Nhớ Đệm (Redis / Failover Cache)</h5>
+              <small class="text-muted">Tăng tốc truy vấn danh mục Máy thủy, Model, Sơ đồ phụ tùng và chịu tải cao khi triển khai Production</small>
+            </div>
+            <span class="badge bg-success px-3 py-2 rounded-pill">
+              <i class="bx bx-check-shield me-1"></i> Redis Active (Failover Protected)
+            </span>
+          </div>
+
+          <div class="card-body pt-4">
+            <div class="row align-items-center g-3">
+              <div class="col-lg-8">
+                <p class="text-dark fw-medium mb-1">
+                  Kiến trúc bộ nhớ đệm: <strong>Failover Cache (Redis &rarr; File Driver &rarr; Memory Array)</strong>
+                </p>
+                <p class="text-muted small mb-0">
+                  Khi kích hoạt máy chủ Production, Redis Cache lưu trữ sẵn toàn bộ Thương hiệu, Loại động cơ, Model và Nhóm phụ tùng giúp giảm tải 95% truy vấn database. Khi có thay đổi dữ liệu phụ tùng từ Admin, hệ thống tự động xóa cache liên quan.
+                </p>
+                <div v-if="cacheStats" class="mt-3 p-3 bg-light rounded-3 border small">
+                  <div class="d-flex flex-wrap gap-4 text-dark">
+                    <span><i class="bx bx-badge-check text-success me-1"></i>Thương hiệu: <strong>{{ cacheStats.thuong_hieu ?? cacheStats.cached_brands ?? 0 }}</strong></span>
+                    <span><i class="bx bx-badge-check text-success me-1"></i>Loại động cơ: <strong>{{ cacheStats.loai_dong_co ?? cacheStats.cached_engine_types ?? 0 }}</strong></span>
+                    <span><i class="bx bx-badge-check text-success me-1"></i>Model máy: <strong>{{ cacheStats.dong_co_model ?? cacheStats.cached_models ?? 0 }}</strong></span>
+                    <span><i class="bx bx-badge-check text-success me-1"></i>Nhóm phụ tùng: <strong>{{ cacheStats.nhom_phu_tung ?? cacheStats.cached_part_groups ?? 0 }}</strong></span>
+                  </div>
+                </div>
+              </div>
+              <div class="col-lg-4 text-lg-end d-flex flex-column flex-sm-row justify-content-lg-end gap-2">
+                <button 
+                  type="button" 
+                  class="btn btn-outline-danger shadow-sm text-nowrap"
+                  @click="handleClearCache(false)"
+                  :disabled="isClearingCache"
+                >
+                  <i class="bx bx-trash me-1"></i> Xóa Trắng Cache
+                </button>
+                <button 
+                  type="button" 
+                  class="btn btn-success shadow-sm text-nowrap"
+                  @click="handleClearCache(true)"
+                  :disabled="isClearingCache"
+                >
+                  <span v-if="isClearingCache" class="spinner-border spinner-border-sm me-2" role="status"></span>
+                  <i v-else class="bx bx-bolt-circle me-1"></i>
+                  {{ isClearingCache ? 'Đang làm ấm...' : 'Làm Ấm Cache (Warm-up)' }}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </div>
   </div>
 </template>
@@ -432,6 +488,33 @@ export default {
       }
     };
 
+    const isClearingCache = ref(false);
+    const cacheStats = ref(null);
+
+    const handleClearCache = async (warmup = true) => {
+      isClearingCache.value = true;
+      try {
+        const res = await axiosClient.post('/admin/he-thong/clear-cache', { warmup });
+        if (res.data && res.data.success) {
+          cacheStats.value = res.data.stats || null;
+          Swal.fire({
+            icon: 'success',
+            title: 'Thành Công!',
+            text: res.data.message,
+            confirmButtonColor: '#696cff'
+          });
+        }
+      } catch (err) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Lỗi',
+          text: 'Không thể xóa bộ nhớ đệm: ' + (err.response?.data?.message || err.message)
+        });
+      } finally {
+        isClearingCache.value = false;
+      }
+    };
+
     onMounted(() => {
       updateYoutubePreview();
     });
@@ -443,7 +526,10 @@ export default {
       previewVideoId,
       updateYoutubePreview,
       saveSettings,
-      resetToInitial
+      resetToInitial,
+      isClearingCache,
+      cacheStats,
+      handleClearCache
     };
   }
 };

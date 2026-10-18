@@ -88,8 +88,9 @@
                               <span class="text-muted small me-1">Tổng báo giá:</span>
                               <strong class="text-danger fs-6">{{ formatPrice(quote.tong_tien + (quote.khach_tu_tra_cuoc ? 0 : (quote.phi_van_chuyen || 0))) }}đ</strong>
                             </div>
-                            <router-link v-if="quote.token" :to="'/tra-cuu-bao-gia/' + quote.token" class="btn btn-sm btn-outline-primary fw-bold px-3">
-                              Xem & Chốt Đơn
+                            <router-link v-if="quote.token" :to="'/tra-cuu-bao-gia/' + quote.token" class="btn btn-sm fw-bold px-3 shadow-sm" :class="quote.trang_thai == 3 ? 'btn-outline-danger' : 'btn-outline-primary'">
+                              <i :class="quote.trang_thai == 3 ? 'bi bi-arrow-repeat me-1' : 'bi bi-check2-circle me-1'"></i>
+                              {{ quote.trang_thai == 3 ? 'Yêu Cầu Báo Giá Lại' : (quote.trang_thai == 1 ? 'Xem & Chốt Đơn' : 'Xem Chi Tiết') }}
                             </router-link>
                           </div>
                         </div>
@@ -140,6 +141,72 @@
                           </span>
                         </div>
                         
+                        <!-- TIẾN ĐỘ 5 BƯỚC NHẬP KHẨU VẬN CHUYỂN -->
+                        <div class="px-3 py-3 bg-light border-bottom" v-if="order.trang_thai !== 4">
+                          <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap gap-1">
+                            <span class="small fw-bold text-uppercase text-secondary" style="font-size: 0.75rem; letter-spacing: 0.5px;">
+                              <i class="bi bi-geo-alt-fill text-danger me-1"></i> TIẾN ĐỘ ĐƠN HÀNG NHẬP KHẨU NHẬT BẢN
+                            </span>
+                            <span class="badge bg-white text-primary border shadow-sm small px-2 py-1">
+                              {{ getMilestoneName(order) }}
+                            </span>
+                          </div>
+                          
+                          <div class="stepper-horizontal">
+                            <div class="stepper-step" :class="{ 'completed': getMilestoneStep(order) >= 1, 'active': getMilestoneStep(order) === 1 }">
+                              <div class="stepper-circle">
+                                <i v-if="getMilestoneStep(order) > 1" class="bi bi-check-lg"></i>
+                                <span v-else>1</span>
+                              </div>
+                              <div class="stepper-label">Đã nhận cọc</div>
+                            </div>
+                            
+                            <div class="stepper-line" :class="{ 'completed': getMilestoneStep(order) >= 2 }"></div>
+                            
+                            <div class="stepper-step" :class="{ 'completed': getMilestoneStep(order) >= 2, 'active': getMilestoneStep(order) === 2 }">
+                              <div class="stepper-circle">
+                                <i v-if="getMilestoneStep(order) > 2" class="bi bi-check-lg"></i>
+                                <span v-else>2</span>
+                              </div>
+                              <div class="stepper-label">Đã đặt hàng Nhật</div>
+                            </div>
+                            
+                            <div class="stepper-line" :class="{ 'completed': getMilestoneStep(order) >= 3 }"></div>
+                            
+                            <div class="stepper-step" :class="{ 'completed': getMilestoneStep(order) >= 3, 'active': getMilestoneStep(order) === 3 }">
+                              <div class="stepper-circle">
+                                <i v-if="getMilestoneStep(order) > 3" class="bi bi-check-lg"></i>
+                                <span v-else>3</span>
+                              </div>
+                              <div class="stepper-label">Đã về kho VN</div>
+                            </div>
+                            
+                            <div class="stepper-line" :class="{ 'completed': getMilestoneStep(order) >= 4 }"></div>
+                            
+                            <div class="stepper-step" :class="{ 'completed': getMilestoneStep(order) >= 4, 'active': getMilestoneStep(order) === 4 }">
+                              <div class="stepper-circle">
+                                <i v-if="getMilestoneStep(order) > 4" class="bi bi-check-lg"></i>
+                                <span v-else>4</span>
+                              </div>
+                              <div class="stepper-label">Giao chành xe</div>
+                            </div>
+                            
+                            <div class="stepper-line" :class="{ 'completed': getMilestoneStep(order) >= 5 }"></div>
+                            
+                            <div class="stepper-step" :class="{ 'completed': getMilestoneStep(order) >= 5, 'active': getMilestoneStep(order) === 5 }">
+                              <div class="stepper-circle">
+                                <i v-if="getMilestoneStep(order) >= 5" class="bi bi-check-lg"></i>
+                                <span v-else>5</span>
+                              </div>
+                              <div class="stepper-label">Hoàn tất (Tất toán)</div>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="px-3 py-2 bg-danger-subtle text-danger small border-bottom fw-bold" v-else>
+                          <i class="bi bi-x-circle me-1"></i> Đơn hàng này đã bị hủy.
+                        </div>
+
                         <div class="card-body p-0">
                           <div class="list-group list-group-flush">
                             <div v-for="(item, idx) in order.items" :key="idx" class="list-group-item p-3 border-bottom d-flex align-items-center gap-3">
@@ -285,9 +352,9 @@ const formatDate = (dateStr) => {
 const getQuoteStatusText = (status) => {
   switch(Number(status)) {
     case 0: return 'Đang chờ báo giá';
-    case 1: return 'Đã có báo giá';
-    case 2: return 'Đã từ chối';
-    case 3: return 'Đã chốt thành đơn';
+    case 1: return 'Đã có báo giá (Hiệu lực 72h)';
+    case 2: return 'Đã chốt đơn hàng';
+    case 3: return 'Hết hạn hiệu lực / Đã hủy';
     default: return 'Không xác định';
   }
 };
@@ -295,8 +362,8 @@ const getQuoteStatusClass = (status) => {
   switch(Number(status)) {
     case 0: return 'bg-pastel-warning text-warning';
     case 1: return 'bg-pastel-success text-success';
-    case 2: return 'bg-pastel-danger text-danger';
-    case 3: return 'bg-pastel-info text-info';
+    case 2: return 'bg-pastel-info text-info';
+    case 3: return 'bg-pastel-danger text-danger';
     default: return 'bg-light text-secondary';
   }
 };
@@ -304,9 +371,9 @@ const getQuoteStatusClass = (status) => {
 const getOrderStatusText = (status) => {
   switch(Number(status)) {
     case 0: return 'Chờ xác nhận';
-    case 1: return 'Đã xác nhận';
-    case 2: return 'Đang vận chuyển';
-    case 3: return 'Hoàn thành';
+    case 1: return 'Đã đặt hàng Nhật';
+    case 2: return 'Đang giao chành xe';
+    case 3: return 'Hoàn tất (Tất toán)';
     case 4: return 'Đã hủy';
     default: return 'Không xác định';
   }
@@ -319,6 +386,27 @@ const getOrderStatusClass = (status) => {
     case 3: return 'bg-pastel-success text-success';
     case 4: return 'bg-pastel-danger text-danger';
     default: return 'bg-light text-secondary';
+  }
+};
+
+const getMilestoneStep = (order) => {
+  const st = Number(order.trang_thai);
+  if (st === 4) return -1; // Đã hủy
+  if (st === 3) return 5;  // Hoàn tất (Tất toán)
+  if (st === 2) return 4;  // Đang giao chành xe
+  if (st === 1) return 2;  // Đã gom PO đặt hàng Nhật
+  return 1;                // Đã nhận cọc / Tiếp nhận
+};
+
+const getMilestoneName = (order) => {
+  const step = getMilestoneStep(order);
+  switch(step) {
+    case 1: return 'Bước 1/5: Đã tiếp nhận & Nhận cọc';
+    case 2: return 'Bước 2/5: Đã đặt hàng đối tác Nhật';
+    case 3: return 'Bước 3/5: Đã nhập kho JPM & Kiểm định';
+    case 4: return 'Bước 4/5: Đang giao chành xe liên tỉnh';
+    case 5: return 'Bước 5/5: Đã giao hàng & Tất toán thành công';
+    default: return 'Đã hủy đơn';
   }
 };
 
@@ -416,6 +504,90 @@ const logout = async () => {
 .bg-pastel-danger { background-color: rgba(255, 62, 29, 0.1); }
 .bg-pastel-info { background-color: rgba(3, 195, 236, 0.1); }
 .bg-pastel-primary { background-color: rgba(105, 108, 255, 0.1); }
+
+/* Horizontal Milestone Stepper */
+.stepper-horizontal {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  margin-top: 10px;
+  margin-bottom: 5px;
+}
+.stepper-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  flex: 0 0 auto;
+}
+.stepper-circle {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background-color: #e9ecef;
+  color: #6c757d;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  transition: all 0.3s ease;
+  border: 2px solid #dee2e6;
+}
+.stepper-step.completed .stepper-circle {
+  background-color: #198754;
+  border-color: #198754;
+  color: #fff;
+}
+.stepper-step.active .stepper-circle {
+  background-color: #0d6efd;
+  border-color: #0d6efd;
+  color: #fff;
+  box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.2);
+}
+.stepper-label {
+  margin-top: 6px;
+  font-size: 11px;
+  color: #6c757d;
+  font-weight: 500;
+  max-width: 90px;
+  line-height: 1.2;
+}
+.stepper-step.completed .stepper-label {
+  color: #198754;
+  font-weight: 600;
+}
+.stepper-step.active .stepper-label {
+  color: #0d6efd;
+  font-weight: 700;
+}
+.stepper-line {
+  flex: 1 1 0%;
+  height: 3px;
+  background-color: #dee2e6;
+  margin: 0 4px;
+  margin-bottom: 20px;
+  z-index: 1;
+  transition: all 0.3s ease;
+}
+.stepper-line.completed {
+  background-color: #198754;
+}
+
+@media (max-width: 576px) {
+  .stepper-label {
+    font-size: 9px;
+    max-width: 60px;
+  }
+  .stepper-circle {
+    width: 22px;
+    height: 22px;
+    font-size: 10px;
+  }
+}
 </style>
 
 

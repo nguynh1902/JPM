@@ -291,9 +291,37 @@ class YeuCauBaoGiaController extends Controller
     {
         try {
             $quote = YeuCauBaoGia::with('chiTiet')->where('token', $token)->firstOrFail();
+
+            // Thời hạn hiệu lực báo giá: 72 giờ (3 ngày) kể từ khi Admin báo giá
+            $validHours = 72;
+            $isExpired = false;
+            $remainingSeconds = 0;
+            $expiresAt = null;
+
+            if ($quote->trang_thai == 1 && $quote->updated_at) {
+                $expiresAt = $quote->updated_at->copy()->addHours($validHours);
+                if (now()->greaterThan($expiresAt)) {
+                    $isExpired = true;
+                    // Tự động hủy báo giá quá hạn
+                    $quote->trang_thai = 3;
+                    $quote->ghi_chu_zalo = ($quote->ghi_chu_zalo ? $quote->ghi_chu_zalo . ' | ' : '') . 'Báo giá đã tự động hủy do quá hạn hiệu lực (' . $validHours . 'h).';
+                    $quote->save();
+                } else {
+                    $remainingSeconds = max(0, now()->diffInSeconds($expiresAt, false));
+                }
+            } elseif ($quote->trang_thai == 3) {
+                $isExpired = true;
+            }
+
+            $quoteData = $quote->toArray();
+            $quoteData['is_expired'] = $isExpired;
+            $quoteData['valid_hours'] = $validHours;
+            $quoteData['expires_at'] = $expiresAt ? $expiresAt->toIso8601String() : null;
+            $quoteData['remaining_seconds'] = $remainingSeconds;
+
             return response()->json([
                 'success' => true,
-                'data'    => $quote
+                'data'    => $quoteData
             ]);
         } catch (\Exception $e) {
             return response()->json(['success' => false, 'message' => 'Báo giá không tồn tại hoặc đã hết hạn.'], 404);
@@ -301,7 +329,7 @@ class YeuCauBaoGiaController extends Controller
     }
 
     /**
-     * Khách hàng chốt / duyệt báo giá từ link Zalo
+     * Khách hàng chốt / duyệt / hủy / yêu cầu báo giá lại từ link Zalo
      */
     public function customerAction(Request $request, $token)
     {
@@ -311,13 +339,39 @@ class YeuCauBaoGiaController extends Controller
             $action = $request->input('action', 'accept');
 
             if ($action === 'accept') {
-                $quote->trang_thai = 1; // Khách đã chốt
+                // Kiểm tra nếu báo giá đã quá 72h thì không cho chốt giá cũ
+                $validHours = 72;
+                if ($quote->updated_at && now()->diffInHours($quote->updated_at) > $validHours) {
+                    $quote->trang_thai = 3;
+                    $quote->save();
+                    DB::commit();
+
+                    return response()->json([
+                        'success' => false,
+                        'is_expired' => true,
+                        'message' => 'Báo giá này đã quá thời hạn giữ giá (' . $validHours . ' giờ). Vui lòng bấm "Yêu Cầu Báo Giá Lại" để nhận giá cập nhật mới nhất.'
+                    ], 422);
+                }
+
+                $quote->trang_thai = 2; // Khách đã chốt đơn hàng (Chờ cọc)
                 $quote->save();
                 DB::commit();
 
                 return response()->json([
                     'success' => true,
-                    'message' => 'Quý khách đã xác nhận đồng ý báo giá thành công! JPM sẽ liên hệ sớm nhất.'
+                    'message' => 'Quý khách đã đồng ý chốt đơn thành công! Vui lòng chuyển khoản tiền cọc để kho tiến hành đặt hàng bên Nhật.'
+                ]);
+            } elseif ($action === 're_quote') {
+                // Khách yêu cầu báo giá lại khi đơn cũ quá hạn
+                $quote->trang_thai = 0; // Chuyển về Chờ báo giá
+                $quote->updated_at = now();
+                $quote->ghi_chu_khach_hang = ($quote->ghi_chu_khach_hang ? $quote->ghi_chu_khach_hang . ' | ' : '') . 'Khách yêu cầu cập nhật lại báo giá vào ' . now()->format('d/m/Y H:i');
+                $quote->save();
+                DB::commit();
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Đã gửi yêu cầu báo giá lại tới JPM Marine. Kỹ thuật viên sẽ kiểm tra lại giá và gửi bảng giá mới nhất qua Zalo cho quý khách.'
                 ]);
             } else {
                 $quote->trang_thai = 3; // Hủy
@@ -326,7 +380,7 @@ class YeuCauBaoGiaController extends Controller
 
                 return response()->json([
                     'success' => true,
-                    'message' => 'Đã từ chối báo giá.'
+                    'message' => 'Đã từ chối báo giá. Đơn yêu cầu này đã được đóng lại.'
                 ]);
             }
         } catch (\Exception $e) {

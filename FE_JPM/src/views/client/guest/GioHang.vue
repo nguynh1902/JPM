@@ -16,7 +16,7 @@
           
           <!-- LEFT COLUMN: CART ITEMS -->
           <div class="col-lg-7 col-xl-8" data-aos="fade-up" data-aos-delay="100">
-            <div class="card">
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
               <div class="card-header bg-white px-4 border-bottom d-flex flex-wrap justify-content-between align-items-center gap-2" style="height: 76px;">
                 <div class="d-flex align-items-center">
                   <h4 class="mb-0 jpm-card-title">Danh Sách Sản Phẩm</h4>
@@ -53,17 +53,18 @@
                           <input class="form-check-input custom-checkbox" type="checkbox" :value="item.ma_phu_tung" v-model="selectedItems" style="width: 20px; height: 20px; cursor: pointer;">
                         </td>
                         <td class="text-center">
-                          <div class="d-inline-flex justify-content-center align-items-center border rounded bg-white" style="width: 60px; height: 60px;">
-                            <img v-if="item.hinh_anh" :src="getImageUrl(item.hinh_anh)" style="max-height: 40px; max-width: 50px; object-fit: contain;" :alt="item.ten_phu_tung">
+                          <div class="d-inline-flex justify-content-center align-items-center border rounded bg-white p-1" style="width: 60px; height: 60px;">
+                            <img v-if="item.hinh_anh" :src="getImageUrl(item.hinh_anh)" style="max-height: 48px; max-width: 48px; object-fit: contain;" :alt="item.ten_phu_tung">
                             <i v-else class="bi bi-image text-muted fs-4"></i>
                           </div>
                         </td>
                         <td>
                           <div class="fw-bold" style="color: var(--heading-color); font-size: 0.95rem;">{{ item.ma_phu_tung }}</div>
                           <div class="text-muted small fw-medium mt-1">{{ item.ten_phu_tung }}</div>
+                          <span v-if="item.loai_san_pham" class="badge bg-secondary-subtle text-secondary small mt-1">{{ item.loai_san_pham }}</span>
                         </td>
                         <td class="text-center">
-                          <span v-if="item.is_gia_lien_he" class="text-danger fw-bold" style="font-size: 0.95rem;">Liên hệ</span>
+                          <span v-if="item.is_gia_lien_he || !item.gia_ban || parseFloat(item.gia_ban) <= 0" class="text-danger fw-bold" style="font-size: 0.95rem;">Liên hệ</span>
                           <span v-else class="fw-bold text-danger text-nowrap" style="font-size: 0.95rem;">{{ formatPrice(item.gia_ban) }}</span>
                         </td>
                         <td class="text-center">
@@ -87,16 +88,17 @@
             </div>
           </div>
 
+          <!-- RIGHT COLUMN: CHECKOUT SIDEBAR -->
           <div class="col-lg-5 col-xl-4" data-aos="fade-up" data-aos-delay="200">
-            <div class="card sticky-sidebar">
+            <div class="card border-0 shadow-sm rounded-4 sticky-sidebar">
               <div class="card-header bg-white px-4 border-bottom d-flex align-items-center" style="height: 76px;">
-                <h4 class="mb-0 jpm-card-title">{{ checkoutType === 'quote' ? 'Yêu Cầu Báo Giá' : 'Thông Tin Đặt Hàng' }}</h4>
+                <h4 class="mb-0 jpm-card-title">{{ isMixedCart ? 'Đơn Hàng & Báo Giá' : (checkoutType === 'quote' ? 'Yêu Cầu Báo Giá' : 'Thông Tin Đặt Hàng') }}</h4>
               </div>
               
               <div class="card-body p-4">
                 
                 <!-- Summary -->
-                <div class="summary-box mb-4">
+                <div class="summary-box mb-4 p-3 rounded-3 bg-light border">
                   <div class="d-flex justify-content-between mb-2">
                     <span class="text-muted fw-medium">Tổng sản phẩm:</span>
                     <strong class="text-dark">{{ totalQuantity }}</strong>
@@ -106,9 +108,19 @@
                     <span v-if="isB2B" class="text-success fw-bold">Ưu đãi B2B (Hỗ trợ chành xe)</span>
                     <span v-else class="text-secondary">Theo cước nhà xe / chành xe</span>
                   </div>
-                  <div class="d-flex justify-content-between align-items-center pt-3 border-top">
+                  <div class="d-flex justify-content-between align-items-baseline pt-2 border-top">
                     <span class="text-muted fw-medium">Tạm tính:</span>
-                    <strong class="text-danger fs-5 fw-bold">{{ totalAmount }}</strong>
+                    <div class="text-end">
+                      <strong class="text-danger fs-5 fw-bold" v-if="hasPricedItems">{{ formatPrice(pricedTotalAmount) }}</strong>
+                      <strong class="text-danger fs-5 fw-bold" v-else>Liên hệ báo giá</strong>
+                      <div v-if="isMixedCart" class="small text-muted fst-italic">
+                        (+ {{ contactItemCount }} phụ tùng chờ tư vấn giá)
+                      </div>
+                    </div>
+                  </div>
+                  <!-- Thông báo đơn hỗn hợp thân thiện -->
+                  <div v-if="isMixedCart" class="alert alert-info py-2 px-3 small mt-3 mb-0 rounded-3 border-0 bg-info-subtle text-info-emphasis" style="font-size: 0.8rem; line-height: 1.4;">
+                    <i class="bi bi-info-circle-fill me-1"></i> Đơn hàng gồm phụ tùng có sẵn và phụ tùng cần kiểm tra thông số máy. Kỹ thuật viên JPM sẽ gọi điện/Zalo báo giá chiết khấu cho quý khách trước khi xuất kho.
                   </div>
                 </div>
 
@@ -137,14 +149,14 @@
 
                   <!-- If Authenticated (MEMBER) -->
                   <div v-else class="mb-4">
-                    <label class="form-label fw-bold text-dark mb-3" style="font-size: 0.9rem;">Thông tin & Địa chỉ giao hàng</label>
+                    <label class="form-label fw-bold text-dark mb-2" style="font-size: 0.9rem;">Thông tin & Địa chỉ giao hàng</label>
                     <div v-if="selectedAddress" class="border rounded p-3 bg-light position-relative">
                       <div class="fw-bold mb-1">{{ selectedAddress.ten_nguoi_nhan }}</div>
-                      <div class="text-muted small mb-2"><i class="bi bi-telephone-fill me-1"></i> {{ selectedAddress.so_dien_thoai }}</div>
-                      <div class="small" style="line-height: 1.4;">{{ selectedAddress.dia_chi_cu_the }}</div>
+                      <div class="text-muted small mb-1"><i class="bi bi-telephone-fill me-1"></i> {{ selectedAddress.so_dien_thoai }}</div>
+                      <div class="small text-secondary" style="line-height: 1.4;">{{ selectedAddress.dia_chi_cu_the }}</div>
                       <!-- Option to change address -->
-                      <div class="mt-3 text-end" v-if="addresses.length > 0">
-                        <a href="#" class="text-decoration-none fw-bold" style="color: var(--accent-color); font-size: 0.85rem;" data-bs-toggle="modal" data-bs-target="#addressModal" @click="modalState = 'list'">Thay đổi</a>
+                      <div class="mt-2 text-end" v-if="addresses.length > 0">
+                        <a href="#" class="text-decoration-none fw-bold" style="color: var(--accent-color, #f82249); font-size: 0.85rem;" data-bs-toggle="modal" data-bs-target="#addressModal" @click="modalState = 'list'">Thay đổi địa chỉ</a>
                       </div>
                     </div>
                     <div v-else class="alert alert-warning small p-3">
@@ -156,13 +168,13 @@
                   <!-- Note Input (Common) -->
                   <div class="mb-4">
                     <label class="form-label fw-bold text-dark" style="font-size: 0.9rem;">Ghi chú (Tuỳ chọn)</label>
-                    <textarea class="form-control" v-model="checkoutForm.note" rows="3" style="min-height: 80px;" placeholder="Yêu cầu hóa đơn, giao gấp..."></textarea>
+                    <textarea class="form-control" v-model="checkoutForm.note" rows="3" style="min-height: 70px;" placeholder="Yêu cầu hóa đơn, giao gấp..."></textarea>
                   </div>
 
                   <!-- Submit Button -->
-                  <button type="submit" class="btn btn-jpm w-100 py-3 d-flex justify-content-center align-items-center" :disabled="isSubmitting">
+                  <button type="submit" class="btn btn-jpm w-100 py-3 d-flex justify-content-center align-items-center shadow-sm" :disabled="isSubmitting">
                     <span v-if="isSubmitting" class="spinner-border spinner-border-sm me-2"></span>
-                    <span v-else class="fw-bold" style="letter-spacing: 0;">{{ checkoutType === 'quote' ? 'NHẬN BÁO GIÁ NGAY' : 'ĐẶT HÀNG NGAY' }}</span>
+                    <span v-else class="fw-bold" style="letter-spacing: 0;">{{ buttonText }}</span>
                     <i class="bi bi-arrow-right ms-2" v-if="!isSubmitting"></i>
                   </button>
                   
@@ -182,82 +194,80 @@
           <img src="https://cdn-icons-png.flaticon.com/512/11329/11329060.png" width="120" alt="Empty Cart" class="mb-4 opacity-50">
           <h3 class="fw-bold text-dark mb-3">Giỏ hàng của bạn đang trống</h3>
           <p class="text-muted mb-4 fs-5">Hãy tìm kiếm phụ tùng bạn cần và thêm vào giỏ hàng nhé!</p>
-          <router-link to="/" class="submit-btn d-inline-block px-5 text-decoration-none">
-            Khám phá phụ tùng
+          <router-link to="/san-pham" class="btn btn-jpm d-inline-block px-5 py-3 text-decoration-none shadow">
+            Khám phá phụ tùng máy thủy
           </router-link>
         </div>
 
       </div>
     </section>
 
-
-  </main>
-
-  <!-- Address Modal — Teleport to body để thoát khỏi CSS stacking context của parent transforms -->
-  <Teleport to="body">
-    <div class="modal fade" id="addressModal" tabindex="-1" aria-labelledby="addressModalLabel" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content" style="border-radius: 12px; border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
-          <div class="modal-header border-bottom-0 pb-0 mt-2">
-            <h5 class="modal-title fw-bold text-dark" id="addressModalLabel">Địa Chỉ Của Tôi</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-            <div v-if="modalState === 'list'" class="address-list">
-              <div v-for="addr in addresses" :key="addr.id" class="address-item p-3 mb-3 border rounded position-relative d-flex align-items-start gap-3" :class="{'border-danger': selectedAddressId === addr.id}" style="cursor: pointer;" @click="selectedAddressId = addr.id">
-                <div class="radio-wrap mt-1">
-                  <input class="form-check-input" type="radio" :name="'address_radio'" :value="addr.id" v-model="selectedAddressId" style="transform: scale(1.2);">
-                </div>
-                <div class="flex-grow-1">
-                  <div class="d-flex justify-content-between align-items-center mb-1">
-                    <span class="fw-bold text-dark">{{ addr.ten_nguoi_nhan }}</span>
-                    <a href="#" class="text-decoration-none" style="color: #0d6efd; font-size: 0.85rem;" @click.prevent="openEditAddress(addr)">Cập nhật</a>
+    <!-- Address Modal — Teleport to body -->
+    <Teleport to="body">
+      <div class="modal fade" id="addressModal" tabindex="-1" aria-labelledby="addressModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content" style="border-radius: 12px; border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
+            <div class="modal-header border-bottom-0 pb-0 mt-2">
+              <h5 class="modal-title fw-bold text-dark" id="addressModalLabel">Địa Chỉ Của Tôi</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <div v-if="modalState === 'list'" class="address-list">
+                <div v-for="addr in addresses" :key="addr.id" class="address-item p-3 mb-3 border rounded position-relative d-flex align-items-start gap-3" :class="{'border-danger': selectedAddressId === addr.id}" style="cursor: pointer;" @click="selectedAddressId = addr.id">
+                  <div class="radio-wrap mt-1">
+                    <input class="form-check-input" type="radio" :name="'address_radio'" :value="addr.id" v-model="selectedAddressId" style="transform: scale(1.2);">
                   </div>
-                  <div class="text-muted small mb-1">(+84) {{ addr.so_dien_thoai }}</div>
-                  <div class="small text-secondary" style="line-height: 1.4;">{{ addr.dia_chi_cu_the }}</div>
-                  <span v-if="addr.la_mac_dinh" class="badge text-danger mt-2" style="background: rgba(248,34,73,0.1);">Mặc định</span>
+                  <div class="flex-grow-1">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                      <span class="fw-bold text-dark">{{ addr.ten_nguoi_nhan }}</span>
+                      <a href="#" class="text-decoration-none" style="color: #0d6efd; font-size: 0.85rem;" @click.prevent="openEditAddress(addr)">Cập nhật</a>
+                    </div>
+                    <div class="text-muted small mb-1">(+84) {{ addr.so_dien_thoai }}</div>
+                    <div class="small text-secondary" style="line-height: 1.4;">{{ addr.dia_chi_cu_the }}</div>
+                    <span v-if="addr.la_mac_dinh" class="badge text-danger mt-2" style="background: rgba(248,34,73,0.1);">Mặc định</span>
+                  </div>
                 </div>
               </div>
+              
+              <div v-else class="address-form-inline">
+                <form @submit.prevent="saveAddress">
+                  <div class="mb-3">
+                    <label class="form-label small fw-bold text-dark">Họ và tên <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control form-control-sm" v-model="addressForm.ten_nguoi_nhan" required placeholder="Tên người nhận">
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label small fw-bold text-dark">Số điện thoại <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control form-control-sm" v-model="addressForm.so_dien_thoai" required placeholder="SĐT liên hệ">
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label small fw-bold text-dark">Địa chỉ cụ thể <span class="text-danger">*</span></label>
+                    <textarea class="form-control form-control-sm" v-model="addressForm.dia_chi_cu_the" required rows="2" placeholder="Số nhà, đường, phường/xã, quận/huyện, tỉnh/thành phố..."></textarea>
+                  </div>
+                  <div class="mb-3 form-check">
+                    <input type="checkbox" class="form-check-input" id="laMacDinh" v-model="addressForm.la_mac_dinh">
+                    <label class="form-check-label small" for="laMacDinh">Đặt làm địa chỉ mặc định</label>
+                  </div>
+                  <div class="d-flex gap-2 mt-4">
+                    <button type="button" class="btn btn-light flex-grow-1" style="font-size: 0.9rem;" @click="modalState = 'list'">Hủy</button>
+                    <button type="submit" class="btn btn-jpm flex-grow-1" style="font-size: 0.9rem;" :disabled="isSavingAddress">
+                      <span v-if="isSavingAddress" class="spinner-border spinner-border-sm me-2"></span>
+                      Lưu địa chỉ
+                    </button>
+                  </div>
+                </form>
+              </div>
             </div>
-            
-            <div v-else class="address-form-inline">
-              <form @submit.prevent="saveAddress">
-                <div class="mb-3">
-                  <label class="form-label small fw-bold text-dark">Họ và tên <span class="text-danger">*</span></label>
-                  <input type="text" class="form-control form-control-sm" v-model="addressForm.ten_nguoi_nhan" required placeholder="Tên người nhận">
-                </div>
-                <div class="mb-3">
-                  <label class="form-label small fw-bold text-dark">Số điện thoại <span class="text-danger">*</span></label>
-                  <input type="text" class="form-control form-control-sm" v-model="addressForm.so_dien_thoai" required placeholder="SĐT liên hệ">
-                </div>
-                <div class="mb-3">
-                  <label class="form-label small fw-bold text-dark">Địa chỉ cụ thể <span class="text-danger">*</span></label>
-                  <textarea class="form-control form-control-sm" v-model="addressForm.dia_chi_cu_the" required rows="2" placeholder="Số nhà, đường, phường/xã, quận/huyện, tỉnh/thành phố..."></textarea>
-                </div>
-                <div class="mb-3 form-check">
-                  <input type="checkbox" class="form-check-input" id="laMacDinh" v-model="addressForm.la_mac_dinh">
-                  <label class="form-check-label small" for="laMacDinh">Đặt làm địa chỉ mặc định</label>
-                </div>
-                <div class="d-flex gap-2 mt-4">
-                  <button type="button" class="btn btn-light flex-grow-1" style="font-size: 0.9rem;" @click="modalState = 'list'">Hủy</button>
-                  <button type="submit" class="btn btn-jpm flex-grow-1" style="font-size: 0.9rem;" :disabled="isSavingAddress">
-                    <span v-if="isSavingAddress" class="spinner-border spinner-border-sm me-2"></span>
-                    Lưu địa chỉ
-                  </button>
-                </div>
-              </form>
+            <div class="modal-footer border-top-0 pt-0 mb-2" v-if="modalState === 'list'">
+              <a href="#" class="btn btn-jpm w-100 py-2 d-flex justify-content-center align-items-center gap-2" @click.prevent="openAddAddress">
+                <i class="bi bi-plus-lg"></i> Thêm Địa Chỉ Mới
+              </a>
             </div>
-          </div>
-          <div class="modal-footer border-top-0 pt-0 mb-2" v-if="modalState === 'list'">
-            <a href="#" class="btn btn-jpm w-100 py-2 d-flex justify-content-center align-items-center gap-2" @click.prevent="openAddAddress">
-              <i class="bi bi-plus-lg"></i> Thêm Địa Chỉ Mới
-            </a>
           </div>
         </div>
       </div>
-    </div>
-  </Teleport>
+    </Teleport>
 
+  </main>
 </template>
 
 <script>
@@ -281,7 +291,6 @@ export default {
         address: ''
       },
       selectedItems: [],
-      showSuccessModal: false,
       isSubmitting: false,
       pendingOrderId: '',
 
@@ -289,7 +298,7 @@ export default {
       userProfile: null,
       addresses: [],
       selectedAddressId: null,
-      modalState: 'list', // 'list' | 'form'
+      modalState: 'list',
       editingAddressId: null,
       addressForm: {
         ten_nguoi_nhan: '',
@@ -302,151 +311,117 @@ export default {
   },
   computed: {
     cartItems() {
-      return this.cartStore.items
+      return this.cartStore.items || []
+    },
+    selectedCartItems() {
+      return this.cartItems.filter(item => this.selectedItems.includes(item.ma_phu_tung))
     },
     totalQuantity() {
-      return this.cartItems
-        .filter(item => this.selectedItems.includes(item.ma_phu_tung))
-        .reduce((total, item) => total + item.quantity, 0)
+      return this.selectedCartItems.reduce((total, item) => total + item.quantity, 0)
     },
     checkoutType() {
-      if (this.selectedItems.length === 0) return 'order';
-      const selectedCartItems = this.cartItems.filter(item => this.selectedItems.includes(item.ma_phu_tung));
-      const hasContact = selectedCartItems.some(item => item.is_gia_lien_he || !item.gia_ban || parseFloat(item.gia_ban) <= 0);
-      return hasContact ? 'quote' : 'order';
+      if (this.selectedItems.length === 0) return 'order'
+      return this.hasContactItems ? 'quote' : 'order'
+    },
+    hasContactItems() {
+      return this.selectedCartItems.some(item => item.is_gia_lien_he || !item.gia_ban || parseFloat(item.gia_ban) <= 0)
+    },
+    hasPricedItems() {
+      return this.selectedCartItems.some(item => !item.is_gia_lien_he && item.gia_ban && parseFloat(item.gia_ban) > 0)
+    },
+    isMixedCart() {
+      return this.hasContactItems && this.hasPricedItems
+    },
+    contactItemCount() {
+      return this.selectedCartItems.filter(item => item.is_gia_lien_he || !item.gia_ban || parseFloat(item.gia_ban) <= 0).length
+    },
+    pricedTotalAmount() {
+      return this.selectedCartItems.reduce((sum, item) => {
+        const price = (item.is_gia_lien_he || !item.gia_ban) ? 0 : parseFloat(item.gia_ban)
+        return sum + (price * item.quantity)
+      }, 0)
+    },
+    buttonText() {
+      if (this.isMixedCart) return 'XÁC NHẬN ĐƠN & BÁO GIÁ'
+      if (this.hasContactItems) return 'NHẬN BÁO GIÁ NGAY'
+      return 'ĐẶT HÀNG NGAY'
     },
     totalAmount() {
-      if (this.selectedItems.length === 0) return this.formatPrice(0);
-        if (this.checkoutType === 'quote') return 'Liên hệ báo giá';
-      const selectedCartItems = this.cartItems.filter(item => this.selectedItems.includes(item.ma_phu_tung));
-      const total = selectedCartItems.reduce((sum, item) => sum + (item.gia_ban * item.quantity), 0);
-      return this.formatPrice(total);
+      if (this.selectedItems.length === 0) return this.formatPrice(0)
+      if (!this.hasPricedItems) return 'Liên hệ báo giá'
+      return this.formatPrice(this.pricedTotalAmount)
     },
     selectedAddress() {
-      return this.addresses.find(a => a.id === this.selectedAddressId) || null;
+      return this.addresses.find(a => a.id === this.selectedAddressId) || null
     },
     selectAll: {
       get() {
         return this.cartItems.length > 0 && this.selectedItems.length === this.cartItems.length
       },
       set(value) {
-          if (value) {
-            this.selectedItems = this.cartItems.map(item => item.ma_phu_tung)
-          } else {
+        if (value) {
+          this.selectedItems = this.cartItems.map(item => item.ma_phu_tung)
+        } else {
           this.selectedItems = []
         }
       }
     },
     isB2B() {
-      if (!this.isAuthenticated || !this.userProfile) return false;
-      const roles = this.userProfile.roles || [];
+      if (!this.isAuthenticated || !this.userProfile) return false
+      const roles = this.userProfile.roles || []
       const hasB2BRole = Array.isArray(roles) && roles.some(r => {
-        const s = typeof r === 'string' ? r.toLowerCase() : (r.name || '').toLowerCase();
-        return s.includes('đại lý') || s.includes('b2b');
-      });
-      return hasB2BRole || Boolean(this.userProfile.ten_cong_ty);
+        const s = typeof r === 'string' ? r.toLowerCase() : (r.name || '').toLowerCase()
+        return s.includes('đại lý') || s.includes('b2b')
+      })
+      return hasB2BRole || Boolean(this.userProfile.ten_cong_ty)
     }
   },
   mounted() {
-      this.selectedItems = []
+    if (this.cartItems.length > 0) {
+      this.selectedItems = this.cartItems.map(item => item.ma_phu_tung)
+    }
     
     try {
-      const userStr = localStorage.getItem('auth_user');
-      const token = localStorage.getItem('auth_token');
+      const userStr = localStorage.getItem('auth_user')
+      const token = localStorage.getItem('auth_token')
       if (userStr && token) {
-        this.isAuthenticated = true;
-        const user = JSON.parse(userStr);
-        this.userProfile = user;
+        this.isAuthenticated = true
+        const user = JSON.parse(userStr)
+        this.userProfile = user
         
-        // Fallback info from profile in case they have no address
-        this.checkoutForm.name = user.ho_ten || user.name || '';
-        this.checkoutForm.phone = user.so_dien_thoai || user.phone || '';
-        this.checkoutForm.email = user.email || '';
+        this.checkoutForm.name = user.ho_ten || user.name || ''
+        this.checkoutForm.phone = user.so_dien_thoai || user.phone || ''
+        this.checkoutForm.email = user.email || ''
 
-        this.fetchAddresses();
+        this.fetchAddresses()
       }
     } catch (e) {
-      console.warn('Cannot parse user info');
+      console.warn('Cannot parse user info', e)
     }
   },
   methods: {
-    goToProfile() {
-      const modalElement = document.getElementById('addressModal');
-      if (modalElement) {
-        // Remove backdrop manually if needed, or use bootstrap instance
-        const bsModal = window.bootstrap.Modal.getInstance(modalElement);
-        if (bsModal) {
-          bsModal.hide();
-        }
-        // Force cleanup backdrop just in case
-        document.body.classList.remove('modal-open');
-        const backdrop = document.querySelector('.modal-backdrop');
-        if (backdrop) backdrop.remove();
-      }
-      this.$router.push('/tai-khoan');
-    },
-    openAddAddress() {
-      this.editingAddressId = null;
-      this.addressForm = { ten_nguoi_nhan: '', so_dien_thoai: '', dia_chi_cu_the: '', la_mac_dinh: this.addresses.length === 0 };
-      this.modalState = 'form';
-    },
-    openEditAddress(addr) {
-      this.editingAddressId = addr.id;
-      this.addressForm = { 
-        ten_nguoi_nhan: addr.ten_nguoi_nhan, 
-        so_dien_thoai: addr.so_dien_thoai, 
-        dia_chi_cu_the: addr.dia_chi_cu_the, 
-        la_mac_dinh: addr.la_mac_dinh === 1 
-      };
-      this.modalState = 'form';
-    },
-    async saveAddress() {
-      this.isSavingAddress = true;
-      try {
-        if (this.editingAddressId) {
-          await axiosClient.put(`/client/profile/addresses/${this.editingAddressId}`, this.addressForm);
-          Swal.fire({ icon: 'success', title: 'Thành công', text: 'Cập nhật địa chỉ thành công!', timer: 1500, showConfirmButton: false });
-        } else {
-          await axiosClient.post('/client/profile/addresses', this.addressForm);
-          Swal.fire({ icon: 'success', title: 'Thành công', text: 'Thêm địa chỉ mới thành công!', timer: 1500, showConfirmButton: false });
-        }
-        await this.fetchAddresses();
-        this.modalState = 'list';
-      } catch (error) {
-        console.error(error);
-        Swal.fire({ icon: 'error', title: 'Lỗi', text: 'Không thể lưu địa chỉ. Vui lòng thử lại!' });
-      } finally {
-        this.isSavingAddress = false;
-      }
-    },
-    async fetchAddresses() {
-      try {
-        const res = await axiosClient.get('/client/profile/addresses');
-        this.addresses = Array.isArray(res) ? res : (res.data || []);
-        if (this.addresses.length > 0) {
-          const defaultAddr = this.addresses.find(a => a.la_mac_dinh) || this.addresses[0];
-          this.selectedAddressId = defaultAddr.id;
-        }
-      } catch (error) {
-        console.error('Lỗi khi tải sổ địa chỉ', error);
-      }
+    getImageUrl(path) {
+      if (!path) return 'https://placehold.co/400x300/f8f9fa/a1acb8?text=JPM+Marine'
+      if (path.startsWith('http')) return path
+      if (path.startsWith('/storage/')) return 'http://localhost:8000' + path
+      return 'http://localhost:8000/storage/' + path.replace(/^\/+/, '')
     },
     formatPrice(price) {
-      if (!price) return '0 ₫';
-      return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price);
+      if (!price) return '0 ₫'
+      return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price)
     },
     updateQuantity(item, amount) {
       const newQty = item.quantity + amount
+      if (newQty < 1) return
       this.cartStore.updateQuantity(item.ma_phu_tung, newQty)
     },
-
     async removeItem(item) {
       const result = await Swal.fire({
         title: 'Xóa sản phẩm?',
         text: `"${item.ten_phu_tung}" sẽ bị xóa khỏi giỏ hàng.`,
         icon: 'warning',
         showCancelButton: true,
-        confirmButtonColor: 'var(--accent-color)',
+        confirmButtonColor: '#f82249',
         cancelButtonColor: '#aaa',
         confirmButtonText: 'Xóa',
         cancelButtonText: 'Hủy',
@@ -456,7 +431,6 @@ export default {
         this.selectedItems = this.selectedItems.filter(id => id !== item.ma_phu_tung)
       }
     },
-
     async removeSelectedItems() {
       if (this.selectedItems.length === 0) return
       const result = await Swal.fire({
@@ -464,7 +438,7 @@ export default {
         text: 'Hành động này không thể hoàn tác.',
         icon: 'warning',
         showCancelButton: true,
-        confirmButtonColor: 'var(--accent-color)',
+        confirmButtonColor: '#f82249',
         cancelButtonColor: '#aaa',
         confirmButtonText: 'Xóa',
         cancelButtonText: 'Hủy',
@@ -476,44 +450,89 @@ export default {
         this.selectedItems = []
       }
     },
-
+    openAddAddress() {
+      this.editingAddressId = null
+      this.addressForm = { ten_nguoi_nhan: '', so_dien_thoai: '', dia_chi_cu_the: '', la_mac_dinh: this.addresses.length === 0 }
+      this.modalState = 'form'
+    },
+    openEditAddress(addr) {
+      this.editingAddressId = addr.id
+      this.addressForm = { 
+        ten_nguoi_nhan: addr.ten_nguoi_nhan, 
+        so_dien_thoai: addr.so_dien_thoai, 
+        dia_chi_cu_the: addr.dia_chi_cu_the, 
+        la_mac_dinh: addr.la_mac_dinh === 1 
+      }
+      this.modalState = 'form'
+    },
+    async saveAddress() {
+      this.isSavingAddress = true
+      try {
+        if (this.editingAddressId) {
+          await axiosClient.put(`/client/profile/addresses/${this.editingAddressId}`, this.addressForm)
+          Swal.fire({ icon: 'success', title: 'Thành công', text: 'Cập nhật địa chỉ thành công!', timer: 1500, showConfirmButton: false })
+        } else {
+          await axiosClient.post('/client/profile/addresses', this.addressForm)
+          Swal.fire({ icon: 'success', title: 'Thành công', text: 'Thêm địa chỉ mới thành công!', timer: 1500, showConfirmButton: false })
+        }
+        await this.fetchAddresses()
+        this.modalState = 'list'
+      } catch (error) {
+        console.error(error)
+        Swal.fire({ icon: 'error', title: 'Lỗi', text: 'Không thể lưu địa chỉ. Vui lòng thử lại!' })
+      } finally {
+        this.isSavingAddress = false
+      }
+    },
+    async fetchAddresses() {
+      try {
+        const res = await axiosClient.get('/client/profile/addresses')
+        this.addresses = Array.isArray(res) ? res : (res.data || [])
+        if (this.addresses.length > 0 && !this.selectedAddressId) {
+          const defaultAddr = this.addresses.find(a => a.la_mac_dinh) || this.addresses[0]
+          this.selectedAddressId = defaultAddr.id
+        }
+      } catch (error) {
+        console.error('Lỗi khi tải sổ địa chỉ', error)
+      }
+    },
     async submitQuotation() {
       if (this.selectedItems.length === 0) {
-        Swal.fire({ icon: 'warning', title: 'Chưa chọn sản phẩm', text: 'Vui lòng chọn ít nhất 1 sản phẩm!', confirmButtonColor: 'var(--accent-color)' })
+        Swal.fire({ icon: 'warning', title: 'Chưa chọn sản phẩm', text: 'Vui lòng chọn ít nhất 1 sản phẩm!', confirmButtonColor: '#f82249' })
         return
       }
 
       if (!this.isAuthenticated) {
         if (!this.checkoutForm.name.trim() || !this.checkoutForm.phone.trim()) {
-          Swal.fire({ icon: 'warning', title: 'Thiếu thông tin', text: 'Vui lòng điền đầy đủ Họ Tên và Số điện thoại!', confirmButtonColor: 'var(--accent-color)' })
+          Swal.fire({ icon: 'warning', title: 'Thiếu thông tin', text: 'Vui lòng điền đầy đủ Họ Tên và Số điện thoại!', confirmButtonColor: '#f82249' })
           return
         }
         if (!this.checkoutForm.address.trim()) {
-          Swal.fire({ icon: 'warning', title: 'Thiếu thông tin', text: 'Vui lòng điền địa chỉ giao hàng!', confirmButtonColor: 'var(--accent-color)' })
+          Swal.fire({ icon: 'warning', title: 'Thiếu thông tin', text: 'Vui lòng điền địa chỉ giao hàng!', confirmButtonColor: '#f82249' })
           return
         }
       } else {
         if (!this.selectedAddressId) {
-          Swal.fire({ icon: 'warning', title: 'Thiếu địa chỉ', text: 'Vui lòng chọn hoặc thêm một địa chỉ giao hàng!', confirmButtonColor: 'var(--accent-color)' })
+          Swal.fire({ icon: 'warning', title: 'Thiếu địa chỉ', text: 'Vui lòng chọn hoặc thêm một địa chỉ giao hàng!', confirmButtonColor: '#f82249' })
           return
         }
       }
 
       const selectedCartItems = this.cartItems.filter(item => this.selectedItems.includes(item.ma_phu_tung))
       
-      let finalName = this.checkoutForm.name.trim();
-      let finalPhone = this.checkoutForm.phone.trim();
-      let finalAddress = this.checkoutForm.address ? this.checkoutForm.address.trim() : null;
+      let finalName = this.checkoutForm.name.trim()
+      let finalPhone = this.checkoutForm.phone.trim()
+      let finalAddress = this.checkoutForm.address ? this.checkoutForm.address.trim() : null
 
       if (this.isAuthenticated && this.selectedAddress) {
-        finalName = this.selectedAddress.ten_nguoi_nhan;
-        finalPhone = this.selectedAddress.so_dien_thoai;
-        finalAddress = this.selectedAddress.dia_chi_cu_the;
+        finalName = this.selectedAddress.ten_nguoi_nhan
+        finalPhone = this.selectedAddress.so_dien_thoai
+        finalAddress = this.selectedAddress.dia_chi_cu_the
       }
 
       const payload = {
         user_id: this.userProfile ? this.userProfile.id : null,
-        loai_yeu_cau: this.checkoutType, // 'quote' or 'order'
+        loai_yeu_cau: this.checkoutType,
         loai_don: this.isB2B ? 'b2b' : 'b2c',
         khach_hang_ten: finalName,
         khach_hang_sdt: finalPhone,
@@ -534,176 +553,120 @@ export default {
       this.isSubmitting = true
       try {
         if (!navigator.onLine) {
-          // Lưu vào IndexedDB nếu mất mạng
-          import('../../../utils/offlineSyncService').then(async ({ saveDraft }) => {
-             await saveDraft(this.checkoutType, payload, '/public/yeu-cau-bao-gia');
-             Swal.fire({
-                icon: 'info',
-                title: 'Đã lưu ngoại tuyến!',
-                text: 'Hệ thống phát hiện mất kết nối mạng. Đơn hàng của bạn đã được lưu tạm và sẽ tự động gửi đi khi có mạng trở lại.',
-                confirmButtonColor: 'var(--accent-color)'
-             });
-             this.selectedItems.forEach(id => {
-                this.cartStore.removeItem(id)
-             });
-             this.selectedItems = [];
-             this.isSubmitting = false;
-          });
-          return;
+          const { saveDraft } = await import('../../../utils/offlineSyncService')
+          await saveDraft(this.checkoutType, payload, '/public/yeu-cau-bao-gia')
+          Swal.fire({
+            icon: 'info',
+            title: 'Đã lưu ngoại tuyến!',
+            text: 'Hệ thống phát hiện mất kết nối mạng. Đơn hàng của bạn đã được lưu tạm và sẽ tự động gửi đi khi có mạng trở lại.',
+            confirmButtonColor: '#f82249'
+          })
+          this.selectedItems.forEach(id => this.cartStore.removeItem(id))
+          this.selectedItems = []
+          this.isSubmitting = false
+          return
         }
 
         const res = await axiosClient.post('/public/yeu-cau-bao-gia', payload)
         if (res.success || (res.data && res.data.success)) {
-          const responseData = res.success ? res.data : res.data.data;
-          this.pendingOrderId = responseData.ma_yeu_cau
-          this.showSuccessModal = true
+          const responseData = res.success ? res.data : res.data.data
+          this.pendingOrderId = responseData.code || responseData.ma_yeu_cau || ('DH-' + Date.now())
           
-          this.selectedItems.forEach(id => {
-            this.cartStore.removeItem(id)
-          })
+          this.selectedItems.forEach(id => this.cartStore.removeItem(id))
           this.selectedItems = []
           
-          const isOrder = this.checkoutType === 'order';
-          const titleType = isOrder ? 'Mã đơn hàng' : 'Mã yêu cầu báo giá';
-          const descText = isOrder 
-            ? 'Hệ thống đã tiếp nhận đơn hàng của bạn. Bộ phận vận hành sẽ liên hệ trong ít phút để giao hàng.' 
-            : 'Hệ thống đã tiếp nhận yêu cầu. Hãy chat với chúng tôi qua Zalo kèm mã đơn để nhận báo giá lập tức.';
-          const chatMsg = isOrder 
-            ? `Chào JPM Marine, tôi vừa đặt đơn hàng mã ${this.pendingOrderId}.` 
-            : `Chào JPM Marine, tôi muốn nhận báo giá cho mã ${this.pendingOrderId}.`;
+          const isMixed = this.isMixedCart
+          const isOrder = this.checkoutType === 'order'
+          const titleType = isMixed ? 'Mã đơn & báo giá' : (isOrder ? 'Mã đơn hàng' : 'Mã yêu cầu báo giá')
+          let descText = isOrder 
+            ? 'Hệ thống đã tiếp nhận đơn hàng của bạn. Bộ phận vận hành sẽ liên hệ trong ít phút để xác nhận giao hàng.' 
+            : 'Hệ thống đã tiếp nhận yêu cầu. Hãy chat với chúng tôi qua Zalo kèm mã đơn để nhận báo giá lập tức.'
+          if (isMixed) {
+            descText = `Hệ thống đã ghi nhận đơn hàng (${this.formatPrice(this.pricedTotalAmount)}) kèm các phụ tùng cần kiểm tra thông số kỹ thuật. Kỹ thuật viên JPM sẽ gọi điện/Zalo báo giá chiết khấu cho quý khách trước khi xuất kho.`
+          }
+          const chatMsg = `Chào JPM Marine, tôi vừa gửi yêu cầu mã ${this.pendingOrderId}.`
             
           Swal.fire({
             icon: 'success',
             title: 'Thành Công!',
             html: `
               <p class="text-muted mb-2">${titleType} của bạn:</p>
-              <div class="fw-bold fs-3 mb-3" style="color: #059669;">${this.pendingOrderId}</div>
+              <div class="fw-bold fs-3 mb-3" style="color: #059669;">#${this.pendingOrderId}</div>
               <p style="font-size: 0.95rem;">${descText}</p>
             `,
             showCancelButton: true,
             confirmButtonText: '<i class="bi bi-chat-dots me-1"></i> Chat Zalo Ngay',
-            cancelButtonText: 'Quay về giỏ hàng',
-            confirmButtonColor: '#0068ff', // Zalo Color
+            cancelButtonText: this.isAuthenticated ? 'Xem Lịch Sử Đơn' : 'Quay về giỏ hàng',
+            confirmButtonColor: '#0068ff',
             cancelButtonColor: '#6c757d'
           }).then((result) => {
             if (result.isConfirmed) {
               const zaloPhone = '0123456789'
-              const message = chatMsg;
-              window.open(`https://zalo.me/${zaloPhone}?text=${encodeURIComponent(message)}`, '_blank')
+              window.open(`https://zalo.me/${zaloPhone}?text=${encodeURIComponent(chatMsg)}`, '_blank')
+            } else if (this.isAuthenticated) {
+              this.$router.push('/lich-su-don-hang')
             }
           })
         }
       } catch (err) {
         const msg = err.response?.data?.message || 'Đã có lỗi xảy ra. Vui lòng thử lại!'
-        Swal.fire({ icon: 'error', title: 'Gửi yêu cầu thất bại', text: msg, confirmButtonColor: 'var(--accent-color)' })
+        Swal.fire({ icon: 'error', title: 'Gửi yêu cầu thất bại', text: msg, confirmButtonColor: '#f82249' })
       } finally {
-        if (navigator.onLine) {
-            this.isSubmitting = false
-        }
+        this.isSubmitting = false
       }
     }
   }
 }
 </script>
 
-
 <style scoped>
-/* =========================================
-   MODERN PREMIUM CART CSS (USING TEMPLATE VARIABLES)
-========================================== */
+/* ===============================================================
+   GIAO DIỆN GIỎ HÀNG GỐC 2 CỘT CHUẨN JPM MARINE
+   =============================================================== */
 .cart-page-bg {
   min-height: 100vh;
   padding-bottom: 50px;
-  font-family: var(--default-font);
-  color: var(--default-color);
+  background-color: #f8fafc;
+  font-family: var(--default-font, system-ui, -apple-system, sans-serif);
+  color: var(--default-color, #212529);
 }
 
-.cart-page-title {
-  font-weight: 700;
-  color: var(--heading-color);
+.jpm-page-title {
+  font-weight: 800;
+  color: var(--heading-color, #0e1b4d);
   letter-spacing: -0.5px;
 }
 
-/* ================= LEFT COLUMN: CART ================= */
-.cart-card {
-  background: var(--surface-color);
-  border-radius: 12px;
-  box-shadow: 0 4px 24px rgba(14, 27, 77, 0.04);
-  overflow: hidden;
-  border: 1px solid rgba(0,0,0,0.05);
+.jpm-card-title {
+  font-weight: 700;
+  color: var(--heading-color, #0e1b4d);
+  font-size: 1.15rem;
 }
 
-.cart-header {
-  padding: 12px 24px;
-  border-bottom: 1px solid rgba(0,0,0,0.05);
-  background-color: var(--surface-color);
-  min-height: 70px;
-}
-.cart-header h5 {
-  color: var(--heading-color);
-  font-size: 1.1rem;
+.table-row-hover:hover {
+  background-color: #f8fafc;
 }
 
-.bg-soft-danger {
-  background-color: color-mix(in srgb, var(--accent-color), transparent 90%);
-  color: var(--accent-color) !important;
-}
-
-.cart-body {
-  padding: 0 24px;
-}
-
-.cart-item {
-  padding: 16px 0;
-  border-bottom: 1px solid rgba(0,0,0,0.03);
-}
-
-.item-img-wrapper {
-  width: 80px;
-  height: 80px;
-  background: var(--surface-color);
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid rgba(0,0,0,0.05);
-  flex-shrink: 0;
-  padding: 8px;
-}
-.item-img {
-  max-width: 100%;
-  max-height: 100%;
-  object-fit: contain;
-}
-
-.item-name {
-  font-size: 1rem;
-  font-weight: 600;
-  color: var(--heading-color);
-  line-height: 1.4;
-}
-
-.oem-badge {
-  background: #f2f2f3;
-  color: var(--default-color);
-  border: 1px solid rgba(0,0,0,0.05);
-  font-weight: 500;
-  font-size: 0.75rem;
-  padding: 4px 8px;
+.custom-checkbox {
+  border-color: #cbd5e1;
   border-radius: 4px;
+}
+.custom-checkbox:checked {
+  background-color: #f82249;
+  border-color: #f82249;
 }
 
 .qty-selector {
-  background: var(--surface-color);
-  border: 1px solid rgba(0,0,0,0.1);
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
   border-radius: 6px;
   overflow: hidden;
   height: 36px;
 }
 .qty-btn {
-  background: #f2f2f3;
+  background: #f8fafc;
   border: none;
-  color: var(--default-color);
+  color: #334155;
   width: 32px;
   height: 100%;
   font-weight: bold;
@@ -713,8 +676,8 @@ export default {
   transition: all 0.2s;
 }
 .qty-btn:hover {
-  background: rgba(0,0,0,0.05);
-  color: var(--heading-color);
+  background-color: #e2e8f0;
+  color: #0e1b4d;
 }
 .qty-input {
   width: 40px;
@@ -722,96 +685,23 @@ export default {
   border: none;
   text-align: center;
   font-weight: 600;
-  color: var(--heading-color);
+  color: var(--heading-color, #0e1b4d);
   background: transparent;
 }
 .qty-input:focus {
   outline: none;
 }
 
-.btn-delete {
-  background: transparent;
-  color: color-mix(in srgb, var(--default-color), transparent 40%);
-  border: none;
-  width: 36px;
-  height: 36px;
-  border-radius: 6px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s;
-}
-.btn-delete:hover {
-  background: color-mix(in srgb, var(--accent-color), transparent 90%);
-  color: var(--accent-color);
+.sticky-sidebar {
+  position: sticky;
+  top: 100px;
 }
 
-.continue-shopping {
-  color: color-mix(in srgb, var(--default-color), transparent 20%);
-  font-weight: 500;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  transition: color 0.2s;
-  font-size: 0.95rem;
-}
-.continue-shopping:hover {
-  color: var(--heading-color);
+.summary-box {
+  background: #f8fafc;
 }
 
-/* ================= MODAL ================= */
-.success-checkmark {
-  width: 60px;
-  height: 60px;
-  background: rgba(255,255,255,0.2);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto;
-}
-.success-checkmark i {
-  font-size: 32px;
-  color: #fff;
-}
-.order-id-box {
-  display: inline-block;
-  background: #f2f2f3;
-  color: var(--heading-color);
-  font-size: 1.5rem;
-  font-weight: 700;
-  padding: 8px 24px;
-  border-radius: 6px;
-  border: 1px dashed rgba(0,0,0,0.2);
-  letter-spacing: 1px;
-}
-.zalo-btn {
-  background: #0068ff;
-  color: white;
-  border: none;
-  padding: 14px;
-  border-radius: 8px;
-  font-weight: 600;
-  font-size: 1.05rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(0, 104, 255, 0.2);
-}
-.zalo-btn:hover {
-  background: #0056cc;
-  transform: translateY(-1px);
-}
 .cursor-pointer {
   cursor: pointer;
 }
-
-
-
-
 </style>
-
-
-
-

@@ -28,6 +28,18 @@
           >
             LỊCH SỬ KẾT QUẢ
           </div>
+          <div 
+            class="fs-5 fw-bold pb-2 custom-line-tab" 
+            role="tab"
+            data-bs-toggle="tab"
+            data-bs-target="#navs-transactions"
+            aria-controls="navs-transactions"
+            aria-selected="false"
+            style="min-width: 220px;"
+            @click="loadTransactions"
+          >
+            ĐỐI SOÁT VIETQR
+          </div>
         </div>
 
       <div class="tab-content border-0 p-0 bg-transparent shadow-none">
@@ -35,8 +47,11 @@
           <!-- TAB 1: CẦN XỬ LÝ -->
           <div class="tab-pane fade show active" id="navs-inbox" role="tabpanel">
             <div class="card">
-              <div class="card-header border-bottom">
+              <div class="card-header border-bottom d-flex justify-content-between align-items-center flex-wrap gap-2">
                 <h5 class="mb-0 fw-bold text-dark">Danh sách Giao Dịch Cần Xử Lý</h5>
+                <button type="button" class="btn btn-outline-success btn-sm shadow-sm" @click="exportJapanPO" title="Xuất file CSV UTF-8 đơn đặt hàng nhà cung cấp Nhật">
+                  <i class="bx bx-download me-1"></i> Xuất Excel Đặt Hàng Nhật (PO)
+                </button>
               </div>
               <div class="card-body pt-3 pb-3">
                 <div class="d-flex align-items-center gap-2">
@@ -186,6 +201,87 @@
               </div>
             </div>
           </div>
+
+          <!-- TAB 3: ĐỐI SOÁT VIETQR & GIAO DỊCH -->
+          <div class="tab-pane fade" id="navs-transactions" role="tabpanel">
+            <div class="card">
+              <div class="card-header border-bottom d-flex justify-content-between align-items-center">
+                <h5 class="mb-0 fw-bold text-dark">Lịch Sử Giao Dịch & Đối Soát Ngân Hàng (VietQR IPN)</h5>
+                <button type="button" class="btn btn-primary btn-sm" @click="openSimulateModal(null)">
+                  <i class="bx bx-plus me-1"></i> Giả Lập Giao Dịch Sandbox
+                </button>
+              </div>
+              <div class="card-body pt-3 pb-3">
+                <div class="d-flex align-items-center gap-2">
+                  <div class="flex-grow-1">
+                    <input type="text" class="form-control" placeholder="Tìm theo Mã tham chiếu (DH/YCBG), Mã GD, Nội dung..." v-model="txSearch">
+                  </div>
+                  <div style="width: 200px;">
+                    <select class="form-select" v-model="txStatus">
+                      <option value="all">Tất cả trạng thái</option>
+                      <option value="thanh_cong">Thành công</option>
+                      <option value="mo_phong">Mô phỏng (Sandbox)</option>
+                      <option value="that_bai">Thất bại</option>
+                    </select>
+                  </div>
+                  <button type="button" class="btn btn-outline-secondary" @click="loadTransactions" :disabled="isFetchingTransactions">
+                    <i class="bx bx-refresh" :class="{ 'bx-spin': isFetchingTransactions }"></i>
+                  </button>
+                </div>
+              </div>
+              <div class="table-responsive text-nowrap custom-scroll" style="height: calc(100vh - 270px); min-height: 400px; overflow-y: auto;">
+                <table class="table table-hover align-middle mb-0">
+                  <thead style="position: sticky; top: 0; z-index: 1; background: #fff;">
+                    <tr>
+                      <th class="text-center text-uppercase" style="width: 5%">STT</th>
+                      <th class="text-uppercase" style="width: 15%">Mã Giao Dịch</th>
+                      <th class="text-uppercase" style="width: 15%">Cổng / Ngân Hàng</th>
+                      <th class="text-uppercase" style="width: 15%">Mã Đơn / Báo Giá</th>
+                      <th class="text-end text-uppercase" style="width: 15%">Số Tiền Nhận</th>
+                      <th class="text-uppercase" style="width: 20%">Nội Dung Chuyển Khoản</th>
+                      <th class="text-center text-uppercase" style="width: 15%">Thời Gian</th>
+                      <th class="text-center text-uppercase" style="width: 10%">Trạng Thái</th>
+                    </tr>
+                  </thead>
+                  <tbody class="table-border-bottom-0">
+                    <tr v-if="isFetchingTransactions">
+                      <td colspan="8" class="text-center py-5 text-muted">
+                        <div class="spinner-border text-primary" role="status"></div>
+                        <p class="mt-2 mb-0">Đang tải lịch sử đối soát giao dịch...</p>
+                      </td>
+                    </tr>
+                    <tr v-for="(tx, index) in filteredTransactions" :key="tx.id" v-else>
+                      <td class="text-center"><strong>{{ index + 1 }}</strong></td>
+                      <td><span class="fw-bold text-dark font-monospace">{{ tx.ma_giao_dich }}</span></td>
+                      <td><span class="badge bg-label-info">{{ tx.gateway || 'VietQR Bank' }}</span></td>
+                      <td>
+                        <span class="fw-bold text-primary">{{ tx.ma_tham_chieu || 'Chưa nhận diện' }}</span>
+                      </td>
+                      <td class="text-end">
+                        <span class="fw-bold text-success fs-6">+{{ formatCurrency(tx.so_tien) }}</span>
+                      </td>
+                      <td><span class="text-truncate d-inline-block" style="max-width: 250px;" :title="tx.noi_dung">{{ tx.noi_dung }}</span></td>
+                      <td class="text-center text-muted" style="font-size: 0.85rem;">{{ tx.thoi_gian_giao_dich || tx.created_at }}</td>
+                      <td class="text-center">
+                        <span v-if="tx.trang_thai === 'thanh_cong'" class="badge bg-success">THÀNH CÔNG</span>
+                        <span v-else-if="tx.trang_thai === 'mo_phong'" class="badge bg-warning text-dark">SANDBOX TEST</span>
+                        <span v-else class="badge bg-danger">THẤT BẠI</span>
+                      </td>
+                    </tr>
+                    <tr v-if="!isFetchingTransactions && filteredTransactions.length === 0">
+                      <td colspan="8" class="text-center py-5 text-muted">
+                        <i class="bx bx-receipt text-secondary fs-1 d-block mb-2"></i>
+                        Chưa có giao dịch ngân hàng nào được ghi nhận
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="card-footer py-3 border-top">
+                <span class="text-muted fw-medium">Tổng cộng: {{ filteredTransactions.length }} giao dịch đối soát</span>
+              </div>
+            </div>
+          </div>
         </div>
 
         </div>
@@ -312,6 +408,9 @@
             </div>
             <div class="modal-footer border-top py-2 mt-2 d-flex justify-content-between align-items-center">
               <div>
+                <button type="button" class="btn btn-primary px-3 me-2 shadow-sm" v-if="selectedQuote && selectedQuote.status === 1 && !isQuoteReadOnly && canProcessOrders" @click.prevent="openZaloMessage">
+                  <i class="bx bx-chat me-1"></i> Mở Zalo Gửi Khách
+                </button>
                 <button type="button" class="btn btn-success px-3 me-2 shadow-sm" v-if="selectedQuote && selectedQuote.status === 1 && !isQuoteReadOnly && canProcessOrders" @click.prevent="copyMagicLink">
                   <i class="bx bx-link me-1"></i> Copy Link Zalo
                 </button>
@@ -479,13 +578,201 @@
               </div>
             </div>
           </div>
-          <div class="modal-footer border-top py-3 mt-2">
+          <div class="modal-footer border-top py-3 mt-2 d-flex justify-content-between align-items-center">
+            <div class="d-flex gap-2">
+              <button type="button" class="btn btn-outline-primary px-3 shadow-sm" @click="openVietQrModal(selectedOrder)" title="Xem mã VietQR tự động">
+                <i class="bx bx-qr-scan me-1"></i> Mã VietQR
+              </button>
+              <button type="button" class="btn btn-outline-info px-3 shadow-sm" @click="openShippingModal(selectedOrder)" title="Gửi Zalo ZNS / SMS xuất bến chành xe">
+                <i class="bx bxs-truck me-1"></i> Gửi Tin Chành Xe
+              </button>
+              <button type="button" class="btn btn-outline-warning px-3 shadow-sm" @click="openSimulateModal(selectedOrder)" title="Thử nghiệm đối soát sandbox">
+                <i class="bx bx-money-withdraw me-1"></i> Test VietQR
+              </button>
+            </div>
+            <div class="d-flex gap-2">
               <button type="button" class="btn btn-outline-secondary px-4" data-bs-dismiss="modal">Đóng</button>
               <button type="button" class="btn btn-primary px-4 shadow-sm" @click="saveOrder" v-if="!isOrderReadOnly && canEditOrders">Lưu Thay Đổi</button>
               <button type="button" class="btn btn-primary px-4 shadow-sm">
                 <i class="bx bx-printer me-1"></i> In Hóa Đơn
               </button>
             </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal 1: Hiển Thị Mã VietQR Cho Admin & Thu Ngân -->
+    <div class="modal fade" id="adminVietQrModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-md modal-dialog-centered" role="document">
+        <div class="modal-content border-0 shadow-lg">
+          <div class="modal-header bg-primary text-white py-3">
+            <h5 class="modal-title fw-bold text-white mb-0">
+              <i class="bx bx-qr-scan me-2"></i>Mã VietQR Napas247 - Đơn Hàng
+            </h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body text-center p-4">
+            <div v-if="isLoadingQr" class="py-5">
+              <div class="spinner-border text-primary" role="status"></div>
+              <p class="text-muted mt-2">Đang kết nối cổng VietQR...</p>
+            </div>
+            <div v-else-if="adminVietQr">
+              <div class="bg-white p-3 rounded-4 shadow-sm border d-inline-block mb-3">
+                <img :src="adminVietQr.qr_url" alt="VietQR" class="img-fluid" style="max-width: 250px; border-radius: 8px;">
+              </div>
+              <div class="text-start bg-light p-3 rounded-3 border">
+                <div class="d-flex justify-content-between py-1 border-bottom small">
+                  <span class="text-muted">Ngân Hàng:</span>
+                  <span class="fw-bold text-dark">{{ adminVietQr.bank_name }} ({{ adminVietQr.bank_id }})</span>
+                </div>
+                <div class="d-flex justify-content-between py-1 border-bottom small">
+                  <span class="text-muted">Số Tài Khoản:</span>
+                  <div class="d-flex align-items-center gap-1">
+                    <span class="fw-bold text-primary">{{ adminVietQr.account_no }}</span>
+                    <button type="button" class="btn btn-sm btn-outline-secondary py-0 px-1" @click="copyText(adminVietQr.account_no, 'Đã copy STK')">
+                      <i class="bx bx-copy"></i>
+                    </button>
+                  </div>
+                </div>
+                <div class="d-flex justify-content-between py-1 border-bottom small">
+                  <span class="text-muted">Chủ Tài Khoản:</span>
+                  <span class="fw-bold text-dark">{{ adminVietQr.account_name }}</span>
+                </div>
+                <div class="d-flex justify-content-between py-1 border-bottom small">
+                  <span class="text-muted">Số Tiền:</span>
+                  <span class="fw-bold text-danger fs-6">{{ adminVietQr.amount_formatted }}</span>
+                </div>
+                <div class="d-flex justify-content-between py-1 small">
+                  <span class="text-muted">Cú Pháp Chuyển:</span>
+                  <div class="d-flex align-items-center gap-1">
+                    <span class="fw-bold text-dark bg-white px-2 py-0 rounded border">{{ adminVietQr.transfer_content }}</span>
+                    <button type="button" class="btn btn-sm btn-outline-primary py-0 px-1" @click="copyText(adminVietQr.transfer_content, 'Đã copy nội dung')">
+                      <i class="bx bx-copy"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer py-2">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal 2: Gửi Tin Nhắn Chành Xe (ZNS / SMS) Cho Chủ Tàu & Tài Xế -->
+    <div class="modal fade" id="adminShippingModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content border-0 shadow-lg">
+          <div class="modal-header bg-info text-white py-3">
+            <h5 class="modal-title fw-bold text-white mb-0">
+              <i class="bx bxs-truck me-2"></i>Gửi Thông Tin Chành Xe & Xuất Bến (Zalo ZNS / SMS)
+            </h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <form @submit.prevent="sendShippingNotice">
+            <div class="modal-body p-4" v-if="shippingOrder">
+              <div class="alert alert-primary py-2 px-3 small mb-3">
+                <i class="bx bx-info-circle me-1"></i> Đơn hàng: <strong>#{{ shippingOrder.code }}</strong> - Khách nhận: <strong>{{ shippingOrder.customer_name }} ({{ shippingOrder.customer_phone }})</strong>
+              </div>
+
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label class="form-label fw-bold">Tên Nhà Xe / Chành Xe <span class="text-danger">*</span></label>
+                  <input type="text" class="form-control" v-model="shippingForm.ten_nha_xe" placeholder="VD: Chành xe Tô Châu, Phương Trang..." required>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label fw-bold">Biển Số Xe</label>
+                  <input type="text" class="form-control" v-model="shippingForm.bien_so_xe" placeholder="VD: 68C-123.45">
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label fw-bold">Tên Tài Xế</label>
+                  <input type="text" class="form-control" v-model="shippingForm.ten_tai_xe" placeholder="VD: Bác tài Nguyễn Văn Hùng">
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label fw-bold">Số Điện Thoại Tài Xế</label>
+                  <input type="tel" class="form-control" v-model="shippingForm.sdt_tai_xe" placeholder="VD: 0918123456">
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label fw-bold">Số Kiện Hàng</label>
+                  <input type="number" class="form-control" v-model.number="shippingForm.so_kien_hang" min="1" required>
+                </div>
+                <div class="col-md-8">
+                  <label class="form-label fw-bold">Địa Điểm / Bến Trả Hàng</label>
+                  <input type="text" class="form-control" v-model="shippingForm.dia_diem_tra_hang" placeholder="VD: Cảng cá Tắc Cậu, Rạch Giá, Kiên Giang">
+                </div>
+              </div>
+
+              <hr class="my-4">
+
+              <div class="bg-light p-3 rounded-3 border">
+                <h6 class="fw-bold mb-2 text-dark small text-uppercase">Tùy Chọn Kênh Gửi Thông Báo</h6>
+                <div class="form-check mb-2">
+                  <input class="form-check-input" type="checkbox" id="notifyCust" v-model="shippingForm.notify_customer">
+                  <label class="form-check-label" for="notifyCust">
+                    <strong>Gửi SMS Brandname / Zalo ZNS cho Khách hàng / Chủ tàu</strong> (Kèm tên nhà xe, biển số, SĐT bác tài để ra nhận hàng).
+                  </label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="notifyDriv" v-model="shippingForm.notify_driver" :disabled="!shippingForm.sdt_tai_xe">
+                  <label class="form-check-label" for="notifyDriv">
+                    <strong>Gửi SMS điều phối giao hàng cho Bác tài chành xe</strong> (Kèm mã đơn, tên và SĐT chủ tàu để liên hệ khi tới bến cảng).
+                  </label>
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer py-2">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+              <button type="submit" class="btn btn-info text-white shadow-sm" :disabled="isSendingShipping">
+                <span v-if="isSendingShipping" class="spinner-border spinner-border-sm me-1" role="status"></span>
+                <i v-else class="bx bx-paper-plane me-1"></i>
+                {{ isSendingShipping ? 'Đang gửi...' : 'Gửi Thông Báo Ngay' }}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal 3: Giả Lập / Mô Phỏng Đối Soát VietQR Sandbox -->
+    <div class="modal fade" id="adminSimulateModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-md modal-dialog-centered" role="document">
+        <div class="modal-content border-0 shadow-lg">
+          <div class="modal-header bg-warning text-dark py-3">
+            <h5 class="modal-title fw-bold mb-0">
+              <i class="bx bx-test-tube me-2"></i>Mô Phỏng Giao Dịch Chuyển Khoản Ngân Hàng (Sandbox)
+            </h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <form @submit.prevent="submitSimulatePayment">
+            <div class="modal-body p-4">
+              <p class="text-muted small">
+                Tính năng dành cho kiểm thử: Giả lập webhook của SePay/Casso/Ngân hàng gửi về hệ thống để kiểm tra đối soát tự động cập nhật số tiền đã thu và kích hoạt thông báo.
+              </p>
+              <div class="mb-3">
+                <label class="form-label fw-bold">Mã Tham Chiếu (Đơn hàng DH... hoặc Báo giá YCBG...)</label>
+                <input type="text" class="form-control" v-model="simulateForm.reference_code" placeholder="VD: DH-261011-F605" required>
+              </div>
+              <div class="mb-3">
+                <label class="form-label fw-bold">Số Tiền Chuyển Vào (VND)</label>
+                <input type="number" class="form-control" v-model.number="simulateForm.amount" min="1000" step="1000" required>
+              </div>
+              <div class="mb-3">
+                <label class="form-label fw-bold">Nội Dung Chuyển Khoản Ngân Hàng</label>
+                <input type="text" class="form-control" v-model="simulateForm.content" placeholder="VD: JPM DH-261011-F605 TIEN COC">
+              </div>
+            </div>
+            <div class="modal-footer py-2">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+              <button type="submit" class="btn btn-warning text-dark fw-bold shadow-sm" :disabled="isSimulating">
+                <span v-if="isSimulating" class="spinner-border spinner-border-sm me-1" role="status"></span>
+                <i v-else class="bx bx-check-double me-1"></i>
+                {{ isSimulating ? 'Đang gửi...' : 'Kích Hoạt Đối Soát Ngay' }}
+              </button>
+            </div>
+          </form>
         </div>
       </div>
     </div>
@@ -570,6 +857,34 @@ export default {
       archiveSearch: "",
       selectedQuote: null,
       selectedOrder: null,
+      // Transactions data
+      transactions: [],
+      isFetchingTransactions: false,
+      txSearch: "",
+      txStatus: "all",
+      // VietQR Modal
+      adminVietQr: null,
+      isLoadingQr: false,
+      // Shipping Modal
+      shippingOrder: null,
+      shippingForm: {
+        ten_nha_xe: "",
+        bien_so_xe: "",
+        ten_tai_xe: "",
+        sdt_tai_xe: "",
+        so_kien_hang: 1,
+        dia_diem_tra_hang: "",
+        notify_customer: true,
+        notify_driver: true
+      },
+      isSendingShipping: false,
+      // Simulation Modal
+      simulateForm: {
+        reference_code: "",
+        amount: 0,
+        content: ""
+      },
+      isSimulating: false
     };
   },
   computed: {
@@ -650,6 +965,22 @@ export default {
       return result;
     },
 
+    filteredTransactions() {
+      let list = this.transactions || [];
+      if (this.txSearch) {
+        const s = this.txSearch.toLowerCase();
+        list = list.filter(t => 
+          (t.ma_giao_dich && t.ma_giao_dich.toLowerCase().includes(s)) ||
+          (t.ma_tham_chieu && t.ma_tham_chieu.toLowerCase().includes(s)) ||
+          (t.noi_dung && t.noi_dung.toLowerCase().includes(s))
+        );
+      }
+      if (this.txStatus !== 'all') {
+        list = list.filter(t => t.trang_thai === this.txStatus);
+      }
+      return list;
+    },
+
     quotes() {
       return (this.rawQuotes || []).map(item => {
         const d = new Date(item.created_at);
@@ -727,6 +1058,52 @@ export default {
         this.openQuoteModal(item);
       } else {
         this.openOrderModal(item);
+      }
+    },
+    openZaloMessage() {
+      if (!this.selectedQuote) return;
+      const phone = (this.selectedQuote.customer_phone || '').replace(/[^0-9]/g, '');
+      if (!phone) {
+        Swal.fire({ icon: 'warning', iconColor: '#ff3e1d', title: 'Thiếu số điện thoại', text: 'Khách hàng chưa có số điện thoại để gửi Zalo.' });
+        return;
+      }
+      const link = this.selectedQuote.token ? `${window.location.origin}/tra-cuu-bao-gia/${this.selectedQuote.token}` : '';
+      const total = this.calculateTotal(this.selectedQuote.items) + (this.selectedQuote.freight_collect ? 0 : (this.selectedQuote.shipping_fee || 0));
+      const deposit = this.selectedQuote.deposit_required || 0;
+      
+      let msg = `Chào ${this.selectedQuote.customer_name || 'Quý khách'}, JPM Marine đã gửi bảng báo giá phụ tùng động cơ thủy cho yêu cầu [${this.selectedQuote.code}]:\n`;
+      msg += `• Tổng tiền tạm tính: ${this.formatCurrency(total)}\n`;
+      if (deposit > 0) {
+        msg += `• Tiền đặt cọc giữ hàng: ${this.formatCurrency(deposit)}\n`;
+      }
+      if (link) {
+        msg += `• Link xem chi tiết và chốt đơn: ${link}\n`;
+      }
+      msg += `(Lưu ý: Báo giá có hiệu lực trong 72 giờ theo tỷ giá JPY hiện hành). Trân trọng cảm ơn Quý khách!`;
+
+      window.open(`https://zalo.me/${phone}?text=${encodeURIComponent(msg)}`, '_blank');
+    },
+    async exportJapanPO() {
+      try {
+        const res = await axiosClient.get('/admin/don-hang/xuat-excel-po-nhat', { responseType: 'blob' });
+        const url = window.URL.createObjectURL(new Blob([res.data], { type: 'text/csv;charset=utf-8;' }));
+        const link = document.createElement('a');
+        link.href = url;
+        const dateStr = new Date().toISOString().slice(0, 10);
+        link.setAttribute('download', `PO_Nhat_JPM_${dateStr}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+        Swal.fire({
+          icon: 'success',
+          title: 'Xuất file thành công',
+          text: 'Danh sách đơn hàng cần đặt từ Nhật đã được tải về (UTF-8 CSV).',
+          timer: 2000,
+          showConfirmButton: false
+        });
+      } catch (err) {
+        Swal.fire({ icon: 'error', title: 'Lỗi', text: 'Không thể xuất file đơn đặt hàng Nhật.' });
       }
     },
     copyMagicLink() {
@@ -914,6 +1291,141 @@ export default {
       }
       const closeBtn = document.querySelector(`#${modalId} .btn-close`);
       if (closeBtn) closeBtn.click();
+    },
+
+    copyText(text, msg) {
+      if (!text) return;
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(text);
+      }
+      Swal.fire({
+        toast: true,
+        position: 'top-end',
+        icon: 'success',
+        title: msg || 'Đã sao chép!',
+        showConfirmButton: false,
+        timer: 2000
+      });
+    },
+
+    async loadTransactions() {
+      this.isFetchingTransactions = true;
+      try {
+        const res = await axiosClient.get('/admin/thanh-toan/giao-dich?per_page=50');
+        if (res.data && res.data.success) {
+          this.transactions = res.data.data.data || [];
+        }
+      } catch (err) {
+        console.error('Lỗi khi tải danh sách giao dịch:', err);
+      } finally {
+        this.isFetchingTransactions = false;
+      }
+    },
+
+    async openVietQrModal(order) {
+      if (!order) return;
+      this.isLoadingQr = true;
+      this.adminVietQr = null;
+      // eslint-disable-next-line no-undef
+      const modalEl = new bootstrap.Modal(document.getElementById('adminVietQrModal'));
+      modalEl.show();
+      try {
+        const res = await axiosClient.get(`/public/vietqr/don-hang/${order.code}`);
+        if (res.data && res.data.success) {
+          this.adminVietQr = res.data;
+        }
+      } catch (e) {
+        Swal.fire({ icon: 'error', title: 'Lỗi', text: 'Không thể tạo mã VietQR cho đơn hàng này' });
+      } finally {
+        this.isLoadingQr = false;
+      }
+    },
+
+    openShippingModal(order) {
+      if (!order) return;
+      this.shippingOrder = order;
+      this.shippingForm = {
+        ten_nha_xe: 'Chành Xe Tô Châu',
+        bien_so_xe: '',
+        ten_tai_xe: '',
+        sdt_tai_xe: '',
+        so_kien_hang: 1,
+        dia_diem_tra_hang: order.address || 'Bến tàu Rạch Giá, Kiên Giang',
+        notify_customer: true,
+        notify_driver: true
+      };
+      // eslint-disable-next-line no-undef
+      const modalEl = new bootstrap.Modal(document.getElementById('adminShippingModal'));
+      modalEl.show();
+    },
+
+    async sendShippingNotice() {
+      if (!this.shippingOrder) return;
+      if (!this.shippingForm.ten_nha_xe) {
+        Swal.fire({ icon: 'warning', title: 'Thiếu thông tin', text: 'Vui lòng nhập tên nhà xe / chành xe' });
+        return;
+      }
+      this.isSendingShipping = true;
+      try {
+        const res = await axiosClient.post(`/admin/thong-bao/gui-chanh-xe/${this.shippingOrder.id}`, this.shippingForm);
+        if (res.data && res.data.success) {
+          Swal.fire({
+            icon: 'success',
+            title: 'Thành Công!',
+            text: 'Đã gửi thông báo xuất bến qua Zalo ZNS / SMS Brandname cho chủ tàu và chành xe.'
+          });
+          // eslint-disable-next-line no-undef
+          const modalEl = bootstrap.Modal.getInstance(document.getElementById('adminShippingModal'));
+          if (modalEl) modalEl.hide();
+        }
+      } catch (err) {
+        Swal.fire({ icon: 'error', title: 'Lỗi', text: err.response?.data?.message || 'Có lỗi xảy ra khi gửi thông báo' });
+      } finally {
+        this.isSendingShipping = false;
+      }
+    },
+
+    openSimulateModal(order) {
+      const code = order ? order.code : '';
+      const remaining = order ? Math.max(0, (this.calculateTotal(order.items) + (order.freight_collect ? 0 : (order.shipping_fee || 0))) - (order.paid_amount || 0)) : 1000000;
+      this.simulateForm = {
+        reference_code: code,
+        amount: remaining > 0 ? remaining : 500000,
+        content: `JPM ${code} TEST THANH TOAN`
+      };
+      // eslint-disable-next-line no-undef
+      const modalEl = new bootstrap.Modal(document.getElementById('adminSimulateModal'));
+      modalEl.show();
+    },
+
+    async submitSimulatePayment() {
+      if (!this.simulateForm.reference_code || this.simulateForm.amount <= 0) {
+        Swal.fire({ icon: 'warning', title: 'Chú ý', text: 'Vui lòng nhập mã tham chiếu và số tiền hợp lệ' });
+        return;
+      }
+      this.isSimulating = true;
+      try {
+        const res = await axiosClient.post('/admin/thanh-toan/mo-phong', this.simulateForm);
+        if (res.data && res.data.success) {
+          Swal.fire({
+            icon: 'success',
+            title: 'Đối Soát Thành Công!',
+            text: `Đã đối soát +${this.formatCurrency(this.simulateForm.amount)} vào ${this.simulateForm.reference_code}`
+          });
+          // eslint-disable-next-line no-undef
+          const modalEl = bootstrap.Modal.getInstance(document.getElementById('adminSimulateModal'));
+          if (modalEl) modalEl.hide();
+          this.queryClient.invalidateQueries({ queryKey: ['don-hang'] });
+          this.loadTransactions();
+          if (this.selectedOrder && this.selectedOrder.code === this.simulateForm.reference_code) {
+            this.selectedOrder.paid_amount = (Number(this.selectedOrder.paid_amount) || 0) + Number(this.simulateForm.amount);
+          }
+        }
+      } catch (err) {
+        Swal.fire({ icon: 'error', title: 'Lỗi', text: err.response?.data?.message || 'Đối soát mô phỏng thất bại' });
+      } finally {
+        this.isSimulating = false;
+      }
     }
   }
 };

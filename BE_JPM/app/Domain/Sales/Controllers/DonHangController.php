@@ -211,4 +211,79 @@ class DonHangController extends Controller
             ], 500);
         }
     }
+
+    /**
+     * Admin: Xuất file Excel/CSV gom đơn đặt hàng sang đối tác Nhật Bản (Purchase Order - PO)
+     */
+    public function exportJapanPO(Request $request)
+    {
+        $query = DonHang::with(['chiTiet.phuTung.thuongHieu', 'chiTiet.sanPham']);
+
+        // Cho phép lọc theo danh sách ID đơn cụ thể hoặc mặc định gom các đơn đã cọc/chờ nhập hàng
+        if ($request->has('order_ids') && is_array($request->order_ids)) {
+            $query->whereIn('id', $request->order_ids);
+        } else {
+            $query->whereIn('trang_thai', [0, 1]);
+        }
+
+        $orders = $query->orderBy('created_at', 'desc')->get();
+
+        $filename = 'JPM_PO_JAPAN_' . date('Ymd_His') . '.csv';
+
+        $headers = [
+            'Content-Type' => 'text/csv; charset=UTF-8',
+            'Content-Disposition' => "attachment; filename=\"$filename\"",
+            'Pragma' => 'no-cache',
+            'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
+            'Expires' => '0',
+        ];
+
+        $callback = function () use ($orders) {
+            $output = fopen('php://output', 'w');
+
+            // Ghi UTF-8 BOM để Excel hiển thị đúng dấu tiếng Việt / tiếng Nhật
+            fprintf($output, chr(0xEF) . chr(0xBB) . chr(0xBF));
+
+            fputcsv($output, ['JPM MARINE - PURCHASE ORDER (PO) TO JAPAN SUPPLIER']);
+            fputcsv($output, ['Export Date', date('Y-m-d H:i:s'), 'Total Orders', $orders->count()]);
+            fputcsv($output, []);
+
+            fputcsv($output, [
+                'STT (No.)',
+                'Mã Đơn Hàng (Order Ref)',
+                'Mã Phụ Tùng (Part Number OEM)',
+                'Tên Phụ Tùng (Part Name Description)',
+                'Số Lượng (Qty)',
+                'Thương Hiệu / Hãng (Brand)',
+                'Ghi Chú Đời Máy (Engine Model / Note)',
+                'Tên Khách Hàng (Customer)',
+                'Ngày Cọc (Deposit Date)'
+            ]);
+
+            $stt = 1;
+            foreach ($orders as $order) {
+                foreach ($order->chiTiet as $item) {
+                    $partNo = $item->ma_phu_tung ?? ($item->phuTung->ma_phu_tung ?? $item->sanPham->ma_san_pham ?? 'N/A');
+                    $partName = $item->ten_phu_tung ?? ($item->phuTung->ten_phu_tung ?? $item->sanPham->ten_san_pham ?? 'Không rõ');
+                    $brand = $item->phuTung->thuongHieu->ten_thuong_hieu ?? 'Yamaha / Yanmar / Mercury';
+
+                    fputcsv($output, [
+                        $stt++,
+                        $order->ma_don_hang,
+                        $partNo,
+                        $partName,
+                        $item->so_luong,
+                        $brand,
+                        $order->ghi_chu_khach_hang ?? 'Theo tiêu chuẩn nhà sản xuất',
+                        $order->khach_hang_ten,
+                        $order->created_at ? $order->created_at->format('Y-m-d H:i') : ''
+                    ]);
+                }
+            }
+
+            fclose($output);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
 }

@@ -1,0 +1,280 @@
+<?php
+
+namespace App\Domain\Sales\Services;
+
+use App\Domain\Communication\Services\NotificationService;
+use App\Domain\Sales\Models\DonHang;
+use App\Domain\Sales\Models\GiaoDichThanhToan;
+use App\Domain\Sales\Models\YeuCauBaoGia;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+
+class VietQRService
+{
+    protected NotificationService $notificationService;
+
+    public function __construct(NotificationService $notificationService)
+    {
+        $this->notificationService = $notificationService;
+    }
+
+    /**
+     * Sinh thông tin mã VietQR cho Đơn hàng
+     */
+    public function generateDonHangQR(DonHang $donHang, string $type = 'auto'): array
+    {
+        $bankId = config('services.vietqr.bank_id', 'ICB');
+        $bankName = config('services.vietqr.bank_name', 'VietinBank');
+        $accountNo = config('services.vietqr.account_no', '108876543210');
+        $accountName = config('services.vietqr.account_name', 'CONG TY PHU TUNG MAY THUY JPM');
+        $template = config('services.vietqr.template', 'compact2');
+
+        $totalOrder = (float)($donHang->tong_tien + ($donHang->phi_van_chuyen ?? 0));
+        $daThu = (float)($donHang->da_thu ?? 0);
+        $tienCoc = (float)($donHang->tien_coc_yeu_cau ?? 0);
+
+        $isDeposit = false;
+        if ($type === 'deposit' || ($type === 'auto' && $tienCoc > 0 && $daThu < $tienCoc)) {
+            $amount = max(0, $tienCoc - $daThu);
+            $isDeposit = true;
+            $transferContent = "JPM COC " . $donHang->ma_don_hang;
+        } else {
+            $amount = max(0, $totalOrder - $daThu);
+            $transferContent = "JPM " . $donHang->ma_don_hang;
+        }
+
+        $qrUrl = sprintf(
+            "https://img.vietqr.io/image/%s-%s-%s.png?amount=%d&addInfo=%s&accountName=%s",
+            $bankId,
+            $accountNo,
+            $template,
+            (int)$amount,
+            urlencode($transferContent),
+            urlencode($accountName)
+        );
+
+        $isPaid = ($daThu >= $totalOrder && $totalOrder > 0);
+        $isDepositPaid = ($daThu >= $tienCoc && $tienCoc > 0);
+
+        return [
+            'success' => true,
+            'qr_url' => $qrUrl,
+            'bank_id' => $bankId,
+            'bank_name' => $bankName,
+            'account_no' => $accountNo,
+            'account_name' => $accountName,
+            'amount' => $amount,
+            'amount_formatted' => number_format($amount, 0, ',', '.') . ' đ',
+            'transfer_content' => $transferContent,
+            'is_deposit' => $isDeposit,
+            'is_deposit_paid' => $isDepositPaid,
+            'is_paid' => $isPaid,
+            'order_code' => $donHang->ma_don_hang,
+            'total_order' => $totalOrder,
+            'deposit_required' => $tienCoc,
+            'paid_amount' => $daThu,
+            'remaining_amount' => max(0, $totalOrder - $daThu),
+            'order_status' => $donHang->trang_thai,
+            'payment_status' => $donHang->trang_thai_thanh_toan,
+        ];
+    }
+
+    /**
+     * Sinh thông tin mã VietQR tiền cọc cho Yêu cầu báo giá
+     */
+    public function generateBaoGiaQR(YeuCauBaoGia $quote): array
+    {
+        $bankId = config('services.vietqr.bank_id', 'ICB');
+        $bankName = config('services.vietqr.bank_name', 'VietinBank');
+        $accountNo = config('services.vietqr.account_no', '108876543210');
+        $accountName = config('services.vietqr.account_name', 'CONG TY PHU TUNG MAY THUY JPM');
+        $template = config('services.vietqr.template', 'compact2');
+
+        $tienCoc = (float)($quote->tien_coc_yeu_cau ?? 0);
+        $tongTien = (float)($quote->tong_tien ?? 0);
+        $amount = $tienCoc > 0 ? $tienCoc : $tongTien;
+
+        $transferContent = "COC " . $quote->ma_yeu_cau;
+
+        $qrUrl = sprintf(
+            "https://img.vietqr.io/image/%s-%s-%s.png?amount=%d&addInfo=%s&accountName=%s",
+            $bankId,
+            $accountNo,
+            $template,
+            (int)$amount,
+            urlencode($transferContent),
+            urlencode($accountName)
+        );
+
+        $isDepositPaid = ($quote->trang_thai === 'Đã cọc' || $quote->trang_thai === 'Đã chuyển đơn hàng');
+
+        return [
+            'success' => true,
+            'qr_url' => $qrUrl,
+            'bank_id' => $bankId,
+            'bank_name' => $bankName,
+            'account_no' => $accountNo,
+            'account_name' => $accountName,
+            'amount' => $amount,
+            'amount_formatted' => number_format($amount, 0, ',', '.') . ' đ',
+            'transfer_content' => $transferContent,
+            'quote_code' => $quote->ma_yeu_cau,
+            'total_amount' => $tongTien,
+            'deposit_required' => $tienCoc,
+            'is_deposit_paid' => $isDepositPaid,
+            'quote_status' => $quote->trang_thai,
+        ];
+    }
+
+    /**
+     * Webhook tự động đối soát tiền chuyển khoản
+     */
+    public function reconcileWebhook(array $payload): array
+    {
+        $amountIn = (float)($payload['amountIn'] ?? $payload['transferAmount'] ?? $payload['amount'] ?? 0);
+        $content = (string)($payload['transactionContent'] ?? $payload['content'] ?? $payload['description'] ?? '');
+        $refNumber = (string)($payload['referenceNumber'] ?? $payload['id'] ?? ('REF_' . time()));
+        $accountNo = (string)($payload['accountNumber'] ?? $payload['account_no'] ?? '');
+        $gateway = (string)($payload['gateway'] ?? 'VietQR Bank');
+        $transactionDate = isset($payload['transactionDate']) ? date('Y-m-d H:i:s', strtotime($payload['transactionDate'])) : now();
+
+        Log::info("[VIETQR RECONCILIATION] Received payload: Ref={$refNumber}, Amount={$amountIn}, Content='{$content}'");
+
+        if ($amountIn <= 0) {
+            return ['success' => false, 'message' => 'Số tiền giao dịch không hợp lệ'];
+        }
+
+        // Kiểm tra xem giao dịch ngân hàng này đã được ghi nhận trước đó chưa (Chống duplicate Webhook)
+        $existingTx = GiaoDichThanhToan::where('ma_giao_dich', $refNumber)->first();
+        if ($existingTx) {
+            return [
+                'success' => true,
+                'message' => 'Giao dịch đã được đối soát trước đó',
+                'transaction_id' => $existingTx->id,
+            ];
+        }
+
+        // Bóc tách mã Đơn hàng (DH...) hoặc Mã Yêu cầu báo giá (YCBG...) từ nội dung chuyển khoản
+        $matchedOrderCode = null;
+        $matchedQuoteCode = null;
+
+        // Pattern 1: Đơn hàng (VD: DH20261018001, DH-12345, JPM DH...)
+        if (preg_match('/DH[0-9A-Z_-]+/i', $content, $m)) {
+            $matchedOrderCode = strtoupper($m[0]);
+        }
+
+        // Pattern 2: Báo giá (VD: YCBG20261018001, COC YCBG...)
+        if (preg_match('/YCBG[0-9A-Z_-]+/i', $content, $m2)) {
+            $matchedQuoteCode = strtoupper($m2[0]);
+        }
+
+        return DB::transaction(function () use (
+            $amountIn, $content, $refNumber, $accountNo, $gateway, $transactionDate, $matchedOrderCode, $matchedQuoteCode, $payload
+        ) {
+            // 1. Trường hợp khớp Đơn hàng (DonHang)
+            if ($matchedOrderCode) {
+                $order = DonHang::where('ma_don_hang', $matchedOrderCode)->first();
+                if ($order) {
+                    $order->da_thu = (float)($order->da_thu ?? 0) + $amountIn;
+                    $totalRequired = (float)($order->tong_tien + ($order->phi_van_chuyen ?? 0));
+                    $depositRequired = (float)($order->tien_coc_yeu_cau ?? 0);
+
+                    if ($order->da_thu >= $totalRequired) {
+                        $order->trang_thai_thanh_toan = 'Đã thanh toán';
+                        if ($order->trang_thai === 'Chờ xử lý' || $order->trang_thai === 'Đã cọc') {
+                            $order->trang_thai = 'Đang xử lý';
+                        }
+                    } elseif ($depositRequired > 0 && $order->da_thu >= $depositRequired) {
+                        $order->trang_thai_thanh_toan = 'Đã cọc';
+                        if ($order->trang_thai === 'Chờ xử lý') {
+                            $order->trang_thai = 'Đã cọc';
+                        }
+                    }
+                    $order->save();
+
+                    // Ghi log giao dịch
+                    $tx = GiaoDichThanhToan::create([
+                        'gateway' => $gateway,
+                        'ma_giao_dich' => $refNumber,
+                        'so_tai_khoan' => $accountNo,
+                        'so_tien' => $amountIn,
+                        'noi_dung' => $content,
+                        'loai_doi_tuong' => 'don_hang',
+                        'id_doi_tuong' => $order->id,
+                        'ma_tham_chieu' => $order->ma_don_hang,
+                        'trang_thai' => 'Thành công',
+                        'du_lieu_raw' => $payload,
+                        'ngay_giao_dich' => $transactionDate,
+                    ]);
+
+                    // Tự động kích hoạt gửi SMS / Zalo ZNS xác nhận cho khách hàng
+                    $this->notificationService->sendDepositConfirmedToCustomer($order, $amountIn);
+
+                    return [
+                        'success' => true,
+                        'matched' => 'don_hang',
+                        'order_code' => $order->ma_don_hang,
+                        'paid_added' => $amountIn,
+                        'total_paid' => $order->da_thu,
+                        'payment_status' => $order->trang_thai_thanh_toan,
+                        'order_status' => $order->trang_thai,
+                        'transaction_id' => $tx->id,
+                    ];
+                }
+            }
+
+            // 2. Trường hợp khớp Yêu cầu báo giá (YeuCauBaoGia)
+            if ($matchedQuoteCode) {
+                $quote = YeuCauBaoGia::where('ma_yeu_cau', $matchedQuoteCode)->first();
+                if ($quote) {
+                    $quote->trang_thai = 'Đã cọc';
+                    $quote->save();
+
+                    $tx = GiaoDichThanhToan::create([
+                        'gateway' => $gateway,
+                        'ma_giao_dich' => $refNumber,
+                        'so_tai_khoan' => $accountNo,
+                        'so_tien' => $amountIn,
+                        'noi_dung' => $content,
+                        'loai_doi_tuong' => 'yeu_cau_bao_gia',
+                        'id_doi_tuong' => $quote->id,
+                        'ma_tham_chieu' => $quote->ma_yeu_cau,
+                        'trang_thai' => 'Thành công',
+                        'du_lieu_raw' => $payload,
+                        'ngay_giao_dich' => $transactionDate,
+                    ]);
+
+                    return [
+                        'success' => true,
+                        'matched' => 'yeu_cau_bao_gia',
+                        'quote_code' => $quote->ma_yeu_cau,
+                        'quote_status' => $quote->trang_thai,
+                        'transaction_id' => $tx->id,
+                    ];
+                }
+            }
+
+            // 3. Trường hợp không tìm thấy đơn khớp (Lưu lại để kế toán đối soát thủ công)
+            $unmatchedTx = GiaoDichThanhToan::create([
+                'gateway' => $gateway,
+                'ma_giao_dich' => $refNumber,
+                'so_tai_khoan' => $accountNo,
+                'so_tien' => $amountIn,
+                'noi_dung' => $content,
+                'loai_doi_tuong' => 'khac',
+                'id_doi_tuong' => null,
+                'ma_tham_chieu' => $matchedOrderCode ?: ($matchedQuoteCode ?: 'UNKNOWN'),
+                'trang_thai' => 'Không khớp',
+                'du_lieu_raw' => $payload,
+                'ngay_giao_dich' => $transactionDate,
+            ]);
+
+            return [
+                'success' => false,
+                'matched' => 'none',
+                'message' => 'Không tìm thấy đơn hàng hoặc báo giá khớp với nội dung chuyển khoản',
+                'transaction_id' => $unmatchedTx->id,
+            ];
+        });
+    }
+}
