@@ -45,7 +45,7 @@ const pageTitle = computed(() => {
   if (route.path === '/tai-khoan') return 'QUẢN LÝ TÀI KHOẢN';
   if (route.path === '/garage' || route.path.startsWith('/garage/')) return 'GARAGE';
   if (route.path === '/vat-tu-thuong-mua') return 'VẬT TƯ THƯỜNG MUA';
-  if (route.path === '/lich-su-don-hang') return 'LỊCH SỬ BÁO GIÁ';
+  if (route.path === '/lich-su-don-hang') return 'ĐƠN HÀNG & BÁO GIÁ';
   return 'TÀI KHOẢN';
 });
 

@@ -15,12 +15,19 @@ class HistoryController extends Controller
     public function getQuotes(Request $request)
     {
         $user = $request->user();
+        $khachHang = \App\Domain\IAM\Models\KhachHang::where('id_tai_khoan', $user->id)->first();
         
         $quotes = YeuCauBaoGia::with('chiTiet')
-            ->where(function($q) use ($user) {
-                $q->where('khach_hang_email', $user->email);
-                if ($user->phone) {
+            ->where(function($q) use ($user, $khachHang) {
+                $q->where('user_id', $user->id);
+                if (!empty($user->email)) {
+                    $q->orWhere('khach_hang_email', $user->email);
+                }
+                if (!empty($user->phone)) {
                     $q->orWhere('khach_hang_sdt', $user->phone);
+                }
+                if ($khachHang && !empty($khachHang->so_dien_thoai)) {
+                    $q->orWhere('khach_hang_sdt', $khachHang->so_dien_thoai);
                 }
             })
             ->orderBy('id', 'desc')
@@ -35,25 +42,41 @@ class HistoryController extends Controller
     public function getOrders(Request $request)
     {
         $user = $request->user();
-        
-        // Find customer ID
         $khachHang = \App\Domain\IAM\Models\KhachHang::where('id_tai_khoan', $user->id)->first();
         
-        if (!$khachHang) {
-            return response()->json([]);
-        }
-        
-        // We'll need a DonHang model or just DB query if it doesn't exist
-        $orders = \Illuminate\Support\Facades\DB::table('don_hangs')
-            ->where('id_khach_hang', $khachHang->id)
+        $orders = DonHang::with(['chiTiet.phuTung', 'chiTiet.sanPham'])
+            ->where(function($q) use ($user, $khachHang) {
+                if ($khachHang) {
+                    $q->where('id_khach_hang', $khachHang->id);
+                }
+                if (!empty($user->email)) {
+                    $q->orWhere('khach_hang_email', $user->email);
+                }
+                if (!empty($user->phone)) {
+                    $q->orWhere('khach_hang_sdt', $user->phone);
+                }
+                if ($khachHang && !empty($khachHang->so_dien_thoai)) {
+                    $q->orWhere('khach_hang_sdt', $khachHang->so_dien_thoai);
+                }
+            })
             ->orderBy('id', 'desc')
             ->get();
-            
-        // Get items for each order
+
         foreach ($orders as $order) {
-            $order->items = \Illuminate\Support\Facades\DB::table('chi_tiet_don_hangs')
-                ->where('id_don_hang', $order->id)
-                ->get();
+            $items = [];
+            foreach ($order->chiTiet as $detail) {
+                $items[] = [
+                    'id'            => $detail->id,
+                    'id_san_pham'   => $detail->id_san_pham,
+                    'id_phu_tung'   => $detail->id_phu_tung,
+                    'ten_san_pham'  => $detail->sanPham->ten_san_pham ?? $detail->phuTung->ten_phu_tung ?? $detail->ten_phu_tung ?? 'Phụ tùng chính hãng',
+                    'ma_phu_tung'   => $detail->phuTung->ma_phu_tung ?? $detail->ma_phu_tung ?? '',
+                    'so_luong'      => $detail->so_luong,
+                    'don_gia'       => $detail->don_gia,
+                    'thanh_tien'    => $detail->thanh_tien ?? ($detail->so_luong * $detail->don_gia),
+                ];
+            }
+            $order->items = $items;
         }
             
         return response()->json($orders);

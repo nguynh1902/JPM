@@ -148,7 +148,7 @@
                 <ul class="user-menu-dropdown dropdown-menu-end">
                   <li><router-link to="/tai-khoan" class="um-item"><i class="bi bi-person-circle"></i> Quản lý tài khoản</router-link></li>
                   <li><router-link to="/garage" class="um-item"><i class="bi bi-tools"></i> Garage</router-link></li>
-                  <li><router-link to="/lich-su-don-hang" class="um-item"><i class="bi bi-receipt"></i> Lịch sử giao dịch</router-link></li>
+                  <li><router-link to="/lich-su-don-hang" class="um-item"><i class="bi bi-receipt"></i> Đơn hàng & Báo giá</router-link></li>
                   <li><a href="#" class="um-item" @click.prevent="logout"><i class="bi bi-box-arrow-right"></i> Đăng xuất</a></li>
                 </ul>
               </template>

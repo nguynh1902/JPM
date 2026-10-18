@@ -1,345 +1,506 @@
 <template>
-<div class="flex-grow-1 d-flex flex-column">
-    <div class="card border-0 flex-grow-1" style="box-shadow: var(--shadow-sm); border-radius: 12px;">
-              <div class="card-header bg-white border-bottom p-0">
-                <ul class="nav nav-tabs border-0 w-100 shopee-tabs d-flex justify-content-between" id="historyTab" role="tablist">
-                  <li class="nav-item flex-fill text-center" role="presentation">
-                    <button class="nav-link custom-tab active w-100 py-3" id="quotes-tab" data-bs-toggle="tab" data-bs-target="#quotes" type="button" role="tab" @click="activeTab = 'quotes'">YÊU CẦU BÁO GIÁ</button>
-                  </li>
-                  <li class="nav-item flex-fill text-center" role="presentation">
-                    <button class="nav-link custom-tab w-100 py-3" id="orders-tab" data-bs-toggle="tab" data-bs-target="#orders" type="button" role="tab" @click="activeTab = 'orders'">ĐƠN HÀNG CỦA TÔI</button>
-                  </li>
-                </ul>
-              </div>
+  <div class="shopee-orders-wrapper">
+    
+    <!-- ========================================================================= -->
+    <!-- THANH TAB ĐƠN HÀNG CHUẨN SHOPEE (FLAT, MINIMALIST, KHÔNG MÀU MÈ) -->
+    <!-- ========================================================================= -->
+    <div class="shopee-tabs-container">
+      <div 
+        class="shopee-tab-item" 
+        :class="{ active: currentTab === 'all' }" 
+        @click="currentTab = 'all'"
+      >
+        Tất cả
+      </div>
+      <div 
+        class="shopee-tab-item" 
+        :class="{ active: currentTab === '1' }" 
+        @click="currentTab = '1'"
+      >
+        Đợi báo giá <span v-if="countByStage(1) > 0" class="tab-badge">({{ countByStage(1) }})</span>
+      </div>
+      <div 
+        class="shopee-tab-item" 
+        :class="{ active: currentTab === '2' }" 
+        @click="currentTab = '2'"
+      >
+        Báo giá & Cọc <span v-if="countByStage(2) > 0" class="tab-badge">({{ countByStage(2) }})</span>
+      </div>
+      <div 
+        class="shopee-tab-item" 
+        :class="{ active: currentTab === '3' }" 
+        @click="currentTab = '3'"
+      >
+        Vận chuyển <span v-if="countByStage(3) > 0" class="tab-badge">({{ countByStage(3) }})</span>
+      </div>
+      <div 
+        class="shopee-tab-item" 
+        :class="{ active: currentTab === '4' }" 
+        @click="currentTab = '4'"
+      >
+        Hoàn thành
+      </div>
+      <div 
+        class="shopee-tab-item" 
+        :class="{ active: currentTab === '-1' }" 
+        @click="currentTab = '-1'"
+      >
+        Đã hủy
+      </div>
+    </div>
 
-              <div class="card-body p-4 bg-light">
-                <div class="tab-content" id="historyTabContent">
-                
-                  <!-- TAB: YÊU CẦU BÁO GIÁ -->
-                  <div class="tab-pane fade show active" id="quotes" role="tabpanel">
-                    
-                                        <!-- Skeletons for Quotes -->
-                    <div class="d-flex flex-column gap-4" v-if="isLoadingQuotes">
-                      <div class="card border-0 shadow-sm rounded-3 overflow-hidden placeholder-glow" v-for="i in 2" :key="i">
-                        <div class="card-header bg-white p-3 border-bottom d-flex justify-content-between">
-                          <span class="placeholder col-4 rounded bg-secondary"></span>
-                          <span class="placeholder col-2 rounded bg-secondary"></span>
-                        </div>
-                        <div class="card-body p-3">
-                          <div class="d-flex gap-3">
-                            <div class="placeholder bg-secondary rounded" style="width: 60px; height: 60px;"></div>
-                            <div class="flex-grow-1">
-                              <span class="placeholder col-6 mb-2 rounded bg-secondary"></span><br>
-                              <span class="placeholder col-3 rounded bg-secondary"></span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
+    <!-- ========================================================================= -->
+    <!-- NỘI DUNG ĐƠN HÀNG DẠNG CARD CHUẨN SHOPEE -->
+    <!-- ========================================================================= -->
 
-                    <!-- Empty State -->
-                    <div class="text-center py-5" v-else-if="quotes.length === 0">
-                      <i class="bi bi-file-earmark-text text-muted" style="font-size: 3.5rem; opacity: 0.35;"></i>
-                      <h6 class="mt-3 mb-1" style="color: var(--heading-color); font-weight: 700;">Chưa có yêu cầu báo giá</h6>
-                      <p class="text-muted mb-0" style="font-size: 14px;">Bạn chưa thực hiện gửi yêu cầu báo giá nào.</p>
-                    </div>
-
-                    <!-- Quote List -->
-                    <div class="d-flex flex-column gap-4" v-else>
-                      <div v-for="quote in quotes" :key="quote.id" class="card border-0 shadow-sm rounded-3 overflow-hidden">
-                        <div class="card-header bg-white p-3 border-bottom d-flex justify-content-between align-items-center flex-wrap gap-2">
-                          <div>
-                            <strong style="color: var(--heading-color);">Mã: {{ quote.ma_yeu_cau }}</strong>
-                            <span class="text-muted mx-2">|</span>
-                            <span class="text-muted small"><i class="bi bi-calendar3 me-1"></i>{{ formatDate(quote.created_at) }}</span>
-                          </div>
-                          <span class="badge text-uppercase px-3 py-2" :class="getQuoteStatusClass(quote.trang_thai)" style="font-size: 11px; letter-spacing: 0.5px;">
-                            {{ getQuoteStatusText(quote.trang_thai) }}
-                          </span>
-                        </div>
-                        
-                        <div class="card-body p-0">
-                          <div class="list-group list-group-flush">
-                            <div v-for="(item, idx) in quote.chi_tiet" :key="idx" class="list-group-item p-3 border-bottom d-flex align-items-center gap-3">
-                              <div class="bg-light rounded d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
-                                <i class="bi bi-gear-fill text-secondary fs-3"></i>
-                              </div>
-                              <div class="flex-grow-1">
-                                <h6 class="mb-1 fw-bold text-dark">{{ item.ten_phu_tung }}</h6>
-                                <div class="text-muted small">
-                                  <span>SL: {{ item.so_luong }}</span>
-                                  <span v-if="item.ma_phu_tung" class="mx-2 text-light-subtle">|</span>
-                                  <span v-if="item.ma_phu_tung">Mã OEM: {{ item.ma_phu_tung }}</span>
-                                </div>
-                              </div>
-                              <div class="text-end" v-if="quote.trang_thai == 1 && item.don_gia > 0">
-                                <span class="fw-bold text-danger">{{ formatPrice(item.don_gia) }}đ</span>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        
-                        <div class="card-footer bg-white p-3 d-flex justify-content-between align-items-center border-top">
-                          <div class="text-muted small" style="max-width: 50%;">
-                            <i class="bi bi-chat-left-text me-1"></i> Ghi chú: {{ quote.ghi_chu_khach_hang || 'Không có ghi chú' }}
-                          </div>
-                          <div class="d-flex align-items-center gap-3">
-                            <div v-if="quote.trang_thai == 1 && quote.tong_tien > 0" class="text-end">
-                              <span class="text-muted small me-1">Tổng báo giá:</span>
-                              <strong class="text-danger fs-6">{{ formatPrice(quote.tong_tien + (quote.khach_tu_tra_cuoc ? 0 : (quote.phi_van_chuyen || 0))) }}đ</strong>
-                            </div>
-                            <router-link v-if="quote.token" :to="'/tra-cuu-bao-gia/' + quote.token" class="btn btn-sm fw-bold px-3 shadow-sm" :class="quote.trang_thai == 3 ? 'btn-outline-danger' : 'btn-outline-primary'">
-                              <i :class="quote.trang_thai == 3 ? 'bi bi-arrow-repeat me-1' : 'bi bi-check2-circle me-1'"></i>
-                              {{ quote.trang_thai == 3 ? 'Yêu Cầu Báo Giá Lại' : (quote.trang_thai == 1 ? 'Xem & Chốt Đơn' : 'Xem Chi Tiết') }}
-                            </router-link>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <!-- TAB: ĐƠN HÀNG -->
-                  <div class="tab-pane fade" id="orders" role="tabpanel">
-                    
-                                        <!-- Skeletons for Orders -->
-                    <div class="d-flex flex-column gap-4" v-if="isLoadingOrders">
-                      <div class="card border-0 shadow-sm rounded-3 overflow-hidden placeholder-glow" v-for="i in 2" :key="i">
-                        <div class="card-header bg-white p-3 border-bottom d-flex justify-content-between">
-                          <span class="placeholder col-4 rounded bg-secondary"></span>
-                          <span class="placeholder col-2 rounded bg-secondary"></span>
-                        </div>
-                        <div class="card-body p-3">
-                          <div class="d-flex gap-3">
-                            <div class="placeholder bg-secondary rounded" style="width: 60px; height: 60px;"></div>
-                            <div class="flex-grow-1">
-                              <span class="placeholder col-6 mb-2 rounded bg-secondary"></span><br>
-                              <span class="placeholder col-3 rounded bg-secondary"></span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <!-- Empty State -->
-                    <div class="text-center py-5" v-else-if="orders.length === 0">
-                      <i class="bi bi-box-seam text-muted" style="font-size: 3.5rem; opacity: 0.35;"></i>
-                      <h6 class="mt-3 mb-1" style="color: var(--heading-color); font-weight: 700;">Chưa có đơn hàng nào</h6>
-                      <p class="text-muted mb-0" style="font-size: 14px;">Bạn chưa thực hiện giao dịch mua hàng nào.</p>
-                    </div>
-
-                    <!-- Order List -->
-                    <div class="d-flex flex-column gap-4" v-else>
-                      <div v-for="order in orders" :key="order.id" class="card border-0 shadow-sm rounded-3 overflow-hidden">
-                        <div class="card-header bg-white p-3 border-bottom d-flex justify-content-between align-items-center flex-wrap gap-2">
-                          <div>
-                            <strong style="color: var(--heading-color);">Đơn hàng: {{ order.ma_don_hang }}</strong>
-                            <span class="text-muted mx-2">|</span>
-                            <span class="text-muted small"><i class="bi bi-calendar3 me-1"></i>{{ formatDate(order.created_at) }}</span>
-                          </div>
-                          <span class="badge text-uppercase px-3 py-2" :class="getOrderStatusClass(order.trang_thai)" style="font-size: 11px; letter-spacing: 0.5px;">
-                            {{ getOrderStatusText(order.trang_thai) }}
-                          </span>
-                        </div>
-                        
-                        <!-- TIẾN ĐỘ 5 BƯỚC NHẬP KHẨU VẬN CHUYỂN -->
-                        <div class="px-3 py-3 bg-light border-bottom" v-if="order.trang_thai !== 4">
-                          <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap gap-1">
-                            <span class="small fw-bold text-uppercase text-secondary" style="font-size: 0.75rem; letter-spacing: 0.5px;">
-                              <i class="bi bi-geo-alt-fill text-danger me-1"></i> TIẾN ĐỘ ĐƠN HÀNG NHẬP KHẨU NHẬT BẢN
-                            </span>
-                            <span class="badge bg-white text-primary border shadow-sm small px-2 py-1">
-                              {{ getMilestoneName(order) }}
-                            </span>
-                          </div>
-                          
-                          <div class="stepper-horizontal">
-                            <div class="stepper-step" :class="{ 'completed': getMilestoneStep(order) >= 1, 'active': getMilestoneStep(order) === 1 }">
-                              <div class="stepper-circle">
-                                <i v-if="getMilestoneStep(order) > 1" class="bi bi-check-lg"></i>
-                                <span v-else>1</span>
-                              </div>
-                              <div class="stepper-label">Đã nhận cọc</div>
-                            </div>
-                            
-                            <div class="stepper-line" :class="{ 'completed': getMilestoneStep(order) >= 2 }"></div>
-                            
-                            <div class="stepper-step" :class="{ 'completed': getMilestoneStep(order) >= 2, 'active': getMilestoneStep(order) === 2 }">
-                              <div class="stepper-circle">
-                                <i v-if="getMilestoneStep(order) > 2" class="bi bi-check-lg"></i>
-                                <span v-else>2</span>
-                              </div>
-                              <div class="stepper-label">Đã đặt hàng Nhật</div>
-                            </div>
-                            
-                            <div class="stepper-line" :class="{ 'completed': getMilestoneStep(order) >= 3 }"></div>
-                            
-                            <div class="stepper-step" :class="{ 'completed': getMilestoneStep(order) >= 3, 'active': getMilestoneStep(order) === 3 }">
-                              <div class="stepper-circle">
-                                <i v-if="getMilestoneStep(order) > 3" class="bi bi-check-lg"></i>
-                                <span v-else>3</span>
-                              </div>
-                              <div class="stepper-label">Đã về kho VN</div>
-                            </div>
-                            
-                            <div class="stepper-line" :class="{ 'completed': getMilestoneStep(order) >= 4 }"></div>
-                            
-                            <div class="stepper-step" :class="{ 'completed': getMilestoneStep(order) >= 4, 'active': getMilestoneStep(order) === 4 }">
-                              <div class="stepper-circle">
-                                <i v-if="getMilestoneStep(order) > 4" class="bi bi-check-lg"></i>
-                                <span v-else>4</span>
-                              </div>
-                              <div class="stepper-label">Giao chành xe</div>
-                            </div>
-                            
-                            <div class="stepper-line" :class="{ 'completed': getMilestoneStep(order) >= 5 }"></div>
-                            
-                            <div class="stepper-step" :class="{ 'completed': getMilestoneStep(order) >= 5, 'active': getMilestoneStep(order) === 5 }">
-                              <div class="stepper-circle">
-                                <i v-if="getMilestoneStep(order) >= 5" class="bi bi-check-lg"></i>
-                                <span v-else>5</span>
-                              </div>
-                              <div class="stepper-label">Hoàn tất (Tất toán)</div>
-                            </div>
-                          </div>
-                        </div>
-
-                        <div class="px-3 py-2 bg-danger-subtle text-danger small border-bottom fw-bold" v-else>
-                          <i class="bi bi-x-circle me-1"></i> Đơn hàng này đã bị hủy.
-                        </div>
-
-                        <div class="card-body p-0">
-                          <div class="list-group list-group-flush">
-                            <div v-for="(item, idx) in order.items" :key="idx" class="list-group-item p-3 border-bottom d-flex align-items-center gap-3">
-                              <div class="bg-light rounded d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
-                                <i class="bi bi-box text-secondary fs-3"></i>
-                              </div>
-                              <div class="flex-grow-1">
-                                <h6 class="mb-1 fw-bold text-dark">Sản phẩm #{{ item.id_san_pham }}</h6>
-                                <div class="text-muted small">SL: {{ item.so_luong }} <span class="mx-2 text-light-subtle">|</span> Đơn giá: {{ formatPrice(item.don_gia) }}đ</div>
-                              </div>
-                              <div class="text-end">
-                                <span class="fw-bold text-dark">{{ formatPrice(item.thanh_tien) }}đ</span>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        
-                        <div class="card-footer bg-white p-3 d-flex flex-column gap-3 border-top">
-                          <div class="d-flex justify-content-between align-items-center">
-                            <span class="badge text-uppercase px-2 py-1" :class="getPaymentStatusClass(order.trang_thai_thanh_toan)" style="font-size: 10px;">
-                              {{ getPaymentStatusText(order.trang_thai_thanh_toan) }}
-                            </span>
-                            <div class="text-end">
-                              <div v-if="order.khach_tu_tra_cuoc" class="text-muted small mb-1">Phí vận chuyển: Người nhận trả cước</div>
-                              <div v-else-if="order.phi_van_chuyen > 0" class="text-muted small mb-1">Phí vận chuyển: {{ formatPrice(order.phi_van_chuyen) }}đ</div>
-                              
-                              <span class="text-muted small me-2">Cần thanh toán:</span>
-                              <strong class="text-danger fs-5">{{ formatPrice(order.tong_tien + (order.khach_tu_tra_cuoc ? 0 : (order.phi_van_chuyen || 0)) - (order.da_thu || 0)) }}đ</strong>
-                            </div>
-                          </div>
-
-                          <!-- QR CODE CHO THANH TOÁN CỌC HOẶC THANH TOÁN NỐT -->
-                          <div v-if="order.trang_thai_thanh_toan === 0 && (order.tien_coc_yeu_cau > 0 || order.tong_tien > 0)" class="alert alert-info d-flex align-items-center justify-content-between mb-0 py-2 px-3 border-0" style="background-color: rgba(3, 195, 236, 0.08);">
-                            <div>
-                              <strong class="text-dark fs-6 d-block mb-1">
-                                {{ (order.da_thu || 0) == 0 && order.tien_coc_yeu_cau > 0 ? 'Vui lòng thanh toán Tiền Cọc' : 'Vui lòng thanh toán Đơn Hàng' }}
-                              </strong>
-                              <span class="text-muted small">Quét mã QR để chuyển khoản nhanh</span>
-                            </div>
-                            <button class="btn btn-primary btn-sm px-3 fw-bold shadow-sm" @click="showPaymentQR(order)" data-bs-toggle="modal" data-bs-target="#paymentModal">
-                              <i class="bi bi-qr-code-scan me-1"></i> Thanh Toán Ngay
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                  </div>
-                </div>
-              </div>
-            </div>
-          
-    <!-- PAYMENT QR MODAL -->
-    <div class="modal fade" id="paymentModal" tabindex="-1" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered" style="max-width: 400px;">
-        <div class="modal-content border-0 shadow">
-          <div class="modal-header border-bottom-0 pb-0">
-            <h5 class="modal-title fw-bold text-dark w-100 text-center">Thanh Toán Chuyển Khoản</h5>
-            <button type="button" class="btn-close position-absolute" style="right: 15px; top: 15px;" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body text-center pt-2 pb-4">
-            <p class="text-muted small mb-3">Vui lòng sử dụng App Ngân hàng để quét mã QR bên dưới.</p>
-            
-            <div class="bg-light p-3 rounded-3 d-inline-block mb-3 border">
-              <img v-if="selectedOrderForPayment" :src="getVietQRUrl(selectedOrderForPayment)" alt="VietQR" class="img-fluid rounded" style="max-width: 250px;">
-            </div>
-            
-            <div v-if="selectedOrderForPayment" class="text-start bg-light p-3 rounded-3" style="font-size: 14px;">
-              <div class="d-flex justify-content-between mb-2">
-                <span class="text-muted">Ngân hàng:</span>
-                <span class="fw-bold text-dark">MB Bank (Demo)</span>
-              </div>
-              <div class="d-flex justify-content-between mb-2">
-                <span class="text-muted">Số tài khoản:</span>
-                <span class="fw-bold text-dark">0123456789</span>
-              </div>
-              <div class="d-flex justify-content-between mb-2">
-                <span class="text-muted">Chủ tài khoản:</span>
-                <span class="fw-bold text-dark">CTY TNHH JPM</span>
-              </div>
-              <div class="d-flex justify-content-between mb-2">
-                <span class="text-muted">Số tiền:</span>
-                <span class="fw-bold text-danger">{{ formatPrice(getPaymentAmount(selectedOrderForPayment)) }}đ</span>
-              </div>
-              <div class="d-flex justify-content-between border-top pt-2 mt-2">
-                <span class="text-muted">Nội dung CK:</span>
-                <span class="fw-bold text-primary">{{ selectedOrderForPayment.ma_don_hang }}</span>
-              </div>
-            </div>
-            
-            <button class="btn btn-success w-100 mt-4 fw-bold py-2 shadow-sm" data-bs-dismiss="modal" @click="confirmPaid">
-              Tôi đã chuyển khoản thành công
-            </button>
+    <!-- Loading Skeleton -->
+    <div class="d-flex flex-column gap-3 mt-3" v-if="isLoading">
+      <div class="shopee-order-card placeholder-glow p-4 bg-white" v-for="i in 2" :key="i">
+        <div class="placeholder col-4 rounded bg-secondary mb-3"></div>
+        <div class="d-flex gap-3">
+          <div class="placeholder bg-secondary rounded" style="width: 80px; height: 80px;"></div>
+          <div class="flex-grow-1">
+            <span class="placeholder col-6 mb-2 rounded bg-secondary"></span><br>
+            <span class="placeholder col-3 rounded bg-secondary"></span>
           </div>
         </div>
       </div>
     </div>
+
+    <!-- Empty State (Giống hệt ảnh Shopee người dùng cung cấp) -->
+    <div class="shopee-empty-state" v-else-if="displayedOrders.length === 0">
+      <div class="empty-icon-box">
+        <svg class="empty-clipboard-icon" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="50" cy="50" r="46" fill="#F4F8FA"/>
+          <circle cx="28" cy="30" r="4" fill="#E8B86D" opacity="0.6"/>
+          <circle cx="74" cy="48" r="3" fill="#E8B86D" opacity="0.6"/>
+          <circle cx="34" cy="22" r="5" fill="#88D4D0" opacity="0.5"/>
+          <!-- Clipboard body -->
+          <rect x="30" y="24" width="40" height="52" rx="4" fill="#FFFFFF" stroke="#CCD5DD" stroke-width="2"/>
+          <rect x="42" y="20" width="16" height="7" rx="3" fill="#5EAAAC"/>
+          <line x1="38" y1="36" x2="62" y2="36" stroke="#E1E6EB" stroke-width="2.5" stroke-linecap="round"/>
+          <line x1="38" y1="44" x2="58" y2="44" stroke="#E1E6EB" stroke-width="2.5" stroke-linecap="round"/>
+          <line x1="38" y1="52" x2="62" y2="52" stroke="#E1E6EB" stroke-width="2.5" stroke-linecap="round"/>
+          <line x1="38" y1="60" x2="52" y2="60" stroke="#E1E6EB" stroke-width="2.5" stroke-linecap="round"/>
+          <!-- Pencil -->
+          <path d="M60 68 L68 56 L72 60 L64 72 Z" fill="#4B9DA0"/>
+          <path d="M58 70 L60 68 L64 72 L60 74 Z" fill="#E59866"/>
+        </svg>
+      </div>
+      <p class="empty-text">Chưa có đơn hàng</p>
+    </div>
+
+    <!-- DANH SÁCH ĐƠN HÀNG DẠNG SHOPEE CARDS -->
+    <div class="d-flex flex-column gap-3 mt-3" v-else>
+      <div 
+        v-for="order in displayedOrders" 
+        :key="order._type + order.id" 
+        class="shopee-order-card"
+      >
+        <!-- Card Header: Tên Đơn / Mã Đơn + Trạng Thái Phía Phải -->
+        <div class="card-head">
+          <div class="head-left">
+            <span class="type-tag" :class="order._type === 'quote' ? 'quote-tag' : 'order-tag'">
+              {{ order._type === 'quote' ? 'BÁO GIÁ' : 'ĐƠN HÀNG' }}
+            </span>
+            <span class="order-id">#{{ order.code }}</span>
+            <span class="order-date text-muted">{{ formatDate(order.created_at) }}</span>
+          </div>
+
+          <div class="head-right status-text">
+            {{ getStatusText(order) }}
+          </div>
+        </div>
+
+        <!-- Banner thông báo vận chuyển (Khi ở bước 3) -->
+        <div class="logistics-notice" v-if="getStage(order) === 3">
+          <i class="bi bi-truck text-danger me-2"></i>
+          <span>{{ getLogisticsStatus(order) }}</span>
+        </div>
+
+        <!-- Danh sách sản phẩm của đơn (Kiểu Shopee) -->
+        <div class="order-items-list">
+          <div 
+            v-for="(prod, idx) in getItemProducts(order)" 
+            :key="idx" 
+            class="item-row"
+          >
+            <div class="item-thumb">
+              <i class="bi bi-gear-wide-connected"></i>
+            </div>
+            
+            <div class="item-details">
+              <div class="item-name">{{ prod.name }}</div>
+              <div class="item-oem text-muted">Mã OEM: {{ prod.code || 'N/A' }}</div>
+              <div class="item-qty">x{{ prod.qty }}</div>
+            </div>
+
+            <div class="item-price">
+              <span v-if="prod.price > 0">{{ formatPrice(prod.price) }}₫</span>
+              <span v-else class="text-muted fst-italic">Đang đợi báo giá</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Khung VietQR cọc nếu bấm mở (Ở bước 2) -->
+        <div v-if="activeQrOrderCode === order.code" class="qr-deposit-box">
+          <div class="qr-inner">
+            <div class="text-center qr-img-col">
+              <img :src="getVietQrImageUrl(order)" alt="VietQR" class="qr-img">
+              <div class="qr-subtext text-muted">
+                <span class="spinner-grow spinner-grow-sm text-danger me-1"></span>
+                <span>Chờ thanh toán...</span>
+              </div>
+            </div>
+            <div class="qr-info-col">
+              <div class="info-row">
+                <span class="text-muted">Ngân hàng:</span>
+                <strong>MB Bank (Quân Đội)</strong>
+              </div>
+              <div class="info-row">
+                <span class="text-muted">Số tài khoản:</span>
+                <div>
+                  <strong class="font-monospace">0123456789</strong>
+                  <button type="button" class="btn-copy" @click="copyText('0123456789', 'Đã copy STK')">Copy</button>
+                </div>
+              </div>
+              <div class="info-row">
+                <span class="text-muted">Chủ tài khoản:</span>
+                <strong>CTY TNHH JPM MARINE</strong>
+              </div>
+              <div class="info-row">
+                <span class="text-muted">Số tiền cọc:</span>
+                <strong class="text-danger fs-6">{{ formatPrice(order.tien_coc_yeu_cau || 0) }}₫</strong>
+              </div>
+              <div class="info-row">
+                <span class="text-muted">Nội dung CK:</span>
+                <div>
+                  <strong class="font-monospace text-danger">{{ order.code }}</strong>
+                  <button type="button" class="btn-copy" @click="copyText(order.code, 'Đã copy nội dung')">Copy</button>
+                </div>
+              </div>
+              <div class="mt-2 text-end">
+                <button type="button" class="btn btn-sm btn-outline-success" @click="confirmManualPaid">
+                  <i class="bi bi-check-lg me-1"></i> Tôi đã chuyển khoản cọc
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card Footer: Tổng tiền & Nút thao tác chuẩn Shopee -->
+        <div class="card-bottom">
+          <div class="price-section">
+            <span class="label">
+              {{ getStage(order) === 2 ? 'Tiền cọc yêu cầu:' : (getStage(order) === 3 ? 'Còn lại khi nhận hàng:' : 'Thành tiền:') }}
+            </span>
+            <span class="total-amount">
+              <template v-if="getStage(order) === 1">
+                <span class="text-muted fs-6 fw-normal">Chờ báo giá</span>
+              </template>
+              <template v-else-if="getStage(order) === 2">
+                {{ formatPrice(order.tien_coc_yeu_cau || 0) }}₫
+              </template>
+              <template v-else-if="getStage(order) === 3">
+                {{ formatPrice(calculateRemaining(order)) }}₫
+              </template>
+              <template v-else>
+                {{ formatPrice(calculateItemTotal(order)) }}₫
+              </template>
+            </span>
+          </div>
+
+          <div class="action-buttons">
+            <!-- Bước 1: Liên hệ hỗ trợ -->
+            <template v-if="getStage(order) === 1">
+              <a :href="'https://zalo.me/0123456789?text=' + encodeURIComponent('Chào JPM, tôi muốn hỏi giá yêu cầu mã #' + order.code)" target="_blank" class="btn-shopee btn-shopee-outline">
+                Chat Kỹ Thuật
+              </a>
+            </template>
+
+            <!-- Bước 2: Từ chối hoặc Đặt cọc -->
+            <template v-else-if="getStage(order) === 2">
+              <button type="button" class="btn-shopee btn-shopee-outline" @click="handleRejectQuote(order)">
+                Từ chối
+              </button>
+              <button type="button" class="btn-shopee btn-shopee-primary" @click="toggleVietQR(order)">
+                {{ activeQrOrderCode === order.code ? 'Đóng QR' : 'Đặt Cọc VietQR' }}
+              </button>
+            </template>
+
+            <!-- Bước 3: Xem chi tiết / Chờ giao -->
+            <template v-else-if="getStage(order) === 3">
+              <span class="text-muted small me-2">Đã cọc: {{ formatPrice(order.da_thu || order.tien_coc_yeu_cau || 0) }}₫</span>
+              <a :href="'https://zalo.me/0123456789?text=' + encodeURIComponent('Hỏi tiến độ đơn #' + order.code)" target="_blank" class="btn-shopee btn-shopee-outline">
+                Tra Cứu Vận Chuyển
+              </a>
+            </template>
+
+            <!-- Bước 4: Hoàn thành -->
+            <template v-else-if="getStage(order) === 4">
+              <router-link to="/san-pham" class="btn-shopee btn-shopee-primary">
+                Mua Lại
+              </router-link>
+            </template>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
   </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted, watch, inject } from "vue";
+import { ref, computed, onBeforeUnmount, watch, inject } from "vue";
 import { useAuthStore } from "../../../stores/authStore";
-
 import Swal from "sweetalert2";
 import axiosClient from "../../../api/axiosClient";
-import { useQuery } from "@tanstack/vue-query";
+import { useQuery, useQueryClient } from "@tanstack/vue-query";
 
 const authStore = useAuthStore();
+const queryClient = useQueryClient();
 
-// ===================== QUOTES DATA =====================
+// ===================== DATA FETCHING =====================
 const { data: quotesData, isLoading: isLoadingQuotes } = useQuery({
   queryKey: ["clientQuotesHistory"],
   queryFn: async () => await axiosClient.get("/client/history/quotes"),
-  staleTime: 5 * 60 * 1000,
+  staleTime: 30 * 1000,
 });
 const quotes = computed(() => quotesData.value || []);
 
-// ===================== ORDERS DATA =====================
 const { data: ordersData, isLoading: isLoadingOrders } = useQuery({
   queryKey: ["clientOrdersHistory"],
   queryFn: async () => await axiosClient.get("/client/history/orders"),
-  staleTime: 5 * 60 * 1000,
+  staleTime: 30 * 1000,
 });
 const orders = computed(() => ordersData.value || []);
 
-// ===================== PAGE LOADING =====================
+const isLoading = computed(() => isLoadingQuotes.value || isLoadingOrders.value);
 const setPageLoading = inject('setPageLoading', () => {});
-const isPageLoading = computed(() => isLoadingQuotes.value || isLoadingOrders.value);
-watch(isPageLoading, (val) => setPageLoading(val), { immediate: true });
+watch(isLoading, (val) => setPageLoading(val), { immediate: true });
 
-// ===================== UTILS & FORMATTERS =====================
+// ===================== TAB STATE (SHOPEE STYLE) =====================
+const currentTab = ref('all'); // 'all' | '1' | '2' | '3' | '4' | '-1'
+const activeQrOrderCode = ref(null);
+const pollingTimer = ref(null);
+
+const allOrders = computed(() => {
+  const qList = (quotes.value || []).map(q => ({
+    ...q,
+    _type: 'quote',
+    code: q.ma_yeu_cau,
+    sortDate: new Date(q.created_at).getTime()
+  }));
+
+  const oList = (orders.value || []).map(o => ({
+    ...o,
+    _type: 'order',
+    code: o.ma_don_hang,
+    sortDate: new Date(o.created_at).getTime()
+  }));
+
+  return [...qList, ...oList].sort((a, b) => b.sortDate - a.sortDate);
+});
+
+const displayedOrders = computed(() => {
+  if (currentTab.value === 'all') return allOrders.value;
+  return allOrders.value.filter(order => String(getStage(order)) === currentTab.value);
+});
+
+const countByStage = (stageNum) => {
+  return allOrders.value.filter(o => getStage(o) === stageNum).length;
+};
+
+// ===================== LOGIC TÍNH BƯỚC =====================
+const getStage = (order) => {
+  if (!order) return 1;
+
+  if (order._type === 'quote') {
+    const st = Number(order.trang_thai);
+    if (st === 0) return 1; // 1. Đợi Báo Giá
+    if (st === 1) return 2; // 2. Báo Giá & Cọc
+    if (st === 2) return 3; // 3. Vận Chuyển
+    if (st === 3) return -1; // Đã Hủy
+    return 1;
+  } else {
+    const st = Number(order.trang_thai);
+    const paySt = Number(order.trang_thai_thanh_toan);
+    const daThu = Number(order.da_thu || 0);
+    const depositReq = Number(order.tien_coc_yeu_cau || 0);
+
+    if (st === 4) return -1; // Đã Hủy
+    if (st === 3) return 4;  // 4. Hoàn Thành
+    if (st === 1 || st === 2) return 3; // 3. Vận Chuyển
+
+    if (paySt >= 1 || (depositReq > 0 && daThu >= depositReq)) {
+      return 3;
+    }
+    if (depositReq > 0 && daThu === 0) {
+      return 2;
+    }
+    return 3;
+  }
+};
+
+const getStatusText = (order) => {
+  const stage = getStage(order);
+  switch (stage) {
+    case 1:
+      return 'CHỜ ADMIN BÁO GIÁ';
+    case 2:
+      return 'ĐÃ BÁO GIÁ - CHỜ ĐẶT CỌC';
+    case 3:
+      return 'ĐANG VẬN CHUYỂN';
+    case 4:
+      return 'HOÀN THÀNH';
+    default:
+      return 'ĐÃ HỦY';
+  }
+};
+
+const getLogisticsStatus = (order) => {
+  const st = Number(order.trang_thai);
+  if (st === 2) return 'Đang giao chành xe liên tỉnh đến quý khách';
+  if (st === 1) return 'Đã đặt hàng đối tác Nhật Bản';
+  return 'Đã nhận cọc & đang điều phối hàng';
+};
+
+const getItemProducts = (order) => {
+  if (!order) return [];
+  const list = order.items || order.chi_tiet || [];
+  return list.map(p => ({
+    name: p.ten_phu_tung || p.ten_san_pham || 'Phụ tùng máy thủy',
+    code: p.ma_phu_tung || p.ma_san_pham || '',
+    qty: p.so_luong || 1,
+    price: Number(p.don_gia || p.gia_ban || 0)
+  }));
+};
+
+const calculateItemTotal = (order) => {
+  if (!order) return 0;
+  const subtotal = getItemProducts(order).reduce((sum, p) => sum + (p.price * p.qty), 0);
+  const ship = order.khach_tu_tra_cuoc ? 0 : Number(order.phi_van_chuyen || 0);
+  return subtotal + ship;
+};
+
+const calculateRemaining = (order) => {
+  if (!order) return 0;
+  const total = calculateItemTotal(order);
+  const paid = Number(order.da_thu || order.tien_coc_yeu_cau || 0);
+  return Math.max(0, total - paid);
+};
+
+// ===================== VIETQR & ACTIONS =====================
+const toggleVietQR = (order) => {
+  if (activeQrOrderCode.value === order.code) {
+    activeQrOrderCode.value = null;
+    stopPolling();
+  } else {
+    activeQrOrderCode.value = order.code;
+    startPolling(order);
+  }
+};
+
+const getVietQrImageUrl = (order) => {
+  if (!order) return '';
+  const bankId = "970422"; // MB Bank
+  const accountNo = "0123456789";
+  const amount = Number(order.tien_coc_yeu_cau || 0);
+  const addInfo = order.code || 'COC JPM';
+  const template = "print";
+  return `https://img.vietqr.io/image/${bankId}-${accountNo}-${template}.png?amount=${amount}&addInfo=${addInfo}&accountName=CTY TNHH JPM MARINE`;
+};
+
+const copyText = (text, msg) => {
+  if (!text) return;
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(text);
+  }
+  Swal.fire({
+    toast: true,
+    position: 'top-end',
+    icon: 'success',
+    title: msg || 'Đã sao chép!',
+    showConfirmButton: false,
+    timer: 2000
+  });
+};
+
+const confirmManualPaid = () => {
+  Swal.fire({
+    icon: 'success',
+    title: 'Đã Ghi Nhận Đặt Cọc!',
+    text: 'Cảm ơn quý khách. Đơn hàng đang được cập nhật sang giai đoạn vận chuyển.',
+    confirmButtonColor: '#f82249'
+  });
+  queryClient.invalidateQueries({ queryKey: ["clientQuotesHistory"] });
+  queryClient.invalidateQueries({ queryKey: ["clientOrdersHistory"] });
+};
+
+const handleRejectQuote = async (order) => {
+  const result = await Swal.fire({
+    title: 'Từ Chối Báo Giá?',
+    text: 'Bạn chắc chắn muốn từ chối báo giá này?',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonText: 'Từ chối',
+    cancelButtonText: 'Đóng',
+    confirmButtonColor: '#f82249'
+  });
+
+  if (result.isConfirmed && order.token) {
+    try {
+      await axiosClient.post(`/public/yeu-cau-bao-gia/${order.token}/action`, { action: 'reject' });
+      queryClient.invalidateQueries({ queryKey: ["clientQuotesHistory"] });
+      Swal.fire({ icon: 'success', title: 'Đã từ chối đơn' });
+    } catch (e) {
+      Swal.fire({ icon: 'error', title: 'Lỗi', text: 'Không thể từ chối lúc này.' });
+    }
+  }
+};
+
+const startPolling = (order) => {
+  stopPolling();
+  if (!order) return;
+
+  const type = order._type === 'quote' ? 'quote' : 'order';
+  const code = order.code;
+
+  pollingTimer.value = setInterval(async () => {
+    try {
+      const res = await axiosClient.get(`/public/vietqr/check-status/${type}/${code}`);
+      if (res.data && res.data.success) {
+        if (res.data.is_deposit_paid || res.data.is_paid || res.data.quote_status === 2) {
+          stopPolling();
+          activeQrOrderCode.value = null;
+          Swal.fire({
+            icon: 'success',
+            title: 'Đã Nhận Tiền Cọc!',
+            text: 'Đơn hàng đã được chuyển sang giai đoạn vận chuyển.',
+            confirmButtonColor: '#f82249'
+          });
+          queryClient.invalidateQueries({ queryKey: ["clientQuotesHistory"] });
+          queryClient.invalidateQueries({ queryKey: ["clientOrdersHistory"] });
+        }
+      }
+    } catch (e) {}
+  }, 4000);
+};
+
+const stopPolling = () => {
+  if (pollingTimer.value) {
+    clearInterval(pollingTimer.value);
+    pollingTimer.value = null;
+  }
+};
+
+onBeforeUnmount(() => {
+  stopPolling();
+});
+
 const formatPrice = (price) => {
+  if (!price) return '0';
   return new Intl.NumberFormat('vi-VN').format(price);
 };
 
@@ -348,254 +509,323 @@ const formatDate = (dateStr) => {
   const d = new Date(dateStr);
   return d.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' });
 };
-
-const getQuoteStatusText = (status) => {
-  switch(Number(status)) {
-    case 0: return 'Đang chờ báo giá';
-    case 1: return 'Đã có báo giá (Hiệu lực 72h)';
-    case 2: return 'Đã chốt đơn hàng';
-    case 3: return 'Hết hạn hiệu lực / Đã hủy';
-    default: return 'Không xác định';
-  }
-};
-const getQuoteStatusClass = (status) => {
-  switch(Number(status)) {
-    case 0: return 'bg-pastel-warning text-warning';
-    case 1: return 'bg-pastel-success text-success';
-    case 2: return 'bg-pastel-info text-info';
-    case 3: return 'bg-pastel-danger text-danger';
-    default: return 'bg-light text-secondary';
-  }
-};
-
-const getOrderStatusText = (status) => {
-  switch(Number(status)) {
-    case 0: return 'Chờ xác nhận';
-    case 1: return 'Đã đặt hàng Nhật';
-    case 2: return 'Đang giao chành xe';
-    case 3: return 'Hoàn tất (Tất toán)';
-    case 4: return 'Đã hủy';
-    default: return 'Không xác định';
-  }
-};
-const getOrderStatusClass = (status) => {
-  switch(Number(status)) {
-    case 0: return 'bg-pastel-warning text-warning';
-    case 1: return 'bg-pastel-info text-info';
-    case 2: return 'bg-pastel-primary text-primary';
-    case 3: return 'bg-pastel-success text-success';
-    case 4: return 'bg-pastel-danger text-danger';
-    default: return 'bg-light text-secondary';
-  }
-};
-
-const getMilestoneStep = (order) => {
-  const st = Number(order.trang_thai);
-  if (st === 4) return -1; // Đã hủy
-  if (st === 3) return 5;  // Hoàn tất (Tất toán)
-  if (st === 2) return 4;  // Đang giao chành xe
-  if (st === 1) return 2;  // Đã gom PO đặt hàng Nhật
-  return 1;                // Đã nhận cọc / Tiếp nhận
-};
-
-const getMilestoneName = (order) => {
-  const step = getMilestoneStep(order);
-  switch(step) {
-    case 1: return 'Bước 1/5: Đã tiếp nhận & Nhận cọc';
-    case 2: return 'Bước 2/5: Đã đặt hàng đối tác Nhật';
-    case 3: return 'Bước 3/5: Đã nhập kho JPM & Kiểm định';
-    case 4: return 'Bước 4/5: Đang giao chành xe liên tỉnh';
-    case 5: return 'Bước 5/5: Đã giao hàng & Tất toán thành công';
-    default: return 'Đã hủy đơn';
-  }
-};
-
-const getPaymentStatusText = (status) => {
-  return Number(status) === 1 ? 'Đã thanh toán' : 'Chưa thanh toán';
-};
-const getPaymentStatusClass = (status) => {
-  return Number(status) === 1 ? 'bg-success text-white' : 'bg-secondary text-white';
-};
-
-
-// ===================== PAYMENT LOGIC =====================
-const selectedOrderForPayment = ref(null);
-
-const getPaymentAmount = (order) => {
-  if (!order) return 0;
-  const total = order.tong_tien + (order.khach_tu_tra_cuoc ? 0 : (order.phi_van_chuyen || 0));
-  // Nếu chưa cọc và có yêu cầu cọc -> Cần cọc
-  if ((order.da_thu || 0) == 0 && order.tien_coc_yeu_cau > 0) {
-    return order.tien_coc_yeu_cau;
-  }
-  // Còn lại thanh toán nốt
-  return total - (order.da_thu || 0);
-};
-
-const getVietQRUrl = (order) => {
-  if (!order) return '';
-  const amount = getPaymentAmount(order);
-  const content = order.ma_don_hang;
-  // Replace with actual Bank ID and Account Number (e.g. MB, VCB)
-  const bankId = "970422"; // MB Bank bin code example
-  const accountNo = "0123456789"; 
-  const template = "print"; 
-  return `https://img.vietqr.io/image/${bankId}-${accountNo}-${template}.png?amount=${amount}&addInfo=${content}&accountName=JPM`;
-};
-
-const showPaymentQR = (order) => {
-  selectedOrderForPayment.value = order;
-};
-
-const confirmPaid = () => {
-  Swal.fire({
-    icon: 'success',
-    title: 'Đã ghi nhận',
-    text: 'Cảm ơn bạn đã thanh toán. Chúng tôi sẽ kiểm tra đối soát và cập nhật trạng thái đơn hàng trong thời gian sớm nhất!',
-    confirmButtonColor: '#28a745'
-  });
-};
-
-// ===================== LOGOUT =====================
-const logout = async () => {
-  try {
-    await authStore.logout();
-    window.location.href = "/dang-nhap";
-  } catch {
-    console.error("Lỗi đăng xuất");
-  }
-};
 </script>
 
 <style scoped>
-.active-sidebar-link {
-  color: var(--accent-color) !important;
-  background-color: rgba(239, 35, 60, 0.04) !important;
-  border-left: 3px solid var(--accent-color) !important;
-}
-.list-group-item-action:hover {
-  background-color: rgba(0, 0, 0, 0.02);
-  color: var(--heading-color) !important;
+.shopee-orders-wrapper {
+  width: 100%;
 }
 
-/* Custom Tabs Styling */
-.custom-tab {
-  color: #555;
-  font-weight: 500;
-  font-size: 16px;
-  border: none !important;
-  border-bottom: 2px solid transparent !important;
-  border-radius: 0 !important;
-  background: white !important;
-  transition: all 0.2s ease-in-out;
-}
-.custom-tab:hover {
-  color: var(--accent-color);
-}
-.custom-tab.active {
-  color: var(--accent-color) !important;
-  border-bottom: 2px solid var(--accent-color) !important;
-  background: white !important;
-}
-
-/* Custom Badge Colors to match project styles */
-.bg-pastel-warning { background-color: rgba(255, 171, 0, 0.1); }
-.bg-pastel-success { background-color: rgba(113, 221, 55, 0.1); }
-.bg-pastel-danger { background-color: rgba(255, 62, 29, 0.1); }
-.bg-pastel-info { background-color: rgba(3, 195, 236, 0.1); }
-.bg-pastel-primary { background-color: rgba(105, 108, 255, 0.1); }
-
-/* Horizontal Milestone Stepper */
-.stepper-horizontal {
+/* ========================================================================= */
+/* SHOPEE TAB BAR CHUẨN (GIỐNG HÌNH ẢNH) */
+/* ========================================================================= */
+.shopee-tabs-container {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  position: relative;
-  margin-top: 10px;
-  margin-bottom: 5px;
+  background-color: #ffffff;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.09);
+  box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.05);
+  border-radius: 2px;
+  overflow-x: auto;
+  white-space: nowrap;
 }
-.stepper-step {
+
+.shopee-tab-item {
+  flex: 1;
+  min-width: 110px;
+  text-align: center;
+  padding: 16px 8px;
+  font-size: 14px;
+  color: rgba(0, 0, 0, 0.8);
+  cursor: pointer;
+  user-select: none;
+  transition: color 0.2s;
+  border-bottom: 2px solid transparent;
+}
+
+.shopee-tab-item:hover {
+  color: var(--accent-color, #f82249);
+}
+
+.shopee-tab-item.active {
+  color: var(--accent-color, #f82249);
+  border-bottom: 2px solid var(--accent-color, #f82249);
+  font-weight: 500;
+}
+
+.tab-badge {
+  font-size: 12px;
+  opacity: 0.85;
+}
+
+/* ========================================================================= */
+/* EMPTY STATE (GIỐNG HỆT ẢNH CHỤP SHOPEE) */
+/* ========================================================================= */
+.shopee-empty-state {
+  background-color: #ffffff;
+  min-height: 480px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  position: relative;
-  z-index: 2;
-  text-align: center;
-  flex: 0 0 auto;
+  justify-content: center;
+  margin-top: 12px;
+  box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.05);
+  border-radius: 2px;
 }
-.stepper-circle {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  background-color: #e9ecef;
-  color: #6c757d;
+
+.empty-clipboard-icon {
+  width: 120px;
+  height: 120px;
+}
+
+.empty-text {
+  margin-top: 18px;
+  font-size: 15px;
+  color: rgba(0, 0, 0, 0.65);
+}
+
+/* ========================================================================= */
+/* ORDER CARD CHUẨN SHOPEE */
+/* ========================================================================= */
+.shopee-order-card {
+  background: #ffffff;
+  box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.05);
+  border-radius: 2px;
+  overflow: hidden;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+/* Head */
+.card-head {
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.head-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.type-tag {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 2px;
+}
+.quote-tag {
+  background-color: #e0f2fe;
+  color: #0369a1;
+}
+.order-tag {
+  background-color: #fef3c7;
+  color: #b45309;
+}
+
+.order-id {
+  font-weight: 700;
+  color: #222;
+  font-size: 14px;
+}
+
+.order-date {
+  font-size: 12px;
+}
+
+.head-right.status-text {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--accent-color, #f82249);
+  text-transform: uppercase;
+}
+
+/* Logistics Notice */
+.logistics-notice {
+  padding: 10px 20px;
+  background-color: #fbfbfb;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  font-size: 13px;
+  color: rgba(0, 0, 0, 0.7);
+}
+
+/* Items List */
+.order-items-list {
+  padding: 0;
+}
+
+.item-row {
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.item-thumb {
+  width: 65px;
+  height: 65px;
+  background-color: #f8f9fa;
+  border: 1px solid #e9ecef;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 12px;
-  font-weight: 700;
-  transition: all 0.3s ease;
-  border: 2px solid #dee2e6;
-}
-.stepper-step.completed .stepper-circle {
-  background-color: #198754;
-  border-color: #198754;
-  color: #fff;
-}
-.stepper-step.active .stepper-circle {
-  background-color: #0d6efd;
-  border-color: #0d6efd;
-  color: #fff;
-  box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.2);
-}
-.stepper-label {
-  margin-top: 6px;
-  font-size: 11px;
+  font-size: 24px;
   color: #6c757d;
-  font-weight: 500;
-  max-width: 90px;
-  line-height: 1.2;
-}
-.stepper-step.completed .stepper-label {
-  color: #198754;
-  font-weight: 600;
-}
-.stepper-step.active .stepper-label {
-  color: #0d6efd;
-  font-weight: 700;
-}
-.stepper-line {
-  flex: 1 1 0%;
-  height: 3px;
-  background-color: #dee2e6;
-  margin: 0 4px;
-  margin-bottom: 20px;
-  z-index: 1;
-  transition: all 0.3s ease;
-}
-.stepper-line.completed {
-  background-color: #198754;
+  flex-shrink: 0;
 }
 
-@media (max-width: 576px) {
-  .stepper-label {
-    font-size: 9px;
-    max-width: 60px;
-  }
-  .stepper-circle {
-    width: 22px;
-    height: 22px;
-    font-size: 10px;
-  }
+.item-details {
+  flex-grow: 1;
+}
+
+.item-name {
+  font-size: 14px;
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.87);
+  margin-bottom: 2px;
+}
+
+.item-oem {
+  font-size: 12px;
+}
+
+.item-qty {
+  font-size: 12px;
+  color: rgba(0, 0, 0, 0.6);
+  margin-top: 2px;
+}
+
+.item-price {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--accent-color, #f82249);
+  text-align: right;
+  min-width: 110px;
+}
+
+/* Card Bottom */
+.card-bottom {
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  background-color: #ffffff;
+}
+
+.price-section {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.price-section .label {
+  font-size: 14px;
+  color: rgba(0, 0, 0, 0.8);
+}
+
+.price-section .total-amount {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--accent-color, #f82249);
+}
+
+.action-buttons {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.btn-shopee {
+  padding: 8px 16px;
+  font-size: 13.5px;
+  border-radius: 2px;
+  text-decoration: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.btn-shopee-primary {
+  background-color: var(--accent-color, #f82249);
+  color: #ffffff;
+  border: 1px solid var(--accent-color, #f82249);
+}
+.btn-shopee-primary:hover {
+  background-color: #d81438;
+  color: #ffffff;
+}
+
+.btn-shopee-outline {
+  background-color: #ffffff;
+  color: #555555;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+}
+.btn-shopee-outline:hover {
+  background-color: #f8f8f8;
+  color: #222222;
+}
+
+/* QR Deposit Box */
+.qr-deposit-box {
+  padding: 16px 20px;
+  background-color: #fffdfd;
+  border-bottom: 1px dashed rgba(248, 34, 73, 0.3);
+}
+
+.qr-inner {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.qr-img-col {
+  width: 140px;
+}
+.qr-img {
+  width: 100%;
+  border: 1px solid #e2e8f0;
+  border-radius: 4px;
+  padding: 4px;
+}
+.qr-subtext {
+  font-size: 11px;
+  margin-top: 4px;
+}
+
+.qr-info-col {
+  flex: 1;
+  min-width: 260px;
+  background-color: #f8fafc;
+  padding: 12px 16px;
+  border-radius: 4px;
+  border: 1px solid #e2e8f0;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+  padding: 3px 0;
+}
+
+.btn-copy {
+  margin-left: 8px;
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  font-size: 11px;
+  padding: 1px 6px;
+  border-radius: 2px;
+  cursor: pointer;
+}
+.btn-copy:hover {
+  background-color: #f1f5f9;
 }
 </style>
-
-
-
-
-
-
-
-
-
-

@@ -22,7 +22,7 @@
           <i class="bi bi-bookmark-heart fs-5"></i> Vật tư thường mua
         </router-link>
         <router-link to="/lich-su-don-hang" class="list-group-item list-group-item-action border-0 d-flex align-items-center gap-3 text-secondary sidebar-menu-item" active-class="active-sidebar-link">
-          <i class="bi bi-receipt fs-5"></i> Lịch sử báo giá
+          <i class="bi bi-receipt fs-5"></i> Đơn hàng & Báo giá
         </router-link>
         <hr class="my-2 mx-3 text-muted">
         <a href="#" @click.prevent="logout" class="list-group-item list-group-item-action border-0 d-flex align-items-center gap-3 text-danger sidebar-menu-item">

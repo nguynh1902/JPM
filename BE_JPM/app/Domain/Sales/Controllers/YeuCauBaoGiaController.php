@@ -127,14 +127,24 @@ class YeuCauBaoGiaController extends Controller
                     'token'              => Str::random(32),
                 ]);
 
+                $tongTienTamTinh = 0;
                 foreach ($request->chi_tiet as $item) {
+                    $qty = (int) ($item['so_luong'] ?? 1);
+                    $price = (float) ($item['gia_ban'] ?? 0);
+                    $tongTienTamTinh += ($qty * $price);
+
                     ChiTietBaoGia::create([
                         'yeu_cau_bao_gia_id' => $quote->id,
                         'ten_phu_tung'       => $item['ten_phu_tung'] ?? 'Không rõ',
                         'ma_phu_tung'        => $item['ma_phu_tung'] ?? 'N/A',
-                        'so_luong'           => (int) ($item['so_luong'] ?? 1),
-                        'don_gia'            => (float) ($item['gia_ban'] ?? 0)
+                        'so_luong'           => $qty,
+                        'don_gia'            => $price
                     ]);
+                }
+
+                if ($tongTienTamTinh > 0) {
+                    $quote->tong_tien = $tongTienTamTinh;
+                    $quote->save();
                 }
 
                 $responseCode = $maCode;
