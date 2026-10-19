@@ -202,6 +202,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('admin/ton-kho/{id}', [\App\Domain\Procurement\Controllers\TonKhoController::class, 'destroy']);
 
         Route::delete('admin/don-hang/{id}', [\App\Domain\Sales\Controllers\DonHangController::class, 'destroy']);
+        Route::delete('admin/yeu-cau-bao-gia/{id}', [\App\Domain\Sales\Controllers\YeuCauBaoGiaController::class, 'destroy']);
 
         // Tiện ích Cache & Tối ưu hóa Catalog
         Route::post('admin/he-thong/clear-cache', function (\Illuminate\Http\Request $request, \App\Domain\MarineCatalog\Services\CatalogCacheService $cacheService) {
@@ -260,6 +261,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('admin/yeu-cau-bao-gia/{id}', [\App\Domain\Sales\Controllers\YeuCauBaoGiaController::class, 'show']);
         Route::post('admin/yeu-cau-bao-gia', [\App\Domain\Sales\Controllers\YeuCauBaoGiaController::class, 'store']);
         Route::put('admin/yeu-cau-bao-gia/{id}', [\App\Domain\Sales\Controllers\YeuCauBaoGiaController::class, 'update']);
+        Route::delete('admin/yeu-cau-bao-gia/{id}', [\App\Domain\Sales\Controllers\YeuCauBaoGiaController::class, 'destroy']);
         Route::post('admin/yeu-cau-bao-gia/{id}/chuyen-don', [\App\Domain\Sales\Controllers\YeuCauBaoGiaController::class, 'convertToOrder']);
 
         // Nghiệp vụ Đơn hàng
@@ -267,6 +269,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('admin/don-hang', [\App\Domain\Sales\Controllers\DonHangController::class, 'index']);
         Route::get('admin/don-hang/{id}', [\App\Domain\Sales\Controllers\DonHangController::class, 'show']);
         Route::put('admin/don-hang/{id}', [\App\Domain\Sales\Controllers\DonHangController::class, 'update']);
+        Route::delete('admin/don-hang/{id}', [\App\Domain\Sales\Controllers\DonHangController::class, 'destroy']);
 
         // Nghiệp vụ Kho (Xem tồn kho, cảnh báo cạn, xem thẻ kho & xuất file)
         Route::get('admin/kho', [\App\Domain\Procurement\Controllers\KhoController::class, 'index']);

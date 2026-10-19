@@ -243,13 +243,21 @@ class YeuCauBaoGiaController extends Controller
             // Cập nhật giá từng món hàng nếu có
             if ($request->has('chi_tiet') && is_array($request->input('chi_tiet'))) {
                 foreach ($request->input('chi_tiet') as $item) {
-                    if (isset($item['id'])) {
+                    if (isset($item['id']) && $item['id']) {
                         ChiTietBaoGia::where('id', $item['id'])
                             ->where('yeu_cau_bao_gia_id', $quote->id)
                             ->update([
                                 'don_gia'  => (float) ($item['price'] ?? $item['don_gia'] ?? 0),
                                 'so_luong' => (int) ($item['qty'] ?? $item['so_luong'] ?? 1),
                             ]);
+                    } elseif (!empty($item['part_name']) || !empty($item['ten_phu_tung'])) {
+                        ChiTietBaoGia::create([
+                            'yeu_cau_bao_gia_id' => $quote->id,
+                            'ten_phu_tung'      => $item['part_name'] ?? $item['ten_phu_tung'] ?? '',
+                            'ma_phu_tung'       => $item['part_code'] ?? $item['ma_phu_tung'] ?? null,
+                            'so_luong'          => (int) ($item['qty'] ?? $item['so_luong'] ?? 1),
+                            'don_gia'           => (float) ($item['price'] ?? $item['don_gia'] ?? 0),
+                        ]);
                     }
                 }
             }

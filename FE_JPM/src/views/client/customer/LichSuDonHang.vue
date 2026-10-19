@@ -141,12 +141,9 @@
             </div>
           </div>
 
-          <!-- Đơn giá: Nếu là chờ báo giá thì hiển thị 'Liên hệ' -->
+          <!-- Đơn giá: Hiển thị giá nếu có, nếu chưa có giá hoặc giá <= 0 thì hiển thị 'Liên hệ' -->
           <div class="item-price text-end">
-            <template v-if="getStage(order) === 1">
-              <span class="price-contact">Liên hệ</span>
-            </template>
-            <template v-else-if="getItemProducts(order)[0]?.price > 0">
+            <template v-if="getItemProducts(order)[0]?.price > 0">
               <span class="price-num">{{ formatPrice(getItemProducts(order)[0]?.price) }}₫</span>
             </template>
             <template v-else>
@@ -213,9 +210,15 @@
               {{ getStage(order) === 2 ? 'Tiền cọc yêu cầu:' : (getStage(order) === 3 ? 'Còn lại khi nhận hàng:' : 'Thành tiền:') }}
             </span>
             <span class="total-amount">
-              <!-- NẾU LÀ ĐỢI BÁO GIÁ THÌ GIÁ PHẢI LÀ 'LIÊN HỆ' -->
+              <!-- NẾU LÀ ĐỢI BÁO GIÁ (BƯỚC 1) -->
               <template v-if="getStage(order) === 1">
-                <span class="price-contact-lg">Liên hệ</span>
+                <template v-if="calculateItemTotal(order) > 0">
+                  <span class="price-num-lg text-danger fw-bold">{{ formatPrice(calculateItemTotal(order)) }}₫</span>
+                  <span v-if="hasUnquotedItems(order)" class="text-muted small fst-italic ms-1" style="font-size: 0.8rem;">(+ chờ báo giá)</span>
+                </template>
+                <template v-else>
+                  <span class="price-contact-lg">Liên hệ</span>
+                </template>
               </template>
               <template v-else-if="getStage(order) === 2">
                 {{ formatPrice(order.tien_coc_yeu_cau || 0) }}₫
@@ -324,10 +327,7 @@
                 <!-- Bên phải: Giá (Liên hệ nếu bước 1) + Icon Thêm Giỏ Hàng -->
                 <div class="d-flex align-items-center gap-3">
                   <div class="text-end">
-                    <template v-if="getStage(selectedOrderForModal) === 1">
-                      <span class="price-contact">Liên hệ</span>
-                    </template>
-                    <template v-else-if="prod.price > 0">
+                    <template v-if="prod.price > 0">
                       <span class="price-num">{{ formatPrice(prod.price) }}₫</span>
                     </template>
                     <template v-else>
@@ -354,7 +354,13 @@
           <div class="modal-footer bg-light py-2 px-4 d-flex justify-content-between align-items-center">
             <div class="small">
               <span class="text-muted me-1">Tổng cộng:</span>
-              <strong v-if="getStage(selectedOrderForModal) === 1" class="text-danger fs-6">Liên hệ</strong>
+              <template v-if="getStage(selectedOrderForModal) === 1">
+                <strong v-if="calculateItemTotal(selectedOrderForModal) > 0" class="text-danger fs-6">
+                  {{ formatPrice(calculateItemTotal(selectedOrderForModal)) }}₫
+                  <span v-if="hasUnquotedItems(selectedOrderForModal)" class="text-muted small fw-normal ms-1">(Tạm tính + chờ báo giá)</span>
+                </strong>
+                <strong v-else class="text-danger fs-6">Liên hệ</strong>
+              </template>
               <strong v-else-if="getStage(selectedOrderForModal) === 2" class="text-danger fs-6">
                 {{ formatPrice(selectedOrderForModal.tien_coc_yeu_cau || 0) }}₫ (Cọc) / {{ formatPrice(calculateItemTotal(selectedOrderForModal)) }}₫
               </strong>
@@ -468,11 +474,23 @@ const getStage = (order) => {
     if (depositReq > 0 && daThu === 0) {
       return 2;
     }
+    if (st === 0 && paySt === 0) {
+      return 2; // Chờ thanh toán / xác nhận
+    }
     return 3;
   }
 };
 
 const getStatusText = (order) => {
+  if (order._type === 'order') {
+    const st = Number(order.trang_thai);
+    const paySt = Number(order.trang_thai_thanh_toan);
+    if (st === 4) return 'ĐÃ HỦY';
+    if (st === 3) return 'HOÀN THÀNH';
+    if (st === 2) return 'ĐANG GIAO HÀNG';
+    if (st === 1) return 'ĐANG XỬ LÝ';
+    if (st === 0) return paySt === 0 ? 'CHỜ XÁC NHẬN / THANH TOÁN' : 'ĐÃ THANH TOÁN';
+  }
   const stage = getStage(order);
   switch (stage) {
     case 1:
@@ -509,11 +527,17 @@ const getItemProducts = (order) => {
   }));
 };
 
+const hasUnquotedItems = (order) => {
+  if (!order) return false;
+  return getItemProducts(order).some(p => p.price <= 0);
+};
+
 const calculateItemTotal = (order) => {
   if (!order) return 0;
   const subtotal = getItemProducts(order).reduce((sum, p) => sum + (p.price * p.qty), 0);
   const ship = order.khach_tu_tra_cuoc ? 0 : Number(order.phi_van_chuyen || 0);
-  return subtotal + ship;
+  if (subtotal > 0) return subtotal + ship;
+  return Number(order.tong_tien || 0);
 };
 
 const calculateRemaining = (order) => {

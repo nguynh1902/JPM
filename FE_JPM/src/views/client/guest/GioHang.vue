@@ -330,7 +330,7 @@ export default {
       return this.selectedCartItems.reduce((total, item) => total + item.quantity, 0)
     },
     checkoutType() {
-      return 'quote'
+      return this.hasContactItems ? 'quote' : 'order'
     },
     hasContactItems() {
       return this.selectedCartItems.some(item => item.is_gia_lien_he || !item.gia_ban || parseFloat(item.gia_ban) <= 0)
@@ -354,7 +354,7 @@ export default {
       if (this.selectedItems.length === 0) return 'VUI LÒNG CHỌN SẢN PHẨM'
       if (this.isMixedCart) return 'XÁC NHẬN GỬI YÊU CẦU BÁO GIÁ'
       if (this.hasContactItems) return 'GỬI YÊU CẦU BÁO GIÁ'
-      return 'GỬI YÊU CẦU BÁO GIÁ & CƯỚC SHIP'
+      return 'TIẾN HÀNH ĐẶT HÀNG'
     },
     totalAmount() {
       if (this.selectedItems.length === 0) return this.formatPrice(0)
@@ -582,13 +582,18 @@ export default {
           this.selectedItems.forEach(id => this.cartStore.removeItem(id))
           this.selectedItems = []
           
-          const titleType = 'Mã Yêu Cầu Báo Giá'
-          const descText = `Hệ thống đã ghi nhận yêu cầu báo giá #${this.pendingOrderId}. Đội ngũ JPM Marine sẽ kiểm tra tồn kho phụ tùng, tính cước vận chuyển và gửi bảng báo giá kèm tiền cọc cho quý khách sớm nhất.`
-          const chatMsg = `Chào JPM Marine, tôi vừa gửi yêu cầu báo giá phụ tùng mã ${this.pendingOrderId}.`
+          const isOrder = this.checkoutType === 'order'
+          const titleType = isOrder ? 'Mã Đơn Hàng' : 'Mã Yêu Cầu Báo Giá'
+          const descText = isOrder
+            ? `Hệ thống đã ghi nhận đơn hàng #${this.pendingOrderId}. Đội ngũ JPM Marine sẽ kiểm tra và liên hệ xác nhận xuất kho sớm nhất.`
+            : `Hệ thống đã ghi nhận yêu cầu báo giá #${this.pendingOrderId}. Đội ngũ JPM Marine sẽ kiểm tra tồn kho phụ tùng, tính cước vận chuyển và gửi bảng báo giá kèm tiền cọc cho quý khách sớm nhất.`
+          const chatMsg = isOrder
+            ? `Chào JPM Marine, tôi vừa đặt đơn hàng mã ${this.pendingOrderId}.`
+            : `Chào JPM Marine, tôi vừa gửi yêu cầu báo giá phụ tùng mã ${this.pendingOrderId}.`
             
           Swal.fire({
             icon: 'success',
-            title: 'Gửi Yêu Cầu Thành Công!',
+            title: isOrder ? 'Đặt Hàng Thành Công!' : 'Gửi Yêu Cầu Thành Công!',
             html: `
               <p class="text-muted mb-2">${titleType} của bạn:</p>
               <div class="fw-bold fs-3 mb-3" style="color: #059669;">#${this.pendingOrderId}</div>
@@ -596,7 +601,7 @@ export default {
             `,
             showCancelButton: true,
             confirmButtonText: '<i class="bi bi-chat-dots me-1"></i> Chat Zalo Hỗ Trợ',
-            cancelButtonText: this.isAuthenticated ? 'Xem Lịch Sử Báo Giá' : 'Đóng',
+            cancelButtonText: this.isAuthenticated ? (isOrder ? 'Xem Lịch Sử Đơn Hàng' : 'Xem Lịch Sử Báo Giá') : 'Đóng',
             confirmButtonColor: '#0068ff',
             cancelButtonColor: '#6c757d'
           }).then((result) => {

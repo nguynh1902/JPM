@@ -8,7 +8,7 @@
 'use strict';
 
 // JS global variables
-window.config = {
+let config = {
   colors: {
     primary: '#696cff',
     secondary: '#8592a3',

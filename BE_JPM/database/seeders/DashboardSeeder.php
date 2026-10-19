@@ -7,6 +7,9 @@ use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use App\Domain\Sales\Models\DonHang;
 use App\Domain\Sales\Models\YeuCauBaoGia;
+use App\Domain\Sales\Models\ChiTietBaoGia;
+use App\Domain\Sales\Models\ChiTietDonHang;
+use App\Domain\PIM\Models\PhuTung;
 use App\Domain\Procurement\Models\DonNhapHang;
 use App\Domain\Procurement\Models\TonKho;
 
@@ -227,7 +230,59 @@ class DashboardSeeder extends Seeder
         ];
 
         foreach ($orders as $od) {
-            DonHang::updateOrCreate(['ma_don_hang' => $od['ma_don_hang']], $od);
+            $createdOrder = DonHang::withTrashed()->where('ma_don_hang', $od['ma_don_hang'])->first();
+            if ($createdOrder) {
+                if ($createdOrder->trashed()) {
+                    $createdOrder->restore();
+                }
+                $createdOrder->update($od);
+            } else {
+                $createdOrder = DonHang::create($od);
+            }
+
+            if ($createdOrder->chiTiet()->count() == 0) {
+                $ptSample = PhuTung::first();
+                $ptId = $ptSample ? $ptSample->id : 1;
+                $ptMa = $ptSample ? $ptSample->ma_phu_tung : 'PT-YMR-4JH';
+                $ptTen = $ptSample ? $ptSample->ten_phu_tung : 'Bộ phụ tùng máy thủy chính hãng';
+
+                $price1 = round($createdOrder->tong_tien * 0.6);
+                $price2 = $createdOrder->tong_tien - $price1;
+
+                if ($price2 > 0) {
+                    ChiTietDonHang::create([
+                        'id_don_hang'   => $createdOrder->id,
+                        'id_san_pham'   => $ptId,
+                        'loai_san_pham' => 'phu_tung',
+                        'so_luong'      => 1,
+                        'don_gia'       => $price1,
+                        'thanh_tien'    => $price1,
+                        'ten_phu_tung'  => $ptTen,
+                        'ma_phu_tung'   => $ptMa,
+                    ]);
+                    ChiTietDonHang::create([
+                        'id_don_hang'   => $createdOrder->id,
+                        'id_san_pham'   => $ptId,
+                        'loai_san_pham' => 'phu_tung',
+                        'so_luong'      => 1,
+                        'don_gia'       => $price2,
+                        'thanh_tien'    => $price2,
+                        'ten_phu_tung'  => 'Bộ phớt làm kín & lọc phụ trợ',
+                        'ma_phu_tung'   => 'FLT-SEAL-01',
+                    ]);
+                } else {
+                    ChiTietDonHang::create([
+                        'id_don_hang'   => $createdOrder->id,
+                        'id_san_pham'   => $ptId,
+                        'loai_san_pham' => 'phu_tung',
+                        'so_luong'      => 1,
+                        'don_gia'       => $createdOrder->tong_tien,
+                        'thanh_tien'    => $createdOrder->tong_tien,
+                        'ten_phu_tung'  => $ptTen,
+                        'ma_phu_tung'   => $ptMa,
+                    ]);
+                }
+            }
         }
 
         // 2. TẠO CÁC YÊU CẦU BÁO GIÁ (YEU_CAU_BAO_GIAS)
@@ -243,6 +298,10 @@ class DashboardSeeder extends Seeder
                 'trang_thai' => 0, // Chờ xử lý
                 'created_at' => $now->copy()->subHours(2),
                 'updated_at' => $now->copy()->subHours(2),
+                'items' => [
+                    ['ten_phu_tung' => 'Bộ xéc-măng Yanmar 4JH (Piston Ring Set)', 'ma_phu_tung' => 'YMR-129407-22500', 'so_luong' => 4, 'don_gia' => 2500000],
+                    ['ten_phu_tung' => 'Bạc lót trục khuỷu Yanmar 4JH (Main Bearing)', 'ma_phu_tung' => 'YMR-129150-02800', 'so_luong' => 1, 'don_gia' => 4500000],
+                ]
             ],
             [
                 'ma_yeu_cau' => 'YCBG-261011-002',
@@ -255,6 +314,10 @@ class DashboardSeeder extends Seeder
                 'trang_thai' => 0, // Chờ xử lý
                 'created_at' => $now->copy()->subMinutes(45),
                 'updated_at' => $now->copy()->subMinutes(45),
+                'items' => [
+                    ['ten_phu_tung' => 'Bơm cao áp nhiên liệu Cummins 6BT (Fuel Injection Pump)', 'ma_phu_tung' => 'CMS-3918991', 'so_luong' => 1, 'don_gia' => 22000000],
+                    ['ten_phu_tung' => 'Bộ kim phun Cummins 6BT (Fuel Injector Nozzle)', 'ma_phu_tung' => 'CMS-3926817', 'so_luong' => 6, 'don_gia' => 1000000],
+                ]
             ],
             [
                 'ma_yeu_cau' => 'YCBG-261010-003',
@@ -267,6 +330,10 @@ class DashboardSeeder extends Seeder
                 'trang_thai' => 1, // Đã báo giá
                 'created_at' => $now->copy()->subDay(),
                 'updated_at' => $now->copy()->subDay(),
+                'items' => [
+                    ['ten_phu_tung' => 'Cánh quạt đẩy Inox 3 lá Yamaha 200HP (Propeller)', 'ma_phu_tung' => 'YMH-6E5-45945-01', 'so_luong' => 1, 'don_gia' => 6500000],
+                    ['ten_phu_tung' => 'Lọc dầu nhớt động cơ Yamaha Marine', 'ma_phu_tung' => 'YMH-5GH-13440-71', 'so_luong' => 2, 'don_gia' => 350000],
+                ]
             ],
             [
                 'ma_yeu_cau' => 'YCBG-260925-004',
@@ -279,11 +346,24 @@ class DashboardSeeder extends Seeder
                 'trang_thai' => 2, // Đã chốt
                 'created_at' => $now->copy()->subDays(16),
                 'updated_at' => $now->copy()->subDays(16),
+                'items' => [
+                    ['ten_phu_tung' => 'Bộ gioăng nắp quy-lát Suzuki DF250 (Gasket Kit)', 'ma_phu_tung' => 'SZK-11141-93J00', 'so_luong' => 2, 'don_gia' => 4500000],
+                    ['ten_phu_tung' => 'Bộ phớt đại tu toàn bộ động cơ Suzuki DF250', 'ma_phu_tung' => 'SZK-11400-93850', 'so_luong' => 1, 'don_gia' => 12500000],
+                ]
             ]
         ];
 
         foreach ($quotes as $qt) {
-            YeuCauBaoGia::updateOrCreate(['ma_yeu_cau' => $qt['ma_yeu_cau']], $qt);
+            $items = $qt['items'] ?? [];
+            unset($qt['items']);
+            $createdQuote = YeuCauBaoGia::updateOrCreate(['ma_yeu_cau' => $qt['ma_yeu_cau']], $qt);
+            if (!empty($items)) {
+                ChiTietBaoGia::where('yeu_cau_bao_gia_id', $createdQuote->id)->delete();
+                foreach ($items as $it) {
+                    $it['yeu_cau_bao_gia_id'] = $createdQuote->id;
+                    ChiTietBaoGia::create($it);
+                }
+            }
         }
 
         // 3. TẠO CÁC ĐƠN NHẬP HÀNG (DON_NHAP_HANGS / PO) CHO BIỂU ĐỒ DOANH THU & CHI PHÍ
