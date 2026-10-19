@@ -15,29 +15,19 @@
         </div>
       </div>
 
-            <!-- Machine Header Card -->
+      <!-- Machine Header Card -->
       <div v-else-if="garageData" class="p-4 border rounded-2 bg-white d-flex align-items-start justify-content-between flex-column flex-md-row gap-3" style="border-radius: 12px !important;">
-        <div class="d-flex align-items-start gap-3">
-          <!-- Model Brand Logo / Icon -->
-          <div class="flex-shrink-0 d-flex align-items-center justify-content-center border rounded" style="width: 64px; height: 64px; background: #fff;">
-            <img v-if="garageData.dong_co_model?.thuong_hieu?.logo_path"
-              :src="getImageUrl(garageData.dong_co_model.thuong_hieu.logo_path)"
-              :alt="garageData.dong_co_model.thuong_hieu.name"
-              style="max-width: 50px; max-height: 42px; object-fit: contain; opacity: 0.85;">
-            <i v-else class="bi bi-gear text-muted" style="font-size: 1.6rem;"></i>
+        <div>
+          <div class="d-flex align-items-center gap-2 flex-wrap mb-1">
+            <h5 class="fw-bold mb-0" style="color: var(--heading-color);">{{ garageData.dong_co_model?.ten_model || 'Chưa rõ Model' }}</h5>
+            <span class="badge rounded-pill fw-semibold text-uppercase" style="background-color: rgba(239,35,60,0.1); color: var(--accent-color); font-size: 10px; letter-spacing: 0.5px;">
+              {{ garageData.dong_co_model?.thuong_hieu?.name }}
+            </span>
           </div>
-          <div>
-            <div class="d-flex align-items-center gap-2 flex-wrap mb-1">
-              <h5 class="fw-bold mb-0" style="color: var(--heading-color);">{{ garageData.dong_co_model?.ten_model || 'Chưa rõ Model' }}</h5>
-              <span class="badge rounded-pill fw-semibold text-uppercase" style="background-color: rgba(239,35,60,0.1); color: var(--accent-color); font-size: 10px; letter-spacing: 0.5px;">
-                {{ garageData.dong_co_model?.thuong_hieu?.name }}
-              </span>
-            </div>
-            
-            <div class="d-flex align-items-center gap-3 flex-wrap mt-2" style="font-size: 13px; color: #6c757d;">
-              <span v-if="garageData.dong_co_model?.ma_luc"><i class="bi bi-lightning-charge me-1"></i>{{ garageData.dong_co_model.ma_luc }} HP</span>
-              <span v-if="garageData.dong_co_model?.ma_model" class="text-muted fst-italic">{{ garageData.dong_co_model.ma_model }}</span>
-            </div>
+          
+          <div class="d-flex align-items-center gap-3 flex-wrap mt-2" style="font-size: 13px; color: #6c757d;">
+            <span v-if="garageData.dong_co_model?.ma_luc"><i class="bi bi-lightning-charge me-1"></i>{{ garageData.dong_co_model.ma_luc }} HP</span>
+            <span v-if="garageData.dong_co_model?.ma_model" class="text-muted fst-italic">{{ garageData.dong_co_model.ma_model }}</span>
           </div>
         </div>
 

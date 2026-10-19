@@ -43,26 +43,17 @@
                   <div v-for="may in garage" :key="may.id" class="p-3 border rounded-2 d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3" style="background-color: #fff; transition: border-color 0.2s; cursor: pointer;" @mouseenter="$event.currentTarget.style.borderColor='var(--accent-color)'" @mouseleave="$event.currentTarget.style.borderColor='#dee2e6'" @click="router.push(`/garage/${may.id}`)">
                     
                                         <!-- Left: Machine Info -->
-                    <div class="d-flex align-items-center gap-3">
-                      <!-- Machine Icon / Brand Logo -->
-                      <div class="d-flex align-items-center justify-content-center border rounded" style="width: 60px; height: 60px; background-color: #fff; flex-shrink: 0;">
-                        <img v-if="may.dong_co_model?.thuong_hieu?.logo_path" :src="getImageUrl(may.dong_co_model.thuong_hieu.logo_path)" :alt="may.dong_co_model.thuong_hieu.name" style="max-height: 40px; max-width: 50px; object-fit: contain;">
-                        <i v-else class="bi bi-gear text-muted" style="font-size: 1.5rem;"></i>
-                      </div>
+                    <div>
+                      <!-- Model Name & Brand Badge -->
+                      <h6 class="mb-1 d-flex align-items-center gap-2 flex-wrap" style="font-size: 16px; font-weight: 700; color: #111827;">
+                        {{ may.dong_co_model?.ten_model || 'Chưa rõ Model' }}
+                        <span v-if="may.dong_co_model?.thuong_hieu?.name" class="badge bg-pastel-danger text-danger text-uppercase" style="font-size: 9px; padding: 3px 6px; letter-spacing: 0.5px;">{{ may.dong_co_model.thuong_hieu.name }}</span>
+                      </h6>
                       
-                      <!-- Details -->
-                      <div>
-                        <!-- Model Name & Brand Badge -->
-                        <h6 class="mb-1 d-flex align-items-center gap-2 flex-wrap" style="font-size: 16px; font-weight: 700; color: #111827;">
-                          {{ may.dong_co_model?.ten_model || 'Chưa rõ Model' }}
-                          <span v-if="may.dong_co_model?.thuong_hieu?.name" class="badge bg-pastel-danger text-danger text-uppercase" style="font-size: 9px; padding: 3px 6px; letter-spacing: 0.5px;">{{ may.dong_co_model.thuong_hieu.name }}</span>
-                        </h6>
-                        
-                        <!-- Specs -->
-                        <div class="d-flex align-items-center gap-4 mt-2 text-muted flex-wrap" style="font-size: 13px;">
-                          <span v-if="may.dong_co_model?.ma_luc"><i class="bi bi-lightning-charge me-1"></i>{{ may.dong_co_model.ma_luc }} HP</span>
-                          <span v-if="may.dong_co_model?.ma_model" class="fst-italic">{{ may.dong_co_model.ma_model }}</span>
-                        </div>
+                      <!-- Specs -->
+                      <div class="d-flex align-items-center gap-4 mt-2 text-muted flex-wrap" style="font-size: 13px;">
+                        <span v-if="may.dong_co_model?.ma_luc"><i class="bi bi-lightning-charge me-1"></i>{{ may.dong_co_model.ma_luc }} HP</span>
+                        <span v-if="may.dong_co_model?.ma_model" class="fst-italic">{{ may.dong_co_model.ma_model }}</span>
                       </div>
                     </div>
 
