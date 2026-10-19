@@ -34,8 +34,8 @@
                   <table class="table align-middle mb-0">
                     <thead class="bg-white">
                       <tr style="border-bottom: 2px solid #e2e8f0;">
-                        <th class="text-center border-0" style="width: 50px; padding-left: 1.5rem;">
-                          <input class="form-check-input custom-checkbox" type="checkbox" v-model="selectAll" style="width: 20px; height: 20px; cursor: pointer;">
+                        <th class="text-center border-0" style="width: 44px; padding-left: 1.25rem;">
+                          <input class="form-check-input custom-checkbox" type="checkbox" v-model="selectAll" title="Chọn tất cả">
                         </th>
                         <th class="text-center text-uppercase border-0" style="width: 80px; font-size: 0.85rem; letter-spacing: 0.5px;">REF</th>
                         <th class="text-uppercase border-0" style="font-size: 0.85rem; letter-spacing: 0.5px;">MÃ & TÊN</th>
@@ -49,8 +49,8 @@
                         <td colspan="6" class="text-center py-4 text-muted">Giỏ hàng trống.</td>
                       </tr>
                       <tr v-for="item in cartItems" :key="item.ma_phu_tung" class="table-row-hover" style="transition: all 0.2s ease;">
-                        <td class="text-center" style="padding-left: 1.5rem;">
-                          <input class="form-check-input custom-checkbox" type="checkbox" :value="item.ma_phu_tung" v-model="selectedItems" style="width: 20px; height: 20px; cursor: pointer;">
+                        <td class="text-center" style="width: 44px; padding-left: 1.25rem;">
+                          <input class="form-check-input custom-checkbox" type="checkbox" :value="item.ma_phu_tung" v-model="selectedItems">
                         </td>
                         <td class="text-center">
                           <div class="d-inline-flex justify-content-center align-items-center border rounded bg-white p-1" style="width: 60px; height: 60px;">
@@ -59,9 +59,18 @@
                           </div>
                         </td>
                         <td>
-                          <div class="fw-bold" style="color: var(--heading-color); font-size: 0.95rem;">{{ item.ma_phu_tung }}</div>
+                          <div class="d-flex align-items-center gap-2 flex-wrap">
+                            <span class="fw-bold" style="color: var(--heading-color); font-size: 0.95rem;">{{ item.ma_phu_tung }}</span>
+                            <span 
+                              v-if="item.loai_san_pham" 
+                              class="badge rounded-pill d-inline-flex align-items-center gap-1" 
+                              :class="item.loai_san_pham === 'san_pham' ? 'badge-san-pham' : 'badge-phu-tung'"
+                            >
+                              <i :class="item.loai_san_pham === 'san_pham' ? 'bi bi-box-seam' : 'bi bi-tools'" style="font-size: 9.5px;"></i>
+                              {{ item.loai_san_pham === 'san_pham' ? 'Sản phẩm' : 'Phụ tùng' }}
+                            </span>
+                          </div>
                           <div class="text-muted small fw-medium mt-1">{{ item.ten_phu_tung }}</div>
-                          <span v-if="item.loai_san_pham" class="badge bg-secondary-subtle text-secondary small mt-1">{{ item.loai_san_pham }}</span>
                         </td>
                         <td class="text-center">
                           <span v-if="item.is_gia_lien_he || !item.gia_ban || parseFloat(item.gia_ban) <= 0" class="text-danger fw-bold" style="font-size: 0.95rem;">Liên hệ</span>
@@ -111,9 +120,10 @@
                   <div class="d-flex justify-content-between align-items-baseline pt-2 border-top">
                     <span class="text-muted fw-medium">Tạm tính:</span>
                     <div class="text-end">
-                      <strong class="text-danger fs-5 fw-bold" v-if="hasPricedItems">{{ formatPrice(pricedTotalAmount) }}</strong>
+                      <strong class="text-muted fs-5 fw-bold" v-if="selectedItems.length === 0">0 ₫</strong>
+                      <strong class="text-danger fs-5 fw-bold" v-else-if="hasPricedItems">{{ formatPrice(pricedTotalAmount) }}</strong>
                       <strong class="text-danger fs-5 fw-bold" v-else>Liên hệ báo giá</strong>
-                      <div v-if="isMixedCart" class="small text-muted fst-italic">
+                      <div v-if="isMixedCart && selectedItems.length > 0" class="small text-muted fst-italic">
                         (+ {{ contactItemCount }} phụ tùng chờ tư vấn giá)
                       </div>
                     </div>
@@ -172,10 +182,10 @@
                   </div>
 
                   <!-- Submit Button -->
-                  <button type="submit" class="btn btn-jpm w-100 py-3 d-flex justify-content-center align-items-center shadow-sm" :disabled="isSubmitting">
+                  <button type="submit" class="btn btn-jpm w-100 py-3 d-flex justify-content-center align-items-center shadow-sm" :disabled="isSubmitting || selectedItems.length === 0">
                     <span v-if="isSubmitting" class="spinner-border spinner-border-sm me-2"></span>
                     <span v-else class="fw-bold" style="letter-spacing: 0;">{{ buttonText }}</span>
-                    <i class="bi bi-arrow-right ms-2" v-if="!isSubmitting"></i>
+                    <i class="bi bi-arrow-right ms-2" v-if="!isSubmitting && selectedItems.length > 0"></i>
                   </button>
                   
                   <p class="security-text text-center mt-3 mb-0 text-muted" style="font-size: 0.85rem;">
@@ -341,6 +351,7 @@ export default {
       }, 0)
     },
     buttonText() {
+      if (this.selectedItems.length === 0) return 'VUI LÒNG CHỌN SẢN PHẨM'
       if (this.isMixedCart) return 'XÁC NHẬN GỬI YÊU CẦU BÁO GIÁ'
       if (this.hasContactItems) return 'GỬI YÊU CẦU BÁO GIÁ'
       return 'GỬI YÊU CẦU BÁO GIÁ & CƯỚC SHIP'
@@ -376,10 +387,7 @@ export default {
     }
   },
   mounted() {
-    if (this.cartItems.length > 0) {
-      this.selectedItems = this.cartItems.map(item => item.ma_phu_tung)
-    }
-    
+    // Không tự động tick sẵn toàn bộ sản phẩm để người dùng tự chọn món mong muốn
     try {
       const userStr = localStorage.getItem('auth_user')
       const token = localStorage.getItem('auth_token')
@@ -640,12 +648,40 @@ export default {
 }
 
 .custom-checkbox {
+  width: 16px;
+  height: 16px;
   border-color: #cbd5e1;
   border-radius: 4px;
+  cursor: pointer;
+  margin: 0 auto;
+  vertical-align: middle;
+  transition: all 0.15s ease-in-out;
 }
 .custom-checkbox:checked {
   background-color: #f82249;
   border-color: #f82249;
+}
+.custom-checkbox:focus {
+  border-color: #f82249;
+  box-shadow: 0 0 0 0.15rem rgba(248, 34, 73, 0.2);
+}
+
+.badge-san-pham {
+  background-color: #eff6ff;
+  color: #1d4ed8;
+  border: 1px solid #bfdbfe;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 8px;
+}
+
+.badge-phu-tung {
+  background-color: #fff1f2;
+  color: #e11d48;
+  border: 1px solid #fecdd3;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 8px;
 }
 
 .qty-selector {
