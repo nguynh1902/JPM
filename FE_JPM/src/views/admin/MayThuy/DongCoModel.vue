@@ -18,7 +18,7 @@
           <div class="flex-grow-1" style="min-width: 160px;">
             <input type="text" class="form-control" placeholder="Tìm tên, mã..." v-model="filters.search">
           </div>
-          <div style="width: 150px;">
+          <div style="width: 170px;">
             <v-select
               v-model="filters.thuong_hieu_id"
               :options="[{value: null, label: 'Tất cả'}, ...brandOptions]"
@@ -27,7 +27,7 @@
               :can-clear="false"
             />
           </div>
-          <div style="width: 150px;">
+          <div style="width: 175px;">
             <v-select
               v-model="filters.loai_dong_co_id"
               :options="[{value: null, label: 'Tất cả'}, ...typeOptions]"
@@ -36,7 +36,7 @@
               :can-clear="false"
             />
           </div>
-          <div style="width: 105px;">
+          <div style="width: 110px;">
             <v-select
               v-model="filters.year"
               :options="[{value: null, label: 'Tất cả'}, ...yearOptions]"
@@ -45,7 +45,7 @@
               :can-clear="false"
             />
           </div>
-          <div style="width: 115px;">
+          <div style="width: 125px;">
             <v-select
               v-model="filters.ma_luc"
               :options="[{value: null, label: 'Tất cả'}, ...horsepowerOptions]"

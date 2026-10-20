@@ -3232,74 +3232,74 @@ input[type="number"] {
    - Unifies Blue (Primary) to #2563EB
    ========================================= */
 
-/* Unify Danger / Red Buttons */
-.btn-danger, .btn-jpm, .btn-getstarted {
+/* Unify Danger / Red Buttons (Scoped to Client UI .index-page) */
+.index-page .btn-danger, .index-page .btn-jpm, .index-page .btn-getstarted {
   background-color: #f82249 !important;
   border-color: #f82249 !important;
   color: #fff !important;
   box-shadow: none !important;
 }
-.btn-danger:hover, .btn-danger:focus, .btn-danger:active, 
-.btn-jpm:hover, .btn-jpm:focus, .btn-jpm:active,
-.btn-getstarted:hover, .btn-getstarted:focus, .btn-getstarted:active {
+.index-page .btn-danger:hover, .index-page .btn-danger:focus, .index-page .btn-danger:active, 
+.index-page .btn-jpm:hover, .index-page .btn-jpm:focus, .index-page .btn-jpm:active,
+.index-page .btn-getstarted:hover, .index-page .btn-getstarted:focus, .index-page .btn-getstarted:active {
   background-color: #e01a3f !important;
   border-color: #e01a3f !important;
   color: #fff !important;
   box-shadow: none !important;
   transform: none !important;
 }
-.btn-outline-danger, .btn-outline-jpm {
+.index-page .btn-outline-danger, .index-page .btn-outline-jpm {
   color: #f82249 !important;
   border-color: #f82249 !important;
   background-color: transparent !important;
   box-shadow: none !important;
   transition: background-color 0.2s ease, color 0.2s ease !important;
 }
-.btn-outline-danger:hover, .btn-outline-danger:active,
-.btn-outline-jpm:hover, .btn-outline-jpm:active {
+.index-page .btn-outline-danger:hover, .index-page .btn-outline-danger:active,
+.index-page .btn-outline-jpm:hover, .index-page .btn-outline-jpm:active {
   background-color: #f82249 !important;
   border-color: #f82249 !important;
   color: #fff !important;
   box-shadow: none !important;
 }
-.btn-outline-danger:focus, .btn-outline-jpm:focus {
+.index-page .btn-outline-danger:focus, .index-page .btn-outline-jpm:focus {
   background-color: transparent !important;
   border-color: #f82249 !important;
   color: #f82249 !important;
   box-shadow: none !important;
   outline: none !important;
 }
-.text-danger { color: #f82249 !important; }
-.bg-danger { background-color: #f82249 !important; }
+.index-page .text-danger { color: #f82249 !important; }
+.index-page .bg-danger { background-color: #f82249 !important; }
 
-/* Unify Primary / Blue Buttons */
-.btn-primary {
+/* Unify Primary / Blue Buttons (Scoped to Client UI .index-page) */
+.index-page .btn-primary {
   background-color: #2563eb !important;
   border-color: #2563eb !important;
   color: #fff !important;
   box-shadow: none !important;
 }
-.btn-primary:hover, .btn-primary:focus, .btn-primary:active {
+.index-page .btn-primary:hover, .index-page .btn-primary:focus, .index-page .btn-primary:active {
   background-color: #1d4ed8 !important;
   border-color: #1d4ed8 !important;
   color: #fff !important;
   box-shadow: none !important;
   transform: none !important;
 }
-.btn-outline-primary {
+.index-page .btn-outline-primary {
   color: #2563eb !important;
   border-color: #2563eb !important;
   background-color: transparent !important;
   box-shadow: none !important;
   transition: background-color 0.2s ease, color 0.2s ease !important;
 }
-.btn-outline-primary:hover, .btn-outline-primary:active {
+.index-page .btn-outline-primary:hover, .index-page .btn-outline-primary:active {
   background-color: #2563eb !important;
   border-color: #2563eb !important;
   color: #fff !important;
   box-shadow: none !important;
 }
-.btn-outline-primary:focus {
+.index-page .btn-outline-primary:focus {
   background-color: transparent !important;
   border-color: #2563eb !important;
   color: #2563eb !important;
@@ -3308,7 +3308,7 @@ input[type="number"] {
 }
 
 /* Remove default Bootstrap focus ring globally for all buttons in Client UI for a cleaner flat look */
-.btn:focus, .btn:active:focus {
+.index-page .btn:focus, .index-page .btn:active:focus {
   box-shadow: none !important;
   outline: none !important;
 }
