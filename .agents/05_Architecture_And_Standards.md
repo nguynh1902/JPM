@@ -13,15 +13,41 @@ Mọi Lập trình viên và AI tham gia vào dự án JPM bắt buộc phải t
 *   **Database:** MySQL (MariaDB). Tối ưu hóa Indexing (đặc biệt là Composite Indexes) cho các cột thường xuyên query như `SKU`, `ma_phu_tung`, `thuong_hieu_id`.
 
 ## 2. QUY CHUẨN GIAO DIỆN (UI/UX STRICT RULES)
-*   **Tái sử dụng Template:** Không thiết kế UI mới.
-    *   Client (Khách hàng): Sử dụng **TheEvent**.
-    *   Back-office (Admin/Staff): Sử dụng **Sneat**.
-*   **Grid System & Bootstrap 5:** Bắt buộc dùng hệ thống lưới của Bootstrap (`col-md-6`, `col-12`) cho mọi layout. Đảm bảo Responsive 100%. Không tự viết CSS tùy chỉnh (`<style scoped>`) cho Layout trừ khi bất khả kháng.
-*   **Form & Table Layout (Đặc biệt cho Sneat Admin):**
-    *   Form phải gộp các input liên quan trên cùng 1 hàng. Trường Trạng Thái dùng `col-md-5`.
-    *   Bảng (Table) phải được bọc bởi `<div class="table-responsive">`.
-    *   Thẻ trạng thái (Badges) phải dùng màu pastel (`.bg-pastel-success`, `.bg-pastel-danger`), chữ in hoa (Uppercase).
-    *   Cột hành động (Action) và STT (ID) bắt buộc căn giữa (`text-center`).
+
+### 2.1. Triết lý thống nhất toàn hệ thống (Universal Design System Philosophy)
+*   **Ngôn ngữ Markup duy nhất:** Toàn bộ tác nhân (Admin, Staff, Client) đều thống nhất lập trình bằng **cú pháp Bootstrap 5 tối giản, sạch sẽ, chuẩn semantic HTML** (`container`, `row`, `col-*`, `card`, `table`, `form-control`, `btn`...). Tuyệt đối không nạp thêm thư viện UI khác (AntD, Vuetify, Element Plus...).
+*   **Template đóng vai trò Thư viện Thiết kế Tập trung (Template as a Design System Library):**
+    *   Thư mục tài nguyên trong `assets/` (Sneat cho Admin/Staff, TheEvent cho Client) được coi như một thư viện UI chuẩn mực chứa đầy đủ card, button, bảng biểu, badge, màu sắc...
+    *   Giao diện các trang hiển thị đẹp đẽ bằng cách **ăn CSS từ thư viện template trong `assets/`**, tuyệt đối không viết CSS thủ công đè lên từng trang.
+*   **Quy tắc Mở rộng Thư viện (Extending the Library Rule - BẮT BUỘC):**
+    *   Khi giao diện thiếu bất kỳ kiểu dáng, màu sắc button, kiểu badge hay biến thể card nào: **Tuyệt đối KHÔNG viết CSS thuần trong file `.vue` (`<style scoped>`)**.
+    *   Lập trình viên / AI **BẮT BUỘC vào trực tiếp file CSS của template trong thư mục `assets/` để code thêm class chuẩn**:
+        *   **Admin & Staff:** Bổ sung vào `FE_JPM/src/assets/admin/template/css/demo.css` (VD: thêm class `.btn-cyan`, `.bg-label-indigo`...).
+        *   **Client:** Bổ sung vào `FE_JPM/src/assets/client/css/main.css` (VD: thêm class `.btn-marine-dark`, `.badge-marine`...).
+    *   Sau khi thêm vào template CSS, component bên ngoài chỉ việc gọi class (`class="btn btn-cyan"`). Việc này giúp mọi trang khác trong dự án đều tái sử dụng được ngay, đảm bảo tính đồng bộ 100%.
+*   **Quy định nghiêm ngặt về Inline Style (`style="..."`):**
+    *   Inline `style=""` **DUY NHẤT** được chấp nhận cho **kích thước vật lý hoặc thông số động** (Physical / Dynamic Dimensions):
+        *   Chiều rộng cột bảng cố định (VD: `style="width: 5%;"`).
+        *   Chiều cao khung hình / video / sơ đồ (VD: `style="height: 450px;"`).
+        *   Tọa độ hotspot động trên sơ đồ rã máy (VD: `style="top: 35%; left: 62%;"`).
+    *   **TUYỆT ĐỐI CẤM** dùng inline `style=""` cho màu sắc (`color`, `background`), bo góc (`border-radius`), đổ bóng (`box-shadow`), căn lề hay font chữ... Tất cả phải dùng class Bootstrap hoặc class trong template assets.
+
+### 2.2. Giao diện Back-office (Admin & Staff) - Sneat 1.0.0
+> Xem tài liệu đặc tả chi tiết tại: [09_Admin_Staff_UI_Standard.md](09_Admin_Staff_UI_Standard.md)
+*   **Tài nguyên:** Nạp độc quyền từ `FE_JPM/src/assets/admin/template/` (`core.css`, `theme-default.css`, `boxicons.css`, `demo.css`).
+*   **Hệ thống Badges:** Dùng class chuẩn Sneat `.badge.rounded-pill.bg-label-*` (success, danger, warning, info, primary, secondary). Tuyệt đối cấm `.bg-pastel-*` hoặc `.badge-custom`.
+*   **Hệ thống Buttons:** Dùng `.btn.btn-sm.btn-icon.btn-outline-*` và `.btn.btn-label-secondary`. Tuyệt đối cấm `.action-btn`.
+*   **Ô tìm kiếm:** Dùng `.input-group.input-group-merge` kết hợp Boxicons (`bx bx-*`).
+*   **Hai cấu trúc chuẩn:** Bắt buộc áp dụng **Pattern A** (Full-width Card Table + Modal) hoặc **Pattern B** (Chia đôi 4/8 Form + Table).
+
+### 2.3. Giao diện Front-office (Client) - TheEvent 1.0.0
+> Xem tài liệu đặc tả chi tiết tại: [10_Client_UI_Standard.md](10_Client_UI_Standard.md)
+*   **Tài nguyên:** Nạp độc quyền từ `FE_JPM/src/assets/client/` (`bootstrap.min.css`, `bootstrap-icons.css`, `main.css`, `glightbox`, `swiper`).
+*   **Phong cách & Màu sắc:** 
+    *   Tông màu chủ đạo: Deep Navy Blue (`#0A1128`) cho uy tín kỹ thuật + Bright Marine Red (`#f82249`) làm điểm nhấn hành động (Mua hàng, Giỏ hàng, Giá tiền, Badge OEM).
+    *   Font chữ: `Raleway` (Tiêu đề, Navigation, Buttons) & `Roboto` (Nội dung văn bản).
+    *   Icons: Bootstrap Icons (`bi bi-*`).
+*   **Cấu trúc Component:** Khung section chuẩn TheEvent (`section.section` -> `div.section-title`), thẻ sản phẩm Card nền trắng bo góc nhẹ (`shadow-sm`), ô tìm kiếm Catalog dùng `input-group`, bảng giỏ hàng thoáng đãng, checkbox nhỏ gọn chuẩn Bootstrap.
 
 ## 3. CÔNG NGHỆ TỐI ƯU HIỆU NĂNG (MANDATORY PERFORMANCE STACK)
 Để giải quyết bài toán tra cứu dữ liệu siêu lớn và tránh N+1 Query, dự án BẮT BUỘC áp dụng:

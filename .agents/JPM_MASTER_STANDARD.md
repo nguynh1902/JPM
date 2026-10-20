@@ -68,6 +68,27 @@ PHẢI đứng từ vị thế của CHUYÊN GIA KỸ THUẬT & THỰC TIỄN KI
    - Cấu trúc URL Admin chuẩn tinh gọn: `/admin/[thuc-the-chinh]` (e.g. `/admin/khach-hang`, `/admin/don-hang`, `/admin/san-pham`, `/admin/ton-kho`).
    - Mọi URL khi thay đổi BẮT BUỘC phải giữ lại redirect backward-compatible để không bao giờ bị lỗi 404.
 
+5. CHUẨN GIAO DIỆN TOÀN HỆ THỐNG - ADMIN, STAFF & CLIENT (BOOTSTRAP 5 & TEMPLATE AS A LIBRARY):
+   - **Triết lý thống nhất:** Mọi tác nhân (Admin, Staff, Client) đều viết markup bằng **100% Bootstrap 5 chuẩn**, gọn gàng, ngữ nghĩa cao, tối giản.
+   - **Template đóng vai trò Thư viện Thiết kế Tập trung (Design System Library):**
+     - Admin & Staff nạp độc quyền từ `FE_JPM/src/assets/admin/template/` (Sneat 1.0.0, Boxicons).
+     - Client nạp độc quyền từ `FE_JPM/src/assets/client/` (TheEvent 1.0.0, Navy `#0A1128`, Red `#f82249`, Bootstrap Icons).
+   - **Quy tắc Mở rộng Thư viện (Extending the Library Rule):**
+     - Khi giao diện thiếu bất kỳ kiểu dáng, màu sắc nút, badge hay card nào: **TUYỆT ĐỐI KHÔNG viết CSS tùy tiện trong `<style scoped>` của component**.
+     - **BẮT BUỘC vào trực tiếp file CSS của template trong thư mục `assets/` để code thêm class chuẩn**:
+       + Admin/Staff: Bổ sung vào `FE_JPM/src/assets/admin/template/css/demo.css` (VD: `.btn-teal`, `.bg-label-indigo`...).
+       + Client: Bổ sung vào `FE_JPM/src/assets/client/css/main.css` (VD: `.btn-marine-navy`, `.badge-marine-oem`...).
+     - Bên ngoài component chỉ việc gọi class ra dùng. Mọi trang khác đều tái sử dụng được 100%.
+   - **Quy định nghiêm ngặt về Inline Style (`style="..."`):**
+     - Inline `style=""` **DUY NHẤT** được chấp nhận cho kích thước vật lý hoặc thông số động (`width`, `height`, tọa độ sơ đồ rã máy...).
+     - Tuyệt đối cấm dùng inline `style=""` để can thiệp màu sắc, viền bo góc, bóng mờ hay căn lề.
+   - **Chuẩn chi tiết theo từng phân hệ:**
+     - Admin/Staff: Tuân thủ [09_Admin_Staff_UI_Standard.md](09_Admin_Staff_UI_Standard.md), thống nhất theo Pattern A (Full Table + Modal) hoặc Pattern B (Chia đôi 4/8 Form + Table).
+     - Client: Tuân thủ [10_Client_UI_Standard.md](10_Client_UI_Standard.md), khung section chuẩn TheEvent, thẻ card bo góc nhẹ, bảng giỏ hàng thoáng đãng.
+
+============================================================
+
+
 ============================================================
 1. PROJECT CONTEXT
 ============================================================

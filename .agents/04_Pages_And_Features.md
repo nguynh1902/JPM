@@ -7,7 +7,7 @@ Hệ thống giao diện được phân tách rõ rệt: **Front-office (Client)
 ---
 
 ## 1. PHÂN HỆ KHÁCH HÀNG (CLIENT)
-*(Sử dụng Template TheEvent, tối giản, chuyên nghiệp, phản hồi cực nhanh)*
+*(Tuân thủ chuẩn [10_Client_UI_Standard.md](10_Client_UI_Standard.md): Markup 100% Bootstrap 5, Theme TheEvent 1.0.0, Zero Local CSS Hacks)*
 
 ### 1.1. Trang Catalog & Sơ Đồ Lắp Ráp (`SoDoPhuTung.vue`) - [CORE]
 Đây là trang đắt giá nhất của hệ thống, thay thế hoàn toàn cấu trúc trang Chi tiết Sản phẩm của TMĐT thông thường.
@@ -32,7 +32,7 @@ Hệ thống giao diện được phân tách rõ rệt: **Front-office (Client)
 ---
 
 ## 2. PHÂN HỆ QUẢN TRỊ (ADMIN & STAFF)
-*(Sử dụng Template Sneat, UI dạng Dashboard, Form nhập liệu nhiều tính năng)*
+*(Tuân thủ chuẩn [09_Admin_Staff_UI_Standard.md](09_Admin_Staff_UI_Standard.md): Markup 100% Bootstrap 5, Theme Sneat 1.0.0, Zero Local CSS Hacks)*
 
 ### 2.1. Tool Nhập Liệu Data (PIM Workspace) - [CORE]
 Giao diện giúp Admin tạo ra "Tài sản Dữ liệu".
