@@ -15,10 +15,10 @@
       <!-- Bộ lọc (Filters) -->
       <div class="card-body pt-3 pb-3">
         <div class="d-flex align-items-center gap-2 flex-wrap justify-content-end">
-          <div class="flex-grow-1" style="min-width: 250px;">
+          <div class="flex-grow-1" style="min-width: 160px;">
             <input type="text" class="form-control" placeholder="Tìm tên, mã..." v-model="filters.search">
           </div>
-          <div style="width: 200px;">
+          <div style="width: 150px;">
             <v-select
               v-model="filters.thuong_hieu_id"
               :options="[{value: null, label: 'Tất cả'}, ...brandOptions]"
@@ -27,7 +27,7 @@
               :can-clear="false"
             />
           </div>
-          <div style="width: 200px;">
+          <div style="width: 150px;">
             <v-select
               v-model="filters.loai_dong_co_id"
               :options="[{value: null, label: 'Tất cả'}, ...typeOptions]"
@@ -36,7 +36,7 @@
               :can-clear="false"
             />
           </div>
-          <div style="width: 200px;">
+          <div style="width: 105px;">
             <v-select
               v-model="filters.year"
               :options="[{value: null, label: 'Tất cả'}, ...yearOptions]"
@@ -45,7 +45,7 @@
               :can-clear="false"
             />
           </div>
-          <div style="width: 200px;">
+          <div style="width: 115px;">
             <v-select
               v-model="filters.ma_luc"
               :options="[{value: null, label: 'Tất cả'}, ...horsepowerOptions]"
