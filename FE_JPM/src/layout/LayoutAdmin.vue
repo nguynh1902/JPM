@@ -2,7 +2,7 @@
   <div id="admin-layout" class="layout-wrapper layout-content-navbar">
     
     <!-- Preloader to prevent FOUC -->
-    <div v-if="isLoading" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: #f4f5fb; z-index: 99999; display: flex; justify-content: center; align-items: center;">
+    <div v-if="isLoading" class="position-fixed top-0 start-0 w-100 vh-100 d-flex justify-content-center align-items-center bg-light" style="z-index: 99999;">
       <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
         <span class="visually-hidden">Loading...</span>
       </div>
@@ -146,44 +146,4 @@ export default {
   },
 };
 </script>
-
-
-<style>
-/* Override Sneat defaults for Admin panel */
-.layout-wrapper th,
-.layout-wrapper .form-label {
-    /* Keep Sneat's original uppercase, 0.75rem, letter-spacing */
-    text-transform: uppercase !important;
-    font-size: 0.75rem !important;
-    letter-spacing: 1px !important;
-    
-    /* Just make them bold and black */
-    color: #435971 !important;
-    font-weight: 700 !important;
-}
-
-/* Also ensure Card titles are bold */
-.layout-wrapper .card-header h5,
-.layout-wrapper .modal-title {
-    font-weight: 700 !important;
-    color: #435971 !important;
-}
-
-/* Thẻ tiêu đề nhóm Sidebar đậm rõ, tương phản cao, dễ nhìn */
-.layout-wrapper .bg-menu-theme .menu-header .menu-header-text {
-    color: #384d66 !important;
-    font-weight: 700 !important;
-    font-size: 0.78rem !important;
-    letter-spacing: 0.8px !important;
-}
-
-.layout-wrapper .bg-menu-theme .menu-header:before {
-    background-color: #17a2b8 !important;
-    height: 2.5px !important;
-    width: 1.25rem !important;
-    border-radius: 2px !important;
-}
-</style>
-
-
 
