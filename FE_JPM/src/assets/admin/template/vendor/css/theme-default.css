@@ -949,3 +949,15 @@ input[type="file"].form-control::file-selector-button { padding: 0.4375rem 0.875
   text-overflow: ellipsis !important;
   padding-right: 2rem !important;
 }
+
+/* Multiselect Dropdown Auto-width to fit content */
+.multiselect-dropdown {
+  right: auto !important;
+  left: -1px !important;
+  min-width: calc(100% + 2px) !important;
+  width: max-content !important;
+  max-width: min(480px, 85vw) !important;
+}
+.multiselect-option {
+  white-space: nowrap !important;
+}
