@@ -904,11 +904,26 @@ html:not(.layout-menu-collapsed) .bg-menu-theme .menu-inner .menu-item .menu-lin
 /* CSS Fix Leak Client to Admin */
 
 
-.form-control, .form-select { height: auto !important; padding: 0.4375rem 0.875rem !important; font-size: 0.9375rem !important; font-weight: 400 !important; line-height: 1.53 !important; border: 1px solid #d9dee3 !important; border-radius: 0.375rem; box-shadow: none !important; color: #697a8d !important; }
-.form-control:focus, .form-select:focus, .multiselect.is-active, .multiselect.is-open, .input-group:focus-within .form-control, .input-group:focus-within .input-group-text, .input-group-merge:focus-within .form-control, .input-group-merge:focus-within .input-group-text { border-width: 2px !important; border-color: #17a2b8 !important; box-shadow: 0 0 0.25rem 0.12rem rgba(23, 162, 184, 0.4) !important; outline: 0 !important; }
-.form-control:focus, .form-select:focus { padding: calc(0.4375rem - 1px) calc(0.875rem - 1px) !important; }
+.form-control, .form-select {
+  height: auto !important;
+  padding: 0.4375rem 0.875rem !important;
+  font-size: 0.9375rem !important;
+  font-weight: 400 !important;
+  line-height: 1.53 !important;
+  border: 1px solid #d9dee3 !important;
+  border-radius: 0.375rem !important;
+  box-shadow: none !important;
+  color: #697a8d !important;
+  background-color: #fff !important;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out !important;
+}
+.form-control:focus, .form-select:focus {
+  border-color: #17a2b8 !important;
+  box-shadow: 0 0 0.25rem 0.05rem rgba(23, 162, 184, 0.18) !important;
+  outline: 0 !important;
+}
 
-/* Multiselect theme overrides - no purple, bold 2px focus border */
+/* Multiselect theme overrides - no purple, subtle focus border */
 
 .multiselect-option.is-selected {
   background-color: #17a2b8 !important;
@@ -923,7 +938,21 @@ html:not(.layout-menu-collapsed) .bg-menu-theme .menu-inner .menu-item .menu-lin
   color: #17a2b8 !important;
 }
 input[type="file"].form-control::file-selector-button { padding: 0.4375rem 0.875rem !important; margin: -0.4375rem -0.875rem !important; margin-inline-end: 0.875rem !important; background-color: #f8f9fa !important; border-right: 1px solid #d9dee3 !important; color: #697a8d !important; }
-.card:hover { transform: none !important; box-shadow: 0 0.125rem 0.25rem rgba(161, 172, 184, 0.4) !important; }
+/* Khôi phục nguyên bản Card Sneat 1.00 (Không viền sắc nét, bo góc mềm mại 0.5rem, bóng dịu nhẹ, không hiệu ứng hover) */
+.card {
+  background-color: #fff !important;
+  background-clip: padding-box !important;
+  border: 0 solid #d9dee3 !important;
+  border-radius: 0.5rem !important;
+  box-shadow: 0 2px 6px 0 rgba(67, 89, 113, 0.12) !important;
+  transition: none !important;
+  transform: none !important;
+}
+.card:hover {
+  transform: none !important;
+  border: 0 solid #d9dee3 !important;
+  box-shadow: 0 2px 6px 0 rgba(67, 89, 113, 0.12) !important;
+}
 .table-hover > tbody > tr:hover, .table > tbody > tr:hover { transform: none !important; box-shadow: none !important; }
 
 /* Input group border-radius normalization (Fix Admin input-group corner bugs) */
@@ -1039,6 +1068,72 @@ input[type="file"].form-control::file-selector-button { padding: 0.4375rem 0.875
   line-height: 1.2 !important;
 }
 
+/* ======================================================================
+   SNEAT INPUT GROUP & INPUT GROUP MERGE (Chuẩn nguyên bản Template Sneat 1.00)
+   ====================================================================== */
+.input-group:focus-within {
+  box-shadow: 0 0 0.25rem 0.05rem rgba(23, 162, 184, 0.18) !important;
+  border-radius: 0.375rem !important;
+}
+.input-group:focus-within .form-control,
+.input-group:focus-within .input-group-text {
+  border-color: #17a2b8 !important;
+  box-shadow: none !important;
+}
 
+/* Merged inputs: Icon và Text liền mạch thành một khối duy nhất, tuyệt đối không có vạch ngăn */
+.input-group-merge {
+  border-radius: 0.375rem !important;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out !important;
+}
+.input-group-merge:focus-within {
+  box-shadow: 0 0 0.25rem 0.05rem rgba(23, 162, 184, 0.18) !important;
+  border-radius: 0.375rem !important;
+}
+.input-group-merge .input-group-text {
+  background-color: #fff !important;
+  color: #697a8d !important;
+  border: 1px solid #d9dee3 !important;
+  border-radius: 0.375rem;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out !important;
+}
+.input-group-merge .form-control {
+  border: 1px solid #d9dee3 !important;
+  border-radius: 0.375rem;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out !important;
+}
+.input-group-merge:focus-within .input-group-text,
+.input-group-merge:focus-within .form-control {
+  border-color: #17a2b8 !important;
+  box-shadow: none !important;
+}
 
+/* Khử hoàn toàn đường viền và bo góc ở giữa cho Icon đầu / Text sau */
+.input-group-merge .input-group-text:first-child,
+.input-group-merge:focus-within .input-group-text:first-child {
+  border-right: 0 !important;
+  border-top-right-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+}
+.input-group-merge .form-control:not(:first-child),
+.input-group-merge:focus-within .form-control:not(:first-child) {
+  border-left: 0 !important;
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+  padding-left: 0 !important;
+}
 
+/* Khử viền ở giữa cho Text đầu / Icon cuối (ví dụ nút xem mật khẩu) */
+.input-group-merge .form-control:not(:last-child),
+.input-group-merge:focus-within .form-control:not(:last-child) {
+  border-right: 0 !important;
+  border-top-right-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+  padding-right: 0 !important;
+}
+.input-group-merge .input-group-text:last-child,
+.input-group-merge:focus-within .input-group-text:last-child {
+  border-left: 0 !important;
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+}

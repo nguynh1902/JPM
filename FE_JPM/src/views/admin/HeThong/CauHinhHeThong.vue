@@ -33,7 +33,7 @@
     </div>
 
     <!-- Loading State -->
-    <div v-if="isFetching" class="card p-5 text-center shadow-sm">
+    <div v-if="isFetching" class="card p-5 text-center mb-4">
       <div class="spinner-border text-primary mx-auto mb-3" role="status">
         <span class="visually-hidden">Đang tải...</span>
       </div>
@@ -45,8 +45,8 @@
       
       <!-- BANNER TRANG CHỦ & VIDEO -->
       <div class="col-12">
-        <div class="card shadow-sm border">
-          <div class="card-header bg-white border-bottom py-3">
+        <div class="card mb-4">
+          <div class="card-header d-flex justify-content-between align-items-center">
             <h5 class="card-title mb-1 fw-bold text-dark">Banner Trang Chủ & Video</h5>
             <small class="text-muted">Cài đặt video nền YouTube và slogan tại trang chủ Client</small>
           </div>
@@ -150,8 +150,8 @@
 
       <!-- THÔNG TIN DOANH NGHIỆP & LIÊN HỆ -->
       <div class="col-12">
-        <div class="card shadow-sm border">
-          <div class="card-header bg-white border-bottom py-3">
+        <div class="card mb-4">
+          <div class="card-header d-flex justify-content-between align-items-center">
             <h5 class="card-title mb-1 fw-bold text-dark">Thông Tin Doanh Nghiệp & Liên Hệ</h5>
             <small class="text-muted">Thông tin công ty, hotline, email và giờ mở cửa trên toàn website Client</small>
           </div>
@@ -244,8 +244,8 @@
 
       <!-- MẠNG XÃ HỘI -->
       <div class="col-12">
-        <div class="card shadow-sm border">
-          <div class="card-header bg-white border-bottom py-3">
+        <div class="card mb-4">
+          <div class="card-header d-flex justify-content-between align-items-center">
             <h5 class="card-title mb-1 fw-bold text-dark">Mạng Xã Hội</h5>
             <small class="text-muted">Liên kết các kênh mạng xã hội chính thức của doanh nghiệp</small>
           </div>
@@ -318,8 +318,8 @@
 
       <!-- HIỆU NĂNG & REDIS CACHE -->
       <div class="col-12">
-        <div class="card shadow-sm border">
-          <div class="card-header bg-white border-bottom py-3 d-flex justify-content-between align-items-center">
+        <div class="card mb-4">
+          <div class="card-header d-flex justify-content-between align-items-center">
             <div>
               <h5 class="card-title mb-1 fw-bold text-dark">Hiệu Năng & Bộ Nhớ Đệm (Redis / Failover Cache)</h5>
               <small class="text-muted">Tăng tốc truy vấn danh mục Máy thủy, Model, Sơ đồ phụ tùng và chịu tải cao khi triển khai Production</small>
@@ -534,28 +534,3 @@ export default {
   }
 };
 </script>
-
-<style scoped>
-.card-header {
-  border-bottom: 1px solid rgba(67, 89, 113, 0.1) !important;
-}
-
-/* Chuẩn hóa Sneat Input Group Merge: Loại bỏ triệt để bo tròn tại cạnh tiếp xúc */
-.input-group-merge .input-group-text {
-  background-color: transparent !important;
-  border-right: 0 !important;
-  border-top-right-radius: 0 !important;
-  border-bottom-right-radius: 0 !important;
-}
-
-.input-group-merge .form-control {
-  border-left: 0 !important;
-  border-top-left-radius: 0 !important;
-  border-bottom-left-radius: 0 !important;
-}
-
-.input-group-merge:focus-within .input-group-text,
-.input-group-merge:focus-within .form-control {
-  border-color: #17a2b8 !important;
-}
-</style>
