@@ -151,11 +151,16 @@
                 >
               </div>
               <div style="width: 200px;" class="flex-shrink-0" v-if="currentTab === 'all' || currentTab === 'processing' || currentTab === 'cancelled'">
-                <select class="form-select" v-model="typeFilter">
-                  <option value="all">Tất cả phân loại</option>
-                  <option value="quote">Chỉ Báo Giá</option>
-                  <option value="order">Chỉ Đơn Hàng</option>
-                </select>
+                <v-select
+                  v-model="typeFilter"
+                  :options="[
+                    { value: 'all', label: 'Tất cả phân loại' },
+                    { value: 'quote', label: 'Chỉ Báo Giá' },
+                    { value: 'order', label: 'Chỉ Đơn Hàng' }
+                  ]"
+                  placeholder="Phân loại"
+                  :can-clear="false"
+                />
               </div>
               <button class="btn btn-secondary text-nowrap flex-shrink-0" @click="searchQuery = ''; typeFilter = 'all'">
                 Đặt lại
@@ -308,12 +313,17 @@
                 <input type="text" class="form-control" placeholder="Tìm theo Mã tham chiếu (DH/YCBG), Mã GD, Nội dung..." v-model="txSearch">
               </div>
               <div style="width: 200px;" class="flex-shrink-0">
-                <select class="form-select" v-model="txStatus">
-                  <option value="all">Tất cả trạng thái</option>
-                  <option value="thanh_cong">Thành công</option>
-                  <option value="mo_phong">Mô phỏng (Sandbox)</option>
-                  <option value="that_bai">Thất bại</option>
-                </select>
+                <v-select
+                  v-model="txStatus"
+                  :options="[
+                    { value: 'all', label: 'Tất cả trạng thái' },
+                    { value: 'thanh_cong', label: 'Thành công' },
+                    { value: 'mo_phong', label: 'Mô phỏng (Sandbox)' },
+                    { value: 'that_bai', label: 'Thất bại' }
+                  ]"
+                  placeholder="Trạng thái"
+                  :can-clear="false"
+                />
               </div>
               <button type="button" class="btn btn-secondary text-nowrap flex-shrink-0" @click="loadTransactions" :disabled="isFetchingTransactions">
                 <i class="bx bx-refresh me-1" :class="{ 'bx-spin': isFetchingTransactions }"></i> Làm mới

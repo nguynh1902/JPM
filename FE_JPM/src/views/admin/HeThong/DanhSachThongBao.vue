@@ -51,19 +51,29 @@
                   <input type="text" class="form-control" placeholder="Tìm kiếm nội dung thông báo..." v-model="filters.search">
                 </div>
                 <div style="width: 200px;">
-                  <select class="form-select" v-model="filters.status">
-                    <option value="all">Tất cả trạng thái</option>
-                    <option value="unread">Chưa đọc</option>
-                    <option value="read">Đã đọc</option>
-                  </select>
+                  <v-select
+                    v-model="filters.status"
+                    :options="[
+                      { value: 'all', label: 'Tất cả trạng thái' },
+                      { value: 'unread', label: 'Chưa đọc' },
+                      { value: 'read', label: 'Đã đọc' }
+                    ]"
+                    placeholder="Trạng thái"
+                    :can-clear="false"
+                  />
                 </div>
                 <div style="width: 200px;">
-                  <select class="form-select" v-model="filters.type">
-                    <option value="all">Tất cả phân loại</option>
-                    <option value="b2b">Yêu cầu B2B</option>
-                    <option value="system">Hệ thống</option>
-                    <option value="warehouse">Kho bãi</option>
-                  </select>
+                  <v-select
+                    v-model="filters.type"
+                    :options="[
+                      { value: 'all', label: 'Tất cả phân loại' },
+                      { value: 'b2b', label: 'Yêu cầu B2B' },
+                      { value: 'system', label: 'Hệ thống' },
+                      { value: 'warehouse', label: 'Kho bãi' }
+                    ]"
+                    placeholder="Phân loại"
+                    :can-clear="false"
+                  />
                 </div>
                 <div class="ms-auto d-flex gap-2">
                   <button class="btn btn-secondary text-nowrap" @click="resetFilters">
@@ -165,11 +175,16 @@
                   <input type="text" class="form-control" placeholder="Tìm theo Số điện thoại, Tên người nhận, Mã tham chiếu..." v-model="telecomSearch">
                 </div>
                 <div style="width: 220px;">
-                  <select class="form-select" v-model="telecomType">
-                    <option value="all">Tất cả kênh gửi</option>
-                    <option value="zalo_zns">Zalo ZNS</option>
-                    <option value="sms_brandname">SMS Brandname</option>
-                  </select>
+                  <v-select
+                    v-model="telecomType"
+                    :options="[
+                      { value: 'all', label: 'Tất cả kênh gửi' },
+                      { value: 'zalo_zns', label: 'Zalo ZNS' },
+                      { value: 'sms_brandname', label: 'SMS Brandname' }
+                    ]"
+                    placeholder="Kênh gửi"
+                    :can-clear="false"
+                  />
                 </div>
               </div>
             </div>

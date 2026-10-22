@@ -8,11 +8,7 @@
       <!-- Card Header chuẩn DonHang.vue -->
       <div class="card-header border-bottom d-flex justify-content-between align-items-center flex-wrap gap-2">
         <div>
-          <h5 class="mb-0 fw-bold text-dark d-flex align-items-center gap-2">
-            <i class="bx bx-history text-primary fs-4"></i>
-            <span>Nhật Ký Hệ Thống (Audit Log)</span>
-          </h5>
-          <small class="text-muted">Theo dõi toàn bộ lịch sử thao tác của nhân sự trên hệ thống</small>
+          <h5 class="mb-0 fw-bold text-dark">Nhật Ký Hệ Thống (Audit Log)</h5>
         </div>
         <div class="d-flex align-items-center gap-2 flex-wrap">
           <button 
@@ -31,21 +27,15 @@
       <!-- Bộ lọc (Filters) chuẩn DonHang.vue -->
       <div class="card-body pt-3 pb-3">
         <div class="d-flex align-items-center gap-2 flex-wrap">
-          <!-- Ô tìm kiếm nội dung / IP chuẩn DonHang.vue -->
+          <!-- Ô tìm kiếm chuẩn hệ thống -->
           <div class="flex-grow-1" style="min-width: 240px;">
-            <div class="input-group">
-              <span class="input-group-text bg-white border-end-0"><i class="bx bx-search text-muted"></i></span>
-              <input 
-                type="text" 
-                class="form-control border-start-0 ps-0" 
-                placeholder="Tìm kiếm nội dung mô tả, địa chỉ IP, tên nhân viên..." 
-                v-model="filters.search"
-                @keyup.enter="applyFilters"
-              >
-              <button v-if="filters.search" class="btn btn-outline-secondary" type="button" @click="filters.search = ''; applyFilters()">
-                <i class="bx bx-x"></i>
-              </button>
-            </div>
+            <input 
+              type="text" 
+              class="form-control" 
+              placeholder="Tìm kiếm nội dung mô tả, địa chỉ IP, tên nhân viên..." 
+              v-model="filters.search"
+              @keyup.enter="applyFilters"
+            >
           </div>
 
           <!-- Chọn Nhân Viên -->
@@ -59,18 +49,18 @@
             />
           </div>
 
-          <!-- Loại Hành Động -->
+          <!-- Loại Thao Tác -->
           <div style="width: 175px;" class="flex-shrink-0">
             <v-select
               v-model="filters.action_type"
               :options="[
-                {value: '', label: 'Tất cả hành động'},
+                {value: '', label: 'Tất cả thao tác'},
                 {value: 'LOGIN', label: 'Đăng nhập'},
                 {value: 'CREATE', label: 'Thêm mới'},
                 {value: 'UPDATE', label: 'Cập nhật'},
                 {value: 'DELETE', label: 'Xóa'}
               ]"
-              placeholder="Loại Hành Động"
+              placeholder="Loại Thao Tác"
               :can-clear="false"
             />
           </div>
@@ -84,7 +74,7 @@
               title="Từ ngày"
               style="width: 135px;"
             >
-            <span class="text-muted fw-medium text-nowrap">đến</span>
+            <span class="text-muted fw-medium text-nowrap">-</span>
             <input 
               type="date" 
               class="form-control text-muted px-2" 
@@ -112,7 +102,7 @@
               <th class="text-center text-uppercase" style="width: 5%">STT</th>
               <th class="text-uppercase" style="width: 14%">Thời Gian</th>
               <th class="text-uppercase" style="width: 22%">Nhân Viên</th>
-              <th class="text-center text-uppercase" style="width: 13%">Hành Động</th>
+              <th class="text-center text-uppercase" style="width: 13%">Thao Tác</th>
               <th class="text-uppercase" style="width: 33%">Mô Tả Chi Tiết</th>
               <th class="text-uppercase" style="width: 13%">Địa Chỉ IP</th>
             </tr>
@@ -136,10 +126,10 @@
               <td>
                 <div v-if="item.created_at">
                   <span class="d-block text-dark fw-medium mb-1" style="font-size: 0.85rem;">
-                    <i class="bx bx-calendar-alt text-primary me-1"></i>{{ item.created_at.split(' ')[0] }}
+                    {{ item.created_at.split(' ')[0] }}
                   </span>
                   <span class="text-muted" style="font-size: 0.75rem;">
-                    <i class="bx bx-time-five me-1"></i>{{ item.created_at.split(' ')[1] }}
+                    {{ item.created_at.split(' ')[1] }}
                   </span>
                 </div>
               </td>
@@ -158,14 +148,14 @@
                     </span>
                   </div>
                   <div>
-                    <span class="fw-bold text-dark d-block mb-0" style="font-size: 0.9rem;">{{ item.user_name }}</span>
+                    <span class="fw-bold text-primary d-block mb-0" style="font-size: 0.9rem;">{{ item.user_name }}</span>
                     <span class="text-muted text-capitalize" style="font-size: 0.78rem;">{{ item.role }}</span>
                   </div>
                 </div>
               </td>
               <td class="text-center">
-                <span class="badge badge-custom" :class="getActionBadgeClass(item.action)">
-                  <i :class="getActionIcon(item.action)" class="me-1"></i>{{ getActionLabel(item.action) }}
+                <span class="badge" :class="getActionBadgeClass(item.action)" style="width: 105px; display: inline-block; text-align: center; font-weight: 600; font-size: 0.75rem; letter-spacing: 0.5px; padding: 0.45rem 0.5rem;">
+                  {{ getActionLabel(item.action) }}
                 </span>
               </td>
               <td>
@@ -173,7 +163,7 @@
               </td>
               <td>
                 <span class="text-muted font-monospace" style="font-size: 0.85rem;">
-                  <i class="bx bx-globe me-1 text-secondary"></i>{{ item.ip_address }}
+                  {{ item.ip_address || '—' }}
                 </span>
               </td>
             </tr>
@@ -191,11 +181,9 @@
         </table>
       </div>
 
-      <!-- Footer chuẩn DonHang.vue -->
-      <div class="card-footer py-3 border-top d-flex justify-content-between align-items-center bg-white">
-        <span class="text-muted fw-medium" style="font-size: 0.85rem;">
-          Hiển thị <strong>{{ logs.length }}</strong> bản ghi nhật ký
-        </span>
+      <!-- Tổng số mục chuẩn hệ thống -->
+      <div class="card-footer py-3 border-top">
+        <span class="text-muted fw-medium">Tổng cộng: {{ logs ? logs.length : 0 }} mục</span>
       </div>
       
     </div>
@@ -289,21 +277,11 @@ onMounted(() => {
 
 const getActionBadgeClass = (action) => {
   switch (action) {
-    case 'LOGIN': return 'bg-pastel-info';
-    case 'CREATE': return 'bg-pastel-success';
-    case 'UPDATE': return 'bg-pastel-warning';
-    case 'DELETE': return 'bg-pastel-danger';
-    default: return 'bg-pastel-secondary';
-  }
-};
-
-const getActionIcon = (action) => {
-  switch (action) {
-    case 'LOGIN': return 'bx bx-log-in-circle';
-    case 'CREATE': return 'bx bx-plus-circle';
-    case 'UPDATE': return 'bx bx-edit-alt';
-    case 'DELETE': return 'bx bx-trash';
-    default: return 'bx bx-info-circle';
+    case 'LOGIN': return 'bg-label-primary';
+    case 'CREATE': return 'bg-label-success';
+    case 'UPDATE': return 'bg-label-warning';
+    case 'DELETE': return 'bg-label-danger';
+    default: return 'bg-label-secondary';
   }
 };
 
@@ -313,7 +291,7 @@ const getActionLabel = (action) => {
     case 'CREATE': return 'THÊM MỚI';
     case 'UPDATE': return 'CẬP NHẬT';
     case 'DELETE': return 'XÓA';
-    default: return 'KHÁC';
+    default: return (action || 'KHÁC').toUpperCase();
   }
 };
 </script>
