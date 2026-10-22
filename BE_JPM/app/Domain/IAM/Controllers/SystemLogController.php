@@ -13,6 +13,17 @@ class SystemLogController extends Controller
     {
         $query = SystemLog::with(['user', 'user.roles']);
 
+        if ($request->filled('search')) {
+            $search = trim($request->search);
+            $query->where(function($q) use ($search) {
+                $q->where('description', 'like', "%{$search}%")
+                  ->orWhere('ip_address', 'like', "%{$search}%")
+                  ->orWhereHas('user', function($uq) use ($search) {
+                      $uq->where('name', 'like', "%{$search}%");
+                  });
+            });
+        }
+
         if ($request->filled('user_id')) {
             $query->where('user_id', $request->user_id);
         }

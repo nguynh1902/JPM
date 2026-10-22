@@ -5,14 +5,51 @@
     </h4>
 
     <div class="card">
-      <div class="card-header border-bottom d-flex justify-content-between align-items-center">
-        <h5 class="mb-0 fw-bold text-dark">Nhật Ký Hệ Thống (Audit Log)</h5>
+      <!-- Card Header chuẩn DonHang.vue -->
+      <div class="card-header border-bottom d-flex justify-content-between align-items-center flex-wrap gap-2">
+        <div>
+          <h5 class="mb-0 fw-bold text-dark d-flex align-items-center gap-2">
+            <i class="bx bx-history text-primary fs-4"></i>
+            <span>Nhật Ký Hệ Thống (Audit Log)</span>
+          </h5>
+          <small class="text-muted">Theo dõi toàn bộ lịch sử thao tác của nhân sự trên hệ thống</small>
+        </div>
+        <div class="d-flex align-items-center gap-2 flex-wrap">
+          <button 
+            type="button" 
+            class="btn btn-outline-primary btn-sm shadow-sm"
+            @click="applyFilters"
+            :disabled="isFetching"
+            title="Làm mới danh sách"
+          >
+            <i class="bx bx-refresh me-1" :class="{ 'bx-spin': isFetching }"></i>
+            Làm mới
+          </button>
+        </div>
       </div>
 
-      <!-- Bộ lọc (Filters) -->
+      <!-- Bộ lọc (Filters) chuẩn DonHang.vue -->
       <div class="card-body pt-3 pb-3">
-        <div class="d-flex align-items-center justify-content-end gap-2 flex-wrap">
-          <div style="width: 220px;">
+        <div class="d-flex align-items-center gap-2 flex-wrap">
+          <!-- Ô tìm kiếm nội dung / IP chuẩn DonHang.vue -->
+          <div class="flex-grow-1" style="min-width: 240px;">
+            <div class="input-group">
+              <span class="input-group-text bg-white border-end-0"><i class="bx bx-search text-muted"></i></span>
+              <input 
+                type="text" 
+                class="form-control border-start-0 ps-0" 
+                placeholder="Tìm kiếm nội dung mô tả, địa chỉ IP, tên nhân viên..." 
+                v-model="filters.search"
+                @keyup.enter="applyFilters"
+              >
+              <button v-if="filters.search" class="btn btn-outline-secondary" type="button" @click="filters.search = ''; applyFilters()">
+                <i class="bx bx-x"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Chọn Nhân Viên -->
+          <div style="width: 185px;" class="flex-shrink-0">
             <v-select
               v-model="filters.user_id"
               :options="employeeOptions"
@@ -21,7 +58,9 @@
               :can-clear="false"
             />
           </div>
-          <div style="width: 220px;">
+
+          <!-- Loại Hành Động -->
+          <div style="width: 175px;" class="flex-shrink-0">
             <v-select
               v-model="filters.action_type"
               :options="[
@@ -35,31 +74,47 @@
               :can-clear="false"
             />
           </div>
-          <div class="d-flex align-items-center gap-2" style="max-width: 360px;">
-            <input type="date" class="form-control text-muted" v-model="filters.date_from" title="Từ ngày">
+
+          <!-- Khoảng ngày Từ - Đến -->
+          <div class="d-flex align-items-center gap-2 flex-shrink-0">
+            <input 
+              type="date" 
+              class="form-control text-muted px-2" 
+              v-model="filters.date_from" 
+              title="Từ ngày"
+              style="width: 135px;"
+            >
             <span class="text-muted fw-medium text-nowrap">đến</span>
-            <input type="date" class="form-control text-muted" v-model="filters.date_to" title="Đến ngày">
+            <input 
+              type="date" 
+              class="form-control text-muted px-2" 
+              v-model="filters.date_to" 
+              title="Đến ngày"
+              style="width: 135px;"
+            >
           </div>
-          <button class="btn btn-secondary px-3 text-nowrap" @click="resetFilters" :disabled="isFetching && !logs.length">
+
+          <!-- Nhóm nút bấm -->
+          <button class="btn btn-secondary px-3 text-nowrap flex-shrink-0" @click="resetFilters" :disabled="isFetching && !logs.length">
             Đặt lại
           </button>
-          <button class="btn btn-primary px-4 shadow-sm text-nowrap" @click="applyFilters" :disabled="isFetching && !logs.length">
+          <button class="btn btn-primary text-nowrap shadow-sm flex-shrink-0" @click="applyFilters" :disabled="isFetching && !logs.length">
             <i class="bx bx-search me-1"></i> Tra cứu
           </button>
         </div>
       </div>
 
-      <!-- Bảng Dữ Liệu -->
-      <div class="table-responsive text-nowrap custom-scroll" style="max-height: calc(100vh - 280px); min-height: 400px; overflow-y: auto;">
-        <table class="table table-hover mb-0">
-          <thead class="table-light" style="position: sticky; top: 0; z-index: 1;">
+      <!-- Bảng Dữ Liệu chuẩn DonHang.vue -->
+      <div class="table-responsive text-nowrap custom-scroll" style="height: calc(100vh - 290px); min-height: 420px; overflow-y: auto;">
+        <table class="table table-hover align-middle mb-0">
+          <thead style="position: sticky; top: 0; z-index: 2; background: #fff;">
             <tr>
-              <th class="text-center" style="width: 5%">STT</th>
-              <th style="width: 15%">Thời Gian</th>
-              <th style="width: 20%">Nhân Viên</th>
-              <th class="text-center" style="width: 15%">Hành Động</th>
-              <th style="width: 35%">Mô Tả Chi Tiết</th>
-              <th style="width: 10%">Địa Chỉ IP</th>
+              <th class="text-center text-uppercase" style="width: 5%">STT</th>
+              <th class="text-uppercase" style="width: 14%">Thời Gian</th>
+              <th class="text-uppercase" style="width: 22%">Nhân Viên</th>
+              <th class="text-center text-uppercase" style="width: 13%">Hành Động</th>
+              <th class="text-uppercase" style="width: 33%">Mô Tả Chi Tiết</th>
+              <th class="text-uppercase" style="width: 13%">Địa Chỉ IP</th>
             </tr>
           </thead>
           <tbody class="table-border-bottom-0">
@@ -77,53 +132,70 @@
               </td>
             </tr>
             <tr v-for="(item, index) in logs" :key="item.id || index">
-              <td class="text-center"><span class="fw-bold text-dark">{{ index + 1 }}</span></td>
+              <td class="text-center"><strong>{{ index + 1 }}</strong></td>
               <td>
-                <div v-if="item.created_at" class="d-flex flex-column">
-                  <span class="fw-medium text-dark">{{ item.created_at.split(' ')[0] }}</span>
-                  <small class="fw-semibold text-secondary">{{ item.created_at.split(' ')[1] }}</small>
+                <div v-if="item.created_at">
+                  <span class="d-block text-dark fw-medium mb-1" style="font-size: 0.85rem;">
+                    <i class="bx bx-calendar-alt text-primary me-1"></i>{{ item.created_at.split(' ')[0] }}
+                  </span>
+                  <span class="text-muted" style="font-size: 0.75rem;">
+                    <i class="bx bx-time-five me-1"></i>{{ item.created_at.split(' ')[1] }}
+                  </span>
                 </div>
               </td>
               <td>
                 <div class="d-flex align-items-center">
-                  <div class="d-inline-flex justify-content-center align-items-center border rounded me-3 bg-white" style="width: 50px; height: 50px; flex-shrink: 0;">
-                    <img v-if="item.avatar" :src="item.avatar" alt="Avatar" style="max-height: 35px; max-width: 40px; object-fit: contain;">
-                    <i v-else class="bx bx-image text-muted fs-4"></i>
+                  <div class="avatar avatar-sm me-2 flex-shrink-0">
+                    <img 
+                      v-if="item.avatar" 
+                      :src="item.avatar" 
+                      alt="Avatar" 
+                      class="rounded-circle"
+                      style="width: 32px; height: 32px; object-fit: cover;"
+                    />
+                    <span v-else class="avatar-initial rounded-circle bg-label-primary fw-semibold" style="width: 32px; height: 32px; line-height: 32px; font-size: 0.8rem; display: inline-block; text-align: center;">
+                      {{ (item.user_name || 'U').charAt(0).toUpperCase() }}
+                    </span>
                   </div>
                   <div>
-                    <span class="fw-bold text-primary d-block">{{ item.user_name }}</span>
-                    <small class="text-muted text-capitalize">{{ item.role }}</small>
+                    <span class="fw-bold text-dark d-block mb-0" style="font-size: 0.9rem;">{{ item.user_name }}</span>
+                    <span class="text-muted text-capitalize" style="font-size: 0.78rem;">{{ item.role }}</span>
                   </div>
                 </div>
               </td>
               <td class="text-center">
-                <span class="badge" :class="getActionBadgeClass(item.action)" style="width: 100px;">
-                  {{ getActionLabel(item.action) }}
+                <span class="badge badge-custom" :class="getActionBadgeClass(item.action)">
+                  <i :class="getActionIcon(item.action)" class="me-1"></i>{{ getActionLabel(item.action) }}
                 </span>
               </td>
               <td>
-                <span class="fw-medium text-dark">{{ item.description }}</span>
+                <span class="fw-medium text-dark text-wrap" style="font-size: 0.9rem;">{{ item.description }}</span>
               </td>
               <td>
-                <span class="fw-semibold text-secondary">{{ item.ip_address }}</span>
+                <span class="text-muted font-monospace" style="font-size: 0.85rem;">
+                  <i class="bx bx-globe me-1 text-secondary"></i>{{ item.ip_address }}
+                </span>
               </td>
             </tr>
             
             <tr v-if="nextCursor">
               <td colspan="6" class="text-center py-4 bg-transparent border-0">
-                <button class="btn btn-outline-primary" @click="loadMore" :disabled="isFetching">
-                  <span v-if="isPending" class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+                <button class="btn btn-outline-primary btn-sm shadow-sm" @click="loadMore" :disabled="isFetching">
+                  <span v-if="isFetching" class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
                   <i v-else class="bx bx-down-arrow-alt me-1"></i>
-                  Tải thêm lịch sử cũ hơn...
+                  Tải thêm nhật ký cũ hơn...
                 </button>
               </td>
             </tr>
           </tbody>
         </table>
       </div>
-            <!-- Tổng số mục -->
-      <div class="card-footer py-3 border-top">
-        <span class="text-muted fw-medium">Tổng cộng: {{ (logs && logs.length) ? logs.length : 0 }} mục</span>
+
+      <!-- Footer chuẩn DonHang.vue -->
+      <div class="card-footer py-3 border-top d-flex justify-content-between align-items-center bg-white">
+        <span class="text-muted fw-medium" style="font-size: 0.85rem;">
+          Hiển thị <strong>{{ logs.length }}</strong> bản ghi nhật ký
+        </span>
       </div>
       
     </div>
@@ -141,6 +213,7 @@ const nextCursor = ref(null);
 const isFetching = ref(false);
 
 const filters = reactive({
+  search: "",
   user_id: null,
   action_type: "",
   date_from: "",
@@ -166,6 +239,7 @@ const fetchLogs = async (cursor = null) => {
   isFetching.value = true;
   try {
     const params = {
+      search: filters.search,
       user_id: filters.user_id,
       action_type: filters.action_type,
       date_from: filters.date_from,
@@ -173,8 +247,6 @@ const fetchLogs = async (cursor = null) => {
       cursor: cursor
     };
     const res = await axiosClient.get('/admin/system-logs', { params });
-    // res is the unwrapped body due to interceptor.
-    // res.data contains { data: [...], meta: { next_cursor: ... } }
     const dataObj = res.data || {};
     
     if (cursor) {
@@ -196,6 +268,7 @@ const applyFilters = () => {
 };
 
 const resetFilters = () => {
+  filters.search = "";
   filters.user_id = null;
   filters.action_type = "";
   filters.date_from = "";
@@ -224,6 +297,16 @@ const getActionBadgeClass = (action) => {
   }
 };
 
+const getActionIcon = (action) => {
+  switch (action) {
+    case 'LOGIN': return 'bx bx-log-in-circle';
+    case 'CREATE': return 'bx bx-plus-circle';
+    case 'UPDATE': return 'bx bx-edit-alt';
+    case 'DELETE': return 'bx bx-trash';
+    default: return 'bx bx-info-circle';
+  }
+};
+
 const getActionLabel = (action) => {
   switch (action) {
     case 'LOGIN': return 'ĐĂNG NHẬP';
@@ -235,3 +318,22 @@ const getActionLabel = (action) => {
 };
 </script>
 
+<style scoped>
+.badge-custom {
+  border-radius: 0.25rem;
+  padding: 0.4em 0.8em;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+.custom-scroll::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.custom-scroll::-webkit-scrollbar-thumb {
+  background: #d9dee3;
+  border-radius: 10px;
+}
+.custom-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+</style>

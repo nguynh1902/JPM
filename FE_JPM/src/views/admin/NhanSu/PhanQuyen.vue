@@ -68,7 +68,7 @@
               <td>
                 <span 
                   class="fw-bold text-capitalize"
-                  :class="(item.is_system || item.name.toLowerCase() === 'admin') ? 'text-danger' : 'text-primary'"
+                  :class="(item.is_system || item.name.toLowerCase() === 'admin') ? 'text-primary' : 'text-dark'"
                 >
                   {{ item.name }}
                 </span>
