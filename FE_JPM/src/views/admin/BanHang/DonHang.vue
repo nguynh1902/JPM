@@ -6,7 +6,7 @@
 
     <div class="nav-align-top mb-4">
       <!-- SNEAT ADMIN STANDARD NAV PILLS -->
-      <ul class="nav nav-pills mb-3 gap-2 flex-wrap pt-2" role="tablist">
+      <ul class="nav nav-pills mb-3 gap-2 flex-wrap pt-2" style="column-gap: 0.75rem !important;" role="tablist">
         <li class="nav-item">
           <button 
             type="button"
@@ -1651,15 +1651,15 @@ export default {
 }
 .tab-badge-top {
   position: absolute;
-  top: -8px;
-  right: 6px;
+  top: -7px;
+  right: -5px;
   background-color: #ff3e1d;
   color: #ffffff;
   font-size: 0.72rem;
   font-weight: 700;
   line-height: 1.2;
   padding: 2px 6px;
-  border-radius: 4px;
+  border-radius: 5px;
   border: 1.5px solid #ffffff;
   box-shadow: 0 2px 4px rgba(255, 62, 29, 0.35);
   z-index: 2;
