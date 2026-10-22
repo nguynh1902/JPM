@@ -121,7 +121,7 @@
                 </span>
               </td>
               <td class="text-center">
-                <span class="badge" :class="getTransactionBadgeClass(item.loai_giao_dich)">
+                <span class="badge badge-custom" :class="getTransactionBadgeClass(item.loai_giao_dich)">
                   {{ getTransactionLabel(item.loai_giao_dich) }}
                 </span>
               </td>
@@ -288,11 +288,11 @@ export default {
     getTransactionBadgeClass(type) {
       switch (type) {
         case 'NHAP_KHO':
-          return 'bg-pastel-success text-dark fw-bold';
+          return 'bg-pastel-success';
         case 'XUAT_KHO':
-          return 'bg-pastel-danger text-dark fw-bold';
+          return 'bg-pastel-danger';
         default:
-          return 'bg-label-secondary text-secondary fw-bold';
+          return 'bg-pastel-secondary';
       }
     },
     getTransactionLabel(type) {

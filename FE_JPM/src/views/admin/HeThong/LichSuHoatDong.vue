@@ -319,12 +319,6 @@ const getActionLabel = (action) => {
 </script>
 
 <style scoped>
-.badge-custom {
-  border-radius: 0.25rem;
-  padding: 0.4em 0.8em;
-  font-size: 0.75rem;
-  font-weight: 600;
-}
 .custom-scroll::-webkit-scrollbar {
   width: 6px;
   height: 6px;

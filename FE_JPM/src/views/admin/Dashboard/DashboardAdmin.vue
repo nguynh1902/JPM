@@ -239,7 +239,7 @@
             <div>
               <div class="d-flex align-items-center gap-2 mb-1">
                 <span class="kpi-label mb-0">Doanh Thu & Chi Phí Nhập Kho</span>
-                <span class="badge bg-pastel-primary text-primary" style="font-size: 0.68rem; padding: 2px 6px;">{{ chartGranularityLabel }}</span>
+                <span class="badge bg-pastel-info" style="font-size: 0.68rem; padding: 2px 6px;">{{ chartGranularityLabel }}</span>
               </div>
               <div class="d-flex align-items-baseline gap-2">
                 <h4 class="fw-bold text-dark mb-0">{{ formatCurrency(revenueChartData.current_period_revenue) }}</h4>
@@ -316,7 +316,7 @@
                     <span
                       class="fw-bold"
                       style="font-size: 0.85rem;"
-                      :style="{ color: item.type === 'quote' ? '#17a2b8' : '#696cff' }"
+                      :class="item.type === 'quote' ? 'text-warning' : 'text-primary'"
                     >
                       {{ item.type_label }}
                     </span>
@@ -861,45 +861,6 @@ onUnmounted(() => {
 
 .kpi-subtext {
   font-size: 0.75rem;
-}
-
-/* Badge Pastel chuẩn theo JPM Master Standard & Sneat */
-.badge-custom {
-  padding: 5px 9px;
-  font-size: 0.72rem;
-  font-weight: 600;
-  border-radius: 4px;
-  letter-spacing: 0.3px;
-}
-
-.bg-pastel-warning {
-  background-color: rgba(255, 171, 0, 0.12) !important;
-  color: #ffab00 !important;
-}
-
-.bg-pastel-info {
-  background-color: rgba(3, 195, 236, 0.12) !important;
-  color: #03c3ec !important;
-}
-
-.bg-pastel-success {
-  background-color: rgba(113, 221, 55, 0.12) !important;
-  color: #71dd37 !important;
-}
-
-.bg-pastel-danger {
-  background-color: rgba(255, 62, 29, 0.12) !important;
-  color: #ff3e1d !important;
-}
-
-.bg-pastel-primary {
-  background-color: rgba(105, 108, 255, 0.12) !important;
-  color: #696cff !important;
-}
-
-.bg-pastel-secondary {
-  background-color: rgba(133, 146, 163, 0.12) !important;
-  color: #8592a3 !important;
 }
 
 /* Custom Table header - Đồng bộ chuẩn font-weight 700 và màu sắc với các trang khác */

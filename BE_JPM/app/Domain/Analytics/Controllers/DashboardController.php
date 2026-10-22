@@ -383,8 +383,8 @@ class DashboardController extends Controller
                 ->map(function ($order) {
                     $statusMap = [
                         0 => ['label' => 'CHỜ XÁC NHẬN', 'class' => 'bg-pastel-warning'],
-                        1 => ['label' => 'ĐANG XỬ LÝ', 'class' => 'bg-pastel-info'],
-                        2 => ['label' => 'ĐANG GIAO', 'class' => 'bg-pastel-primary'],
+                        1 => ['label' => 'ĐANG XỬ LÝ', 'class' => 'bg-pastel-secondary'],
+                        2 => ['label' => 'ĐANG GIAO', 'class' => 'bg-pastel-info'],
                         3 => ['label' => 'HOÀN TẤT', 'class' => 'bg-pastel-success'],
                         4 => ['label' => 'ĐÃ HỦY', 'class' => 'bg-pastel-danger'],
                     ];

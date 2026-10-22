@@ -104,7 +104,7 @@
                   <tr v-for="(item, index) in filteredNotifications" :key="item.id" v-else>
                     <td class="text-center"><strong>{{ index + 1 }}</strong></td>
                     <td>
-                      <span class="badge text-uppercase" :class="getBadgeClass(item.type)">
+                      <span class="badge badge-custom text-uppercase" :class="getBadgeClass(item.type)">
                         {{ getTypeName(item.type) }}
                       </span>
                     </td>
@@ -197,18 +197,18 @@
                   <tr v-for="(log, idx) in filteredTelecomLogs" :key="log.id" v-else>
                     <td class="text-center"><strong>{{ idx + 1 }}</strong></td>
                     <td>
-                      <span v-if="log.loai_tin === 'zalo_zns'" class="badge bg-label-info">
+                      <span v-if="log.loai_tin === 'zalo_zns'" class="badge badge-custom bg-pastel-info">
                         <i class="bx bx-chat me-1"></i> ZALO ZNS
                       </span>
-                      <span v-else class="badge bg-label-primary">
+                      <span v-else class="badge badge-custom bg-pastel-secondary">
                         <i class="bx bx-message-square-dots me-1"></i> SMS BRAND
                       </span>
                     </td>
                     <td>
                       <span class="d-block fw-bold text-dark">{{ log.ten_nguoi_nhan || 'Khách hàng' }}</span>
                       <small class="text-primary font-monospace">{{ log.so_dien_thoai }}</small>
-                      <span v-if="log.nguoi_nhan_loai === 'tai_xe'" class="badge bg-label-warning ms-1" style="font-size: 0.65rem;">Tài xế</span>
-                      <span v-else class="badge bg-label-success ms-1" style="font-size: 0.65rem;">Chủ tàu</span>
+                      <span v-if="log.nguoi_nhan_loai === 'tai_xe'" class="badge bg-pastel-warning ms-1" style="font-size: 0.65rem;">Tài xế</span>
+                      <span v-else class="badge bg-pastel-success ms-1" style="font-size: 0.65rem;">Chủ tàu</span>
                     </td>
                     <td>
                       <span class="fw-bold font-monospace text-dark">{{ log.ma_tham_chieu || 'N/A' }}</span>
@@ -222,9 +222,9 @@
                       {{ formatTime(log.created_at) }}
                     </td>
                     <td class="text-center">
-                      <span v-if="log.trang_thai === 'thanh_cong'" class="badge bg-success">ĐÃ GỬI</span>
-                      <span v-else-if="log.trang_thai === 'mo_phong'" class="badge bg-warning text-dark">SANDBOX TEST</span>
-                      <span v-else class="badge bg-danger">THẤT BẠI</span>
+                      <span v-if="log.trang_thai === 'thanh_cong'" class="badge badge-custom bg-pastel-success">ĐÃ GỬI</span>
+                      <span v-else-if="log.trang_thai === 'mo_phong'" class="badge badge-custom bg-pastel-warning">SANDBOX TEST</span>
+                      <span v-else class="badge badge-custom bg-pastel-danger">THẤT BẠI</span>
                     </td>
                   </tr>
                   <tr v-if="!isLoadingTelecom && filteredTelecomLogs.length === 0">
@@ -350,10 +350,10 @@ export default {
     },
     getBadgeClass(type) {
       switch (type) {
-        case 'b2b': return 'bg-pastel-warning text-warning';
-        case 'warehouse': return 'bg-pastel-info text-info';
-        case 'system': return 'bg-pastel-danger text-danger';
-        default: return 'bg-pastel-secondary text-secondary';
+        case 'b2b': return 'bg-pastel-warning';
+        case 'warehouse': return 'bg-pastel-info';
+        case 'system': return 'bg-pastel-danger';
+        default: return 'bg-pastel-secondary';
       }
     },
     getTypeName(type) {

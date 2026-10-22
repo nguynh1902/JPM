@@ -125,7 +125,7 @@
                       <div class="text-muted small">{{ item.phu_tung_moi?.ten_phu_tung }}</div>
                     </td>
                     <td class="align-middle">
-                      <span class="badge bg-label-info">{{ item.loai_thay_the }}</span>
+                      <span class="badge badge-custom bg-pastel-info">{{ item.loai_thay_the }}</span>
                     </td>
                     <td class="text-center align-middle">
                       <div class="d-flex justify-content-center">

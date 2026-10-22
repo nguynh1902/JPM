@@ -88,8 +88,8 @@
                 </div>
               </td>
               <td class="text-center">
-                <span v-if="item.status === 1 || item.status === true" class="badge bg-pastel-success text-success">HOẠT ĐỘNG</span>
-                <span v-else class="badge bg-pastel-danger text-danger">TẠM KHÓA</span>
+                <span v-if="item.status === 1 || item.status === true" class="badge badge-custom bg-pastel-success">HOẠT ĐỘNG</span>
+                <span v-else class="badge badge-custom bg-pastel-danger">TẠM KHÓA</span>
               </td>
               <td class="text-center">
                 <div class="d-flex align-items-center justify-content-center">

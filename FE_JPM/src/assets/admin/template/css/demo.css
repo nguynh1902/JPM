@@ -105,3 +105,36 @@
   text-align: center;
   margin-top: 1rem;
 }
+
+
+/* ==========================================================================
+   JPM ADMIN STANDARD - TAB INLINE COUNT BADGE (SNEAT EXTENSION)
+   ========================================================================== */
+.tab-count-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.35rem;
+  height: 1.35rem;
+  padding: 0 0.35rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  border-radius: 0.375rem;
+  line-height: 1;
+  background-color: #ff0000 !important;
+  color: #ffffff !important;
+  transition: all 0.2s ease;
+}
+
+/* Đồng nhất 100% màu đỏ chuẩn (#ff0000 trùng với text-danger của hệ thống) */
+.nav-pills .nav-link .tab-count-badge,
+.nav-pills .nav-link.active .tab-count-badge,
+.nav-pills .nav-link:not(.active) .tab-count-badge {
+  background-color: #ff0000 !important;
+  color: #ffffff !important;
+}
+
+/* Đổ bóng nhẹ khi Tab Active để nổi bật trên nền nút */
+.nav-pills .nav-link.active .tab-count-badge {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+}

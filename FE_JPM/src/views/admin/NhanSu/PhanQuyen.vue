@@ -78,8 +78,8 @@
                 <span class="fw-semibold text-secondary">{{ item.user_count }}</span>
               </td>
               <td class="text-center">
-                <span v-if="item.status === 1 || item.status === true" class="badge text-uppercase bg-pastel-success">HOẠT ĐỘNG</span>
-                <span v-else class="badge text-uppercase bg-pastel-danger">ĐÃ KHÓA</span>
+                <span v-if="item.status === 1 || item.status === true" class="badge badge-custom text-uppercase bg-pastel-success">HOẠT ĐỘNG</span>
+                <span v-else class="badge badge-custom text-uppercase bg-pastel-danger">ĐÃ KHÓA</span>
               </td>
               <td class="text-center">
                 <div class="d-flex align-items-center justify-content-center">

@@ -454,7 +454,7 @@ export default {
       };
     },
             getCategoryBadge(category) {
-      return 'bg-label-primary';
+      return 'bg-pastel-info';
     },
     formatDate(dateString) {
       if (!dateString) return '';

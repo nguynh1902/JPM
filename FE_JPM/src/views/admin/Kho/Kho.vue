@@ -311,20 +311,6 @@ export default {
 .action-btn:hover {
   background-color: rgba(0,0,0,0.05);
 }
-.badge-custom {
-  font-size: 0.75rem;
-  padding: 0.4em 0.8em;
-  font-weight: 600;
-  border-radius: 0.25rem;
-}
-.bg-pastel-success {
-  background-color: #e8fadf;
-  color: #71dd37;
-}
-.bg-pastel-danger {
-  background-color: #ffe0db;
-  color: #ff3e1d;
-}
 .custom-scroll::-webkit-scrollbar {
   width: 6px;
 }

@@ -10,7 +10,7 @@
         <li class="nav-item">
           <button 
             type="button"
-            class="nav-link position-relative" 
+            class="nav-link d-flex align-items-center" 
             :class="{ active: currentTab === 'pending_quotes' }"
             @click="switchTab('pending_quotes')"
             role="tab"
@@ -18,14 +18,14 @@
           >
             <i class="bx bx-time-five me-1"></i>
             <span>Chờ Báo Giá</span>
-            <span class="tab-badge-top">{{ countPendingQuotes }}</span>
+            <span class="tab-count-badge ms-2">{{ countPendingQuotes }}</span>
           </button>
         </li>
 
         <li class="nav-item">
           <button 
             type="button"
-            class="nav-link position-relative" 
+            class="nav-link d-flex align-items-center" 
             :class="{ active: currentTab === 'quoted_quotes' }"
             @click="switchTab('quoted_quotes')"
             role="tab"
@@ -33,14 +33,14 @@
           >
             <i class="bx bx-send me-1"></i>
             <span>Đã Báo Giá</span>
-            <span class="tab-badge-top">{{ countQuotedQuotes }}</span>
+            <span class="tab-count-badge ms-2">{{ countQuotedQuotes }}</span>
           </button>
         </li>
 
         <li class="nav-item">
           <button 
             type="button"
-            class="nav-link position-relative" 
+            class="nav-link d-flex align-items-center" 
             :class="{ active: currentTab === 'processing' }"
             @click="switchTab('processing')"
             role="tab"
@@ -48,14 +48,14 @@
           >
             <i class="bx bx-package me-1"></i>
             <span>Đang Xử Lý & Giao</span>
-            <span class="tab-badge-top">{{ countProcessing }}</span>
+            <span class="tab-count-badge ms-2">{{ countProcessing }}</span>
           </button>
         </li>
 
         <li class="nav-item">
           <button 
             type="button"
-            class="nav-link position-relative" 
+            class="nav-link d-flex align-items-center" 
             :class="{ active: currentTab === 'completed' }"
             @click="switchTab('completed')"
             role="tab"
@@ -63,14 +63,13 @@
           >
             <i class="bx bx-check-circle me-1"></i>
             <span>Hoàn Thành</span>
-            <span class="tab-badge-top">{{ countCompleted }}</span>
           </button>
         </li>
 
         <li class="nav-item">
           <button 
             type="button"
-            class="nav-link position-relative" 
+            class="nav-link d-flex align-items-center" 
             :class="{ active: currentTab === 'cancelled' }"
             @click="switchTab('cancelled')"
             role="tab"
@@ -78,14 +77,13 @@
           >
             <i class="bx bx-x-circle me-1"></i>
             <span>Đã Hủy</span>
-            <span class="tab-badge-top">{{ countCancelled }}</span>
           </button>
         </li>
 
         <li class="nav-item">
           <button 
             type="button"
-            class="nav-link position-relative" 
+            class="nav-link d-flex align-items-center" 
             :class="{ active: currentTab === 'all' }"
             @click="switchTab('all')"
             role="tab"
@@ -93,14 +91,13 @@
           >
             <i class="bx bx-list-ul me-1"></i>
             <span>Tất Cả</span>
-            <span class="tab-badge-top">{{ countAll }}</span>
           </button>
         </li>
 
         <li class="nav-item ms-auto">
           <button 
             type="button"
-            class="nav-link position-relative" 
+            class="nav-link d-flex align-items-center" 
             :class="{ active: currentTab === 'transactions' }"
             @click="switchTab('transactions')"
             role="tab"
@@ -108,7 +105,7 @@
           >
             <i class="bx bx-qr-scan me-1"></i>
             <span>Đối Soát VietQR</span>
-            <span class="tab-badge-top">{{ transactions.length }}</span>
+            <span class="tab-count-badge ms-2">{{ transactions.length }}</span>
           </button>
         </li>
       </ul>
@@ -131,6 +128,7 @@
                 Làm mới
               </button>
               <button 
+                v-if="currentTab === 'processing'"
                 type="button" 
                 class="btn btn-primary text-nowrap shadow-sm" 
                 @click="exportJapanPO" 
@@ -184,11 +182,11 @@
               <tbody class="table-border-bottom-0">
                 <tr v-for="(item, index) in filteredTabList" :key="item._type + item.id">
                   <td class="text-center"><strong>{{ index + 1 }}</strong></td>
-                  <td class="text-center">
-                    <span v-if="item._type === 'quote'" class="badge bg-label-info">
+                  <td class="text-center text-nowrap">
+                    <span v-if="item._type === 'quote'" class="fw-bold text-warning" style="font-size: 0.85rem;">
                       BÁO GIÁ
                     </span>
-                    <span v-else class="badge bg-label-primary">
+                    <span v-else class="fw-bold text-primary" style="font-size: 0.85rem;">
                       ĐƠN HÀNG
                     </span>
                   </td>
@@ -228,23 +226,23 @@
                     <span v-else class="text-muted" style="font-size: 0.85rem;">-</span>
                   </td>
                   <td class="text-center">
-                    <!-- Trạng thái Báo Giá (Chuẩn Sneat bg-label-*) -->
+                    <!-- Trạng thái Báo Giá -->
                     <template v-if="item._type === 'quote'">
-                      <span v-if="item.status === 0" class="badge bg-label-warning">CHỜ BÁO GIÁ</span>
-                      <span v-else-if="item.status === 1" class="badge bg-label-info">ĐÃ GỬI BÁO GIÁ</span>
-                      <span v-else-if="item.status === 2" class="badge bg-label-success">ĐÃ CHỐT</span>
-                      <span v-else-if="item.status === 3" class="badge bg-label-danger">ĐÃ HỦY</span>
-                      <span v-else class="badge bg-label-secondary">KHÁC</span>
+                      <span v-if="item.status === 0" class="badge badge-custom bg-pastel-warning">CHỜ BÁO GIÁ</span>
+                      <span v-else-if="item.status === 1" class="badge badge-custom bg-pastel-info">ĐÃ GỬI BÁO GIÁ</span>
+                      <span v-else-if="item.status === 2" class="badge badge-custom bg-pastel-success">ĐÃ CHỐT</span>
+                      <span v-else-if="item.status === 3" class="badge badge-custom bg-pastel-danger">ĐÃ HỦY</span>
+                      <span v-else class="badge badge-custom bg-pastel-secondary">KHÁC</span>
                     </template>
-                    <!-- Trạng thái Đơn Hàng (Chuẩn Sneat bg-label-*) -->
+                    <!-- Trạng thái Đơn Hàng -->
                     <template v-else>
-                      <span v-if="item.status === 0 && Number(item.payment_status) === 0" class="badge bg-label-warning">CHỜ DUYỆT & CỌC</span>
-                      <span v-else-if="item.status === 0" class="badge bg-label-info">CHỜ DUYỆT</span>
-                      <span v-else-if="item.status === 1" class="badge bg-label-primary">ĐANG CHUẨN BỊ</span>
-                      <span v-else-if="item.status === 2" class="badge bg-label-info">ĐANG GIAO</span>
-                      <span v-else-if="item.status === 3" class="badge bg-label-success">HOÀN THÀNH</span>
-                      <span v-else-if="item.status === 4" class="badge bg-label-danger">ĐÃ HỦY</span>
-                      <span v-else class="badge bg-label-secondary">ĐANG XỬ LÝ</span>
+                      <span v-if="item.status === 0 && Number(item.payment_status) === 0" class="badge badge-custom bg-pastel-warning">CHỜ DUYỆT & CỌC</span>
+                      <span v-else-if="item.status === 0" class="badge badge-custom bg-pastel-info">CHỜ DUYỆT</span>
+                      <span v-else-if="item.status === 1" class="badge badge-custom bg-pastel-secondary">ĐANG CHUẨN BỊ</span>
+                      <span v-else-if="item.status === 2" class="badge badge-custom bg-pastel-info">ĐANG GIAO</span>
+                      <span v-else-if="item.status === 3" class="badge badge-custom bg-pastel-success">HOÀN THÀNH</span>
+                      <span v-else-if="item.status === 4" class="badge badge-custom bg-pastel-danger">ĐÃ HỦY</span>
+                      <span v-else class="badge badge-custom bg-pastel-secondary">ĐANG XỬ LÝ</span>
                     </template>
                   </td>
                   <td class="text-center">
@@ -346,7 +344,7 @@
                 <tr v-for="(tx, index) in filteredTransactions" :key="tx.id" v-else>
                   <td class="text-center"><strong>{{ index + 1 }}</strong></td>
                   <td><span class="fw-bold text-dark font-monospace">{{ tx.ma_giao_dich }}</span></td>
-                  <td><span class="badge bg-label-info">{{ tx.gateway || 'VietQR Bank' }}</span></td>
+                  <td><span class="badge bg-pastel-info">{{ tx.gateway || 'VietQR Bank' }}</span></td>
                   <td>
                     <span class="fw-bold text-primary">{{ tx.ma_tham_chieu || 'Chưa nhận diện' }}</span>
                   </td>
@@ -356,9 +354,9 @@
                   <td><span class="text-truncate d-inline-block" style="max-width: 250px;" :title="tx.noi_dung">{{ tx.noi_dung }}</span></td>
                   <td class="text-center text-muted" style="font-size: 0.85rem;">{{ tx.thoi_gian_giao_dich || tx.created_at }}</td>
                   <td class="text-center">
-                    <span v-if="tx.trang_thai === 'thanh_cong'" class="badge bg-label-success">THÀNH CÔNG</span>
-                    <span v-else-if="tx.trang_thai === 'mo_phong'" class="badge bg-label-warning">SANDBOX TEST</span>
-                    <span v-else class="badge bg-label-danger">THẤT BẠI</span>
+                    <span v-if="tx.trang_thai === 'thanh_cong'" class="badge badge-custom bg-pastel-success">THÀNH CÔNG</span>
+                    <span v-else-if="tx.trang_thai === 'mo_phong'" class="badge badge-custom bg-pastel-warning">SANDBOX TEST</span>
+                    <span v-else class="badge badge-custom bg-pastel-danger">THẤT BẠI</span>
                   </td>
                 </tr>
                 <tr v-if="!isFetchingTransactions && filteredTransactions.length === 0">
@@ -1646,25 +1644,6 @@ export default {
 </script>
 
 <style scoped>
-.nav-pills .nav-link.position-relative {
-  padding-right: 1.4rem;
-}
-.tab-badge-top {
-  position: absolute;
-  top: -7px;
-  right: -5px;
-  background-color: #ff3e1d;
-  color: #ffffff;
-  font-size: 0.72rem;
-  font-weight: 700;
-  line-height: 1.2;
-  padding: 2px 6px;
-  border-radius: 5px;
-  border: 1.5px solid #ffffff;
-  box-shadow: 0 2px 4px rgba(255, 62, 29, 0.35);
-  z-index: 2;
-  white-space: nowrap;
-}
 .action-btn {
   background: transparent;
   border: none;

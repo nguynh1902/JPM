@@ -16649,41 +16649,51 @@ html:not(.layout-footer-fixed) .content-wrapper {
 
 
 /* Global UI Components for Admin */
-.bg-pastel-secondary {
+.bg-pastel-secondary,
+.badge.bg-label-secondary {
   background-color: #ebeef0 !important;
-  color: #8592a3 !important;
+  color: #4b5563 !important; /* Chữ xám đậm rõ nét hơn */
 }
 
 .badge-custom {
-  padding: 0.5rem 0.8rem;
-  font-weight: 600;
-  letter-spacing: 0.5px;
-  border-radius: 6px;
-  font-size: 0.75rem;
+  padding: 0.5rem 0.8rem !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.5px !important;
+  border-radius: 6px !important;
+  font-size: 0.75rem !important;
   min-width: 140px !important;
   text-align: center !important;
   white-space: nowrap !important;
   display: inline-block !important;
 }
-.bg-pastel-success {
+.bg-pastel-success,
+.badge.bg-label-success {
   background-color: #e2f6dd !important; /* Nền đậm hơn xíu */
   color: #2e9f00 !important; /* Chữ xanh đậm rõ nét hơn */
 }
-.bg-pastel-danger {
+.bg-pastel-danger,
+.badge.bg-label-danger {
   background-color: #ffe0e0 !important;
-  color: #ef4444 !important;
+  color: #d92d20 !important; /* Chữ đỏ đậm rõ nét hơn */
 }
-.bg-pastel-warning {
+.bg-pastel-warning,
+.badge.bg-label-warning {
   background-color: #fff2d6 !important;
-  color: #ffab00 !important;
+  color: #c27800 !important; /* Chữ vàng cam đậm rõ nét hơn */
 }
-.bg-pastel-info {
+.bg-pastel-info,
+.badge.bg-label-info {
   background-color: #d7f5fc !important;
-  color: #03c3ec !important;
+  color: #007799 !important; /* Chữ xanh lam đậm rõ nét hơn */
+}
+.bg-pastel-dark,
+.badge.bg-label-dark {
+  background-color: #dcdfe1 !important;
+  color: #233446 !important;
 }
 .bg-pastel-primary {
-  background-color: #e7e7ff !important;
-  color: #696cff !important;
+  background-color: #ebeef0 !important;
+  color: #4b5563 !important;
 }
 .action-btn {
   background: transparent;
