@@ -6,22 +6,8 @@
 
     <div class="card">
       <!-- Card Header chuẩn DonHang.vue -->
-      <div class="card-header border-bottom d-flex justify-content-between align-items-center flex-wrap gap-2">
-        <div>
-          <h5 class="mb-0 fw-bold text-dark">Nhật Ký Hệ Thống (Audit Log)</h5>
-        </div>
-        <div class="d-flex align-items-center gap-2 flex-wrap">
-          <button 
-            type="button" 
-            class="btn btn-outline-primary btn-sm shadow-sm"
-            @click="applyFilters"
-            :disabled="isFetching"
-            title="Làm mới danh sách"
-          >
-            <i class="bx bx-refresh me-1" :class="{ 'bx-spin': isFetching }"></i>
-            Làm mới
-          </button>
-        </div>
+      <div class="card-header border-bottom">
+        <h5 class="mb-0 fw-bold text-dark">Nhật Ký Hệ Thống (Audit Log)</h5>
       </div>
 
       <!-- Bộ lọc (Filters) chuẩn DonHang.vue -->

@@ -114,29 +114,8 @@
       <!-- SECTION A: PIPELINE TABS (Báo Giá & Đơn Hàng) -->
       <div v-if="currentTab !== 'transactions'">
         <div class="card">
-          <div class="card-header border-bottom d-flex justify-content-between align-items-center flex-wrap gap-2">
+          <div class="card-header border-bottom">
             <h5 class="mb-0 fw-bold text-dark">{{ tabTitle }}</h5>
-            <div class="d-flex align-items-center gap-2 flex-wrap">
-              <button 
-                type="button" 
-                class="btn btn-secondary text-nowrap"
-                @click="refreshData"
-                :disabled="isFetchingOrders || isFetchingQuotes"
-                title="Làm mới danh sách"
-              >
-                <i class="bx bx-refresh me-1" :class="{ 'bx-spin': isFetchingOrders || isFetchingQuotes }"></i>
-                Làm mới
-              </button>
-              <button 
-                v-if="currentTab === 'processing'"
-                type="button" 
-                class="btn btn-primary text-nowrap shadow-sm" 
-                @click="exportJapanPO" 
-                title="Xuất file CSV UTF-8 đơn đặt hàng nhà cung cấp Nhật"
-              >
-                <i class="bx bx-download me-1"></i> Xuất Excel Đặt Hàng Nhật (PO)
-              </button>
-            </div>
           </div>
 
           <!-- Bộ lọc (Filters) chuẩn Admin Sneat -->
@@ -164,6 +143,15 @@
               </div>
               <button class="btn btn-secondary text-nowrap flex-shrink-0" @click="searchQuery = ''; typeFilter = 'all'">
                 Đặt lại
+              </button>
+              <button 
+                v-if="currentTab === 'processing'"
+                type="button" 
+                class="btn btn-primary text-nowrap shadow-sm flex-shrink-0" 
+                @click="exportJapanPO" 
+                title="Xuất file CSV UTF-8 đơn đặt hàng nhà cung cấp Nhật"
+              >
+                <i class="bx bx-download me-1"></i> Xuất Excel Đặt Hàng Nhật (PO)
               </button>
             </div>
           </div>
@@ -1296,13 +1284,6 @@ export default {
         link.click();
         document.body.removeChild(link);
         window.URL.revokeObjectURL(url);
-        Swal.fire({
-          icon: 'success',
-          title: 'Xuất file thành công',
-          text: 'Danh sách đơn hàng cần đặt từ Nhật đã được tải về (UTF-8 CSV).',
-          timer: 2000,
-          showConfirmButton: false
-        });
       } catch (err) {
         Swal.fire({ icon: 'error', title: 'Lỗi', text: 'Không thể xuất file đơn đặt hàng Nhật.' });
       }
