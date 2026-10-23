@@ -125,6 +125,9 @@ export default {
           .then(() => loadScript("https://buttons.github.io/buttons.js"))
           .finally(() => {
             this.isLoading = false;
+            this.$nextTick(() => {
+              window.dispatchEvent(new Event('admin-layout-ready'));
+            });
           });
       })
       .catch((err) => {

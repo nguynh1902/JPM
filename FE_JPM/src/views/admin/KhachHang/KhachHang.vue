@@ -156,7 +156,7 @@
                   <button
                     v-if="canEditCustomer"
                     type="button"
-                    class="action-btn text-primary me-1"
+                    class="action-btn text-primary me-2"
                     @click="openEditModal(item)"
                     data-bs-toggle="modal"
                     data-bs-target="#modalCustomer"

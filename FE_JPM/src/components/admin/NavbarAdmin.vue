@@ -50,6 +50,7 @@ export default {
   name: "NavbarAdmin",
   data() {
     return {
+      menuPs: null,
       // Menu Backoffice Hợp nhất: Tự động phân quyền động theo Roles & Permissions
       menus: [
         {
@@ -306,6 +307,85 @@ export default {
       }
 
       return result;
+    }
+  },
+  mounted() {
+    this.initOrUpdateScrollbar();
+    window.addEventListener('resize', this.onResize);
+    window.addEventListener('admin-layout-ready', this.initOrUpdateScrollbar);
+  },
+  beforeUnmount() {
+    window.removeEventListener('resize', this.onResize);
+    window.removeEventListener('admin-layout-ready', this.initOrUpdateScrollbar);
+    if (this.menuPs && this.menuPs.destroy) {
+      this.menuPs.destroy();
+      this.menuPs = null;
+    }
+  },
+  watch: {
+    filteredMenus: {
+      deep: true,
+      handler() {
+        this.initOrUpdateScrollbar();
+      }
+    },
+    '$route'() {
+      this.$nextTick(() => {
+        this.initOrUpdateScrollbar();
+        if (window.Helpers && window.Helpers.scrollToActive) {
+          window.Helpers.scrollToActive(false);
+        }
+      });
+    }
+  },
+  methods: {
+    initOrUpdateScrollbar() {
+      this.$nextTick(() => {
+        const menuInner = this.$el ? this.$el.querySelector('.menu-inner') : document.querySelector('#layout-menu .menu-inner');
+        if (!menuInner) return;
+
+        const PS = window.PerfectScrollbar;
+        if (PS) {
+          // Nếu Menu (từ main.js của Sneat) đã khởi tạo instance trên Helpers.menuPsScroll
+          if (window.Helpers && window.Helpers.menuPsScroll && window.Helpers.menuPsScroll.isAlive) {
+            this.menuPs = window.Helpers.menuPsScroll;
+            this.menuPs.update();
+            return;
+          }
+
+          if (this.menuPs && this.menuPs.isAlive) {
+            this.menuPs.update();
+          } else {
+            this.menuPs = new PS(menuInner, {
+              suppressScrollX: true,
+              wheelPropagation: false
+            });
+            if (window.Helpers) {
+              window.Helpers.menuPsScroll = this.menuPs;
+            }
+
+            const menuInnerShadow = this.$el ? this.$el.querySelector('.menu-inner-shadow') : document.querySelector('.menu-inner-shadow');
+            menuInner.addEventListener('ps-scroll-y', () => {
+              const thumb = menuInner.querySelector('.ps__thumb-y');
+              if (menuInnerShadow) {
+                menuInnerShadow.style.display = thumb && thumb.offsetTop ? 'block' : 'none';
+              }
+            });
+          }
+        } else {
+          // Thử lại sau 300ms nếu assets Sneat đang tải
+          setTimeout(() => {
+            if (window.PerfectScrollbar && !this.menuPs) {
+              this.initOrUpdateScrollbar();
+            }
+          }, 300);
+        }
+      });
+    },
+    onResize() {
+      if (this.menuPs && this.menuPs.update) {
+        this.menuPs.update();
+      }
     }
   }
 };

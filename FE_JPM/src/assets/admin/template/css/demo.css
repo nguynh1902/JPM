@@ -167,3 +167,41 @@
   font-size: 1.25rem !important;
   line-height: 1 !important;
 }
+
+/* ==========================================================================
+   JPM ADMIN STANDARD - SNEAT 1.0.0 SCROLLBAR (TRIỆT TIÊU NÚT MŨI TÊN, THANH MẢNH)
+   ========================================================================== */
+::-webkit-scrollbar-button {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+/* Chuẩn hóa toàn bộ bảng và vùng cuộn admin theo phong cách Sneat 1.0.0 */
+.custom-scroll,
+.table-responsive {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(86, 106, 127, 0.25) transparent;
+}
+
+.custom-scroll::-webkit-scrollbar,
+.table-responsive::-webkit-scrollbar {
+  width: 6px !important;
+  height: 6px !important;
+}
+
+.custom-scroll::-webkit-scrollbar-track,
+.table-responsive::-webkit-scrollbar-track {
+  background: transparent !important;
+}
+
+.custom-scroll::-webkit-scrollbar-thumb,
+.table-responsive::-webkit-scrollbar-thumb {
+  background-color: rgba(86, 106, 127, 0.25) !important;
+  border-radius: 6px !important;
+}
+
+.custom-scroll::-webkit-scrollbar-thumb:hover,
+.table-responsive::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(86, 106, 127, 0.45) !important;
+}

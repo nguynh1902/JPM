@@ -319,52 +319,89 @@
       <!-- HIỆU NĂNG & REDIS CACHE -->
       <div class="col-12">
         <div class="card mb-4">
-          <div class="card-header d-flex justify-content-between align-items-center">
+          <div class="card-header d-flex flex-wrap justify-content-between align-items-center gap-2 border-bottom py-3">
             <div>
-              <h5 class="card-title mb-1 fw-bold text-dark">Hiệu Năng & Bộ Nhớ Đệm (Redis / Failover Cache)</h5>
-              <small class="text-muted">Tăng tốc truy vấn danh mục Máy thủy, Model, Sơ đồ phụ tùng và chịu tải cao khi triển khai Production</small>
+              <h5 class="card-title mb-1 fw-bold text-dark">
+                <i class="bx bx-server text-primary me-2"></i>Hiệu Năng & Bộ Nhớ Đệm (Redis Cache)
+              </h5>
+              <small class="text-muted">Tối ưu tốc độ tải danh mục Máy thủy, Động cơ, Sơ đồ phụ tùng và giảm tải máy chủ</small>
             </div>
-            <span class="badge bg-success px-3 py-2 rounded-pill">
+            <span class="badge bg-label-success px-3 py-2 rounded">
               <i class="bx bx-check-shield me-1"></i> Redis Active (Failover Protected)
             </span>
           </div>
 
           <div class="card-body pt-4">
-            <div class="row align-items-center g-3">
-              <div class="col-lg-8">
-                <p class="text-dark fw-medium mb-1">
-                  Kiến trúc bộ nhớ đệm: <strong>Failover Cache (Redis &rarr; File Driver &rarr; Memory Array)</strong>
-                </p>
-                <p class="text-muted small mb-0">
-                  Khi kích hoạt máy chủ Production, Redis Cache lưu trữ sẵn toàn bộ Thương hiệu, Loại động cơ, Model và Nhóm phụ tùng giúp giảm tải 95% truy vấn database. Khi có thay đổi dữ liệu phụ tùng từ Admin, hệ thống tự động xóa cache liên quan.
-                </p>
-                <div v-if="cacheStats" class="mt-3 p-3 bg-light rounded-3 border small">
-                  <div class="d-flex flex-wrap gap-4 text-dark">
-                    <span><i class="bx bx-badge-check text-success me-1"></i>Thương hiệu: <strong>{{ cacheStats.thuong_hieu ?? cacheStats.cached_brands ?? 0 }}</strong></span>
-                    <span><i class="bx bx-badge-check text-success me-1"></i>Loại động cơ: <strong>{{ cacheStats.loai_dong_co ?? cacheStats.cached_engine_types ?? 0 }}</strong></span>
-                    <span><i class="bx bx-badge-check text-success me-1"></i>Model máy: <strong>{{ cacheStats.dong_co_model ?? cacheStats.cached_models ?? 0 }}</strong></span>
-                    <span><i class="bx bx-badge-check text-success me-1"></i>Nhóm phụ tùng: <strong>{{ cacheStats.nhom_phu_tung ?? cacheStats.cached_part_groups ?? 0 }}</strong></span>
+            <!-- Mô tả kiến trúc cache -->
+            <div class="mb-3">
+              <p class="text-dark fw-medium mb-1">
+                Kiến trúc bộ nhớ đệm: <span class="text-primary fw-semibold">Failover Cache (Redis &rarr; File Driver &rarr; Memory Array)</span>
+              </p>
+              <p class="text-muted small mb-0" style="line-height: 1.6;">
+                Hệ thống tự động lưu trữ sẵn toàn bộ danh mục Thương hiệu, Loại động cơ, Model và Nhóm phụ tùng vào bộ nhớ đệm tốc độ cao, giúp giảm tới <strong>95%</strong> áp lực truy vấn lên cơ sở dữ liệu. Khi Quản trị viên thay đổi hoặc cập nhật dữ liệu phụ tùng, hệ thống sẽ tự động làm mới bộ nhớ đệm liên quan.
+              </p>
+            </div>
+
+            <!-- Thống kê mục đã cache (khi đã làm ấm) -->
+            <div v-if="cacheStats" class="mb-4 p-3 bg-light rounded border">
+              <div class="d-flex align-items-center mb-2">
+                <i class="bx bx-check-circle text-success fs-5 me-2"></i>
+                <span class="fw-semibold text-dark small">Dữ liệu đã nạp sẵn vào bộ nhớ đệm:</span>
+              </div>
+              <div class="row g-2 text-dark small">
+                <div class="col-6 col-sm-3">
+                  <div class="p-2 border rounded bg-white text-center">
+                    <div class="text-muted small">Thương hiệu</div>
+                    <div class="fw-bold fs-6 text-primary">{{ cacheStats.thuong_hieu ?? cacheStats.cached_brands ?? 0 }}</div>
+                  </div>
+                </div>
+                <div class="col-6 col-sm-3">
+                  <div class="p-2 border rounded bg-white text-center">
+                    <div class="text-muted small">Loại động cơ</div>
+                    <div class="fw-bold fs-6 text-primary">{{ cacheStats.loai_dong_co ?? cacheStats.cached_engine_types ?? 0 }}</div>
+                  </div>
+                </div>
+                <div class="col-6 col-sm-3">
+                  <div class="p-2 border rounded bg-white text-center">
+                    <div class="text-muted small">Model máy</div>
+                    <div class="fw-bold fs-6 text-primary">{{ cacheStats.dong_co_model ?? cacheStats.cached_models ?? 0 }}</div>
+                  </div>
+                </div>
+                <div class="col-6 col-sm-3">
+                  <div class="p-2 border rounded bg-white text-center">
+                    <div class="text-muted small">Nhóm phụ tùng</div>
+                    <div class="fw-bold fs-6 text-primary">{{ cacheStats.nhom_phu_tung ?? cacheStats.cached_part_groups ?? 0 }}</div>
                   </div>
                 </div>
               </div>
-              <div class="col-lg-4 text-lg-end d-flex flex-column flex-sm-row justify-content-lg-end gap-2">
+            </div>
+
+            <!-- Thanh công cụ thao tác chuẩn Sneat 1.0.0 (Tách hàng riêng, không đè chữ) -->
+            <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 pt-3 border-top">
+              <div class="text-muted small">
+                <i class="bx bx-info-circle me-1 text-info"></i>
+                Khuyến nghị bấm <strong>Làm Ấm Cache</strong> sau khi xóa trắng để người dùng tra cứu mượt mà nhất.
+              </div>
+              <div class="d-flex flex-wrap gap-2">
                 <button 
                   type="button" 
-                  class="btn btn-outline-danger shadow-sm text-nowrap"
+                  class="btn btn-outline-danger px-4 shadow-sm text-nowrap d-inline-flex align-items-center justify-content-center"
+                  style="min-width: 175px;"
                   @click="handleClearCache(false)"
                   :disabled="isClearingCache"
                 >
-                  <i class="bx bx-trash me-1"></i> Xóa Trắng Cache
+                  <i class="bx bx-trash me-2"></i> Xóa Trắng Cache
                 </button>
                 <button 
                   type="button" 
-                  class="btn btn-success shadow-sm text-nowrap"
+                  class="btn btn-primary px-4 shadow-sm text-nowrap d-inline-flex align-items-center justify-content-center"
+                  style="min-width: 175px;"
                   @click="handleClearCache(true)"
                   :disabled="isClearingCache"
                 >
                   <span v-if="isClearingCache" class="spinner-border spinner-border-sm me-2" role="status"></span>
-                  <i v-else class="bx bx-bolt-circle me-1"></i>
-                  {{ isClearingCache ? 'Đang làm ấm...' : 'Làm Ấm Cache (Warm-up)' }}
+                  <i v-else class="bx bx-bolt-circle me-2"></i>
+                  {{ isClearingCache ? 'Đang làm ấm...' : 'Làm Ấm Cache' }}
                 </button>
               </div>
             </div>

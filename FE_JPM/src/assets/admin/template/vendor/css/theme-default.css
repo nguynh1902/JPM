@@ -996,7 +996,7 @@ input[type="file"].form-control::file-selector-button { padding: 0.4375rem 0.875
 }
 
 /* ======================================================================
-   ADMIN SIDEBAR SCROLL FIX: Pinned header & scrollable menu
+   ADMIN SIDEBAR SCROLL: Pinned header & Sleek Sneat 1.0.0 Scrollbar
    ====================================================================== */
 #layout-menu {
   display: flex !important;
@@ -1014,24 +1014,38 @@ input[type="file"].form-control::file-selector-button { padding: 0.4375rem 0.875
   background-color: #fff !important;
 }
 #layout-menu .menu-inner {
+  position: relative !important;
   flex: 1 1 auto !important;
   min-height: 0 !important;
-  height: auto !important;
-  overflow-y: auto !important;
+  height: calc(100vh - 76px) !important;
   overflow-x: hidden !important;
   scrollbar-width: thin !important;
-  scrollbar-color: rgba(67, 89, 113, 0.2) transparent !important;
+  scrollbar-color: rgba(86, 106, 127, 0.2) transparent !important;
 }
+#layout-menu .menu-inner:not(.ps) {
+  overflow-y: auto !important;
+}
+
+/* Fallback WebKit Scrollbar (đồng nhất 100% chuẩn Sneat 1.0.0: thanh mảnh 5px, không nút mũi tên) */
 #layout-menu .menu-inner::-webkit-scrollbar {
   width: 5px !important;
+  height: 5px !important;
+}
+#layout-menu .menu-inner::-webkit-scrollbar-track {
+  background: transparent !important;
 }
 #layout-menu .menu-inner::-webkit-scrollbar-thumb {
-  background: rgba(67, 89, 113, 0.2) !important;
+  background: rgba(86, 106, 127, 0.2) !important;
   border-radius: 10px !important;
 }
-#layout-menu .ps__rail-y,
-#layout-menu .ps__rail-x {
+#layout-menu .menu-inner::-webkit-scrollbar-thumb:hover {
+  background: rgba(86, 106, 127, 0.4) !important;
+}
+#layout-menu .menu-inner::-webkit-scrollbar-button,
+::-webkit-scrollbar-button {
   display: none !important;
+  width: 0 !important;
+  height: 0 !important;
 }
 
 /* ======================================================================
