@@ -154,34 +154,39 @@ Mọi trang danh mục quản trị trong hệ thống Admin/Staff phải thuộ
 - Bộ tài nguyên Sneat tại `FE_JPM/src/assets/admin/template/` được đối xử như một thư viện UI lõi chứa đầy đủ các thành phần: thẻ card, bảng biểu, hệ màu chữ/nền, các kiểu nút bấm (`btn-*`, `btn-label-*`), các kiểu huy hiệu (`badge`, `bg-label-*`).
 - Toàn bộ giao diện Admin & Staff phải hiển thị đồng nhất nhờ kế thừa các class tiện ích có sẵn trong thư viện này.
 
-### 5.2. Quy tắc Mở rộng Thư viện (Extending Sneat via `demo.css`)
-> **Tình huống:** Khi một trang nghiệp vụ cần một kiểu nút màu mới, một biến thể badge đặc thù, hoặc kiểu hiển thị mới mà Sneat mặc định chưa có:
-- ❌ **TUYỆT ĐỐI CẤM:** Không tự viết class CSS riêng trong thẻ `<style scoped>` của file Vue đó (vì sẽ làm phân mảnh code, trang khác không dùng lại được, gây rác mã nguồn).
-- ✅ **BẮT BUỘC:** Vào trực tiếp file CSS của template Admin:
-  📁 `FE_JPM/src/assets/admin/template/css/demo.css`
-  Viết thêm định nghĩa class chuẩn tại đây theo phong cách Bootstrap/Sneat. Ví dụ:
-  ```css
-  /* Bổ sung trong demo.css */
-  .btn-teal {
-    color: #fff;
-    background-color: #20c997;
-    border-color: #20c997;
-  }
-  .btn-teal:hover {
-    background-color: #1aa179;
-    border-color: #1aa179;
-  }
-  .bg-label-teal {
-    background-color: #e8fadf !important;
-    color: #20c997 !important;
-  }
-  ```
-- **Bên ngoài component Vue:** Chỉ việc gọi class ra dùng như class Bootstrap thông thường:
+### 5.2. Quy tắc Chuẩn hóa & Tinh chỉnh bằng Mã Bootstrap / Sneat trong `demo.css`
+> **Tình huống:** Khi một trang nghiệp vụ cần tinh chỉnh màu sắc, thanh cuộn, padding hay biến thể hiển thị đồng bộ cho Admin & Staff:
+- ❌ **TUYỆT ĐỐI CẤM:** 
+  - Không tự viết class CSS riêng trong thẻ `<style scoped>` của file Vue.
+  - **Không tự độ chế ra các class có tên tùy tiện, dị biệt** (CẤM: `.btn-teal`, `.btn-my-action`, `.my-custom-badge`...).
+- ✅ **BẮT BUỘC:** 
+  - Mọi component bên ngoài **100% chỉ sử dụng class chính quy của Bootstrap 5 và Sneat**:
+    - Nút bấm: `.btn.btn-primary`, `.btn.btn-danger`, `.btn.btn-outline-*`, `.btn.btn-label-*`, `.btn.btn-sm.btn-icon`...
+    - Huy hiệu: `.badge.bg-label-primary`, `.badge.bg-label-success`, `.badge.bg-label-danger`, `.badge.bg-label-warning`...
+  - Khi cần định nghĩa hoặc tinh chỉnh giao diện toàn cục, **bắt buộc viết trong file CSS của template Admin**:
+    📁 `FE_JPM/src/assets/admin/template/css/demo.css`
+    **Nhưng phải viết theo chuẩn Bootstrap 5 & cấu trúc Sneat**, tùy biến trực tiếp trên class và CSS variables của Bootstrap/Sneat:
+    ```css
+    /* Tinh chỉnh chuẩn Bootstrap / Sneat trong demo.css */
+    /* 1. Tùy biến biến thể nút chuẩn theo CSS variables của Bootstrap */
+    .btn-primary {
+      --bs-btn-bg: #696cff;
+      --bs-btn-border-color: #696cff;
+      --bs-btn-hover-bg: #5f61e6;
+      --bs-btn-hover-border-color: #5f61e6;
+    }
+    /* 2. Badge pastel chuẩn hệ thống Sneat */
+    .badge.bg-label-success {
+      background-color: #e8fadf !important;
+      color: #71dd37 !important;
+    }
+    ```
+- **Bên ngoài component Vue:** Chỉ gọi đúng class chuẩn Bootstrap / Sneat:
   ```html
-  <button class="btn btn-teal"><i class="bx bx-check me-1"></i> Xác Nhận</button>
-  <span class="badge rounded-pill bg-label-teal">HOÀN TẤT</span>
+  <button class="btn btn-primary"><i class="bx bx-check me-1"></i> Xác Nhận</button>
+  <span class="badge bg-label-success">HOÀN TẤT</span>
   ```
-- **Lợi ích:** Mọi trang Admin và Staff khác khi cần đều có thể gọi ngay class này, đảm bảo tính tái sử dụng và đồng bộ 100% trên toàn dự án.
+- **Lợi ích:** Mọi trang Admin và Staff đều dùng chung 100% cú pháp Bootstrap chính quy, không sinh rác class tự chế, dễ bảo trì và mở rộng.
 
 ### 5.3. Quy định nghiêm ngặt về Inline Style (`style="..."`)
 - Inline `style=""` **DUY NHẤT** được chấp nhận cho **kích thước vật lý hoặc thông số động** (Physical / Dynamic Dimensions):

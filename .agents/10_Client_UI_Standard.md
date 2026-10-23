@@ -152,37 +152,45 @@ Dùng `.input-group` kết hợp icon Bootstrap Icons:
 - Bộ tài nguyên TheEvent tại `FE_JPM/src/assets/client/` đóng vai trò như một thư viện UI chuẩn cho toàn bộ người dùng Client. Nó đã bao hàm đầy đủ kiểu hiển thị của Section, Card sản phẩm, Typography, Buttons, Badges, Animation.
 - Giống như Admin, toàn bộ giao diện Client phải đồng nhất về phong cách và màu sắc thương hiệu hải quân (Navy `#0A1128` + Marine Red `#f82249`).
 
-### 4.2. Quy tắc Mở rộng Thư viện (Extending TheEvent via `main.css`)
-> **Tình huống:** Khi một trang Client (VD: Chi tiết Catalog, Báo giá B2B, Giỏ hàng) cần một biến thể nút mới, một màu huy hiệu danh mục mới, hoặc card kiểu mới mà TheEvent mặc định chưa có:
-- ❌ **TUYỆT ĐỐI CẤM:** Không tự viết class CSS riêng trong thẻ `<style scoped>` của file Vue Client đó.
-- ✅ **BẮT BUỘC:** Vào trực tiếp file CSS giao diện chính của Client:
-  📁 `FE_JPM/src/assets/client/css/main.css`
-  Viết thêm định nghĩa class chuẩn tại đây. Ví dụ:
-  ```css
-  /* Bổ sung trong main.css của Client */
-  .btn-marine-navy {
-    background-color: #0A1128;
-    color: #ffffff;
-    border: 1px solid #0A1128;
-    transition: all 0.3s ease;
-  }
-  .btn-marine-navy:hover {
-    background-color: #1a2750;
-    color: #ffffff;
-    border-color: #1a2750;
-  }
-  .badge-marine-oem {
-    background-color: rgba(248, 34, 73, 0.1);
-    color: #f82249;
-    border: 1px solid rgba(248, 34, 73, 0.3);
-  }
-  ```
-- **Bên ngoài component Vue:** Chỉ việc gọi class ra dùng như class Bootstrap thông thường:
+### 4.2. Quy tắc Chuẩn hóa & Mở rộng bằng Mã Bootstrap 5 trong `main.css`
+> **Tình huống:** Khi một trang Client (VD: Chi tiết Catalog, Báo giá B2B, Giỏ hàng) cần điều chỉnh màu sắc thương hiệu, biến thể nút, huy hiệu hoặc card mà giao diện mặc định cần đồng bộ:
+- ❌ **TUYỆT ĐỐI CẤM:** 
+  - Không tự viết CSS riêng trong thẻ `<style scoped>` của file Vue.
+  - **Không tự độ chế ra các class có tên tùy tiện, dị biệt** (CẤM: `.btn-marine-navy`, `.badge-marine-oem`, `.my-card-custom`...).
+- ✅ **BẮT BUỘC:** 
+  - Mọi component bên ngoài **100% chỉ sử dụng class chính quy của Bootstrap 5**: `btn btn-primary`, `btn btn-danger`, `btn btn-outline-danger`, `badge bg-danger`, `card`, `table table-hover`...
+  - Khi cần định nghĩa hoặc tinh chỉnh giao diện, **bắt buộc viết trong file CSS gốc**:
+    📁 `FE_JPM/src/assets/client/css/main.css`
+    **Nhưng phải viết bằng chuẩn code và biến Bootstrap 5**, ghi đè hoặc tùy biến trực tiếp trên class và CSS variables của Bootstrap:
+    ```css
+    /* Tinh chỉnh chuẩn Bootstrap trong main.css của Client */
+    /* 1. Tùy biến nút chính quy Bootstrap theo màu thương hiệu */
+    .btn-primary {
+      --bs-btn-bg: #0A1128;
+      --bs-btn-border-color: #0A1128;
+      --bs-btn-hover-bg: #1a2750;
+      --bs-btn-hover-border-color: #1a2750;
+      --bs-btn-color: #ffffff;
+    }
+    .btn-danger {
+      --bs-btn-bg: #f82249;
+      --bs-btn-border-color: #f82249;
+      --bs-btn-hover-bg: #e0163c;
+      --bs-btn-hover-border-color: #e0163c;
+      --bs-btn-color: #ffffff;
+    }
+    /* 2. Badge chuẩn Bootstrap */
+    .badge.bg-danger {
+      background-color: #f82249 !important;
+    }
+    ```
+- **Bên ngoài component Vue:** Chỉ gọi đúng class chuẩn Bootstrap 5:
   ```html
-  <button class="btn btn-marine-navy"><i class="bi bi-box-seam me-1"></i> Tra Cứu Catalog</button>
-  <span class="badge badge-marine-oem">OEM GENUINE</span>
+  <button class="btn btn-primary"><i class="bi bi-box-seam me-1"></i> Tra Cứu Catalog</button>
+  <button class="btn btn-danger"><i class="bi bi-cart-plus me-1"></i> Thêm Vào Giỏ</button>
+  <span class="badge bg-danger">OEM GENUINE</span>
   ```
-- **Lợi ích:** Mọi trang Client khác (Trang chủ, Chi tiết sản phẩm, Giỏ hàng, Đơn mua) đều tái sử dụng được ngay mà không cần viết lại CSS, giữ mã nguồn cực kỳ gọn gàng.
+- **Lợi ích:** Không sinh ra bất kỳ class "chế" nào, giữ mã nguồn 100% Bootstrap 5 chuẩn mực, mọi trang Client khác đều dùng chung cú pháp đồng nhất.
 
 ### 4.3. Quy định nghiêm ngặt về Inline Style (`style="..."`)
 - Inline `style=""` **DUY NHẤT** được chấp nhận cho **kích thước vật lý hoặc thông số động** (Physical / Dynamic Dimensions):

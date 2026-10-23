@@ -19,12 +19,13 @@ Mọi Lập trình viên và AI tham gia vào dự án JPM bắt buộc phải t
 *   **Template đóng vai trò Thư viện Thiết kế Tập trung (Template as a Design System Library):**
     *   Thư mục tài nguyên trong `assets/` (Sneat cho Admin/Staff, TheEvent cho Client) được coi như một thư viện UI chuẩn mực chứa đầy đủ card, button, bảng biểu, badge, màu sắc...
     *   Giao diện các trang hiển thị đẹp đẽ bằng cách **ăn CSS từ thư viện template trong `assets/`**, tuyệt đối không viết CSS thủ công đè lên từng trang.
-*   **Quy tắc Mở rộng Thư viện (Extending the Library Rule - BẮT BUỘC):**
+*   **Quy tắc Chuẩn hóa & Mở rộng bằng Mã Bootstrap 5 (BẮT BUỘC):**
     *   Khi giao diện thiếu bất kỳ kiểu dáng, màu sắc button, kiểu badge hay biến thể card nào: **Tuyệt đối KHÔNG viết CSS thuần trong file `.vue` (`<style scoped>`)**.
-    *   Lập trình viên / AI **BẮT BUỘC vào trực tiếp file CSS của template trong thư mục `assets/` để code thêm class chuẩn**:
-        *   **Admin & Staff:** Bổ sung vào `FE_JPM/src/assets/admin/template/css/demo.css` (VD: thêm class `.btn-cyan`, `.bg-label-indigo`...).
-        *   **Client:** Bổ sung vào `FE_JPM/src/assets/client/css/main.css` (VD: thêm class `.btn-marine-dark`, `.badge-marine`...).
-    *   Sau khi thêm vào template CSS, component bên ngoài chỉ việc gọi class (`class="btn btn-cyan"`). Việc này giúp mọi trang khác trong dự án đều tái sử dụng được ngay, đảm bảo tính đồng bộ 100%.
+    *   **Tuyệt đối KHÔNG tự độ chế ra các tên class dị biệt** (CẤM: `.btn-marine-navy`, `.btn-cyan`, `.badge-marine`...).
+    *   Lập trình viên / AI **BẮT BUỘC viết bằng mã/biến chuẩn Bootstrap 5 trực tiếp vào file CSS gốc của template trong thư mục `assets/`**:
+        *   **Admin & Staff:** Bổ sung/ghi đè theo chuẩn Bootstrap/Sneat trong `FE_JPM/src/assets/admin/template/css/demo.css`.
+        *   **Client:** Bổ sung/ghi đè theo chuẩn Bootstrap trong `FE_JPM/src/assets/client/css/main.css`.
+    *   Component bên ngoài **100% chỉ gọi các class chính quy của Bootstrap 5** (`btn btn-primary`, `btn btn-danger`, `badge bg-danger`...), đảm bảo toàn bộ dự án thống nhất một cú pháp duy nhất.
 *   **Quy định nghiêm ngặt về Inline Style (`style="..."`):**
     *   Inline `style=""` **DUY NHẤT** được chấp nhận cho **kích thước vật lý hoặc thông số động** (Physical / Dynamic Dimensions):
         *   Chiều rộng cột bảng cố định (VD: `style="width: 5%;"`).

@@ -223,9 +223,9 @@
           <!-- Skeleton khi đang load -->
           <template v-if="!hotProducts">
             <div class="col" v-for="n in 4" :key="'sk-' + n">
-              <div class="card h-100 premium-product-card">
+              <div class="card h-100 border-0 shadow-sm rounded-3 overflow-hidden">
                 <div class="card-img-wrapper skeleton-box" style="aspect-ratio: 4/3;"></div>
-                <div class="card-body p-4">
+                <div class="card-body p-3">
                   <div class="skeleton-line" style="width: 60%; height: 12px; margin-bottom: 12px;"></div>
                   <div class="skeleton-line" style="width: 90%; height: 16px; margin-bottom: 8px;"></div>
                   <div class="skeleton-line" style="width: 75%; height: 16px; margin-bottom: 20px;"></div>
@@ -237,40 +237,41 @@
           <!-- Data thật -->
           <template v-else>
             <div class="col" v-for="prod in hotProducts" :key="prod.id">
-              <div class="card h-100 premium-product-card group-hover position-relative" style="border: 1px solid #e5e7eb; border-radius: 0; box-shadow: none;">
-                  <div class="card-img-wrapper overflow-hidden img-zoom-hover" style="border-radius: 0;">
-                    <img
-                      :src="getImageUrl(prod.hinh_anh_chinh) || 'https://images.unsplash.com/photo-1559523161-0fc0d8b38a7a?auto=format&fit=crop&q=80&w=400'"
-                      class="card-img-top w-100 transition-transform"
-                      style="aspect-ratio: 4/3; object-fit: cover; border-radius: 0;"
-                      :alt="prod.ten_san_pham"
-                      @error="$event.target.src='https://placehold.co/300x200/f8f9fa/a1acb8?text=JPM+Marine'"
-                    >
-                    <div class="position-absolute" style="top: 10px; right: 10px; z-index: 10;">
-                      <button class="btn bg-white shadow-sm" style="width: 32px; height: 32px; padding: 0; display: flex; align-items: center; justify-content: center; border: 1px solid #e5e7eb; border-radius: 4px;" title="Thêm vào giỏ" @click.prevent="addToCart(prod)">
-                        <i class="bi bi-cart-plus" style="color: #dc3545; font-size: 1.1rem;"></i>
-                      </button>
-                    </div>
-                  </div>
-                  <div class="card-body text-start p-3 d-flex flex-column bg-white">
-                    <div class="d-flex justify-content-between align-items-start mb-2">
-                      <span class="text-muted fw-bold text-uppercase" style="letter-spacing: 0.5px; font-size: 0.75rem;">{{ prod.danh_muc ? prod.danh_muc.ten_danh_muc : 'OEM' }}</span>
-                    </div>
-                    <h5 class="card-title mb-3" style="font-size: 0.95rem; line-height: 1.5; font-weight: 500; color: #1e293b;">
-                      <router-link :to="`/chi-tiet-san-pham/${prod.slug}`" class="text-decoration-none stretched-link" style="color: inherit;">{{ prod.ten_san_pham }}</router-link>
-                    </h5>
-                    <div class="mt-auto d-flex align-items-center contact-action" style="border-top: 1px solid #f1f5f9; padding-top: 0.75rem; justify-content: flex-end;">
-                      <span v-if="prod.is_gia_lien_he || !prod.gia_ban" class="text-danger fw-bold" style="font-size: 1.1rem;">Liên hệ</span>
-                      <span v-else class="text-danger fw-bold" style="font-size: 1.1rem;">{{ Number(prod.gia_ban).toLocaleString('vi-VN') }} đ</span>
-                    </div>
+              <div class="card h-100 border-0 shadow-sm rounded-3 overflow-hidden product-card group-hover position-relative">
+                <div class="card-img-wrapper position-relative overflow-hidden bg-light d-flex align-items-center justify-content-center">
+                  <img
+                    :src="getImageUrl(prod.hinh_anh_chinh) || 'https://images.unsplash.com/photo-1559523161-0fc0d8b38a7a?auto=format&fit=crop&q=80&w=400'"
+                    class="card-img-top w-100 transition-transform"
+                    style="aspect-ratio: 4/3; object-fit: cover;"
+                    :alt="prod.ten_san_pham"
+                    @error="$event.target.src='https://placehold.co/300x200/f8f9fa/a1acb8?text=JPM+Marine'"
+                  >
+                  <div class="position-absolute top-0 end-0 p-2" style="z-index: 10;">
+                    <button class="btn btn-sm btn-light border shadow-sm rounded-circle p-0 d-flex align-items-center justify-content-center" style="width: 34px; height: 34px;" title="Thêm vào giỏ" @click.prevent="addToCart(prod)">
+                      <i class="bi bi-cart-plus text-danger fs-6"></i>
+                    </button>
                   </div>
                 </div>
+                <div class="card-body text-start p-3 d-flex flex-column bg-white">
+                  <div class="d-flex justify-content-between align-items-start mb-2">
+                    <span class="text-muted fw-semibold text-uppercase small" style="letter-spacing: 0.5px; font-size: 0.75rem;">{{ prod.danh_muc ? prod.danh_muc.ten_danh_muc : 'OEM' }}</span>
+                  </div>
+                  <h5 class="card-title mb-3 fs-6 fw-semibold text-dark">
+                    <router-link :to="`/chi-tiet-san-pham/${prod.slug}`" class="text-decoration-none text-dark stretched-link">{{ prod.ten_san_pham }}</router-link>
+                  </h5>
+                  <div class="mt-auto d-flex align-items-center justify-content-between pt-2 border-top">
+                    <span class="text-muted small">Giá bán:</span>
+                    <span v-if="prod.is_gia_lien_he || !prod.gia_ban" class="text-danger fw-bold fs-6">Liên hệ</span>
+                    <span v-else class="text-danger fw-bold fs-6">{{ Number(prod.gia_ban).toLocaleString('vi-VN') }} đ</span>
+                  </div>
+                </div>
+              </div>
             </div>
           </template>
         </div>
 
         <div class="text-center mt-5">
-          <router-link to="/san-pham" class="btn btn-outline-danger px-4 py-2 fw-semibold btn-view-all">Xem tất cả sản phẩm <i class="bi bi-arrow-right ms-2"></i></router-link>
+          <router-link to="/san-pham" class="btn btn-outline-danger px-4 py-2 fw-semibold rounded-pill">Xem tất cả sản phẩm <i class="bi bi-arrow-right ms-2"></i></router-link>
         </div>
       </div>
     </section>
@@ -283,21 +284,21 @@
           <!-- Cột Trái (5 phần): Tiêu đề và Mô tả -->
           <div class="col-lg-5 mb-5 mb-lg-0 pe-lg-5" data-aos="fade-right">
             <div class="mb-3">
-              <span style="color: var(--accent-color); font-size: 0.85rem; font-weight: 600;">Thế mạnh vượt trội</span>
+              <span class="badge bg-danger-subtle text-danger border border-danger-subtle text-uppercase fw-semibold px-3 py-2 rounded-pill">Thế mạnh vượt trội</span>
             </div>
-            <h2 class="mb-4" style="color: #fff; font-size: 2rem; line-height: 1.3; font-family: var(--heading-font);">
-              <span class="fw-light" style="opacity: 0.9;">Tại Sao Chọn</span> <br>
-              <span class="fw-bold" style="color: var(--accent-color);">JPM Marine</span>
+            <h2 class="mb-4 text-white display-6 fw-bold">
+              <span class="fw-light opacity-75">Tại Sao Chọn</span> <br>
+              <span class="text-danger">JPM Marine</span>
             </h2>
-            <p class="mb-4" style="color: rgba(255,255,255,0.85); font-size: 1rem; line-height: 1.6; font-weight: 400;">Chúng tôi không chỉ cung cấp phụ tùng, chúng tôi mang đến sự an tâm tuyệt đối cho mỗi chuyến ra khơi với dịch vụ tiêu chuẩn quốc tế.</p>
-            <router-link to="/ho-tro" class="btn btn-outline-pulse rounded-0 px-4 py-2 mt-2 fw-medium" style="letter-spacing: 1px; transition: 0.3s; font-size: 0.85rem;">Nhận Tư Vấn Ngay <i class="bi bi-arrow-right ms-2"></i></router-link>
+            <p class="mb-4 text-white-50">Chúng tôi không chỉ cung cấp phụ tùng, chúng tôi mang đến sự an tâm tuyệt đối cho mỗi chuyến ra khơi với dịch vụ tiêu chuẩn quốc tế.</p>
+            <router-link to="/ho-tro" class="btn btn-outline-danger px-4 py-2 mt-2 fw-semibold rounded-pill">Nhận Tư Vấn Ngay <i class="bi bi-arrow-right ms-2"></i></router-link>
           </div>
 
           <!-- Cột Phải (7 phần): List 4 Items -->
           <div class="col-lg-7">
             <div class="d-flex flex-column gap-3">
               <!-- Item 1 -->
-              <div class="feature-list-card d-flex align-items-center p-4 rounded-4 feature-card" data-aos="fade-left" data-aos-delay="100" >
+              <div class="feature-list-card d-flex align-items-center p-4 rounded-3 feature-card" data-aos="fade-left" data-aos-delay="100">
                 <div class="icon feature-icon flex-shrink-0 d-flex align-items-center justify-content-center rounded-circle">
                   <i class="bi bi-shield-check"></i>
                 </div>
@@ -307,7 +308,7 @@
                 </div>
               </div>
               <!-- Item 2 -->
-              <div class="feature-list-card d-flex align-items-center p-4 rounded-4 feature-card" data-aos="fade-left" data-aos-delay="200" >
+              <div class="feature-list-card d-flex align-items-center p-4 rounded-3 feature-card" data-aos="fade-left" data-aos-delay="200">
                 <div class="icon feature-icon flex-shrink-0 d-flex align-items-center justify-content-center rounded-circle">
                   <i class="bi bi-truck"></i>
                 </div>
@@ -317,7 +318,7 @@
                 </div>
               </div>
               <!-- Item 3 -->
-              <div class="feature-list-card d-flex align-items-center p-4 rounded-4 feature-card" data-aos="fade-left" data-aos-delay="300" >
+              <div class="feature-list-card d-flex align-items-center p-4 rounded-3 feature-card" data-aos="fade-left" data-aos-delay="300">
                 <div class="icon feature-icon flex-shrink-0 d-flex align-items-center justify-content-center rounded-circle">
                   <i class="bi bi-headset"></i>
                 </div>
@@ -327,7 +328,7 @@
                 </div>
               </div>
               <!-- Item 4 -->
-              <div class="feature-list-card d-flex align-items-center p-4 rounded-4 feature-card" data-aos="fade-left" data-aos-delay="400" >
+              <div class="feature-list-card d-flex align-items-center p-4 rounded-3 feature-card" data-aos="fade-left" data-aos-delay="400">
                 <div class="icon feature-icon flex-shrink-0 d-flex align-items-center justify-content-center rounded-circle">
                   <i class="bi bi-tools"></i>
                 </div>
@@ -355,7 +356,7 @@
           <div class="col-lg-5">
             <!-- Skeleton -->
             <div v-if="!latestNews" class="feature-news-item d-flex flex-column h-100">
-              <div class="skeleton-box skeleton-box-full mb-4"></div>
+              <div class="skeleton-box skeleton-box-full mb-4 rounded-3"></div>
               <div class="px-1">
                 <div class="skeleton-line mb-3" style="width:40%;height:22px;"></div>
                 <div class="skeleton-line mb-2" style="width:90%;height:18px;"></div>
@@ -365,16 +366,16 @@
             </div>
             <!-- Data thật -->
             <div v-else-if="latestNews.length > 0" class="feature-news-item d-flex flex-column h-100 group-hover p-2">
-              <div class="overflow-hidden mb-4 position-relative img-zoom-hover skeleton-box-md">
+              <div class="overflow-hidden mb-4 position-relative img-zoom-hover rounded-3 skeleton-box-md">
                 <img
                   :src="getImageUrl(latestNews[0].thumbnail) || 'https://placehold.co/800x500/f1f3f5/a1acb8?text=JPM+Marine'"
-                  class="img-fluid object-fit-cover h-100 w-100 transition-transform"
+                  class="img-fluid object-fit-cover h-100 w-100 transition-transform rounded-3"
                   :alt="latestNews[0].title"
                   @error="$event.target.src='https://placehold.co/800x500/f1f3f5/a1acb8?text=JPM+Marine'"
                 >
               </div>
               <div class="d-flex flex-column flex-grow-1 px-1">
-                <span class="mb-3 align-self-start text-uppercase fw-bold" style="color: var(--accent-color); font-size: 0.8rem; letter-spacing: 2px;">
+                <span class="badge bg-danger-subtle text-danger border border-danger-subtle text-uppercase fw-semibold mb-3 align-self-start" style="letter-spacing: 1px;">
                   {{ latestNews[0].category || 'Tin tức' }}
                 </span>
                 <h4 class="fw-semibold mb-3" style="line-height: 1.4; font-family: var(--heading-font);">
@@ -393,7 +394,7 @@
             <!-- Skeleton -->
             <div v-if="!latestNews" class="news-list-container d-flex flex-column justify-content-between h-100">
               <div v-for="n in 5" :key="'nsk-'+n" class="news-list-item d-flex align-items-center py-3 border-bottom">
-                <div class="skeleton-box skeleton-box-sm flex-shrink-0"></div>
+                <div class="skeleton-box skeleton-box-sm flex-shrink-0 rounded-3"></div>
                 <div class="ms-4 flex-grow-1">
                   <div class="skeleton-line mb-2" style="width:85%;height:16px;"></div>
                   <div class="skeleton-line mb-2" style="width:60%;height:16px;"></div>
@@ -409,7 +410,7 @@
                 class="news-list-item d-flex align-items-center position-relative list-item-hover px-2"
                 :class="idx === 0 ? 'pt-0 pb-3 border-bottom' : idx === latestNews.slice(1).length - 1 ? 'pt-3 pb-0' : 'py-3 border-bottom'"
               >
-                <div class="flex-shrink-0 overflow-hidden img-zoom-hover" style="border-radius: 4px; width: 140px; aspect-ratio: 16/9;">
+                <div class="flex-shrink-0 overflow-hidden img-zoom-hover rounded-3" style="width: 140px; aspect-ratio: 16/9;">
                   <img
                     :src="getImageUrl(item.thumbnail) || 'https://placehold.co/300x200/f1f3f5/a1acb8?text=JPM'"
                     class="img-fluid object-fit-cover h-100 w-100 transition-transform"
@@ -418,7 +419,7 @@
                   >
                 </div>
                 <div class="ms-4 flex-grow-1">
-                  <h6 class="fw-medium mb-1 news-title" style="font-size: 1.2rem; line-height: 1.4;">
+                  <h6 class="fw-semibold mb-1 news-title" style="font-size: 1.1rem; line-height: 1.4;">
                     <router-link :to="`/tin-tuc/${item.slug || item.id}`" class="text-dark text-decoration-none stretched-link">{{ item.title }}</router-link>
                   </h6>
                   <div class="text-muted fw-medium text-uppercase" style="letter-spacing: 1px; font-size: 0.75rem;">
@@ -431,7 +432,7 @@
         </div>
 
         <div class="text-center mt-5">
-          <router-link to="/tin-tuc" class="btn btn-outline-danger px-4 py-2 fw-semibold btn-view-all">Xem tất cả bài viết <i class="bi bi-arrow-right ms-2"></i></router-link>
+          <router-link to="/tin-tuc" class="btn btn-outline-danger px-4 py-2 fw-semibold rounded-pill">Xem tất cả bài viết <i class="bi bi-arrow-right ms-2"></i></router-link>
         </div>
       </div>
     </section>
