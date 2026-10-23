@@ -417,12 +417,13 @@
 import { ref, reactive, watch, onMounted } from 'vue';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/vue-query';
 import axiosClient from '../../../api/axiosClient';
-import Swal from 'sweetalert2';
+import { createToaster } from '@meforma/vue-toaster';
 
 export default {
   name: "CauHinhHeThong",
   setup() {
     const queryClient = useQueryClient();
+    const toaster = createToaster({ position: "top-right", duration: 3000 });
     const isSubmitting = ref(false);
 
     // Initial default state
@@ -491,21 +492,10 @@ export default {
         queryClient.invalidateQueries({ queryKey: ['admin-site-settings'] });
         queryClient.invalidateQueries({ queryKey: ['public-site-settings'] });
         initialSnapshot.value = JSON.parse(JSON.stringify(formData));
-        
-        Swal.fire({
-          icon: 'success',
-          title: 'Thành công!',
-          text: 'Đã lưu cấu hình hệ thống và cập nhật giao diện Client.',
-          timer: 2000,
-          showConfirmButton: false
-        });
+        toaster.success('Đã lưu cấu hình hệ thống và cập nhật giao diện Client.');
       },
       onError: (err) => {
-        Swal.fire({
-          icon: 'error',
-          title: 'Lỗi khi lưu',
-          text: err.response?.data?.message || err.message || 'Không thể lưu cấu hình.'
-        });
+        toaster.error(err.response?.data?.message || err.message || 'Không thể lưu cấu hình.');
       }
     });
 
@@ -534,19 +524,10 @@ export default {
         const res = await axiosClient.post('/admin/he-thong/clear-cache', { warmup });
         if (res.data && res.data.success) {
           cacheStats.value = res.data.stats || null;
-          Swal.fire({
-            icon: 'success',
-            title: 'Thành Công!',
-            text: res.data.message,
-            confirmButtonColor: '#696cff'
-          });
+          toaster.success(res.data.message || 'Đã làm mới bộ nhớ đệm cache!');
         }
       } catch (err) {
-        Swal.fire({
-          icon: 'error',
-          title: 'Lỗi',
-          text: 'Không thể xóa bộ nhớ đệm: ' + (err.response?.data?.message || err.message)
-        });
+        toaster.error('Không thể xóa bộ nhớ đệm: ' + (err.response?.data?.message || err.message));
       } finally {
         isClearingCache.value = false;
       }

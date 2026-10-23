@@ -3,7 +3,7 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
       <h4 class="fw-bold py-3 mb-0"><span class="text-muted fw-light">Tài khoản /</span> Đổi mật khẩu</h4>
       <a href="javascript:void(0)" class="btn btn-sm btn-outline-danger" @click="confirmLogout">
-        <i class="icon-base bx bx-log-out-circle icon-sm me-1"></i>Logout
+        <i class="bx bx-log-out-circle me-1"></i>Đăng xuất
       </a>
     </div>
 
