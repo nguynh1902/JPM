@@ -37,6 +37,14 @@
   --shadow-md: 0 4px 12px rgba(10, 17, 40, 0.08);
   --shadow-lg: 0 12px 24px rgba(10, 17, 40, 0.12);
   --shadow-hover: 0 16px 32px rgba(10, 17, 40, 0.15);
+
+  /* Unified Bootstrap Design System Tokens (Luxury Minimalism 4px) */
+  --bs-border-radius: 4px;
+  --bs-border-radius-sm: 2px;
+  --bs-border-radius-lg: 4px;
+  --bs-border-radius-xl: 6px;
+  --bs-card-border-radius: 4px;
+  --bs-card-inner-border-radius: 4px;
 }
 
 /* Nav Menu Colors */
@@ -1523,6 +1531,9 @@ section,
 /*--------------------------------------------------------------
 # Sponsors Section
 --------------------------------------------------------------*/
+.sponsors .section-title {
+  padding-bottom: 20px;
+}
 .sponsors .clients-wrap {
   border: none;
 }
@@ -2493,23 +2504,31 @@ section,
    ========================================= */
 
 /* 1. Cards */
+.card,
 .index-page .card {
   background: var(--surface-color, #fff);
-  border-radius: 4px !important; /* Update to 4px per Luxury Minimalism rule */
+  border-radius: 4px !important; /* Unified 4px per Client Template Design System */
   box-shadow: 0 10px 30px rgba(0,0,0,0.04) !important;
   border: 1px solid #e0e6f0 !important;
   overflow: hidden;
   transition: all 0.3s ease;
 }
+.card .card-img-wrapper img,
 .index-page .card .card-img-wrapper img {
   transition: transform 0.3s ease-in-out;
 }
+.product-card:hover,
 .premium-product-card:hover {
   transform: translateY(-8px);
   box-shadow: 0 16px 40px rgba(0,0,0,0.1) !important;
 }
+.product-card:hover .card-img-wrapper img,
 .premium-product-card:hover .card-img-wrapper img {
-  transform: scale(1.1);
+  transform: scale(1.08);
+}
+.product-card:hover .card-title a,
+.premium-product-card:hover .card-title a {
+  color: var(--heading-color, #0e1b4d) !important; /* Giữ nguyên màu Xanh đậm đà nguyên bản của Client khi hover */
 }
 .card-hover:hover {
   border-color: var(--accent-color, #f82249) !important;
@@ -2850,47 +2869,92 @@ input[type="number"] {
   padding: 1.25rem !important;
 }
 
-/* Kiểu chữ: Brand (LAGOON) */
+/* Kiểu chữ: Brand / Danh mục sản phẩm (Category) */
+.product-category,
+.product-card .text-muted.small,
+.premium-product-card .text-muted.small,
 .premium-product-card .text-muted.small.text-uppercase {
+  font-family: var(--default-font) !important;
   font-size: 0.75rem !important;
-  letter-spacing: 1px !important;
-  color: #8392a5 !important; /* Xám xanh nhạt */
-  font-weight: 500 !important; /* Bớt đậm lại */
-  margin-bottom: 0.5rem !important;
+  letter-spacing: 0.5px !important;
+  color: #8392a5 !important; /* Xám xanh nhạt dịu mắt */
+  font-weight: 600 !important;
+  text-transform: uppercase !important;
+  line-height: 1.2 !important;
+  margin-bottom: 0.25rem !important;
 }
 
-/* Kiểu chữ: Title (FIRST 20) */
-.premium-product-card .card-title {
-  font-size: 1.15rem !important;
-  color: #1a2b4c !important; /* Xanh Navy đậm */
-  font-weight: 500 !important; /* Sang trọng, không quá dày */
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
-  white-space: nowrap !important;
-  overflow: hidden !important;
-  text-overflow: ellipsis !important;
-  display: block;
+/* Kiểu chữ: Mã sản phẩm (SKU) đặt ngay dưới tên sản phẩm dạng text kỹ thuật rõ nét */
+.product-sku {
+  font-family: var(--default-font) !important;
+  font-size: 0.8125rem !important; /* ~13px */
+  color: #64748b !important;
+  line-height: 1.3 !important;
+  margin-bottom: 0.75rem !important;
 }
+
+.product-sku .sku-label {
+  color: #8392a5 !important;
+  font-size: 0.75rem !important;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.product-sku .sku-code {
+  font-weight: 600 !important;
+  color: #1e293b !important;
+  letter-spacing: 0.2px !important;
+}
+
+/* Kiểu chữ: Tên sản phẩm & Thông tin Card (Chuẩn Typography E-Commerce) */
+.product-card .card-title,
+.premium-product-card .card-title {
+  font-family: var(--default-font) !important; /* Roboto: sắc nét, dễ đọc thông số kỹ thuật */
+  font-size: 0.95rem !important; /* Cỡ chữ vừa vặn, chuẩn e-commerce hiện đại */
+  color: var(--heading-color, #0A1128) !important; /* Deep Navy sang trọng */
+  font-weight: 600 !important;
+  line-height: 1.4 !important;
+  letter-spacing: normal !important;
+  text-transform: none !important; /* Bắt buộc tuân thủ 100% chữ hoa/thường do Admin nhập */
+  display: -webkit-box !important;
+  -webkit-line-clamp: 2 !important;
+  -webkit-box-orient: vertical !important;
+  overflow: hidden !important;
+  min-height: 2.65rem; /* Cố định chiều cao 2 dòng đều nhau giữa các card */
+  margin-bottom: 0.4rem !important;
+}
+.product-card .card-title a,
 .premium-product-card .card-title a {
-  color: #1a2b4c !important;
+  color: var(--heading-color, #0A1128) !important;
+  text-decoration: none !important;
+  transition: color 0.25s ease;
+}
+.product-card:hover .card-title a,
+.premium-product-card:hover .card-title a {
+  color: var(--heading-color, #0e1b4d) !important; /* Giữ nguyên màu Xanh đậm đà nguyên bản của Client khi hover */
 }
 
 /* Kẻ ngang bên dưới (trước giá tiền) */
+.product-card .contact-action,
 .premium-product-card .contact-action {
   border-top: 1px solid #e2e8f0; 
-  padding-top: 15px !important;
-  margin-top: 15px !important;
+  padding-top: 12px !important;
+  margin-top: auto !important;
   display: flex;
-  justify-content: flex-end; /* Đẩy giá tiền sang phải giống mẫu */
+  align-items: center;
+  justify-content: flex-end; /* Đẩy giá tiền sang phải */
 }
 
-/* Kiểu chữ: Giá tiền */
-.premium-product-card .contact-action .text-danger {
-  color: #f82249 !important; /* Đỏ tươi giống tiêu đề nhỏ bên trên */
-  font-family: var(--heading-font); /* Thống nhất font với tiêu đề */
+/* Kiểu chữ: Giá tiền (Nổi bật, số kỹ thuật rõ ràng) */
+.product-card .price-value,
+.premium-product-card .price-value,
+.premium-product-card .contact-action .text-danger,
+.product-card .border-top .text-danger {
+  color: var(--accent-color, #f82249) !important; /* Đỏ Marine Red thương hiệu */
+  font-family: var(--default-font) !important; /* Roboto: số kỹ thuật sắc nét, không bị cách điệu */
   font-size: 1.15rem !important;
-  font-weight: 600 !important; /* Đậm vừa phải, đồng bộ với h2 */
-  letter-spacing: 0.5px;
+  font-weight: 700 !important; /* Đậm nét nổi bật */
+  letter-spacing: normal !important;
 }
 @keyframes skeleton-shimmer {
   0% { background-position: -400px 0; }
@@ -2907,8 +2971,8 @@ input[type="number"] {
   animation: skeleton-shimmer 1.4s ease infinite;
   border-radius: 8px;
 }
-.skeleton-box { border-radius: 16px 16px 0 0; width: 100%; display: block; }
-.skeleton-line { display: block; border-radius: 6px; }
+.skeleton-box { border-radius: 4px !important; width: 100%; display: block; }
+.skeleton-line { display: block; border-radius: 4px !important; }
 
 /* ════════════════════════════════════
    NEWS PAGE SHARED STYLES (Extracted from TinTuc.vue)
@@ -3352,6 +3416,7 @@ input[type="number"] {
 .feature-card {
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 4px !important;
   transition: all 0.3s ease;
 }
 .feature-card:hover {
@@ -3395,6 +3460,36 @@ input[type="number"] {
   z-index: 10;
 }
 
+
+
+/* Hỗ trợ tương thích ngược SKU (nếu có) */
+.product-sku-badge {
+  font-size: 0.75rem !important;
+  font-weight: 500;
+  color: #64748b;
+  letter-spacing: 0.3px;
+}
+
+/* Nút thêm giỏ hàng ở chân card */
+.btn-cart-action {
+  width: 34px;
+  height: 34px;
+  border-radius: 4px !important;
+  color: var(--accent-color, #f82249) !important;
+  border-color: rgba(248, 34, 73, 0.25) !important;
+  background-color: #fff;
+  transition: all 0.25s ease;
+  position: relative;
+  z-index: 2;
+}
+.btn-cart-action:hover {
+  background-color: var(--accent-color, #f82249) !important;
+  color: #ffffff !important;
+  border-color: var(--accent-color, #f82249) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(248, 34, 73, 0.25);
+}
+
 /* News Section Extra */
 .news-img-thumb {
   width: 140px;
@@ -3416,4 +3511,118 @@ input[type="number"] {
   border-radius: 8px;
   width: 140px;
   aspect-ratio: 16/9;
+}
+
+
+/* ==============================================================
+   NEWS BENTO GRID (TIN TUC & KINH NGHIEM) - 3-COLUMN BENTO
+   ============================================================== */
+.news-bento-grid {
+  min-height: 560px;
+}
+.bento-card {
+  display: block;
+  width: 100%;
+  cursor: pointer;
+  background: #0A1128;
+  border-radius: 4px !important;
+  border: 0 !important;
+}
+.bento-card-sm {
+  height: 270px;
+}
+.bento-card-lg {
+  height: 100%;
+  min-height: 564px;
+}
+.bento-card-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 1;
+  transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+.bento-card:hover .bento-card-bg {
+  transform: scale(1.04);
+}
+
+/* Overlay làm mờ nhẹ, chỉ tối dần ở 45% phía dưới chân để thấy rõ ảnh */
+.bento-card-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(180deg, transparent 40%, rgba(6, 12, 34, 0.45) 70%, rgba(6, 12, 34, 0.88) 100%);
+  transition: background 0.3s ease;
+}
+.bento-card:hover .bento-card-overlay {
+  background: linear-gradient(180deg, transparent 35%, rgba(6, 12, 34, 0.5) 65%, rgba(6, 12, 34, 0.92) 100%);
+}
+
+/* Tiêu đề: Khóa màu trắng 100%, không bị đổi màu xanh khi hover */
+.bento-card-title {
+  font-family: var(--heading-font);
+  font-size: 1.12rem;
+  line-height: 1.35;
+  color: #ffffff !important;
+}
+.bento-card-title a,
+.bento-card a.stretched-link {
+  color: #ffffff !important;
+  text-decoration: none !important;
+  transition: text-shadow 0.3s ease;
+}
+.bento-card:hover .bento-card-title,
+.bento-card:hover .bento-card-title a,
+.bento-card:hover a.stretched-link {
+  color: #ffffff !important;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.7);
+}
+.bento-card-lg .bento-card-title {
+  font-size: 1.45rem;
+}
+
+/* Badge tinh tế phong cách Glassmorphism (Kính mờ + Chấm đỏ hàng hải) */
+.bento-badge {
+  background: rgba(10, 17, 40, 0.65) !important;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.25) !important;
+  color: #ffffff !important;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.8px;
+  padding: 6px 14px;
+  border-radius: 50rem;
+  text-transform: uppercase;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+.bento-badge .badge-dot {
+  width: 6px;
+  height: 6px;
+  background-color: var(--accent-color);
+  border-radius: 50%;
+  display: inline-block;
+  box-shadow: 0 0 6px var(--accent-color);
+}
+
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+@media (max-width: 991px) {
+  .bento-card-lg {
+    min-height: 380px;
+    height: 380px;
+  }
+  .bento-card-sm {
+    height: 240px;
+  }
 }

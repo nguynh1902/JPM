@@ -70,3 +70,13 @@ Mọi Lập trình viên và AI tham gia vào dự án JPM bắt buộc phải t
 ## 5. BẢO MẬT & PHÂN QUYỀN
 *   **Xác thực (Authentication):** Sử dụng Laravel Sanctum cấp phát Token cho Vue 3.
 *   **Phân quyền (Authorization):** Sử dụng Spatie Laravel Permission. Middleware kiểm tra Role/Permission đặt ở cả tầng API Backend và `beforeEach` ở tầng Router Frontend. Phân quyền theo Hành động Nghiệp vụ (Business Action) thay vì từng nút bấm nhỏ nhặt.
+
+## 6. QUY TẮC CHÚ THÍCH (COMMENT) BẰNG TIẾNG VIỆT TOÀN DỰ ÁN
+> **Mục đích:** Đảm bảo khả năng bảo trì, bàn giao và kế thừa mã nguồn lâu dài. Bất kỳ lập trình viên hoặc AI nào tiếp quản sau này cũng có thể đọc hiểu ngay lập tức cấu trúc và nghiệp vụ của từng dòng code.
+
+*   **Bắt buộc comment bằng tiếng Việt rõ ràng, dễ hiểu:**
+    *   **Trong template Vue (HTML):** Mọi section, block, card, form, modal, table và luồng điều kiện (`v-if` / `v-else`) đều phải có thẻ comment tiếng Việt ở đầu khối (VD: `<!-- Khối 4: Tại sao chọn JPM Marine -->`, `<!-- Skeleton loading khi đang nạp dữ liệu -->`).
+    *   **Trong Script Vue (JS/TS):** Mọi state, hook Vue Query, computed property, method, watcher đều phải có comment 1-2 dòng giải thích mục đích và luồng xử lý.
+    *   **Trong Stylesheet (CSS/SCSS):** Các nhóm class tiện ích, biến design token, khối giao diện tùy biến phải được phân chia bằng header block comment tiếng Việt.
+    *   **Trong Backend (Laravel/PHP):** Mọi Service method, Model relationship, Action, FormRequest đều phải có chú thích tiếng Việt giải thích quy tắc nghiệp vụ tàu thủy tương ứng.
+

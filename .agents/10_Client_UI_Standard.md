@@ -206,3 +206,60 @@ Dùng `.input-group` kết hợp icon Bootstrap Icons:
 2. **Khối `<style scoped>` trên trang Client chỉ dùng cho:**
    - Các hiệu ứng đặc thù không thể làm bằng class utility (VD: phóng to thu nhỏ bản vẽ tương tác SVG/Canvas, kéo thả zoom sơ đồ nổ).
    - Nếu là giao diện danh sách, form, bảng, thẻ thông tin: **Ưu tiên 100% Bootstrap 5 markup và xóa sạch `<style scoped>` để code luôn gọn gàng, nhẹ và dễ bảo trì**.
+
+---
+
+## 5. BẮT BUỘC CHÚ THÍCH (COMMENT) BẰNG TIẾNG VIỆT TOÀN DIỆN
+
+> **Mục tiêu tối thượng:** Bất kỳ lập trình viên, kỹ sư hay AI tiếp quản dự án sau này đều có thể đọc lướt qua là hiểu ngay mục đích, cấu trúc nghiệp vụ và vị trí từng khối giao diện mà không cần phải đoán mò hay dịch ngược code.
+
+### 5.1. Chú thích trong Template Vue (HTML Markup)
+Mọi section, khối chức năng, bộ lọc, card, modal và các phân nhánh điều kiện (`v-if` / `v-else`) bắt buộc phải có thẻ chú thích tiếng Việt rõ ràng:
+- **Tiêu đề khối / Section:** Đặt ở đầu mỗi thẻ `<section>` hoặc `<div>` lớn.
+  ```html
+  <!-- Khối 1: Tra Cứu Phụ Tùng Nhanh (Bộ Lọc Động Cơ Thông Minh) -->
+  <section id="search-parts" class="...">
+  ```
+  ```html
+  <!-- Khối 4: Tại Sao Chọn JPM Marine (Điểm Mạnh Vượt Trội) -->
+  <section class="why-us-section ...">
+  ```
+- **Phân nhánh trạng thái dữ liệu (Loading / Empty / Real Data):**
+  ```html
+  <!-- Trạng thái Skeleton Loading khi đang nạp dữ liệu từ API -->
+  <template v-if="isLoading">...</template>
+
+  <!-- Trạng thái hiển thị dữ liệu thật -->
+  <template v-else>...</template>
+  ```
+- **Các khối con quan trọng (Cột, Form, Action Buttons):**
+  ```html
+  <!-- Cột Trái: Tiêu đề và Mô tả giới thiệu -->
+  <!-- Cột Phải: Danh sách các thẻ điểm mạnh dịch vụ -->
+  <!-- Nút Thêm Vào Giỏ Hàng Nhanh -->
+  ```
+
+### 5.2. Chú thích trong Script Vue (Logic & Composables)
+Mọi khai báo biến trạng thái (State), truy vấn dữ liệu (Vue Query), thuộc tính tính toán (Computed), theo dõi (Watchers) và phương thức (Methods) phải có chú thích 1-2 dòng bằng tiếng Việt:
+```javascript
+// Lấy danh sách thương hiệu động cơ từ API công khai (cache RAM 30 phút)
+const { data: brands, isLoading: isLoadingBrands } = useQuery(...);
+
+// Tự động đặt lại bộ lọc con khi thương hiệu cha bị thay đổi
+watch(selectedBrand, () => {
+  selectedEngineType.value = "";
+  selectedModel.value = "";
+});
+
+// Thêm phụ tùng vào giỏ hàng và hiển thị thông báo toast
+const addToCart = (product) => { ... };
+```
+
+### 5.3. Chú thích trong Stylesheet (`main.css`)
+Mọi đoạn CSS mở rộng, ghi đè hoặc bổ sung phải được gom nhóm và phân cách bằng tiêu đề khối rõ ràng:
+```css
+/* ==============================================================
+   KHỐI TIN TỨC BENTO GRID (TIN TUC & KINH NGHIEM) - 3 CỘT
+   ============================================================== */
+```
+
