@@ -3,19 +3,18 @@
     <!-- Hero Section -->
     <section id="hero" class="hero section dark-background">
       <!-- Video Background (YouTube) -->
-      <div style="position: absolute; inset: 0; z-index: 1; width: 100%; height: 100%; overflow: hidden; background: #000;">
+      <div class="hero-video-wrap">
         <iframe 
           :src="youtubeEmbedUrl" 
           frameborder="0" 
           allow="autoplay; encrypted-media" 
-          style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 100vw; height: 56.25vw; min-height: 100vh; min-width: 177.77vh; pointer-events: none;"
+          class="hero-video-iframe"
         ></iframe>
-        <!-- Overlay chặn controls YouTube -->
-        <div style="position: absolute; inset: 0; z-index: 2; background: transparent;"></div>
         <!-- Gradient bên trái -->
-        <div style="position: absolute; inset: 0; z-index: 3; background: linear-gradient(90deg, rgba(6,12,34,0.85) 0%, rgba(6,12,34,0.4) 45%, rgba(6,12,34,0) 100%);"></div>
+        <div class="hero-video-gradient"></div>
       </div>
-      <div class="container flex-grow-1 d-flex align-items-center" style="position: relative; z-index: 3;">
+
+      <div class="container flex-grow-1 d-flex align-items-center position-relative z-3">
         <div class="row w-100">
           <div class="col-lg-8 text-start">
             <h1 data-aos="fade-up" data-aos-delay="100" class="hero-main-title">
@@ -36,6 +35,7 @@
         </div>
       </div>
 
+      <!-- About Info Banner -->
       <div class="about-info mt-auto position-relative">
         <div class="container position-relative" data-aos="fade-up">
           <div class="row">
@@ -59,7 +59,7 @@
     </section>
 
     <!-- Parts Search Section -->
-    <section id="search-parts" class="search-parts-section section" style="overflow: visible !important; position: relative; z-index: 99;">
+    <section id="search-parts" class="search-parts-section section position-relative z-3">
       <div class="container" data-aos="fade-up">
         <div class="section-title" data-aos="fade-up">
           <h2>Tra Cứu Phụ Tùng Nhanh</h2>
@@ -141,15 +141,15 @@
               <div class="search-input-wrap">
                 <label><i class="bi bi-search"></i> Tìm kiếm theo mã (Tùy chọn)</label>
                 <div class="input-group">
-                    <span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-muted"></i></span>
-                    <input
-                      type="text"
-                      class="form-control border-start-0 shadow-none"
-                      placeholder="Nhập mã phụ tùng / model (VD: F250TUR...)"
-                      v-model="searchKeyword"
-                      @keyup.enter="searchParts"
-                    />
-                  </div>
+                  <span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-muted"></i></span>
+                  <input
+                    type="text"
+                    class="form-control border-start-0 shadow-none"
+                    placeholder="Nhập mã phụ tùng / model (VD: F250TUR...)"
+                    v-model="searchKeyword"
+                    @keyup.enter="searchParts"
+                  />
+                </div>
               </div>
               <div class="search-actions">
                 <button class="btn-reset" @click="resetSearch">
@@ -158,7 +158,6 @@
                 <button class="btn-search" @click="searchParts">
                   <i class="bi bi-search"></i>
                   <span>Tìm Kiếm Phụ Tùng</span>
-                  <span class="btn-search-shine"></span>
                 </button>
               </div>
             </div>
@@ -178,19 +177,19 @@
       </div>
     </section>
 
-    <!-- Sponsors Section -->
-    <section id="sponsors" class="sponsors section bg-light py-5">
+    <!-- Phụ Tùng Theo Thương Hiệu -->
+    <section id="sponsors" class="sponsors section bg-white py-5">
       <div class="container section-title" data-aos="fade-up">
         <h2>Phụ Tùng Theo Thương Hiệu</h2>
         <p>Đa dạng các loại phụ tùng chính hãng từ những thương hiệu hàng đầu thế giới</p>
       </div>
-        <div class="container" data-aos="fade-up" data-aos-delay="100">
+      <div class="container" data-aos="fade-up" data-aos-delay="100">
         <div class="row g-0 clients-wrap">
           <!-- Skeleton loading -->
           <template v-if="isLoadingBrands">
             <div class="col-xl-3 col-md-4 client-logo" v-for="n in 8" :key="'skel-' + n">
               <div class="d-flex align-items-center justify-content-center w-100 h-100">
-                <div style="width: 120px; height: 40px; background: #e2e8f0; border-radius: 4px; animation: pulse-skeleton 1.5s infinite;"></div>
+                <div class="skeleton-box skeleton-box-brand"></div>
               </div>
             </div>
           </template>
@@ -209,11 +208,11 @@
             </div>
           </template>
         </div>
-        </div>
+      </div>
     </section>
 
-    <!-- Sản phẩm nổi bật -->
-    <section class="products-section section">
+    <!-- Sản phẩm bán chạy -->
+    <section class="products-section section bg-light py-5">
       <div class="container section-title" data-aos="fade-up">
         <h2>Sản Phẩm Bán Chạy</h2>
         <p>Những linh kiện phụ tùng được khách hàng tin dùng nhiều nhất tại JPM Marine</p>
@@ -224,12 +223,12 @@
           <template v-if="!hotProducts">
             <div class="col" v-for="n in 4" :key="'sk-' + n">
               <div class="card h-100 border-0 shadow-sm rounded-3 overflow-hidden">
-                <div class="card-img-wrapper skeleton-box" style="aspect-ratio: 4/3;"></div>
+                <div class="card-img-wrapper skeleton-box card-img-product"></div>
                 <div class="card-body p-3">
-                  <div class="skeleton-line" style="width: 60%; height: 12px; margin-bottom: 12px;"></div>
-                  <div class="skeleton-line" style="width: 90%; height: 16px; margin-bottom: 8px;"></div>
-                  <div class="skeleton-line" style="width: 75%; height: 16px; margin-bottom: 20px;"></div>
-                  <div class="skeleton-line" style="width: 40%; height: 20px;"></div>
+                  <div class="skeleton-line mb-2 w-50"></div>
+                  <div class="skeleton-line mb-2 w-75"></div>
+                  <div class="skeleton-line mb-3 w-100"></div>
+                  <div class="skeleton-line w-25"></div>
                 </div>
               </div>
             </div>
@@ -241,20 +240,19 @@
                 <div class="card-img-wrapper position-relative overflow-hidden bg-light d-flex align-items-center justify-content-center">
                   <img
                     :src="getImageUrl(prod.hinh_anh_chinh) || 'https://images.unsplash.com/photo-1559523161-0fc0d8b38a7a?auto=format&fit=crop&q=80&w=400'"
-                    class="card-img-top w-100 transition-transform"
-                    style="aspect-ratio: 4/3; object-fit: cover;"
+                    class="card-img-top w-100 transition-transform card-img-product"
                     :alt="prod.ten_san_pham"
                     @error="$event.target.src='https://placehold.co/300x200/f8f9fa/a1acb8?text=JPM+Marine'"
                   >
-                  <div class="position-absolute top-0 end-0 p-2" style="z-index: 10;">
-                    <button class="btn btn-sm btn-light border shadow-sm rounded-circle p-0 d-flex align-items-center justify-content-center" style="width: 34px; height: 34px;" title="Thêm vào giỏ" @click.prevent="addToCart(prod)">
+                  <div class="position-absolute top-0 end-0 p-2 z-3">
+                    <button class="btn btn-sm btn-light border shadow-sm rounded-circle p-0 d-flex align-items-center justify-content-center btn-cart-quick" title="Thêm vào giỏ" @click.prevent="addToCart(prod)">
                       <i class="bi bi-cart-plus text-danger fs-6"></i>
                     </button>
                   </div>
                 </div>
                 <div class="card-body text-start p-3 d-flex flex-column bg-white">
                   <div class="d-flex justify-content-between align-items-start mb-2">
-                    <span class="text-muted fw-semibold text-uppercase small" style="letter-spacing: 0.5px; font-size: 0.75rem;">{{ prod.danh_muc ? prod.danh_muc.ten_danh_muc : 'OEM' }}</span>
+                    <span class="text-muted fw-semibold text-uppercase small">{{ prod.danh_muc ? prod.danh_muc.ten_danh_muc : 'OEM' }}</span>
                   </div>
                   <h5 class="card-title mb-3 fs-6 fw-semibold text-dark">
                     <router-link :to="`/chi-tiet-san-pham/${prod.slug}`" class="text-decoration-none text-dark stretched-link">{{ prod.ten_san_pham }}</router-link>
@@ -271,35 +269,42 @@
         </div>
 
         <div class="text-center mt-5">
-          <router-link to="/san-pham" class="btn btn-outline-danger px-4 py-2 fw-semibold rounded-pill">Xem tất cả sản phẩm <i class="bi bi-arrow-right ms-2"></i></router-link>
+          <router-link to="/san-pham" class="text-danger fw-semibold text-decoration-none d-inline-flex align-items-center fs-6">
+            Xem tất cả sản phẩm <i class="bi bi-arrow-right ms-2"></i>
+          </router-link>
         </div>
       </div>
     </section>
 
-
     <!-- Tại sao chọn JPM Marine -->
-    <section class="why-us-section section dark-background py-5 py-lg-5">
+    <section class="why-us-section section dark-background py-5">
       <div class="container py-4">
         <div class="row align-items-center">
           <!-- Cột Trái (5 phần): Tiêu đề và Mô tả -->
           <div class="col-lg-5 mb-5 mb-lg-0 pe-lg-5" data-aos="fade-right">
             <div class="mb-3">
-              <span class="badge bg-danger-subtle text-danger border border-danger-subtle text-uppercase fw-semibold px-3 py-2 rounded-pill">Thế mạnh vượt trội</span>
+              <span class="badge bg-danger-subtle text-danger border border-danger-subtle text-uppercase fw-semibold px-3 py-2 rounded-pill">
+                Thế mạnh vượt trội
+              </span>
             </div>
             <h2 class="mb-4 text-white display-6 fw-bold">
               <span class="fw-light opacity-75">Tại Sao Chọn</span> <br>
               <span class="text-danger">JPM Marine</span>
             </h2>
-            <p class="mb-4 text-white-50">Chúng tôi không chỉ cung cấp phụ tùng, chúng tôi mang đến sự an tâm tuyệt đối cho mỗi chuyến ra khơi với dịch vụ tiêu chuẩn quốc tế.</p>
-            <router-link to="/ho-tro" class="btn btn-outline-danger px-4 py-2 mt-2 fw-semibold rounded-pill">Nhận Tư Vấn Ngay <i class="bi bi-arrow-right ms-2"></i></router-link>
+            <p class="mb-4 text-white-50">
+              Chúng tôi không chỉ cung cấp phụ tùng, chúng tôi mang đến sự an tâm tuyệt đối cho mỗi chuyến ra khơi với dịch vụ tiêu chuẩn quốc tế.
+            </p>
+            <router-link to="/ho-tro" class="btn btn-outline-danger px-4 py-2 mt-2 fw-semibold rounded-pill">
+              Nhận Tư Vấn Ngay <i class="bi bi-arrow-right ms-2"></i>
+            </router-link>
           </div>
 
-          <!-- Cột Phải (7 phần): List 4 Items -->
+          <!-- Cột Phải (7 phần): Danh sách điểm mạnh -->
           <div class="col-lg-7">
             <div class="d-flex flex-column gap-3">
               <!-- Item 1 -->
-              <div class="feature-list-card d-flex align-items-center p-4 rounded-3 feature-card" data-aos="fade-left" data-aos-delay="100">
-                <div class="icon feature-icon flex-shrink-0 d-flex align-items-center justify-content-center rounded-circle">
+              <div class="d-flex align-items-center p-4 rounded-3 feature-card" data-aos="fade-left" data-aos-delay="100">
+                <div class="feature-icon d-flex align-items-center justify-content-center rounded-circle">
                   <i class="bi bi-shield-check"></i>
                 </div>
                 <div>
@@ -308,8 +313,8 @@
                 </div>
               </div>
               <!-- Item 2 -->
-              <div class="feature-list-card d-flex align-items-center p-4 rounded-3 feature-card" data-aos="fade-left" data-aos-delay="200">
-                <div class="icon feature-icon flex-shrink-0 d-flex align-items-center justify-content-center rounded-circle">
+              <div class="d-flex align-items-center p-4 rounded-3 feature-card" data-aos="fade-left" data-aos-delay="200">
+                <div class="feature-icon d-flex align-items-center justify-content-center rounded-circle">
                   <i class="bi bi-truck"></i>
                 </div>
                 <div>
@@ -318,8 +323,8 @@
                 </div>
               </div>
               <!-- Item 3 -->
-              <div class="feature-list-card d-flex align-items-center p-4 rounded-3 feature-card" data-aos="fade-left" data-aos-delay="300">
-                <div class="icon feature-icon flex-shrink-0 d-flex align-items-center justify-content-center rounded-circle">
+              <div class="d-flex align-items-center p-4 rounded-3 feature-card" data-aos="fade-left" data-aos-delay="300">
+                <div class="feature-icon d-flex align-items-center justify-content-center rounded-circle">
                   <i class="bi bi-headset"></i>
                 </div>
                 <div>
@@ -328,8 +333,8 @@
                 </div>
               </div>
               <!-- Item 4 -->
-              <div class="feature-list-card d-flex align-items-center p-4 rounded-3 feature-card" data-aos="fade-left" data-aos-delay="400">
-                <div class="icon feature-icon flex-shrink-0 d-flex align-items-center justify-content-center rounded-circle">
+              <div class="d-flex align-items-center p-4 rounded-3 feature-card" data-aos="fade-left" data-aos-delay="400">
+                <div class="feature-icon d-flex align-items-center justify-content-center rounded-circle">
                   <i class="bi bi-tools"></i>
                 </div>
                 <div>
@@ -344,7 +349,7 @@
     </section>
 
     <!-- Tin tức & Kinh nghiệm -->
-    <section class="news-section section py-5">
+    <section class="news-section section bg-white py-5">
       <div class="container section-title" data-aos="fade-up">
         <h2>Tin tức & Kinh nghiệm</h2>
         <p>Cập nhật kiến thức bảo dưỡng và tin tức mới nhất về thiết bị tàu thuyền</p>
@@ -352,21 +357,21 @@
       <div class="container" data-aos="fade-up" data-aos-delay="100">
         <div class="row gx-lg-5 gy-4">
 
-          <!-- Bài nổi bật (item đầu tiên) -->
+          <!-- Bài nổi bật (cột trái 5 phần) -->
           <div class="col-lg-5">
             <!-- Skeleton -->
-            <div v-if="!latestNews" class="feature-news-item d-flex flex-column h-100">
-              <div class="skeleton-box skeleton-box-full mb-4 rounded-3"></div>
+            <div v-if="!latestNews" class="d-flex flex-column h-100">
+              <div class="skeleton-box skeleton-box-full mb-4"></div>
               <div class="px-1">
-                <div class="skeleton-line mb-3" style="width:40%;height:22px;"></div>
-                <div class="skeleton-line mb-2" style="width:90%;height:18px;"></div>
-                <div class="skeleton-line mb-4" style="width:75%;height:18px;"></div>
-                <div class="skeleton-line" style="width:30%;height:14px;"></div>
+                <div class="skeleton-line mb-3 w-50"></div>
+                <div class="skeleton-line mb-2 w-100"></div>
+                <div class="skeleton-line mb-4 w-75"></div>
+                <div class="skeleton-line w-25"></div>
               </div>
             </div>
             <!-- Data thật -->
-            <div v-else-if="latestNews.length > 0" class="feature-news-item d-flex flex-column h-100 group-hover p-2">
-              <div class="overflow-hidden mb-4 position-relative img-zoom-hover rounded-3 skeleton-box-md">
+            <div v-else-if="latestNews.length > 0" class="d-flex flex-column h-100 group-hover p-2">
+              <div class="overflow-hidden mb-4 position-relative img-zoom-hover rounded-3 skeleton-box-full">
                 <img
                   :src="getImageUrl(latestNews[0].thumbnail) || 'https://placehold.co/800x500/f1f3f5/a1acb8?text=JPM+Marine'"
                   class="img-fluid object-fit-cover h-100 w-100 transition-transform rounded-3"
@@ -375,42 +380,44 @@
                 >
               </div>
               <div class="d-flex flex-column flex-grow-1 px-1">
-                <span class="badge bg-danger-subtle text-danger border border-danger-subtle text-uppercase fw-semibold mb-3 align-self-start" style="letter-spacing: 1px;">
+                <span class="badge bg-danger-subtle text-danger border border-danger-subtle text-uppercase fw-semibold mb-3 align-self-start">
                   {{ latestNews[0].category || 'Tin tức' }}
                 </span>
-                <h4 class="fw-semibold mb-3" style="line-height: 1.4; font-family: var(--heading-font);">
-                  <router-link :to="`/tin-tuc/${latestNews[0].slug || latestNews[0].id}`" class="text-dark text-decoration-none">{{ latestNews[0].title }}</router-link>
+                <h4 class="fw-semibold mb-3">
+                  <router-link :to="`/tin-tuc/${latestNews[0].slug || latestNews[0].id}`" class="text-dark text-decoration-none">
+                    {{ latestNews[0].title }}
+                  </router-link>
                 </h4>
-                <p class="text-secondary mb-4" style="font-size: 0.95rem; line-height: 1.6; font-weight: 300;">{{ latestNews[0].summary }}</p>
-                <div class="mt-auto text-muted fw-medium text-uppercase" style="letter-spacing: 1px; font-size: 0.75rem;">
+                <p class="text-secondary mb-4">{{ latestNews[0].summary }}</p>
+                <div class="mt-auto text-muted fw-medium text-uppercase small">
                   <i class="bi bi-calendar3 me-2"></i>{{ formatDate(latestNews[0].created_at) }}
                 </div>
               </div>
             </div>
           </div>
 
-          <!-- Danh sách bài (các item tiếp theo) -->
+          <!-- Danh sách bài (cột phải 7 phần) -->
           <div class="col-lg-7">
             <!-- Skeleton -->
-            <div v-if="!latestNews" class="news-list-container d-flex flex-column justify-content-between h-100">
-              <div v-for="n in 5" :key="'nsk-'+n" class="news-list-item d-flex align-items-center py-3 border-bottom">
-                <div class="skeleton-box skeleton-box-sm flex-shrink-0 rounded-3"></div>
+            <div v-if="!latestNews" class="d-flex flex-column justify-content-between h-100">
+              <div v-for="n in 5" :key="'nsk-'+n" class="d-flex align-items-center py-3 border-bottom">
+                <div class="skeleton-box skeleton-box-sm flex-shrink-0"></div>
                 <div class="ms-4 flex-grow-1">
-                  <div class="skeleton-line mb-2" style="width:85%;height:16px;"></div>
-                  <div class="skeleton-line mb-2" style="width:60%;height:16px;"></div>
-                  <div class="skeleton-line" style="width:30%;height:12px;"></div>
+                  <div class="skeleton-line mb-2 w-75"></div>
+                  <div class="skeleton-line mb-2 w-50"></div>
+                  <div class="skeleton-line w-25"></div>
                 </div>
               </div>
             </div>
             <!-- Data thật -->
-            <div v-else class="news-list-container d-flex flex-column justify-content-between h-100">
+            <div v-else class="d-flex flex-column justify-content-between h-100">
               <div
                 v-for="(item, idx) in latestNews.slice(1)"
                 :key="item.id"
-                class="news-list-item d-flex align-items-center position-relative list-item-hover px-2"
+                class="d-flex align-items-center position-relative list-item-hover px-2"
                 :class="idx === 0 ? 'pt-0 pb-3 border-bottom' : idx === latestNews.slice(1).length - 1 ? 'pt-3 pb-0' : 'py-3 border-bottom'"
               >
-                <div class="flex-shrink-0 overflow-hidden img-zoom-hover rounded-3" style="width: 140px; aspect-ratio: 16/9;">
+                <div class="overflow-hidden img-zoom-hover rounded-3 news-img-thumb">
                   <img
                     :src="getImageUrl(item.thumbnail) || 'https://placehold.co/300x200/f1f3f5/a1acb8?text=JPM'"
                     class="img-fluid object-fit-cover h-100 w-100 transition-transform"
@@ -419,10 +426,12 @@
                   >
                 </div>
                 <div class="ms-4 flex-grow-1">
-                  <h6 class="fw-semibold mb-1 news-title" style="font-size: 1.1rem; line-height: 1.4;">
-                    <router-link :to="`/tin-tuc/${item.slug || item.id}`" class="text-dark text-decoration-none stretched-link">{{ item.title }}</router-link>
+                  <h6 class="fw-semibold mb-1 news-title">
+                    <router-link :to="`/tin-tuc/${item.slug || item.id}`" class="text-dark text-decoration-none stretched-link">
+                      {{ item.title }}
+                    </router-link>
                   </h6>
-                  <div class="text-muted fw-medium text-uppercase" style="letter-spacing: 1px; font-size: 0.75rem;">
+                  <div class="text-muted fw-medium text-uppercase small">
                     <i class="bi bi-calendar3 me-1"></i>{{ formatDate(item.created_at) }}
                   </div>
                 </div>
@@ -432,7 +441,9 @@
         </div>
 
         <div class="text-center mt-5">
-          <router-link to="/tin-tuc" class="btn btn-outline-danger px-4 py-2 fw-semibold rounded-pill">Xem tất cả bài viết <i class="bi bi-arrow-right ms-2"></i></router-link>
+          <router-link to="/tin-tuc" class="text-danger fw-semibold text-decoration-none d-inline-flex align-items-center fs-6">
+            Xem tất cả bài viết <i class="bi bi-arrow-right ms-2"></i>
+          </router-link>
         </div>
       </div>
     </section>
@@ -471,21 +482,21 @@ export default {
       queryKey: computed(() => ['public-engine-types', selectedBrand.value]),
       queryFn: () => axiosClient.get('/public/loai-dong-co', { params: { thuong_hieu_id: selectedBrand.value } }).then(res => res.data?.data || res.data || res),
       staleTime: 1000 * 60 * 30,
-        enabled: computed(() => !!selectedBrand.value)
+      enabled: computed(() => !!selectedBrand.value)
     });
 
     const { data: engineModels } = useQuery({
       queryKey: computed(() => ['public-models-v6', selectedBrand.value, selectedEngineType.value, selectedYear.value]),
       queryFn: () => axiosClient.get('/public/dong-co-model', { params: { thuong_hieu_id: selectedBrand.value, loai_dong_co_id: selectedEngineType.value, nam_sx: selectedYear.value } }).then(res => res.data?.data || res.data || res),
       staleTime: 1000 * 60 * 30,
-        enabled: computed(() => !!selectedBrand.value)
+      enabled: computed(() => !!selectedBrand.value)
     });
 
     const { data: years } = useQuery({
       queryKey: computed(() => ['public-years-v6', selectedBrand.value, selectedEngineType.value]),
       queryFn: () => axiosClient.get('/public/nam-san-xuat', { params: { thuong_hieu_id: selectedBrand.value, loai_dong_co_id: selectedEngineType.value } }).then(res => res.data?.data || res.data || res),
       staleTime: 1000 * 60 * 30,
-        enabled: computed(() => !!selectedBrand.value)
+      enabled: computed(() => !!selectedBrand.value)
     });
 
     const { data: hotProducts, isLoading: isLoadingHotProducts } = useQuery({
@@ -501,7 +512,11 @@ export default {
     });
 
     // Reset dependent filters when parent filter changes
-    watch(selectedBrand, () => { selectedEngineType.value = ""; selectedYear.value = ""; selectedModel.value = ""; });
+    watch(selectedBrand, () => { 
+      selectedEngineType.value = ""; 
+      selectedYear.value = ""; 
+      selectedModel.value = ""; 
+    });
 
     watch(selectedEngineType, () => {
       selectedYear.value = "";
@@ -588,17 +603,16 @@ export default {
       });
     },
     resetSearch() {
-        this.searchKeyword = "";
-        this.selectedBrand = "";
-        this.selectedEngineType = "";
-        this.selectedYear = "";
-        this.selectedModel = "";
-      },
+      this.searchKeyword = "";
+      this.selectedBrand = "";
+      this.selectedEngineType = "";
+      this.selectedYear = "";
+      this.selectedModel = "";
+    },
     quickSearch(keyword) {
       this.searchKeyword = keyword;
       this.searchParts();
     },
-
     toggleDropdown(name) {
       this.openDropdown = this.openDropdown === name ? null : name;
     },
@@ -613,145 +627,9 @@ export default {
       this.$router.push('/danh-sach-phu-tung');
     },
     addToCart(prod) {
-        this.cartStore.addItem(prod, 1);
-        this.$toast.success("Thêm sản phẩm thành công");
-      }
+      this.cartStore.addItem(prod, 1);
+      this.$toast.success("Thêm sản phẩm thành công");
+    }
   },
 };
 </script>
-
-<style scoped>
-.feature-card {
-  background: rgba(255,255,255,0.03);
-  border: 1px solid rgba(255,255,255,0.05);
-  transition: 0.3s;
-}
-.feature-card:hover {
-  background: rgba(255,255,255,0.05);
-  transform: translateY(-3px);
-}
-.feature-icon {
-  width: 60px;
-  height: 60px;
-  background: rgba(248, 34, 73, 0.1);
-  color: var(--accent-color);
-  font-size: 24px;
-  margin-right: 20px;
-  transition: 0.3s;
-}
-.feature-title {
-  font-size: 1.15rem;
-  font-weight: 700;
-  color: #fff;
-  margin-bottom: 6px;
-}
-.feature-desc {
-  font-size: 0.95rem;
-  color: rgba(255,255,255,0.6);
-  margin-bottom: 0;
-  line-height: 1.5;
-}
-.skeleton-box-full {
-  border-radius: 4px;
-  aspect-ratio: 16/9;
-  width: 100%;
-}
-.skeleton-box-md {
-  border-radius: 4px;
-  aspect-ratio: 16/9;
-}
-.skeleton-box-sm {
-  border-radius: 4px;
-  width: 140px;
-  aspect-ratio: 16/9;
-}
-
-
-/* Biến màu sắc */
-:root {
-  --jpm-red: var(--accent-color);
-  --jpm-dark: #060c22;
-  --jpm-gray: #f5f6fa;
-}
-
-/* ============================
-   SEARCH SECTION MOVED TO MAIN.CSS
-==============================*/
-
-@media (max-width: 991px) {
-  .filter-row { grid-template-columns: repeat(2, 1fr); }
-  .search-main-area { padding: 28px 24px 20px; }
-  .search-tags-footer { padding: 16px 24px; }
-  .search-footer { flex-direction: column; align-items: stretch; }
-  .search-actions { justify-content: flex-end; }
-  .btn-search, .btn-reset { height: 46px; }
-}
-@media (max-width: 575px) {
-  .filter-row { grid-template-columns: 1fr; }
-  .search-actions { flex-direction: column; }
-  .btn-search, .btn-reset { width: 100%; justify-content: center; }
-}
-
-
-/* ============================
-   WHY CHOOSE US (DARK)
-==============================*/
-.why-us-section { padding: 80px 0; background: #060c22; color: #fff; }
-.feature-box { padding: 40px 30px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); border-top: 3px solid rgba(248,34,73,0.3); border-radius: 8px; text-align: center; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); height: 100%; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
-.feature-box:hover { background: rgba(255,255,255,0.06); transform: translateY(-8px); border-color: rgba(255,255,255,0.1); border-top-color: var(--accent-color); box-shadow: 0 15px 40px rgba(248,34,73,0.15); }
-.feature-box .icon { display: inline-block; font-size: 44px; color: var(--accent-color); text-shadow: 0 0 25px rgba(255,71,109,0.5); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-.feature-box:hover .icon { transform: scale(1.15) translateY(-3px); color: var(--accent-color); text-shadow: 0 0 35px rgba(255,71,109,0.9); }
-.feature-box h3 { font-size: 20px; font-weight: 700; margin-bottom: 16px; transition: 0.3s; }
-.feature-box:hover h3 { color: var(--accent-color); }
-.feature-box p { font-size: 15px; color: rgba(255,255,255,0.85); line-height: 1.6; margin: 0; }
-
-/* ============================
-   PRODUCTS SECTION (Minimalist)
-==============================*/
-.products-section { padding: 60px 0; }
-
-
-
-
-/* ============================
-   GLOBAL LINK
-==============================*/
-.jpm-link-minimal { display: inline-flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 600; color: #0e1b4d; text-transform: uppercase; text-decoration: none; transition: 0.2s; letter-spacing: 0.5px; }
-
-
-
-
-@media (min-width: 992px) {
-  .news-divider {
-    border-right: 1px solid #e0e6f0;
-  }
-}
-
-/* Fallback/Cache-buster: Ensure hover color applies even if main.css is cached */
-.news-list-item:hover h6 a,
-.news-list-item:hover .news-title a,
-.news-list-item:hover a.stretched-link,
-.list-item-hover:hover a {
-  color: #0e1b4d !important;
-}
-</style>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
