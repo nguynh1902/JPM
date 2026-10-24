@@ -294,7 +294,7 @@
                       title="Thêm vào giỏ hàng"
                       @click.prevent="addToCart(prod)"
                     >
-                      <i class="bi bi-cart-plus fs-6"></i>
+                      <i class="bi bi-cart3 fs-6"></i>
                     </button>
                   </div>
                 </div>
