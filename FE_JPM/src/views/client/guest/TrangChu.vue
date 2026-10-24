@@ -396,10 +396,10 @@
       <div class="container" data-aos="fade-up" data-aos-delay="100">
         <div class="row gx-lg-5 gy-4">
 
-          <!-- Bài nổi bật (cột trái 5 phần) -->
+          <!-- Bài nổi bật (cột trái 5 phần - Dành riêng cho bài viết có Video) -->
           <div class="col-lg-5">
             <!-- Skeleton -->
-            <div v-if="!latestNews" class="d-flex flex-column h-100">
+            <div v-if="!videoArticle" class="d-flex flex-column h-100">
               <div class="skeleton-box skeleton-box-full mb-3"></div>
               <div class="px-1">
                 <div class="skeleton-line mb-2 w-50"></div>
@@ -408,42 +408,58 @@
                 <div class="skeleton-line w-25"></div>
               </div>
             </div>
-            <!-- Data thật -->
-            <div v-else-if="latestNews.length > 0" class="d-flex flex-column h-100 group-hover p-2 rounded-2 position-relative">
-              <div class="overflow-hidden mb-3 position-relative img-zoom-hover rounded-3 skeleton-box-full">
+            <!-- Data thật: Bài viết có video -->
+            <div v-else class="d-flex flex-column h-100 group-hover p-2 rounded-2 position-relative">
+              <!-- Khung Thumbnail có nút Play Video -->
+              <div
+                class="overflow-hidden mb-3 position-relative img-zoom-hover rounded-3 skeleton-box-full video-thumb-wrap"
+                @click="openVideoModal(videoArticle)"
+                title="Bấm để xem video"
+              >
                 <img
-                  :src="getImageUrl(latestNews[0].thumbnail) || 'https://placehold.co/800x500/f1f3f5/a1acb8?text=JPM+Marine'"
+                  :src="getImageUrl(videoArticle.thumbnail) || 'https://placehold.co/800x500/f1f3f5/a1acb8?text=JPM+Marine'"
                   class="img-fluid object-fit-cover h-100 w-100 transition-transform rounded-3"
-                  :alt="latestNews[0].title"
+                  :alt="videoArticle.title"
                   @error="$event.target.src='https://placehold.co/800x500/f1f3f5/a1acb8?text=JPM+Marine'"
                 >
+                <!-- Badge góc: VIDEO -->
+                <span class="badge bg-danger position-absolute top-0 start-0 m-3 d-flex align-items-center gap-1 shadow-sm px-2 py-1 video-badge">
+                  <i class="bi bi-play-circle-fill"></i> VIDEO
+                </span>
+
+                <!-- Icon Play Video tròn ở chính giữa ảnh -->
+                <div class="position-absolute top-50 start-50 translate-middle rounded-circle d-flex align-items-center justify-content-center video-play-btn shadow">
+                  <i class="bi bi-play-fill text-white fs-2 play-icon"></i>
+                </div>
               </div>
-              <div class="d-flex flex-column flex-grow-1 px-1">
-                <!-- 1. Danh mục: chuẩn phong cách .product-category của Sản phẩm bán chạy -->
-                <div class="product-category mb-1 text-truncate">
-                  {{ latestNews[0].category || 'CẨM NANG HÀNG HẢI' }}
+
+              <!-- Nội dung thông tin bài viết -->
+              <div class="d-flex flex-column flex-grow-1 px-1 position-relative">
+                <!-- 1. Danh mục: Chữ đỏ thương hiệu -->
+                <div class="news-category mb-1 text-truncate">
+                  {{ videoArticle.category || 'CẨM NANG HÀNG HẢI' }}
                 </div>
                 <!-- 2. Tiêu đề: chuẩn Roboto .news-hero-title, màu deep navy đậm nét -->
                 <h5 class="news-hero-title mb-2">
-                  <router-link :to="`/tin-tuc/${latestNews[0].slug || latestNews[0].id}`" class="stretched-link">
-                    {{ latestNews[0].title }}
+                  <router-link :to="`/tin-tuc/${videoArticle.slug || videoArticle.id}`" class="stretched-link">
+                    {{ videoArticle.title }}
                   </router-link>
                 </h5>
                 <!-- 3. Mô tả tóm tắt (3 dòng) -->
-                <p class="text-secondary small mb-3 text-truncate-3">{{ latestNews[0].summary }}</p>
+                <p class="text-secondary small mb-3 text-truncate-3">{{ videoArticle.summary }}</p>
                 <!-- 4. Ngày đăng: chuẩn .product-sku của Sản phẩm bán chạy -->
                 <div class="mt-auto product-sku mb-0">
                   <span class="sku-label me-1"><i class="bi bi-calendar3 me-1"></i>NGÀY:</span>
-                  <span class="sku-code">{{ formatDate(latestNews[0].created_at) }}</span>
+                  <span class="sku-code">{{ formatDate(videoArticle.created_at) }}</span>
                 </div>
               </div>
             </div>
           </div>
 
-          <!-- Danh sách bài (cột phải 7 phần) -->
+          <!-- Danh sách bài viết khác (cột phải 7 phần) -->
           <div class="col-lg-7">
             <!-- Skeleton -->
-            <div v-if="!latestNews" class="d-flex flex-column justify-content-between h-100">
+            <div v-if="!sideNews || sideNews.length === 0" class="d-flex flex-column justify-content-between h-100">
               <div v-for="n in 3" :key="'nsk-'+n" class="d-flex align-items-start py-3 border-bottom">
                 <div class="skeleton-box skeleton-box-sm flex-shrink-0"></div>
                 <div class="ms-3 flex-grow-1">
@@ -454,13 +470,13 @@
                 </div>
               </div>
             </div>
-            <!-- Data thật -->
+            <!-- Data thật: 3 bài viết khác -->
             <div v-else class="d-flex flex-column justify-content-between h-100">
               <div
-                v-for="(item, idx) in latestNews.slice(1, 4)"
+                v-for="(item, idx) in sideNews"
                 :key="item.id"
                 class="d-flex align-items-start position-relative list-item-hover p-2 rounded-2"
-                :class="idx < latestNews.slice(1, 4).length - 1 ? 'border-bottom pb-3 mb-2' : ''"
+                :class="idx < sideNews.length - 1 ? 'border-bottom pb-3 mb-2' : ''"
               >
                 <div class="overflow-hidden img-zoom-hover rounded-3 news-img-thumb flex-shrink-0">
                   <img
@@ -471,12 +487,12 @@
                   >
                 </div>
                 <div class="ms-3 flex-grow-1 d-flex flex-column align-self-stretch">
-                  <!-- 1. Danh mục: chuẩn phong cách .product-category của Sản phẩm bán chạy -->
-                  <div class="product-category mb-1 text-truncate">
+                  <!-- 1. Danh mục: Chữ đỏ thương hiệu -->
+                  <div class="news-category mb-1 text-truncate">
                     {{ item.category || 'TIN TỨC' }}
                   </div>
-                  <!-- 2. Tiêu đề: chuẩn Roboto .card-title, màu deep navy đậm nét -->
-                  <h6 class="card-title fw-semibold mb-1 text-truncate-2">
+                  <!-- 2. Tiêu đề: chuẩn Roboto .news-card-title, màu deep navy đậm nét -->
+                  <h6 class="news-card-title fw-semibold mb-1 text-truncate-2">
                     <router-link :to="`/tin-tuc/${item.slug || item.id}`" class="stretched-link">
                       {{ item.title }}
                     </router-link>
@@ -503,11 +519,49 @@
         </div>
       </div>
     </section>
+
+    <!-- Modal xem Video YouTube cho bài viết Trang chủ -->
+    <div
+      class="modal fade"
+      id="homeNewsVideoModal"
+      tabindex="-1"
+      aria-labelledby="homeNewsVideoModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content bg-dark border-0 shadow-lg overflow-hidden rounded-3 text-white">
+          <div class="modal-header border-0 pb-0 pt-3 px-3 d-flex justify-content-between align-items-center">
+            <h6 class="modal-title fw-semibold text-truncate pe-3" id="homeNewsVideoModalLabel">
+              <i class="bi bi-play-circle-fill text-danger me-2"></i>{{ activeVideoItem?.title }}
+            </h6>
+            <button
+              type="button"
+              class="btn-close btn-close-white"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+              @click="closeVideoModal"
+            ></button>
+          </div>
+          <div class="modal-body p-2 p-md-3">
+            <div class="ratio ratio-16x9 rounded-3 overflow-hidden bg-black shadow">
+              <iframe
+                v-if="activeVideoItem && activeVideoEmbedUrl"
+                :src="activeVideoEmbedUrl"
+                title="JPM Marine Video Player"
+                frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen
+              ></iframe>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
-import { ref, computed, watch } from 'vue';
+import { ref, computed, watch, onMounted, onUnmounted } from 'vue';
 import { useQuery } from '@tanstack/vue-query';
 import axiosClient from '../../../api/axiosClient';
 import { useCartStore } from '../../../stores/cartStore';
@@ -565,14 +619,86 @@ export default {
       staleTime: 1000 * 60 * 5
     });
 
-    // Lấy bài viết kỹ thuật & cẩm nang mới nhất (1 bài lớn bên trái + 3 bài bên phải = 4 bài)
+    // Lấy bài viết kỹ thuật & cẩm nang mới nhất (lấy 8 bài để chọn lọc bài có video cho cột trái và 3 bài cho cột phải)
     const { data: latestNews, isLoading: isLoadingNews } = useQuery({
-      queryKey: ['public-latest-news', 4],
-      queryFn: () => axiosClient.get('/public/tin-tuc-moi-nhat', { params: { limit: 4 } }).then(res => res.data?.data || res.data || res),
+      queryKey: ['public-latest-news', 8],
+      queryFn: () => axiosClient.get('/public/tin-tuc-moi-nhat', { params: { limit: 8 } }).then(res => res.data?.data || res.data || res),
       staleTime: 1000 * 60 * 10
     });
 
-    // ===== 3. THEO DÕI THAY ĐỔI ĐỂ TỰ ĐỘNG RESET BỘ LỌC LIÊN ĐỚI (WATCHERS) =====
+    // 1. Cột trái: Dành riêng cho 1 bài viết có Video
+    const videoArticle = computed(() => {
+      if (!latestNews.value || !Array.isArray(latestNews.value) || latestNews.value.length === 0) return null;
+      // Ưu tiên bài viết có youtube_url
+      const withVideo = latestNews.value.find(item => item.youtube_url && item.youtube_url.trim() !== '');
+      if (withVideo) {
+        return {
+          ...withVideo,
+          hasVideo: true,
+        };
+      }
+      // Fallback: nếu chưa có bài nào có video thì gắn video mẫu cho bài đầu tiên
+      return {
+        ...latestNews.value[0],
+        youtube_url: 'https://www.youtube.com/watch?v=Y7f98aduVJ8',
+        hasVideo: true,
+      };
+    });
+
+    // 2. Cột phải: 3 bài viết thông thường mới nhất (loại bỏ bài video cột trái để tránh trùng lặp)
+    const sideNews = computed(() => {
+      if (!latestNews.value || !Array.isArray(latestNews.value)) return [];
+      const videoId = videoArticle.value?.id;
+      return latestNews.value.filter(item => item.id !== videoId).slice(0, 3);
+    });
+
+    // ===== 3. QUẢN LÝ POPUP MODAL XEM VIDEO YOUTUBE BÀI VIẾT =====
+    const activeVideoItem = ref(null);
+
+    const extractYoutubeId = (url) => {
+      if (!url) return null;
+      const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([^&]{11})/);
+      return match ? match[1] : null;
+    };
+
+    const activeVideoEmbedUrl = computed(() => {
+      if (!activeVideoItem.value?.youtube_url) return null;
+      const id = extractYoutubeId(activeVideoItem.value.youtube_url);
+      return id ? `https://www.youtube.com/embed/${id}?autoplay=1&rel=0` : null;
+    });
+
+    const openVideoModal = (item) => {
+      if (!item) return;
+      activeVideoItem.value = item;
+      const el = document.getElementById('homeNewsVideoModal');
+      if (el && window.bootstrap?.Modal) {
+        let modalInstance = window.bootstrap.Modal.getInstance(el);
+        if (!modalInstance) {
+          modalInstance = new window.bootstrap.Modal(el);
+        }
+        modalInstance.show();
+      }
+    };
+
+    const closeVideoModal = () => {
+      activeVideoItem.value = null;
+    };
+
+    onMounted(() => {
+      const el = document.getElementById('homeNewsVideoModal');
+      if (el) {
+        el.addEventListener('hidden.bs.modal', closeVideoModal);
+      }
+    });
+
+    onUnmounted(() => {
+      const el = document.getElementById('homeNewsVideoModal');
+      if (el) {
+        el.removeEventListener('hidden.bs.modal', closeVideoModal);
+      }
+    });
+
+    // ===== 4. THEO DÕI THAY ĐỔI ĐỂ TỰ ĐỘNG RESET BỘ LỌC LIÊN ĐỚI (WATCHERS) =====
     watch(selectedBrand, () => { 
       selectedEngineType.value = ""; 
       selectedYear.value = ""; 
@@ -607,6 +733,12 @@ export default {
       selectedModel,
       hotProducts,
       latestNews,
+      videoArticle,
+      sideNews,
+      activeVideoItem,
+      activeVideoEmbedUrl,
+      openVideoModal,
+      closeVideoModal,
       formatDate,
       isPageLoading,
       isLoadingBrands, 
@@ -695,3 +827,98 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+/* ==============================================================
+   TrangChu: Tinh chỉnh cục bộ cho khối Tin tức & Kinh nghiệm
+   (Cách ly scoped trong trang này, không viết vào main.css chung)
+   ============================================================== */
+.news-category {
+  color: var(--accent-color, #f82249);
+  font-weight: 600;
+  font-size: 0.75rem;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.news-hero-title {
+  font-family: var(--default-font);
+  font-size: 1.25rem;
+  color: var(--heading-color, #0A1128);
+  font-weight: 600;
+  line-height: 1.35;
+}
+.news-hero-title a,
+.news-card-title a {
+  color: var(--heading-color, #0A1128);
+  text-decoration: none;
+  transition: color 0.25s ease;
+}
+.group-hover:hover .news-hero-title a,
+.list-item-hover:hover .news-card-title a {
+  color: var(--heading-color, #0e1b4d);
+}
+
+.news-card-title {
+  font-family: var(--default-font);
+  font-size: 0.95rem;
+  color: var(--heading-color, #0A1128);
+  font-weight: 600;
+  line-height: 1.4;
+  margin-bottom: 0.25rem;
+}
+
+.news-img-thumb {
+  width: 170px;
+  aspect-ratio: 4/3;
+  flex-shrink: 0;
+}
+
+.skeleton-box-sm {
+  border-radius: 8px;
+  width: 170px;
+  aspect-ratio: 4/3;
+}
+
+@media (max-width: 576px) {
+  .news-img-thumb,
+  .skeleton-box-sm {
+    width: 120px;
+  }
+}
+
+/* ==============================================================
+   Icon & Badge Video trên thumbnail bài viết cột trái
+   ============================================================== */
+.video-thumb-wrap {
+  cursor: pointer;
+}
+.video-badge {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  z-index: 2;
+  border-radius: 4px;
+}
+.video-play-btn {
+  width: 58px;
+  height: 58px;
+  background-color: rgba(10, 17, 40, 0.75);
+  color: #ffffff;
+  border: 2px solid rgba(255, 255, 255, 0.85);
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  z-index: 2;
+  backdrop-filter: blur(4px);
+}
+.video-play-btn .play-icon {
+  margin-left: 3px;
+  line-height: 1;
+}
+.group-hover:hover .video-play-btn,
+.video-thumb-wrap:hover .video-play-btn {
+  background-color: var(--accent-color, #f82249);
+  border-color: #ffffff;
+  transform: translate(-50%, -50%) scale(1.15) !important;
+  box-shadow: 0 0 25px rgba(248, 34, 73, 0.55);
+}
+</style>

@@ -146,66 +146,58 @@ Dùng `.input-group` kết hợp icon Bootstrap Icons:
 
 ---
 
-## 4. NGUYÊN TẮC THƯ VIỆN THIẾT KẾ & "ZERO LOCAL CSS HACKS" TRÊN CLIENT
+## 4. NGUYÊN TẮC PHÂN ĐỊNH KIẾN TRÚC CSS: `main.css` (DÙNG CHUNG TOÀN CỤC) VS `<style scoped>` (ĐẶC THÙ TỪNG TRANG)
 
-### 4.1. Coi Template TheEvent như một Thư viện Thiết kế Tập trung
-- Bộ tài nguyên TheEvent tại `FE_JPM/src/assets/client/` đóng vai trò như một thư viện UI chuẩn cho toàn bộ người dùng Client. Nó đã bao hàm đầy đủ kiểu hiển thị của Section, Card sản phẩm, Typography, Buttons, Badges, Animation.
-- Giống như Admin, toàn bộ giao diện Client phải đồng nhất về phong cách và màu sắc thương hiệu hải quân (Navy `#0A1128` + Marine Red `#f82249`).
+### 4.1. Vai trò của `main.css` (Tương tự Bootstrap Framework Core)
+- File `FE_JPM/src/assets/client/css/main.css` đóng vai trò như **Framework CSS / Design System dùng chung toàn website Client**, tương tự như vai trò của Bootstrap core.
+- **CHỈ CHỨA NHỮNG GÌ DÙNG CHUNG VÀ TÁI SỬ DỤNG TRÊN TOÀN BỘ CÁC TRANG CLIENT:**
+  1. **Design Tokens & Biến CSS toàn cục:** `--accent-color`, `--heading-color`, `--heading-font`, `--default-font`...
+  2. **Chuẩn hóa & Ghi đè Component Bootstrap 5 chính quy:** Tùy biến `.btn-primary`, `.btn-danger`, `.badge.bg-danger`, `.card`, `.dropdown` theo màu sắc và tỷ lệ thương hiệu JPM Marine:
+     ```css
+     /* Tinh chỉnh chuẩn Bootstrap trong main.css của Client */
+     .btn-primary {
+       --bs-btn-bg: #0A1128;
+       --bs-btn-border-color: #0A1128;
+       --bs-btn-hover-bg: #1a2750;
+       --bs-btn-hover-border-color: #1a2750;
+       --bs-btn-color: #ffffff;
+     }
+     .btn-danger {
+       --bs-btn-bg: #f82249;
+       --bs-btn-border-color: #f82249;
+       --bs-btn-hover-bg: #e0163c;
+       --bs-btn-hover-border-color: #e0163c;
+       --bs-btn-color: #ffffff;
+     }
+     .badge.bg-danger {
+       background-color: #f82249 !important;
+     }
+     ```
+  3. **Tiện ích dùng chung toàn cục (Global Shared Utilities):** Các class tiện ích tái sử dụng ở mọi trang như `.text-truncate-2`, `.text-truncate-3`, `.skeleton-box`, `.skeleton-line`...
+  4. **Component nghiệp vụ dùng chung (Global Core Components):** Thẻ sản phẩm dùng chung `.product-card`, `.premium-product-card`, nút giỏ hàng `.btn-cart-action`, tiêu đề khối `.section-title`.
+- ❌ **TUYỆT ĐỐI CẤM ĐƯA VÀO `main.css`:**
+  - **CẤM** viết các class mang tính đặc thù cục bộ của một trang hay một section riêng biệt (ví dụ: `.news-section .card-title`, `.news-img-thumb`, `.cat-bar`, `.zone`, `.lat-title`...).
+  - **CẤM** cấu hình số dòng hiển thị nội dung (`-webkit-line-clamp`) cục bộ cho một trang vào `main.css`. Vì mỗi trang có yêu cầu hiển thị khác nhau (trang này tóm tắt 3 dòng, trang khác tóm tắt 2 dòng hoặc 1 dòng hoặc hiển thị đầy đủ). Đưa vào `main.css` sẽ gây ô nhiễm stylesheet toàn cục, ghi đè không kiểm soát và làm vỡ layout các trang khác!
 
-### 4.2. Quy tắc Chuẩn hóa & Mở rộng bằng Mã Bootstrap 5 trong `main.css`
-> **Tình huống:** Khi một trang Client (VD: Chi tiết Catalog, Báo giá B2B, Giỏ hàng) cần điều chỉnh màu sắc thương hiệu, biến thể nút, huy hiệu hoặc card mà giao diện mặc định cần đồng bộ:
-- ❌ **TUYỆT ĐỐI CẤM:** 
-  - Không tự viết CSS riêng trong thẻ `<style scoped>` của file Vue.
-  - **Không tự độ chế ra các class có tên tùy tiện, dị biệt** (CẤM: `.btn-marine-navy`, `.badge-marine-oem`, `.my-card-custom`...).
-- ✅ **BẮT BUỘC:** 
-  - Mọi component bên ngoài **100% chỉ sử dụng class chính quy của Bootstrap 5**: `btn btn-primary`, `btn btn-danger`, `btn btn-outline-danger`, `badge bg-danger`, `card`, `table table-hover`...
-  - Khi cần định nghĩa hoặc tinh chỉnh giao diện, **bắt buộc viết trong file CSS gốc**:
-    📁 `FE_JPM/src/assets/client/css/main.css`
-    **Nhưng phải viết bằng chuẩn code và biến Bootstrap 5**, ghi đè hoặc tùy biến trực tiếp trên class và CSS variables của Bootstrap:
-    ```css
-    /* Tinh chỉnh chuẩn Bootstrap trong main.css của Client */
-    /* 1. Tùy biến nút chính quy Bootstrap theo màu thương hiệu */
-    .btn-primary {
-      --bs-btn-bg: #0A1128;
-      --bs-btn-border-color: #0A1128;
-      --bs-btn-hover-bg: #1a2750;
-      --bs-btn-hover-border-color: #1a2750;
-      --bs-btn-color: #ffffff;
-    }
-    .btn-danger {
-      --bs-btn-bg: #f82249;
-      --bs-btn-border-color: #f82249;
-      --bs-btn-hover-bg: #e0163c;
-      --bs-btn-hover-border-color: #e0163c;
-      --bs-btn-color: #ffffff;
-    }
-    /* 2. Badge chuẩn Bootstrap */
-    .badge.bg-danger {
-      background-color: #f82249 !important;
-    }
-    ```
-- **Bên ngoài component Vue:** Chỉ gọi đúng class chuẩn Bootstrap 5:
-  ```html
-  <button class="btn btn-primary"><i class="bi bi-box-seam me-1"></i> Tra Cứu Catalog</button>
-  <button class="btn btn-danger"><i class="bi bi-cart-plus me-1"></i> Thêm Vào Giỏ</button>
-  <span class="badge bg-danger">OEM GENUINE</span>
-  ```
-- **Lợi ích:** Không sinh ra bất kỳ class "chế" nào, giữ mã nguồn 100% Bootstrap 5 chuẩn mực, mọi trang Client khác đều dùng chung cú pháp đồng nhất.
+### 4.2. Vai trò và Quy định của `<style scoped>` trong Component Vue (Cục bộ từng trang)
+- Mỗi trang hoặc component Vue (`.vue`) khi có các tinh chỉnh hiển thị **riêng biệt của chính nó** thì **BẮT BUỘC** viết trong khối `<style scoped>` ở cuối file `.vue` tương ứng.
+- **Thuộc tính `scoped`** của Vue sẽ tự động gắn mã hash nhận diện (ví dụ `[data-v-xxxxxx]`), đảm bảo CSS được **cách ly tuyệt đối 100%**, không bao giờ bị rò rỉ hay gây xung đột với các trang khác trong hệ thống.
+- **Những trường hợp BẮT BUỘC viết trong `<style scoped>` của trang:**
+  1. **Số dòng hiển thị nội dung đặc thù của block trong trang:** Ví dụ đoạn tóm tắt bài viết ở Trang chủ cần hiển thị tối đa 3 dòng kèm dấu `...` (`-webkit-line-clamp: 3;`), trong khi ở trang Tin tức cần hiển thị 2 dòng hoặc hiển thị đầy đủ.
+  2. **Kích thước ảnh, thumbnail hoặc tỷ lệ khung hình (aspect-ratio) đặc thù:** Ví dụ thumbnail tin tức Trang chủ là 170px (tỷ lệ 4/3), banner riêng của từng trang...
+  3. **Khoảng cách lề (`margin`/`padding`) và layout tinh chỉnh cục bộ:** Ví dụ khoảng cách sát giữa danh mục, tiêu đề và tóm tắt của block tin tức Trang chủ, ngày tháng cố định đáy (`mt-auto`).
+  4. **Màu sắc danh mục hoặc trạng thái hover riêng biệt của component:** Ví dụ `.news-category` chữ đỏ thương hiệu, hover tiêu đề giữ nguyên màu Navy `#0A1128` (không bị chuyển đỏ).
+  5. **Hiệu ứng đặc thù không thể làm bằng class utility:** Zoom sơ đồ nổ, phóng to thu nhỏ bản vẽ tương tác SVG/Canvas...
+- ❌ **LƯU Ý TRÁNH LẠM DỤNG TRONG `<style scoped>`:**
+  - Không tự chế class cho những thứ Bootstrap 5 đã hỗ trợ sẵn: Luôn ưu tiên dùng class utility của Bootstrap (`d-flex`, `align-items-center`, `justify-content-between`, `gap-*`, `mb-*`, `text-center`, `fw-bold`, `rounded-3`, `shadow-sm`).
+  - Không viết lại các tiện ích đã có sẵn trong `main.css` (như `.text-truncate-2`, `.text-truncate-3`).
 
 ### 4.3. Quy định nghiêm ngặt về Inline Style (`style="..."`)
 - Inline `style=""` **DUY NHẤT** được chấp nhận cho **kích thước vật lý hoặc thông số động** (Physical / Dynamic Dimensions):
   - Chiều rộng cột bảng cố định (VD: `style="width: 5%;"`, `style="width: 15%;"`).
   - Chiều cao khung ảnh sản phẩm hoặc khung vẽ sơ đồ (VD: `style="height: 200px;"`, `style="height: 500px;"`).
   - Tọa độ hotspot đánh số phụ tùng trên bản vẽ sơ đồ nổ (VD: `style="top: 42%; left: 68%;"`).
-- **TUYỆT ĐỐI CẤM** dùng inline `style=""` để chỉnh màu sắc, viền bo góc, đổ bóng hay khoảng cách lề. Mọi thuộc tính đó phải dùng class Bootstrap utility hoặc class định nghĩa trong `main.css`.
-
-### 4.4. Không độ thêm CSS thủ công trong component
-1. **Tuyệt đối không tự chế class CSS riêng trong `<style scoped>`:**
-   - ❌ Không tự viết các class kiểu `.btn-custom-red`, `.my-card-border`, `.custom-header`...
-   - ✅ Luôn tận dụng hệ class tiện ích của Bootstrap 5: `d-flex`, `align-items-center`, `justify-content-between`, `gap-*`, `mb-*`, `text-center`, `fw-bold`, `rounded-3`, `shadow-sm`...
-2. **Khối `<style scoped>` trên trang Client chỉ dùng cho:**
-   - Các hiệu ứng đặc thù không thể làm bằng class utility (VD: phóng to thu nhỏ bản vẽ tương tác SVG/Canvas, kéo thả zoom sơ đồ nổ).
-   - Nếu là giao diện danh sách, form, bảng, thẻ thông tin: **Ưu tiên 100% Bootstrap 5 markup và xóa sạch `<style scoped>` để code luôn gọn gàng, nhẹ và dễ bảo trì**.
+- **TUYỆT ĐỐI CẤM** dùng inline `style=""` để chỉnh màu sắc, viền bo góc, đổ bóng hay khoảng cách lề. Mọi thuộc tính đó phải dùng class Bootstrap utility, class dùng chung trong `main.css`, hoặc `<style scoped>` nếu là tinh chỉnh riêng của trang.
 
 ---
 

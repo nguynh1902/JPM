@@ -16,22 +16,21 @@ Mọi Lập trình viên và AI tham gia vào dự án JPM bắt buộc phải t
 
 ### 2.1. Triết lý thống nhất toàn hệ thống (Universal Design System Philosophy)
 *   **Ngôn ngữ Markup duy nhất:** Toàn bộ tác nhân (Admin, Staff, Client) đều thống nhất lập trình bằng **cú pháp Bootstrap 5 tối giản, sạch sẽ, chuẩn semantic HTML** (`container`, `row`, `col-*`, `card`, `table`, `form-control`, `btn`...). Tuyệt đối không nạp thêm thư viện UI khác (AntD, Vuetify, Element Plus...).
-*   **Template đóng vai trò Thư viện Thiết kế Tập trung (Template as a Design System Library):**
-    *   Thư mục tài nguyên trong `assets/` (Sneat cho Admin/Staff, TheEvent cho Client) được coi như một thư viện UI chuẩn mực chứa đầy đủ card, button, bảng biểu, badge, màu sắc...
-    *   Giao diện các trang hiển thị đẹp đẽ bằng cách **ăn CSS từ thư viện template trong `assets/`**, tuyệt đối không viết CSS thủ công đè lên từng trang.
-*   **Quy tắc Chuẩn hóa & Mở rộng bằng Mã Bootstrap 5 (BẮT BUỘC):**
-    *   Khi giao diện thiếu bất kỳ kiểu dáng, màu sắc button, kiểu badge hay biến thể card nào: **Tuyệt đối KHÔNG viết CSS thuần trong file `.vue` (`<style scoped>`)**.
-    *   **Tuyệt đối KHÔNG tự độ chế ra các tên class dị biệt** (CẤM: `.btn-marine-navy`, `.btn-cyan`, `.badge-marine`...).
-    *   Lập trình viên / AI **BẮT BUỘC viết bằng mã/biến chuẩn Bootstrap 5 trực tiếp vào file CSS gốc của template trong thư mục `assets/`**:
-        *   **Admin & Staff:** Bổ sung/ghi đè theo chuẩn Bootstrap/Sneat trong `FE_JPM/src/assets/admin/template/css/demo.css`.
-        *   **Client:** Bổ sung/ghi đè theo chuẩn Bootstrap trong `FE_JPM/src/assets/client/css/main.css`.
-    *   Component bên ngoài **100% chỉ gọi các class chính quy của Bootstrap 5** (`btn btn-primary`, `btn btn-danger`, `badge bg-danger`...), đảm bảo toàn bộ dự án thống nhất một cú pháp duy nhất.
+*   **Phân định rạch ròi kiến trúc CSS: Toàn cục (`main.css`/`demo.css`) vs Cục bộ (`<style scoped>`):**
+    *   **File CSS gốc của Template (`main.css` ở Client, `demo.css` ở Admin):** Đóng vai trò như **Framework CSS dùng chung toàn website** (tương tự Bootstrap core).
+        *   **CHỈ CHỨA:** Design tokens/variables (`--accent-color`, `--heading-font`...), chuẩn hóa ghi đè component Bootstrap chính quy (`.btn-primary`, `.btn-danger`, `.badge.bg-danger`), các tiện ích dùng chung (`.text-truncate-2`, `.text-truncate-3`), và component dùng chung toàn hệ thống (`.product-card`, `.section-title`, `.btn-cart-action`).
+        *   **TUYỆT ĐỐI CẤM:** Không được đưa CSS đặc thù của riêng 1 trang/section vào `main.css` (CẤM: class cục bộ theo kiểu `.news-section .card-title`, `.news-img-thumb`... hoặc ép số dòng hiển thị `-webkit-line-clamp` của 1 block trên 1 page vào `main.css` vì sẽ gây ô nhiễm và xung đột khi sang trang khác).
+    *   **Thẻ `<style scoped>` trong component Vue:** Dành riêng cho **tinh chỉnh đặc thù của chính trang đó**:
+        *   Số dòng hiển thị nội dung (`-webkit-line-clamp`) của từng block cụ thể trên trang (ví dụ tóm tắt bài viết Trang chủ 3 dòng, trang khác 2 dòng hoặc full).
+        *   Kích thước ảnh, thumbnail hoặc tỉ lệ khung hình (aspect-ratio) đặc thù của block trên trang đó.
+        *   Khoảng cách lề `margin`/`padding` cục bộ và layout nội bộ của section trong trang đó.
+        *   Nhờ thuộc tính `scoped`, Vue tự động cách ly CSS bằng thuộc tính `data-v-xxx`, đảm bảo 100% không ảnh hưởng sang các trang khác.
 *   **Quy định nghiêm ngặt về Inline Style (`style="..."`):**
     *   Inline `style=""` **DUY NHẤT** được chấp nhận cho **kích thước vật lý hoặc thông số động** (Physical / Dynamic Dimensions):
         *   Chiều rộng cột bảng cố định (VD: `style="width: 5%;"`).
         *   Chiều cao khung hình / video / sơ đồ (VD: `style="height: 450px;"`).
         *   Tọa độ hotspot động trên sơ đồ rã máy (VD: `style="top: 35%; left: 62%;"`).
-    *   **TUYỆT ĐỐI CẤM** dùng inline `style=""` cho màu sắc (`color`, `background`), bo góc (`border-radius`), đổ bóng (`box-shadow`), căn lề hay font chữ... Tất cả phải dùng class Bootstrap hoặc class trong template assets.
+    *   **TUYỆT ĐỐI CẤM** dùng inline `style=""` cho màu sắc (`color`, `background`), bo góc (`border-radius`), đổ bóng (`box-shadow`), căn lề hay font chữ... Tất cả phải dùng class Bootstrap, class trong template assets, hoặc `<style scoped>` của component.
 
 ### 2.2. Giao diện Back-office (Admin & Staff) - Sneat 1.0.0
 > Xem tài liệu đặc tả chi tiết tại: [09_Admin_Staff_UI_Standard.md](09_Admin_Staff_UI_Standard.md)
