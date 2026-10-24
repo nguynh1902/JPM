@@ -227,9 +227,9 @@
       </div>
       <div class="container" data-aos="fade-up" data-aos-delay="100">
         <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-4 justify-content-center">
-          <!-- Skeleton khi đang load -->
+          <!-- Skeleton khi đang load (8 sản phẩm = 2 hàng) -->
           <template v-if="!hotProducts">
-            <div class="col" v-for="n in 4" :key="'sk-' + n">
+            <div class="col" v-for="n in 8" :key="'sk-' + n">
               <div class="card h-100">
                 <div class="card-img-wrapper skeleton-box card-img-product"></div>
                 <div class="card-body p-3 d-flex flex-column">
@@ -290,11 +290,11 @@
                     </div>
                     <button
                       v-if="!prod.is_gia_lien_he && prod.gia_ban"
-                      class="btn btn-outline-danger btn-sm d-inline-flex align-items-center justify-content-center btn-cart-action"
+                      class="btn btn-cart-action"
                       title="Thêm vào giỏ hàng"
                       @click.prevent="addToCart(prod)"
                     >
-                      <i class="bi bi-cart3 fs-6"></i>
+                      <i class="bi bi-cart2"></i>
                     </button>
                   </div>
                 </div>
@@ -386,125 +386,115 @@
     </section>
 
     <!-- ========================================================
-         KHỐI 5: TIN TỨC & KINH NGHIỆM (Bento Grid cẩm nang kỹ thuật hàng hải)
+         KHỐI 5: TIN TỨC & KINH NGHIỆM (Cẩm nang kỹ thuật hàng hải)
          ======================================================== -->
     <section class="news-section section bg-white py-5">
-      <div class="container section-title pb-3" data-aos="fade-up">
+      <div class="container section-title" data-aos="fade-up">
         <h2>Tin tức & Kinh nghiệm</h2>
-        <p>Cập nhật kiến thức bảo dưỡng và cẩm nang kỹ thuật thiết bị tàu thuyền</p>
+        <p>Cập nhật kiến thức bảo dưỡng và tin tức mới nhất về thiết bị tàu thuyền</p>
       </div>
-
       <div class="container" data-aos="fade-up" data-aos-delay="100">
-        <!-- Skeleton Loading -->
-        <template v-if="isLoadingNews && (!latestNews || latestNews.length === 0)">
-          <div class="row g-4 news-bento-grid">
-            <div class="col-lg-4 col-md-12">
-              <div class="skeleton-box bento-card-lg"></div>
-            </div>
-            <div class="col-lg-4 col-md-6 d-flex flex-column gap-4">
-              <div class="skeleton-box bento-card-sm"></div>
-              <div class="skeleton-box bento-card-sm"></div>
-            </div>
-            <div class="col-lg-4 col-md-6 d-flex flex-column gap-4">
-              <div class="skeleton-box bento-card-sm"></div>
-              <div class="skeleton-box bento-card-sm"></div>
-            </div>
-          </div>
-        </template>
+        <div class="row gx-lg-5 gy-4">
 
-        <!-- Bento Grid 3 Cột: 1 Card Dài Bên Trái - 4 Card Ngắn Bên Phải (2 Cột) -->
-        <template v-else>
-          <div class="row g-4 news-bento-grid">
-            <!-- CỘT 1 (BÊN TRÁI): 1 Card cao dọc Spotlight -->
-            <div class="col-lg-4 col-md-12">
-              <div
-                v-if="heroNews"
-                class="card bento-card bento-card-lg position-relative overflow-hidden"
-              >
-                <img
-                  :src="getImageUrl(heroNews.thumbnail) || 'https://images.unsplash.com/photo-1559136555-9303baea8ebd?auto=format&fit=crop&q=80&w=800'"
-                  class="bento-card-bg"
-                  :alt="heroNews.title"
-                  @error="$event.target.src='https://placehold.co/800x1200/0A1128/ffffff?text=JPM+Marine'"
-                >
-                <div class="bento-card-overlay"></div>
-                <span class="bento-badge position-absolute top-0 start-0 m-3 z-2">
-                  <span class="badge-dot"></span> {{ heroNews.category || 'Tiêu điểm' }}
-                </span>
-                <div class="bento-card-content position-absolute bottom-0 start-0 end-0 p-4 z-2">
-                  <h4 class="bento-card-title fw-bold mb-2">
-                    <router-link :to="`/tin-tuc/${heroNews.slug || heroNews.id}`" class="stretched-link">
-                      {{ heroNews.title }}
-                    </router-link>
-                  </h4>
-                  <p class="bento-card-desc text-white-50 mb-0 line-clamp-2">
-                    {{ heroNews.summary }}
-                  </p>
-                </div>
+          <!-- Bài nổi bật (cột trái 5 phần) -->
+          <div class="col-lg-5">
+            <!-- Skeleton -->
+            <div v-if="!latestNews" class="d-flex flex-column h-100">
+              <div class="skeleton-box skeleton-box-full mb-3"></div>
+              <div class="px-1">
+                <div class="skeleton-line mb-2 w-50"></div>
+                <div class="skeleton-line mb-2 w-100"></div>
+                <div class="skeleton-line mb-3 w-75"></div>
+                <div class="skeleton-line w-25"></div>
               </div>
             </div>
-
-            <!-- CỘT 2 (Ở GIỮA): 2 Cards ngắn -->
-            <div class="col-lg-4 col-md-6 d-flex flex-column gap-4">
-              <div
-                v-for="item in leftNews"
-                :key="item.id"
-                class="card bento-card bento-card-sm position-relative overflow-hidden"
-              >
+            <!-- Data thật -->
+            <div v-else-if="latestNews.length > 0" class="d-flex flex-column h-100 group-hover p-2 rounded-2 position-relative">
+              <div class="overflow-hidden mb-3 position-relative img-zoom-hover rounded-3 skeleton-box-full">
                 <img
-                  :src="getImageUrl(item.thumbnail) || 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&q=80&w=800'"
-                  class="bento-card-bg"
-                  :alt="item.title"
-                  @error="$event.target.src='https://placehold.co/800x500/0A1128/ffffff?text=JPM+Marine'"
+                  :src="getImageUrl(latestNews[0].thumbnail) || 'https://placehold.co/800x500/f1f3f5/a1acb8?text=JPM+Marine'"
+                  class="img-fluid object-fit-cover h-100 w-100 transition-transform rounded-3"
+                  :alt="latestNews[0].title"
+                  @error="$event.target.src='https://placehold.co/800x500/f1f3f5/a1acb8?text=JPM+Marine'"
                 >
-                <div class="bento-card-overlay"></div>
-                <span class="bento-badge position-absolute top-0 start-0 m-3 z-2">
-                  <span class="badge-dot"></span> {{ item.category || 'Kỹ thuật' }}
-                </span>
-                <div class="bento-card-content position-absolute bottom-0 start-0 end-0 p-3 p-md-4 z-2">
-                  <h5 class="bento-card-title fw-bold mb-1">
-                    <router-link :to="`/tin-tuc/${item.slug || item.id}`" class="stretched-link">
-                      {{ item.title }}
-                    </router-link>
-                  </h5>
-                  <p class="bento-card-desc text-white-50 mb-0 small line-clamp-2">
-                    {{ item.summary }}
-                  </p>
-                </div>
               </div>
-            </div>
-
-            <!-- CỘT 3 (BÊN PHẢI): 2 Cards ngắn -->
-            <div class="col-lg-4 col-md-6 d-flex flex-column gap-4">
-              <div
-                v-for="item in rightNews"
-                :key="item.id"
-                class="card bento-card bento-card-sm position-relative overflow-hidden"
-              >
-                <img
-                  :src="getImageUrl(item.thumbnail) || 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&q=80&w=800'"
-                  class="bento-card-bg"
-                  :alt="item.title"
-                  @error="$event.target.src='https://placehold.co/800x500/0A1128/ffffff?text=JPM+Marine'"
-                >
-                <div class="bento-card-overlay"></div>
-                <span class="bento-badge position-absolute top-0 start-0 m-3 z-2">
-                  <span class="badge-dot"></span> {{ item.category || 'Bảo dưỡng' }}
-                </span>
-                <div class="bento-card-content position-absolute bottom-0 start-0 end-0 p-3 p-md-4 z-2">
-                  <h5 class="bento-card-title fw-bold mb-1">
-                    <router-link :to="`/tin-tuc/${item.slug || item.id}`" class="stretched-link">
-                      {{ item.title }}
-                    </router-link>
-                  </h5>
-                  <p class="bento-card-desc text-white-50 mb-0 small line-clamp-2">
-                    {{ item.summary }}
-                  </p>
+              <div class="d-flex flex-column flex-grow-1 px-1">
+                <!-- 1. Danh mục: chuẩn phong cách .product-category của Sản phẩm bán chạy -->
+                <div class="product-category mb-1 text-truncate">
+                  {{ latestNews[0].category || 'CẨM NANG HÀNG HẢI' }}
+                </div>
+                <!-- 2. Tiêu đề: chuẩn Roboto .news-hero-title, màu deep navy đậm nét -->
+                <h5 class="news-hero-title mb-2">
+                  <router-link :to="`/tin-tuc/${latestNews[0].slug || latestNews[0].id}`" class="stretched-link">
+                    {{ latestNews[0].title }}
+                  </router-link>
+                </h5>
+                <!-- 3. Mô tả tóm tắt (3 dòng) -->
+                <p class="text-secondary small mb-3 text-truncate-3">{{ latestNews[0].summary }}</p>
+                <!-- 4. Ngày đăng: chuẩn .product-sku của Sản phẩm bán chạy -->
+                <div class="mt-auto product-sku mb-0">
+                  <span class="sku-label me-1"><i class="bi bi-calendar3 me-1"></i>NGÀY:</span>
+                  <span class="sku-code">{{ formatDate(latestNews[0].created_at) }}</span>
                 </div>
               </div>
             </div>
           </div>
-        </template>
+
+          <!-- Danh sách bài (cột phải 7 phần) -->
+          <div class="col-lg-7">
+            <!-- Skeleton -->
+            <div v-if="!latestNews" class="d-flex flex-column justify-content-between h-100">
+              <div v-for="n in 3" :key="'nsk-'+n" class="d-flex align-items-start py-3 border-bottom">
+                <div class="skeleton-box skeleton-box-sm flex-shrink-0"></div>
+                <div class="ms-3 flex-grow-1">
+                  <div class="skeleton-line mb-2 w-25" style="height: 12px;"></div>
+                  <div class="skeleton-line mb-2 w-75" style="height: 16px;"></div>
+                  <div class="skeleton-line mb-2 w-100" style="height: 13px;"></div>
+                  <div class="skeleton-line w-50" style="height: 12px;"></div>
+                </div>
+              </div>
+            </div>
+            <!-- Data thật -->
+            <div v-else class="d-flex flex-column justify-content-between h-100">
+              <div
+                v-for="(item, idx) in latestNews.slice(1, 4)"
+                :key="item.id"
+                class="d-flex align-items-start position-relative list-item-hover p-2 rounded-2"
+                :class="idx < latestNews.slice(1, 4).length - 1 ? 'border-bottom pb-3 mb-2' : ''"
+              >
+                <div class="overflow-hidden img-zoom-hover rounded-3 news-img-thumb flex-shrink-0">
+                  <img
+                    :src="getImageUrl(item.thumbnail) || 'https://placehold.co/400x300/f1f3f5/a1acb8?text=JPM'"
+                    class="img-fluid object-fit-cover h-100 w-100 transition-transform"
+                    :alt="item.title"
+                    @error="$event.target.src='https://placehold.co/400x300/f1f3f5/a1acb8?text=JPM'"
+                  >
+                </div>
+                <div class="ms-3 flex-grow-1 d-flex flex-column align-self-stretch">
+                  <!-- 1. Danh mục: chuẩn phong cách .product-category của Sản phẩm bán chạy -->
+                  <div class="product-category mb-1 text-truncate">
+                    {{ item.category || 'TIN TỨC' }}
+                  </div>
+                  <!-- 2. Tiêu đề: chuẩn Roboto .card-title, màu deep navy đậm nét -->
+                  <h6 class="card-title fw-semibold mb-1 text-truncate-2">
+                    <router-link :to="`/tin-tuc/${item.slug || item.id}`" class="stretched-link">
+                      {{ item.title }}
+                    </router-link>
+                  </h6>
+                  <!-- 3. Nội dung tóm tắt dưới tên bài viết (tối đa 3 dòng là ...) -->
+                  <p class="text-secondary small mb-2 text-truncate-3">
+                    {{ item.summary }}
+                  </p>
+                  <!-- 4. Ngày đăng: Mặc định cố định ở dưới cùng (mt-auto) -->
+                  <div class="mt-auto product-sku mb-0">
+                    <span class="sku-label me-1"><i class="bi bi-calendar3 me-1"></i>NGÀY:</span>
+                    <span class="sku-code">{{ formatDate(item.created_at) }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
 
         <div class="text-center mt-5">
           <router-link to="/tin-tuc" class="text-danger fw-semibold text-decoration-none d-inline-flex align-items-center fs-6">
@@ -568,78 +558,21 @@ export default {
       enabled: computed(() => !!selectedBrand.value)
     });
 
-    // Lấy 4 sản phẩm bán chạy nhất
+    // Lấy 8 sản phẩm bán chạy nhất (2 hàng x 4 cột)
     const { data: hotProducts, isLoading: isLoadingHotProducts } = useQuery({
-      queryKey: ['public-hot-products'],
-      queryFn: () => axiosClient.get('/public/san-pham-ban-chay', { params: { limit: 4 } }).then(res => res.data?.data || res.data || res),
+      queryKey: ['public-hot-products', 8],
+      queryFn: () => axiosClient.get('/public/san-pham-ban-chay', { params: { limit: 8 } }).then(res => res.data?.data || res.data || res),
       staleTime: 1000 * 60 * 5
     });
 
-    // Lấy 5 bài viết kỹ thuật & cẩm nang mới nhất
+    // Lấy bài viết kỹ thuật & cẩm nang mới nhất (1 bài lớn bên trái + 3 bài bên phải = 4 bài)
     const { data: latestNews, isLoading: isLoadingNews } = useQuery({
-      queryKey: ['public-latest-news'],
-      queryFn: () => axiosClient.get('/public/tin-tuc-moi-nhat', { params: { limit: 5 } }).then(res => res.data?.data || res.data || res),
+      queryKey: ['public-latest-news', 4],
+      queryFn: () => axiosClient.get('/public/tin-tuc-moi-nhat', { params: { limit: 4 } }).then(res => res.data?.data || res.data || res),
       staleTime: 1000 * 60 * 10
     });
 
-    // ===== 3. DỮ LIỆU TÍNH TOÁN & BÀI VIẾT DỰ PHÒNG (COMPUTED) =====
-    const displayNews = computed(() => {
-      const list = Array.isArray(latestNews.value) ? latestNews.value : [];
-      const fallbacks = [
-        {
-          id: 'fb-1',
-          title: 'Quy trình bảo dưỡng động cơ thủy 4 thì định kỳ 100 giờ chạy',
-          summary: 'Hướng dẫn chi tiết từng bước kiểm tra nhớt máy, bugi đánh lửa, lọc xăng và cánh quạt làm mát cho máy thủy.',
-          category: 'Cẩm nang',
-          thumbnail: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&q=80&w=800',
-          created_at: new Date().toISOString()
-        },
-        {
-          id: 'fb-2',
-          title: 'Cách tra cứu mã phụ tùng OEM chính xác trên sơ đồ rã máy',
-          summary: 'Bí quyết giúp thợ máy và xưởng đóng tàu tìm đúng linh kiện thay thế mà không lo nhầm lẫn Part Number.',
-          category: 'Kỹ thuật',
-          thumbnail: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&q=80&w=800',
-          created_at: new Date().toISOString()
-        },
-        {
-          id: 'fb-3',
-          title: 'Nhận biết dấu hiệu hư hỏng hệ thống lái thủy lực và cánh bơm',
-          summary: 'Phát hiện sớm rò rỉ áp suất dầu và mài mòn cánh bơm nước để tránh nguy cơ chết máy giữa biển.',
-          category: 'Bảo trì',
-          thumbnail: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&q=80&w=800',
-          created_at: new Date().toISOString()
-        },
-        {
-          id: 'fb-4',
-          title: 'Công nghệ động cơ Outboard thế hệ mới: Tối ưu nhiên liệu',
-          summary: 'Đánh giá hiệu suất động cơ tàu biển 4 thì tích hợp hệ thống phun xăng điện tử đa điểm EFI bền bỉ.',
-          category: 'Công nghệ',
-          thumbnail: 'https://images.unsplash.com/photo-1559136555-9303baea8ebd?auto=format&fit=crop&q=80&w=800',
-          created_at: new Date().toISOString()
-        },
-        {
-          id: 'fb-5',
-          title: 'Vòng đời mã thay thế (Supersession) từ nhà sản xuất Nhật',
-          summary: 'Quy tắc chọn mã phụ tùng kế thừa khi hãng chính thức dừng sản xuất các mã phụ tùng đời cũ.',
-          category: 'Kinh nghiệm',
-          thumbnail: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&q=80&w=800',
-          created_at: new Date().toISOString()
-        }
-      ];
-
-      const combined = [...list];
-      for (let i = combined.length; i < 5; i++) {
-        combined.push(fallbacks[i]);
-      }
-      return combined;
-    });
-
-    const heroNews = computed(() => displayNews.value[0]);
-    const leftNews = computed(() => [displayNews.value[1], displayNews.value[2]]);
-    const rightNews = computed(() => [displayNews.value[3], displayNews.value[4]]);
-
-    // ===== 4. THEO DÕI THAY ĐỔI ĐỂ TỰ ĐỘNG RESET BỘ LỌC LIÊN ĐỚI (WATCHERS) =====
+    // ===== 3. THEO DÕI THAY ĐỔI ĐỂ TỰ ĐỘNG RESET BỘ LỌC LIÊN ĐỚI (WATCHERS) =====
     watch(selectedBrand, () => { 
       selectedEngineType.value = ""; 
       selectedYear.value = ""; 
@@ -660,7 +593,7 @@ export default {
     const formatDate = (dateStr) => {
       if (!dateStr) return '';
       const d = new Date(dateStr);
-      return d.toLocaleDateString('vi-VN', { day: '2-digit', month: 'long', year: 'numeric' });
+      return d.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' });
     };
 
     return {
@@ -674,10 +607,6 @@ export default {
       selectedModel,
       hotProducts,
       latestNews,
-      heroNews,
-      leftNews,
-      rightNews,
-      isLoadingNews,
       formatDate,
       isPageLoading,
       isLoadingBrands, 
