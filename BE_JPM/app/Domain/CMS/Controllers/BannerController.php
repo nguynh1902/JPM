@@ -18,7 +18,7 @@ class BannerController extends Controller
 
     public function index()
     {
-        $banners = Banner::orderBy('id', 'desc')->cursorPaginate(50);
+        $banners = Banner::orderBy('id', 'desc')->get();
         return response()->json([
             'success' => true,
             'data' => $banners

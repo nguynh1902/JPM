@@ -161,7 +161,7 @@
         <div v-if="activeQrOrderCode === order.code" class="qr-deposit-box">
           <div class="qr-inner">
             <div class="text-center qr-img-col">
-              <img :src="getVietQrImageUrl(order)" alt="VietQR" class="img-fluid rounded border p-1" style="max-width: 190px;">
+              <img :src="vietQrData?.qr_url || getVietQrImageUrl(order)" alt="VietQR" class="img-fluid rounded border p-1" style="max-width: 190px;">
               <div class="mt-2 text-muted small d-flex align-items-center justify-content-center gap-1">
                 <span class="spinner-grow spinner-grow-sm text-danger me-1"></span>
                 <span>Chờ thanh toán...</span>
@@ -170,28 +170,28 @@
             <div class="qr-info-col">
               <div class="info-row">
                 <span class="text-muted">Ngân hàng:</span>
-                <strong>MB Bank (Quân Đội)</strong>
+                <strong>{{ vietQrData ? `${vietQrData.bank_name} (${vietQrData.bank_id})` : 'VietinBank (ICB)' }}</strong>
               </div>
               <div class="info-row">
                 <span class="text-muted">Số tài khoản:</span>
                 <div>
-                  <strong class="font-monospace">0123456789</strong>
-                  <button type="button" class="btn-copy" @click="copyText('0123456789', 'Đã copy STK')">Copy</button>
+                  <strong class="font-monospace">{{ vietQrData?.account_no || '108876543210' }}</strong>
+                  <button type="button" class="btn-copy" @click="copyText(vietQrData?.account_no || '108876543210', 'Đã copy STK')">Copy</button>
                 </div>
               </div>
               <div class="info-row">
                 <span class="text-muted">Chủ tài khoản:</span>
-                <strong>CTY TNHH JPM MARINE</strong>
+                <strong>{{ vietQrData?.account_name || 'CONG TY PHU TUNG MAY THUY JPM' }}</strong>
               </div>
               <div class="info-row">
                 <span class="text-muted">Số tiền cọc:</span>
-                <strong class="text-danger fs-6">{{ formatPrice(order.tien_coc_yeu_cau || 0) }}₫</strong>
+                <strong class="text-danger fs-6">{{ vietQrData?.amount_formatted || (formatPrice(order.tien_coc_yeu_cau || 0) + '₫') }}</strong>
               </div>
               <div class="info-row">
                 <span class="text-muted">Nội dung CK:</span>
                 <div>
-                  <strong class="font-monospace text-danger">{{ order.code }}</strong>
-                  <button type="button" class="btn-copy" @click="copyText(order.code, 'Đã copy nội dung')">Copy</button>
+                  <strong class="font-monospace text-danger">{{ vietQrData?.transfer_content || order.code }}</strong>
+                  <button type="button" class="btn-copy" @click="copyText(vietQrData?.transfer_content || order.code, 'Đã copy nội dung')">Copy</button>
                 </div>
               </div>
               <div class="mt-2 text-end">
@@ -245,10 +245,19 @@
               </a>
             </template>
 
-            <!-- Bước 2: Từ chối hoặc Đặt cọc -->
+            <!-- Bước 2: Từ chối, Đồng ý chốt đơn hoặc Đặt cọc -->
             <template v-else-if="getStage(order) === 2">
               <button type="button" class="btn-shopee btn-shopee-outline" @click="handleRejectQuote(order)">
                 Từ chối
+              </button>
+              <button
+                v-if="order._type === 'quote' && Number(order.trang_thai) === 1"
+                type="button"
+                class="btn-shopee btn-shopee-outline"
+                style="border-color: #16a34a; color: #16a34a;"
+                @click="handleAcceptQuote(order)"
+              >
+                Đồng ý chốt đơn
               </button>
               <button type="button" class="btn-shopee btn-shopee-primary" @click="toggleVietQR(order)">
                 {{ activeQrOrderCode === order.code ? 'Đóng QR' : 'Đặt Cọc VietQR' }}
@@ -417,6 +426,7 @@ watch(isLoading, (val) => setPageLoading(val), { immediate: true });
 // ===================== TAB STATE (SHOPEE STYLE) =====================
 const currentTab = ref('all'); // 'all' | '1' | '2' | '3' | '4' | '-1'
 const activeQrOrderCode = ref(null);
+const vietQrData = ref(null);
 const pollingTimer = ref(null);
 const selectedOrderForModal = ref(null);
 
@@ -588,24 +598,38 @@ const handleAddToCart = (prod) => {
 };
 
 // ===================== VIETQR & ACTIONS =====================
-const toggleVietQR = (order) => {
-  if (activeQrOrderCode === order.code) {
+const toggleVietQR = async (order) => {
+  if (activeQrOrderCode.value === order.code) {
     activeQrOrderCode.value = null;
+    vietQrData.value = null;
     stopPolling();
   } else {
     activeQrOrderCode.value = order.code;
+    vietQrData.value = null;
+    try {
+      const endpoint = order._type === 'quote'
+        ? `/public/vietqr/bao-gia/${order.code}`
+        : `/public/vietqr/don-hang/${order.code}`;
+      const res = await axiosClient.get(endpoint);
+      const payload = res?.qr_url ? res : res?.data;
+      if (payload && (res?.success || payload?.success)) {
+        vietQrData.value = payload;
+      }
+    } catch (e) {
+      // Fallback to static VietQR URL
+    }
     startPolling(order);
   }
 };
 
 const getVietQrImageUrl = (order) => {
   if (!order) return '';
-  const bankId = "970422"; // MB Bank
-  const accountNo = "0123456789";
+  const bankId = "ICB"; // VietinBank (ICB)
+  const accountNo = "108876543210";
   const amount = Number(order.tien_coc_yeu_cau || 0);
   const addInfo = order.code || 'COC JPM';
-  const template = "print";
-  return `https://img.vietqr.io/image/${bankId}-${accountNo}-${template}.png?amount=${amount}&addInfo=${addInfo}&accountName=CTY TNHH JPM MARINE`;
+  const template = "compact2";
+  return `https://img.vietqr.io/image/${bankId}-${accountNo}-${template}.png?amount=${amount}&addInfo=${encodeURIComponent(addInfo)}&accountName=${encodeURIComponent('CONG TY PHU TUNG MAY THUY JPM')}`;
 };
 
 const copyText = (text, msg) => {
@@ -632,6 +656,29 @@ const confirmManualPaid = () => {
   });
   queryClient.invalidateQueries({ queryKey: ["clientQuotesHistory"] });
   queryClient.invalidateQueries({ queryKey: ["clientOrdersHistory"] });
+};
+
+const handleAcceptQuote = async (order) => {
+  const result = await Swal.fire({
+    title: 'Đồng Ý Chốt Đơn?',
+    text: 'Bạn đồng ý với mức báo giá này và chốt đặt hàng?',
+    icon: 'question',
+    showCancelButton: true,
+    confirmButtonText: 'Đồng ý chốt đơn',
+    cancelButtonText: 'Đóng',
+    confirmButtonColor: '#16a34a'
+  });
+
+  if (result.isConfirmed && order.token) {
+    try {
+      await axiosClient.post(`/public/yeu-cau-bao-gia/${order.token}/action`, { action: 'accept' });
+      queryClient.invalidateQueries({ queryKey: ["clientQuotesHistory"] });
+      queryClient.invalidateQueries({ queryKey: ["clientOrdersHistory"] });
+      Swal.fire({ icon: 'success', title: 'Đã chốt đơn thành công!' });
+    } catch (e) {
+      Swal.fire({ icon: 'error', title: 'Lỗi', text: e.response?.data?.message || 'Không thể chốt đơn lúc này.' });
+    }
+  }
 };
 
 const handleRejectQuote = async (order) => {
@@ -666,19 +713,19 @@ const startPolling = (order) => {
   pollingTimer.value = setInterval(async () => {
     try {
       const res = await axiosClient.get(`/public/vietqr/check-status/${type}/${code}`);
-      if (res.data && res.data.success) {
-        if (res.data.is_deposit_paid || res.data.is_paid || res.data.quote_status === 2) {
-          stopPolling();
-          activeQrOrderCode.value = null;
-          Swal.fire({
-            icon: 'success',
-            title: 'Đã Nhận Tiền Cọc!',
-            text: 'Đơn hàng đã được chuyển sang giai đoạn vận chuyển.',
-            confirmButtonColor: '#f82249'
-          });
-          queryClient.invalidateQueries({ queryKey: ["clientQuotesHistory"] });
-          queryClient.invalidateQueries({ queryKey: ["clientOrdersHistory"] });
-        }
+      const payload = res?.data ?? res;
+      if ((res?.success || payload?.success) && (payload?.is_deposit_paid || payload?.is_paid || payload?.quote_status === 2)) {
+        stopPolling();
+        activeQrOrderCode.value = null;
+        vietQrData.value = null;
+        Swal.fire({
+          icon: 'success',
+          title: 'Đã Nhận Tiền Cọc!',
+          text: 'Đơn hàng đã được chuyển sang giai đoạn vận chuyển.',
+          confirmButtonColor: '#f82249'
+        });
+        queryClient.invalidateQueries({ queryKey: ["clientQuotesHistory"] });
+        queryClient.invalidateQueries({ queryKey: ["clientOrdersHistory"] });
       }
     } catch (e) {}
   }, 4000);

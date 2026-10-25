@@ -23,7 +23,7 @@ class TheKho extends Model
 
     public function phuTung()
     {
-        return $this->belongsTo(PhuTung::class, 'id_san_pham');
+        return $this->belongsTo(PhuTung::class, 'id_san_pham')->withTrashed();
     }
 
     public function nguoiThucHien()

@@ -18,7 +18,7 @@ class TinTucController extends Controller
         try {
             return response()->json([
                 'success' => true,
-                'data' => TinTucResource::collection(TinTuc::orderBy('id', 'desc')->cursorPaginate(50))
+                'data' => TinTucResource::collection(request()->filled('cursor') ? TinTuc::orderBy('id', 'desc')->cursorPaginate(50) : TinTuc::orderBy('id', 'desc')->get())
             ]);
         } catch (Exception $e) {
             return response()->json(['success' => false, 'message' => $e->getMessage()], 500);

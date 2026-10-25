@@ -289,7 +289,19 @@ export default {
           headers: { 'Content-Type': 'multipart/form-data' }
         });
       },
-      onMutate: async (vars) => { await queryClient.cancelQueries({ queryKey: ['san-pham'] }); const previousData = queryClient.getQueryData(['san-pham']); queryClient.setQueryData(['san-pham'], (old) => { const list = Array.isArray(old) ? old : (old?.data || []); const updatedData = vars.data || {}; if (vars.id) { return { data: list.map(item => item.id === vars.id ? { ...item, ...updatedData } : item) }; } return { data: [...list, { ...updatedData, id: Date.now() }] }; }); return { previousData }; },
+      onMutate: async (vars) => {
+        await queryClient.cancelQueries({ queryKey: ['san-pham'] });
+        const previousData = queryClient.getQueryData(['san-pham']);
+        queryClient.setQueryData(['san-pham'], (old) => {
+          const list = Array.isArray(old) ? old : (old?.data || []);
+          const updatedData = vars.data || {};
+          if (vars.id) {
+            return list.map(item => item.id === vars.id ? { ...item, ...updatedData } : item);
+          }
+          return [...list, { ...updatedData, id: Date.now() }];
+        });
+        return { previousData };
+      },
       onError: (err, vars, context) => {
         toaster.error(err.response?.data?.message || "Lỗi khi lưu sản phẩm");
       },
@@ -371,11 +383,12 @@ export default {
       const tree = buildTree(null);
       
       return tree
-        .filter(dm => dm.trang_thai === 1 || dm.id === this.formData.danh_muc_san_pham_id || dm.id === this.filterCategoryId)
+        .filter(dm => dm.trang_thai === 1 || dm.id === this.formData.danh_muc_san_pham_id || dm.id === this.filters.danh_muc_san_pham_id)
         .map(dm => ({ value: dm.id, label: dm.display_name }));
     },
     filteredSanPhams() {
-      return (this.sanPhams || []).filter(item => {
+      const list = Array.isArray(this.sanPhams) ? this.sanPhams : (this.sanPhams?.data || []);
+      return list.filter(item => {
         let match = true;
 
         if (this.filters.search) {
@@ -551,6 +564,8 @@ export default {
 
         if (this.mainImageFile) {
           payload.append('hinh_anh_chinh_file', this.mainImageFile);
+        } else if (this.isEditMode && !this.mainImageFile && !this.formData.hinh_anh_chinh) {
+          payload.append('remove_main_image', '1');
         }
         
         payload.append('thu_vien_anh_kept', JSON.stringify(this.formData.thu_vien_anh || []));

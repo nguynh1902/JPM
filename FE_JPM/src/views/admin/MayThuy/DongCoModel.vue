@@ -317,9 +317,11 @@ export default {
       onSettled: () => queryClient.invalidateQueries({ queryKey: ['engineModels'] })
     });
 
+    const isPending = computed(() => isPendingmodels.value || isPendingbrands.value || isPendingequipmentTypes.value);
+
     return { 
       queryClient, models, isFetchingModels, brands, isFetchingBrands, 
-      equipmentTypes, isFetchingTypes, deleteMutation, saveMutation, toaster,
+      equipmentTypes, isFetchingTypes, isPending, deleteMutation, saveMutation, toaster,
       authStore
     };
   },

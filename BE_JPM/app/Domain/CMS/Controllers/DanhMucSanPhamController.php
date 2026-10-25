@@ -85,7 +85,8 @@ class DanhMucSanPhamController extends Controller
                 'data' => new DanhMucSanPhamResource($danhMuc)
             ], 201);
         } catch (Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+            $status = (str_contains($e->getMessage(), 'Không thể') || str_contains($e->getMessage(), 'không thể')) ? 422 : 500;
+            return response()->json(['success' => false, 'message' => $e->getMessage()], $status);
         }
     }
 
@@ -99,7 +100,8 @@ class DanhMucSanPhamController extends Controller
                 'data' => new DanhMucSanPhamResource($danhMuc)
             ]);
         } catch (Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+            $status = (str_contains($e->getMessage(), 'Không thể') || str_contains($e->getMessage(), 'không thể')) ? 422 : 500;
+            return response()->json(['success' => false, 'message' => $e->getMessage()], $status);
         }
     }
 
@@ -112,7 +114,8 @@ class DanhMucSanPhamController extends Controller
                 'message' => 'Xóa danh mục thành công'
             ]);
         } catch (Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+            $status = (str_contains($e->getMessage(), 'Không thể') || str_contains($e->getMessage(), 'không thể')) ? 422 : 500;
+            return response()->json(['success' => false, 'message' => $e->getMessage()], $status);
         }
     }
 }

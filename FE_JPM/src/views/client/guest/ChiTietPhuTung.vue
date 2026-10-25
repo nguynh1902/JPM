@@ -384,8 +384,8 @@
                                 <i class="bi bi-engine-fill text-danger fs-4"></i>
                             </div>
                             <div class="text-start">
-                                <h6 class="mb-1 fw-bold text-dark">{{ g.ten_may || g.dong_co_model?.model_name || 'Máy không tên' }}</h6>
-                                <small class="text-muted">S/N: {{ g.so_serial || 'N/A' }} | Model: {{ g.dong_co_model?.model_name }}</small>
+                                <h6 class="mb-1 fw-bold text-dark">{{ g.ten_may || g.dong_co_model?.ten_model || g.dong_co_model?.model_name || 'Máy không tên' }}</h6>
+                                <small class="text-muted">S/N: {{ g.so_serial || 'N/A' }} | Model: {{ g.dong_co_model?.ten_model || g.dong_co_model?.model_name }}</small>
                             </div>
                             <i class="bi bi-chevron-right ms-auto text-muted"></i>
                         </button>
@@ -493,7 +493,9 @@ const diagramGroups = computed(() => {
         groups[name].models[modelName] = { name: modelName.trim(), years: new Set() };
       }
       
-      if (model.nam_bat_dau) {
+      if (model.nam_san_xuat) {
+        groups[name].models[modelName].years.add(model.nam_san_xuat);
+      } else if (model.nam_bat_dau) {
         const start = parseInt(model.nam_bat_dau);
         const end = model.nam_ket_thuc ? parseInt(model.nam_ket_thuc) : new Date().getFullYear();
         for (let y = start; y <= end; y++) {
@@ -688,7 +690,7 @@ const compatibleModels = computed(() => {
           id: m.id,
           name: m.ten_model || m.ma_model,
           brand: m.thuong_hieu?.name || 'Chưa rõ',
-          years: m.nam_bat_dau ? `${m.nam_bat_dau} - ${m.nam_ket_thuc || 'Nay'}` : 'Tất cả năm'
+          years: m.nam_san_xuat ? String(m.nam_san_xuat) : (m.nam_bat_dau ? `${m.nam_bat_dau} - ${m.nam_ket_thuc || 'Nay'}` : 'Tất cả năm')
         });
       }
     }

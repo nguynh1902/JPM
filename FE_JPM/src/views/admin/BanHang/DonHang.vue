@@ -350,9 +350,9 @@
                     <span class="fw-bold text-success fs-6">+{{ formatCurrency(tx.so_tien) }}</span>
                   </td>
                   <td><span class="text-truncate d-inline-block" style="max-width: 250px;" :title="tx.noi_dung">{{ tx.noi_dung }}</span></td>
-                  <td class="text-center text-muted" style="font-size: 0.85rem;">{{ tx.thoi_gian_giao_dich || tx.created_at }}</td>
+                  <td class="text-center text-muted" style="font-size: 0.85rem;">{{ formatDate(tx.ngay_giao_dich || tx.thoi_gian_giao_dich || tx.created_at) }}</td>
                   <td class="text-center">
-                    <span v-if="tx.trang_thai === 'thanh_cong'" class="badge badge-custom bg-pastel-success">THÀNH CÔNG</span>
+                    <span v-if="['thanh_cong', 'Thành công', 'SUCCESS'].includes(tx.trang_thai)" class="badge badge-custom bg-pastel-success">THÀNH CÔNG</span>
                     <span v-else-if="tx.trang_thai === 'mo_phong'" class="badge badge-custom bg-pastel-warning">SANDBOX TEST</span>
                     <span v-else class="badge badge-custom bg-pastel-danger">THẤT BẠI</span>
                   </td>
@@ -571,10 +571,11 @@
                     <v-select
                       v-model="selectedOrder.status" :disabled="isOrderReadOnly"
                       :options="[
-                        {value: 0, label: 'Chờ Xác Nhận'},
-                        {value: 1, label: 'Đang Xử Lý'},
-                        {value: 2, label: 'Hoàn Tất'},
-                        {value: 3, label: 'Đã Hủy'}
+                        {value: 0, label: '0 - Chờ duyệt / Chờ xác nhận'},
+                        {value: 1, label: '1 - Đang chuẩn bị / Đang xử lý'},
+                        {value: 2, label: '2 - Đang giao hàng'},
+                        {value: 3, label: '3 - Hoàn thành / Hoàn tất'},
+                        {value: 4, label: '4 - Đã hủy (Hoàn kho)'}
                       ]"
                       :can-clear="false"
                     />
@@ -680,7 +681,7 @@
             <div class="d-flex gap-2">
               <button type="button" class="btn btn-outline-secondary px-4" data-bs-dismiss="modal">Đóng</button>
               <button type="button" class="btn btn-primary px-4 shadow-sm" @click="saveOrder" v-if="!isOrderReadOnly && canEditOrders">Lưu Thay Đổi</button>
-              <button type="button" class="btn btn-primary px-4 shadow-sm">
+              <button type="button" class="btn btn-primary px-4 shadow-sm" @click="printOrder">
                 <i class="bx bx-printer me-1"></i> In Hóa Đơn
               </button>
             </div>
@@ -1137,7 +1138,11 @@ export default {
         );
       }
       if (this.txStatus !== 'all') {
-        list = list.filter(t => t.trang_thai === this.txStatus);
+        if (this.txStatus === 'thanh_cong') {
+          list = list.filter(t => ['thanh_cong', 'Thành công', 'SUCCESS'].includes(t.trang_thai));
+        } else {
+          list = list.filter(t => t.trang_thai === this.txStatus);
+        }
       }
       return list;
     },
@@ -1249,6 +1254,22 @@ export default {
         this.openOrderModal(item);
       }
     },
+    handleDelete(item) {
+      if (item.record_type === 'quote' || item._type === 'quote') {
+        this.deleteQuote(item);
+      } else {
+        this.deleteOrder(item);
+      }
+    },
+    printOrder() {
+      window.print();
+    },
+    formatDate(dateStr) {
+      if (!dateStr) return '';
+      const d = new Date(dateStr);
+      if (isNaN(d.getTime())) return dateStr;
+      return d.toLocaleString('vi-VN');
+    },
     openZaloMessage() {
       if (!this.selectedQuote) return;
       const phone = (this.selectedQuote.customer_phone || '').replace(/[^0-9]/g, '');
@@ -1275,7 +1296,7 @@ export default {
     async exportJapanPO() {
       try {
         const res = await axiosClient.get('/admin/don-hang/xuat-excel-po-nhat', { responseType: 'blob' });
-        const url = window.URL.createObjectURL(new Blob([res.data], { type: 'text/csv;charset=utf-8;' }));
+        const url = window.URL.createObjectURL(new Blob([res?.data !== undefined ? res.data : res], { type: 'text/csv;charset=utf-8;' }));
         const link = document.createElement('a');
         link.href = url;
         const dateStr = new Date().toISOString().slice(0, 10);
@@ -1320,8 +1341,8 @@ export default {
       if (result.isConfirmed) {
         try {
           const res = await axiosClient.post(`/admin/yeu-cau-bao-gia/${this.selectedQuote.id}/chuyen-don`);
-          if (res.data.success) {
-            Swal.fire({ icon: 'success', title: 'Thành công', text: res.data.message });
+          if (res?.success || res?.data?.success) {
+            Swal.fire({ icon: 'success', title: 'Thành công', text: res?.message || res?.data?.message });
             // Close modal implicitly via reload/invalidation
             this.queryClient.invalidateQueries({ queryKey: ['yeu-cau-bao-gia'] });
             this.queryClient.invalidateQueries({ queryKey: ['don-hang'] });
@@ -1515,8 +1536,9 @@ export default {
       this.isFetchingTransactions = true;
       try {
         const res = await axiosClient.get('/admin/thanh-toan/giao-dich?per_page=50');
-        if (res.data && res.data.success) {
-          this.transactions = res.data.data.data || [];
+        if (res && (res.success || res.data?.success)) {
+          const raw = res.data?.data ?? res.data ?? [];
+          this.transactions = Array.isArray(raw) ? raw : (raw.data || []);
         }
       } catch (err) {
         console.error('Lỗi khi tải danh sách giao dịch:', err);
@@ -1534,8 +1556,10 @@ export default {
       modalEl.show();
       try {
         const res = await axiosClient.get(`/public/vietqr/don-hang/${order.code}`);
-        if (res.data && res.data.success) {
-          this.adminVietQr = res.data;
+        const payload = res?.qr_url ? res : res?.data;
+        if (payload && (res.success || payload.success || payload.qr_url)) {
+          this.adminVietQr = payload;
+          this.currentVietQr = payload;
         }
       } catch (e) {
         Swal.fire({ icon: 'error', title: 'Lỗi', text: 'Không thể tạo mã VietQR cho đơn hàng này' });
@@ -1571,7 +1595,7 @@ export default {
       this.isSendingShipping = true;
       try {
         const res = await axiosClient.post(`/admin/thong-bao/gui-chanh-xe/${this.shippingOrder.id}`, this.shippingForm);
-        if (res.data && res.data.success) {
+        if (res?.success || res?.data?.success) {
           Swal.fire({
             icon: 'success',
             title: 'Thành Công!',
@@ -1609,7 +1633,7 @@ export default {
       this.isSimulating = true;
       try {
         const res = await axiosClient.post('/admin/thanh-toan/mo-phong', this.simulateForm);
-        if (res.data && res.data.success) {
+        if (res?.success || res?.data?.success) {
           Swal.fire({
             icon: 'success',
             title: 'Đối Soát Thành Công!',

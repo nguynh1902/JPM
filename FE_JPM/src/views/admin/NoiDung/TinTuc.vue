@@ -279,6 +279,7 @@
 
 <script>
 import mammoth from 'mammoth';
+import { computed } from 'vue';
 import vSelect from '@vueform/multiselect';
 import axiosClient from '../../../api/axiosClient';
 import Swal from 'sweetalert2';
@@ -354,7 +355,9 @@ export default {
       }
     });
 
-    return { articles, isFetchingArticles, isFetchingCategories, rawCategories, queryClient, deleteMutation, saveMutation };
+    const isPending = computed(() => isPendingarticles.value || isPendingrawCategories.value);
+
+    return { articles, isFetchingArticles, isFetchingCategories, isPending, rawCategories, queryClient, deleteMutation, saveMutation };
   },
       data() {
       return {

@@ -596,6 +596,13 @@ export default {
         queryClient.invalidateQueries({ queryKey: ["phu-tung"] }),
     });
 
+    const isPending = computed(
+      () =>
+        isPendingrawPhuTungList.value ||
+        isPendingrawThuongHieuList.value ||
+        isPendingrawNhomPhuTungList.value,
+    );
+
     return {
       queryClient,
       authStore,
@@ -605,6 +612,7 @@ export default {
       isFetchingBrands,
       rawNhomPhuTungList,
       isFetchingNhom,
+      isPending,
       deleteMutation,
       saveMutation,
       toaster,

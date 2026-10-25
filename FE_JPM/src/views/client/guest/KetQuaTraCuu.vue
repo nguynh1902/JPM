@@ -169,13 +169,15 @@
                 </div>
                 <div class="d-flex align-items-center gap-2">
                   <label class="text-muted text-nowrap mb-0 fw-bold text-uppercase" style="font-size: 0.75rem; letter-spacing: 0.5px;">Sắp xếp:</label>
-                  <div class="custom-select-wrapper" :class="{ 'z-active': openDropdown === 'sort' }" style="width: 140px;">
+                  <div class="custom-select-wrapper" :class="{ 'z-active': openDropdown === 'sort' }" style="width: 165px;">
                     <div class="custom-select-box" :class="{ 'is-focused': openDropdown === 'sort' }" @click="toggleDropdown('sort')">
-                      <span class="text-truncate">Mới nhất</span>
+                      <span class="text-truncate">{{ sortLabel }}</span>
                       <i class="bi bi-chevron-down select-arrow" :class="{ 'rotated': openDropdown === 'sort' }"></i>
                     </div>
                     <ul class="custom-dropdown-list align-right" v-show="openDropdown === 'sort'">
-                      <li class="active">Mới nhất</li>
+                      <li @click="selectSort('newest')" :class="{ active: sortBy === 'newest' }">Mới nhất</li>
+                      <li @click="selectSort('price_asc')" :class="{ active: sortBy === 'price_asc' }">Giá thấp đến cao</li>
+                      <li @click="selectSort('price_desc')" :class="{ active: sortBy === 'price_desc' }">Giá cao đến thấp</li>
                     </ul>
                   </div>
                 </div>
@@ -340,6 +342,7 @@ import { ref, reactive, watch, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useQuery, useQueryClient } from '@tanstack/vue-query';
 import axiosClient from '../../../api/axiosClient';
+import { useCartStore } from '../../../stores/cartStore';
 
 export default {
   name: "KetQuaTraCuu",
@@ -347,6 +350,7 @@ export default {
     const route = useRoute();
     const router = useRouter();
     const queryClient = useQueryClient();
+    const cartStore = useCartStore();
 
     const localKeyword = ref(route.query.keyword || "");
     let searchTimeout = null;
@@ -436,7 +440,24 @@ export default {
       enabled: computed(() => !isFilterEmpty.value)
     });
 
-    const products = computed(() => searchResult.value?.data || []);
+    const sortBy = ref('newest');
+    const sortLabel = computed(() => {
+      if (sortBy.value === 'price_asc') return 'Giá thấp đến cao';
+      if (sortBy.value === 'price_desc') return 'Giá cao đến thấp';
+      return 'Mới nhất';
+    });
+
+    const filteredProducts = computed(() => {
+      const list = [...(searchResult.value?.data || [])];
+      if (sortBy.value === 'price_asc') {
+        return list.sort((a, b) => Number(a.gia_ban || 0) - Number(b.gia_ban || 0));
+      }
+      if (sortBy.value === 'price_desc') {
+        return list.sort((a, b) => Number(b.gia_ban || 0) - Number(a.gia_ban || 0));
+      }
+      return list;
+    });
+    const products = filteredProducts;
     const diagramsList = computed(() => searchDiagrams.value?.data || []);
     const isFetchingGlobal = computed(() => isFetching.value || isFetchingDiagrams.value);
 
@@ -608,10 +629,16 @@ export default {
       });
     };
 
+    const selectSort = (val) => {
+      sortBy.value = val;
+      openDropdown.value = null;
+    };
+
     return {
       localKeyword,
-      filters, brands, partGroups, engineTypes, engineModels, products, diagramsList, pagination, isFetchingGlobal,
+      filters, brands, partGroups, engineTypes, engineModels, products, filteredProducts, diagramsList, pagination, isFetchingGlobal,
       activeTab, searchResult, searchDiagrams,
+      sortBy, sortLabel, selectSort, cartStore,
       goToDiagram, prefetchDiagram,
       resetFilters, changePage, openDropdown, toggleDropdown, selectOption,
       brandLabel, engineTypeLabel, modelLabel, yearLabel, years, activeFilters, removeFilter, toggleCategory, isFilterEmpty
@@ -619,6 +646,17 @@ export default {
   },
   methods: {
     addToCart(prod) {
+      this.cartStore.addItem({
+        ...prod,
+        id: prod.id,
+        code: prod.ma_phu_tung,
+        name: prod.ten_phu_tung,
+        price: Number(prod.gia_ban || 0),
+        is_gia_lien_he: Boolean(prod.is_gia_lien_he),
+        image: prod.hinh_anh,
+        loai_san_pham: 'phu_tung',
+        stock: prod.so_luong_ton ?? 99
+      }, 1);
       this.$toast?.success(`Đã thêm "${prod.ten_phu_tung}" vào giỏ hàng!`);
     }
   }

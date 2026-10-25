@@ -3,7 +3,7 @@
 namespace App\Domain\Storefront\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Models\User;
+use App\Domain\IAM\Models\User;
 use App\Domain\CMS\Models\SanPham;
 
 class VatTuLuuTru extends Model

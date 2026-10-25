@@ -86,7 +86,7 @@ class PaymentController extends Controller
                 return response()->json(['success' => false, 'message' => 'Báo giá không tồn tại'], 404);
             }
 
-            $isDepositPaid = ($quote->trang_thai === 'Đã cọc' || $quote->trang_thai === 'Đã chuyển đơn hàng');
+            $isDepositPaid = ((int)$quote->trang_thai === 2 || ($quote->tien_coc_yeu_cau > 0 && ($quote->da_thu ?? 0) >= $quote->tien_coc_yeu_cau));
 
             return response()->json([
                 'success' => true,

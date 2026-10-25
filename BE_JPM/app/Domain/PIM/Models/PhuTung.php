@@ -11,6 +11,7 @@ use App\Domain\MarineCatalog\Models\DongCoModel;
 class PhuTung extends Model
 {
     use \App\Domain\Core\Traits\LogsActivity;
+    use SoftDeletes;
 
     use Searchable;
 

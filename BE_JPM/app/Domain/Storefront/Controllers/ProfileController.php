@@ -273,6 +273,7 @@ class ProfileController extends Controller
 
         return response()->json([
             'success' => true,
+            'unread_count' => $user->unreadNotifications()->count(),
             'data' => $notifications
         ]);
     }

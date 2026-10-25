@@ -221,7 +221,7 @@
                   </div>
                 </div>
                 <div class="border-top pt-2 mt-3">
-                  <router-link :to="`${basePath}/ton-kho`" class="text-primary fw-medium d-flex align-items-center justify-content-between text-decoration-none" style="font-size: 0.78rem;">
+                  <router-link to="/portal/ton-kho" class="text-primary fw-medium d-flex align-items-center justify-content-between text-decoration-none" style="font-size: 0.78rem;">
                     <span>Xem tồn kho</span>
                     <i class="bx bx-right-arrow-alt"></i>
                   </router-link>

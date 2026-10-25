@@ -296,6 +296,7 @@ import axiosClient from '../../../api/axiosClient';
 import Swal from 'sweetalert2';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/vue-query';
 import { useAuthStore } from '../../../stores/authStore';
+import { createToaster } from "@meforma/vue-toaster";
 
 export default {
   name: "SoDoPhuTung",
@@ -358,14 +359,14 @@ export default {
     models() {
       const items = Array.isArray(this.engineModels) ? this.engineModels : (this.engineModels?.data || []);
       return items
-        .filter(m => m.trang_thai === 1 || m.id === this.formData.may_thuy_model_id || m.id === this.filterModelId)
         .map(m => ({
           value: m.id,
           label: `${m.ten_model} - ${m.ma_model}`,
           code: m.ma_model,
             ten_model: m.ten_model,
           thuong_hieu_id: m.thuong_hieu_id,
-          loai_may_id: m.loai_dong_co_id
+          loai_may_id: m.loai_dong_co_id,
+          trang_thai: m.trang_thai
         }));
     },
     brandList() {
@@ -412,10 +413,7 @@ export default {
     },
     filteredDiagrams() {
       const items = Array.isArray(this.diagrams) ? this.diagrams : (this.diagrams?.data || []);
-      // Only keep diagrams whose engine model belongs to the current active ecosystem
-      let result = items.filter(d => 
-        this.models.some(m => m.value === d.may_thuy_model_id)
-      );
+      let result = [...items];
 
       if (this.filterThuongHieuId || this.filterLoaiMayId) {
         result = result.filter(d => {
@@ -461,7 +459,7 @@ export default {
     const { data: diagrams, isFetching: isFetchingDiagrams } = useQuery({ queryKey: ['so-do'], queryFn: () => fetchApi('/admin/so-do') });
     
     
-    const toaster = window.toaster || { success: () => {}, error: () => {} };
+    const toaster = createToaster({ position: "top-right", duration: 3000 });
 
     const deleteMutation = useMutation({
       mutationFn: async (id) => {
@@ -498,7 +496,7 @@ export default {
         queryClient.invalidateQueries({ queryKey: ['so-do'] });
       }
     });
-    return { authStore, queryClient, brands, isFetchingBrands, equipmentTypes, isFetchingTypes, engineModels, isFetchingModels, nhomPhuTungs, isFetchingNhom, phuTungs, isFetchingPhuTungs, diagrams, isFetchingDiagrams , deleteMutation, saveMutation };
+    return { authStore, queryClient, toaster, brands, isFetchingBrands, equipmentTypes, isFetchingTypes, engineModels, isFetchingModels, nhomPhuTungs, isFetchingNhom, phuTungs, isFetchingPhuTungs, diagrams, isFetchingDiagrams , deleteMutation, saveMutation };
   },
   methods: {
     getImageUrl(path) {
@@ -556,6 +554,12 @@ export default {
       const nhom = this.nhomPhuTungList.find(n => n.value === id);
       return nhom ? nhom.label : 'N/A';
     },
+    resetToAddMode() {
+      this.openAddModal();
+    },
+    resetForm() {
+      this.openAddModal();
+    },
     openAddModal() {
       this.isEditMode = false;
       this.imageFile = null;
@@ -608,7 +612,7 @@ export default {
     },
     async saveData() {
       if (!this.formData.may_thuy_model_id || !this.formData.nhom_phu_tung_id) {
-        this.$toast?.error("Vui lòng nhập đầy đủ thông tin bắt buộc!");
+        this.toaster.error("Vui lòng nhập đầy đủ thông tin bắt buộc!");
         return;
       }
 
@@ -648,14 +652,14 @@ export default {
           id: this.formData.id,
           data: formDataToSend
         });
-        this.$toast?.success(this.isEditMode ? "Cập nhật sơ đồ thành công!" : "Đã tạo sơ đồ mới!");
+        this.toaster.success(this.isEditMode ? "Cập nhật sơ đồ thành công!" : "Đã tạo sơ đồ mới!");
         
         const closeBtn = document.querySelector("#modalSoDo .btn-close");
         if (closeBtn) {
            closeBtn.click();
         }
       } catch (error) {
-        this.$toast?.error(error.response?.data?.message || "Lỗi lưu dữ liệu sơ đồ!");
+        this.toaster.error(error.response?.data?.message || "Lỗi lưu dữ liệu sơ đồ!");
       } finally {
         this.isSubmitting = false;
       }
@@ -680,7 +684,7 @@ export default {
       });
 
       if (result.isConfirmed) {
-        if (this.isEditMode && this.formData.id === item.id) { this.resetForm(); }
+        if (this.isEditMode && this.formData.id === item.id) { this.resetToAddMode(); }
       this.deleteMutation.mutate(item.id);
       }
     }

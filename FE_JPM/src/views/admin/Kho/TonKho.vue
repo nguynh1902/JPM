@@ -85,7 +85,7 @@
                     <button type="button" class="action-btn text-primary" @click="openEditForm(item)" title="Điều chỉnh số lượng">
                       <i class="bx bx-edit-alt"></i>
                     </button>
-                    <button type="button" class="action-btn text-danger" @click="deleteItem(item)" title="Xóa tồn kho">
+                    <button type="button" class="action-btn text-danger" @click="confirmDelete(item)" title="Xóa tồn kho">
                       <i class="bx bx-trash"></i>
                     </button>
                   </div>
@@ -433,6 +433,9 @@ export default {
           this.toaster.error(error.response?.data?.message || "Lỗi khi lưu dữ liệu tồn kho!");
         }
       });
+    },
+    deleteItem(item) {
+      this.confirmDelete(item);
     },
     async confirmDelete(item) {
       const result = await Swal.fire({

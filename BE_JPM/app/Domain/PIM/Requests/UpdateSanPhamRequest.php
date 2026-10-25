@@ -15,9 +15,9 @@ class UpdateSanPhamRequest extends FormRequest
     {
         return [
             'danh_muc_san_pham_id' => 'required|exists:danh_muc_san_phams,id',
-            'ma_san_pham' => 'required|string|max:255|unique:san_phams,ma_san_pham,' . $this->route('san_pham'),
+            'ma_san_pham' => 'required|string|max:255|unique:san_phams,ma_san_pham,' . ($this->route('id') ?? $this->route('san_pham')),
             'ten_san_pham' => 'required|string|max:255',
-            'slug' => 'required|string|max:255|unique:san_phams,slug,' . $this->route('san_pham'),
+            'slug' => 'required|string|max:255|unique:san_phams,slug,' . ($this->route('id') ?? $this->route('san_pham')),
             'mo_ta_chi_tiet' => 'nullable|string',
             'thong_so_ky_thuat' => 'nullable|string',
             'video_url' => 'nullable|string',

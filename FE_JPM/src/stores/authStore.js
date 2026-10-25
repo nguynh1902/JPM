@@ -1,6 +1,17 @@
 import { defineStore } from "pinia";
 import axiosClient from "../api/axiosClient";
 
+const PERMISSION_ALIASES = {
+  "quản lý model & động cơ": ["xem động cơ & thương hiệu"],
+  "xem động cơ & thương hiệu": ["quản lý model & động cơ"],
+  "quản lý thẻ kho": ["xem thẻ kho"],
+  "xem thẻ kho": ["quản lý thẻ kho"],
+  "quản lý sản phẩm": ["xem sản phẩm"],
+  "xem sản phẩm": ["quản lý sản phẩm"],
+  "quản lý tin tức & cms": ["xem tin tức & cms"],
+  "xem tin tức & cms": ["quản lý tin tức & cms"],
+};
+
 export const useAuthStore = defineStore("auth", {
   state: () => ({
     user: JSON.parse(localStorage.getItem("auth_user") || "null"), // Lưu thông tin cá nhân của User
@@ -49,9 +60,10 @@ export const useAuthStore = defineStore("auth", {
       }
       if (!state.user.permissions || !Array.isArray(state.user.permissions)) return false;
       const target = String(permissionName).toLowerCase().trim();
+      const validTargets = [target, ...(PERMISSION_ALIASES[target] || [])];
       return state.user.permissions.some(p => {
         const cur = String(typeof p === 'string' ? p : (p?.name || '')).toLowerCase().trim();
-        return cur === target;
+        return validTargets.includes(cur);
       });
     },
 
@@ -74,7 +86,8 @@ export const useAuthStore = defineStore("auth", {
 
       return permissionList.some(item => {
         const target = String(item).toLowerCase().trim();
-        return userPerms.includes(target);
+        const validTargets = [target, ...(PERMISSION_ALIASES[target] || [])];
+        return validTargets.some(t => userPerms.includes(t));
       });
     },
     
@@ -137,12 +150,17 @@ export const useAuthStore = defineStore("auth", {
       try {
         const response = await axiosClient.post("/register", payload);
         if (response.success) {
-          alert("Đăng ký thành công! Vui lòng đăng nhập.");
+          if (response.data?.token && response.data?.user) {
+            this.token = response.data.token;
+            this.user = response.data.user;
+            localStorage.setItem("auth_token", response.data.token);
+            localStorage.setItem("auth_user", JSON.stringify(response.data.user));
+          }
           return true;
         }
+        return false;
       } catch (err) {
         this.error = err.response?.data?.message || "Đăng ký thất bại.";
-        this.error = "Đăng ký thất bại.";
         return false;
       } finally {
         this.loading = false;

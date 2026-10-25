@@ -14,7 +14,7 @@ class UpdateThuongHieuRequest extends FormRequest
 
     public function rules(): array
     {
-        $brandId = $this->route('thuong_hieu');
+        $brandId = $this->route('id') ?? $this->route('thuong_hieu');
 
         return [
             'name' => [

@@ -52,10 +52,24 @@ class CauHinhService
         DB::beginTransaction();
         try {
             foreach ($settings as $key => $value) {
-                CauHinh::where('khoa_cau_hinh', $key)->update([
-                    'gia_tri'    => is_string($value) ? trim($value) : $value,
-                    'updated_at' => now(),
-                ]);
+                $valueToSave = is_string($value) ? trim($value) : $value;
+                $group = str_starts_with((string) $key, 'seo_') ? 'seo' : 'general';
+                $existing = CauHinh::where('khoa_cau_hinh', $key)->first();
+                if ($existing) {
+                    $existing->update([
+                        'gia_tri'    => $valueToSave,
+                        'updated_at' => now(),
+                    ]);
+                } else {
+                    CauHinh::updateOrCreate(
+                        ['khoa_cau_hinh' => $key],
+                        [
+                            'gia_tri'    => $valueToSave,
+                            'nhom'       => $group,
+                            'trang_thai' => 1,
+                        ]
+                    );
+                }
             }
 
             DB::commit();

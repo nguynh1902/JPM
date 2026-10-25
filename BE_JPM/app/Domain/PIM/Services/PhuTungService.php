@@ -66,17 +66,8 @@ class PhuTungService
         DB::beginTransaction();
         try {
             $phuTung = $this->getById($id);
-            // Delete physical files
-            if ($phuTung->hinh_anh) {
-                $path = str_replace('/storage/', '', $phuTung->hinh_anh);
-                Storage::disk('public')->delete($path);
-            }
-            if ($phuTung->thu_vien_anh && is_array($phuTung->thu_vien_anh)) {
-                foreach ($phuTung->thu_vien_anh as $img) {
-                    $path = str_replace('/storage/', '', $img);
-                    Storage::disk('public')->delete($path);
-                }
-            }
+            // Vì PhuTung dùng SoftDeletes, KHÔNG xóa file ảnh vật lý trên ổ cứng và KHÔNG detach models()
+            // để đơn hàng, báo giá, sơ đồ cũ không bị mất thông tin/hình ảnh.
             $deleted = $phuTung->delete();
             $this->clearCache();
             DB::commit();

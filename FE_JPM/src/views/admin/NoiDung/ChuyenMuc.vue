@@ -102,7 +102,14 @@
                 </tr>
               </thead>
               <tbody class="table-border-bottom-0">
-                <tr v-if="filteredCategories.length === 0">
+                <tr v-if="isPending">
+                  <td colspan="5" class="text-center py-5">
+                    <div class="spinner-border text-primary" role="status">
+                      <span class="visually-hidden">Loading...</span>
+                    </div>
+                  </td>
+                </tr>
+                <tr v-else-if="filteredCategories.length === 0">
                   <td colspan="5" class="text-center py-5 text-muted">
                     <i class="bx bx-folder-open text-secondary fs-1 d-block mb-2"></i>
                     Không có dữ liệu
@@ -165,7 +172,7 @@ export default {
     };
 
     
-    const { data: categories } = useQuery({
+    const { data: categories, isPending, isFetching } = useQuery({
       queryKey: ['chuyen-muc'],
       queryFn: fetchCategories,
       staleTime: 1000 * 60 * 5
@@ -199,13 +206,14 @@ export default {
       }
     });
 
-    return { categories, queryClient, deleteMutation, saveMutation };
+    return { categories, isPending, isFetching, queryClient, deleteMutation, saveMutation };
   },
   data() {
     return {
       searchKeyword: '',
       filterType: '',
       isEditMode: false,
+      isSubmitting: false,
       formData: this.getInitialFormData()
     };
   },
@@ -241,6 +249,7 @@ export default {
       this.formData = this.getInitialFormData();
     },
     async saveData() {
+      this.isSubmitting = true;
       try {
         await this.saveMutation.mutateAsync(this.formData);
         this.$toast?.success(this.isEditMode ? 'Cập nhật thành công!' : 'Thêm mới thành công!');
@@ -248,6 +257,8 @@ export default {
       } catch (error) {
         console.error(error);
         this.$toast?.error('Lỗi khi lưu chuyên mục!');
+      } finally {
+        this.isSubmitting = false;
       }
     },
     async confirmDelete(item) {

@@ -228,8 +228,11 @@ export default {
     },
     getImageUrl(path) {
       if (!path) return '';
-      if (path.startsWith('blob:') || path.startsWith('http')) return path;
-      return `http://localhost:8000${path}`;
+      if (path.startsWith('blob:') || path.startsWith('http') || path.startsWith('data:')) return path;
+      if (path.startsWith('/storage/') || path.startsWith('/uploads/')) {
+        return `http://localhost:8000${path}`;
+      }
+      return `http://localhost:8000/storage/${path.replace(/^\/+/, '')}`;
     },
     resetForm() {
       this.isEditMode = false;

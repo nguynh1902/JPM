@@ -39,12 +39,37 @@ const routes = [
     redirect: "/tra-cuu",
   },
   {
+    path: "/so-do-phu-tung",
+    redirect: "/tra-cuu",
+  },
+  {
+    path: "/thuong-hieu",
+    redirect: "/thuong-hieu/YAM",
+  },
+  {
+    path: "/gioi-thieu",
+    redirect: "/ho-tro",
+  },
+  {
+    path: "/he-thong-dai-ly",
+    redirect: "/ho-tro",
+  },
+  {
     path: "/ho-tro",
     component: () => import("../views/client/guest/HoTro.vue"),
     meta: { layout: "client" },
   },
   {
-    path: "/tra-cuu-bao-gia/:token", component: () => import("../views/client/guest/TraCuuBaoGia.vue"), meta: { layout: "client" } }, { path: "/tra-cuu-don-hang", component: () => import("../views/client/guest/TraCuuDonHang.vue"), meta: { layout: "client" } },
+    path: "/bao-gia/:token",
+    alias: ["/tra-cuu-bao-gia/:token"],
+    component: () => import("../views/client/guest/TraCuuBaoGia.vue"),
+    meta: { layout: "client" },
+  },
+  {
+    path: "/tra-cuu-don-hang",
+    component: () => import("../views/client/guest/TraCuuDonHang.vue"),
+    meta: { layout: "client" },
+  },
     { path: "/tra-cuu",
     component: () => import("../views/client/guest/KetQuaTraCuu.vue"),
     meta: { layout: "client" },
@@ -130,6 +155,7 @@ const routes = [
   {
     path: "/portal/thanh-toan",
     name: "PortalThanhToan",
+    redirect: "/portal/don-hang",
     meta: { layout: "admin", requiresAuth: true, permission: "Xem Đơn hàng" },
   },
 
@@ -151,7 +177,7 @@ const routes = [
     path: "/portal/the-kho",
     name: "PortalTheKho",
     component: () => import("../views/admin/Kho/TheKho.vue"),
-    meta: { layout: "admin", requiresAuth: true, permission: "Quản lý Thẻ kho" },
+    meta: { layout: "admin", requiresAuth: true, permission: "Xem Thẻ kho" },
   },
 
   // MÁY THỦY & ĐỘNG CƠ
@@ -159,19 +185,19 @@ const routes = [
     path: "/portal/loai-dong-co",
     name: "PortalLoaiDongCo",
     component: () => import("../views/admin/MayThuy/LoaiDongCo.vue"),
-    meta: { layout: "admin", requiresAuth: true, permission: "Quản lý Model & Động cơ" },
+    meta: { layout: "admin", requiresAuth: true, permission: "Xem Động cơ & Thương hiệu" },
   },
   {
     path: "/portal/thuong-hieu",
     name: "PortalThuongHieu",
     component: () => import("../views/admin/MayThuy/ThuongHieu.vue"),
-    meta: { layout: "admin", requiresAuth: true, permission: "Quản lý Model & Động cơ" },
+    meta: { layout: "admin", requiresAuth: true, permission: "Xem Động cơ & Thương hiệu" },
   },
   {
     path: "/portal/dong-co-model",
     name: "PortalDongCoModel",
     component: () => import("../views/admin/MayThuy/DongCoModel.vue"),
-    meta: { layout: "admin", requiresAuth: true, permission: "Quản lý Model & Động cơ" },
+    meta: { layout: "admin", requiresAuth: true, permission: "Xem Động cơ & Thương hiệu" },
   },
 
   // SẢN PHẨM PHỔ THÔNG
@@ -179,13 +205,13 @@ const routes = [
     path: "/portal/danh-muc-san-pham",
     name: "PortalDanhMucSanPham",
     component: () => import("../views/admin/SanPham/DanhMucSanPham.vue"),
-    meta: { layout: "admin", requiresAuth: true, permission: "Quản lý Sản phẩm" },
+    meta: { layout: "admin", requiresAuth: true, permission: "Xem Sản phẩm" },
   },
   {
     path: "/portal/san-pham",
     name: "PortalSanPham",
     component: () => import("../views/admin/SanPham/SanPham.vue"),
-    meta: { layout: "admin", requiresAuth: true, permission: "Quản lý Sản phẩm" },
+    meta: { layout: "admin", requiresAuth: true, permission: "Xem Sản phẩm" },
   },
 
   // PHỤ TÙNG & LINH KIỆN
@@ -204,7 +230,7 @@ const routes = [
   {
     path: "/portal/cap-nhat-linh-kien",
     name: "PortalCapNhatLinhKien",
-    component: () => import("../views/admin/LinhKien/CapNhatLinhKien.vue"),
+    redirect: "/portal/phu-tung",
     meta: { layout: "admin", requiresAuth: true, permission: "Xem Phụ tùng" },
   },
   {
@@ -230,6 +256,7 @@ const routes = [
   {
     path: "/portal/lich-su-mua",
     name: "PortalLichSuMua",
+    redirect: "/portal/don-hang",
     meta: { layout: "admin", requiresAuth: true, permission: "Xem Khách hàng" },
   },
 
@@ -252,19 +279,33 @@ const routes = [
     path: "/portal/chuyen-muc",
     name: "PortalChuyenMuc",
     component: () => import("../views/admin/NoiDung/ChuyenMuc.vue"),
-    meta: { layout: "admin", requiresAuth: true, permission: "Quản lý Tin tức & CMS" },
+    meta: { layout: "admin", requiresAuth: true, permission: "Xem Tin tức & CMS" },
   },
   {
     path: "/portal/tin-tuc",
     name: "PortalTinTuc",
     component: () => import("../views/admin/NoiDung/TinTuc.vue"),
-    meta: { layout: "admin", requiresAuth: true, permission: "Quản lý Tin tức & CMS" },
+    meta: { layout: "admin", requiresAuth: true, permission: "Xem Tin tức & CMS" },
   },
   {
     path: "/portal/faq",
     name: "PortalFaq",
     component: () => import("../views/admin/NoiDung/Faq.vue"),
-    meta: { layout: "admin", requiresAuth: true, permission: "Quản lý Tin tức & CMS" },
+    meta: { layout: "admin", requiresAuth: true, permission: "Xem Tin tức & CMS" },
+  },
+  {
+    path: "/portal/banner",
+    alias: ["/admin/banner"],
+    name: "AdminBanner",
+    component: () => import("../views/admin/Marketing/Banner.vue"),
+    meta: { layout: "admin", requiresAuth: true, permission: "Xem Tin tức & CMS" },
+  },
+  {
+    path: "/portal/voucher",
+    alias: ["/admin/voucher"],
+    name: "AdminVoucher",
+    component: () => import("../views/admin/Marketing/Voucher.vue"),
+    meta: { layout: "admin", requiresAuth: true, permission: "Xem Đơn hàng" },
   },
 
   // HỆ THỐNG

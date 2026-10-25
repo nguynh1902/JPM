@@ -450,7 +450,7 @@ export default {
       queryKey: ['admin-site-settings'],
       queryFn: async () => {
         const res = await axiosClient.get('/admin/cau-hinh');
-        return res.data?.data || [];
+        return Array.isArray(res?.data) ? res.data : (res?.data?.data || []);
       }
     });
 
@@ -522,9 +522,10 @@ export default {
       isClearingCache.value = true;
       try {
         const res = await axiosClient.post('/admin/he-thong/clear-cache', { warmup });
-        if (res.data && res.data.success) {
-          cacheStats.value = res.data.stats || null;
-          toaster.success(res.data.message || 'Đã làm mới bộ nhớ đệm cache!');
+        const payload = res?.success !== undefined ? res : res?.data;
+        if (payload && payload.success) {
+          cacheStats.value = payload.stats || null;
+          toaster.success(payload.message || 'Đã xử lý Cache thành công!');
         }
       } catch (err) {
         toaster.error('Không thể xóa bộ nhớ đệm: ' + (err.response?.data?.message || err.message));

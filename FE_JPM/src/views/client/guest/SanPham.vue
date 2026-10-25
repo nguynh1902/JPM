@@ -115,14 +115,20 @@
                         @error="$event.target.src='https://placehold.co/400x300/f8f9fa/a1acb8?text=JPM'"
                       >
                       <div class="position-absolute" style="top: 10px; right: 10px; z-index: 10;">
-                        <button class="btn bg-white shadow-sm" style="width: 32px; height: 32px; padding: 0; display: flex; align-items: center; justify-content: center; border: 1px solid #e5e7eb; border-radius: 4px;" title="Thêm vào giỏ" @click.prevent="addToCart(prod)">
+                        <button
+                          class="btn bg-white shadow-sm"
+                          style="width: 32px; height: 32px; padding: 0; display: flex; align-items: center; justify-content: center; border: 1px solid #e5e7eb; border-radius: 4px;"
+                          :title="!prod.is_gia_lien_he && prod.so_luong_ton !== undefined && prod.so_luong_ton <= 0 ? 'Hết hàng' : (prod.is_gia_lien_he ? 'Thêm vào giỏ báo giá' : 'Thêm vào giỏ')"
+                          :disabled="!prod.is_gia_lien_he && prod.so_luong_ton !== undefined && prod.so_luong_ton <= 0"
+                          @click.prevent="addToCart(prod)"
+                        >
                           <i class="bi bi-cart-plus" style="color: #dc3545; font-size: 1.1rem;"></i>
                         </button>
                       </div>
                     </div>
                     <div class="card-body text-start p-3 d-flex flex-column bg-white">
                       <div class="d-flex justify-content-between align-items-start mb-2">
-                        <span class="text-muted fw-bold text-uppercase" style="letter-spacing: 0.5px; font-size: 0.75rem;">{{ getCategoryName(prod.danh_muc_san_pham_id) || 'OEM' }}</span>
+                        <span class="text-muted fw-bold text-uppercase" style="letter-spacing: 0.5px; font-size: 0.75rem;">{{ prod.danh_muc?.ten_danh_muc || getCategoryName(prod.danh_muc_san_pham_id) || 'OEM' }}</span>
                       </div>
                       <h5 class="card-title mb-3" style="font-size: 0.95rem; line-height: 1.5; font-weight: 500; color: #1e293b;">
                         <router-link :to="`/chi-tiet-san-pham/${prod.slug}`" class="text-decoration-none stretched-link" style="color: inherit;">{{ prod.ten_san_pham }}</router-link>
@@ -185,14 +191,20 @@
                         @error="$event.target.src='https://placehold.co/400x300/f8f9fa/a1acb8?text=JPM'"
                       >
                       <div class="position-absolute" style="top: 10px; right: 10px; z-index: 10;">
-                        <button class="btn bg-white shadow-sm" style="width: 32px; height: 32px; padding: 0; display: flex; align-items: center; justify-content: center; border: 1px solid #e5e7eb; border-radius: 4px;" title="Thêm vào giỏ" @click.prevent="addToCart(prod)">
+                        <button
+                          class="btn bg-white shadow-sm"
+                          style="width: 32px; height: 32px; padding: 0; display: flex; align-items: center; justify-content: center; border: 1px solid #e5e7eb; border-radius: 4px;"
+                          :title="!prod.is_gia_lien_he && prod.so_luong_ton !== undefined && prod.so_luong_ton <= 0 ? 'Hết hàng' : (prod.is_gia_lien_he ? 'Thêm vào giỏ báo giá' : 'Thêm vào giỏ')"
+                          :disabled="!prod.is_gia_lien_he && prod.so_luong_ton !== undefined && prod.so_luong_ton <= 0"
+                          @click.prevent="addToCart(prod)"
+                        >
                           <i class="bi bi-cart-plus" style="color: #dc3545; font-size: 1.1rem;"></i>
                         </button>
                       </div>
                     </div>
                     <div class="card-body text-start p-3 d-flex flex-column bg-white">
                       <div class="d-flex justify-content-between align-items-start mb-2">
-                        <span class="text-muted fw-bold text-uppercase" style="letter-spacing: 0.5px; font-size: 0.75rem;">{{ getCategoryName(prod.danh_muc_san_pham_id) || 'OEM' }}</span>
+                        <span class="text-muted fw-bold text-uppercase" style="letter-spacing: 0.5px; font-size: 0.75rem;">{{ prod.danh_muc?.ten_danh_muc || getCategoryName(prod.danh_muc_san_pham_id) || 'OEM' }}</span>
                       </div>
                       <h5 class="card-title mb-3" style="font-size: 0.95rem; line-height: 1.5; font-weight: 500; color: #1e293b;">
                         <router-link :to="`/chi-tiet-san-pham/${prod.slug}`" class="text-decoration-none stretched-link" style="color: inherit;">{{ prod.ten_san_pham }}</router-link>
@@ -393,8 +405,8 @@ const viewCategory = (slug) => {
     }
   };
 
-const getCategoryName = (slug) => {
-  const cat = categories.value.find(c => c.slug === slug);
+const getCategoryName = (catIdOrSlug) => {
+  const cat = categories.value.find(c => c.id == catIdOrSlug || c.slug === catIdOrSlug);
   return cat ? cat.ten_danh_muc : '';
 };
 
@@ -415,8 +427,15 @@ const getImageUrl = (path) => {
 };
 
 const addToCart = (item) => {
-    cartStore.addItem(item, 1);
-    toaster.success("Thêm sản phẩm thành công");
+  if (!item.is_gia_lien_he && item.so_luong_ton !== undefined && item.so_luong_ton <= 0) {
+    toaster.error("Sản phẩm hiện đã hết hàng!");
+    return;
+  }
+  cartStore.addItem({
+    ...item,
+    is_gia_lien_he: Boolean(item.is_gia_lien_he)
+  }, 1);
+  toaster.success(item.is_gia_lien_he ? "Đã thêm vào danh sách yêu cầu báo giá!" : "Thêm sản phẩm thành công");
 };
 
 const scrollToProducts = () => {

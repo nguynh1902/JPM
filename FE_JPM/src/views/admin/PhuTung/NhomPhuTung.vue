@@ -157,7 +157,7 @@ export default {
     const { data: nhomPhuTung, isFetching, isPending } = useQuery({
       queryKey: ['nhom-phu-tung'],
       queryFn: async () => {
-        const res = await axiosClient.get('/admin/nhom-phu-tung');
+        const res = await axiosClient.get('/admin/nhom-phu-tung?all=true');
         return res.data;
       }
     });

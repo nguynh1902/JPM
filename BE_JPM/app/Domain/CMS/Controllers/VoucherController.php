@@ -17,7 +17,7 @@ class VoucherController extends Controller
 
     public function index()
     {
-        $vouchers = Voucher::orderBy('id', 'desc')->cursorPaginate(50);
+        $vouchers = Voucher::orderBy('id', 'desc')->get();
         return response()->json([
             'success' => true,
             'data' => $vouchers

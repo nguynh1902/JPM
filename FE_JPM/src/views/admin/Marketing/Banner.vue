@@ -175,7 +175,7 @@ export default {
     
     const { data: bannersData, isFetching, isPending } = useQuery({
       queryKey: ['banners'],
-      queryFn: () => axiosClient.get('/admin/banner').then(res => res.data || [])
+      queryFn: () => axiosClient.get('/admin/banner').then(res => Array.isArray(res?.data) ? res.data : (res?.data?.data || []))
     });
 
     const deleteMutation = useMutation({
@@ -231,7 +231,7 @@ export default {
   },
   computed: {
     filteredBanners() {
-      let list = this.bannersData || [];
+      let list = Array.isArray(this.bannersData) ? this.bannersData : (this.bannersData?.data || []);
       if (this.searchKeyword) {
         const q = this.searchKeyword.toLowerCase().trim();
         list = list.filter(b => 

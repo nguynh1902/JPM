@@ -5,6 +5,7 @@ namespace App\Domain\Storefront\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Domain\PIM\Models\PhuTung;
+use App\Domain\IAM\Models\GarageMayThuy;
 
 class GaragePhuTung extends Model
 {

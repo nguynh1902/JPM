@@ -222,7 +222,7 @@
                     <td>
                       <span class="d-block fw-bold text-dark">{{ log.ten_nguoi_nhan || 'Khách hàng' }}</span>
                       <small class="text-primary font-monospace">{{ log.so_dien_thoai }}</small>
-                      <span v-if="log.nguoi_nhan_loai === 'tai_xe'" class="badge bg-pastel-warning ms-1" style="font-size: 0.65rem;">Tài xế</span>
+                      <span v-if="log.nguoi_nhan_loai === 'tai_xe' || log.nguoi_nhan_loai === 'tai_xe_chanh'" class="badge bg-pastel-warning ms-1" style="font-size: 0.65rem;">Tài xế</span>
                       <span v-else class="badge bg-pastel-success ms-1" style="font-size: 0.65rem;">Chủ tàu</span>
                     </td>
                     <td>
@@ -351,8 +351,9 @@ export default {
       this.isLoadingTelecom = true;
       try {
         const res = await axiosClient.get('/admin/thong-bao/lich-su?per_page=50');
-        if (res.data && res.data.success) {
-          this.telecomLogs = res.data.data.data || [];
+        if (res && (res.success || res.data?.success)) {
+          const raw = res.data?.data ?? res.data ?? [];
+          this.telecomLogs = Array.isArray(raw) ? raw : (raw.data || []);
         }
       } catch (err) {
         console.error('Không thể tải nhật ký viễn thông:', err);

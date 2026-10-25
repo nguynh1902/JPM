@@ -282,8 +282,9 @@ export default {
       if (!this.result || this.result.type !== 'order') return;
       try {
         const res = await axiosClient.get(`/public/vietqr/don-hang/${this.result.data.ma_don_hang}`);
-        if (res.data && res.data.success) {
-          this.vietQrData = res.data;
+        const payload = res?.qr_url ? res : res?.data;
+        if (payload && (res?.success || payload?.success)) {
+          this.vietQrData = payload;
         }
       } catch (err) {
         console.error('Không thể tải mã VietQR:', err);
@@ -298,13 +299,14 @@ export default {
       this.pollingTimer = setInterval(async () => {
         try {
           const res = await axiosClient.get(`/public/vietqr/check-status/order/${orderCode}`);
-          if (res.data && res.data.success) {
+          const payload = res?.paid_amount !== undefined || res?.is_paid !== undefined ? res : res?.data;
+          if (payload && (res?.success || payload?.success)) {
             const currentPaid = parseFloat(this.result.data.da_thu || 0);
-            const newPaid = parseFloat(res.data.paid_amount || 0);
+            const newPaid = parseFloat(payload.paid_amount || 0);
 
-            if (newPaid > currentPaid || res.data.is_paid || res.data.is_deposit_paid) {
+            if (newPaid > currentPaid || payload.is_paid || payload.is_deposit_paid) {
               this.result.data.da_thu = newPaid;
-              this.result.data.trang_thai_thanh_toan = res.data.payment_status;
+              this.result.data.trang_thai_thanh_toan = payload.payment_status;
               this.stopPolling();
 
               Swal.fire({
@@ -334,8 +336,9 @@ export default {
       this.vietQrData = null;
       try {
         const res = await axiosClient.post('/public/tra-cuu-nhanh', this.form);
-        if (res.data.success) {
-          this.result = res.data;
+        const payload = res?.type ? res : res?.data;
+        if (payload && (res?.success || payload?.success)) {
+          this.result = payload;
           if (this.result.type === 'order' && this.result.data.trang_thai_thanh_toan === 0) {
             await this.loadVietQR();
             this.startPolling();

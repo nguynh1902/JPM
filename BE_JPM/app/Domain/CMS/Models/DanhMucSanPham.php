@@ -31,4 +31,9 @@ class DanhMucSanPham extends Model
     {
         return $this->children()->with('descendants');
     }
+
+    public function sanPhams()
+    {
+        return $this->hasMany(SanPham::class, 'danh_muc_san_pham_id');
+    }
 }

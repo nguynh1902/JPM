@@ -100,6 +100,12 @@ export default {
           type: "item"
         },
         {
+          title: "Thông Báo Hệ Thống",
+          icon: "bx-bell",
+          path: "/portal/thong-bao",
+          type: "item"
+        },
+        {
           title: "Động Cơ & Phụ Tùng",
           type: "header"
         },
@@ -107,21 +113,21 @@ export default {
           title: "Thương Hiệu",
           icon: "bx-purchase-tag-alt",
           path: "/portal/thuong-hieu",
-          permission: "Quản lý Model & Động cơ",
+          permission: "Xem Động cơ & Thương hiệu",
           type: "item"
         },
         {
           title: "Loại Động Cơ",
           icon: "bx-cube",
           path: "/portal/loai-dong-co",
-          permission: "Quản lý Model & Động cơ",
+          permission: "Xem Động cơ & Thương hiệu",
           type: "item"
         },
         {
           title: "Model Động Cơ",
           icon: "bx-layer",
           path: "/portal/dong-co-model",
-          permission: "Quản lý Model & Động cơ",
+          permission: "Xem Động cơ & Thương hiệu",
           type: "item"
         },
         {
@@ -160,14 +166,14 @@ export default {
           title: "Danh Mục Sản Phẩm",
           icon: "bx-collection",
           path: "/portal/danh-muc-san-pham",
-          permission: "Quản lý Sản phẩm",
+          permission: "Xem Sản phẩm",
           type: "item"
         },
         {
           title: "Danh Sách Sản Phẩm",
           icon: "bx-cart",
           path: "/portal/san-pham",
-          permission: "Quản lý Sản phẩm",
+          permission: "Xem Sản phẩm",
           type: "item"
         },
         {
@@ -181,7 +187,13 @@ export default {
           permission: "Xem Đơn hàng",
           type: "item"
         },
-
+        {
+          title: "Mã Giảm Giá (Voucher)",
+          icon: "bx-gift",
+          path: "/portal/voucher",
+          permission: "Xem Đơn hàng",
+          type: "item"
+        },
         {
           title: "Danh Sách Kho",
           icon: "bx-store-alt",
@@ -200,7 +212,7 @@ export default {
           title: "Xuất / Nhập / Tồn",
           icon: "bx-transfer-alt",
           path: "/portal/the-kho",
-          permission: "Quản lý Thẻ kho",
+          permission: "Xem Thẻ kho",
           type: "item"
         },
         {
@@ -208,24 +220,31 @@ export default {
           type: "header"
         },
         {
+          title: "Banner Quảng Cáo",
+          icon: "bx-images",
+          path: "/portal/banner",
+          permission: "Xem Tin tức & CMS",
+          type: "item"
+        },
+        {
           title: "Chuyên Mục",
           icon: "bx-folder",
           path: "/portal/chuyen-muc",
-          permission: "Quản lý Tin tức & CMS",
+          permission: "Xem Tin tức & CMS",
           type: "item"
         },
         {
           title: "Tin Tức",
           icon: "bx-news",
           path: "/portal/tin-tuc",
-          permission: "Quản lý Tin tức & CMS",
+          permission: "Xem Tin tức & CMS",
           type: "item"
         },
         {
           title: "FAQ",
           icon: "bx-help-circle",
           path: "/portal/faq",
-          permission: "Quản lý Tin tức & CMS",
+          permission: "Xem Tin tức & CMS",
           type: "item"
         }
       ]

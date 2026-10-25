@@ -14,12 +14,12 @@ class KhachHangRequest extends FormRequest
         public function rules(): array
     {
         $isUpdate = $this->isMethod('put') || $this->isMethod('patch');
-        $id = $this->route('khach_hang');
+        $id = $this->route('id') ?? $this->route('khach_hang');
         $userId = null;
         
         if ($id) {
             $kh = \App\Domain\IAM\Models\KhachHang::find($id);
-            if ($kh) $userId = $kh->id_tai_khoan;
+            if ($kh) $userId = $kh->id_tai_khoan ?? $kh->user_id;
         }
 
         $emailRule = 'required|email|max:100';

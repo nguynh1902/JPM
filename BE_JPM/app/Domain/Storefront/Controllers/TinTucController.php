@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Domain\CMS\Models\TinTuc;
 use App\Domain\CMS\Models\ChuyenMuc;
+use Illuminate\Support\Facades\Schema;
 
 class TinTucController extends Controller
 {
@@ -98,11 +99,24 @@ class TinTucController extends Controller
     }
 
     /**
-     * Chi tiết tin tức
+     * Chi tiết tin tức (Hỗ trợ cả id và slug)
      */
     public function chiTiet($id)
     {
-        $news = TinTuc::where('status', 'PUBLISHED')->findOrFail($id);
+        $hasSlug = Schema::hasColumn('tin_tucs', 'slug');
+        $news = TinTuc::where('status', 'PUBLISHED')
+            ->where(function ($q) use ($id, $hasSlug) {
+                if (is_numeric($id)) {
+                    $q->where('id', $id);
+                    if ($hasSlug) {
+                        $q->orWhere('slug', $id);
+                    }
+                } elseif ($hasSlug) {
+                    $q->where('slug', $id);
+                } else {
+                    $q->where('id', $id)->orWhere('title', $id);
+                }
+            })->firstOrFail();
         
         // Tăng view
         $news->increment('views');
@@ -112,7 +126,7 @@ class TinTucController extends Controller
         // Lấy 3 bài liên quan cùng danh mục
         $related = TinTuc::where('status', 'PUBLISHED')
             ->where('category', $news->category)
-            ->where('id', '!=', $id)
+            ->where('id', '!=', $news->id)
             ->latest()
             ->limit(3)
             ->get(['id', 'title', 'category', 'thumbnail', 'summary', 'views', 'author', 'created_at']);
@@ -141,4 +155,3 @@ class TinTucController extends Controller
         ]);
     }
 }
-

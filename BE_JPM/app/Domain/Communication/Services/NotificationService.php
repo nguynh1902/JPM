@@ -20,7 +20,7 @@ class NotificationService
         $code = $quote->ma_yeu_cau;
         $total = number_format($quote->tong_tien ?? 0, 0, ',', '.') . ' đ';
         $deposit = number_format($quote->tien_coc_yeu_cau ?? 0, 0, ',', '.') . ' đ';
-        $approveUrl = url("/tra-cuu-bao-gia?token={$quote->token}");
+        $approveUrl = rtrim(env('FRONTEND_URL', 'http://localhost:5173'), '/') . "/bao-gia/{$quote->token}";
 
         $content = "JPM MARINE: Kính gửi {$name}, báo giá #{$code} phụ tùng máy thủy của quý khách đã hoàn tất. Tổng tiền: {$total}, tiền cọc yêu cầu: {$deposit}. Vui lòng xem và duyệt tại: {$approveUrl}";
 

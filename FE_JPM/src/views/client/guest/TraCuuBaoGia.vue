@@ -323,8 +323,9 @@ export default {
       if (!this.quote || !this.quote.ma_yeu_cau) return;
       try {
         const res = await axiosClient.get(`/public/vietqr/bao-gia/${this.quote.ma_yeu_cau}`);
-        if (res.data && res.data.success) {
-          this.vietQrData = res.data;
+        const payload = res?.qr_url ? res : res?.data;
+        if (payload && (res.success || payload.success)) {
+          this.vietQrData = payload;
         }
       } catch (err) {
         console.error('Không thể nạp mã VietQR cọc:', err);
@@ -338,8 +339,9 @@ export default {
       this.pollingTimer = setInterval(async () => {
         try {
           const res = await axiosClient.get(`/public/vietqr/check-status/quote/${quoteCode}`);
-          if (res.data && res.data.success) {
-            if (res.data.is_deposit_paid || res.data.quote_status === 2) {
+          const payload = res?.is_deposit_paid !== undefined ? res : res?.data;
+          if (payload && (res.success || payload.success)) {
+            if (payload.is_deposit_paid || payload.quote_status === 2) {
               this.stopPolling();
               await this.fetchQuote();
 
@@ -366,8 +368,10 @@ export default {
       this.loading = true;
       try {
         const res = await axiosClient.get('/public/yeu-cau-bao-gia/' + this.token);
-        if (res.data.success) {
-          this.quote = res.data.data;
+        const ok = res?.success ?? res?.data?.success;
+        const quoteData = res?.data?.data ?? res?.data;
+        if (ok && quoteData) {
+          this.quote = quoteData;
           if (this.quote.remaining_seconds && this.quote.remaining_seconds > 0) {
             this.remainingSeconds = this.quote.remaining_seconds;
             this.startCountdown();
@@ -419,11 +423,12 @@ export default {
         this.isSubmitting = true;
         try {
           const res = await axiosClient.post('/public/yeu-cau-bao-gia/' + this.token + '/action', { action: actionType });
-          if (res.data.success) {
-            Swal.fire({ icon: 'success', title: 'Thành công', text: res.data.message });
+          const message = res?.message ?? res?.data?.message;
+          if (res?.success || res?.data?.success) {
+            Swal.fire({ icon: 'success', title: 'Thành công', text: message });
             await this.fetchQuote(); // Reload data
           } else {
-            Swal.fire({ icon: 'warning', title: 'Thông báo', text: res.data.message });
+            Swal.fire({ icon: 'warning', title: 'Thông báo', text: message });
             await this.fetchQuote();
           }
         } catch (err) {

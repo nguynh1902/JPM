@@ -79,7 +79,7 @@ class KhachHangController extends Controller
             $this->khachHangService->resetPassword($id);
             return response()->json([
                 'success' => true,
-                'message' => 'Đã reset mật khẩu về mặc định (123456789012)'
+                'message' => 'Đã reset mật khẩu về mặc định (Jpm@2026)'
             ]);
         } catch (Exception $e) {
             return response()->json(['success' => false, 'message' => $e->getMessage()], 500);

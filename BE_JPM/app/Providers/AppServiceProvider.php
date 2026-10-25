@@ -5,6 +5,7 @@ namespace App\Providers;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Response;
@@ -19,6 +20,11 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        // 0. Super Admin / Admin bypass mọi kiểm tra quyền RBAC
+        Gate::before(function ($user, $ability) {
+            return ($user->hasRole('admin') || $user->hasRole('Super Admin')) ? true : null;
+        });
+
         // 1. Rate Limiters chuẩn doanh nghiệp (dùng Redis làm backend)
         $this->configureRateLimiting();
 
@@ -46,6 +52,9 @@ class AppServiceProvider extends ServiceProvider
         \App\Domain\PIM\Models\NhomPhuTung::observe(\App\Domain\MarineCatalog\Observers\CatalogModelObserver::class);
         \App\Domain\PIM\Models\SoDoPhuTung::observe(\App\Domain\MarineCatalog\Observers\CatalogModelObserver::class);
         \App\Domain\PIM\Models\PhuTung::observe(\App\Domain\MarineCatalog\Observers\CatalogModelObserver::class);
+        \App\Domain\PIM\Models\MaThayThe::observe(\App\Domain\MarineCatalog\Observers\CatalogModelObserver::class);
+        \App\Domain\CMS\Models\DanhMucSanPham::observe(\App\Domain\MarineCatalog\Observers\CatalogModelObserver::class);
+        \App\Domain\CMS\Models\SanPham::observe(\App\Domain\MarineCatalog\Observers\CatalogModelObserver::class);
     }
 
     /**

@@ -245,8 +245,10 @@ const cancelEditProfile = () => {
 const updateProfileMutation = useMutation({
   mutationFn: (data) => axiosClient.put('/client/profile', data),
   onSuccess: (response) => {
-    queryClient.setQueryData(['clientProfile'], response.user);
-    authStore.user = response.user;
+    const updatedUser = response.user || response.data?.user || response;
+    queryClient.setQueryData(['clientProfile'], updatedUser);
+    authStore.user = updatedUser;
+    localStorage.setItem('auth_user', JSON.stringify(authStore.user));
     isEditingProfile.value = false;
     toaster.success("Cập nhật thông tin thành công!");
   },

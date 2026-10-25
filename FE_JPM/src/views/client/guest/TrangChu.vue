@@ -465,7 +465,7 @@
               <div class="d-flex flex-column flex-grow-1 px-1 position-relative">
                 <!-- 1. Danh mục: Chữ đỏ thương hiệu -->
                 <div class="news-category mb-1 text-truncate">
-                  {{ videoArticle.category || 'CẨM NANG HÀNG HẢI' }}
+                  {{ videoArticle.category || videoArticle.type || videoArticle.loai || 'CẨM NANG HÀNG HẢI' }}
                 </div>
                 <!-- 2. Tiêu đề: chuẩn Roboto .news-hero-title, màu deep navy đậm nét -->
                 <h5 class="news-hero-title mb-2">
@@ -517,7 +517,7 @@
                 <div class="ms-3 flex-grow-1 d-flex flex-column align-self-stretch">
                   <!-- 1. Danh mục: Chữ đỏ thương hiệu -->
                   <div class="news-category mb-1 text-truncate">
-                    {{ item.category || 'TIN TỨC' }}
+                    {{ item.category || item.type || item.loai || 'TIN TỨC' }}
                   </div>
                   <!-- 2. Tiêu đề: chuẩn Roboto .news-card-title, màu deep navy đậm nét -->
                   <h6 class="news-card-title fw-semibold mb-1 text-truncate-2">

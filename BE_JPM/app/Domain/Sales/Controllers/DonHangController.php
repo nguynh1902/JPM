@@ -74,7 +74,7 @@ class DonHangController extends Controller
             
             $resBody = [
                 'success' => true,
-                'message' => 'T?o don hng thnh cng',
+                'message' => 'Tạo đơn hàng thành công',
                 'data' => $donHang
             ];
             
@@ -91,15 +91,15 @@ class DonHangController extends Controller
             DB::rollBack();
             
             $status = 500;
-            if (str_contains($e->getMessage(), 'Khng d? s? lu?ng') || str_contains($e->getMessage(), 'Khng th? h?y')) {
+            if (str_contains($e->getMessage(), 'Không đủ số lượng') || str_contains($e->getMessage(), 'Không thể hủy')) {
                 $status = 409;
-            } elseif (str_contains($e->getMessage(), 'Khng tm th?y') || str_contains($e->getMessage(), 'khng h?p l?')) {
+            } elseif (str_contains($e->getMessage(), 'Không tìm thấy') || str_contains($e->getMessage(), 'không hợp lệ')) {
                 $status = 422;
             }
             
             $resBody = [
                 'success' => false,
-                'message' => 'L?i t?o don hng: ' . $e->getMessage()
+                'message' => 'Lỗi tạo đơn hàng: ' . $e->getMessage()
             ];
 
             if ($idempotencyKey) {
@@ -125,11 +125,11 @@ class DonHangController extends Controller
         DB::beginTransaction();
         try {
             $donHang = DonHang::lockForUpdate()->findOrFail($id);
-            $oldStatus = $donHang->trang_thai;
-            $newStatus = $request->status ?? $donHang->trang_thai;
+            $oldStatus = (int) $donHang->trang_thai;
+            $newStatus = isset($request->status) ? (int) $request->status : $oldStatus;
             
-            if ($oldStatus == 2 && $newStatus == 3) {
-                throw new \Exception("Khng th? h?y don hng d hon thnh. Vui lng dng quy trnh d?i tr?.");
+            if ($oldStatus == 3 && $newStatus == 4) {
+                throw new \Exception("Không thể hủy đơn hàng đã hoàn thành. Vui lòng dùng quy trình đổi trả.");
             }
             
             $donHang->update([
@@ -143,7 +143,7 @@ class DonHangController extends Controller
                 'khach_tu_tra_cuoc' => $request->freight_collect ?? $donHang->khach_tu_tra_cuoc,
             ]);
 
-            if ($oldStatus != 3 && $newStatus == 3) {
+            if ($oldStatus != 4 && $newStatus == 4) {
                 $orderService = new OrderService();
                 $orderService->cancelOrderInventory($donHang, auth()->id() ?? 1);
             }
@@ -151,18 +151,18 @@ class DonHangController extends Controller
             DB::commit();
             return response()->json([
                 'success' => true,
-                'message' => 'C?p nh?t don hng thnh cng',
+                'message' => 'Cập nhật đơn hàng thành công',
                 'data' => $donHang
             ]);
         } catch (\Exception $e) {
             DB::rollBack();
             $status = 500;
-            if (str_contains($e->getMessage(), 'Khng th? h?y')) {
+            if (str_contains($e->getMessage(), 'Không thể hủy')) {
                 $status = 409;
             }
             return response()->json([
                 'success' => false,
-                'message' => 'L?i c?p nh?t don hng: ' . $e->getMessage()
+                'message' => 'Lỗi cập nhật đơn hàng: ' . $e->getMessage()
             ], $status);
         }
     }
@@ -189,10 +189,10 @@ class DonHangController extends Controller
         try {
             $donHang = DonHang::lockForUpdate()->findOrFail($id);
             
-            if ($donHang->trang_thai != 3) {
+            if ($donHang->trang_thai != 4) {
                 $orderService = new OrderService();
                 $orderService->cancelOrderInventory($donHang, auth()->id() ?? 1);
-                $donHang->trang_thai = 3;
+                $donHang->trang_thai = 4;
                 $donHang->save();
             }
             

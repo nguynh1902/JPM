@@ -16,7 +16,12 @@ class TheKhoController extends Controller
     public function show($id)
     {
         try {
-            $item = TheKho::with(['kho', 'sanPham', 'phuTung', 'nguoiThucHien'])->findOrFail($id);
+            $item = TheKho::with([
+                'kho' => fn($q) => $q->withTrashed(),
+                'sanPham',
+                'phuTung' => fn($q) => $q->withTrashed(),
+                'nguoiThucHien'
+            ])->findOrFail($id);
             return response()->json(['success' => true, 'data' => new TheKhoResource($item)]);
         } catch (Exception $e) {
             return response()->json(['success' => false, 'message' => 'Không tìm thấy thẻ kho.'], 404);
@@ -26,7 +31,12 @@ class TheKhoController extends Controller
     public function index(Request $request)
     {
         try {
-            $query = TheKho::with(['kho', 'sanPham', 'phuTung', 'nguoiThucHien'])
+            $query = TheKho::with([
+                'kho' => fn($q) => $q->withTrashed(),
+                'sanPham',
+                'phuTung' => fn($q) => $q->withTrashed(),
+                'nguoiThucHien'
+            ])
                 ->orderBy('id', 'desc');
 
             if ($request->filled('warehouse_id')) {

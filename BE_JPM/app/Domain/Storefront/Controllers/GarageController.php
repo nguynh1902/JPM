@@ -132,7 +132,7 @@ class GarageController extends Controller
         $models = DongCoModel::where('thuong_hieu_id', $request->thuong_hieu_id)
             ->where('trang_thai', 1)
             
-            ->select('id', 'ma_model', 'ten_model', 'ma_luc', 'nam_bat_dau', 'nam_ket_thuc')
+            ->select('id', 'ma_model', 'ten_model', 'ma_luc', 'nam_san_xuat')
             ->orderBy('ten_model')
             ->get();
 

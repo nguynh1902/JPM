@@ -106,7 +106,7 @@ class VietQRService
             urlencode($accountName)
         );
 
-        $isDepositPaid = ($quote->trang_thai === 'Đã cọc' || $quote->trang_thai === 'Đã chuyển đơn hàng');
+        $isDepositPaid = ((int)$quote->trang_thai === 2 || ($quote->tien_coc_yeu_cau > 0 && ($quote->da_thu ?? 0) >= $quote->tien_coc_yeu_cau));
 
         return [
             'success' => true,
@@ -180,14 +180,14 @@ class VietQRService
                     $depositRequired = (float)($order->tien_coc_yeu_cau ?? 0);
 
                     if ($order->da_thu >= $totalRequired) {
-                        $order->trang_thai_thanh_toan = 'Đã thanh toán';
-                        if ($order->trang_thai === 'Chờ xử lý' || $order->trang_thai === 'Đã cọc') {
-                            $order->trang_thai = 'Đang xử lý';
+                        $order->trang_thai_thanh_toan = 1; // Đã thanh toán đủ
+                        if ((int)$order->trang_thai === 0) {
+                            $order->trang_thai = 1; // Đang xử lý
                         }
-                    } elseif ($depositRequired > 0 && $order->da_thu >= $depositRequired) {
-                        $order->trang_thai_thanh_toan = 'Đã cọc';
-                        if ($order->trang_thai === 'Chờ xử lý') {
-                            $order->trang_thai = 'Đã cọc';
+                    } elseif (($depositRequired > 0 && $order->da_thu >= $depositRequired) || ($order->da_thu > 0 && $order->da_thu < $totalRequired)) {
+                        $order->trang_thai_thanh_toan = 2; // Đã đặt cọc
+                        if ((int)$order->trang_thai === 0) {
+                            $order->trang_thai = 1; // Đang xử lý
                         }
                     }
                     $order->save();
@@ -227,7 +227,7 @@ class VietQRService
             if ($matchedQuoteCode) {
                 $quote = YeuCauBaoGia::where('ma_yeu_cau', $matchedQuoteCode)->first();
                 if ($quote) {
-                    $quote->trang_thai = 'Đã cọc';
+                    $quote->trang_thai = 2; // Đã chốt / Đã cọc
                     $quote->save();
 
                     $tx = GiaoDichThanhToan::create([

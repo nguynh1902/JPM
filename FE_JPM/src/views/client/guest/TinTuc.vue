@@ -524,13 +524,7 @@ export default {
     };
 
     const mapArticle = (art) => {
-      let ytUrl = art.youtube_url;
-      if (!ytUrl && (art.category === 'Bảo Dưỡng Động Cơ' || (art.title && art.title.toLowerCase().includes('yamaha')) || (art.title && art.title.toLowerCase().includes('bảo dưỡng')))) {
-        ytUrl = 'https://www.youtube.com/watch?v=5CVzOqvqI38';
-      } else if (!ytUrl && (art.category === 'Công Nghệ Hàng Hải' || (art.title && art.title.toLowerCase().includes('thiết kế')) || (art.title && art.title.toLowerCase().includes('xu hướng')))) {
-        ytUrl = 'https://www.youtube.com/watch?v=Y7f98aduVJ8';
-      }
-
+      const ytUrl = art.youtube_url && !String(art.youtube_url).includes('dQw4w9WgXcQ') ? art.youtube_url : null;
       const ytId = extractYoutubeId(ytUrl);
       const hasVideo = Boolean(ytId);
 

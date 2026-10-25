@@ -43,9 +43,21 @@ class DanhMucSanPhamService
     {
         try {
             $danhMuc = $this->getById($id);
-            // Ngăn tự chọn mình làm danh mục cha
-            if (!empty($data['parent_id']) && $data['parent_id'] == $id) {
-                throw new Exception("Danh mục không thể là cha của chính nó.");
+            if (!empty($data['parent_id'])) {
+                $parentId = (int) $data['parent_id'];
+                if ($parentId === (int) $id) {
+                    throw new Exception("Danh mục không thể là cha của chính nó.");
+                }
+                // Kiểm tra chống vòng lặp cha-con (Circular Reference)
+                $visited = [(int) $id];
+                $currentParent = DanhMucSanPham::find($parentId);
+                while ($currentParent) {
+                    if (in_array((int) $currentParent->id, $visited, true)) {
+                        throw new Exception("Không thể chọn danh mục con/cháu làm danh mục cha (lỗi vòng lặp phân cấp).");
+                    }
+                    $visited[] = (int) $currentParent->id;
+                    $currentParent = $currentParent->parent_id ? DanhMucSanPham::find($currentParent->parent_id) : null;
+                }
             }
             $danhMuc->update($data);
             return $danhMuc;
@@ -62,11 +74,13 @@ class DanhMucSanPhamService
             if ($danhMuc->children()->exists()) {
                 throw new Exception("Không thể xóa danh mục này vì vẫn còn danh mục con bên trong. Vui lòng xóa hoặc chuyển danh mục con trước.");
             }
+            // RESTRICT: Không cho xóa nếu còn sản phẩm thuộc danh mục
+            if ($danhMuc->sanPhams()->exists()) {
+                throw new Exception("Không thể xóa danh mục này vì đang chứa sản phẩm. Vui lòng xóa hoặc chuyển sản phẩm sang danh mục khác trước.");
+            }
             return $danhMuc->delete();
         } catch (Exception $e) {
             throw new Exception($e->getMessage());
         }
     }
 }
-
-

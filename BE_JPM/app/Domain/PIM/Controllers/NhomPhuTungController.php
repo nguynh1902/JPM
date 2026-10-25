@@ -21,7 +21,7 @@ class NhomPhuTungController extends Controller
         
         return response()->json([
             'success' => true,
-            'data' => \App\Domain\PIM\Resources\NhomPhuTungResource::collection($query->cursorPaginate(50))
+            'data' => \App\Domain\PIM\Resources\NhomPhuTungResource::collection($request->filled('cursor') ? $query->cursorPaginate(50) : $query->get())
         ]);
     }
 

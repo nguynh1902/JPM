@@ -130,6 +130,8 @@
               <p class="mb-4 auth-subtext">Đã có tài khoản? <a href="#" @click.prevent="switchToLogin" class="text-decoration-none ms-1" style="color: var(--accent-color); font-weight: 500;">Đăng nhập ngay</a>
               </p>
 
+              <div v-if="authStore.error" class="alert alert-danger py-2 small mb-3">{{ authStore.error }}</div>
+
               <form @submit.prevent="handleRegister">
                 <div class="row g-3 mb-3">
                   <div class="col-6">
@@ -254,6 +256,7 @@
 <script>
 import { useAuthStore } from "../../stores/authStore";
 import { useCartStore } from "../../stores/cartStore";
+import axiosClient from "../../api/axiosClient";
 
 export default {
   name: 'XacThuc',
@@ -266,10 +269,11 @@ export default {
       loginForm: { login_id: '', password: '' },
       
       registerForm: {
-        ho: '', ten: '', email: '', so_dien_thoai: '', mat_khau: '', mat_khau_confirmation: '', role: 'user'
+        ho: '', ten: '', email: '', phone: '', so_dien_thoai: '', password: '', password_confirmation: '', mat_khau: '', mat_khau_confirmation: '', role: 'user'
       },
 
-            forgotForm: { email: '' },
+      forgotEmail: '',
+      forgotForm: { email: '' },
       resetForm: { password: '', password_confirmation: '' },
       showResetPw: false,
       showResetConfirmPw: false,
@@ -284,15 +288,23 @@ export default {
     }
   },
   computed: {
+    authStore() {
+      return useAuthStore();
+    },
     isLoading() {
-      const authStore = useAuthStore();
-      return authStore.loading;
+      return this.authStore.loading;
+    }
+  },
+  watch: {
+    '$route.path'() {
+      this.syncFormFromRoute();
+    },
+    '$route.query.mode'() {
+      this.syncFormFromRoute();
     }
   },
   mounted() {
-    if (this.$route.query.mode === 'reset' || this.$route.path.includes('dat-lai-mat-khau')) {
-      this.activeForm = 'reset';
-    }
+    this.syncFormFromRoute();
     this.timer = setInterval(() => {
       this.activeImgIndex = (this.activeImgIndex + 1) % this.bgImages.length;
     }, 5000);
@@ -301,19 +313,59 @@ export default {
     if (this.timer) clearInterval(this.timer);
   },
   methods: {
-    switchToRegister() { this.activeForm = 'register'; },
-    switchToLogin() { this.activeForm = 'login'; },
-    switchToForgot() { this.activeForm = 'forgot'; },
+    syncFormFromRoute() {
+      const path = this.$route.path || '';
+      if (path.includes('dang-ky')) {
+        this.activeForm = 'register';
+      } else if (path.includes('quen-mat-khau')) {
+        this.activeForm = 'forgot';
+      } else if (path.includes('dat-lai-mat-khau') || this.$route.query.mode === 'reset') {
+        this.activeForm = 'reset';
+      } else {
+        this.activeForm = 'login';
+      }
+      if (this.authStore) {
+        this.authStore.error = null;
+      }
+    },
+    switchToRegister() {
+      this.authStore.error = null;
+      this.activeForm = 'register';
+    },
+    switchToLogin() {
+      this.authStore.error = null;
+      this.activeForm = 'login';
+    },
+    switchToForgot() {
+      this.authStore.error = null;
+      this.activeForm = 'forgot';
+    },
     async handleForgot() {
-      alert("Đã gửi liên kết khôi phục đến email: " + this.forgotForm.email);
+      const email = this.forgotEmail || this.forgotForm.email;
+      try {
+        const res = await axiosClient.post('/forgot-password', { email });
+        alert(res?.message || "Đã gửi liên kết khôi phục đến email: " + email);
+      } catch (err) {
+        alert(err.response?.data?.message || "Không thể gửi yêu cầu khôi phục mật khẩu, vui lòng kiểm tra lại email!");
+      }
     },
     async handleReset() {
-      if (this.resetForm.mat_khau !== this.resetForm.mat_khau_confirmation) {
+      if (this.resetForm.password !== this.resetForm.password_confirmation) {
         alert("Mật khẩu xác nhận không khớp!");
         return;
       }
-      alert("Đổi mật khẩu thành công!");
-      this.activeForm = 'login';
+      try {
+        const res = await axiosClient.post('/reset-password', {
+          ...this.resetForm,
+          token: this.$route.query.token,
+          email: this.$route.query.email
+        });
+        alert(res?.message || "Đổi mật khẩu thành công!");
+        this.activeForm = 'login';
+        this.$router.push('/dang-nhap');
+      } catch (err) {
+        alert(err.response?.data?.message || "Đặt lại mật khẩu thất bại, vui lòng thử lại!");
+      }
     },
     async handleLogin() {
       const authStore = useAuthStore();
@@ -333,8 +385,22 @@ export default {
     },
     async handleRegister() {
       this.registerForm.password_confirmation = this.registerForm.password;
+      this.registerForm.so_dien_thoai = this.registerForm.phone || this.registerForm.so_dien_thoai;
+      this.registerForm.mat_khau = this.registerForm.password;
+      this.registerForm.mat_khau_confirmation = this.registerForm.password;
       const authStore = useAuthStore();
-      await authStore.register(this.registerForm);
+      const success = await authStore.register(this.registerForm);
+      if (success) {
+        if (authStore.isLoggedIn) {
+          const cartStore = useCartStore();
+          await cartStore.fetchFromCloud();
+          this.$router.push('/');
+        } else {
+          alert("Đăng ký thành công! Vui lòng đăng nhập.");
+          this.activeForm = 'login';
+          this.$router.push('/');
+        }
+      }
     }
   }
 }

@@ -33,9 +33,21 @@ class TraCuuController extends Controller
     public function faqs(Request $request)
     {
         $limit = (int) $request->get('limit', 4);
-        $faqs = \App\Domain\CMS\Models\Faq::where('status', 'active')
-            ->orWhere('status', 1)
-            ->orderBy('id', 'desc')
+        $excludedFaqCats = \App\Domain\CMS\Models\ChuyenMuc::where('type', 'FAQ')
+            ->where('status', '!=', 'ACTIVE')
+            ->pluck('name');
+
+        $query = \App\Domain\CMS\Models\Faq::where(function ($q) {
+            $q->where('status', 'active')
+              ->orWhere('status', 1)
+              ->orWhere('status', 'ACTIVE');
+        });
+
+        if ($excludedFaqCats->isNotEmpty()) {
+            $query->whereNotIn('category', $excludedFaqCats);
+        }
+
+        $faqs = $query->orderBy('id', 'desc')
             ->limit($limit)
             ->get();
 
@@ -711,7 +723,8 @@ class TraCuuController extends Controller
                     'slug' => $s->slug,
                     'price' => $s->gia_ban,
                     'sale_price' => $s->gia_khuyen_mai,
-                    'image' => $s->hinh_anh,
+                    'image' => $s->hinh_anh_chinh ?? $s->hinh_anh,
+                    'hinh_anh' => $s->hinh_anh_chinh ?? $s->hinh_anh,
                     'category' => $s->danhMuc?->ten_danh_muc,
                     'url' => '/chi-tiet-san-pham/' . $s->slug
                 ];

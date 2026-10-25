@@ -52,7 +52,7 @@
                   </div>
                   
                   <h6 class="fw-bold mb-1 text-dark">{{ profile.name || 'Admin Manager' }}</h6>
-                                    <span class="badge bg-label-primary mt-1">Quản trị viên</span>
+                  <span class="badge bg-label-primary mt-1">{{ authStore.user?.roles?.[0] || (authStore.isAdmin ? 'Quản trị viên' : 'Nhân viên') }}</span>
 
                   <p v-if="isEditing" class="text-muted mt-3 mb-0" style="font-size: 0.8rem;">Cho phép mọi định dạng ảnh (JPG, PNG, GIF, WEBP, SVG...).<br>Tối đa 5MB</p>
                 </div>
@@ -108,7 +108,7 @@
         </div>
 
         <!-- Khôi phục lại y chang thiết kế Vô hiệu hóa tài khoản gốc của Sneat -->
-        <div class="card">
+        <div class="card" v-if="!authStore.isAdmin">
           <h5 class="card-header border-bottom">Vô hiệu hóa tài khoản</h5>
           <div class="card-body pt-4">
             <div class="mb-3 col-12 mb-0">
@@ -153,7 +153,7 @@ import Swal from 'sweetalert2';
 import { useMutation } from '@tanstack/vue-query';
 
 const route = useRoute();
-const basePath = computed(() => (route.path.startsWith('/staff') ? '/staff' : '/admin'));
+const basePath = computed(() => (route.path.startsWith('/portal') ? '/portal' : (route.path.startsWith('/staff') ? '/staff' : '/admin')));
 
 const toaster = createToaster({ position: "top-right", duration: 3000 });
 const authStore = useAuthStore();

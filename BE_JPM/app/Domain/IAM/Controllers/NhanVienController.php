@@ -55,7 +55,7 @@ class NhanVienController extends Controller
                 ];
             });
             
-            $roles = Role::pluck('name')->map(function($role) {
+            $roles = Role::where('name', '!=', 'customer')->pluck('name')->map(function($role) {
                 return [
                     'value' => $role,
                     'label' => $role
@@ -135,6 +135,7 @@ class NhanVienController extends Controller
                 $updateData = [
                     'name' => $request->name,
                     'email' => $request->email,
+                    'phone' => $request->phone,
                     'status' => $request->status,
                 ];
 
@@ -146,11 +147,11 @@ class NhanVienController extends Controller
                     
                     // Xóa ảnh cũ
                     if ($nv->user->avatar && file_exists(public_path($nv->user->avatar))) {
-                        unlink(public_path($nv->user->avatar));
+                        @unlink(public_path($nv->user->avatar));
                     }
-                } elseif ($request->has('avatar') && ($request->input('avatar') === null || $request->input('avatar') === '')) {
+                } elseif ($request->boolean('remove_avatar') || ($request->has('avatar') && ($request->input('avatar') === null || $request->input('avatar') === ''))) {
                     if ($nv->user->avatar && file_exists(public_path($nv->user->avatar))) {
-                        unlink(public_path($nv->user->avatar));
+                        @unlink(public_path($nv->user->avatar));
                     }
                     $updateData['avatar'] = null;
                 }
@@ -179,6 +180,22 @@ class NhanVienController extends Controller
         try {
             $nv = NhanVien::findOrFail($id);
             $user = $nv->user;
+
+            if ($user && $user->id === auth()->id()) {
+                DB::rollBack();
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Không thể tự xóa tài khoản của chính mình!'
+                ], 403);
+            }
+
+            if ($user && ($user->hasRole('admin') || $user->hasRole('Super Admin'))) {
+                DB::rollBack();
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Không thể xóa tài khoản Quản trị viên tối cao (Super Admin)!'
+                ], 403);
+            }
             
             // Check dependency via FK constraint by attempting to delete
             $nv->delete();
@@ -218,14 +235,10 @@ class NhanVienController extends Controller
             }
             return response()->json([
                 'success' => true,
-                'message' => 'Đã reset mật khẩu thành công!'
+                'message' => 'Đã reset mật khẩu thành công (Jpm@2026)!'
             ]);
         } catch (Exception $e) {
             return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
         }
     }
 }
-
-
-
-

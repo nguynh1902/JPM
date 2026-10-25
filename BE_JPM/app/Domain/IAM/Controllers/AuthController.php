@@ -8,6 +8,11 @@ use App\Domain\IAM\Requests\LoginRequest;
 use App\Domain\IAM\Requests\RegisterRequest;
 use App\Domain\IAM\Resources\UserResource;
 use App\Domain\IAM\Services\AuthService;
+use App\Domain\IAM\Models\User;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 use Exception;
 
 class AuthController extends Controller
@@ -74,9 +79,115 @@ class AuthController extends Controller
     }
 
     /**
-     * API Get Me
+     * API Quên mật khẩu (Forgot Password)
      */
-    
+    public function forgotPassword(Request $request)
+    {
+        try {
+            $request->validate([
+                'email' => 'required|email',
+            ], [
+                'email.required' => 'Vui lòng nhập địa chỉ email.',
+                'email.email' => 'Địa chỉ email không hợp lệ.',
+            ]);
+
+            $user = User::where('email', $request->email)->first();
+            if (!$user) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Không tìm thấy tài khoản với địa chỉ email này.'
+                ], 404);
+            }
+
+            $token = Str::random(64);
+            DB::table('password_reset_tokens')->updateOrInsert(
+                ['email' => $user->email],
+                [
+                    'token' => Hash::make($token),
+                    'created_at' => now(),
+                ]
+            );
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Đã tạo liên kết khôi phục mật khẩu thành công.',
+                'reset_token' => $token,
+                'email' => $user->email,
+            ], 200);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->validator->errors()->first(),
+                'errors' => $e->errors(),
+            ], 422);
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Lỗi xử lý yêu cầu: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    /**
+     * API Đặt lại mật khẩu (Reset Password)
+     */
+    public function resetPassword(Request $request)
+    {
+        try {
+            $request->validate([
+                'email' => 'required|email',
+                'token' => 'nullable|string',
+                'password' => 'required|string|min:8|max:25|confirmed',
+            ], [
+                'email.required' => 'Vui lòng nhập email.',
+                'password.required' => 'Vui lòng nhập mật khẩu mới.',
+                'password.min' => 'Mật khẩu phải từ 8 đến 25 ký tự.',
+                'password.max' => 'Mật khẩu phải từ 8 đến 25 ký tự.',
+                'password.confirmed' => 'Xác nhận mật khẩu không khớp.',
+            ]);
+
+            $user = User::where('email', $request->email)->first();
+            if (!$user) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Không tìm thấy tài khoản với email này.'
+                ], 404);
+            }
+
+            if ($request->filled('token')) {
+                $record = DB::table('password_reset_tokens')->where('email', $user->email)->first();
+                if (!$record || !Hash::check($request->token, $record->token)) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Mã khôi phục không hợp lệ hoặc đã hết hạn.'
+                    ], 422);
+                }
+            }
+
+            $user->password = Hash::make($request->password);
+            $user->save();
+
+            DB::table('password_reset_tokens')->where('email', $user->email)->delete();
+            $user->tokens()->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Đặt lại mật khẩu thành công. Vui lòng đăng nhập lại.'
+            ], 200);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->validator->errors()->first(),
+                'errors' => $e->errors(),
+            ], 422);
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Lỗi đặt lại mật khẩu: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
     /**
      * API Update Profile
      */
@@ -101,6 +212,11 @@ class AuthController extends Controller
                 $filename = time() . '_' . $file->getClientOriginalName();
                 $file->move(public_path('uploads/avatars'), $filename);
                 $user->avatar = '/uploads/avatars/' . $filename;
+            } elseif ($request->boolean('remove_avatar') || ($request->has('avatar') && ($request->input('avatar') === '' || $request->input('avatar') === null))) {
+                if ($user->avatar && file_exists(public_path($user->avatar))) {
+                    @unlink(public_path($user->avatar));
+                }
+                $user->avatar = null;
             }
 
             $user->name = $data['name'];
@@ -114,6 +230,12 @@ class AuthController extends Controller
                 $user->nhanVien->save();
             }
 
+            if ($user->khachHang) {
+                $user->khachHang->ho_ten = $user->name;
+                $user->khachHang->so_dien_thoai = $user->phone;
+                $user->khachHang->save();
+            }
+
             return response()->json([
                 'success' => true,
                 'message' => 'Cập nhật hồ sơ thành công',
@@ -122,6 +244,12 @@ class AuthController extends Controller
                 ]
             ], 200);
 
+        } catch (ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->validator->errors()->first(),
+                'errors' => $e->errors(),
+            ], 422);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
@@ -154,12 +282,16 @@ class AuthController extends Controller
                 'new_password' => [
                     'required',
                     'string',
-                    'min:25',
+                    'min:8',
+                    'max:25',
                     'confirmed',
                     'regex:/[a-z]/',
                     'regex:/[\d\W]/',
                 ],
             ], [
+                'new_password.min' => 'Mật khẩu mới phải có ít nhất 8 ký tự.',
+                'new_password.max' => 'Mật khẩu mới không được vượt quá 25 ký tự.',
+                'new_password.confirmed' => 'Xác nhận mật khẩu mới không khớp.',
                 'new_password.regex' => 'Mật khẩu mới phải chứa ít nhất 1 chữ cái viết thường và 1 chữ số/ký tự đặc biệt.',
             ]);
 
@@ -180,6 +312,12 @@ class AuthController extends Controller
                 'message' => 'Đổi mật khẩu thành công'
             ], 200);
 
+        } catch (ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->validator->errors()->first(),
+                'errors' => $e->errors(),
+            ], 422);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
@@ -189,12 +327,19 @@ class AuthController extends Controller
     }
 
     /**
-     * API Logout
+     * API Deactivate Account
      */
     public function deactivateAccount(Request $request)
     {
         try {
             $user = $request->user();
+
+            if ($user->hasRole('admin') || $user->hasRole('Super Admin')) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Không thể vô hiệu hóa tài khoản Quản trị viên tối cao!'
+                ], 403);
+            }
             
             $request->validate([
                 'password' => 'required|string'
@@ -221,6 +366,12 @@ class AuthController extends Controller
                 'message' => 'Tài khoản của bạn đã bị vô hiệu hóa và sẽ bị xóa vĩnh viễn sau 15 ngày.'
             ], 200);
 
+        } catch (ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->validator->errors()->first(),
+                'errors' => $e->errors(),
+            ], 422);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
@@ -255,10 +406,3 @@ class AuthController extends Controller
         }
     }
 }
-
-
-
-
-
-
-

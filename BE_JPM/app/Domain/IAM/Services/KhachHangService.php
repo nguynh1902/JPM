@@ -13,12 +13,16 @@ class KhachHangService
 {
     public function getById($id)
     {
-        return KhachHang::with('user')->findOrFail($id);
+        return KhachHang::with(['user.diaChis'])->findOrFail($id);
     }
 
     public function getAll()
     {
-        return KhachHang::with('user')->orderBy('id', 'desc')->cursorPaginate(50);
+        $query = KhachHang::with(['user.diaChis'])->orderBy('id', 'desc');
+        if (request()->filled('cursor')) {
+            return $query->cursorPaginate(50);
+        }
+        return $query->get();
     }
 
     public function create(array $data)
@@ -53,7 +57,7 @@ class KhachHangService
             ]);
             
             DB::commit();
-            return clone $kh->load('user');
+            return clone $kh->load(['user.diaChis']);
         } catch (Exception $e) {
             DB::rollBack();
             throw $e;
@@ -66,11 +70,12 @@ class KhachHangService
         try {
             $kh = KhachHang::findOrFail($id);
             
-                        // Update User properties (Name, Email, Status, Avatar)
+            // Update User properties (Name, Email, Phone, Status, Avatar)
             if ($kh->user) {
                 $kh->user->update([
                     'name' => $data['name'],
                     'email' => $data['email'],
+                    'phone' => $data['phone'] ?? $kh->user->phone,
                     'status' => $data['status'] ?? 1,
                 ]);
 
@@ -82,6 +87,11 @@ class KhachHangService
                     $filename = time() . '_' . $file->getClientOriginalName();
                     $file->move(public_path('uploads/avatars'), $filename);
                     $kh->user->avatar = '/uploads/avatars/' . $filename;
+                } elseif (!empty($data['remove_avatar']) || request()->boolean('remove_avatar') || (array_key_exists('avatar', $data) && ($data['avatar'] === '' || $data['avatar'] === null))) {
+                    if ($kh->user->avatar && file_exists(public_path($kh->user->avatar))) {
+                        @unlink(public_path($kh->user->avatar));
+                    }
+                    $kh->user->avatar = null;
                 }
                 $kh->user->save();
             }
@@ -93,7 +103,7 @@ class KhachHangService
             ]);
             
             DB::commit();
-            return clone $kh->load('user');
+            return clone $kh->load(['user.diaChis']);
         } catch (Exception $e) {
             DB::rollBack();
             throw $e;
@@ -135,10 +145,9 @@ class KhachHangService
             
             $user = $kh->user;
             
-            $kh->delete(); // Hard delete customer profile
+            $kh->delete();
             
             if ($user) {
-                // Hard delete user account
                 $user->tokens()->delete();
                 $user->delete();
             }
@@ -151,8 +160,3 @@ class KhachHangService
         }
     }
 }
-
-
-
-
-

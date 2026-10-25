@@ -71,6 +71,7 @@ class OrderService
 
             // 2. Xử lý Tồn Kho & Gom Đơn (Order to PO Model)
             $tonKho = TonKho::where('id_san_pham', $idItem)
+                            ->where('loai_san_pham', $loaiSanPham)
                             ->lockForUpdate()
                             ->first();
 
@@ -148,13 +149,17 @@ class OrderService
 
             if (!$idItem) continue;
 
+            $loaiSanPham = $item->loai_san_pham ?? 'phu_tung';
+
             $tonKho = TonKho::where('id_san_pham', $idItem)
+                            ->where('loai_san_pham', $loaiSanPham)
                             ->lockForUpdate()
                             ->first();
 
             // Kiểm tra xem đơn này lúc tạo có bị trừ tồn kho thực tế hay chỉ chờ giao
             $wasDeducted = TheKho::where('id_tham_chieu', $donHang->id)
                 ->where('id_san_pham', $idItem)
+                ->where('loai_san_pham', $loaiSanPham)
                 ->where('so_luong_thay_doi', '<', 0)
                 ->exists();
 

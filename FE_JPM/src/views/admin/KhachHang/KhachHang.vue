@@ -567,6 +567,9 @@ export default {
 
       if (this.avatarFile) {
         payload.append("avatar", this.avatarFile);
+      } else if (this.isEditMode && this.avatarFile === null && !this.formData.avatar) {
+        payload.append("remove_avatar", "1");
+        payload.append("avatar", "");
       }
 
       this.saveMutation.mutate(

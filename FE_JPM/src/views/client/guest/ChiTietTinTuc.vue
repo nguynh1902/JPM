@@ -175,7 +175,7 @@
               <router-link :to="{ path: '/tin-tuc', query: { category: 'Bảo Dưỡng Động Cơ' } }" class="tag-pill text-decoration-none">
                 Bảo dưỡng định kỳ
               </router-link>
-              <router-link to="/so-do-phu-tung" class="tag-pill text-decoration-none">
+              <router-link to="/tra-cuu" class="tag-pill text-decoration-none">
                 Phụ tùng OEM JPM
               </router-link>
             </div>
@@ -258,7 +258,7 @@
                   Tra cứu sơ đồ bóc tách (Exploded View) và đặt mua phụ tùng chính hãng Yamaha, Yanmar, Honda Marine nhanh chóng với độ chính xác tuyệt đối từ JPM.
                 </p>
                 <router-link
-                  to="/so-do-phu-tung"
+                  to="/tra-cuu"
                   class="btn btn-dark w-100 rounded-2 py-2 fw-semibold"
                   style="font-size: 0.85rem;"
                 >

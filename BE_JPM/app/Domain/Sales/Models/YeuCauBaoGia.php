@@ -1,7 +1,7 @@
 <?php
 namespace App\Domain\Sales\Models;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\User;
+use App\Domain\IAM\Models\User;
 
 class YeuCauBaoGia extends Model
 {

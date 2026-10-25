@@ -189,7 +189,7 @@
             </div>
             <div class="modal-footer border-top pt-3">
               <button type="button" class="btn btn-outline-secondary px-4" data-bs-dismiss="modal" @click="resetForm">Hủy Bỏ</button>
-              <button type="submit" class="btn btn-primary px-4 shadow-sm" data-bs-dismiss="modal" :disabled="isSubmitting">
+              <button type="submit" class="btn btn-primary px-4 shadow-sm" :disabled="isSubmitting">
                 <span v-if="isSubmitting" class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
                 {{ isEditMode ? 'Cập Nhật' : 'Lưu Lại' }}
               </button>
@@ -204,7 +204,6 @@
 import vSelect from '@vueform/multiselect';
 import axiosClient from '../../../api/axiosClient';
 import Swal from 'sweetalert2';
-import dayjs from 'dayjs';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/vue-query';
 
 export default {
@@ -217,7 +216,7 @@ export default {
     
     const { data: vouchersData, isFetching, isPending } = useQuery({
       queryKey: ['vouchers'],
-      queryFn: () => axiosClient.get('/admin/voucher').then(res => res.data || [])
+      queryFn: () => axiosClient.get('/admin/voucher').then(res => Array.isArray(res?.data) ? res.data : (res?.data?.data || []))
     });
 
     const deleteMutation = useMutation({
@@ -264,7 +263,7 @@ export default {
   },
   computed: {
     filteredVouchers() {
-      const allVouchers = this.vouchersData || [];
+      const allVouchers = Array.isArray(this.vouchersData) ? this.vouchersData : (this.vouchersData?.data || []);
       return allVouchers.filter(item => {
         let match = true;
         if (this.filters.code) {
@@ -295,7 +294,9 @@ export default {
     },
     formatDate(dateStr) {
       if (!dateStr) return '';
-      return dayjs(dateStr).format('DD/MM/YYYY');
+      const d = new Date(dateStr);
+      if (isNaN(d.getTime())) return dateStr;
+      return d.toLocaleDateString('vi-VN');
     },
     getInitialFormData() {
       return {
@@ -329,6 +330,8 @@ export default {
         await this.saveMutation.mutateAsync(this.formData);
         
         this.$toast?.success(this.isEditMode ? 'Cập nhật thành công!' : 'Thêm mới thành công!');
+        const closeBtn = document.querySelector('#modalVoucher .btn-close');
+        if (closeBtn) closeBtn.click();
         this.resetForm();
       } catch (error) {
         console.error(error);

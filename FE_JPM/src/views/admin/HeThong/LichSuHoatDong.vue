@@ -124,7 +124,7 @@
                   <div class="avatar avatar-sm me-2 flex-shrink-0">
                     <img 
                       v-if="item.avatar" 
-                      :src="item.avatar" 
+                      :src="getImageUrl(item.avatar)" 
                       alt="Avatar" 
                       class="rounded-circle"
                       style="width: 32px; height: 32px; object-fit: cover;"
@@ -260,6 +260,12 @@ onMounted(() => {
   fetchEmployees();
   fetchLogs();
 });
+
+const getImageUrl = (path) => {
+  if (!path) return '';
+  if (path.startsWith('blob:') || path.startsWith('http') || path.startsWith('data:')) return path;
+  return `http://localhost:8000${path.startsWith('/') ? '' : '/'}${path}`;
+};
 
 const getActionBadgeClass = (action) => {
   switch (action) {

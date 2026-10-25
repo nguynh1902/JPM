@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
-use App\Domain\Sales\Models\GioHang;
 use App\Domain\Sales\Models\YeuCauBaoGia;
 use App\Domain\Sales\Models\DonHang;
 use Spatie\Permission\Traits\HasRoles;
@@ -55,26 +54,21 @@ class User extends Authenticatable
 
     public function diaChis()
     {
-        return $this->hasMany(DiaChi::class);
+        return $this->hasMany(DiaChi::class, 'id_tai_khoan');
     }
 
     public function garages()
     {
-        return $this->hasMany(Garage::class);
-    }
-
-    public function gioHang()
-    {
-        return $this->hasOne(GioHang::class);
+        return $this->hasMany(GarageMayThuy::class, 'id_tai_khoan');
     }
 
     public function yeuCauBaoGias()
     {
-        return $this->hasMany(YeuCauBaoGia::class);
+        return $this->hasMany(YeuCauBaoGia::class, 'user_id');
     }
 
     public function donHangs()
     {
-        return $this->hasMany(DonHang::class);
+        return $this->hasManyThrough(DonHang::class, KhachHang::class, 'id_tai_khoan', 'id_khach_hang', 'id', 'id');
     }
 }

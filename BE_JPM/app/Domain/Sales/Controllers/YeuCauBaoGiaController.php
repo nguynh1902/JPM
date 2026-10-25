@@ -67,12 +67,18 @@ class YeuCauBaoGiaController extends Controller
             $idKhachHang = null;
             $loaiDon = 'b2c';
             $khachTuTraCuoc = 1; // Mặc định B2C: Khách trả cước nội địa
+            $verifiedUserId = auth('sanctum')->id();
+            if (!$verifiedUserId && $request->user_id) {
+                if (\App\Domain\IAM\Models\User::where('id', $request->user_id)->exists()) {
+                    $verifiedUserId = (int) $request->user_id;
+                }
+            }
 
-            if ($request->user_id) {
-                $kh = KhachHang::where('id_tai_khoan', $request->user_id)->first();
+            if ($verifiedUserId) {
+                $kh = KhachHang::where('id_tai_khoan', $verifiedUserId)->first();
                 if ($kh) {
                     $idKhachHang = $kh->id;
-                    if (!empty($kh->ten_cong_ty) || $request->input('loai_don') === 'b2b') {
+                    if (!empty($kh->ten_cong_ty)) {
                         $loaiDon = 'b2b';
                         $khachTuTraCuoc = 0; // Khách B2B: JPM tài trợ miễn phí cước nội địa
                     }
@@ -123,7 +129,7 @@ class YeuCauBaoGiaController extends Controller
                     'phi_van_chuyen'     => 0,
                     'tien_coc_yeu_cau'   => 0,
                     'trang_thai'         => 0, // 0 = Chờ báo giá
-                    'user_id'            => $request->user_id,
+                    'user_id'            => $verifiedUserId,
                     'token'              => Str::random(32),
                 ]);
 
@@ -131,12 +137,47 @@ class YeuCauBaoGiaController extends Controller
                 foreach ($request->chi_tiet as $item) {
                     $qty = (int) ($item['so_luong'] ?? 1);
                     $price = (float) ($item['gia_ban'] ?? 0);
+                    $tenItem = $item['ten_phu_tung'] ?? 'Không rõ';
+                    $maItem = $item['ma_phu_tung'] ?? 'N/A';
+
+                    $idItem = $item['id_san_pham'] ?? $item['id_phu_tung'] ?? null;
+                    $loaiSanPham = $item['loai_san_pham'] ?? 'phu_tung';
+                    if ($idItem) {
+                        if ($loaiSanPham === 'san_pham') {
+                            $sp = \App\Domain\CMS\Models\SanPham::find($idItem);
+                            if ($sp) {
+                                $tenItem = $sp->ten_san_pham;
+                                $maItem = $sp->ma_san_pham;
+                                $price = $sp->is_gia_lien_he ? 0 : (float) $sp->gia_ban;
+                            }
+                        } else {
+                            $pt = \App\Domain\PIM\Models\PhuTung::find($idItem);
+                            if ($pt) {
+                                $tenItem = $pt->ten_phu_tung;
+                                $maItem = $pt->ma_phu_tung;
+                                $price = $pt->is_gia_lien_he ? 0 : (float) $pt->gia_ban;
+                            }
+                        }
+                    } elseif (!empty($maItem) && $maItem !== 'N/A') {
+                        $pt = \App\Domain\PIM\Models\PhuTung::where('ma_phu_tung', $maItem)->first();
+                        if ($pt) {
+                            $tenItem = $pt->ten_phu_tung;
+                            $price = $pt->is_gia_lien_he ? 0 : (float) $pt->gia_ban;
+                        } else {
+                            $sp = \App\Domain\CMS\Models\SanPham::where('ma_san_pham', $maItem)->first();
+                            if ($sp) {
+                                $tenItem = $sp->ten_san_pham;
+                                $price = $sp->is_gia_lien_he ? 0 : (float) $sp->gia_ban;
+                            }
+                        }
+                    }
+
                     $tongTienTamTinh += ($qty * $price);
 
                     ChiTietBaoGia::create([
                         'yeu_cau_bao_gia_id' => $quote->id,
-                        'ten_phu_tung'       => $item['ten_phu_tung'] ?? 'Không rõ',
-                        'ma_phu_tung'        => $item['ma_phu_tung'] ?? 'N/A',
+                        'ten_phu_tung'       => $tenItem,
+                        'ma_phu_tung'        => $maItem,
                         'so_luong'           => $qty,
                         'don_gia'            => $price
                     ]);
@@ -478,11 +519,38 @@ class YeuCauBaoGiaController extends Controller
                     $idSanPham = null;
                     $loaiSanPham = "custom";
                 } else {
-                    // Giữ hàng trong kho đối với linh kiện có sẵn trong catalog
-                    $tonKho = \App\Domain\Procurement\Models\TonKho::where("id_san_pham", $idSanPham)->first();
-                    if ($tonKho) {
+                    // Xử lý tồn kho & ghi nhận Thẻ Kho tương tự OrderService
+                    $tonKho = \App\Domain\Procurement\Models\TonKho::where("id_san_pham", $idSanPham)
+                        ->where("loai_san_pham", $loaiSanPham)
+                        ->lockForUpdate()
+                        ->first();
+                    if ($tonKho && $tonKho->so_luong_ton >= $ct->so_luong) {
+                        $tonKho->so_luong_ton -= $ct->so_luong;
+                        $tonKho->save();
+
+                        \App\Domain\Procurement\Models\TheKho::create([
+                            'id_kho' => $tonKho->id_kho,
+                            'id_san_pham' => $idSanPham,
+                            'loai_san_pham' => $loaiSanPham,
+                            'loai_giao_dich' => 'XUAT_KHO',
+                            'so_luong_thay_doi' => -$ct->so_luong,
+                            'so_luong_ton_cuoi' => $tonKho->so_luong_ton,
+                            'id_tham_chieu' => $donHang->id,
+                            'ma_tham_chieu' => 'DH' . str_pad($donHang->id, 5, '0', STR_PAD_LEFT),
+                            'ghi_chu' => 'Xuất bán từ báo giá #' . $quote->ma_yeu_cau,
+                            'created_by' => auth()->id() ?? 1,
+                        ]);
+                    } elseif ($tonKho) {
                         $tonKho->so_luong_dang_giu = ($tonKho->so_luong_dang_giu ?? 0) + $ct->so_luong;
                         $tonKho->save();
+                    } else {
+                        \App\Domain\Procurement\Models\TonKho::create([
+                            'id_kho' => 1,
+                            'id_san_pham' => $idSanPham,
+                            'loai_san_pham' => $loaiSanPham,
+                            'so_luong_ton' => 0,
+                            'so_luong_dang_giu' => $ct->so_luong,
+                        ]);
                     }
                 }
 

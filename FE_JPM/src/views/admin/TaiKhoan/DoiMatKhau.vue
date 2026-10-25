@@ -80,7 +80,7 @@
                 <div class="col-12 mb-4">
                   <p class="fw-semibold mt-2 text-dark">Yêu cầu mật khẩu:</p>
                   <ul class="ps-3 mb-0 text-muted">
-                    <li class="mb-1">Tối thiểu 12 ký tự</li>
+                    <li class="mb-1">Tối thiểu 8 ký tự</li>
                     <li class="mb-1">Ít nhất một chữ cái viết thường</li>
                     <li>Ít nhất một chữ số hoặc ký tự đặc biệt</li>
                   </ul>
@@ -111,7 +111,7 @@ import { createToaster } from "@meforma/vue-toaster";
 import { useMutation } from '@tanstack/vue-query';
 
 const route = useRoute();
-const basePath = computed(() => (route.path.startsWith('/staff') ? '/staff' : '/admin'));
+const basePath = computed(() => (route.path.startsWith('/portal') ? '/portal' : (route.path.startsWith('/staff') ? '/staff' : '/admin')));
 const authStore = useAuthStore();
 
 const confirmLogout = async () => {
@@ -178,8 +178,8 @@ const changePassword = () => {
     return;
   }
   
-  if (passwords.value.new.length < 12) {
-    toaster.error("Mật khẩu mới phải dài ít nhất 12 ký tự!");
+  if (passwords.value.new.length < 8) {
+    toaster.error("Mật khẩu mới phải dài ít nhất 8 ký tự!");
     return;
   }
 

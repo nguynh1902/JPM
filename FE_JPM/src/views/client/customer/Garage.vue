@@ -54,6 +54,7 @@
                       <div class="d-flex align-items-center gap-4 mt-2 text-muted flex-wrap" style="font-size: 13px;">
                         <span v-if="may.dong_co_model?.ma_luc"><i class="bi bi-lightning-charge me-1"></i>{{ may.dong_co_model.ma_luc }} HP</span>
                         <span v-if="may.dong_co_model?.ma_model" class="fst-italic">{{ may.dong_co_model.ma_model }}</span>
+                        <span v-if="may.dong_co_model?.nam_san_xuat || may.dong_co_model?.nam_bat_dau"><i class="bi bi-calendar3 me-1"></i>{{ may.dong_co_model?.nam_san_xuat || may.dong_co_model?.nam_bat_dau || '' }}</span>
                       </div>
                     </div>
 

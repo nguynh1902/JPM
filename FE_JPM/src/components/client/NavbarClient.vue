@@ -203,6 +203,9 @@ export default {
     };
   },
   async mounted() {
+    if (this.isLoggedIn) {
+      this.fetchNotifications();
+    }
     try {
       const res = await axiosClient.get('/public/danh-muc-san-pham');
       const allCats = res.data?.data || res.data || [];
@@ -228,7 +231,7 @@ export default {
       try {
         const res = await axiosClient.get('/client/notifications');
         this.notifications = res.data || [];
-        this.unreadCount = res.unread_count || 0;
+        this.unreadCount = res.unread_count ?? (res.data || []).filter(n => !n.is_read && !n.read_at).length;
       } catch (e) {}
     },
     async markAsRead() {

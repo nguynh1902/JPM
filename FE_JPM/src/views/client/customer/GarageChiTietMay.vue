@@ -123,6 +123,7 @@
                 <div class="flex-grow-1 min-width-0">
                   <router-link
                     :to="`/chi-tiet-phu-tung/${item.phu_tung?.ma_phu_tung}`"
+                    @click.stop
                     class="fw-bold d-block text-decoration-none text-truncate"
                     style="color: var(--heading-color); font-size: 14px;">
                     {{ item.phu_tung?.ten_phu_tung }}

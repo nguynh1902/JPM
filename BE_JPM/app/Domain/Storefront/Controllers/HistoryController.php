@@ -65,12 +65,21 @@ class HistoryController extends Controller
         foreach ($orders as $order) {
             $items = [];
             foreach ($order->chiTiet as $detail) {
+                $isSanPham = ($detail->loai_san_pham === 'san_pham');
+                $tenSanPham = $detail->ten_phu_tung
+                    ?? ($isSanPham ? ($detail->sanPham->ten_san_pham ?? null) : ($detail->phuTung->ten_phu_tung ?? null))
+                    ?? 'Phụ tùng chính hãng';
+                $maPhuTung = $detail->ma_phu_tung
+                    ?? ($isSanPham ? ($detail->sanPham->ma_san_pham ?? null) : ($detail->phuTung->ma_phu_tung ?? null))
+                    ?? '';
+
                 $items[] = [
                     'id'            => $detail->id,
                     'id_san_pham'   => $detail->id_san_pham,
-                    'id_phu_tung'   => $detail->id_phu_tung,
-                    'ten_san_pham'  => $detail->sanPham->ten_san_pham ?? $detail->phuTung->ten_phu_tung ?? $detail->ten_phu_tung ?? 'Phụ tùng chính hãng',
-                    'ma_phu_tung'   => $detail->phuTung->ma_phu_tung ?? $detail->ma_phu_tung ?? '',
+                    'id_phu_tung'   => $detail->id_phu_tung ?? ($isSanPham ? null : $detail->id_san_pham),
+                    'loai_san_pham' => $detail->loai_san_pham ?? 'phu_tung',
+                    'ten_san_pham'  => $tenSanPham,
+                    'ma_phu_tung'   => $maPhuTung,
                     'so_luong'      => $detail->so_luong,
                     'don_gia'       => $detail->don_gia,
                     'thanh_tien'    => $detail->thanh_tien ?? ($detail->so_luong * $detail->don_gia),

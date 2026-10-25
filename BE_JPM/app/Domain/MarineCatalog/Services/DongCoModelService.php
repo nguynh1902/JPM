@@ -66,13 +66,16 @@ class DongCoModelService
             if ($model->phuTungs()->exists()) {
                 throw new Exception("Không thể xóa! Model này đang được sử dụng bởi các Phụ tùng.");
             }
+            if ($model->soDoPhuTungs()->exists()) {
+                throw new Exception("Không thể xóa! Model này đang được sử dụng bởi Sơ đồ phụ tùng.");
+            }
             $deleted = $model->delete();
             $this->clearPublicCache();
             DB::commit();
             return $deleted;
         } catch (Exception $e) {
             DB::rollBack();
-            throw new Exception("Lỗi khi xóa model: " . $e->getMessage());
+            throw new Exception($e->getMessage());
         }
     }
 }
