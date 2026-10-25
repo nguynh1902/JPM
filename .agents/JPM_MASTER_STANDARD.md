@@ -72,7 +72,7 @@ PHẢI đứng từ vị thế của CHUYÊN GIA KỸ THUẬT & THỰC TIỄN KI
    - **Triết lý thống nhất:** Mọi tác nhân (Admin, Staff, Client) đều viết markup bằng **100% Bootstrap 5 chuẩn**, gọn gàng, ngữ nghĩa cao, tối giản.
    - **Phân định rạch ròi kiến trúc CSS: Toàn cục (`main.css`/`demo.css`) vs Cục bộ (`<style scoped>`):**
      - **`main.css` (Client) & `demo.css` (Admin):** Đóng vai trò như **Framework CSS dùng chung toàn website** (giống như Bootstrap core).
-       + **CHỈ CHỨA:** Token màu sắc/biến CSS toàn cục, tùy biến/ghi đè component Bootstrap chính quy (`.btn-primary`, `.btn-danger`, `.badge`, `.card`), tiện ích dùng chung (`.text-truncate-2`, `.text-truncate-3`), component chung (`.product-card`, `.btn-cart-action`).
+       + **CHỈ CHỨA:** Token màu sắc/biến CSS toàn cục, tùy biến/ghi đè component Bootstrap chính quy (`.btn-primary`, `.btn-danger`, `.badge`, `.card` thống nhất độ cong `4px` chuẩn Luxury Minimalism toàn hệ thống Client), tiện ích dùng chung (`.text-truncate-2`, `.text-truncate-3`), component chung (`.product-card`, `.btn-cart-action`).
        + **TUYỆT ĐỐI CẤM:** Không đưa CSS mang tính cục bộ của riêng 1 trang/section vào `main.css` (CẤM: class cục bộ theo kiểu `.news-section .card-title`, `.news-img-thumb`... hoặc ép số dòng hiển thị line-clamp của 1 block trên trang vào `main.css` vì sẽ gây ô nhiễm và xung đột khi sang trang khác).
      - **`<style scoped>` trong component Vue:** Dành riêng cho **tinh chỉnh đặc thù của chính trang đó**:
        + Số dòng hiển thị nội dung (`-webkit-line-clamp`) của từng block trên trang (ví dụ tóm tắt bài viết Trang chủ 3 dòng, trang khác 2 dòng hoặc full).

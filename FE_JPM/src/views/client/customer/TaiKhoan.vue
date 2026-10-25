@@ -28,12 +28,12 @@
                     
                     <div class="col-12 mt-4 pt-4 border-top d-flex justify-content-end gap-3">
                       <template v-if="!isEditingProfile">
-                        <button type="button" class="btn-reset d-inline-flex align-items-center justify-content-center gap-2" data-bs-toggle="modal" data-bs-target="#changePasswordModal"><i class="bi bi-arrow-counterclockwise"></i>Đổi mật khẩu</button>
-                        <button type="button" @click="startEditProfile" class="btn-search"><i class="bi bi-pencil"></i>Chỉnh sửa</button>
+                        <button type="button" class="btn btn-outline-secondary px-3 py-2 fw-semibold d-inline-flex align-items-center justify-content-center gap-2" data-bs-toggle="modal" data-bs-target="#changePasswordModal"><i class="bi bi-arrow-counterclockwise"></i>Đổi mật khẩu</button>
+                        <button type="button" @click="startEditProfile" class="btn btn-danger px-4 py-2 fw-semibold d-inline-flex align-items-center gap-2"><i class="bi bi-pencil"></i>Chỉnh sửa</button>
                       </template>
                       <template v-else>
-                        <button type="button" class="btn-reset d-inline-flex align-items-center justify-content-center gap-2" @click="cancelEditProfile"><i class="bi bi-x-circle"></i>Hủy bỏ</button>
-                        <button type="submit" class="btn-search" :disabled="isUpdatingProfile">
+                        <button type="button" class="btn btn-outline-secondary px-3 py-2 fw-semibold d-inline-flex align-items-center justify-content-center gap-2" @click="cancelEditProfile"><i class="bi bi-x-circle"></i>Hủy bỏ</button>
+                        <button type="submit" class="btn btn-danger px-4 py-2 fw-semibold d-inline-flex align-items-center gap-2" :disabled="isUpdatingProfile">
                           <span v-if="isUpdatingProfile" class="spinner-border spinner-border-sm me-2"></span>
                           <i class="bi bi-check-circle" v-else></i> Lưu thay đổi
                         </button>
@@ -103,7 +103,7 @@
     <!-- MODAL: Doi mat khau -->
     <div class="modal fade" id="changePasswordModal" tabindex="-1" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content" style="border-radius: 12px; border: none;">
+        <div class="modal-content" style="border-radius: 4px; border: none;">
           <div class="modal-header border-bottom-0 pt-4 pb-2 px-4">
             <h5 class="modal-title" style="color: var(--heading-color); font-weight: 800; letter-spacing: 0.5px;">ĐỔI MẬT KHẨU</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
@@ -124,7 +124,7 @@
                 <label class="form-label fw-bold tk-form-label">Xác nhận mật khẩu</label>
                 <input type="password" v-model="passwordForm.new_password_confirmation" class="form-control form-control-lg" required>
               </div>
-              <button type="submit" class="btn-search w-100 justify-content-center mt-3" :disabled="isChangingPassword">
+              <button type="submit" class="btn btn-danger w-100 justify-content-center py-2 fw-semibold mt-3" :disabled="isChangingPassword">
                 <span v-if="isChangingPassword" class="spinner-border spinner-border-sm"></span>
                 <i class="bi bi-shield-check" v-else></i> Cập nhật mật khẩu
               </button>
@@ -137,7 +137,7 @@
     <!-- MODAL: Dia chi -->
     <div class="modal fade" id="addressModal" tabindex="-1" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content" style="border-radius: 12px; border: none;">
+        <div class="modal-content" style="border-radius: 4px; border: none;">
           <div class="modal-header border-bottom-0 pt-4 pb-2 px-4">
             <h5 class="modal-title" style="color: var(--heading-color); font-weight: 800; letter-spacing: 0.5px;">{{ isEditingAddress ? 'SỬA ĐỊA CHỈ' : 'THÊM ĐỊA CHỈ MỚI' }}</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
@@ -160,7 +160,7 @@
                 <input type="checkbox" class="form-check-input" id="defaultAddress" v-model="addressForm.la_mac_dinh">
                 <label class="form-check-label fw-bold text-secondary" style="font-size: 13px;" for="defaultAddress">Đặt làm địa chỉ mặc định</label>
               </div>
-              <button type="submit" class="btn-search w-100 justify-content-center mt-3" :disabled="isSavingAddress">
+              <button type="submit" class="btn btn-danger w-100 justify-content-center py-2 fw-semibold mt-3" :disabled="isSavingAddress">
                 <span v-if="isSavingAddress" class="spinner-border spinner-border-sm me-2"></span>
                 <i class="bi bi-save" v-else></i> Lưu địa chỉ
               </button>
@@ -450,7 +450,7 @@ const setDefault = (id) => {
 
 .tk-card {
   box-shadow: var(--shadow-sm);
-  border-radius: 12px;
+  border-radius: 4px;
 }
 .tk-card-header {
   padding: 20px 24px;

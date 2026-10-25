@@ -8,7 +8,7 @@
       </router-link>
 
       <!-- Skeleton Header -->
-      <div v-if="isLoading" class="p-4 border rounded-2 bg-white" style="border-radius: 12px !important;">
+      <div v-if="isLoading" class="p-4 border rounded-2 bg-white">
         <div class="placeholder-glow">
           <div class="placeholder col-3 mb-2" style="height: 20px;"></div>
           <div class="placeholder col-2" style="height: 14px;"></div>
@@ -16,7 +16,7 @@
       </div>
 
       <!-- Machine Header Card -->
-      <div v-else-if="garageData" class="p-4 border rounded-2 bg-white d-flex align-items-start justify-content-between flex-column flex-md-row gap-3" style="border-radius: 12px !important;">
+      <div v-else-if="garageData" class="p-4 border rounded-2 bg-white d-flex align-items-start justify-content-between flex-column flex-md-row gap-3">
         <div>
           <div class="d-flex align-items-center gap-2 flex-wrap mb-1">
             <h5 class="fw-bold mb-0" style="color: var(--heading-color);">{{ garageData.dong_co_model?.ten_model || 'Chưa rõ Model' }}</h5>
@@ -45,7 +45,7 @@
     </div>
 
     <!-- Content -->
-    <div class="card border-0 flex-grow-1" style="box-shadow: var(--shadow-sm); border-radius: 12px;">
+    <div class="card border-0 flex-grow-1" style="box-shadow: var(--shadow-sm);">
       <div class="card-header bg-transparent border-bottom d-flex justify-content-between align-items-center" style="padding: 18px 24px;">
         <div>
           <h6 class="mb-0 fw-bold" style="color: var(--heading-color);">PHỤ TÙNG ĐÃ LƯU</h6>

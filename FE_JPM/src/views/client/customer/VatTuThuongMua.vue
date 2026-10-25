@@ -1,6 +1,6 @@
 <template>
 <div class="flex-grow-1 d-flex flex-column">
-    <div class="card border-0 flex-grow-1" style="box-shadow: var(--shadow-sm); border-radius: 12px;">
+    <div class="card border-0 flex-grow-1" style="box-shadow: var(--shadow-sm);">
       <div class="card-header bg-transparent border-bottom d-flex justify-content-between align-items-center" style="padding: 20px 24px;">
         <div>
           <h5 class="mb-0" style="color: var(--heading-color); font-weight: 700;">DANH SÁCH LƯU TRỮ</h5>

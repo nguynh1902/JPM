@@ -276,12 +276,12 @@
           </div>
                     <div class="row g-4">
             <div class="col-6 col-md-4 col-lg-3" v-for="part in relatedParts.slice(0, 8)" :key="part.id">
-                            <div class="card h-100 premium-product-card group-hover position-relative" style="border: 1px solid #e5e7eb; border-radius: 0; box-shadow: none;">
-                  <div class="card-img-wrapper overflow-hidden img-zoom-hover" style="border-radius: 0;">
+                            <div class="card h-100 premium-product-card group-hover position-relative">
+                  <div class="card-img-wrapper overflow-hidden img-zoom-hover">
                     <img
                       :src="part.hinh_anh ? getImageUrl(part.hinh_anh) : 'https://images.unsplash.com/photo-1559523161-0fc0d8b38a7a?auto=format&fit=crop&q=80&w=400'"
                       class="card-img-top w-100 transition-transform"
-                      style="aspect-ratio: 4/3; object-fit: cover; border-radius: 0;"
+                      style="aspect-ratio: 4/3; object-fit: cover;"
                       :alt="part.ten_phu_tung"
                       @error="$event.target.src='https://placehold.co/300x200/f8f9fa/a1acb8?text=JPM+Marine'"
                     >

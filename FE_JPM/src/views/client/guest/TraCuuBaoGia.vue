@@ -18,7 +18,7 @@
     <div class="container" v-else-if="quote">
       <div class="row justify-content-center">
         <div class="col-lg-8">
-          <div class="card shadow-sm border-0" style="border-radius: 12px;">
+          <div class="card shadow-sm border-0">
             <div class="card-header bg-white border-bottom py-4 text-center">
               <h4 class="fw-bold text-dark mb-0">Tra Cứu Báo Giá</h4>
               <p class="text-muted mb-0 mt-2">Mã yêu cầu: <span class="fw-bold text-primary">{{ quote.ma_yeu_cau }}</span></p>

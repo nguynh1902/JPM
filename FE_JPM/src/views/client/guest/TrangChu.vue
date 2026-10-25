@@ -65,118 +65,146 @@
          ======================================================== -->
     <section id="search-parts" class="search-parts-section section position-relative z-3">
       <div class="container" data-aos="fade-up">
+        <!-- Tiêu đề Section chuẩn TheEvent -->
         <div class="section-title" data-aos="fade-up">
           <h2>Tra Cứu Phụ Tùng Nhanh</h2>
-          <p>Chọn thông số phương tiện của bạn để tìm đúng phụ tùng cần thiết</p>
+          <p>Chọn thông số phương tiện hoặc nhập mã để tra cứu chính xác phụ tùng cần thiết</p>
         </div>
 
-        <div class="search-glass-card" data-aos="fade-up" data-aos-delay="100">
+        <!-- Khung Tra Cứu Sang Trọng, Thống Nhất Phong Cách TheEvent -->
+        <div class="filter-console-card position-relative" data-aos="fade-up" data-aos-delay="100">
           <!-- OVERLAY để click ra ngoài đóng dropdown -->
           <div class="dropdown-overlay" v-if="openDropdown" @click="openDropdown = null"></div>
 
-          <!-- MAIN FILTER AREA -->
-          <div class="search-main-area">
-            <div class="filter-row">
-
-              <!-- Thương Hiệu -->
-              <div class="filter-group">
-                <label><i class="bi bi-tag-fill"></i> Thương Hiệu</label>
-                <div class="custom-select-wrapper" :class="{ 'z-active': openDropdown === 'brand' }">
-                  <div class="custom-select-box" :class="{ 'is-focused': openDropdown === 'brand', 'has-value': selectedBrand !== '' }" @click="toggleDropdown('brand')">
-                    <span class="text-truncate">{{ brandLabel }}</span>
-                    <i class="bi bi-chevron-down select-arrow" :class="{ 'rotated': openDropdown === 'brand' }"></i>
-                  </div>
-                  <ul class="custom-dropdown-list" v-show="openDropdown === 'brand'">
-                    <li @click="selectOption('brand', '')" :class="{ active: selectedBrand === '' }">Tất cả thương hiệu</li>
-                    <li v-for="b in brands" :key="b.id" @click="selectOption('brand', b.id)" :class="{ active: selectedBrand === b.id }">{{ b.name }}</li>
-                  </ul>
+          <!-- 1. Hàng 4 Dropdown Lọc Động Cơ -->
+          <div class="row g-3 mb-4">
+            <!-- Cột 1: Thương Hiệu -->
+            <div class="col-12 col-sm-6 col-lg-3">
+              <label class="filter-label mb-2">
+                <i class="bi bi-tag text-secondary me-1"></i> Thương hiệu
+              </label>
+              <div class="custom-select-wrapper" :class="{ 'z-active': openDropdown === 'brand' }">
+                <div class="custom-select-box" :class="{ 'is-focused': openDropdown === 'brand', 'has-value': selectedBrand !== '' }" @click="toggleDropdown('brand')">
+                  <span class="text-truncate">{{ brandLabel }}</span>
+                  <i class="bi bi-chevron-down select-arrow" :class="{ 'rotated': openDropdown === 'brand' }"></i>
                 </div>
+                <ul class="custom-dropdown-list" v-show="openDropdown === 'brand'">
+                  <li @click="selectOption('brand', '')" :class="{ active: selectedBrand === '' }">Tất cả thương hiệu</li>
+                  <li v-for="b in brands" :key="b.id" @click="selectOption('brand', b.id)" :class="{ active: selectedBrand === b.id }">{{ b.name }}</li>
+                </ul>
               </div>
-
-              <!-- Loại Động Cơ -->
-              <div class="filter-group">
-                <label><i class="bi bi-puzzle-fill"></i> Loại Động Cơ</label>
-                <div class="custom-select-wrapper" :class="{ 'z-active': openDropdown === 'engineType' }">
-                  <div class="custom-select-box" :class="{ 'is-focused': openDropdown === 'engineType', 'has-value': selectedEngineType !== '' }" @click="toggleDropdown('engineType')">
-                    <span class="text-truncate">{{ partLabel }}</span>
-                    <i class="bi bi-chevron-down select-arrow" :class="{ 'rotated': openDropdown === 'engineType' }"></i>
-                  </div>
-                  <ul class="custom-dropdown-list" v-show="openDropdown === 'engineType'">
-                    <li @click="selectOption('engineType', '')" :class="{ active: selectedEngineType === '' }">Tất cả loại động cơ</li>
-                    <li v-for="p in engineTypes" :key="p.id" @click="selectOption('engineType', p.id)" :class="{ active: selectedEngineType === p.id }">{{ p.ten_loai_dong_co }}</li>
-                  </ul>
-                </div>
-              </div>
-
-              <!-- Năm Sản Xuất -->
-              <div class="filter-group">
-                <label><i class="bi bi-calendar3"></i> Năm Sản Xuất</label>
-                <div class="custom-select-wrapper" :class="{ 'z-active': openDropdown === 'year' }">
-                  <div class="custom-select-box" :class="{ 'is-focused': openDropdown === 'year', 'has-value': selectedYear !== '' }" @click="toggleDropdown('year')">
-                    <span class="text-truncate">{{ yearLabel }}</span>
-                    <i class="bi bi-chevron-down select-arrow" :class="{ 'rotated': openDropdown === 'year' }"></i>
-                  </div>
-                  <ul class="custom-dropdown-list" v-show="openDropdown === 'year'">
-                    <li @click="selectOption('year', '')" :class="{ active: selectedYear === '' }">Tất cả các năm</li>
-                    <li v-for="y in years" :key="y" @click="selectOption('year', y)" :class="{ active: selectedYear === y }">{{ y }}</li>
-                  </ul>
-                </div>
-              </div>
-
-              <!-- Model Động Cơ -->
-              <div class="filter-group">
-                <label><i class="bi bi-diagram-3-fill"></i> Model Động Cơ</label>
-                <div class="custom-select-wrapper" :class="{ 'z-active': openDropdown === 'model' }">
-                  <div class="custom-select-box" :class="{ 'is-focused': openDropdown === 'model', 'has-value': selectedModel !== '' }" @click="toggleDropdown('model')">
-                    <span class="text-truncate">{{ modelLabel }}</span>
-                    <i class="bi bi-chevron-down select-arrow" :class="{ 'rotated': openDropdown === 'model' }"></i>
-                  </div>
-                  <ul class="custom-dropdown-list" v-show="openDropdown === 'model'">
-                    <li @click="selectOption('model', '')" :class="{ active: selectedModel === '' }">Tất cả model</li>
-                    <li v-for="m in engineModels" :key="m.id" @click="selectOption('model', m.id)" :class="{ active: selectedModel === m.id }">{{ m.ten_model }}</li>
-                  </ul>
-                </div>
-              </div>
-
             </div>
 
-            <!-- Search Input + Buttons -->
-            <div class="search-footer">
-              <div class="search-input-wrap">
-                <label><i class="bi bi-search"></i> Tìm kiếm theo mã (Tùy chọn)</label>
-                <div class="input-group">
-                  <span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-muted"></i></span>
-                  <input
-                    type="text"
-                    class="form-control border-start-0 shadow-none"
-                    placeholder="Nhập mã phụ tùng / model (VD: F250TUR...)"
-                    v-model="searchKeyword"
-                    @keyup.enter="searchParts"
-                  />
+            <!-- Cột 2: Loại Động Cơ -->
+            <div class="col-12 col-sm-6 col-lg-3">
+              <label class="filter-label mb-2">
+                <i class="bi bi-gear text-secondary me-1"></i> Loại động cơ
+              </label>
+              <div class="custom-select-wrapper" :class="{ 'z-active': openDropdown === 'engineType' }">
+                <div class="custom-select-box" :class="{ 'is-focused': openDropdown === 'engineType', 'has-value': selectedEngineType !== '' }" @click="toggleDropdown('engineType')">
+                  <span class="text-truncate">{{ partLabel }}</span>
+                  <i class="bi bi-chevron-down select-arrow" :class="{ 'rotated': openDropdown === 'engineType' }"></i>
                 </div>
+                <ul class="custom-dropdown-list" v-show="openDropdown === 'engineType'">
+                  <li @click="selectOption('engineType', '')" :class="{ active: selectedEngineType === '' }">Tất cả loại động cơ</li>
+                  <li v-for="p in engineTypes" :key="p.id" @click="selectOption('engineType', p.id)" :class="{ active: selectedEngineType === p.id }">{{ p.ten_loai_dong_co }}</li>
+                </ul>
               </div>
-              <div class="search-actions">
-                <button class="btn-reset" @click="resetSearch">
-                  <i class="bi bi-arrow-counterclockwise"></i> Đặt Lại
+            </div>
+
+            <!-- Cột 3: Năm Sản Xuất -->
+            <div class="col-12 col-sm-6 col-lg-3">
+              <label class="filter-label mb-2">
+                <i class="bi bi-calendar3 text-secondary me-1"></i> Năm sản xuất
+              </label>
+              <div class="custom-select-wrapper" :class="{ 'z-active': openDropdown === 'year' }">
+                <div class="custom-select-box" :class="{ 'is-focused': openDropdown === 'year', 'has-value': selectedYear !== '' }" @click="toggleDropdown('year')">
+                  <span class="text-truncate">{{ yearLabel }}</span>
+                  <i class="bi bi-chevron-down select-arrow" :class="{ 'rotated': openDropdown === 'year' }"></i>
+                </div>
+                <ul class="custom-dropdown-list" v-show="openDropdown === 'year'">
+                  <li @click="selectOption('year', '')" :class="{ active: selectedYear === '' }">Tất cả các năm</li>
+                  <li v-for="y in years" :key="y" @click="selectOption('year', y)" :class="{ active: selectedYear === y }">{{ y }}</li>
+                </ul>
+              </div>
+            </div>
+
+            <!-- Cột 4: Model Động Cơ -->
+            <div class="col-12 col-sm-6 col-lg-3">
+              <label class="filter-label mb-2">
+                <i class="bi bi-diagram-3 text-secondary me-1"></i> Model động cơ
+              </label>
+              <div class="custom-select-wrapper" :class="{ 'z-active': openDropdown === 'model' }">
+                <div class="custom-select-box" :class="{ 'is-focused': openDropdown === 'model', 'has-value': selectedModel !== '' }" @click="toggleDropdown('model')">
+                  <span class="text-truncate">{{ modelLabel }}</span>
+                  <i class="bi bi-chevron-down select-arrow" :class="{ 'rotated': openDropdown === 'model' }"></i>
+                </div>
+                <ul class="custom-dropdown-list" v-show="openDropdown === 'model'">
+                  <li @click="selectOption('model', '')" :class="{ active: selectedModel === '' }">Tất cả model</li>
+                  <li v-for="m in engineModels" :key="m.id" @click="selectOption('model', m.id)" :class="{ active: selectedModel === m.id }">{{ m.ten_model }}</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. Hàng Tìm Kiếm Theo Mã & Cụm Nút Thao Tác -->
+          <div class="row g-3 align-items-end">
+            <!-- Ô Tìm kiếm mã -->
+            <div class="col-12 col-lg-8">
+              <label class="filter-label mb-2">
+                <i class="bi bi-upc-scan text-secondary me-1"></i> Tìm kiếm theo mã (Tùy chọn)
+              </label>
+              <div class="search-input-box">
+                <i class="bi bi-search search-input-icon"></i>
+                <input
+                  type="text"
+                  class="search-input-field"
+                  placeholder="Nhập mã phụ tùng / model (VD: F250TUR, 688-45941-01...)"
+                  v-model="searchKeyword"
+                  @keyup.enter="searchParts"
+                />
+              </div>
+            </div>
+
+            <!-- Cụm Nút Thao Tác -->
+            <div class="col-12 col-lg-4">
+              <div class="d-flex gap-2">
+                <button
+                  type="button"
+                  class="btn-reset-action"
+                  @click="resetSearch"
+                  title="Đặt lại các bộ lọc"
+                >
+                  <i class="bi bi-arrow-counterclockwise"></i>
+                  <span>Đặt lại</span>
                 </button>
-                <button class="btn-search" @click="searchParts">
+                <button
+                  type="button"
+                  class="btn-search-action"
+                  @click="searchParts"
+                >
                   <i class="bi bi-search"></i>
-                  <span>Tìm Kiếm Phụ Tùng</span>
+                  <span>Tìm kiếm phụ tùng</span>
                 </button>
               </div>
             </div>
           </div>
 
-          <!-- FOOTER: Tags phổ biến -->
-          <div class="search-tags-footer">
-            <span class="tags-label"><i class="bi bi-lightning-charge-fill"></i> Phổ biến:</span>
-            <a href="javascript:void(0)" class="search-tag" @click="quickSearch('F250TUR')">Yamaha F250TUR</a>
-            <a href="javascript:void(0)" class="search-tag" @click="quickSearch('300HP')">Mercury 300HP V8</a>
-            <a href="javascript:void(0)" class="search-tag" @click="quickSearch('Bottom Cowling')">Bottom Cowling</a>
-            <a href="javascript:void(0)" class="search-tag" @click="quickSearch('Accent Panel')">Accent Panel</a>
-            <a href="javascript:void(0)" class="search-tag" @click="quickSearch('máy phát')">Máy phát Alternator</a>
-            <a href="javascript:void(0)" class="search-tag" @click="quickSearch('8M0142205')">8M0142205</a>
+          <!-- 3. Hàng Từ Khóa Gợi Ý Phổ Biến (Nhẹ nhàng, thanh lịch) -->
+          <div class="popular-tags-row">
+            <span class="popular-tags-label">
+              <i class="bi bi-lightning-charge-fill text-danger me-1"></i>Phổ biến:
+            </span>
+            <div class="popular-tags-list">
+              <a href="javascript:void(0)" class="quick-pill-tag" @click="quickSearch('F250TUR')">Yamaha F250TUR</a>
+              <a href="javascript:void(0)" class="quick-pill-tag" @click="quickSearch('300HP')">Mercury 300HP V8</a>
+              <a href="javascript:void(0)" class="quick-pill-tag" @click="quickSearch('Bottom Cowling')">Bottom Cowling</a>
+              <a href="javascript:void(0)" class="quick-pill-tag" @click="quickSearch('Accent Panel')">Accent Panel</a>
+              <a href="javascript:void(0)" class="quick-pill-tag" @click="quickSearch('máy phát')">Máy phát Alternator</a>
+              <a href="javascript:void(0)" class="quick-pill-tag" @click="quickSearch('8M0142205')">8M0142205</a>
+            </div>
           </div>
+
         </div>
       </div>
     </section>
@@ -409,16 +437,16 @@
               </div>
             </div>
             <!-- Data thật: Bài viết có video -->
-            <div v-else class="d-flex flex-column h-100 group-hover p-2 rounded-2 position-relative">
+            <div v-else class="d-flex flex-column h-100 group-hover p-2 position-relative">
               <!-- Khung Thumbnail có nút Play Video -->
               <div
-                class="overflow-hidden mb-3 position-relative img-zoom-hover rounded-3 skeleton-box-full video-thumb-wrap"
+                class="overflow-hidden mb-3 position-relative img-zoom-hover rounded skeleton-box-full video-thumb-wrap"
                 @click="openVideoModal(videoArticle)"
                 title="Bấm để xem video"
               >
                 <img
                   :src="getImageUrl(videoArticle.thumbnail) || 'https://placehold.co/800x500/f1f3f5/a1acb8?text=JPM+Marine'"
-                  class="img-fluid object-fit-cover h-100 w-100 transition-transform rounded-3"
+                  class="img-fluid object-fit-cover h-100 w-100 transition-transform rounded"
                   :alt="videoArticle.title"
                   @error="$event.target.src='https://placehold.co/800x500/f1f3f5/a1acb8?text=JPM+Marine'"
                 >
@@ -475,10 +503,10 @@
               <div
                 v-for="(item, idx) in sideNews"
                 :key="item.id"
-                class="d-flex align-items-start position-relative list-item-hover p-2 rounded-2"
+                class="d-flex align-items-start position-relative list-item-hover p-2"
                 :class="idx < sideNews.length - 1 ? 'border-bottom pb-3 mb-2' : ''"
               >
-                <div class="overflow-hidden img-zoom-hover rounded-3 news-img-thumb flex-shrink-0">
+                <div class="overflow-hidden img-zoom-hover rounded news-img-thumb flex-shrink-0">
                   <img
                     :src="getImageUrl(item.thumbnail) || 'https://placehold.co/400x300/f1f3f5/a1acb8?text=JPM'"
                     class="img-fluid object-fit-cover h-100 w-100 transition-transform"
@@ -875,7 +903,7 @@ export default {
 }
 
 .skeleton-box-sm {
-  border-radius: 8px;
+  border-radius: 4px;
   width: 170px;
   aspect-ratio: 4/3;
 }
@@ -920,5 +948,296 @@ export default {
   border-color: #ffffff;
   transform: translate(-50%, -50%) scale(1.15) !important;
   box-shadow: 0 0 25px rgba(248, 34, 73, 0.55);
+}
+
+/* ==============================================================
+   Khối 1: Tra Cứu Phụ Tùng Nhanh (Smart Filter Console)
+   Thống nhất 100% phong cách TheEvent, màu Navy & Red thương hiệu
+   ============================================================== */
+.search-parts-section {
+  padding: 55px 0 65px 0;
+  background-color: #f8fafc;
+}
+
+.filter-console-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 4px;
+  box-shadow: 0 10px 30px rgba(10, 17, 40, 0.05);
+  padding: 32px 36px;
+  transition: box-shadow 0.3s ease;
+  overflow: visible !important;
+  position: relative;
+  z-index: 20;
+}
+
+.filter-console-card:hover {
+  box-shadow: 0 14px 40px rgba(10, 17, 40, 0.08);
+}
+
+.filter-label {
+  display: flex;
+  align-items: center;
+  font-family: var(--default-font);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--heading-color, #0A1128);
+  letter-spacing: 0.1px;
+}
+
+.filter-label i {
+  font-size: 0.9rem;
+}
+
+/* Custom Select Box */
+.custom-select-wrapper {
+  position: relative;
+}
+.custom-select-wrapper.z-active {
+  z-index: 1050;
+}
+.custom-select-box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  height: 46px;
+  border-radius: 4px;
+  border: 1px solid #d1d5db;
+  background: #ffffff;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.875rem;
+  font-weight: 400;
+  color: #64748b;
+  font-family: var(--default-font);
+}
+.custom-select-box:hover {
+  border-color: #94a3b8;
+}
+.custom-select-box.is-focused {
+  border-color: var(--accent-color, #f82249);
+  box-shadow: 0 0 0 3px rgba(248, 34, 73, 0.12);
+}
+.custom-select-box.has-value {
+  color: var(--heading-color, #0A1128);
+  font-weight: 500;
+}
+.select-arrow {
+  transition: transform 0.2s ease;
+  font-size: 11px;
+  color: #94a3b8;
+}
+.select-arrow.rotated,
+.custom-select-box.is-focused .select-arrow {
+  transform: rotate(180deg);
+  color: var(--accent-color, #f82249);
+}
+
+/* Dropdown Menu */
+.custom-dropdown-list {
+  position: absolute;
+  min-width: 100%;
+  width: max-content;
+  max-width: 320px;
+  top: calc(100% + 4px);
+  list-style: none;
+  margin: 0;
+  padding: 6px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 4px;
+  box-shadow: 0 14px 35px rgba(10, 17, 40, 0.15);
+  z-index: 1060;
+  max-height: 320px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  font-family: var(--default-font);
+}
+.custom-dropdown-list::-webkit-scrollbar {
+  width: 6px;
+}
+.custom-dropdown-list::-webkit-scrollbar-track {
+  background: #f8fafc;
+  border-radius: 4px;
+}
+.custom-dropdown-list::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+.custom-dropdown-list li {
+  white-space: nowrap;
+  padding: 9px 14px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 400;
+  color: #334155;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.15s ease;
+  border-radius: 4px;
+}
+.custom-dropdown-list li:hover {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+.custom-dropdown-list li.active {
+  background: var(--accent-color, #f82249);
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.dropdown-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: transparent;
+}
+
+/* Search Input Box */
+.search-input-box {
+  display: flex;
+  align-items: center;
+  height: 46px;
+  border-radius: 4px;
+  border: 1px solid #d1d5db;
+  background: #ffffff;
+  padding: 0 16px;
+  transition: all 0.2s ease;
+}
+.search-input-box:focus-within {
+  border-color: var(--accent-color, #f82249);
+  box-shadow: 0 0 0 3px rgba(248, 34, 73, 0.12);
+}
+.search-input-box:hover {
+  border-color: #94a3b8;
+}
+.search-input-icon {
+  font-size: 1rem;
+  color: #94a3b8;
+  margin-right: 10px;
+  flex-shrink: 0;
+}
+.search-input-box:focus-within .search-input-icon {
+  color: var(--accent-color, #f82249);
+}
+.search-input-field {
+  flex: 1;
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: 0.875rem;
+  font-family: var(--default-font);
+  color: var(--heading-color, #0A1128);
+  font-weight: 400;
+}
+.search-input-field::placeholder {
+  color: #94a3b8;
+}
+
+/* Nút Bấm Thao Tác (Buttons) */
+.btn-reset-action {
+  height: 46px;
+  padding: 0 18px;
+  border: 1px solid #d1d5db;
+  background: #ffffff;
+  color: #475569;
+  font-family: var(--heading-font, 'Raleway', sans-serif);
+  font-size: 0.875rem;
+  font-weight: 600;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.btn-reset-action:hover {
+  background: #f8fafc;
+  border-color: #94a3b8;
+  color: #0f172a;
+}
+
+.btn-search-action {
+  height: 46px;
+  padding: 0 24px;
+  border: none;
+  background: var(--accent-color, #f82249);
+  color: #ffffff;
+  font-family: var(--heading-font, 'Raleway', sans-serif);
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  white-space: nowrap;
+  flex-grow: 1;
+}
+.btn-search-action:hover {
+  background: #d91a3c;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 15px rgba(248, 34, 73, 0.3);
+}
+
+/* Hàng Tags Phổ Biến */
+.popular-tags-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 24px;
+  padding-top: 18px;
+  border-top: 1px dashed #e2e8f0;
+}
+.popular-tags-label {
+  font-family: var(--default-font);
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  margin-right: 4px;
+}
+.popular-tags-list {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+.quick-pill-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 14px;
+  border: 1px solid #e2e8f0;
+  background: #f8fafc;
+  color: #475569;
+  font-size: 0.78rem;
+  font-weight: 500;
+  text-decoration: none;
+  border-radius: 20px;
+  transition: all 0.2s ease;
+}
+.quick-pill-tag:hover {
+  border-color: var(--accent-color, #f82249);
+  color: var(--accent-color, #f82249);
+  background-color: #fff5f6;
+  transform: translateY(-1px);
+}
+
+@media (max-width: 991px) {
+  .filter-console-card {
+    padding: 24px 20px;
+  }
 }
 </style>

@@ -216,7 +216,7 @@
     <Teleport to="body">
       <div class="modal fade" id="addressModal" tabindex="-1" aria-labelledby="addressModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
-          <div class="modal-content" style="border-radius: 12px; border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
+          <div class="modal-content" style="border-radius: 4px; border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
             <div class="modal-header border-bottom-0 pb-0 mt-2">
               <h5 class="modal-title fw-bold text-dark" id="addressModalLabel">Địa Chỉ Của Tôi</h5>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>

@@ -227,9 +227,9 @@
                 <div v-else-if="activeTab === 'diagrams'">
                   <div class="row g-4" v-if="diagramsList.length > 0">
                     <div class="col-md-4 col-sm-6" v-for="diag in diagramsList" :key="diag.id">
-                      <div class="card h-100 premium-product-card group-hover" @click="goToDiagram(diag)" @mouseenter="prefetchDiagram(diag)" style="cursor: pointer; border: 1px solid #e5e7eb; border-radius: 0; box-shadow: none;">
-                        <div class="card-img-wrapper overflow-hidden img-zoom-hover" style="border-radius: 0;">
-                          <img :src="diag.hinh_anh ? diag.hinh_anh : 'https://placehold.co/400x400/f8f9fa/a1acb8?text=No+Image'" class="card-img-top w-100 transition-transform" style="aspect-ratio: 4/3; object-fit: cover; border-radius: 0;" :alt="diag.ten_so_do">
+                      <div class="card h-100 premium-product-card group-hover" @click="goToDiagram(diag)" @mouseenter="prefetchDiagram(diag)" style="cursor: pointer;">
+                        <div class="card-img-wrapper overflow-hidden img-zoom-hover">
+                          <img :src="diag.hinh_anh ? diag.hinh_anh : 'https://placehold.co/400x400/f8f9fa/a1acb8?text=No+Image'" class="card-img-top w-100 transition-transform" style="aspect-ratio: 4/3; object-fit: cover;" :alt="diag.ten_so_do">
                         </div>
                         <div class="card-body text-start p-3 d-flex flex-column bg-white">
                           <div class="d-flex justify-content-between align-items-start mb-2">
@@ -261,9 +261,9 @@
                 <div v-else-if="activeTab === 'products'">
                   <div class="row g-4" v-if="products.length > 0">
                     <div class="col-md-4 col-sm-6" v-for="prod in products" :key="prod.id">
-                      <div class="card h-100 premium-product-card group-hover position-relative" style="border: 1px solid #e5e7eb; border-radius: 0; box-shadow: none;">
-                        <div class="card-img-wrapper overflow-hidden img-zoom-hover" style="border-radius: 0;">
-                          <img :src="prod.hinh_anh ? prod.hinh_anh : 'https://placehold.co/400x300/f8f9fa/a1acb8?text=No+Image'" class="card-img-top w-100 transition-transform" style="aspect-ratio: 4/3; object-fit: cover; border-radius: 0;" :alt="prod.ten_phu_tung">
+                      <div class="card h-100 premium-product-card group-hover position-relative">
+                        <div class="card-img-wrapper overflow-hidden img-zoom-hover">
+                          <img :src="prod.hinh_anh ? prod.hinh_anh : 'https://placehold.co/400x300/f8f9fa/a1acb8?text=No+Image'" class="card-img-top w-100 transition-transform" style="aspect-ratio: 4/3; object-fit: cover;" :alt="prod.ten_phu_tung">
                           <div class="position-absolute" style="top: 10px; right: 10px; z-index: 10;">
                             <button class="btn bg-white shadow-sm" style="width: 32px; height: 32px; padding: 0; display: flex; align-items: center; justify-content: center; border: 1px solid #e5e7eb; border-radius: 4px;" title="Thêm vào giỏ" @click.prevent="addToCart(prod)">
                               <i class="bi bi-cart-plus" style="color: #dc3545; font-size: 1.1rem;"></i>
@@ -663,7 +663,7 @@ export default {
 .badge-filter:hover { background: var(--accent-color); color: #fff; }
 
 /* Skeleton */
-.skeleton-card { background: #fff; border-radius: 12px; overflow: hidden; border: 1px solid #eee; }
+.skeleton-card { background: #fff; border-radius: 4px; overflow: hidden; border: 1px solid #eee; }
 .skeleton-img { height: 200px; }
 .skeleton-box { background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 4px; display: block; }
 @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }

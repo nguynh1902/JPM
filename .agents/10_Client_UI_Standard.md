@@ -86,21 +86,30 @@ Không tự viết class nút tùy biến. Sử dụng hệ nút Bootstrap đư�
 </button>
 ```
 
-### 3.3. Thẻ Sản Phẩm / Phụ Tùng (Product & Part Cards)
-Sử dụng thẻ Card nền trắng, đổ bóng mềm của TheEvent:
+### 3.3. Thẻ Sản Phẩm / Phụ Tùng / Card Chung (Product & Card Standard)
+- **Quy chuẩn độ cong Card thống nhất toàn bộ Client:** Toàn bộ thẻ `.card`, `.product-card`, `.premium-product-card` trên giao diện Client được quy chuẩn bo góc sắc nét, thanh lịch chuẩn **`border-radius: 4px;`** (Luxury Minimalism 4px nguyên bản của hệ thống) tự động ăn theo template `main.css`.
+- **Cơ chế tự động hóa qua CSS Template:** Khi lập trình viên viết code chỉ cần khai báo class `card` (hoặc `product-card`), thẻ sẽ **tự động thừa hưởng độ cong 4px**, viền mỏng `#e0e6f0`, đổ bóng mờ thanh lịch và hiệu ứng overflow clipping. **Tuyệt đối không cần thêm các class bo góc rời rạc** (`rounded-3`, `rounded-2`) hay dùng inline `style="border-radius: ..."` gây bất nhất giao diện giữa các trang.
+- **Ảnh thẻ con (`.card-img-wrapper`, `.card-img-top`):** Tự động bo góc trên `4px` (`border-top-left-radius: 4px; border-top-right-radius: 4px;`) để ảnh ôm khít tuyệt đối góc cong của Card, không bị lem góc vuông thừa ra ngoài.
+
+Cấu trúc mẫu chuẩn cho Card:
 ```html
-<div class="card h-100 border-0 shadow-sm rounded-3 overflow-hidden product-card">
+<div class="card h-100 product-card position-relative">
   <!-- Ảnh sản phẩm / sơ đồ -->
-  <div class="position-relative bg-light d-flex align-items-center justify-content-center p-3" style="height: 200px;">
-    <img :src="item.image" :alt="item.name" class="img-fluid object-fit-contain h-100" />
+  <div class="card-img-wrapper position-relative overflow-hidden bg-light d-flex align-items-center justify-content-center">
+    <img :src="item.image" :alt="item.name" class="card-img-top w-100 transition-transform" />
     <span v-if="item.is_oem" class="badge bg-danger position-absolute top-0 start-0 m-2">Chính Hãng OEM</span>
   </div>
   <!-- Thông tin -->
-  <div class="card-body d-flex flex-column justify-content-between p-3">
+  <div class="card-body d-flex flex-column justify-content-between p-3 bg-white">
     <div>
-      <small class="text-muted text-uppercase fw-semibold">{{ item.brand_name }}</small>
-      <h6 class="fw-bold text-dark mb-2 text-truncate" :title="item.name">{{ item.name }}</h6>
-      <div class="text-danger fw-bold fs-5 mb-2">{{ formatCurrency(item.price) }}</div>
+      <div class="product-category mb-1 text-truncate">{{ item.brand_name }}</div>
+      <h5 class="card-title mb-1">
+        <router-link :to="`/chi-tiet-san-pham/${item.slug}`" class="stretched-link">{{ item.name }}</router-link>
+      </h5>
+      <div class="product-sku mb-3">
+        <span class="sku-label">Mã:</span> <span class="sku-code">{{ item.sku }}</span>
+      </div>
+      <div class="text-danger fw-bold price-value">{{ formatCurrency(item.price) }}</div>
     </div>
     <div class="d-grid mt-2">
       <button class="btn btn-outline-danger btn-sm">Xem Chi Tiết</button>
@@ -171,6 +180,12 @@ Dùng `.input-group` kết hợp icon Bootstrap Icons:
      }
      .badge.bg-danger {
        background-color: #f82249 !important;
+     }
+     .card {
+       border-radius: 4px !important;
+       box-shadow: 0 10px 30px rgba(0,0,0,0.04) !important;
+       border: 1px solid #e0e6f0 !important;
+       overflow: hidden;
      }
      ```
   3. **Tiện ích dùng chung toàn cục (Global Shared Utilities):** Các class tiện ích tái sử dụng ở mọi trang như `.text-truncate-2`, `.text-truncate-3`, `.skeleton-box`, `.skeleton-line`...

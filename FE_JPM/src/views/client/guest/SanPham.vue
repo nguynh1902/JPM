@@ -105,12 +105,12 @@
                   <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4">
                     <div class="col" v-for="prod in cat.products" :key="prod.id">
                                                           <!-- PRODUCT CARD -->
-                  <div class="card h-100 premium-product-card group-hover position-relative" style="border: 1px solid #e5e7eb; border-radius: 0; box-shadow: none;">
-                    <div class="card-img-wrapper overflow-hidden img-zoom-hover" style="border-radius: 0;">
+                  <div class="card h-100 premium-product-card group-hover position-relative">
+                    <div class="card-img-wrapper overflow-hidden img-zoom-hover">
                       <img
                         :src="getImageUrl(prod.hinh_anh_chinh)"
                         class="card-img-top w-100 transition-transform"
-                        style="aspect-ratio: 4/3; object-fit: cover; border-radius: 0;"
+                        style="aspect-ratio: 4/3; object-fit: cover;"
                         :alt="prod.ten_san_pham"
                         @error="$event.target.src='https://placehold.co/400x300/f8f9fa/a1acb8?text=JPM'"
                       >
@@ -175,12 +175,12 @@
                 <div class="col" v-for="prod in products" :key="prod.id">
                   
                                                       <!-- PRODUCT CARD -->
-                  <div class="card h-100 premium-product-card group-hover position-relative" style="border: 1px solid #e5e7eb; border-radius: 0; box-shadow: none;">
-                    <div class="card-img-wrapper overflow-hidden img-zoom-hover" style="border-radius: 0;">
+                  <div class="card h-100 premium-product-card group-hover position-relative">
+                    <div class="card-img-wrapper overflow-hidden img-zoom-hover">
                       <img
                         :src="getImageUrl(prod.hinh_anh_chinh)"
                         class="card-img-top w-100 transition-transform"
-                        style="aspect-ratio: 4/3; object-fit: cover; border-radius: 0;"
+                        style="aspect-ratio: 4/3; object-fit: cover;"
                         :alt="prod.ten_san_pham"
                         @error="$event.target.src='https://placehold.co/400x300/f8f9fa/a1acb8?text=JPM'"
                       >
@@ -207,7 +207,7 @@
               </div>
               
               <!-- Empty State -->
-              <div class="text-center py-5 card border-0 p-5 shadow-sm mt-4" style="border-radius: 12px;" v-else>
+              <div class="text-center py-5 card border-0 p-5 shadow-sm mt-4" v-else>
                 <i class="bi bi-box-seam text-muted" style="font-size: 4rem; opacity: 0.5;"></i>
                 <h5 class="mt-4 fw-bold text-uppercase" style="letter-spacing: 1px; color: var(--heading-color);">Không tìm thấy sản phẩm</h5>
                 <p class="text-muted mt-2" style="font-weight: 300;">Rất tiếc, không có sản phẩm nào phù hợp với bộ lọc hiện tại của bạn.</p>

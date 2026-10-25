@@ -679,7 +679,7 @@ export default {
 .article-html-content :deep(img) {
   max-width: 100%;
   height: auto;
-  border-radius: 12px;
+  border-radius: 4px;
   margin: 1.75rem 0;
 }
 
