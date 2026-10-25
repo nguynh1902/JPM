@@ -1016,8 +1016,10 @@ export default {
   border-color: #94a3b8;
 }
 .custom-select-box.is-focused {
-  border-color: var(--accent-color, #f82249);
-  box-shadow: 0 0 0 3px rgba(248, 34, 73, 0.12);
+  border-width: 2px !important;
+  border-color: var(--accent-color, #f82249) !important;
+  box-shadow: 0 0 0.25rem 0.12rem rgba(248, 34, 73, 0.4) !important;
+  outline: 0 !important;
 }
 .custom-select-box.has-value {
   color: var(--heading-color, #0A1128);
@@ -1107,8 +1109,10 @@ export default {
   transition: all 0.2s ease;
 }
 .search-input-box:focus-within {
-  border-color: var(--accent-color, #f82249);
-  box-shadow: 0 0 0 3px rgba(248, 34, 73, 0.12);
+  border-width: 2px !important;
+  border-color: var(--accent-color, #f82249) !important;
+  box-shadow: 0 0 0.25rem 0.12rem rgba(248, 34, 73, 0.4) !important;
+  outline: 0 !important;
 }
 .search-input-box:hover {
   border-color: #94a3b8;

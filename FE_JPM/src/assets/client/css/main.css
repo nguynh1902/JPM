@@ -2286,8 +2286,9 @@ section,
   transition: all 0.25s ease;
 }
 .index-page .form-control:focus, .index-page .form-select:focus {
-  border-color: var(--accent-color, #f82249);
-  box-shadow: 0 0 0 3px rgba(248, 34, 73, 0.1);
+  border-width: 2px !important;
+  border-color: var(--accent-color, #f82249) !important;
+  box-shadow: 0 0 0.25rem 0.12rem rgba(248, 34, 73, 0.4) !important;
   outline: none;
   z-index: 3;
 }
@@ -2299,11 +2300,12 @@ section,
 /* JPM Unified Input Group Focus */
 .index-page .input-group:focus-within .form-control,
 .index-page .input-group:focus-within .input-group-text {
-  border-color: var(--accent-color, #f82249);
+  border-width: 2px !important;
+  border-color: var(--accent-color, #f82249) !important;
   z-index: 4;
 }
 .index-page .input-group:focus-within {
-  box-shadow: 0 0 0 3px rgba(248, 34, 73, 0.1);
+  box-shadow: 0 0 0.25rem 0.12rem rgba(248, 34, 73, 0.4) !important;
   border-radius: 4px;
 }
 .index-page .input-group .form-control:focus {
