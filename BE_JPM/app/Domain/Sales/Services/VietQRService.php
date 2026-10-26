@@ -3,6 +3,7 @@
 namespace App\Domain\Sales\Services;
 
 use App\Domain\Communication\Services\NotificationService;
+use App\Domain\Core\Models\CauHinh;
 use App\Domain\Sales\Models\DonHang;
 use App\Domain\Sales\Models\GiaoDichThanhToan;
 use App\Domain\Sales\Models\YeuCauBaoGia;
@@ -19,15 +20,42 @@ class VietQRService
     }
 
     /**
+     * Lấy cấu hình tài khoản ngân hàng (Ưu tiên đọc từ CSDL Cấu Hình Hệ Thống, fallback về .env)
+     */
+    public function getBankConfig(): array
+    {
+        try {
+            $dbConfigs = CauHinh::whereIn('khoa_cau_hinh', [
+                'vietqr_bank_id',
+                'vietqr_bank_name',
+                'vietqr_account_no',
+                'vietqr_account_name',
+                'vietqr_template',
+            ])->pluck('gia_tri', 'khoa_cau_hinh')->toArray();
+        } catch (\Throwable $e) {
+            $dbConfigs = [];
+        }
+
+        return [
+            'bank_id'      => !empty($dbConfigs['vietqr_bank_id']) ? $dbConfigs['vietqr_bank_id'] : config('services.vietqr.bank_id', 'ICB'),
+            'bank_name'    => !empty($dbConfigs['vietqr_bank_name']) ? $dbConfigs['vietqr_bank_name'] : config('services.vietqr.bank_name', 'VietinBank'),
+            'account_no'   => !empty($dbConfigs['vietqr_account_no']) ? $dbConfigs['vietqr_account_no'] : config('services.vietqr.account_no', '108876543210'),
+            'account_name' => !empty($dbConfigs['vietqr_account_name']) ? $dbConfigs['vietqr_account_name'] : config('services.vietqr.account_name', 'CONG TY PHU TUNG MAY THUY JPM'),
+            'template'     => !empty($dbConfigs['vietqr_template']) ? $dbConfigs['vietqr_template'] : config('services.vietqr.template', 'compact2'),
+        ];
+    }
+
+    /**
      * Sinh thông tin mã VietQR cho Đơn hàng
      */
     public function generateDonHangQR(DonHang $donHang, string $type = 'auto'): array
     {
-        $bankId = config('services.vietqr.bank_id', 'ICB');
-        $bankName = config('services.vietqr.bank_name', 'VietinBank');
-        $accountNo = config('services.vietqr.account_no', '108876543210');
-        $accountName = config('services.vietqr.account_name', 'CONG TY PHU TUNG MAY THUY JPM');
-        $template = config('services.vietqr.template', 'compact2');
+        $bankCfg = $this->getBankConfig();
+        $bankId = $bankCfg['bank_id'];
+        $bankName = $bankCfg['bank_name'];
+        $accountNo = $bankCfg['account_no'];
+        $accountName = $bankCfg['account_name'];
+        $template = $bankCfg['template'];
 
         $totalOrder = (float)($donHang->tong_tien + ($donHang->phi_van_chuyen ?? 0));
         $daThu = (float)($donHang->da_thu ?? 0);
@@ -84,11 +112,12 @@ class VietQRService
      */
     public function generateBaoGiaQR(YeuCauBaoGia $quote): array
     {
-        $bankId = config('services.vietqr.bank_id', 'ICB');
-        $bankName = config('services.vietqr.bank_name', 'VietinBank');
-        $accountNo = config('services.vietqr.account_no', '108876543210');
-        $accountName = config('services.vietqr.account_name', 'CONG TY PHU TUNG MAY THUY JPM');
-        $template = config('services.vietqr.template', 'compact2');
+        $bankCfg = $this->getBankConfig();
+        $bankId = $bankCfg['bank_id'];
+        $bankName = $bankCfg['bank_name'];
+        $accountNo = $bankCfg['account_no'];
+        $accountName = $bankCfg['account_name'];
+        $template = $bankCfg['template'];
 
         $tienCoc = (float)($quote->tien_coc_yeu_cau ?? 0);
         $tongTien = (float)($quote->tong_tien ?? 0);

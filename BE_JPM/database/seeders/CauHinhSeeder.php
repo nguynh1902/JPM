@@ -103,7 +103,44 @@ class CauHinhSeeder extends Seeder
                 'trang_thai'    => 1,
             ],
 
-            // 4. Chân trang & Pháp lý
+            // 4. Tài khoản ngân hàng & VietQR nhận cọc Napas 24/7
+            [
+                'khoa_cau_hinh' => 'vietqr_bank_id',
+                'gia_tri'       => 'ICB',
+                'mo_ta'         => 'Mã định danh ngân hàng Napas (ICB: VietinBank, VCB: Vietcombank, MB: MBBank...)',
+                'loai_gia_tri'  => 'text',
+                'trang_thai'    => 1,
+            ],
+            [
+                'khoa_cau_hinh' => 'vietqr_bank_name',
+                'gia_tri'       => 'VietinBank',
+                'mo_ta'         => 'Tên viết tắt ngân hàng thụ hưởng',
+                'loai_gia_tri'  => 'text',
+                'trang_thai'    => 1,
+            ],
+            [
+                'khoa_cau_hinh' => 'vietqr_account_no',
+                'gia_tri'       => '108876543210',
+                'mo_ta'         => 'Số tài khoản ngân hàng nhận tiền cọc',
+                'loai_gia_tri'  => 'text',
+                'trang_thai'    => 1,
+            ],
+            [
+                'khoa_cau_hinh' => 'vietqr_account_name',
+                'gia_tri'       => 'CONG TY PHU TUNG MAY THUY JPM',
+                'mo_ta'         => 'Tên chủ tài khoản ngân hàng (in hoa không dấu)',
+                'loai_gia_tri'  => 'text',
+                'trang_thai'    => 1,
+            ],
+            [
+                'khoa_cau_hinh' => 'vietqr_template',
+                'gia_tri'       => 'compact2',
+                'mo_ta'         => 'Kiểu hiển thị mã QR VietQR (compact, compact2, qr_only)',
+                'loai_gia_tri'  => 'text',
+                'trang_thai'    => 1,
+            ],
+
+            // 5. Chân trang & Pháp lý
             [
                 'khoa_cau_hinh' => 'footer_about_text',
                 'gia_tri'       => 'Nhà phân phối phụ tùng động cơ thủy gắn ngoài hàng đầu tại Việt Nam. Uy tín, chất lượng và đồng hành cùng bạn trên mọi hành trình vươn khơi.',

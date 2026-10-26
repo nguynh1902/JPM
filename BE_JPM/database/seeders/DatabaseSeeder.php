@@ -33,6 +33,7 @@ class DatabaseSeeder extends Seeder
             FaqSeeder::class,
             NhaCungCapSeeder::class,
             KhoSeeder::class,
+            CauHinhSeeder::class,
             DashboardSeeder::class,
             NotificationSeeder::class,
             SystemLogSeeder::class,

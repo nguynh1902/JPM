@@ -64,9 +64,9 @@ class CauHinhService
                     CauHinh::updateOrCreate(
                         ['khoa_cau_hinh' => $key],
                         [
-                            'gia_tri'    => $valueToSave,
-                            'nhom'       => $group,
-                            'trang_thai' => 1,
+                            'gia_tri'      => $valueToSave,
+                            'loai_gia_tri' => $group,
+                            'trang_thai'   => 1,
                         ]
                     );
                 }
