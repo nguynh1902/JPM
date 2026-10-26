@@ -28,8 +28,6 @@ class DatabaseSeeder extends Seeder
             ChiTietSoDoSeeder::class,
             DanhMucSanPhamSeeder::class,
             SanPhamSeeder::class,
-            BannerSeeder::class,
-            VoucherSeeder::class,
             ChuyenMucSeeder::class,
             TinTucSeeder::class,
             FaqSeeder::class,

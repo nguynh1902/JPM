@@ -101,7 +101,7 @@
           <div class="col-lg-5 col-xl-4" data-aos="fade-up" data-aos-delay="200">
             <div class="card border-0 shadow-sm rounded-4 sticky-sidebar">
               <div class="card-header bg-white px-4 border-bottom d-flex align-items-center" style="height: 76px;">
-                <h4 class="mb-0 jpm-card-title">{{ isMixedCart ? 'Đơn Hàng & Báo Giá' : (checkoutType === 'quote' ? 'Yêu Cầu Báo Giá' : 'Thông Tin Đặt Hàng') }}</h4>
+                <h4 class="mb-0 jpm-card-title">Thông Tin Đặt Hàng & Báo Giá</h4>
               </div>
               
               <div class="card-body p-4">
@@ -118,7 +118,7 @@
                     <span v-else class="text-secondary">Theo cước nhà xe / chành xe</span>
                   </div>
                   <div class="d-flex justify-content-between align-items-baseline pt-2 border-top">
-                    <span class="text-muted fw-medium">Tạm tính:</span>
+                    <span class="text-muted fw-medium">Tạm tính tiền hàng:</span>
                     <div class="text-end">
                       <strong class="text-muted fs-5 fw-bold" v-if="selectedItems.length === 0">0 ₫</strong>
                       <strong class="text-danger fs-5 fw-bold" v-else-if="hasPricedItems">{{ formatPrice(pricedTotalAmount) }}</strong>
@@ -128,9 +128,9 @@
                       </div>
                     </div>
                   </div>
-                  <!-- Thông báo đơn hỗn hợp thân thiện -->
-                  <div v-if="isMixedCart" class="alert alert-info py-2 px-3 small mt-3 mb-0 rounded-3 border-0 bg-info-subtle text-info-emphasis" style="font-size: 0.8rem; line-height: 1.4;">
-                    <i class="bi bi-info-circle-fill me-1"></i> Đơn hàng gồm phụ tùng có sẵn và phụ tùng cần kiểm tra thông số máy. Kỹ thuật viên JPM sẽ gọi điện/Zalo báo giá chiết khấu cho quý khách trước khi xuất kho.
+                  <!-- Thông báo đơn hàng chuẩn thực tế -->
+                  <div class="alert alert-info py-2 px-3 small mt-3 mb-0 rounded-3 border-0 bg-info-subtle text-info-emphasis" style="font-size: 0.8rem; line-height: 1.4;">
+                    <i class="bi bi-info-circle-fill me-1"></i> Sau khi nhận đơn, Kỹ thuật viên JPM sẽ kiểm tra tồn kho, tính cước vận chuyển (chành xe) và tiền cọc cần chuyển, sau đó gửi bảng báo giá kèm mã VietQR qua Zalo để quý khách xác nhận.
                   </div>
                 </div>
 
@@ -330,7 +330,7 @@ export default {
       return this.selectedCartItems.reduce((total, item) => total + item.quantity, 0)
     },
     checkoutType() {
-      return this.hasContactItems ? 'quote' : 'order'
+      return 'quote'
     },
     hasContactItems() {
       return this.selectedCartItems.some(item => item.is_gia_lien_he || !item.gia_ban || parseFloat(item.gia_ban) <= 0)
@@ -352,9 +352,7 @@ export default {
     },
     buttonText() {
       if (this.selectedItems.length === 0) return 'VUI LÒNG CHỌN SẢN PHẨM'
-      if (this.isMixedCart) return 'XÁC NHẬN GỬI YÊU CẦU BÁO GIÁ'
-      if (this.hasContactItems) return 'GỬI YÊU CẦU BÁO GIÁ'
-      return 'TIẾN HÀNH ĐẶT HÀNG'
+      return 'GỬI ĐƠN ĐẶT HÀNG & BÁO GIÁ'
     },
     totalAmount() {
       if (this.selectedItems.length === 0) return this.formatPrice(0)
@@ -582,26 +580,20 @@ export default {
           this.selectedItems.forEach(id => this.cartStore.removeItem(id))
           this.selectedItems = []
           
-          const isOrder = this.checkoutType === 'order'
-          const titleType = isOrder ? 'Mã Đơn Hàng' : 'Mã Yêu Cầu Báo Giá'
-          const descText = isOrder
-            ? `Hệ thống đã ghi nhận đơn hàng #${this.pendingOrderId}. Đội ngũ JPM Marine sẽ kiểm tra và liên hệ xác nhận xuất kho sớm nhất.`
-            : `Hệ thống đã ghi nhận yêu cầu báo giá #${this.pendingOrderId}. Đội ngũ JPM Marine sẽ kiểm tra tồn kho phụ tùng, tính cước vận chuyển và gửi bảng báo giá kèm tiền cọc cho quý khách sớm nhất.`
-          const chatMsg = isOrder
-            ? `Chào JPM Marine, tôi vừa đặt đơn hàng mã ${this.pendingOrderId}.`
-            : `Chào JPM Marine, tôi vừa gửi yêu cầu báo giá phụ tùng mã ${this.pendingOrderId}.`
+          const descText = `Hệ thống đã ghi nhận đơn hàng #${this.pendingOrderId}. Đội ngũ JPM Marine sẽ kiểm tra tồn kho, tính cước vận chuyển (chành xe) và gửi bảng báo giá kèm tiền cọc cho quý khách qua Zalo sớm nhất.`
+          const chatMsg = `Chào JPM Marine, tôi vừa gửi đơn hàng mã ${this.pendingOrderId} cần báo giá cước vận chuyển và tiền cọc.`
             
           Swal.fire({
             icon: 'success',
-            title: isOrder ? 'Đặt Hàng Thành Công!' : 'Gửi Yêu Cầu Thành Công!',
+            title: 'Gửi Đơn Hàng Thành Công!',
             html: `
-              <p class="text-muted mb-2">${titleType} của bạn:</p>
+              <p class="text-muted mb-2">Mã Đơn / Yêu Cầu của bạn:</p>
               <div class="fw-bold fs-3 mb-3" style="color: #059669;">#${this.pendingOrderId}</div>
               <p style="font-size: 0.95rem;">${descText}</p>
             `,
             showCancelButton: true,
             confirmButtonText: '<i class="bi bi-chat-dots me-1"></i> Chat Zalo Hỗ Trợ',
-            cancelButtonText: this.isAuthenticated ? (isOrder ? 'Xem Lịch Sử Đơn Hàng' : 'Xem Lịch Sử Báo Giá') : 'Đóng',
+            cancelButtonText: this.isAuthenticated ? 'Xem Lịch Sử Đơn Hàng' : 'Theo Dõi Đơn Hàng',
             confirmButtonColor: '#0068ff',
             cancelButtonColor: '#6c757d'
           }).then((result) => {
@@ -610,6 +602,8 @@ export default {
               window.open(`https://zalo.me/${zaloPhone}?text=${encodeURIComponent(chatMsg)}`, '_blank')
             } else if (this.isAuthenticated) {
               this.$router.push('/lich-su-don-hang')
+            } else {
+              this.$router.push(`/tra-cuu-don-hang?code=${this.pendingOrderId}&phone=${finalPhone}`)
             }
           })
         }

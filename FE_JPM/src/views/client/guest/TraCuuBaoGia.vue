@@ -114,20 +114,42 @@
                   </tbody>
                   <tfoot class="table-light">
                     <tr>
-                      <td colspan="4" class="text-end fw-bold text-dark text-muted">Phí Vận Chuyển:</td>
-                      <td class="text-end fw-bold text-danger">
-                        <span v-if="quote.trang_thai > 0 && quote.khach_tu_tra_cuoc">Người nhận trả cước</span>
-                        <span v-else-if="quote.trang_thai > 0">{{ formatCurrency(quote.phi_van_chuyen || 0) }}</span>
-                        <span v-else>---</span>
+                      <td colspan="4" class="text-end fw-medium text-muted">Tiền Hàng (Tạm tính):</td>
+                      <td class="text-end fw-bold text-dark">
+                        {{ quote.trang_thai > 0 ? formatCurrency(quote.tong_tien) : 'Chờ định giá' }}
                       </td>
                     </tr>
                     <tr>
-                      <td colspan="4" class="text-end fw-bold text-dark text-muted">Yêu Cầu Cọc:</td>
-                      <td class="text-end fw-bold text-primary">{{ quote.trang_thai > 0 ? formatCurrency(quote.tien_coc_yeu_cau || 0) : '---' }}</td>
+                      <td colspan="4" class="text-end fw-medium text-muted">Phí Vận Chuyển:</td>
+                      <td class="text-end fw-bold text-dark">
+                        <span v-if="quote.trang_thai > 0 && quote.khach_tu_tra_cuoc" class="badge bg-light text-dark border">Người nhận trả cước chành xe</span>
+                        <span v-else-if="quote.trang_thai > 0">{{ formatCurrency(quote.phi_van_chuyen || 0) }}</span>
+                        <span v-else>Chờ xác nhận</span>
+                      </td>
                     </tr>
                     <tr>
-                      <td colspan="4" class="text-end fw-bold text-dark">Tổng tiền (Tạm tính):</td>
-                      <td class="text-end fw-bold text-danger fs-5">{{ quote.trang_thai > 0 ? formatCurrency(quote.tong_tien + (quote.khach_tu_tra_cuoc ? 0 : (quote.phi_van_chuyen || 0))) : 'Chờ báo giá' }}</td>
+                      <td colspan="4" class="text-end fw-bold text-dark fs-6">TỔNG CỘNG ĐƠN HÀNG:</td>
+                      <td class="text-end fw-bold text-danger fs-5">{{ quote.trang_thai > 0 ? formatCurrency(quote.tong_tien + (quote.khach_tu_tra_cuoc ? 0 : (quote.phi_van_chuyen || 0))) : 'Chờ hoàn tất' }}</td>
+                    </tr>
+                    <tr v-if="quote.tien_coc_yeu_cau > 0">
+                      <td colspan="4" class="text-end fw-medium text-muted">Tiền Cọc Cam Kết:</td>
+                      <td class="text-end">
+                        <span class="fw-bold text-primary fs-6">{{ formatCurrency(quote.tien_coc_yeu_cau) }}</span>
+                        <div class="small mt-1">
+                          <span v-if="quote.trang_thai === 2" class="badge bg-success-subtle text-success border border-success-subtle">
+                            <i class="bx bx-check-circle me-1"></i>Đã nhận tiền cọc
+                          </span>
+                          <span v-else class="badge bg-danger-subtle text-danger border border-danger-subtle">
+                            <i class="bx bx-time me-1"></i>Chưa thanh toán cọc
+                          </span>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr v-if="quote.trang_thai > 0 && quote.tien_coc_yeu_cau > 0">
+                      <td colspan="4" class="text-end fw-bold text-secondary">Còn Lại Thu Khi Nhận Hàng (COD):</td>
+                      <td class="text-end fw-bold text-dark fs-6 font-monospace">
+                        {{ formatCurrency(Math.max(0, (quote.tong_tien + (quote.khach_tu_tra_cuoc ? 0 : (quote.phi_van_chuyen || 0))) - (quote.trang_thai === 2 ? quote.tien_coc_yeu_cau : 0))) }}
+                      </td>
                     </tr>
                   </tfoot>
                 </table>
@@ -345,11 +367,23 @@ export default {
               this.stopPolling();
               await this.fetchQuote();
 
+              const hasToken = Boolean(localStorage.getItem('auth_token'));
               Swal.fire({
                 icon: 'success',
                 title: 'Đã Nhận Tiền Cọc Thành Công!',
                 text: 'Hệ thống đã tự động đối soát giao dịch và tiến hành gom đơn nhập từ Nhật Bản.',
-                confirmButtonColor: '#28a745'
+                confirmButtonColor: '#28a745',
+                confirmButtonText: hasToken ? 'Xem Lịch Sử Đơn Hàng' : 'Theo Dõi Đơn Hàng',
+                showCancelButton: true,
+                cancelButtonText: 'Ở Lại Trang Này'
+              }).then((result) => {
+                if (result.isConfirmed) {
+                  if (hasToken) {
+                    this.$router.push('/lich-su-don-hang');
+                  } else {
+                    this.$router.push(`/tra-cuu-don-hang?code=${this.quote.ma_yeu_cau}&phone=${this.quote.khach_hang_sdt}`);
+                  }
+                }
               });
             }
           }

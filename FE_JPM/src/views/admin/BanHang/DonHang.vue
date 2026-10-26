@@ -18,7 +18,7 @@
           >
             <i class="bx bx-time-five me-1"></i>
             <span>Chờ Báo Giá</span>
-            <span class="tab-count-badge ms-2">{{ countPendingQuotes }}</span>
+            <span v-if="countPendingQuotes > 0" class="tab-count-badge ms-2">{{ countPendingQuotes }}</span>
           </button>
         </li>
 
@@ -33,7 +33,7 @@
           >
             <i class="bx bx-send me-1"></i>
             <span>Đã Báo Giá</span>
-            <span class="tab-count-badge ms-2">{{ countQuotedQuotes }}</span>
+            <span v-if="countQuotedQuotes > 0" class="tab-count-badge ms-2">{{ countQuotedQuotes }}</span>
           </button>
         </li>
 
@@ -48,7 +48,7 @@
           >
             <i class="bx bx-package me-1"></i>
             <span>Đang Xử Lý & Giao</span>
-            <span class="tab-count-badge ms-2">{{ countProcessing }}</span>
+            <span v-if="countProcessing > 0" class="tab-count-badge ms-2">{{ countProcessing }}</span>
           </button>
         </li>
 
@@ -105,7 +105,7 @@
           >
             <i class="bx bx-qr-scan me-1"></i>
             <span>Đối Soát VietQR</span>
-            <span class="tab-count-badge ms-2">{{ transactions.length }}</span>
+            <span v-if="transactions && transactions.length > 0" class="tab-count-badge ms-2">{{ transactions.length }}</span>
           </button>
         </li>
       </ul>
@@ -167,7 +167,7 @@
                   <th class="text-uppercase" style="width: 20%">Khách Hàng</th>
                   <th class="text-uppercase" style="width: 13%">Thời Gian</th>
                   <th class="text-end text-uppercase" style="width: 14%">Tổng Tiền</th>
-                  <th class="text-end text-uppercase" style="width: 12%">Đã Thu / Cọc</th>
+                  <th class="text-end text-uppercase" style="width: 14%">Thanh Toán / Cọc</th>
                   <th class="text-center text-uppercase" style="width: 12%">Trạng Thái</th>
                   <th class="text-center text-uppercase" style="width: 10%">Hành Động</th>
                 </tr>
@@ -210,13 +210,34 @@
                     <div v-if="item.freight_collect" class="text-muted" style="font-size: 0.72rem;">(Chưa gồm cước)</div>
                   </td>
                   <td class="text-end">
-                    <span v-if="item._type === 'order' && item.paid_amount > 0" class="fw-bold text-success">
-                      {{ formatCurrency(item.paid_amount) }}
-                    </span>
-                    <span v-else-if="item.deposit_required > 0" class="text-warning fw-medium" style="font-size: 0.85rem;">
-                      Cọc: {{ formatCurrency(item.deposit_required) }}
-                    </span>
-                    <span v-else class="text-muted" style="font-size: 0.85rem;">-</span>
+                    <template v-if="item._type === 'order'">
+                      <div v-if="item.paid_amount > 0" class="fw-bold text-success" style="font-size: 0.85rem;">
+                        <i class="bx bx-check-circle me-1"></i>Đã thu: {{ formatCurrency(item.paid_amount) }}
+                      </div>
+                      <div v-else-if="item.deposit_required > 0" class="d-flex flex-column align-items-end">
+                        <span class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle mb-1" style="font-size: 0.75rem;">
+                          Chưa cọc
+                        </span>
+                        <span class="text-muted" style="font-size: 0.75rem;">
+                          (YC: {{ formatCurrency(item.deposit_required) }})
+                        </span>
+                      </div>
+                      <span v-else class="text-muted" style="font-size: 0.85rem;">Chưa thu</span>
+                    </template>
+                    <template v-else>
+                      <div v-if="item.status === 0" class="text-muted" style="font-size: 0.8rem;">
+                        <span class="badge bg-light text-secondary border">Chờ định giá</span>
+                      </div>
+                      <div v-else-if="item.deposit_required > 0" class="d-flex flex-column align-items-end">
+                        <span class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle mb-1" style="font-size: 0.75rem;">
+                          Chờ khách cọc
+                        </span>
+                        <span class="text-muted" style="font-size: 0.75rem;">
+                          (YC: {{ formatCurrency(item.deposit_required) }})
+                        </span>
+                      </div>
+                      <span v-else class="text-muted" style="font-size: 0.85rem;">-</span>
+                    </template>
                   </td>
                   <td class="text-center">
                     <!-- Trạng thái Báo Giá -->

@@ -97,16 +97,38 @@
       >
         <!-- Card Header: Tag + Mã đơn + Trạng thái -->
         <div class="card-head">
-          <div class="head-left">
+          <div class="head-left flex-wrap gap-2">
             <span class="type-tag" :class="order._type === 'quote' ? 'quote-tag' : 'order-tag'">
               {{ order._type === 'quote' ? 'BÁO GIÁ' : 'ĐƠN HÀNG' }}
             </span>
             <span class="order-id">#{{ order.code }}</span>
             <span class="order-date text-muted">{{ formatDate(order.created_at) }}</span>
+
+            <!-- Tag phân loại hàng rõ ràng -->
+            <template v-if="getStage(order) === 1">
+              <span v-if="getOrderPricingType(order) === 1" class="badge rounded-pill bg-info-subtle text-info-emphasis border border-info-subtle fw-medium" style="font-size: 11px;">
+                <i class="bi bi-tag-fill me-1"></i> Có sẵn giá
+              </span>
+              <span v-else-if="getOrderPricingType(order) === 2" class="badge rounded-pill bg-warning-subtle text-warning-emphasis border border-warning-subtle fw-medium" style="font-size: 11px;">
+                <i class="bi bi-layers-half me-1"></i> Đơn hỗn hợp
+              </span>
+              <span v-else class="badge rounded-pill bg-secondary-subtle text-secondary border border-secondary-subtle fw-medium" style="font-size: 11px;">
+                <i class="bi bi-chat-quote me-1"></i> Cần tra thông số
+              </span>
+            </template>
           </div>
 
-          <div class="head-right status-text">
-            {{ getStatusText(order) }}
+          <div class="head-right">
+            <span class="status-badge-pill" :class="'stage-status-' + getStage(order) + (getStage(order) === 1 ? '-p' + getOrderPricingType(order) : '')">
+              <i v-if="getStage(order) === 1 && getOrderPricingType(order) === 1" class="bi bi-clock-history me-1"></i>
+              <i v-else-if="getStage(order) === 1 && getOrderPricingType(order) === 2" class="bi bi-hourglass-split me-1"></i>
+              <i v-else-if="getStage(order) === 1" class="bi bi-search me-1"></i>
+              <i v-else-if="getStage(order) === 2" class="bi bi-qr-scan me-1"></i>
+              <i v-else-if="getStage(order) === 3" class="bi bi-truck me-1"></i>
+              <i v-else-if="getStage(order) === 4" class="bi bi-check-circle me-1"></i>
+              <i v-else class="bi bi-x-circle me-1"></i>
+              {{ getStatusText(order) }}
+            </span>
           </div>
         </div>
 
@@ -122,16 +144,19 @@
           @click="openProductModal(order)"
           title="Nhấp để xem danh sách chi tiết các sản phẩm trong đơn"
         >
-          <div class="item-thumb">
-            <i class="bi bi-gear-wide-connected"></i>
+          <div class="item-thumb rounded-3 overflow-hidden border">
+            <img v-if="getItemProducts(order)[0]?.image" :src="getImageUrl(getItemProducts(order)[0].image)" :alt="getItemProducts(order)[0]?.name" class="img-fluid" style="width: 100%; height: 100%; object-fit: contain; padding: 4px;">
+            <div v-else class="w-100 h-100 d-flex align-items-center justify-content-center bg-light">
+              <i class="bi bi-box-seam text-secondary fs-4"></i>
+            </div>
           </div>
           
           <div class="item-details">
-            <div class="item-name">
+            <div class="item-name fw-bold">
               {{ getItemProducts(order)[0]?.name || 'Phụ tùng máy thủy' }}
             </div>
-            <div class="item-oem text-muted">
-              Mã OEM: {{ getItemProducts(order)[0]?.code || 'N/A' }}
+            <div class="item-oem text-muted mt-1">
+              <span>Mã OEM: <code class="text-secondary">{{ getItemProducts(order)[0]?.code || 'N/A' }}</code></span>
             </div>
             <div class="item-qty mt-1">
               Số lượng: <strong>x{{ getItemProducts(order)[0]?.qty || 1 }}</strong>
@@ -141,16 +166,16 @@
             </div>
           </div>
 
-          <!-- Đơn giá: Hiển thị giá nếu có, nếu chưa có giá hoặc giá <= 0 thì hiển thị 'Liên hệ' -->
+          <!-- Đơn giá: Hiển thị giá nếu có, nếu chưa có giá thì hiển thị 'Chờ tra giá' -->
           <div class="item-price text-end">
             <template v-if="getItemProducts(order)[0]?.price > 0">
               <span class="price-num">{{ formatPrice(getItemProducts(order)[0]?.price) }}₫</span>
             </template>
             <template v-else>
-              <span class="price-contact">Liên hệ</span>
+              <span class="badge bg-light text-secondary border fw-medium px-2 py-1">Chờ tra giá</span>
             </template>
 
-            <div class="view-detail-hint">
+            <div class="view-detail-hint mt-1">
               <span>Xem chi tiết</span>
               <i class="bi bi-chevron-right ms-1"></i>
             </div>
@@ -195,7 +220,7 @@
                 </div>
               </div>
               <div class="mt-2 text-end">
-                <button type="button" class="btn btn-sm btn-outline-success" @click="confirmManualPaid">
+                <button type="button" class="btn btn-sm btn-outline-success" @click="confirmManualPaid(order)">
                   <i class="bi bi-check-lg me-1"></i> Tôi đã chuyển khoản cọc
                 </button>
               </div>
@@ -203,33 +228,148 @@
           </div>
         </div>
 
-        <!-- Card Footer: Tổng tiền & Nút thao tác -->
-        <div class="card-bottom">
-          <div class="price-section">
-            <span class="label">
-              {{ getStage(order) === 2 ? 'Tiền cọc yêu cầu:' : (getStage(order) === 3 ? 'Còn lại khi nhận hàng:' : 'Thành tiền:') }}
-            </span>
-            <span class="total-amount">
-              <!-- NẾU LÀ ĐỢI BÁO GIÁ (BƯỚC 1) -->
-              <template v-if="getStage(order) === 1">
-                <template v-if="calculateItemTotal(order) > 0">
-                  <span class="price-num-lg text-danger fw-bold">{{ formatPrice(calculateItemTotal(order)) }}₫</span>
-                  <span v-if="hasUnquotedItems(order)" class="text-muted small fst-italic ms-1" style="font-size: 0.8rem;">(+ chờ báo giá)</span>
+        <!-- BẢNG PHÂN TÍCH TÀI CHÍNH & VẬN CHUYỂN CHUẨN DOANH NGHIỆP -->
+        <div class="order-finance-card">
+          <div class="finance-grid">
+            <!-- 1. Tiền hàng tạm tính -->
+            <div class="finance-col">
+              <span class="finance-label">Tiền hàng (Tạm tính)</span>
+              <div class="finance-value">
+                <template v-if="getItemSubtotal(order) > 0">
+                  <span class="fw-bold text-dark">{{ formatPrice(getItemSubtotal(order)) }}₫</span>
+                  <span v-if="getOrderPricingType(order) === 2 && getStage(order) === 1" class="d-block text-warning small" style="font-size: 11px;">
+                    (+ {{ getUnquotedCount(order) }} món chờ tra giá)
+                  </span>
                 </template>
                 <template v-else>
-                  <span class="price-contact-lg">Liên hệ</span>
+                  <span class="badge bg-light text-secondary border">Đang định giá</span>
                 </template>
-              </template>
-              <template v-else-if="getStage(order) === 2">
-                {{ formatPrice(order.tien_coc_yeu_cau || 0) }}₫
-              </template>
-              <template v-else-if="getStage(order) === 3">
-                {{ formatPrice(calculateRemaining(order)) }}₫
-              </template>
-              <template v-else>
-                {{ formatPrice(calculateItemTotal(order)) }}₫
-              </template>
-            </span>
+              </div>
+            </div>
+
+            <!-- 2. Cước chành xe / vận chuyển -->
+            <div class="finance-col">
+              <span class="finance-label">Cước vận chuyển</span>
+              <div class="finance-value">
+                <template v-if="order.khach_tu_tra_cuoc">
+                  <span class="badge bg-light text-dark border fw-medium" title="Khách tự thanh toán cước với nhà xe khi nhận hàng">
+                    <i class="bi bi-truck me-1 text-primary"></i> Khách tự trả chành xe
+                  </span>
+                </template>
+                <template v-else-if="Number(order.phi_van_chuyen) > 0">
+                  <span class="fw-bold text-dark">{{ formatPrice(order.phi_van_chuyen) }}₫</span>
+                  <span class="text-muted d-block small" style="font-size: 11px;">(Giao tận nơi/chành)</span>
+                </template>
+                <template v-else-if="getStage(order) === 1">
+                  <span class="text-muted small fst-italic">Chờ Admin liên hệ xe</span>
+                </template>
+                <template v-else>
+                  <span class="badge bg-success-subtle text-success border border-success-subtle">Miễn phí ship</span>
+                </template>
+              </div>
+            </div>
+
+            <!-- 3. Tổng giá trị đơn hàng -->
+            <div class="finance-col">
+              <span class="finance-label">Tổng đơn hàng</span>
+              <div class="finance-value">
+                <template v-if="getGrandTotal(order) !== null && getGrandTotal(order) > 0">
+                  <span class="fw-bold text-danger fs-6">{{ formatPrice(getGrandTotal(order)) }}₫</span>
+                  <span class="text-muted d-block small" style="font-size: 11px;">(Đã gồm tiền hàng + ship)</span>
+                </template>
+                <template v-else>
+                  <span class="badge bg-light text-secondary border">Chờ hoàn tất giá</span>
+                </template>
+              </div>
+            </div>
+
+            <!-- 4. Tiền cọc yêu cầu & Tình trạng cọc -->
+            <div class="finance-col finance-col-deposit">
+              <span class="finance-label">Tiền cọc cam kết</span>
+              <div class="finance-value">
+                <template v-if="getDepositRequired(order) > 0">
+                  <div class="d-flex align-items-center gap-1">
+                    <span class="fw-bold text-primary">{{ formatPrice(getDepositRequired(order)) }}₫</span>
+                  </div>
+                  <div class="mt-1">
+                    <span v-if="getDepositStatus(order) === 'paid'" class="badge bg-success-subtle text-success border border-success-subtle" style="font-size: 11px;">
+                      <i class="bi bi-check-circle-fill me-1"></i> Đã cọc {{ formatPrice(getRealPaidAmount(order)) }}₫
+                    </span>
+                    <span v-else class="badge bg-danger-subtle text-danger border border-danger-subtle" style="font-size: 11px;">
+                      <i class="bi bi-exclamation-circle-fill me-1"></i> Chưa thanh toán cọc
+                    </span>
+                  </div>
+                </template>
+                <template v-else-if="getStage(order) === 1">
+                  <span class="text-muted small fst-italic">Admin đang ấn định mức cọc</span>
+                </template>
+                <template v-else>
+                  <span class="text-muted small">Không yêu cầu cọc</span>
+                </template>
+              </div>
+            </div>
+          </div>
+
+          <!-- DÒNG CÒN LẠI THANH TOÁN KHI NHẬN HÀNG (COD) -->
+          <div v-if="getGrandTotal(order) > 0 && (getStage(order) >= 2 || getDepositRequired(order) > 0)" class="finance-remaining-bar">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+              <div class="d-flex align-items-center gap-2 text-secondary small">
+                <i class="bi bi-shield-check text-success fs-6"></i>
+                <span class="fw-medium">Còn lại thanh toán khi nhận hàng từ chành xe (COD):</span>
+              </div>
+              <div class="fs-6 fw-bold text-dark font-monospace">
+                {{ formatPrice(getRemainingAmount(order)) }}₫
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card Footer: Ghi chú quy trình & Nút thao tác -->
+        <div class="card-bottom">
+          <div class="process-hint-col">
+            <!-- Thông điệp hướng dẫn theo giai đoạn -->
+            <template v-if="getStage(order) === 1">
+              <div v-if="getOrderPricingType(order) === 1" class="text-muted small d-flex align-items-center gap-1">
+                <i class="bi bi-truck text-primary"></i>
+                <span>Admin đang xác nhận cước vận chuyển (chành xe) & số tiền cọc cho quý khách.</span>
+              </div>
+              <div v-else-if="getOrderPricingType(order) === 2" class="text-muted small d-flex align-items-center gap-1">
+                <i class="bi bi-hourglass-split text-warning"></i>
+                <span>Kỹ thuật viên đang tra cứu giá phụ tùng đặc thù & cước chành xe liên tỉnh.</span>
+              </div>
+              <div v-else class="text-muted small d-flex align-items-center gap-1">
+                <i class="bi bi-search text-secondary"></i>
+                <span>Kỹ thuật viên đang đối soát thông số động cơ & tính cước chành xe.</span>
+              </div>
+            </template>
+
+            <template v-else-if="getStage(order) === 2">
+              <div class="text-danger small d-flex align-items-center gap-1 fw-medium">
+                <i class="bi bi-clock-history"></i>
+                <span>Báo giá hiệu lực 72 giờ. Quý khách vui lòng đặt cọc để hệ thống xuất kho hoặc đặt hàng từ Nhật.</span>
+              </div>
+            </template>
+
+            <template v-else-if="getStage(order) === 3">
+              <div class="text-primary small d-flex align-items-center gap-1 fw-medium">
+                <i class="bi bi-box-seam"></i>
+                <span>Đã ghi nhận cọc. Đang điều phối hàng và gửi qua chành xe liên tỉnh đến quý khách.</span>
+              </div>
+            </template>
+
+            <template v-else-if="getStage(order) === 4">
+              <div class="text-success small d-flex align-items-center gap-1 fw-medium">
+                <i class="bi bi-check-circle-fill"></i>
+                <span>Giao dịch hoàn tất thành công. Cảm ơn quý khách đã tin dùng phụ tùng JPM!</span>
+              </div>
+            </template>
+
+            <template v-else>
+              <div class="text-muted small d-flex align-items-center gap-1">
+                <i class="bi bi-x-circle"></i>
+                <span>Yêu cầu đã đóng hoặc hết thời hạn hiệu lực.</span>
+              </div>
+            </template>
           </div>
 
           <div class="action-buttons">
@@ -238,37 +378,36 @@
               <i class="bi bi-list-ul me-1"></i> Xem Sản Phẩm ({{ getItemProducts(order).length }})
             </button>
 
+            <!-- Nếu có token báo giá: Cho phép mở xem trang Báo giá chi tiết -->
+            <router-link v-if="order.token" :to="'/bao-gia/' + order.token" class="btn-shopee btn-shopee-outline">
+              <i class="bi bi-receipt me-1"></i> Bảng Báo Giá Chi Tiết
+            </router-link>
+
             <!-- Bước 1: Liên hệ hỗ trợ -->
             <template v-if="getStage(order) === 1">
-              <a :href="'https://zalo.me/0123456789?text=' + encodeURIComponent('Chào JPM, tôi muốn hỏi giá yêu cầu mã #' + order.code)" target="_blank" class="btn-shopee btn-shopee-outline">
-                Chat Kỹ Thuật
+              <a :href="'https://zalo.me/0123456789?text=' + encodeURIComponent('Chào JPM, tôi muốn hỏi về đơn hàng mã #' + order.code)" target="_blank" class="btn-shopee btn-shopee-primary">
+                <i class="bi bi-chat-dots me-1"></i> Chat Kỹ Thuật
               </a>
             </template>
 
-            <!-- Bước 2: Từ chối, Đồng ý chốt đơn hoặc Đặt cọc -->
+            <!-- Bước 2: Từ chối hoặc Quét QR Cọc -->
             <template v-else-if="getStage(order) === 2">
-              <button type="button" class="btn-shopee btn-shopee-outline" @click="handleRejectQuote(order)">
+              <button type="button" class="btn-shopee btn-shopee-outline text-danger" @click="handleRejectQuote(order)">
                 Từ chối
               </button>
-              <button
-                v-if="order._type === 'quote' && Number(order.trang_thai) === 1"
-                type="button"
-                class="btn-shopee btn-shopee-outline"
-                style="border-color: #16a34a; color: #16a34a;"
-                @click="handleAcceptQuote(order)"
+              <button 
+                type="button" 
+                class="btn-shopee btn-shopee-primary fw-bold"
+                @click="toggleVietQR(order)"
               >
-                Đồng ý chốt đơn
-              </button>
-              <button type="button" class="btn-shopee btn-shopee-primary" @click="toggleVietQR(order)">
-                {{ activeQrOrderCode === order.code ? 'Đóng QR' : 'Đặt Cọc VietQR' }}
+                <i class="bi bi-qr-scan me-1"></i> {{ activeQrOrderCode === order.code ? 'Đóng Mã QR' : `Quét QR Cọc (${formatPrice(getDepositRequired(order))}₫)` }}
               </button>
             </template>
 
             <!-- Bước 3: Xem chi tiết / Chờ giao -->
             <template v-else-if="getStage(order) === 3">
-              <span class="text-muted small me-2">Đã cọc: {{ formatPrice(order.da_thu || order.tien_coc_yeu_cau || 0) }}₫</span>
-              <a :href="'https://zalo.me/0123456789?text=' + encodeURIComponent('Hỏi tiến độ đơn #' + order.code)" target="_blank" class="btn-shopee btn-shopee-outline">
-                Tra Cứu Vận Chuyển
+              <a :href="'https://zalo.me/0123456789?text=' + encodeURIComponent('Hỏi tiến độ vận chuyển chành xe cho đơn #' + order.code)" target="_blank" class="btn-shopee btn-shopee-outline">
+                <i class="bi bi-truck me-1"></i> Tiến Độ Vận Chuyển
               </a>
             </template>
 
@@ -317,8 +456,11 @@
               >
                 <!-- Bên trái: Hình ảnh + Tên (Click mở trang chi tiết) -->
                 <div class="d-flex align-items-center gap-3 flex-grow-1" style="cursor: pointer;" @click="goToProductDetail(prod)" title="Bấm để xem trang chi tiết sản phẩm này">
-                  <div class="modal-thumb">
-                    <i class="bi bi-gear-wide-connected text-secondary fs-4"></i>
+                  <div class="modal-thumb rounded-2 overflow-hidden border">
+                    <img v-if="prod.image" :src="getImageUrl(prod.image)" :alt="prod.name" class="img-fluid" style="width: 100%; height: 100%; object-fit: contain; padding: 2px;">
+                    <div v-else class="w-100 h-100 d-flex align-items-center justify-content-center bg-light">
+                      <i class="bi bi-box-seam text-secondary fs-4"></i>
+                    </div>
                   </div>
                   <div>
                     <div class="fw-bold text-dark hover-red d-flex align-items-center gap-1 product-link" style="font-size: 14.5px;">
@@ -359,28 +501,68 @@
             </div>
           </div>
 
-          <!-- Modal Footer: Tổng tiền + Đóng -->
-          <div class="modal-footer bg-light py-2 px-4 d-flex justify-content-between align-items-center">
-            <div class="small">
-              <span class="text-muted me-1">Tổng cộng:</span>
-              <template v-if="getStage(selectedOrderForModal) === 1">
-                <strong v-if="calculateItemTotal(selectedOrderForModal) > 0" class="text-danger fs-6">
-                  {{ formatPrice(calculateItemTotal(selectedOrderForModal)) }}₫
-                  <span v-if="hasUnquotedItems(selectedOrderForModal)" class="text-muted small fw-normal ms-1">(Tạm tính + chờ báo giá)</span>
-                </strong>
-                <strong v-else class="text-danger fs-6">Liên hệ</strong>
-              </template>
-              <strong v-else-if="getStage(selectedOrderForModal) === 2" class="text-danger fs-6">
-                {{ formatPrice(selectedOrderForModal.tien_coc_yeu_cau || 0) }}₫ (Cọc) / {{ formatPrice(calculateItemTotal(selectedOrderForModal)) }}₫
-              </strong>
-              <strong v-else-if="getStage(selectedOrderForModal) === 3" class="text-danger fs-6">
-                {{ formatPrice(calculateRemaining(selectedOrderForModal)) }}₫ (Còn lại)
-              </strong>
-              <strong v-else class="text-danger fs-6">
-                {{ formatPrice(calculateItemTotal(selectedOrderForModal)) }}₫
-              </strong>
+          <!-- Modal Footer: Bảng phân tích tài chính chi tiết chuẩn doanh nghiệp -->
+          <div class="modal-footer bg-light p-3 d-flex flex-column gap-2" v-if="selectedOrderForModal">
+            <div class="w-100 bg-white p-3 rounded-3 border">
+              <div class="d-flex justify-content-between align-items-center py-1 border-bottom">
+                <span class="text-muted small">Tiền hàng (Tạm tính):</span>
+                <span class="fw-bold text-dark">
+                  <template v-if="getItemSubtotal(selectedOrderForModal) > 0">
+                    {{ formatPrice(getItemSubtotal(selectedOrderForModal)) }}₫
+                    <span v-if="getOrderPricingType(selectedOrderForModal) === 2 && getStage(selectedOrderForModal) === 1" class="text-warning-emphasis small fw-normal ms-1">
+                      (+ {{ getUnquotedCount(selectedOrderForModal) }} món chờ tra giá)
+                    </span>
+                  </template>
+                  <template v-else>
+                    <span class="badge bg-light text-secondary border">Đang định giá</span>
+                  </template>
+                </span>
+              </div>
+              <div class="d-flex justify-content-between align-items-center py-1 border-bottom">
+                <span class="text-muted small">Cước vận chuyển:</span>
+                <span class="fw-medium text-dark">
+                  {{ selectedOrderForModal.khach_tu_tra_cuoc ? 'Khách tự trả chành xe' : (Number(selectedOrderForModal.phi_van_chuyen) > 0 ? formatPrice(selectedOrderForModal.phi_van_chuyen) + '₫' : 'Chờ xác nhận') }}
+                </span>
+              </div>
+              <div class="d-flex justify-content-between align-items-center py-1 border-bottom">
+                <span class="text-dark fw-bold small text-uppercase">Tổng Giá Trị Đơn Hàng:</span>
+                <span class="fw-bold text-danger fs-6">
+                  <template v-if="getGrandTotal(selectedOrderForModal) !== null && getGrandTotal(selectedOrderForModal) > 0">
+                    {{ formatPrice(getGrandTotal(selectedOrderForModal)) }}₫
+                  </template>
+                  <template v-else>
+                    <span class="text-secondary small">Chờ định giá xong</span>
+                  </template>
+                </span>
+              </div>
+              <div v-if="getDepositRequired(selectedOrderForModal) > 0" class="d-flex justify-content-between align-items-center py-1 border-bottom">
+                <span class="text-muted small">Tiền Cọc Cam Kết:</span>
+                <div class="text-end">
+                  <span class="fw-bold text-primary">{{ formatPrice(getDepositRequired(selectedOrderForModal)) }}₫</span>
+                  <div class="small">
+                    <span v-if="getDepositStatus(selectedOrderForModal) === 'paid'" class="text-success fw-semibold">
+                      <i class="bi bi-check-circle-fill me-1"></i>Đã thanh toán cọc
+                    </span>
+                    <span v-else class="text-danger fw-semibold">
+                      <i class="bi bi-exclamation-circle-fill me-1"></i>Chưa thanh toán cọc
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <div v-if="getGrandTotal(selectedOrderForModal) > 0 && (getStage(selectedOrderForModal) >= 2 || getDepositRequired(selectedOrderForModal) > 0)" class="d-flex justify-content-between align-items-center pt-2">
+                <span class="text-secondary fw-semibold small">Còn lại thu khi nhận hàng từ chành xe (COD):</span>
+                <span class="fw-bold text-dark font-monospace fs-6">
+                  {{ formatPrice(getRemainingAmount(selectedOrderForModal)) }}₫
+                </span>
+              </div>
             </div>
-            <button type="button" class="btn btn-secondary btn-sm px-3" @click="closeProductModal">Đóng</button>
+
+            <div class="w-100 d-flex justify-content-end gap-2 mt-1">
+              <router-link v-if="selectedOrderForModal.token" :to="'/bao-gia/' + selectedOrderForModal.token" class="btn btn-outline-primary btn-sm px-3" @click="closeProductModal">
+                <i class="bi bi-receipt me-1"></i> Bảng Báo Giá Chi Tiết
+              </router-link>
+              <button type="button" class="btn btn-secondary btn-sm px-3" @click="closeProductModal">Đóng</button>
+            </div>
           </div>
 
         </div>
@@ -420,8 +602,7 @@ const { data: ordersData, isLoading: isLoadingOrders } = useQuery({
 const orders = computed(() => ordersData.value || []);
 
 const isLoading = computed(() => isLoadingQuotes.value || isLoadingOrders.value);
-const setPageLoading = inject('setPageLoading', () => {});
-watch(isLoading, (val) => setPageLoading(val), { immediate: true });
+// Chuyển sang dùng inline skeleton có sẵn trong trang, không kích hoạt preloader toàn trang gây giật
 
 // ===================== TAB STATE (SHOPEE STYLE) =====================
 const currentTab = ref('all'); // 'all' | '1' | '2' | '3' | '4' | '-1'
@@ -491,6 +672,34 @@ const getStage = (order) => {
   }
 };
 
+const getImageUrl = (path) => {
+  if (!path) return '';
+  if (path.startsWith('http')) return path;
+  if (path.startsWith('/storage/')) return 'http://localhost:8000' + path;
+  return 'http://localhost:8000/storage/' + path.replace(/^\/+/, '');
+};
+
+// Phân loại đơn ở Giai đoạn 1 (Chờ báo giá)
+// 1 = Toàn bộ sản phẩm có giá
+// 2 = Vừa có giá vừa liên hệ (hỗn hợp)
+// 3 = Toàn bộ sản phẩm liên hệ
+const getOrderPricingType = (order) => {
+  const products = getItemProducts(order);
+  if (products.length === 0) return 3;
+  const pricedCount = products.filter(p => p.price > 0).length;
+  if (pricedCount === products.length) return 1; // 100% có giá
+  if (pricedCount > 0) return 2; // Hỗn hợp
+  return 3; // 100% liên hệ
+};
+
+const getUnquotedCount = (order) => {
+  return getItemProducts(order).filter(p => p.price <= 0).length;
+};
+
+const getPricedSubtotal = (order) => {
+  return getItemProducts(order).filter(p => p.price > 0).reduce((sum, p) => sum + (p.price * p.qty), 0);
+};
+
 const getStatusText = (order) => {
   if (order._type === 'order') {
     const st = Number(order.trang_thai);
@@ -498,13 +707,17 @@ const getStatusText = (order) => {
     if (st === 4) return 'ĐÃ HỦY';
     if (st === 3) return 'HOÀN THÀNH';
     if (st === 2) return 'ĐANG GIAO HÀNG';
-    if (st === 1) return 'ĐANG XỬ LÝ';
-    if (st === 0) return paySt === 0 ? 'CHỜ XÁC NHẬN / THANH TOÁN' : 'ĐÃ THANH TOÁN';
+    if (st === 1) return 'ĐANG CHUẨN BỊ XUẤT KHO';
+    if (st === 0) return paySt === 0 ? 'CHỜ DUYỆT & CỌC' : 'ĐÃ THANH TOÁN';
   }
   const stage = getStage(order);
   switch (stage) {
-    case 1:
-      return 'CHỜ ADMIN BÁO GIÁ';
+    case 1: {
+      const pType = getOrderPricingType(order);
+      if (pType === 1) return 'CHỜ BÁO PHÍ SHIP & CỌC';
+      if (pType === 2) return 'CHỜ BÁO GIÁ & PHÍ SHIP';
+      return 'CHỜ KỸ THUẬT BÁO GIÁ';
+    }
     case 2:
       return 'ĐÃ BÁO GIÁ - CHỜ ĐẶT CỌC';
     case 3:
@@ -531,7 +744,7 @@ const getItemProducts = (order) => {
     name: p.ten_phu_tung || p.ten_san_pham || 'Phụ tùng máy thủy',
     code: p.ma_phu_tung || p.ma_san_pham || '',
     slug: p.slug || p.san_pham?.slug || '',
-    image: p.hinh_anh || p.hinh_anh_chinh || p.san_pham?.hinh_anh || null,
+    image: p.hinh_anh || p.hinh_anh_chinh || p.san_pham?.hinh_anh || p.san_pham?.hinh_anh_chinh || null,
     qty: p.so_luong || 1,
     price: Number(p.don_gia || p.gia_ban || 0)
   }));
@@ -542,19 +755,77 @@ const hasUnquotedItems = (order) => {
   return getItemProducts(order).some(p => p.price <= 0);
 };
 
-const calculateItemTotal = (order) => {
+// 1. Tiền hàng (Tạm tính)
+const getItemSubtotal = (order) => {
   if (!order) return 0;
-  const subtotal = getItemProducts(order).reduce((sum, p) => sum + (p.price * p.qty), 0);
-  const ship = order.khach_tu_tra_cuoc ? 0 : Number(order.phi_van_chuyen || 0);
-  if (subtotal > 0) return subtotal + ship;
+  const products = getItemProducts(order);
+  const pricedSum = products.filter(p => p.price > 0).reduce((sum, p) => sum + (p.price * p.qty), 0);
+  if (pricedSum > 0) return pricedSum;
   return Number(order.tong_tien || 0);
 };
 
-const calculateRemaining = (order) => {
+// 2. Cước vận chuyển
+const getShippingFee = (order) => {
   if (!order) return 0;
-  const total = calculateItemTotal(order);
-  const paid = Number(order.da_thu || order.tien_coc_yeu_cau || 0);
-  return Math.max(0, total - paid);
+  if (order.khach_tu_tra_cuoc) return 0;
+  return Number(order.phi_van_chuyen || 0);
+};
+
+// 3. Tổng giá trị toàn bộ đơn hàng
+const getGrandTotal = (order) => {
+  if (!order) return 0;
+  // Nếu là báo giá đang ở bước 1 và có món chưa định giá -> chưa có tổng
+  if (getStage(order) === 1 && getOrderPricingType(order) !== 1) {
+    return null;
+  }
+  const subtotal = getItemSubtotal(order);
+  const ship = order.khach_tu_tra_cuoc ? 0 : Number(order.phi_van_chuyen || 0);
+  return subtotal + ship;
+};
+
+// 4. Số tiền thực tế ĐÃ THU (chỉ lấy da_thu, KHÔNG lấy tien_coc_yeu_cau khi khách chưa cọc)
+const getRealPaidAmount = (order) => {
+  if (!order) return 0;
+  if (order._type === 'quote') return 0; // Báo giá chưa thu tiền
+  return Number(order.da_thu || 0);
+};
+
+// 5. Số tiền cọc yêu cầu
+const getDepositRequired = (order) => {
+  if (!order) return 0;
+  return Number(order.tien_coc_yeu_cau || 0);
+};
+
+// 6. Tình trạng cọc: 'paid' (Đã cọc), 'unpaid' (Chưa cọc), 'waiting' (Chờ báo giá), 'none' (Không yêu cầu)
+const getDepositStatus = (order) => {
+  if (!order) return 'none';
+  const dep = getDepositRequired(order);
+  if (dep <= 0) {
+    return getStage(order) === 1 ? 'waiting' : 'none';
+  }
+  const paid = getRealPaidAmount(order);
+  if (paid >= dep) return 'paid';
+  return 'unpaid';
+};
+
+// 7. Số tiền còn lại phải thanh toán khi nhận hàng
+const getRemainingAmount = (order) => {
+  if (!order) return 0;
+  const grand = getGrandTotal(order);
+  if (!grand || grand <= 0) return 0;
+  const paid = getRealPaidAmount(order);
+  return Math.max(0, grand - paid);
+};
+
+const calculateItemTotal = (order) => {
+  if (!order) return 0;
+  const total = getGrandTotal(order);
+  if (total !== null) return total;
+  return getItemSubtotal(order);
+};
+
+const calculateRemaining = (order) => {
+  return getRemainingAmount(order);
 };
 
 // ===================== MODAL SẢN PHẨM & NAVIGATION =====================
@@ -647,15 +918,61 @@ const copyText = (text, msg) => {
   });
 };
 
-const confirmManualPaid = () => {
-  Swal.fire({
-    icon: 'success',
-    title: 'Đã Ghi Nhận Đặt Cọc!',
-    text: 'Cảm ơn quý khách. Đơn hàng đang được cập nhật sang giai đoạn vận chuyển.',
-    confirmButtonColor: '#f82249'
+const confirmManualPaid = async (order) => {
+  const depositAmt = Number(order.tien_coc_yeu_cau || 0);
+  const transferContent = vietQrData.value?.transfer_content || ('COC ' + order.code);
+  
+  const result = await Swal.fire({
+    title: 'Xác Nhận Đã Chuyển Khoản Cọc?',
+    html: `Hệ thống sẽ ghi nhận và gửi tín hiệu đối soát thanh toán cọc số tiền <b>${formatPrice(depositAmt)}₫</b> với nội dung <code>${transferContent}</code>.<br><small class="text-muted">(Dành cho khách hàng báo đã chuyển hoặc thử nghiệm luồng cọc)</small>`,
+    icon: 'question',
+    showCancelButton: true,
+    confirmButtonText: 'Xác nhận chuyển cọc',
+    cancelButtonText: 'Đóng',
+    confirmButtonColor: '#16a34a'
   });
-  queryClient.invalidateQueries({ queryKey: ["clientQuotesHistory"] });
-  queryClient.invalidateQueries({ queryKey: ["clientOrdersHistory"] });
+
+  if (result.isConfirmed) {
+    try {
+      // 1. Gửi webhook đối soát ngân hàng mô phỏng vào backend
+      await axiosClient.post('/webhooks/payment/reconciliation', {
+        referenceNumber: 'MANUAL_' + Date.now(),
+        amountIn: depositAmt,
+        transactionContent: transferContent,
+        gateway: 'VietinBank (Đối soát cọc)',
+        transactionDate: new Date().toISOString()
+      });
+
+      // 2. Nếu là báo giá, kích hoạt chốt đơn
+      if (order._type === 'quote' && order.token) {
+        try {
+          await axiosClient.post(`/public/yeu-cau-bao-gia/${order.token}/action`, { action: 'accept' });
+        } catch (_) {}
+      }
+
+      // Đóng khung QR
+      activeQrOrderCode.value = null;
+      vietQrData.value = null;
+      stopPolling();
+
+      Swal.fire({
+        icon: 'success',
+        title: 'Đặt Cọc Thành Công!',
+        text: `Hệ thống đã ghi nhận tiền cọc ${formatPrice(depositAmt)}₫ cho đơn #${order.code}. Đơn hàng đã chuyển sang Giai đoạn Vận Chuyển.`,
+        confirmButtonColor: '#16a34a'
+      });
+
+      queryClient.invalidateQueries({ queryKey: ["clientQuotesHistory"] });
+      queryClient.invalidateQueries({ queryKey: ["clientOrdersHistory"] });
+    } catch (e) {
+      console.error('Lỗi đối soát cọc:', e);
+      Swal.fire({
+        icon: 'error',
+        title: 'Lỗi',
+        text: e.response?.data?.message || 'Không thể ghi nhận thanh toán lúc này.'
+      });
+    }
+  }
 };
 
 const handleAcceptQuote = async (order) => {
@@ -885,11 +1202,50 @@ const formatDate = (dateStr) => {
   font-size: 12px;
 }
 
-.head-right.status-text {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--accent-color, #f82249);
+.status-badge-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
   text-transform: uppercase;
+}
+.stage-status-1-p1 {
+  background-color: #e0f2fe;
+  color: #0284c7;
+  border: 1px solid rgba(2, 132, 199, 0.25);
+}
+.stage-status-1-p2 {
+  background-color: #fef3c7;
+  color: #d97706;
+  border: 1px solid rgba(217, 119, 6, 0.25);
+}
+.stage-status-1-p3 {
+  background-color: #f1f5f9;
+  color: #475569;
+  border: 1px solid rgba(71, 85, 105, 0.25);
+}
+.stage-status-2 {
+  background-color: #ffe4e6;
+  color: #e11d48;
+  border: 1px solid rgba(225, 29, 72, 0.25);
+}
+.stage-status-3 {
+  background-color: #dbeafe;
+  color: #2563eb;
+  border: 1px solid rgba(37, 99, 235, 0.25);
+}
+.stage-status-4 {
+  background-color: #dcfce7;
+  color: #16a34a;
+  border: 1px solid rgba(22, 163, 74, 0.25);
+}
+.stage-status--1 {
+  background-color: #fee2e2;
+  color: #dc2626;
+  border: 1px solid rgba(220, 38, 38, 0.25);
 }
 
 /* Logistics Notice */
@@ -972,9 +1328,63 @@ const formatDate = (dateStr) => {
   color: var(--accent-color, #f82249);
 }
 
+/* Order Finance Card - Enterprise Breakdown Bar */
+.order-finance-card {
+  margin: 12px 20px;
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.finance-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  padding: 14px 18px;
+}
+
+@media (max-width: 991px) {
+  .finance-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+  }
+}
+
+@media (max-width: 575px) {
+  .finance-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+}
+
+.finance-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.finance-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #64748b;
+  margin-bottom: 5px;
+  letter-spacing: 0.3px;
+}
+
+.finance-value {
+  font-size: 14px;
+}
+
+.finance-remaining-bar {
+  padding: 8px 18px;
+  background-color: #f1f5f9;
+  border-top: 1px dashed #cbd5e1;
+}
+
 /* Card Bottom */
 .card-bottom {
-  padding: 16px 20px;
+  padding: 14px 20px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -983,33 +1393,21 @@ const formatDate = (dateStr) => {
   background-color: #ffffff;
 }
 
-.price-section {
-  display: flex;
-  align-items: baseline;
-  gap: 8px;
+.process-hint-col {
+  max-width: 55%;
 }
 
-.price-section .label {
-  font-size: 14px;
-  color: rgba(0, 0, 0, 0.8);
-}
-
-.price-section .total-amount {
-  font-size: 20px;
-  font-weight: 700;
-  color: var(--accent-color, #f82249);
-}
-
-.price-contact-lg {
-  font-size: 18px;
-  font-weight: 700;
-  color: var(--accent-color, #f82249);
+@media (max-width: 768px) {
+  .process-hint-col {
+    max-width: 100%;
+  }
 }
 
 .action-buttons {
   display: flex;
   align-items: center;
   gap: 10px;
+  flex-wrap: wrap;
 }
 
 .btn-shopee {

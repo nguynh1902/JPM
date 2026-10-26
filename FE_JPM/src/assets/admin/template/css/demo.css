@@ -121,22 +121,27 @@
   font-weight: 700;
   border-radius: 0.375rem;
   line-height: 1;
-  background-color: #ff0000 !important;
-  color: #ffffff !important;
+  background-color: #ffffff !important;
+  color: #ff0000 !important;
+  border: 1px solid rgba(255, 0, 0, 0.25);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
   transition: all 0.2s ease;
 }
 
-/* Đồng nhất 100% màu đỏ chuẩn (#ff0000 trùng với text-danger của hệ thống) */
+/* Card trắng số đỏ trên mọi trạng thái tab */
 .nav-pills .nav-link .tab-count-badge,
-.nav-pills .nav-link.active .tab-count-badge,
 .nav-pills .nav-link:not(.active) .tab-count-badge {
-  background-color: #ff0000 !important;
-  color: #ffffff !important;
+  background-color: #ffffff !important;
+  color: #ff0000 !important;
+  border-color: rgba(255, 0, 0, 0.25) !important;
 }
 
-/* Đổ bóng nhẹ khi Tab Active để nổi bật trên nền nút */
+/* Nổi bật khi Tab Active */
 .nav-pills .nav-link.active .tab-count-badge {
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+  background-color: #ffffff !important;
+  color: #ff0000 !important;
+  border-color: #ffffff !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 

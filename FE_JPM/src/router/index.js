@@ -293,20 +293,6 @@ const routes = [
     component: () => import("../views/admin/NoiDung/Faq.vue"),
     meta: { layout: "admin", requiresAuth: true, permission: "Xem Tin tức & CMS" },
   },
-  {
-    path: "/portal/banner",
-    alias: ["/admin/banner"],
-    name: "AdminBanner",
-    component: () => import("../views/admin/Marketing/Banner.vue"),
-    meta: { layout: "admin", requiresAuth: true, permission: "Xem Tin tức & CMS" },
-  },
-  {
-    path: "/portal/voucher",
-    alias: ["/admin/voucher"],
-    name: "AdminVoucher",
-    component: () => import("../views/admin/Marketing/Voucher.vue"),
-    meta: { layout: "admin", requiresAuth: true, permission: "Xem Đơn hàng" },
-  },
 
   // HỆ THỐNG
   {

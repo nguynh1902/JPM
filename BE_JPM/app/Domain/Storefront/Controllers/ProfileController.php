@@ -281,11 +281,17 @@ class ProfileController extends Controller
     public function markNotificationsAsRead(Request $request)
     {
         $user = $request->user();
-        $user->unreadNotifications->markAsRead();
+        $id = $request->input('id');
+        if ($id) {
+            $user->unreadNotifications()->where('id', $id)->update(['read_at' => now()]);
+        } else {
+            $user->unreadNotifications->markAsRead();
+        }
 
         return response()->json([
             'success' => true,
-            'message' => 'Đã đánh dấu đã đọc tất cả thông báo.'
+            'unread_count' => $user->unreadNotifications()->count(),
+            'message' => $id ? 'Đã đánh dấu thông báo là đã đọc.' : 'Đã đánh dấu đã đọc tất cả thông báo.'
         ]);
     }
 }

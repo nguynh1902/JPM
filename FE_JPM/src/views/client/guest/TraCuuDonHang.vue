@@ -78,32 +78,56 @@
                         <small class="text-muted">{{ item.ma_phu_tung }}</small>
                       </td>
                       <td class="text-center py-3 align-middle">{{ item.so_luong }}</td>
-                      <td class="text-end py-3 align-middle">{{ formatCurrency(item.don_gia || item.gia_ban || 0) }}</td>
-                      <td class="text-end py-3 align-middle fw-medium">{{ formatCurrency(item.so_luong * (item.don_gia || item.gia_ban || 0)) }}</td>
+                      <td class="text-end py-3 align-middle">
+                        <span v-if="(item.don_gia || item.gia_ban) > 0">{{ formatCurrency(item.don_gia || item.gia_ban) }}</span>
+                        <span v-else class="badge bg-light text-secondary border fw-medium px-2 py-1">Chờ báo giá</span>
+                      </td>
+                      <td class="text-end py-3 align-middle fw-medium">
+                        <span v-if="(item.don_gia || item.gia_ban) > 0">{{ formatCurrency(item.so_luong * (item.don_gia || item.gia_ban)) }}</span>
+                        <span v-else class="text-muted fst-italic small">--</span>
+                      </td>
                     </tr>
                   </tbody>
                   <tfoot class="bg-light">
                     <tr>
-                      <td colspan="3" class="text-end text-muted pt-3 pb-1">Tạm Tính:</td>
-                      <td class="text-end fw-medium pt-3 pb-1">{{ formatCurrency(calculateItemsTotal()) }}</td>
+                      <td colspan="3" class="text-end text-muted pt-3 pb-1">Tiền Hàng (Tạm tính):</td>
+                      <td class="text-end fw-medium pt-3 pb-1">
+                        <span v-if="calculateItemsTotal() > 0">{{ formatCurrency(calculateItemsTotal()) }}</span>
+                        <span v-else class="text-muted fst-italic">Chờ định giá</span>
+                      </td>
                     </tr>
                     <tr>
                       <td colspan="3" class="text-end text-muted py-1">Phí Vận Chuyển:</td>
                       <td class="text-end fw-medium py-1">
-                        {{ result.data.khach_tu_tra_cuoc ? 'Khách trả cước' : formatCurrency(result.data.phi_van_chuyen || 0) }}
+                        {{ result.data.khach_tu_tra_cuoc ? 'Khách tự trả cước chành xe' : ((result.data.phi_van_chuyen > 0) ? formatCurrency(result.data.phi_van_chuyen) : 'Chờ xác nhận') }}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td colspan="3" class="text-end text-dark fw-bold py-2 border-top">TỔNG CỘNG ĐƠN HÀNG:</td>
+                      <td class="text-end fw-bold text-danger py-2 border-top fs-5">
+                        <span v-if="calculateItemsTotal() > 0">{{ formatCurrency(calculateItemsTotal() + (result.data.khach_tu_tra_cuoc ? 0 : (result.data.phi_van_chuyen || 0))) }}</span>
+                        <span v-else class="text-secondary fs-6">Đang Cập Nhật</span>
                       </td>
                     </tr>
                     <tr v-if="result.data.tien_coc_yeu_cau > 0">
-                      <td colspan="3" class="text-end text-muted py-1">Yêu Cầu Cọc:</td>
-                      <td class="text-end fw-bold text-primary py-1">{{ formatCurrency(result.data.tien_coc_yeu_cau) }}</td>
+                      <td colspan="3" class="text-end text-muted py-1">Tiền Cọc Cam Kết:</td>
+                      <td class="text-end py-1">
+                        <span class="fw-bold text-primary">{{ formatCurrency(result.data.tien_coc_yeu_cau) }}</span>
+                        <div class="small mt-1">
+                          <span v-if="(result.data.da_thu || 0) >= result.data.tien_coc_yeu_cau" class="badge bg-success-subtle text-success border border-success-subtle">
+                            <i class='bx bx-check-circle me-1'></i>Đã thanh toán cọc
+                          </span>
+                          <span v-else class="badge bg-danger-subtle text-danger border border-danger-subtle">
+                            <i class='bx bx-time me-1'></i>Chưa thanh toán cọc
+                          </span>
+                        </div>
+                      </td>
                     </tr>
-                    <tr v-if="result.type === 'order' && result.data.da_thu > 0">
-                      <td colspan="3" class="text-end text-muted py-1">Đã Thanh Toán:</td>
-                      <td class="text-end fw-bold text-success py-1">- {{ formatCurrency(result.data.da_thu) }}</td>
-                    </tr>
-                    <tr>
-                      <td colspan="3" class="text-end text-dark fw-bold pt-1 pb-3">TỔNG CỘNG:</td>
-                      <td class="text-end fw-bold text-danger pt-1 pb-3 fs-5">{{ formatCurrency(calculateGrandTotal()) }}</td>
+                    <tr v-if="calculateItemsTotal() > 0 && result.data.tien_coc_yeu_cau > 0">
+                      <td colspan="3" class="text-end text-secondary fw-semibold py-2">Còn Lại Thu Khi Nhận Hàng (COD):</td>
+                      <td class="text-end fw-bold text-dark py-2 font-monospace fs-6">
+                        {{ formatCurrency(Math.max(0, (calculateItemsTotal() + (result.data.khach_tu_tra_cuoc ? 0 : (result.data.phi_van_chuyen || 0))) - (result.data.da_thu || 0))) }}
+                      </td>
                     </tr>
                   </tfoot>
                 </table>
@@ -172,6 +196,47 @@
                   <div class="spinner-border text-primary" role="status"></div>
                   <p class="text-muted small mt-2">Đang kết nối cổng VietQR...</p>
                 </div>
+              </div>
+
+              <!-- Quote Status Sections -->
+              <!-- 1. Báo Giá Đã Sẵn Sàng (Trạng thái = 1) -->
+              <div v-if="result.type === 'quote' && result.data.trang_thai === 1" class="bg-light p-4 rounded-4 text-center mt-4 border border-info border-opacity-50">
+                <div class="d-flex align-items-center justify-content-center gap-2 mb-2">
+                  <span class="badge bg-info text-white px-3 py-2 rounded-pill"><i class='bx bx-check-shield me-1'></i> ĐÃ CÓ BẢNG BÁO GIÁ</span>
+                  <span class="badge bg-warning text-dark px-3 py-2 rounded-pill"><i class='bx bx-time me-1'></i> HIỆU LỰC 72 GIỜ</span>
+                </div>
+                <h5 class="fw-bold text-dark mb-2">Báo Giá & Tiền Cọc Đã Được Phê Duyệt</h5>
+                <p class="text-muted small mb-3">Admin đã đối soát thông số phụ tùng, tính cước chành xe và xác lập số tiền đặt cọc cần thiết. Quý khách vui lòng kiểm tra bảng báo giá và xác nhận thanh toán cọc.</p>
+                <router-link v-if="result.data.token_xac_nhan" :to="'/bao-gia/' + result.data.token_xac_nhan" class="btn btn-primary rounded-pill px-4 py-2 fw-bold shadow-sm">
+                  <i class="bx bx-file-blank me-1"></i> Xem Chi Tiết Báo Giá & Quét Mã Cọc
+                </router-link>
+              </div>
+
+              <!-- 2. Đang Chờ Báo Giá (Trạng thái = 0) -->
+              <div v-else-if="result.type === 'quote' && result.data.trang_thai === 0" class="bg-light p-4 rounded-4 text-center mt-4 border border-warning border-opacity-50">
+                <div class="d-flex align-items-center justify-content-center gap-2 mb-2">
+                  <span class="badge bg-warning text-dark px-3 py-2 rounded-pill"><i class='bx bx-hourglass me-1'></i> ĐANG XỬ LÝ</span>
+                </div>
+                <h5 class="fw-bold text-dark mb-2">Bộ Phận Kỹ Thuật Đang Xử Lý Đơn</h5>
+                <p class="text-muted small mb-0">Hệ thống đang kiểm tra tồn kho tại Nhật/Việt Nam, tính trọng lượng và liên hệ chành xe liên tỉnh để cung cấp chi phí chính xác nhất cho quý khách.</p>
+              </div>
+
+              <!-- 3. Đã Chuyển Thành Đơn Hàng (Trạng thái = 2) -->
+              <div v-else-if="result.type === 'quote' && result.data.trang_thai === 2" class="bg-light p-4 rounded-4 text-center mt-4 border border-success border-opacity-50">
+                <div class="d-flex align-items-center justify-content-center gap-2 mb-2">
+                  <span class="badge bg-success text-white px-3 py-2 rounded-pill"><i class='bx bx-check-circle me-1'></i> ĐÃ XÁC NHẬN</span>
+                </div>
+                <h5 class="fw-bold text-dark mb-2">Yêu Cầu Đã Được Xác Nhận & Đang Tiến Hành Giao Hàng</h5>
+                <p class="text-muted small mb-0">Yêu cầu báo giá này đã được chấp thuận và chuyển sang quy trình xuất kho / vận chuyển.</p>
+              </div>
+
+              <!-- 4. Đã Hủy Hoặc Quá Hạn (Trạng thái = 3) -->
+              <div v-else-if="result.type === 'quote' && result.data.trang_thai === 3" class="bg-light p-4 rounded-4 text-center mt-4 border border-danger border-opacity-50">
+                <div class="d-flex align-items-center justify-content-center gap-2 mb-2">
+                  <span class="badge bg-danger text-white px-3 py-2 rounded-pill"><i class='bx bx-x-circle me-1'></i> ĐÃ HỦY / HẾT HẠN</span>
+                </div>
+                <h5 class="fw-bold text-dark mb-2">Yêu Cầu Báo Giá Đã Đóng</h5>
+                <p class="text-muted small mb-0">Yêu cầu báo giá này đã bị hủy hoặc quá thời hạn 72 giờ theo quy định tỷ giá phụ tùng máy thủy.</p>
               </div>
               
               <!-- Zalo Support -->
@@ -371,8 +436,15 @@ export default {
   mounted() {
     const urlParams = new URLSearchParams(window.location.search);
     const code = urlParams.get('code');
+    const phone = urlParams.get('phone');
     if (code) {
       this.form.code = code;
+    }
+    if (phone) {
+      this.form.phone = phone;
+    }
+    if (code && phone) {
+      this.searchTransaction();
     }
   }
 }

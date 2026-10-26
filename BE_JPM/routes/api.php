@@ -11,8 +11,6 @@ use App\Domain\IAM\Controllers\AuthController;
 use App\Domain\CMS\Controllers\DanhMucSanPhamController;
 use App\Domain\CMS\Controllers\SanPhamController;
 use App\Domain\MarineCatalog\Controllers\ThuongHieuController;
-use App\Domain\CMS\Controllers\BannerController;
-use App\Domain\CMS\Controllers\VoucherController;
 use App\Domain\IAM\Controllers\SystemLogController;
 
 // Auth Routes (Public) - Protected by Rate Limiting
@@ -163,10 +161,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::apiResource('admin/vai-tro', \App\Domain\IAM\Controllers\VaiTroController::class);
     });
 
-    // Nội dung, Tin tức, FAQ, Banner, Voucher (CMS)
+    // Nội dung, Tin tức, FAQ (CMS)
     Route::middleware(['role_or_permission:admin|Super Admin|staff|Xem Tin tức & CMS|Soạn thảo Tin tức & CMS|Xóa Tin tức & CMS|Quản lý Tin tức & CMS|Cấu hình chung,sanctum'])->group(function () {
-        Route::apiResource('admin/banner', BannerController::class);
-        Route::apiResource('admin/voucher', VoucherController::class);
         Route::apiResource('admin/chuyen-muc', \App\Domain\CMS\Controllers\ChuyenMucController::class);
         Route::apiResource('admin/tin-tuc', \App\Domain\CMS\Controllers\TinTucController::class);
         Route::apiResource('admin/faq', \App\Domain\CMS\Controllers\FaqController::class);

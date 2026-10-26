@@ -188,13 +188,6 @@ export default {
           type: "item"
         },
         {
-          title: "Mã Giảm Giá (Voucher)",
-          icon: "bx-gift",
-          path: "/portal/voucher",
-          permission: "Xem Đơn hàng",
-          type: "item"
-        },
-        {
           title: "Danh Sách Kho",
           icon: "bx-store-alt",
           path: "/portal/danh-sach-kho",
@@ -218,13 +211,6 @@ export default {
         {
           title: "Nội Dung & CMS",
           type: "header"
-        },
-        {
-          title: "Banner Quảng Cáo",
-          icon: "bx-images",
-          path: "/portal/banner",
-          permission: "Xem Tin tức & CMS",
-          type: "item"
         },
         {
           title: "Chuyên Mục",
