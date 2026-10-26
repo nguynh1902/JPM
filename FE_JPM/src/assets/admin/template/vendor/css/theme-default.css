@@ -983,13 +983,29 @@ input[type="file"].form-control::file-selector-button { padding: 0.4375rem 0.875
   padding-right: 2rem !important;
 }
 
-/* Multiselect Dropdown Auto-width to fit content */
+/* Multiselect Dropdown Auto-width & Stacking Context Elevation (Thoát khỏi viền Card/Col đè lên thành phần phía sau) */
+.card:has(.multiselect.is-open),
+[class*="col-"]:has(.multiselect.is-open),
+tr:has(.multiselect.is-open) {
+  position: relative !important;
+  z-index: 30 !important;
+}
+
+.multiselect.is-open {
+  position: relative !important;
+  z-index: 1050 !important;
+}
+
 .multiselect-dropdown {
   right: auto !important;
   left: -1px !important;
   min-width: calc(100% + 2px) !important;
   width: max-content !important;
   max-width: min(480px, 85vw) !important;
+  max-height: 24rem !important;
+  overflow-y: auto !important;
+  z-index: 1050 !important;
+  box-shadow: 0 10px 25px -5px rgba(67, 89, 113, 0.25), 0 8px 10px -6px rgba(67, 89, 113, 0.2) !important;
 }
 .multiselect-option {
   white-space: nowrap !important;

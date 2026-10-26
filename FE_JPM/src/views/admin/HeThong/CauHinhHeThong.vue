@@ -317,8 +317,8 @@
       </div>
 
       <!-- TÀI KHOẢN NGÂN HÀNG & MÃ VIETQR NHẬN CỌC -->
-      <div class="col-12">
-        <div class="card mb-4">
+      <div class="col-12" style="position: relative; z-index: 5;">
+        <div class="card mb-4" style="overflow: visible;">
           <div class="card-header d-flex flex-wrap justify-content-between align-items-center gap-2 border-bottom py-3">
             <div>
               <h5 class="card-title mb-1 fw-bold text-dark">
@@ -336,30 +336,22 @@
               <!-- Cột nhập liệu thông tin ngân hàng -->
               <div class="col-lg-7">
                 <!-- Chọn Ngân Hàng -->
-                <div class="mb-4">
-                  <label for="vietqr_bank_id" class="form-label fw-bold text-dark">
+                <div class="mb-3">
+                  <label class="form-label fw-bold text-dark">
                     Ngân Hàng Thụ Hưởng <span class="text-danger">*</span>
                   </label>
-                  <div class="input-group input-group-merge">
-                    <span class="input-group-text"><i class="bx bx-building-house text-primary"></i></span>
-                    <select 
-                      id="vietqr_bank_id" 
-                      class="form-select" 
-                      v-model="formData.vietqr_bank_id"
-                      @change="onBankChange"
-                    >
-                      <option v-for="bank in vietnamBanks" :key="bank.id" :value="bank.id">
-                        {{ bank.fullName }}
-                      </option>
-                    </select>
-                  </div>
-                  <div class="form-text text-muted mt-1">
-                    <i class="bx bx-info-circle text-primary me-1"></i>Hệ thống tự động map mã định danh Napas (VD: VietinBank &rarr; ICB, Vietcombank &rarr; VCB).
-                  </div>
+                  <v-select 
+                    v-model="formData.vietqr_bank_id"
+                    :options="bankOptions"
+                    :searchable="true"
+                    :can-clear="false"
+                    placeholder="Tìm hoặc chọn ngân hàng..."
+                  />
+                  <small class="text-muted mt-1 d-block">Chuẩn Napas 24/7 liên ngân hàng.</small>
                 </div>
 
                 <!-- Số Tài Khoản -->
-                <div class="mb-4">
+                <div class="mb-3">
                   <label for="vietqr_account_no" class="form-label fw-bold text-dark">
                     Số Tài Khoản Nhận Tiền <span class="text-danger">*</span>
                   </label>
@@ -373,11 +365,11 @@
                       v-model="formData.vietqr_account_no"
                     />
                   </div>
-                  <div class="form-text text-muted">Số tài khoản chính xác tại ngân hàng đã chọn để khách chuyển tiền cọc.</div>
+                  <small class="text-muted mt-1 d-block">Số tài khoản nhận tiền cọc.</small>
                 </div>
 
                 <!-- Tên Chủ Tài Khoản -->
-                <div class="mb-4">
+                <div class="mb-3">
                   <label for="vietqr_account_name" class="form-label fw-bold text-dark">
                     Tên Chủ Tài Khoản (In hoa không dấu) <span class="text-danger">*</span>
                   </label>
@@ -387,78 +379,92 @@
                       type="text" 
                       id="vietqr_account_name" 
                       class="form-control text-uppercase" 
-                      placeholder="VD: CONG TY PHU TUNG MAY THUY JPM HOAC NGUYEN VAN A" 
+                      placeholder="VD: CONG TY PHU TUNG MAY THUY JPM" 
                       v-model="formData.vietqr_account_name"
                     />
                   </div>
-                  <div class="form-text text-muted">Nhập chữ IN HOA KHÔNG DẤU theo đúng hợp đồng đăng ký với ngân hàng.</div>
+                  <small class="text-muted mt-1 d-block">In hoa không dấu theo ngân hàng.</small>
+                </div>
+
+                <!-- Tiền Tố Nội Dung Chuyển Khoản -->
+                <div class="mb-3">
+                  <label for="vietqr_prefix" class="form-label fw-bold text-dark">
+                    Tiền Tố Nội Dung Chuyển Khoản
+                  </label>
+                  <div class="input-group input-group-merge">
+                    <span class="input-group-text"><i class="bx bx-purchase-tag-alt text-warning"></i></span>
+                    <input 
+                      type="text" 
+                      id="vietqr_prefix" 
+                      class="form-control text-uppercase" 
+                      placeholder="JPM hoặc COC" 
+                      v-model="formData.vietqr_prefix"
+                    />
+                  </div>
+                  <small class="text-muted mt-1 d-block">
+                    Ghép tự động dạng: <strong>[Tiền tố] [Mã đơn]</strong>
+                  </small>
                 </div>
 
                 <!-- Kiểu hiển thị mã QR (Template) -->
-                <div class="mb-2">
-                  <label for="vietqr_template" class="form-label fw-bold text-dark">
+                <div class="mb-3">
+                  <label class="form-label fw-bold text-dark">
                     Mẫu Hiển Thị Khung QR
                   </label>
-                  <div class="input-group input-group-merge">
-                    <span class="input-group-text"><i class="bx bx-palette text-warning"></i></span>
-                    <select 
-                      id="vietqr_template" 
-                      class="form-select" 
-                      v-model="formData.vietqr_template"
-                    >
-                      <option value="compact2">Chuẩn đầy đủ: Khung viền + Logo Napas + Logo Ngân Hàng (Khuyên dùng)</option>
-                      <option value="compact">Gọn nhẹ: Kèm logo ngân hàng thu nhỏ</option>
-                      <option value="qr_only">Đơn giản: Chỉ hiển thị mã QR vuông</option>
-                    </select>
-                  </div>
-                  <div class="form-text text-muted">Định dạng hình ảnh mã QR gửi cho khách quét trên điện thoại.</div>
+                  <v-select 
+                    v-model="formData.vietqr_template"
+                    :options="templateOptions"
+                    :can-clear="false"
+                    placeholder="Chọn kiểu dáng khung QR..."
+                  />
+                  <small class="text-muted mt-1 d-block">Kiểu dáng hiển thị cho khách quét.</small>
                 </div>
               </div>
 
               <!-- Cột Live Preview Quét Thử Mã QR -->
               <div class="col-lg-5">
-                <div class="border rounded p-3 bg-light text-center h-100 d-flex flex-column justify-content-between">
-                  <div class="d-flex justify-content-between align-items-center mb-2">
-                    <span class="fw-bold text-dark" style="font-size: 0.9rem;">
+                <div class="border rounded p-3 bg-light text-center h-100 d-flex flex-column align-items-center">
+                  <!-- Tiêu đề cột xem trước -->
+                  <div class="d-flex justify-content-between align-items-center w-100 mb-3 pb-2 border-bottom">
+                    <span class="fw-bold text-dark" style="font-size: 0.92rem;">
                       <i class="bx bx-qr-scan text-primary me-1"></i>Xem Trước Mã VietQR Thực Tế
                     </span>
                     <span class="badge bg-label-primary">{{ formData.vietqr_bank_id || 'ICB' }}</span>
                   </div>
 
-                  <!-- Khung hiển thị ảnh QR tự sinh -->
-                  <div class="my-auto py-2">
-                    <div class="bg-white p-2 rounded shadow-sm d-inline-block border">
-                      <img 
-                        :src="previewQrUrl" 
-                        alt="Preview VietQR Napas" 
-                        class="img-fluid rounded"
-                        style="max-height: 220px;"
-                      />
-                    </div>
+                  <!-- Khung hiển thị ảnh QR tự sinh (To rõ, đặt sát tiêu đề, cân đối trên dưới) -->
+                  <div class="bg-white p-2 rounded shadow-sm border mb-3 d-inline-block">
+                    <img 
+                      :src="previewQrUrl" 
+                      alt="Preview VietQR Napas" 
+                      class="img-fluid rounded"
+                      style="max-height: 285px; width: 100%; max-width: 255px; object-fit: contain;"
+                    />
+                  </div>
 
-                    <!-- Bảng thông tin tóm tắt -->
-                    <div class="mt-3 text-start small bg-white p-3 rounded border">
-                      <div class="d-flex justify-content-between py-1 border-bottom">
-                        <span class="text-muted">Ngân hàng:</span>
-                        <span class="fw-bold text-dark">{{ formData.vietqr_bank_name || 'VietinBank' }} ({{ formData.vietqr_bank_id || 'ICB' }})</span>
-                      </div>
-                      <div class="d-flex justify-content-between py-1 border-bottom">
-                        <span class="text-muted">Số tài khoản:</span>
-                        <span class="fw-bold text-primary">{{ formData.vietqr_account_no || 'Chưa nhập' }}</span>
-                      </div>
-                      <div class="d-flex justify-content-between py-1 border-bottom">
-                        <span class="text-muted">Chủ tài khoản:</span>
-                        <span class="fw-bold text-dark">{{ (formData.vietqr_account_name || 'Chưa nhập').toUpperCase() }}</span>
-                      </div>
-                      <div class="d-flex justify-content-between py-1">
-                        <span class="text-muted">Cú pháp mẫu:</span>
-                        <span class="fw-bold text-danger">COC YCBG-DEMO</span>
-                      </div>
+                  <!-- Bảng thông tin tóm tắt -->
+                  <div class="text-start small bg-white p-3 rounded border w-100 mb-2">
+                    <div class="d-flex justify-content-between py-1 border-bottom">
+                      <span class="text-muted">Ngân hàng:</span>
+                      <span class="fw-bold text-dark">{{ formData.vietqr_bank_name || 'VietinBank' }} ({{ formData.vietqr_bank_id || 'ICB' }})</span>
+                    </div>
+                    <div class="d-flex justify-content-between py-1 border-bottom">
+                      <span class="text-muted">Số tài khoản:</span>
+                      <span class="fw-bold text-primary">{{ formData.vietqr_account_no || 'Chưa nhập' }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between py-1 border-bottom">
+                      <span class="text-muted">Chủ tài khoản:</span>
+                      <span class="fw-bold text-dark">{{ (formData.vietqr_account_name || 'Chưa nhập').toUpperCase() }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between py-1">
+                      <span class="text-muted">Nội dung mẫu:</span>
+                      <span class="fw-bold text-danger">{{ (formData.vietqr_prefix || 'COC').trim().toUpperCase() }} YCBG-DEMO</span>
                     </div>
                   </div>
 
-                  <small class="text-muted mt-2 d-block">
-                    <i class="bx bx-mobile-alt me-1 text-primary"></i>Bạn có thể mở App ngân hàng quét thử ngay mã trên để kiểm tra thông tin trước khi Lưu.
+                  <!-- Ghi chú quét thử -->
+                  <small class="text-muted mt-auto pt-2 d-block text-center" style="font-size: 0.8rem;">
+                    <i class="bx bx-mobile-alt me-1 text-primary"></i>Quét thử bằng App ngân hàng để kiểm tra trước khi Lưu.
                   </small>
                 </div>
               </div>
@@ -468,7 +474,7 @@
       </div>
 
       <!-- HIỆU NĂNG & REDIS CACHE -->
-      <div class="col-12">
+      <div class="col-12" style="position: relative; z-index: 1;">
         <div class="card mb-4">
           <div class="card-header d-flex flex-wrap justify-content-between align-items-center gap-2 border-bottom py-3">
             <div>
@@ -577,25 +583,31 @@ export default {
     const toaster = createToaster({ position: "top-right", duration: 3000 });
     const isSubmitting = ref(false);
 
-    // Danh sách các ngân hàng phổ biến tại Việt Nam theo chuẩn Napas247
-    const vietnamBanks = [
-      { id: 'ICB', name: 'VietinBank', fullName: 'VietinBank - Ngân hàng TMCP Công thương Việt Nam' },
-      { id: 'VCB', name: 'Vietcombank', fullName: 'Vietcombank - Ngân hàng TMCP Ngoại thương Việt Nam' },
-      { id: 'MB', name: 'MBBank', fullName: 'MBBank - Ngân hàng TMCP Quân Đội' },
-      { id: 'TCB', name: 'Techcombank', fullName: 'Techcombank - Ngân hàng TMCP Kỹ Thương' },
-      { id: 'BIDV', name: 'BIDV', fullName: 'BIDV - Ngân hàng Đầu tư và Phát triển VN' },
-      { id: 'VBA', name: 'Agribank', fullName: 'Agribank - Ngân hàng Nông nghiệp & PT Nông thôn' },
-      { id: 'ACB', name: 'ACB', fullName: 'ACB - Ngân hàng TMCP Á Châu' },
-      { id: 'VPB', name: 'VPBank', fullName: 'VPBank - Ngân hàng TMCP Việt Nam Thịnh Vượng' },
-      { id: 'STB', name: 'Sacombank', fullName: 'Sacombank - Ngân hàng Sài Gòn Thương Tín' },
-      { id: 'TPB', name: 'TPBank', fullName: 'TPBank - Ngân hàng TMCP Tiên Phong' },
-      { id: 'VIB', name: 'VIB', fullName: 'VIB - Ngân hàng Quốc tế Việt Nam' },
-      { id: 'SHB', name: 'SHB', fullName: 'SHB - Ngân hàng TMCP Sài Gòn - Hà Nội' },
-      { id: 'HDB', name: 'HDBank', fullName: 'HDBank - Ngân hàng TMCP Phát triển TP.HCM' },
-      { id: 'MSB', name: 'MSB', fullName: 'MSB - Ngân hàng TMCP Hàng Hải Việt Nam' },
-      { id: 'OCB', name: 'OCB', fullName: 'OCB - Ngân hàng TMCP Phương Đông' },
-      { id: 'LPB', name: 'LPBank', fullName: 'LPBank - Ngân hàng TMCP Lộc Phát Việt Nam' },
-      { id: 'SEAB', name: 'SeABank', fullName: 'SeABank - Ngân hàng TMCP Đông Nam Á' }
+    // Danh sách các ngân hàng phổ biến tại Việt Nam theo chuẩn Napas247 (Chuẩn v-select options)
+    const bankOptions = [
+      { value: 'ICB', shortName: 'VietinBank', label: 'VietinBank - Ngân hàng TMCP Công thương Việt Nam' },
+      { value: 'VCB', shortName: 'Vietcombank', label: 'Vietcombank - Ngân hàng TMCP Ngoại thương Việt Nam' },
+      { value: 'MB', shortName: 'MBBank', label: 'MBBank - Ngân hàng TMCP Quân Đội' },
+      { value: 'TCB', shortName: 'Techcombank', label: 'Techcombank - Ngân hàng TMCP Kỹ Thương' },
+      { value: 'BIDV', shortName: 'BIDV', label: 'BIDV - Ngân hàng Đầu tư và Phát triển VN' },
+      { value: 'VBA', shortName: 'Agribank', label: 'Agribank - Ngân hàng Nông nghiệp & PT Nông thôn' },
+      { value: 'ACB', shortName: 'ACB', label: 'ACB - Ngân hàng TMCP Á Châu' },
+      { value: 'VPB', shortName: 'VPBank', label: 'VPBank - Ngân hàng TMCP Việt Nam Thịnh Vượng' },
+      { value: 'STB', shortName: 'Sacombank', label: 'Sacombank - Ngân hàng Sài Gòn Thương Tín' },
+      { value: 'TPB', shortName: 'TPBank', label: 'TPBank - Ngân hàng TMCP Tiên Phong' },
+      { value: 'VIB', shortName: 'VIB', label: 'VIB - Ngân hàng Quốc tế Việt Nam' },
+      { value: 'SHB', shortName: 'SHB', label: 'SHB - Ngân hàng TMCP Sài Gòn - Hà Nội' },
+      { value: 'HDB', shortName: 'HDBank', label: 'HDBank - Ngân hàng TMCP Phát triển TP.HCM' },
+      { value: 'MSB', shortName: 'MSB', label: 'MSB - Ngân hàng TMCP Hàng Hải Việt Nam' },
+      { value: 'OCB', shortName: 'OCB', label: 'OCB - Ngân hàng TMCP Phương Đông' },
+      { value: 'LPB', shortName: 'LPBank', label: 'LPBank - Ngân hàng TMCP Lộc Phát Việt Nam' },
+      { value: 'SEAB', shortName: 'SeABank', label: 'SeABank - Ngân hàng TMCP Đông Nam Á' }
+    ];
+
+    const templateOptions = [
+      { value: 'compact2', label: 'Chuẩn đầy đủ: Khung viền + Logo Napas + Logo Ngân Hàng (Khuyên dùng)' },
+      { value: 'compact', label: 'Gọn nhẹ: Kèm logo ngân hàng thu nhỏ' },
+      { value: 'qr_only', label: 'Đơn giản: Chỉ hiển thị mã QR vuông' }
     ];
 
     // Initial default state
@@ -616,19 +628,20 @@ export default {
       vietqr_bank_name: 'VietinBank',
       vietqr_account_no: '108876543210',
       vietqr_account_name: 'CONG TY PHU TUNG MAY THUY JPM',
-      vietqr_template: 'compact2'
+      vietqr_template: 'compact2',
+      vietqr_prefix: 'COC'
     };
 
     const formData = reactive({ ...defaultData });
     const initialSnapshot = ref({});
 
-    // Xử lý thay đổi ngân hàng
-    const onBankChange = () => {
-      const selected = vietnamBanks.find(b => b.id === formData.vietqr_bank_id);
+    // Tự động đồng bộ tên ngân hàng khi đổi mã ngân hàng
+    watch(() => formData.vietqr_bank_id, (newBankId) => {
+      const selected = bankOptions.find(b => b.value === newBankId);
       if (selected) {
-        formData.vietqr_bank_name = selected.name;
+        formData.vietqr_bank_name = selected.shortName;
       }
-    };
+    });
 
     // Live preview URL mã VietQR
     const previewQrUrl = computed(() => {
@@ -636,7 +649,8 @@ export default {
       const accountNo = (formData.vietqr_account_no || '').trim() || '108876543210';
       const template = formData.vietqr_template || 'compact2';
       const accountName = encodeURIComponent((formData.vietqr_account_name || 'CONG TY PHU TUNG MAY THUY JPM').trim().toUpperCase());
-      const addInfo = encodeURIComponent('COC YCBG-DEMO');
+      const prefix = (formData.vietqr_prefix || 'COC').trim().toUpperCase();
+      const addInfo = encodeURIComponent(`${prefix} YCBG-DEMO`);
       return `https://img.vietqr.io/image/${bankId}-${accountNo}-${template}.png?amount=1000000&addInfo=${addInfo}&accountName=${accountName}`;
     });
 
@@ -744,8 +758,8 @@ export default {
       isClearingCache,
       cacheStats,
       handleClearCache,
-      vietnamBanks,
-      onBankChange,
+      bankOptions,
+      templateOptions,
       previewQrUrl
     };
   }

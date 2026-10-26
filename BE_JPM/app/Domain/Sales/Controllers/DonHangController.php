@@ -329,6 +329,12 @@ class DonHangController extends Controller
             
             $donHang->ma_van_don = $request->input('ma_van_don', $donHang->ma_van_don);
             $donHang->ten_don_vi_van_chuyen = $request->input('ten_don_vi_van_chuyen', $donHang->ten_don_vi_van_chuyen ?: 'ViettelPost');
+            
+            $totalPayable = (float) ($donHang->tong_tien + ($donHang->khach_tu_tra_cuoc ? 0 : ($donHang->phi_van_chuyen ?? 0)));
+            $daThu = (float) ($donHang->da_thu ?? 0);
+            $calculatedCod = max(0, $totalPayable - $daThu);
+            $donHang->tien_thu_ho_cod = (float) $request->input('tien_thu_ho_cod', $calculatedCod);
+
             if ($request->has('status')) {
                 $donHang->trang_thai = (int) $request->input('status');
             } else {
@@ -352,8 +358,16 @@ class DonHangController extends Controller
     /**
      * Admin: Xác nhận ViettelPost đã giao & nhận tiền COD đối soát -> Hoàn thành đơn hàng
      */
-    public function completeOrder(Request $request, $id)
+    public function completeOrder($request = null, $id = null)
     {
+        if ($request instanceof Request) {
+            $id = $id ?? (int)$request->route('id');
+        } elseif (is_numeric($request)) {
+            $id = (int)$request;
+        } else {
+            $id = (int)request()->route('id');
+        }
+
         DB::beginTransaction();
         try {
             $donHang = DonHang::lockForUpdate()->findOrFail($id);

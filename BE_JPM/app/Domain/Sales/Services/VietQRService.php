@@ -31,6 +31,7 @@ class VietQRService
                 'vietqr_account_no',
                 'vietqr_account_name',
                 'vietqr_template',
+                'vietqr_prefix',
             ])->pluck('gia_tri', 'khoa_cau_hinh')->toArray();
         } catch (\Throwable $e) {
             $dbConfigs = [];
@@ -42,6 +43,7 @@ class VietQRService
             'account_no'   => !empty($dbConfigs['vietqr_account_no']) ? $dbConfigs['vietqr_account_no'] : config('services.vietqr.account_no', '108876543210'),
             'account_name' => !empty($dbConfigs['vietqr_account_name']) ? $dbConfigs['vietqr_account_name'] : config('services.vietqr.account_name', 'CONG TY PHU TUNG MAY THUY JPM'),
             'template'     => !empty($dbConfigs['vietqr_template']) ? $dbConfigs['vietqr_template'] : config('services.vietqr.template', 'compact2'),
+            'prefix'       => !empty($dbConfigs['vietqr_prefix']) ? trim($dbConfigs['vietqr_prefix']) : 'COC',
         ];
     }
 
@@ -62,13 +64,14 @@ class VietQRService
         $tienCoc = (float)($donHang->tien_coc_yeu_cau ?? 0);
 
         $isDeposit = false;
+        $prefix = !empty($bankCfg['prefix']) ? trim($bankCfg['prefix']) : 'COC';
         if ($type === 'deposit' || ($type === 'auto' && $tienCoc > 0 && $daThu < $tienCoc)) {
             $amount = max(0, $tienCoc - $daThu);
             $isDeposit = true;
-            $transferContent = "JPM COC " . $donHang->ma_don_hang;
+            $transferContent = "{$prefix} " . $donHang->ma_don_hang;
         } else {
             $amount = max(0, $totalOrder - $daThu);
-            $transferContent = "JPM " . $donHang->ma_don_hang;
+            $transferContent = "{$prefix} " . $donHang->ma_don_hang;
         }
 
         $qrUrl = sprintf(
@@ -123,7 +126,8 @@ class VietQRService
         $tongTien = (float)($quote->tong_tien ?? 0);
         $amount = $tienCoc > 0 ? $tienCoc : $tongTien;
 
-        $transferContent = "COC " . $quote->ma_yeu_cau;
+        $prefix = !empty($bankCfg['prefix']) ? trim($bankCfg['prefix']) : 'COC';
+        $transferContent = "{$prefix} " . $quote->ma_yeu_cau;
 
         $qrUrl = sprintf(
             "https://img.vietqr.io/image/%s-%s-%s.png?amount=%d&addInfo=%s&accountName=%s",

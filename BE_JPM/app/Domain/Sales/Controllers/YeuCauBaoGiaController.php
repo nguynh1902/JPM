@@ -276,9 +276,9 @@ class YeuCauBaoGiaController extends Controller
                 'tong_tien'         => $request->input('tong_tien', $quote->tong_tien),
                 'trang_thai'        => $request->input('trang_thai', $quote->trang_thai),
                 'ghi_chu_zalo'      => $request->input('ghi_chu_zalo', $quote->ghi_chu_zalo),
-                'phi_van_chuyen'    => $request->input('shipping_fee', $quote->phi_van_chuyen),
-                'khach_tu_tra_cuoc' => $request->input('freight_collect', $quote->khach_tu_tra_cuoc),
-                'tien_coc_yeu_cau'  => $request->input('deposit_required', $quote->tien_coc_yeu_cau),
+                'phi_van_chuyen'    => $request->input('shipping_fee', $request->input('phi_van_chuyen', $quote->phi_van_chuyen)),
+                'khach_tu_tra_cuoc' => $request->input('freight_collect', $request->input('khach_tu_tra_cuoc', $quote->khach_tu_tra_cuoc)),
+                'tien_coc_yeu_cau'  => $request->input('deposit_required', $request->input('tien_coc_yeu_cau', $quote->tien_coc_yeu_cau)),
             ]);
 
             // Cập nhật giá từng món hàng nếu có
@@ -598,8 +598,17 @@ class YeuCauBaoGiaController extends Controller
     /**
      * Admin: Xác nhận thủ công đã nhận tiền cọc cho Yêu Cầu Báo Giá
      */
-    public function confirmDeposit(Request $request, $id)
+    public function confirmDeposit($request = null, $id = null)
     {
+        if ($request instanceof Request) {
+            $id = $id ?? (int)$request->route('id');
+        } elseif (is_numeric($request)) {
+            $id = (int)$request;
+            $request = request();
+        } else {
+            $id = (int)request()->route('id');
+            $request = request();
+        }
         DB::beginTransaction();
         try {
             $quote = YeuCauBaoGia::with('chiTiet')->findOrFail($id);

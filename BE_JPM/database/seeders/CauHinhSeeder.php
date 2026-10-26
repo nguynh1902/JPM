@@ -139,6 +139,13 @@ class CauHinhSeeder extends Seeder
                 'loai_gia_tri'  => 'text',
                 'trang_thai'    => 1,
             ],
+            [
+                'khoa_cau_hinh' => 'vietqr_prefix',
+                'gia_tri'       => 'COC',
+                'mo_ta'         => 'Tiền tố cú pháp nội dung chuyển khoản cọc (VD: COC, JPM COC...)',
+                'loai_gia_tri'  => 'text',
+                'trang_thai'    => 1,
+            ],
 
             // 5. Chân trang & Pháp lý
             [
