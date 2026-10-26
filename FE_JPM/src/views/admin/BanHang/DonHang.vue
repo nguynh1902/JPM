@@ -93,26 +93,10 @@
             <span>Tất Cả</span>
           </button>
         </li>
-
-        <li class="nav-item ms-auto">
-          <button 
-            type="button"
-            class="nav-link d-flex align-items-center" 
-            :class="{ active: currentTab === 'transactions' }"
-            @click="switchTab('transactions')"
-            role="tab"
-            title="Lịch sử giao dịch & đối soát VietQR IPN"
-          >
-            <i class="bx bx-qr-scan me-1"></i>
-            <span>Đối Soát VietQR</span>
-            <span v-if="transactions && transactions.length > 0" class="tab-count-badge ms-2">{{ transactions.length }}</span>
-          </button>
-        </li>
       </ul>
 
       <!-- MAIN CONTENT AREA (Chuẩn Sneat Admin) -->
-      <!-- SECTION A: PIPELINE TABS (Báo Giá & Đơn Hàng) -->
-      <div v-if="currentTab !== 'transactions'">
+      <div>
         <div class="card">
           <div class="card-header border-bottom">
             <h5 class="mb-0 fw-bold text-dark">{{ tabTitle }}</h5>
@@ -252,15 +236,19 @@
                     <template v-else>
                       <span v-if="item.status === 0 && Number(item.payment_status) === 0" class="badge badge-custom bg-pastel-warning">CHỜ DUYỆT & CỌC</span>
                       <span v-else-if="item.status === 0" class="badge badge-custom bg-pastel-info">CHỜ DUYỆT</span>
-                      <span v-else-if="item.status === 1" class="badge badge-custom bg-pastel-secondary">ĐANG CHUẨN BỊ</span>
-                      <span v-else-if="item.status === 2" class="badge badge-custom bg-pastel-info">ĐANG GIAO</span>
+                      <span v-else-if="item.status === 1" class="badge badge-custom bg-pastel-secondary">LÊN ĐƠN NHẬT</span>
+                      <span v-else-if="item.status === 2" class="badge badge-custom bg-pastel-info">GIAO VIETTELPOST</span>
                       <span v-else-if="item.status === 3" class="badge badge-custom bg-pastel-success">HOÀN THÀNH</span>
                       <span v-else-if="item.status === 4" class="badge badge-custom bg-pastel-danger">ĐÃ HỦY</span>
                       <span v-else class="badge badge-custom bg-pastel-secondary">ĐANG XỬ LÝ</span>
+                      <div v-if="item.ma_van_don" class="small text-muted font-monospace mt-1">
+                        <i class="bx bxs-truck text-primary me-1"></i>{{ item.ma_van_don }}
+                      </div>
                     </template>
                   </td>
                   <td class="text-center">
                     <div class="d-flex justify-content-center gap-1">
+                      <!-- Nút Xử lý / Xem chi tiết -->
                       <button 
                         type="button" 
                         class="action-btn text-primary" 
@@ -271,6 +259,19 @@
                       >
                         <i :class="canProcessOrders ? 'bx bx-edit-alt' : 'bx bx-show'"></i>
                       </button>
+
+                      <!-- Nút Copy Link Báo Giá (Báo giá) -->
+                      <button 
+                        v-if="item._type === 'quote' && item.token" 
+                        type="button" 
+                        class="action-btn text-success" 
+                        @click="copyQuoteLink(item)" 
+                        title="Copy link báo giá gửi khách"
+                      >
+                        <i class="bx bx-link"></i>
+                      </button>
+
+                      <!-- Nút Gửi Zalo (Báo giá) -->
                       <button 
                         v-if="item._type === 'quote' && item.customer_phone" 
                         type="button" 
@@ -280,6 +281,41 @@
                       >
                         <i class="bx bxl-telegram"></i>
                       </button>
+
+                      <!-- Nút Xác Nhận Nhận Cọc (Báo giá hoặc Đơn chờ cọc) -->
+                      <button 
+                        v-if="(item._type === 'quote' && item.status === 1) || (item._type === 'order' && item.status === 0)" 
+                        type="button" 
+                        class="action-btn text-warning" 
+                        @click="confirmDepositBtn(item)" 
+                        title="Xác nhận đã nhận cọc & Chuyển lên đơn Nhật"
+                      >
+                        <i class="bx bx-check-shield"></i>
+                      </button>
+
+                      <!-- Nút Cập Nhật ViettelPost (Đơn hàng đang chuẩn bị hoặc đang giao) -->
+                      <button 
+                        v-if="item._type === 'order' && (item.status === 1 || item.status === 2)" 
+                        type="button" 
+                        class="action-btn text-primary" 
+                        @click="openViettelPostModal(item)" 
+                        title="Cập nhật mã vận đơn ViettelPost"
+                      >
+                        <i class="bx bxs-truck"></i>
+                      </button>
+
+                      <!-- Nút Xác Nhận Thu COD & Hoàn Thành (Đơn hàng đang giao ViettelPost) -->
+                      <button 
+                        v-if="item._type === 'order' && item.status === 2" 
+                        type="button" 
+                        class="action-btn text-success" 
+                        @click="completeOrderBtn(item)" 
+                        title="Xác nhận ViettelPost đã đối soát COD -> Hoàn tất đơn"
+                      >
+                        <i class="bx bx-check-double"></i>
+                      </button>
+
+                      <!-- Nút Xóa -->
                       <button 
                         v-if="canDeleteOrders" 
                         type="button" 
@@ -303,92 +339,6 @@
           </div>
           <div class="card-footer py-3 border-top">
             <span class="text-muted fw-medium">Tổng cộng: {{ (filteredTabList && filteredTabList.length) ? filteredTabList.length : 0 }} mục</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- SECTION B: VIETQR IPN TRANSACTIONS TAB (Chuẩn Sneat Admin) -->
-      <div v-else>
-        <div class="card">
-          <div class="card-header border-bottom d-flex justify-content-between align-items-center flex-wrap gap-2">
-            <h5 class="mb-0 fw-bold text-dark">Lịch Sử Giao Dịch & Đối Soát Ngân Hàng (VietQR IPN)</h5>
-            <button type="button" class="btn btn-primary text-nowrap shadow-sm" @click="openSimulateModal(null)">
-              <i class="bx bx-plus me-1"></i> Giả Lập Giao Dịch Sandbox
-            </button>
-          </div>
-          <div class="card-body pt-3 pb-3">
-            <div class="d-flex align-items-center gap-2 flex-wrap">
-              <div class="flex-grow-1">
-                <input type="text" class="form-control" placeholder="Tìm theo Mã tham chiếu (DH/YCBG), Mã GD, Nội dung..." v-model="txSearch">
-              </div>
-              <div style="width: 200px;" class="flex-shrink-0">
-                <v-select
-                  v-model="txStatus"
-                  :options="[
-                    { value: 'all', label: 'Tất cả trạng thái' },
-                    { value: 'thanh_cong', label: 'Thành công' },
-                    { value: 'mo_phong', label: 'Mô phỏng (Sandbox)' },
-                    { value: 'that_bai', label: 'Thất bại' }
-                  ]"
-                  placeholder="Trạng thái"
-                  :can-clear="false"
-                />
-              </div>
-              <button type="button" class="btn btn-secondary text-nowrap flex-shrink-0" @click="loadTransactions" :disabled="isFetchingTransactions">
-                <i class="bx bx-refresh me-1" :class="{ 'bx-spin': isFetchingTransactions }"></i> Làm mới
-              </button>
-            </div>
-          </div>
-          <div class="table-responsive text-nowrap custom-scroll" style="height: calc(100vh - 270px); min-height: 400px; overflow-y: auto;">
-            <table class="table table-hover mb-0">
-              <thead style="position: sticky; top: 0; z-index: 1; background: #fff;">
-                <tr>
-                  <th class="text-center text-uppercase" style="width: 5%">STT</th>
-                  <th class="text-uppercase" style="width: 15%">Mã Giao Dịch</th>
-                  <th class="text-uppercase" style="width: 15%">Cổng / Ngân Hàng</th>
-                  <th class="text-uppercase" style="width: 15%">Mã Đơn / Báo Giá</th>
-                  <th class="text-end text-uppercase" style="width: 15%">Số Tiền Nhận</th>
-                  <th class="text-uppercase" style="width: 20%">Nội Dung Chuyển Khoản</th>
-                  <th class="text-center text-uppercase" style="width: 15%">Thời Gian</th>
-                  <th class="text-center text-uppercase" style="width: 10%">Trạng Thái</th>
-                </tr>
-              </thead>
-              <tbody class="table-border-bottom-0">
-                <tr v-if="isFetchingTransactions">
-                  <td colspan="8" class="text-center py-5 text-muted">
-                    <div class="spinner-border text-primary" role="status"></div>
-                    <p class="mt-2 mb-0">Đang tải lịch sử đối soát giao dịch...</p>
-                  </td>
-                </tr>
-                <tr v-for="(tx, index) in filteredTransactions" :key="tx.id" v-else>
-                  <td class="text-center"><strong>{{ index + 1 }}</strong></td>
-                  <td><span class="fw-bold text-dark font-monospace">{{ tx.ma_giao_dich }}</span></td>
-                  <td><span class="badge bg-pastel-info">{{ tx.gateway || 'VietQR Bank' }}</span></td>
-                  <td>
-                    <span class="fw-bold text-primary">{{ tx.ma_tham_chieu || 'Chưa nhận diện' }}</span>
-                  </td>
-                  <td class="text-end">
-                    <span class="fw-bold text-success fs-6">+{{ formatCurrency(tx.so_tien) }}</span>
-                  </td>
-                  <td><span class="text-truncate d-inline-block" style="max-width: 250px;" :title="tx.noi_dung">{{ tx.noi_dung }}</span></td>
-                  <td class="text-center text-muted" style="font-size: 0.85rem;">{{ formatDate(tx.ngay_giao_dich || tx.thoi_gian_giao_dich || tx.created_at) }}</td>
-                  <td class="text-center">
-                    <span v-if="['thanh_cong', 'Thành công', 'SUCCESS'].includes(tx.trang_thai)" class="badge badge-custom bg-pastel-success">THÀNH CÔNG</span>
-                    <span v-else-if="tx.trang_thai === 'mo_phong'" class="badge badge-custom bg-pastel-warning">SANDBOX TEST</span>
-                    <span v-else class="badge badge-custom bg-pastel-danger">THẤT BẠI</span>
-                  </td>
-                </tr>
-                <tr v-if="!isFetchingTransactions && filteredTransactions.length === 0">
-                  <td colspan="8" class="text-center py-5 text-muted">
-                    <i class="bx bx-receipt text-secondary fs-1 d-block mb-2"></i>
-                    Không có dữ liệu
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          <div class="card-footer py-3 border-top">
-            <span class="text-muted fw-medium">Tổng cộng: {{ (filteredTransactions && filteredTransactions.length) ? filteredTransactions.length : 0 }} mục</span>
           </div>
         </div>
       </div>
@@ -486,7 +436,7 @@
                           <td class="text-end fw-bold text-danger align-middle">{{ formatCurrency(calculateTotal(selectedQuote.items)) }}</td>
                         </tr>
                         <tr>
-                          <td colspan="4" class="text-end text-muted align-middle">Phí Vận Chuyển:</td>
+                          <td colspan="4" class="text-end text-muted align-middle">Phí Vận Chuyển (ViettelPost):</td>
                           <td class="text-end">
                             <div class="d-flex flex-column align-items-end">
                               <input type="number" class="form-control form-control-sm text-end text-danger fw-bold d-inline-block mb-1" style="width: 150px;" v-model.number="selectedQuote.shipping_fee" :disabled="isQuoteReadOnly || selectedQuote.freight_collect" placeholder="0">
@@ -508,6 +458,12 @@
                           <td colspan="4" class="text-end fw-bold text-dark fs-6 align-middle">Tổng Cộng:</td>
                           <td class="text-end fw-bold text-danger fs-6 align-middle">{{ formatCurrency(calculateTotal(selectedQuote.items) + (selectedQuote.freight_collect ? 0 : (selectedQuote.shipping_fee || 0))) }}</td>
                         </tr>
+                        <tr>
+                          <td colspan="4" class="text-end text-secondary fw-semibold align-middle">ViettelPost Thu COD Khi Giao:</td>
+                          <td class="text-end fw-bold text-dark fs-6 font-monospace align-middle">
+                            {{ formatCurrency(Math.max(0, (calculateTotal(selectedQuote.items) + (selectedQuote.freight_collect ? 0 : (selectedQuote.shipping_fee || 0))) - (selectedQuote.deposit_required || 0))) }}
+                          </td>
+                        </tr>
                       </tfoot>
                     </table>
                   </div>
@@ -516,14 +472,17 @@
             </div>
             <div class="modal-footer border-top py-2 mt-2 d-flex justify-content-between align-items-center">
               <div>
+                <button type="button" class="btn btn-outline-info px-3 me-2 shadow-sm" v-if="selectedQuote && selectedQuote.token" @click.prevent="copyQuoteLink(selectedQuote)">
+                  <i class="bx bx-link me-1"></i> Copy Link Báo Giá
+                </button>
                 <button type="button" class="btn btn-primary px-3 me-2 shadow-sm" v-if="selectedQuote && selectedQuote.status === 1 && !isQuoteReadOnly && canProcessOrders" @click.prevent="openZaloMessage">
                   <i class="bx bx-chat me-1"></i> Mở Zalo Gửi Khách
                 </button>
-                <button type="button" class="btn btn-success px-3 me-2 shadow-sm" v-if="selectedQuote && selectedQuote.status === 1 && !isQuoteReadOnly && canProcessOrders" @click.prevent="copyMagicLink">
-                  <i class="bx bx-link me-1"></i> Copy Link Zalo
+                <button type="button" class="btn btn-warning text-dark fw-bold px-3 me-2 shadow-sm" v-if="selectedQuote && selectedQuote.status === 1 && !isQuoteReadOnly && canProcessOrders" @click.prevent="confirmDepositFromModal(selectedQuote)">
+                  <i class="bx bx-check-shield me-1"></i> Xác Nhận Đã Nhận Cọc & Lên Đơn Nhật
                 </button>
                 <button type="button" class="btn btn-info px-3 text-white shadow-sm" v-if="selectedQuote && selectedQuote.status === 1 && !isQuoteReadOnly && canProcessOrders" @click.prevent="adminChotDon">
-                  <i class="bx bx-check-double me-1"></i> Khách Đã Chốt (Tạo Đơn)
+                  <i class="bx bx-check-double me-1"></i> Khách Chốt Không Cọc (Tạo Đơn)
                 </button>
               </div>
               <div>
@@ -689,14 +648,14 @@
           </div>
           <div class="modal-footer border-top py-3 mt-2 d-flex justify-content-between align-items-center">
             <div class="d-flex gap-2">
-              <button type="button" class="btn btn-outline-primary px-3 shadow-sm" @click="openVietQrModal(selectedOrder)" title="Xem mã VietQR tự động">
+              <button type="button" class="btn btn-outline-primary px-3 shadow-sm" @click="openVietQrModal(selectedOrder)" title="Xem mã VietQR">
                 <i class="bx bx-qr-scan me-1"></i> Mã VietQR
               </button>
-              <button type="button" class="btn btn-outline-info px-3 shadow-sm" @click="openShippingModal(selectedOrder)" title="Gửi Zalo ZNS / SMS xuất bến chành xe">
-                <i class="bx bxs-truck me-1"></i> Gửi Tin Chành Xe
+              <button type="button" class="btn btn-outline-info px-3 shadow-sm" v-if="selectedOrder && (selectedOrder.status === 1 || selectedOrder.status === 2)" @click="openViettelPostModal(selectedOrder)" title="Cập nhật mã vận đơn ViettelPost">
+                <i class="bx bxs-truck me-1"></i> Vận Đơn ViettelPost
               </button>
-              <button type="button" class="btn btn-outline-warning px-3 shadow-sm" @click="openSimulateModal(selectedOrder)" title="Thử nghiệm đối soát sandbox">
-                <i class="bx bx-money-withdraw me-1"></i> Test VietQR
+              <button type="button" class="btn btn-success px-3 shadow-sm" v-if="selectedOrder && selectedOrder.status === 2" @click="completeOrderBtn(selectedOrder)" title="Xác nhận ViettelPost đã chuyển COD">
+                <i class="bx bx-check-double me-1"></i> Thu COD & Hoàn Thành
               </button>
             </div>
             <div class="d-flex gap-2">
@@ -845,40 +804,55 @@
       </div>
     </div>
 
-    <!-- Modal 3: Giả Lập / Mô Phỏng Đối Soát VietQR Sandbox -->
-    <div class="modal fade" id="adminSimulateModal" tabindex="-1" aria-hidden="true">
+    <!-- Modal: Cập Nhật Vận Đơn ViettelPost Giao Hàng -->
+    <div class="modal fade" id="viettelPostModal" tabindex="-1" aria-hidden="true">
       <div class="modal-dialog modal-md modal-dialog-centered" role="document">
         <div class="modal-content border-0 shadow-lg">
-          <div class="modal-header bg-warning text-dark py-3">
-            <h5 class="modal-title fw-bold mb-0">
-              <i class="bx bx-test-tube me-2"></i>Mô Phỏng Giao Dịch Chuyển Khoản Ngân Hàng (Sandbox)
+          <div class="modal-header bg-primary text-white py-3">
+            <h5 class="modal-title fw-bold text-white mb-0">
+              <i class="bx bxs-truck me-2"></i>Giao Hàng Qua ViettelPost
             </h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
-          <form @submit.prevent="submitSimulatePayment">
-            <div class="modal-body p-4">
-              <p class="text-muted small">
-                Tính năng dành cho kiểm thử: Giả lập webhook của SePay/Casso/Ngân hàng gửi về hệ thống để kiểm tra đối soát tự động cập nhật số tiền đã thu và kích hoạt thông báo.
-              </p>
-              <div class="mb-3">
-                <label class="form-label fw-bold">Mã Tham Chiếu (Đơn hàng DH... hoặc Báo giá YCBG...)</label>
-                <input type="text" class="form-control" v-model="simulateForm.reference_code" placeholder="VD: DH-261011-F605" required>
+          <form @submit.prevent="saveViettelPostShipping">
+            <div class="modal-body p-4" v-if="viettelPostOrder">
+              <div class="alert alert-primary py-2 px-3 small mb-3">
+                <i class="bx bx-info-circle me-1"></i> Đơn hàng: <strong>#{{ viettelPostOrder.code }}</strong> - Người nhận: <strong>{{ viettelPostOrder.customer_name }} ({{ viettelPostOrder.customer_phone }})</strong>
+                <div class="mt-1 text-muted" v-if="viettelPostOrder.address">{{ viettelPostOrder.address }}</div>
               </div>
+
               <div class="mb-3">
-                <label class="form-label fw-bold">Số Tiền Chuyển Vào (VND)</label>
-                <input type="number" class="form-control" v-model.number="simulateForm.amount" min="1000" step="1000" required>
+                <label class="form-label fw-bold">Đơn Vị Vận Chuyển</label>
+                <input type="text" class="form-control" v-model="viettelPostForm.ten_don_vi_van_chuyen" placeholder="ViettelPost" required>
               </div>
+
               <div class="mb-3">
-                <label class="form-label fw-bold">Nội Dung Chuyển Khoản Ngân Hàng</label>
-                <input type="text" class="form-control" v-model="simulateForm.content" placeholder="VD: JPM DH-261011-F605 TIEN COC">
+                <label class="form-label fw-bold">Mã Vận Đơn ViettelPost <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" v-model="viettelPostForm.ma_van_don" placeholder="VD: VP123456789VN" required>
+                <small class="text-muted">Nhập mã vận đơn do ViettelPost cấp khi bưu tá nhận hàng hoặc tạo đơn trên app ViettelPost.</small>
+              </div>
+
+              <div class="bg-light p-3 rounded-3 border">
+                <div class="d-flex justify-content-between py-1 small">
+                  <span class="text-muted">Tổng đơn hàng:</span>
+                  <span class="fw-bold">{{ formatCurrency(viettelPostOrder.total_amount) }}</span>
+                </div>
+                <div class="d-flex justify-content-between py-1 small">
+                  <span class="text-muted">Khách đã đặt cọc:</span>
+                  <span class="fw-bold text-success">{{ formatCurrency(viettelPostOrder.paid_amount || 0) }}</span>
+                </div>
+                <div class="d-flex justify-content-between py-1 border-top mt-1 pt-1">
+                  <span class="fw-bold text-dark">Số tiền ViettelPost thu COD:</span>
+                  <span class="fw-bold text-danger fs-6">{{ formatCurrency(Math.max(0, viettelPostOrder.total_amount - (viettelPostOrder.paid_amount || 0))) }}</span>
+                </div>
               </div>
             </div>
             <div class="modal-footer py-2">
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-              <button type="submit" class="btn btn-warning text-dark fw-bold shadow-sm" :disabled="isSimulating">
-                <span v-if="isSimulating" class="spinner-border spinner-border-sm me-1" role="status"></span>
-                <i v-else class="bx bx-check-double me-1"></i>
-                {{ isSimulating ? 'Đang gửi...' : 'Kích Hoạt Đối Soát Ngay' }}
+              <button type="submit" class="btn btn-primary px-4 shadow-sm" :disabled="isSavingViettelPost">
+                <span v-if="isSavingViettelPost" class="spinner-border spinner-border-sm me-1" role="status"></span>
+                <i v-else class="bx bx-check me-1"></i>
+                Lưu & Chuyển Sang Đang Giao
               </button>
             </div>
           </form>
@@ -967,11 +941,13 @@ export default {
       typeFilter: 'all',
       selectedQuote: null,
       selectedOrder: null,
-      // Transactions data
-      transactions: [],
-      isFetchingTransactions: false,
-      txSearch: "",
-      txStatus: "all",
+      // ViettelPost Shipping Modal
+      viettelPostOrder: null,
+      viettelPostForm: {
+        ma_van_don: "",
+        ten_don_vi_van_chuyen: "ViettelPost"
+      },
+      isSavingViettelPost: false,
       // VietQR Modal
       adminVietQr: null,
       isLoadingQr: false,
@@ -987,14 +963,7 @@ export default {
         notify_customer: true,
         notify_driver: true
       },
-      isSendingShipping: false,
-      // Simulation Modal
-      simulateForm: {
-        reference_code: "",
-        amount: 0,
-        content: ""
-      },
-      isSimulating: false
+      isSendingShipping: false
     };
   },
   computed: {
@@ -1148,26 +1117,6 @@ export default {
       }
     },
 
-    filteredTransactions() {
-      let list = this.transactions || [];
-      if (this.txSearch) {
-        const s = this.txSearch.toLowerCase().trim();
-        list = list.filter(t => 
-          (t.ma_giao_dich && String(t.ma_giao_dich).toLowerCase().includes(s)) ||
-          (t.ma_tham_chieu && String(t.ma_tham_chieu).toLowerCase().includes(s)) ||
-          (t.noi_dung && String(t.noi_dung).toLowerCase().includes(s))
-        );
-      }
-      if (this.txStatus !== 'all') {
-        if (this.txStatus === 'thanh_cong') {
-          list = list.filter(t => ['thanh_cong', 'Thành công', 'SUCCESS'].includes(t.trang_thai));
-        } else {
-          list = list.filter(t => t.trang_thai === this.txStatus);
-        }
-      }
-      return list;
-    },
-
     quotes() {
       return (this.rawQuotes || []).map(item => {
         const d = new Date(item.created_at);
@@ -1179,6 +1128,7 @@ export default {
           shipping_fee: Number(item.phi_van_chuyen) || 0,
           freight_collect: item.khach_tu_tra_cuoc == 1,
           deposit_required: Number(item.tien_coc_yeu_cau) || 0,
+          da_thu: Number(item.da_thu) || 0,
           date: d.toLocaleDateString('vi-VN'),
           time: d.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }),
           customer_name: item.khach_hang_ten || 'Khách Vãng Lai',
@@ -1211,6 +1161,8 @@ export default {
           freight_collect: item.khach_tu_tra_cuoc == 1,
           deposit_required: Number(item.tien_coc_yeu_cau) || 0,
           paid_amount: Number(item.da_thu) || 0,
+          ma_van_don: item.ma_van_don || '',
+          ten_don_vi_van_chuyen: item.ten_don_vi_van_chuyen || 'ViettelPost',
           date: d.toLocaleDateString('vi-VN'),
           time: d.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }),
           customer_name: item.khach_hang_ten || item.khach_hang?.ho_ten || 'Khách Lẻ',
@@ -1235,16 +1187,27 @@ export default {
   methods: {
     switchTab(tabKey) {
       this.currentTab = tabKey;
-      if (tabKey === 'transactions') {
-        this.loadTransactions();
-      }
     },
     refreshData() {
       this.queryClient.invalidateQueries({ queryKey: ['yeu-cau-bao-gia'] });
       this.queryClient.invalidateQueries({ queryKey: ['don-hang'] });
-      if (this.currentTab === 'transactions') {
-        this.loadTransactions();
+    },
+    copyQuoteLink(item) {
+      if (!item || !item.token) {
+        Swal.fire({ icon: 'warning', iconColor: '#ff3e1d', title: 'Thông báo', text: 'Báo giá này chưa có liên kết tra cứu.' });
+        return;
       }
+      const link = `${window.location.origin}/bao-gia/${item.token}`;
+      navigator.clipboard.writeText(link).then(() => {
+        Swal.fire({
+          toast: true,
+          position: 'top-end',
+          icon: 'success',
+          title: 'Đã sao chép link báo giá!',
+          showConfirmButton: false,
+          timer: 2000
+        });
+      });
     },
     quickOpenZalo(item) {
       const phone = (item.customer_phone || '').replace(/[^0-9]/g, '');
@@ -1252,19 +1215,25 @@ export default {
         Swal.fire({ icon: 'warning', iconColor: '#ff3e1d', title: 'Thiếu số điện thoại', text: 'Khách hàng chưa có số điện thoại để gửi Zalo.' });
         return;
       }
-      const link = item.token ? `${window.location.origin}/tra-cuu-bao-gia/${item.token}` : '';
+      const link = item.token ? `${window.location.origin}/bao-gia/${item.token}` : '';
       const total = item.total_amount || 0;
       const deposit = item.deposit_required || 0;
+      const shipping = item.shipping_fee || 0;
       
-      let msg = `Chào ${item.customer_name || 'Quý khách'}, JPM Marine đã gửi bảng báo giá phụ tùng động cơ thủy cho yêu cầu [${item.code}]:\n`;
-      msg += `• Tổng tiền tạm tính: ${this.formatCurrency(total)}\n`;
+      let msg = `Chào ${item.customer_name || 'Quý khách'}, JPM Marine đã gửi bảng báo giá cho yêu cầu [${item.code}]:\n`;
+      msg += `• Tiền phụ tùng: ${this.formatCurrency(total)}\n`;
+      if (shipping > 0) {
+        msg += `• Cước vận chuyển ViettelPost: ${this.formatCurrency(shipping)}\n`;
+        msg += `• Tổng cộng đơn hàng: ${this.formatCurrency(total + shipping)}\n`;
+      }
       if (deposit > 0) {
-        msg += `• Tiền đặt cọc giữ hàng: ${this.formatCurrency(deposit)}\n`;
+        msg += `• Tiền cọc giữ hàng (đặt Nhật): ${this.formatCurrency(deposit)}\n`;
+        msg += `• Số tiền còn lại thu COD khi nhận hàng: ${this.formatCurrency(Math.max(0, (total + shipping) - deposit))}\n`;
       }
       if (link) {
-        msg += `• Link xem chi tiết và chốt đơn: ${link}\n`;
+        msg += `• Link xem chi tiết và quét QR cọc: ${link}\n`;
       }
-      msg += `(Lưu ý: Báo giá có hiệu lực trong 72 giờ theo tỷ giá JPY hiện hành). Trân trọng cảm ơn Quý khách!`;
+      msg += `(Báo giá có hiệu lực trong 72 giờ theo tỷ giá JPY hiện hành). Trân trọng cảm ơn Quý khách!`;
 
       window.open(`https://zalo.me/${phone}?text=${encodeURIComponent(msg)}`, '_blank');
     },
@@ -1293,26 +1262,7 @@ export default {
     },
     openZaloMessage() {
       if (!this.selectedQuote) return;
-      const phone = (this.selectedQuote.customer_phone || '').replace(/[^0-9]/g, '');
-      if (!phone) {
-        Swal.fire({ icon: 'warning', iconColor: '#ff3e1d', title: 'Thiếu số điện thoại', text: 'Khách hàng chưa có số điện thoại để gửi Zalo.' });
-        return;
-      }
-      const link = this.selectedQuote.token ? `${window.location.origin}/tra-cuu-bao-gia/${this.selectedQuote.token}` : '';
-      const total = this.calculateTotal(this.selectedQuote.items) + (this.selectedQuote.freight_collect ? 0 : (this.selectedQuote.shipping_fee || 0));
-      const deposit = this.selectedQuote.deposit_required || 0;
-      
-      let msg = `Chào ${this.selectedQuote.customer_name || 'Quý khách'}, JPM Marine đã gửi bảng báo giá phụ tùng động cơ thủy cho yêu cầu [${this.selectedQuote.code}]:\n`;
-      msg += `• Tổng tiền tạm tính: ${this.formatCurrency(total)}\n`;
-      if (deposit > 0) {
-        msg += `• Tiền đặt cọc giữ hàng: ${this.formatCurrency(deposit)}\n`;
-      }
-      if (link) {
-        msg += `• Link xem chi tiết và chốt đơn: ${link}\n`;
-      }
-      msg += `(Lưu ý: Báo giá có hiệu lực trong 72 giờ theo tỷ giá JPY hiện hành). Trân trọng cảm ơn Quý khách!`;
-
-      window.open(`https://zalo.me/${phone}?text=${encodeURIComponent(msg)}`, '_blank');
+      this.quickOpenZalo(this.selectedQuote);
     },
     async exportJapanPO() {
       try {
@@ -1553,18 +1503,129 @@ export default {
       });
     },
 
-    async loadTransactions() {
-      this.isFetchingTransactions = true;
+    async confirmDepositBtn(item) {
+      const depositAmt = item.deposit_required || item.tien_coc_yeu_cau || 0;
+      const result = await Swal.fire({
+        title: 'Xác Nhận Đã Nhận Cọc?',
+        html: `Xác nhận bạn đã kiểm tra thông báo ngân hàng và đã nhận đủ tiền cọc <b>${this.formatCurrency(depositAmt)}</b> cho mã <b>${item.code}</b>?<br><small class="text-muted">Đơn hàng sẽ chuyển sang trạng thái "Lên Đơn Nhật" để xuất file PO.</small>`,
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Đã nhận cọc, lên đơn ngay',
+        cancelButtonText: 'Hủy',
+        customClass: {
+          confirmButton: 'btn btn-success px-4 shadow-sm',
+          cancelButton: 'btn btn-outline-secondary px-4 me-3'
+        },
+        buttonsStyling: false
+      });
+
+      if (result.isConfirmed) {
+        try {
+          const endpoint = item._type === 'quote'
+            ? `/admin/yeu-cau-bao-gia/${item.id}/xac-nhan-coc`
+            : `/admin/don-hang/${item.id}/xac-nhan-coc`;
+          const res = await axiosClient.post(endpoint, { amount: depositAmt });
+          if (res?.success || res?.data?.success) {
+            Swal.fire({
+              icon: 'success',
+              title: 'Thành Công!',
+              text: res?.message || res?.data?.message || 'Đã xác nhận nhận cọc thành công.'
+            });
+            this.refreshData();
+          }
+        } catch (err) {
+          Swal.fire({
+            icon: 'error',
+            title: 'Lỗi',
+            text: err?.response?.data?.message || 'Không thể xác nhận cọc.'
+          });
+        }
+      }
+    },
+
+    async confirmDepositFromModal(quote) {
+      if (!quote) return;
+      await this.confirmDepositBtn(quote);
+      this.closeModal('quoteModal');
+    },
+
+    openViettelPostModal(order) {
+      if (!order) return;
+      this.viettelPostOrder = order;
+      this.viettelPostForm = {
+        ma_van_don: order.ma_van_don || '',
+        ten_don_vi_van_chuyen: order.ten_don_vi_van_chuyen || 'ViettelPost'
+      };
+      // eslint-disable-next-line no-undef
+      const modalEl = new bootstrap.Modal(document.getElementById('viettelPostModal'));
+      modalEl.show();
+    },
+
+    async saveViettelPostShipping() {
+      if (!this.viettelPostOrder || !this.viettelPostForm.ma_van_don.trim()) {
+        Swal.fire({ icon: 'warning', title: 'Thiếu thông tin', text: 'Vui lòng nhập mã vận đơn ViettelPost!' });
+        return;
+      }
+      this.isSavingViettelPost = true;
       try {
-        const res = await axiosClient.get('/admin/thanh-toan/giao-dich?per_page=50');
-        if (res && (res.success || res.data?.success)) {
-          const raw = res.data?.data ?? res.data ?? [];
-          this.transactions = Array.isArray(raw) ? raw : (raw.data || []);
+        const res = await axiosClient.post(`/admin/don-hang/${this.viettelPostOrder.id}/cap-nhat-van-chuyen`, this.viettelPostForm);
+        if (res?.success || res?.data?.success) {
+          Swal.fire({
+            icon: 'success',
+            title: 'Thành Công!',
+            text: 'Đã cập nhật mã vận đơn ViettelPost và chuyển đơn hàng sang trạng thái Giao ViettelPost.'
+          });
+          this.closeModal('viettelPostModal');
+          this.closeModal('orderModal');
+          this.refreshData();
         }
       } catch (err) {
-        console.error('Lỗi khi tải danh sách giao dịch:', err);
+        Swal.fire({
+          icon: 'error',
+          title: 'Lỗi',
+          text: err?.response?.data?.message || 'Không thể cập nhật vận chuyển.'
+        });
       } finally {
-        this.isFetchingTransactions = false;
+        this.isSavingViettelPost = false;
+      }
+    },
+
+    async completeOrderBtn(order) {
+      if (!order) return;
+      const codAmt = Math.max(0, order.total_amount - (order.paid_amount || 0));
+      const result = await Swal.fire({
+        title: 'Xác Nhận Đã Thu COD & Hoàn Thành?',
+        html: `ViettelPost đã giao hàng thành công và chuyển tiền COD <b>${this.formatCurrency(codAmt)}</b> cho đơn <b>${order.code}</b>?<br><small class="text-muted">Đơn hàng sẽ chuyển sang trạng thái "Hoàn Thành" và cập nhật doanh thu 100%.</small>`,
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Đã nhận COD, Hoàn thành đơn',
+        cancelButtonText: 'Hủy',
+        customClass: {
+          confirmButton: 'btn btn-success px-4 shadow-sm',
+          cancelButton: 'btn btn-outline-secondary px-4 me-3'
+        },
+        buttonsStyling: false
+      });
+
+      if (result.isConfirmed) {
+        try {
+          const res = await axiosClient.post(`/admin/don-hang/${order.id}/hoan-thanh`);
+          if (res?.success || res?.data?.success) {
+            Swal.fire({
+              icon: 'success',
+              title: 'Hoàn Tất Đơn Hàng!',
+              text: 'Đơn hàng đã được đánh dấu Hoàn Thành!'
+            });
+            this.closeModal('orderModal');
+            this.refreshData();
+          }
+        } catch (err) {
+          Swal.fire({
+            icon: 'error',
+            title: 'Lỗi',
+            text: err?.response?.data?.message || 'Không thể hoàn thành đơn hàng.'
+          });
+        }
       }
     },
 
@@ -1630,49 +1691,6 @@ export default {
         Swal.fire({ icon: 'error', title: 'Lỗi', text: err.response?.data?.message || 'Có lỗi xảy ra khi gửi thông báo' });
       } finally {
         this.isSendingShipping = false;
-      }
-    },
-
-    openSimulateModal(order) {
-      const code = order ? order.code : '';
-      const remaining = order ? Math.max(0, (this.calculateTotal(order.items) + (order.freight_collect ? 0 : (order.shipping_fee || 0))) - (order.paid_amount || 0)) : 1000000;
-      this.simulateForm = {
-        reference_code: code,
-        amount: remaining > 0 ? remaining : 500000,
-        content: `JPM ${code} TEST THANH TOAN`
-      };
-      // eslint-disable-next-line no-undef
-      const modalEl = new bootstrap.Modal(document.getElementById('adminSimulateModal'));
-      modalEl.show();
-    },
-
-    async submitSimulatePayment() {
-      if (!this.simulateForm.reference_code || this.simulateForm.amount <= 0) {
-        Swal.fire({ icon: 'warning', title: 'Chú ý', text: 'Vui lòng nhập mã tham chiếu và số tiền hợp lệ' });
-        return;
-      }
-      this.isSimulating = true;
-      try {
-        const res = await axiosClient.post('/admin/thanh-toan/mo-phong', this.simulateForm);
-        if (res?.success || res?.data?.success) {
-          Swal.fire({
-            icon: 'success',
-            title: 'Đối Soát Thành Công!',
-            text: `Đã đối soát +${this.formatCurrency(this.simulateForm.amount)} vào ${this.simulateForm.reference_code}`
-          });
-          // eslint-disable-next-line no-undef
-          const modalEl = bootstrap.Modal.getInstance(document.getElementById('adminSimulateModal'));
-          if (modalEl) modalEl.hide();
-          this.queryClient.invalidateQueries({ queryKey: ['don-hang'] });
-          this.loadTransactions();
-          if (this.selectedOrder && this.selectedOrder.code === this.simulateForm.reference_code) {
-            this.selectedOrder.paid_amount = (Number(this.selectedOrder.paid_amount) || 0) + Number(this.simulateForm.amount);
-          }
-        }
-      } catch (err) {
-        Swal.fire({ icon: 'error', title: 'Lỗi', text: err.response?.data?.message || 'Đối soát mô phỏng thất bại' });
-      } finally {
-        this.isSimulating = false;
       }
     }
   }

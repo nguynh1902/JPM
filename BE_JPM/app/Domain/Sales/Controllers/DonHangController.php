@@ -286,4 +286,94 @@ class DonHangController extends Controller
 
         return response()->stream($callback, 200, $headers);
     }
+
+    /**
+     * Admin: Xác nhận thủ công đã nhận tiền cọc cho Đơn Hàng
+     */
+    public function confirmDeposit(Request $request, $id)
+    {
+        DB::beginTransaction();
+        try {
+            $donHang = DonHang::lockForUpdate()->findOrFail($id);
+            $amount = (float) $request->input('amount', $donHang->tien_coc_yeu_cau);
+            if ($amount <= 0 && $donHang->tien_coc_yeu_cau > 0) {
+                $amount = (float) $donHang->tien_coc_yeu_cau;
+            }
+
+            $donHang->da_thu = $amount;
+            $donHang->trang_thai_thanh_toan = 1; // Đã cọc
+            $donHang->trang_thai = 1; // Đang chuẩn bị / lên đơn Nhật
+            $donHang->save();
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Đã xác nhận nhận cọc ' . number_format($amount, 0, ',', '.') . ' đ thành công!',
+                'data' => $donHang
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['success' => false, 'message' => 'Lỗi: ' . $e->getMessage()], 500);
+        }
+    }
+
+    /**
+     * Admin: Cập nhật thông tin giao vận ViettelPost
+     */
+    public function updateShipping(Request $request, $id)
+    {
+        DB::beginTransaction();
+        try {
+            $donHang = DonHang::lockForUpdate()->findOrFail($id);
+            
+            $donHang->ma_van_don = $request->input('ma_van_don', $donHang->ma_van_don);
+            $donHang->ten_don_vi_van_chuyen = $request->input('ten_don_vi_van_chuyen', $donHang->ten_don_vi_van_chuyen ?: 'ViettelPost');
+            if ($request->has('status')) {
+                $donHang->trang_thai = (int) $request->input('status');
+            } else {
+                $donHang->trang_thai = 2; // Đang giao
+            }
+            $donHang->save();
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Cập nhật vận chuyển thành công!',
+                'data' => $donHang
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['success' => false, 'message' => 'Lỗi: ' . $e->getMessage()], 500);
+        }
+    }
+
+    /**
+     * Admin: Xác nhận ViettelPost đã giao & nhận tiền COD đối soát -> Hoàn thành đơn hàng
+     */
+    public function completeOrder(Request $request, $id)
+    {
+        DB::beginTransaction();
+        try {
+            $donHang = DonHang::lockForUpdate()->findOrFail($id);
+            $total = (float) ($donHang->tong_tien + ($donHang->khach_tu_tra_cuoc ? 0 : ($donHang->phi_van_chuyen ?? 0)));
+
+            $donHang->da_thu = $total;
+            $donHang->trang_thai_thanh_toan = 2; // Đã thanh toán 100%
+            $donHang->trang_thai = 3; // Hoàn thành
+            $donHang->save();
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Đã xác nhận hoàn thành đơn hàng!',
+                'data' => $donHang
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['success' => false, 'message' => 'Lỗi: ' . $e->getMessage()], 500);
+        }
+    }
 }

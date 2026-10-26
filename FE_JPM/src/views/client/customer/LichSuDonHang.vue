@@ -731,8 +731,12 @@ const getStatusText = (order) => {
 
 const getLogisticsStatus = (order) => {
   const st = Number(order.trang_thai);
-  if (st === 2) return 'Đang giao chành xe liên tỉnh đến quý khách';
-  if (st === 1) return 'Đã đặt hàng đối tác Nhật Bản';
+  if (st === 2) {
+    const carrier = order.ten_don_vi_van_chuyen || 'ViettelPost';
+    const tracking = order.ma_van_don ? ` (Mã vận đơn: ${order.ma_van_don})` : '';
+    return `Đang giao hàng qua ${carrier}${tracking}`;
+  }
+  if (st === 1) return 'Đang chuẩn bị & Lên đơn nhà cung cấp Nhật Bản';
   return 'Đã nhận cọc & đang điều phối hàng';
 };
 
@@ -873,7 +877,6 @@ const toggleVietQR = async (order) => {
   if (activeQrOrderCode.value === order.code) {
     activeQrOrderCode.value = null;
     vietQrData.value = null;
-    stopPolling();
   } else {
     activeQrOrderCode.value = order.code;
     vietQrData.value = null;
@@ -889,7 +892,6 @@ const toggleVietQR = async (order) => {
     } catch (e) {
       // Fallback to static VietQR URL
     }
-    startPolling(order);
   }
 };
 
@@ -924,54 +926,43 @@ const confirmManualPaid = async (order) => {
   
   const result = await Swal.fire({
     title: 'Xác Nhận Đã Chuyển Khoản Cọc?',
-    html: `Hệ thống sẽ ghi nhận và gửi tín hiệu đối soát thanh toán cọc số tiền <b>${formatPrice(depositAmt)}₫</b> với nội dung <code>${transferContent}</code>.<br><small class="text-muted">(Dành cho khách hàng báo đã chuyển hoặc thử nghiệm luồng cọc)</small>`,
+    html: `Quý khách đã chuyển cọc số tiền <b>${formatPrice(depositAmt)}₫</b> với nội dung <code>${transferContent}</code>?<br><small class="text-muted">Kỹ thuật viên JPM sẽ kiểm tra thông báo ngân hàng và cập nhật đơn ngay.</small>`,
     icon: 'question',
     showCancelButton: true,
-    confirmButtonText: 'Xác nhận chuyển cọc',
+    confirmButtonText: 'Tôi đã chuyển cọc',
     cancelButtonText: 'Đóng',
     confirmButtonColor: '#16a34a'
   });
 
   if (result.isConfirmed) {
-    try {
-      // 1. Gửi webhook đối soát ngân hàng mô phỏng vào backend
-      await axiosClient.post('/webhooks/payment/reconciliation', {
-        referenceNumber: 'MANUAL_' + Date.now(),
-        amountIn: depositAmt,
-        transactionContent: transferContent,
-        gateway: 'VietinBank (Đối soát cọc)',
-        transactionDate: new Date().toISOString()
-      });
-
-      // 2. Nếu là báo giá, kích hoạt chốt đơn
-      if (order._type === 'quote' && order.token) {
-        try {
-          await axiosClient.post(`/public/yeu-cau-bao-gia/${order.token}/action`, { action: 'accept' });
-        } catch (_) {}
-      }
-
-      // Đóng khung QR
-      activeQrOrderCode.value = null;
-      vietQrData.value = null;
-      stopPolling();
-
-      Swal.fire({
-        icon: 'success',
-        title: 'Đặt Cọc Thành Công!',
-        text: `Hệ thống đã ghi nhận tiền cọc ${formatPrice(depositAmt)}₫ cho đơn #${order.code}. Đơn hàng đã chuyển sang Giai đoạn Vận Chuyển.`,
-        confirmButtonColor: '#16a34a'
-      });
-
-      queryClient.invalidateQueries({ queryKey: ["clientQuotesHistory"] });
-      queryClient.invalidateQueries({ queryKey: ["clientOrdersHistory"] });
-    } catch (e) {
-      console.error('Lỗi đối soát cọc:', e);
-      Swal.fire({
-        icon: 'error',
-        title: 'Lỗi',
-        text: e.response?.data?.message || 'Không thể ghi nhận thanh toán lúc này.'
-      });
+    if (order._type === 'quote' && order.token) {
+      try {
+        await axiosClient.post(`/public/yeu-cau-bao-gia/${order.token}/action`, { action: 'accept' });
+      } catch (_) {}
     }
+
+    activeQrOrderCode.value = null;
+    vietQrData.value = null;
+
+    const zaloPhone = '0123456789';
+    const msg = `Chào JPM Marine, tôi vừa chuyển cọc ${formatPrice(depositAmt)}₫ cho đơn #${order.code}. Nhờ Kỹ thuật viên kiểm tra ngân hàng và lên đơn đặt hàng Nhật giúp tôi nhé!`;
+
+    Swal.fire({
+      icon: 'success',
+      title: 'Đã Tiếp Nhận Thông Tin Cọc!',
+      text: `JPM Marine đã ghi nhận thông báo chuyển cọc của Quý khách cho đơn #${order.code}. Kỹ thuật viên sẽ kiểm tra tài khoản ngân hàng và cập nhật tiến độ đặt hàng Nhật.`,
+      showCancelButton: true,
+      confirmButtonText: '<i class="bi bi-chat-dots me-1"></i> Gửi Biên Lai Qua Zalo',
+      cancelButtonText: 'Đóng',
+      confirmButtonColor: '#0068ff'
+    }).then((res) => {
+      if (res.isConfirmed) {
+        window.open(`https://zalo.me/${zaloPhone}?text=${encodeURIComponent(msg)}`, '_blank');
+      }
+    });
+
+    queryClient.invalidateQueries({ queryKey: ["clientQuotesHistory"] });
+    queryClient.invalidateQueries({ queryKey: ["clientOrdersHistory"] });
   }
 };
 
@@ -1019,45 +1010,6 @@ const handleRejectQuote = async (order) => {
     }
   }
 };
-
-const startPolling = (order) => {
-  stopPolling();
-  if (!order) return;
-
-  const type = order._type === 'quote' ? 'quote' : 'order';
-  const code = order.code;
-
-  pollingTimer.value = setInterval(async () => {
-    try {
-      const res = await axiosClient.get(`/public/vietqr/check-status/${type}/${code}`);
-      const payload = res?.data ?? res;
-      if ((res?.success || payload?.success) && (payload?.is_deposit_paid || payload?.is_paid || payload?.quote_status === 2)) {
-        stopPolling();
-        activeQrOrderCode.value = null;
-        vietQrData.value = null;
-        Swal.fire({
-          icon: 'success',
-          title: 'Đã Nhận Tiền Cọc!',
-          text: 'Đơn hàng đã được chuyển sang giai đoạn vận chuyển.',
-          confirmButtonColor: '#f82249'
-        });
-        queryClient.invalidateQueries({ queryKey: ["clientQuotesHistory"] });
-        queryClient.invalidateQueries({ queryKey: ["clientOrdersHistory"] });
-      }
-    } catch (e) {}
-  }, 4000);
-};
-
-const stopPolling = () => {
-  if (pollingTimer.value) {
-    clearInterval(pollingTimer.value);
-    pollingTimer.value = null;
-  }
-};
-
-onBeforeUnmount(() => {
-  stopPolling();
-});
 
 const formatPrice = (price) => {
   if (!price) return '0';

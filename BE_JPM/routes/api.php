@@ -60,18 +60,10 @@ Route::prefix('public')->middleware(['throttle:public-api', 'cache.public'])->gr
     Route::get('/san-pham/{slug}', [\App\Domain\CMS\Controllers\SanPhamController::class, 'publicShow']);
 });
 
-// VietQR Payment & Polling (Public, No Response Cache)
+// VietQR Payment Info (Public, Miễn phí chuẩn Napas)
 Route::prefix('public/vietqr')->group(function () {
     Route::get('/don-hang/{code}', [\App\Domain\Sales\Controllers\PaymentController::class, 'getDonHangQR']);
     Route::get('/bao-gia/{code}', [\App\Domain\Sales\Controllers\PaymentController::class, 'getBaoGiaQR']);
-    Route::get('/check-status/{type}/{code}', [\App\Domain\Sales\Controllers\PaymentController::class, 'checkStatus']);
-});
-
-// Payment Gateway Webhooks (Banking / SePay / Casso IPN)
-Route::prefix('webhooks')->group(function () {
-    Route::post('/payment/reconciliation', [\App\Domain\Sales\Controllers\PaymentController::class, 'webhookReconciliation']);
-    Route::post('/sepay', [\App\Domain\Sales\Controllers\PaymentController::class, 'webhookReconciliation']);
-    Route::post('/casso', [\App\Domain\Sales\Controllers\PaymentController::class, 'webhookReconciliation']);
 });
 
 // Auth Routes (Protected)
@@ -283,18 +275,13 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('admin/don-hang/{id}', [\App\Domain\Sales\Controllers\DonHangController::class, 'show']);
         Route::put('admin/don-hang/{id}', [\App\Domain\Sales\Controllers\DonHangController::class, 'update']);
 
-        // Nghiệp vụ Kho (Xem tồn kho, cảnh báo cạn, xem thẻ kho & xuất file)
-        Route::get('admin/kho', [\App\Domain\Procurement\Controllers\KhoController::class, 'index']);
-        Route::get('admin/kho/{id}', [\App\Domain\Procurement\Controllers\KhoController::class, 'show']);
-        Route::get('admin/ton-kho', [\App\Domain\Procurement\Controllers\TonKhoController::class, 'index']);
-        Route::get('admin/ton-kho/hang-can-nhap', [\App\Domain\Procurement\Controllers\TonKhoController::class, 'hangCanNhap']);
-        Route::get('admin/ton-kho/{id}', [\App\Domain\Procurement\Controllers\TonKhoController::class, 'show']);
-        Route::get('admin/the-kho', [\App\Domain\Procurement\Controllers\TheKhoController::class, 'index']);
-        Route::get('admin/the-kho/{id}', [\App\Domain\Procurement\Controllers\TheKhoController::class, 'show']);
+        // Nghiệp vụ Báo giá & Đơn hàng (Thủ công chuẩn thực tế)
+        Route::post('admin/yeu-cau-bao-gia/{id}/xac-nhan-coc', [\App\Domain\Sales\Controllers\YeuCauBaoGiaController::class, 'confirmDeposit']);
+        Route::post('admin/don-hang/{id}/xac-nhan-coc', [\App\Domain\Sales\Controllers\DonHangController::class, 'confirmDeposit']);
+        Route::post('admin/don-hang/{id}/cap-nhat-van-chuyen', [\App\Domain\Sales\Controllers\DonHangController::class, 'updateShipping']);
+        Route::post('admin/don-hang/{id}/hoan-thanh', [\App\Domain\Sales\Controllers\DonHangController::class, 'completeOrder']);
 
-        // Nghiệp vụ VietQR & Đối soát thanh toán
-        Route::get('admin/thanh-toan/giao-dich', [\App\Domain\Sales\Controllers\PaymentController::class, 'adminTransactions']);
-        Route::post('admin/thanh-toan/mo-phong', [\App\Domain\Sales\Controllers\PaymentController::class, 'adminSimulatePayment']);
+        // Nghiệp vụ Kho (Xem tồn kho, cảnh báo cạn, xem thẻ kho & xuất file)
 
         // Nghiệp vụ Thông báo Zalo ZNS / SMS Chành xe & Khách hàng
         Route::get('admin/thong-bao/lich-su', [\App\Domain\Communication\Controllers\NotificationController::class, 'adminNotifications']);

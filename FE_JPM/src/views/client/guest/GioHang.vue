@@ -114,8 +114,12 @@
                   </div>
                   <div class="d-flex justify-content-between align-items-center mb-2 small text-muted">
                     <span><i class="bi bi-truck me-1"></i> Vận chuyển:</span>
-                    <span v-if="isB2B" class="text-success fw-bold">Ưu đãi B2B (Hỗ trợ chành xe)</span>
-                    <span v-else class="text-secondary">Theo cước nhà xe / chành xe</span>
+                    <span v-if="isB2B" class="text-success fw-bold">Ưu đãi B2B (Hỗ trợ vận chuyển)</span>
+                    <span v-else class="text-secondary">Cước ViettelPost (Đợi Admin báo)</span>
+                  </div>
+                  <div class="d-flex justify-content-between align-items-center mb-2 small text-muted">
+                    <span><i class="bi bi-wallet2 me-1"></i> Tiền cọc:</span>
+                    <span class="text-warning fw-bold">Đợi Admin báo cọc</span>
                   </div>
                   <div class="d-flex justify-content-between align-items-baseline pt-2 border-top">
                     <span class="text-muted fw-medium">Tạm tính tiền hàng:</span>
@@ -130,7 +134,7 @@
                   </div>
                   <!-- Thông báo đơn hàng chuẩn thực tế -->
                   <div class="alert alert-info py-2 px-3 small mt-3 mb-0 rounded-3 border-0 bg-info-subtle text-info-emphasis" style="font-size: 0.8rem; line-height: 1.4;">
-                    <i class="bi bi-info-circle-fill me-1"></i> Sau khi nhận đơn, Kỹ thuật viên JPM sẽ kiểm tra tồn kho, tính cước vận chuyển (chành xe) và tiền cọc cần chuyển, sau đó gửi bảng báo giá kèm mã VietQR qua Zalo để quý khách xác nhận.
+                    <i class="bi bi-info-circle-fill me-1"></i> Sau khi nhận đơn, Kỹ thuật viên JPM sẽ kiểm tra tồn kho, tính cước vận chuyển ViettelPost và tiền cọc, sau đó gửi link báo giá kèm mã VietQR qua Zalo để quý khách xác nhận.
                   </div>
                 </div>
 
@@ -575,31 +579,37 @@ export default {
         const res = await axiosClient.post('/public/yeu-cau-bao-gia', payload)
         if (res.success || (res.data && res.data.success)) {
           const responseData = res.success ? res.data : res.data.data
-          this.pendingOrderId = responseData.code || responseData.ma_yeu_cau || ('DH-' + Date.now())
+          this.pendingOrderId = responseData.code || responseData.ma_yeu_cau || ('YCBG-' + Date.now())
+          const token = responseData.token
           
           this.selectedItems.forEach(id => this.cartStore.removeItem(id))
           this.selectedItems = []
           
-          const descText = `Hệ thống đã ghi nhận đơn hàng #${this.pendingOrderId}. Đội ngũ JPM Marine sẽ kiểm tra tồn kho, tính cước vận chuyển (chành xe) và gửi bảng báo giá kèm tiền cọc cho quý khách qua Zalo sớm nhất.`
-          const chatMsg = `Chào JPM Marine, tôi vừa gửi đơn hàng mã ${this.pendingOrderId} cần báo giá cước vận chuyển và tiền cọc.`
+          const descText = `Hệ thống đã tiếp nhận đơn yêu cầu #${this.pendingOrderId}. Đội ngũ JPM Marine sẽ kiểm tra phụ tùng, tính cước ViettelPost và tiền cọc, sau đó gửi link báo giá qua Zalo cho Quý khách.`
+          const chatMsg = `Chào JPM Marine, tôi vừa gửi đơn hàng #${this.pendingOrderId}. Nhờ Kỹ thuật viên kiểm tra và báo giá giúp tôi nhé!`
             
           Swal.fire({
             icon: 'success',
-            title: 'Gửi Đơn Hàng Thành Công!',
+            title: 'Gửi Đơn Thành Công!',
             html: `
               <p class="text-muted mb-2">Mã Đơn / Yêu Cầu của bạn:</p>
-              <div class="fw-bold fs-3 mb-3" style="color: #059669;">#${this.pendingOrderId}</div>
+              <div class="fw-bold fs-3 mb-3 text-primary">#${this.pendingOrderId}</div>
               <p style="font-size: 0.95rem;">${descText}</p>
             `,
             showCancelButton: true,
-            confirmButtonText: '<i class="bi bi-chat-dots me-1"></i> Chat Zalo Hỗ Trợ',
-            cancelButtonText: this.isAuthenticated ? 'Xem Lịch Sử Đơn Hàng' : 'Theo Dõi Đơn Hàng',
+            confirmButtonText: '<i class="bi bi-chat-dots me-1"></i> Nhắn Zalo Cho JPM',
+            cancelButtonText: token ? 'Xem Trang Đợi Báo Giá' : (this.isAuthenticated ? 'Lịch Sử Đơn Hàng' : 'Theo Dõi Đơn Hàng'),
             confirmButtonColor: '#0068ff',
             cancelButtonColor: '#6c757d'
           }).then((result) => {
             if (result.isConfirmed) {
               const zaloPhone = '0123456789'
               window.open(`https://zalo.me/${zaloPhone}?text=${encodeURIComponent(chatMsg)}`, '_blank')
+              if (token) {
+                this.$router.push(`/bao-gia/${token}`)
+              }
+            } else if (token) {
+              this.$router.push(`/bao-gia/${token}`)
             } else if (this.isAuthenticated) {
               this.$router.push('/lich-su-don-hang')
             } else {

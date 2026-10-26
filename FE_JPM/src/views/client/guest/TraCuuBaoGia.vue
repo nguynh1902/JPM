@@ -161,23 +161,24 @@
                 <p class="mb-0 mt-1" style="white-space: pre-wrap;">{{ quote.ghi_chu_zalo }}</p>
               </div>
 
-              <!-- VietQR Đặt Cọc Báo Giá -->
+              <!-- VietQR Đặt Cọc Báo Giá (Chuẩn Napas247 - Miễn phí 100%) -->
               <div v-if="(quote.trang_thai === 1 || quote.trang_thai === 2) && quote.tien_coc_yeu_cau > 0 && !quote.is_expired" class="card bg-light border-primary border-opacity-25 p-4 mb-4 text-center rounded-4 shadow-sm">
                 <div class="d-flex align-items-center justify-content-center gap-2 mb-2">
                   <span class="badge bg-primary px-3 py-2 rounded-pill"><i class='bx bx-qr-scan me-1'></i> VIETQR ĐẶT CỌC GIỮ HÀNG</span>
-                  <span class="badge bg-success-subtle text-success px-3 py-2 rounded-pill"><i class='bx bx-check-shield me-1'></i> TỰ ĐỘNG ĐỐI SOÁT</span>
+                  <span class="badge bg-info-subtle text-info px-3 py-2 rounded-pill"><i class='bx bx-check-shield me-1'></i> NAPAS 24/7 TRỰC TIẾP</span>
                 </div>
-                <h5 class="fw-bold text-dark mb-1">Quét QR Đặt Cọc - Đặt Hàng Nhật Báo Về</h5>
-                <p class="text-muted small mb-3">Mở app Ngân hàng quét mã bên dưới để chuyển khoản tiền cọc <strong>{{ formatCurrency(quote.tien_coc_yeu_cau) }}</strong>. Hệ thống tự động ghi nhận và chuyển đơn.</p>
+                <h5 class="fw-bold text-dark mb-1">Quét QR Đặt Cọc - Lên Đơn Đặt Hàng Nhật</h5>
+                <p class="text-muted small mb-3">Mở App Ngân hàng quét mã bên dưới để chuyển khoản tiền cọc <strong>{{ formatCurrency(quote.tien_coc_yeu_cau) }}</strong> trực tiếp vào tài khoản JPM Marine.</p>
                 
                 <div v-if="vietQrData" class="row justify-content-center align-items-center g-3 text-start">
                   <div class="col-md-5 text-center">
                     <div class="d-inline-block bg-white p-2 rounded-3 shadow-sm border">
                       <img :src="vietQrData.qr_url" alt="VietQR Napas247" class="img-fluid" style="max-width: 220px; border-radius: 6px;">
                     </div>
-                    <div class="mt-2 text-muted small d-flex align-items-center justify-content-center gap-2">
-                      <span class="spinner-grow spinner-grow-sm text-primary" role="status"></span>
-                      <span>Lắng nghe giao dịch tự động...</span>
+                    <div class="mt-3">
+                      <button type="button" class="btn btn-sm btn-primary px-3 shadow-sm" @click="openZaloReceipt">
+                        <i class="bx bxl-telegram me-1"></i> Mở Zalo Gửi Biên Lai Cọc
+                      </button>
                     </div>
                   </div>
                   <div class="col-md-7">
@@ -203,7 +204,7 @@
                         <span class="text-muted">Số Tiền Cọc:</span>
                         <span class="fw-bold text-danger fs-6">{{ vietQrData.amount_formatted }}</span>
                       </div>
-                      <div class="d-flex justify-content-between py-1 small">
+                      <div class="d-flex justify-content-between py-1 border-bottom small">
                         <span class="text-muted">Nội dung CK:</span>
                         <div class="d-flex align-items-center gap-1">
                           <span class="fw-bold text-dark bg-light px-2 py-0 rounded border">{{ vietQrData.transfer_content }}</span>
@@ -211,6 +212,9 @@
                             <i class='bx bx-copy'></i>
                           </button>
                         </div>
+                      </div>
+                      <div class="mt-3 p-2 bg-light rounded text-muted small" style="line-height: 1.45;">
+                        <i class="bx bx-info-circle text-primary me-1"></i> <em>Sau khi Quý khách chuyển cọc, Kỹ thuật viên JPM sẽ kiểm tra thông báo ngân hàng và bấm xác nhận để tiến hành gom đơn đặt hàng Nhật Bản. Quý khách có thể bấm nút trên để gửi biên lai qua Zalo xử lý nhanh nhất.</em>
                       </div>
                     </div>
                   </div>
@@ -271,7 +275,6 @@ export default {
       error: null,
       isSubmitting: false,
       vietQrData: null,
-      pollingTimer: null,
       remainingSeconds: 0,
       countdownTimer: null
     }
@@ -294,7 +297,6 @@ export default {
     await this.fetchQuote();
   },
   beforeUnmount() {
-    this.stopPolling();
     this.stopCountdown();
   },
   methods: {
@@ -320,6 +322,13 @@ export default {
         showConfirmButton: false,
         timer: 2000
       });
+    },
+    openZaloReceipt() {
+      if (!this.quote) return;
+      const phone = '0123456789';
+      const depositText = this.formatCurrency(this.quote.tien_coc_yeu_cau);
+      const msg = `Chào JPM Marine, tôi vừa chuyển cọc ${depositText} cho yêu cầu báo giá [${this.quote.ma_yeu_cau}]. Nhờ Kỹ thuật viên kiểm tra thông báo ngân hàng và lên đơn đặt hàng Nhật giúp tôi nhé!`;
+      window.open(`https://zalo.me/${phone}?text=${encodeURIComponent(msg)}`, '_blank');
     },
     startCountdown() {
       this.stopCountdown();
@@ -353,51 +362,6 @@ export default {
         console.error('Không thể nạp mã VietQR cọc:', err);
       }
     },
-    startPolling() {
-      this.stopPolling();
-      if (!this.quote || (this.quote.trang_thai !== 1 && this.quote.trang_thai !== 2)) return;
-
-      const quoteCode = this.quote.ma_yeu_cau;
-      this.pollingTimer = setInterval(async () => {
-        try {
-          const res = await axiosClient.get(`/public/vietqr/check-status/quote/${quoteCode}`);
-          const payload = res?.is_deposit_paid !== undefined ? res : res?.data;
-          if (payload && (res.success || payload.success)) {
-            if (payload.is_deposit_paid || payload.quote_status === 2) {
-              this.stopPolling();
-              await this.fetchQuote();
-
-              const hasToken = Boolean(localStorage.getItem('auth_token'));
-              Swal.fire({
-                icon: 'success',
-                title: 'Đã Nhận Tiền Cọc Thành Công!',
-                text: 'Hệ thống đã tự động đối soát giao dịch và tiến hành gom đơn nhập từ Nhật Bản.',
-                confirmButtonColor: '#28a745',
-                confirmButtonText: hasToken ? 'Xem Lịch Sử Đơn Hàng' : 'Theo Dõi Đơn Hàng',
-                showCancelButton: true,
-                cancelButtonText: 'Ở Lại Trang Này'
-              }).then((result) => {
-                if (result.isConfirmed) {
-                  if (hasToken) {
-                    this.$router.push('/lich-su-don-hang');
-                  } else {
-                    this.$router.push(`/tra-cuu-don-hang?code=${this.quote.ma_yeu_cau}&phone=${this.quote.khach_hang_sdt}`);
-                  }
-                }
-              });
-            }
-          }
-        } catch (e) {
-          // Silent polling errors
-        }
-      }, 4000);
-    },
-    stopPolling() {
-      if (this.pollingTimer) {
-        clearInterval(this.pollingTimer);
-        this.pollingTimer = null;
-      }
-    },
     async fetchQuote() {
       this.loading = true;
       try {
@@ -413,9 +377,10 @@ export default {
             this.remainingSeconds = 0;
             this.stopCountdown();
           }
-          if ((this.quote.trang_thai === 1 || this.quote.trang_thai === 2) && this.quote.tien_coc_yeu_cau > 0 && !this.quote.is_expired) {
+          if (quoteData.vietqr_data) {
+            this.vietQrData = quoteData.vietqr_data;
+          } else if ((this.quote.trang_thai === 1 || this.quote.trang_thai === 2) && this.quote.tien_coc_yeu_cau > 0 && !this.quote.is_expired) {
             await this.loadVietQR();
-            this.startPolling();
           }
         } else {
           this.error = "Không tìm thấy dữ liệu báo giá.";

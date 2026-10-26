@@ -133,23 +133,36 @@
                 </table>
               </div>
 
+              <!-- Shipping Information for Orders -->
+              <div v-if="result.type === 'order' && result.data.ma_van_don" class="alert alert-info d-flex align-items-center gap-3 p-3 rounded-4 shadow-sm mb-4">
+                <i class="bx bxs-truck fs-1 text-primary"></i>
+                <div class="flex-grow-1">
+                  <strong class="d-block text-dark">Vận Chuyển: {{ result.data.ten_don_vi_van_chuyen || 'ViettelPost' }}</strong>
+                  <span class="text-muted small">Mã vận đơn: <strong class="text-primary font-monospace fs-6">{{ result.data.ma_van_don }}</strong></span>
+                </div>
+                <a :href="'https://viettelpost.com.vn/tra-cuu-hanh-trinh-don/?order_number=' + result.data.ma_van_don" target="_blank" class="btn btn-sm btn-primary">
+                  Tra Cứu ViettelPost
+                </a>
+              </div>
+
               <!-- Payment Section for Unpaid Orders -->
               <div v-if="result.type === 'order' && result.data.trang_thai_thanh_toan === 0 && result.data.trang_thai !== 3 && result.data.trang_thai !== 4" class="bg-light p-4 rounded-4 text-center mt-4 border border-primary border-opacity-25">
                 <div class="d-flex align-items-center justify-content-center gap-2 mb-2">
-                  <span class="badge bg-primary px-3 py-2 rounded-pill"><i class='bx bx-qr-scan me-1'></i> VIETQR NAPAS247 TỰ ĐỘNG</span>
-                  <span class="badge bg-success-subtle text-success px-3 py-2 rounded-pill"><i class='bx bx-wifi me-1'></i> ĐỐI SOÁT TỨC THÌ</span>
+                  <span class="badge bg-primary px-3 py-2 rounded-pill"><i class='bx bx-qr-scan me-1'></i> VIETQR NAPAS247</span>
+                  <span class="badge bg-info-subtle text-info px-3 py-2 rounded-pill"><i class='bx bx-shield-quarter me-1'></i> MIỄN PHÍ TRỰC TIẾP</span>
                 </div>
-                <h5 class="fw-bold text-dark mb-2">Thanh Toán / Đặt Cọc Chuyển Khoản</h5>
-                <p class="text-muted small mb-4">Mở ứng dụng Mobile Banking của mọi ngân hàng (VietinBank, Vietcombank, MB, Techcombank...) quét mã bên dưới để thanh toán tự động trong vài giây.</p>
+                <h5 class="fw-bold text-dark mb-2">Quét Mã QR Đặt Cọc Chuyển Khoản</h5>
+                <p class="text-muted small mb-3">Mở App Ngân hàng quét mã bên dưới để chuyển khoản tiền cọc trực tiếp vào tài khoản JPM Marine.</p>
                 
                 <div v-if="vietQrData" class="row justify-content-center align-items-center g-4">
                   <div class="col-md-5 text-center">
                     <div class="d-inline-block bg-white p-3 rounded-4 shadow-sm border">
                       <img :src="vietQrData.qr_url" alt="VietQR Napas247" class="img-fluid" style="max-width: 240px; border-radius: 8px;">
                     </div>
-                    <div class="mt-2 text-muted small d-flex align-items-center justify-content-center gap-2">
-                      <span class="spinner-grow spinner-grow-sm text-success" role="status"></span>
-                      <span>Đang chờ chuyển khoản...</span>
+                    <div class="mt-3">
+                      <a :href="'https://zalo.me/0123456789?text=' + encodeURIComponent('Tôi vừa chuyển cọc cho đơn ' + (result.data.ma_don_hang || result.data.ma_yeu_cau))" target="_blank" class="btn btn-sm btn-primary px-3 shadow-sm">
+                        <i class="bx bxl-telegram me-1"></i> Mở Zalo Gửi Biên Lai Cọc
+                      </a>
                     </div>
                   </div>
                   
@@ -173,7 +186,7 @@
                         <span class="fw-bold text-dark">{{ vietQrData.account_name }}</span>
                       </div>
                       <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
-                        <span class="text-muted small">Số Tiền:</span>
+                        <span class="text-muted small">Số Tiền Cọc:</span>
                         <span class="fw-bold text-danger fs-5">{{ vietQrData.amount_formatted }}</span>
                       </div>
                       <div class="d-flex justify-content-between align-items-center py-2">
@@ -187,14 +200,14 @@
                       </div>
                     </div>
                     <small class="text-muted d-block mt-2 fst-italic">
-                      * Vui lòng giữ nguyên nội dung chuyển khoản để hệ thống ngân hàng đối soát tự động kích hoạt xuất kho.
+                      * Sau khi nhận được thông báo biến động số dư, Kỹ thuật viên JPM sẽ xác nhận để lên đơn đặt hàng Nhật.
                     </small>
                   </div>
                 </div>
 
                 <div v-else class="py-4">
                   <div class="spinner-border text-primary" role="status"></div>
-                  <p class="text-muted small mt-2">Đang kết nối cổng VietQR...</p>
+                  <p class="text-muted small mt-2">Đang nạp mã VietQR...</p>
                 </div>
               </div>
 
@@ -206,8 +219,8 @@
                   <span class="badge bg-warning text-dark px-3 py-2 rounded-pill"><i class='bx bx-time me-1'></i> HIỆU LỰC 72 GIỜ</span>
                 </div>
                 <h5 class="fw-bold text-dark mb-2">Báo Giá & Tiền Cọc Đã Được Phê Duyệt</h5>
-                <p class="text-muted small mb-3">Admin đã đối soát thông số phụ tùng, tính cước chành xe và xác lập số tiền đặt cọc cần thiết. Quý khách vui lòng kiểm tra bảng báo giá và xác nhận thanh toán cọc.</p>
-                <router-link v-if="result.data.token_xac_nhan" :to="'/bao-gia/' + result.data.token_xac_nhan" class="btn btn-primary rounded-pill px-4 py-2 fw-bold shadow-sm">
+                <p class="text-muted small mb-3">Admin đã kiểm tra phụ tùng, tính cước vận chuyển ViettelPost và xác định tiền cọc. Quý khách vui lòng kiểm tra bảng báo giá và xác nhận chốt đơn.</p>
+                <router-link v-if="result.data.token || result.data.token_xac_nhan" :to="'/bao-gia/' + (result.data.token || result.data.token_xac_nhan)" class="btn btn-primary rounded-pill px-4 py-2 fw-bold shadow-sm">
                   <i class="bx bx-file-blank me-1"></i> Xem Chi Tiết Báo Giá & Quét Mã Cọc
                 </router-link>
               </div>
@@ -270,12 +283,8 @@ export default {
       },
       isLoading: false,
       result: null,
-      vietQrData: null,
-      pollingTimer: null
+      vietQrData: null
     }
-  },
-  beforeUnmount() {
-    this.stopPolling();
   },
   computed: {
     statusText() {
@@ -288,8 +297,9 @@ export default {
         if (r.trang_thai === 3) return 'Đã hủy';
       } else {
         if (r.trang_thai === 0) return 'Chờ xác nhận';
-        if (r.trang_thai === 1) return 'Đang xử lý / Đang giao';
-        if (r.trang_thai === 2 || r.trang_thai === 3) return 'Hoàn thành';
+        if (r.trang_thai === 1) return 'Đang chuẩn bị & Lên đơn Nhật';
+        if (r.trang_thai === 2) return 'Đang giao hàng';
+        if (r.trang_thai === 3) return 'Hoàn thành';
         if (r.trang_thai === 4) return 'Đã hủy';
       }
       return 'Không xác định';
@@ -304,8 +314,9 @@ export default {
         if (r.trang_thai === 3) return 'bg-danger text-white';
       } else {
         if (r.trang_thai === 0) return 'bg-warning text-dark';
-        if (r.trang_thai === 1) return 'bg-info text-white';
-        if (r.trang_thai === 2 || r.trang_thai === 3) return 'bg-success text-white';
+        if (r.trang_thai === 1) return 'bg-secondary text-white';
+        if (r.trang_thai === 2) return 'bg-info text-white';
+        if (r.trang_thai === 3) return 'bg-success text-white';
         if (r.trang_thai === 4) return 'bg-danger text-white';
       }
       return 'bg-secondary text-white';
@@ -355,47 +366,8 @@ export default {
         console.error('Không thể tải mã VietQR:', err);
       }
     },
-    startPolling() {
-      this.stopPolling();
-      if (!this.result || this.result.type !== 'order') return;
-      if (this.result.data.trang_thai_thanh_toan === 2 || this.result.data.trang_thai === 3 || this.result.data.trang_thai === 4) return;
-
-      const orderCode = this.result.data.ma_don_hang;
-      this.pollingTimer = setInterval(async () => {
-        try {
-          const res = await axiosClient.get(`/public/vietqr/check-status/order/${orderCode}`);
-          const payload = res?.paid_amount !== undefined || res?.is_paid !== undefined ? res : res?.data;
-          if (payload && (res?.success || payload?.success)) {
-            const currentPaid = parseFloat(this.result.data.da_thu || 0);
-            const newPaid = parseFloat(payload.paid_amount || 0);
-
-            if (newPaid > currentPaid || payload.is_paid || payload.is_deposit_paid) {
-              this.result.data.da_thu = newPaid;
-              this.result.data.trang_thai_thanh_toan = payload.payment_status;
-              this.stopPolling();
-
-              Swal.fire({
-                icon: 'success',
-                title: 'Thanh Toán Thành Công!',
-                text: `Hệ thống đã nhận ${this.formatCurrency(newPaid)} và hoàn tất đối soát tự động.`,
-                confirmButtonColor: '#0d6efd'
-              });
-            }
-          }
-        } catch (e) {
-          // Silent polling errors
-        }
-      }, 4000);
-    },
-    stopPolling() {
-      if (this.pollingTimer) {
-        clearInterval(this.pollingTimer);
-        this.pollingTimer = null;
-      }
-    },
     async searchTransaction() {
       if (!this.form.code || !this.form.phone) return;
-      this.stopPolling();
       this.isLoading = true;
       this.result = null;
       this.vietQrData = null;
@@ -406,7 +378,6 @@ export default {
           this.result = payload;
           if (this.result.type === 'order' && this.result.data.trang_thai_thanh_toan === 0) {
             await this.loadVietQR();
-            this.startPolling();
           }
           setTimeout(() => {
             window.scrollTo({ top: 500, behavior: 'smooth' });
