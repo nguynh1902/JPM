@@ -732,9 +732,9 @@ const getStatusText = (order) => {
 const getLogisticsStatus = (order) => {
   const st = Number(order.trang_thai);
   if (st === 2) {
-    const carrier = order.ten_don_vi_van_chuyen || 'ViettelPost';
+    const carrier = order.ten_don_vi_van_chuyen ? `qua ${order.ten_don_vi_van_chuyen}` : 'cho quý khách';
     const tracking = order.ma_van_don ? ` (Mã vận đơn: ${order.ma_van_don})` : '';
-    return `Đang giao hàng qua ${carrier}${tracking}`;
+    return `Đang giao hàng ${carrier}${tracking}`;
   }
   if (st === 1) return 'Đang chuẩn bị & Lên đơn nhà cung cấp Nhật Bản';
   return 'Đã nhận cọc & đang điều phối hàng';

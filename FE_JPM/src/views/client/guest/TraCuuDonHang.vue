@@ -137,10 +137,10 @@
               <div v-if="result.type === 'order' && result.data.ma_van_don" class="alert alert-info d-flex align-items-center gap-3 p-3 rounded-4 shadow-sm mb-4">
                 <i class="bx bxs-truck fs-1 text-primary"></i>
                 <div class="flex-grow-1">
-                  <strong class="d-block text-dark">Vận Chuyển: {{ result.data.ten_don_vi_van_chuyen || 'ViettelPost' }}</strong>
+                  <strong class="d-block text-dark">Vận Chuyển: {{ result.data.ten_don_vi_van_chuyen || 'Đang vận chuyển' }}</strong>
                   <span class="text-muted small">Mã vận đơn: <strong class="text-primary font-monospace fs-6">{{ result.data.ma_van_don }}</strong></span>
                 </div>
-                <a :href="'https://viettelpost.com.vn/tra-cuu-hanh-trinh-don/?order_number=' + result.data.ma_van_don" target="_blank" class="btn btn-sm btn-primary">
+                <a v-if="result.data.ten_don_vi_van_chuyen && result.data.ten_don_vi_van_chuyen.toLowerCase().includes('viettel')" :href="'https://viettelpost.com.vn/tra-cuu-hanh-trinh-don/?order_number=' + result.data.ma_van_don" target="_blank" class="btn btn-sm btn-primary">
                   Tra Cứu ViettelPost
                 </a>
               </div>
@@ -219,7 +219,7 @@
                   <span class="badge bg-warning text-dark px-3 py-2 rounded-pill"><i class='bx bx-time me-1'></i> HIỆU LỰC 72 GIỜ</span>
                 </div>
                 <h5 class="fw-bold text-dark mb-2">Báo Giá & Tiền Cọc Đã Được Phê Duyệt</h5>
-                <p class="text-muted small mb-3">Admin đã kiểm tra phụ tùng, tính cước vận chuyển ViettelPost và xác định tiền cọc. Quý khách vui lòng kiểm tra bảng báo giá và xác nhận chốt đơn.</p>
+                <p class="text-muted small mb-3">Admin đã kiểm tra phụ tùng, tính cước vận chuyển và xác định tiền cọc. Quý khách vui lòng kiểm tra bảng báo giá và xác nhận chốt đơn.</p>
                 <router-link v-if="result.data.token || result.data.token_xac_nhan" :to="'/bao-gia/' + (result.data.token || result.data.token_xac_nhan)" class="btn btn-primary rounded-pill px-4 py-2 fw-bold shadow-sm">
                   <i class="bx bx-file-blank me-1"></i> Xem Chi Tiết Báo Giá & Quét Mã Cọc
                 </router-link>

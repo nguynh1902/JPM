@@ -40,7 +40,13 @@ class DonHangVaBaoGiaSeeder extends Seeder
         $quotesData = [
             // ---------------------------------------------------------------------
             // TAB 1: CHỜ BÁO GIÁ (trang_thai = 0)
+            // Minh họa đầy đủ 3 trường hợp thực tế của giỏ hàng:
+            // 1. Toàn bộ phụ tùng LIÊN HỆ (tổng tiền 0 đ)
+            // 2. Toàn bộ phụ tùng ĐÃ CÓ GIÁ NIÊM YẾT (tổng tiền > 0)
+            // 3. VỪA CÓ GIÁ VỪA LIÊN HỆ (hỗn hợp: một số món có giá, một số món chờ định giá)
             // ---------------------------------------------------------------------
+
+            // TRƯỜNG HỢP 1: GIÁ TOÀN BỘ LÀ "LIÊN HỆ"
             [
                 'ma_yeu_cau'          => 'YCBG-20261027-01',
                 'user_id'             => 3,
@@ -49,7 +55,7 @@ class DonHangVaBaoGiaSeeder extends Seeder
                 'khach_hang_sdt'      => '0918234567',
                 'khach_hang_email'    => 'hung.marine@gmail.com',
                 'dia_chi_giao_hang'   => 'Cảng cá Tắc Cậu, Huyện Châu Thành, Kiên Giang',
-                'ghi_chu_khach_hang'  => 'Cần báo giá gấp 3 món phụ tùng động cơ Honda BF225. Tàu đang neo tại bến chờ phụ tùng thay thế.',
+                'ghi_chu_khach_hang'  => 'Cần báo giá gấp 3 món phụ tùng động cơ Honda BF225 (toàn bộ là hàng liên hệ). Tàu đang neo tại bến chờ phụ tùng thay thế.',
                 'ghi_chu_zalo'        => null,
                 'tong_tien'           => 0,
                 'phi_van_chuyen'      => 0,
@@ -65,6 +71,8 @@ class DonHangVaBaoGiaSeeder extends Seeder
                     ['ten_phu_tung' => 'PULLEY', 'ma_phu_tung' => '31141-P13-003', 'so_luong' => 1, 'don_gia' => 0],
                 ]
             ],
+
+            // TRƯỜNG HỢP 2: GIÁ TOÀN BỘ LÀ "CÓ GIÁ NIÊM YẾT"
             [
                 'ma_yeu_cau'          => 'YCBG-20261027-02',
                 'user_id'             => null,
@@ -73,22 +81,24 @@ class DonHangVaBaoGiaSeeder extends Seeder
                 'khach_hang_sdt'      => '0905345678',
                 'khach_hang_email'    => 'htx.cuadai@gmail.com',
                 'dia_chi_giao_hang'   => 'Bến tàu Cửa Đại, TP. Hội An, Tỉnh Quảng Nam',
-                'ghi_chu_khach_hang'  => 'Báo giá bộ bu-lông và ốc puly máy phát điện cano cao tốc chở khách Cù Lao Chàm. Cần xuất hóa đơn VAT.',
+                'ghi_chu_khach_hang'  => 'Bộ phụ tùng puly cano cao tốc (toàn bộ đã có giá niêm yết trên web). Nhờ Admin kiểm tra tồn kho, báo cước vận chuyển và tiền cọc để HTX chuyển khoản.',
                 'ghi_chu_zalo'        => null,
-                'tong_tien'           => 0,
+                'tong_tien'           => 5570000,
                 'phi_van_chuyen'      => 0,
                 'khach_tu_tra_cuoc'   => false,
                 'tien_coc_yeu_cau'    => 0,
                 'da_thu'              => 0,
-                'trang_thai'          => 0, // Chờ báo giá
+                'trang_thai'          => 0, // Chờ báo giá cước & cọc
                 'loai_yeu_cau'        => 'bao_gia',
                 'created_at'          => $now->copy()->subHours(5),
                 'items'               => [
-                    ['ten_phu_tung' => 'NUT, PULLEY LOCK', 'ma_phu_tung' => '31142-PD1-001', 'so_luong' => 4, 'don_gia' => 0],
-                    ['ten_phu_tung' => 'BOLTS, STUDS (6X68)', 'ma_phu_tung' => '31145-PD1-004', 'so_luong' => 6, 'don_gia' => 0],
-                    ['ten_phu_tung' => 'SCREW-WASHER', 'ma_phu_tung' => '31147-PT0-003', 'so_luong' => 10, 'don_gia' => 0],
+                    ['ten_phu_tung' => 'NUT, PULLEY LOCK', 'ma_phu_tung' => '31142-PD1-001', 'so_luong' => 4, 'don_gia' => 450000],
+                    ['ten_phu_tung' => 'BOLTS, STUDS (6X68)', 'ma_phu_tung' => '31145-PD1-004', 'so_luong' => 6, 'don_gia' => 320000],
+                    ['ten_phu_tung' => 'SCREW-WASHER', 'ma_phu_tung' => '31147-PT0-003', 'so_luong' => 10, 'don_gia' => 185000],
                 ]
             ],
+
+            // TRƯỜNG HỢP 3: VỪA CÓ GIÁ VỪA LIÊN HỆ (HỖN HỢP)
             [
                 'ma_yeu_cau'          => 'YCBG-20261026-03',
                 'user_id'             => null,
@@ -97,19 +107,19 @@ class DonHangVaBaoGiaSeeder extends Seeder
                 'khach_hang_sdt'      => '0977891234',
                 'khach_hang_email'    => 'baba.camau@gmail.com',
                 'dia_chi_giao_hang'   => 'Thị trấn Sông Đốc, Huyện Trần Văn Thời, Cà Mau',
-                'ghi_chu_khach_hang'  => 'Máy phát điện tàu vỏ gỗ bị rơ bạc đạn và kêu rè rè, cần tư vấn phụ tùng thay thế chuẩn Nhật.',
+                'ghi_chu_khach_hang'  => 'Máy phát điện tàu vỏ gỗ bị rơ bạc đạn. Đơn hàng gồm 2 món có giá sẵn (5.150.000 đ) và 1 nắp chụp bạc đạn (31130-PD1-001) nhờ JPM định giá giúp.',
                 'ghi_chu_zalo'        => null,
-                'tong_tien'           => 0,
+                'tong_tien'           => 5150000,
                 'phi_van_chuyen'      => 0,
                 'khach_tu_tra_cuoc'   => false,
                 'tien_coc_yeu_cau'    => 0,
                 'da_thu'              => 0,
-                'trang_thai'          => 0, // Chờ báo giá
+                'trang_thai'          => 0, // Chờ định giá món liên hệ & cước
                 'loai_yeu_cau'        => 'bao_gia',
                 'created_at'          => $now->copy()->subDays(1)->setHour(9),
                 'items'               => [
-                    ['ten_phu_tung' => 'BEARING, FR. GENERATOR', 'ma_phu_tung' => '31114-PT0-013', 'so_luong' => 1, 'don_gia' => 0],
-                    ['ten_phu_tung' => 'BUSH, INSULATION', 'ma_phu_tung' => '31118-PT0-003', 'so_luong' => 2, 'don_gia' => 0],
+                    ['ten_phu_tung' => 'BEARING, FR. GENERATOR', 'ma_phu_tung' => '31114-PT0-013', 'so_luong' => 1, 'don_gia' => 3450000],
+                    ['ten_phu_tung' => 'BUSH, INSULATION', 'ma_phu_tung' => '31118-PT0-003', 'so_luong' => 2, 'don_gia' => 850000],
                     ['ten_phu_tung' => 'COVER, BEARING', 'ma_phu_tung' => '31130-PD1-001', 'so_luong' => 1, 'don_gia' => 0],
                 ]
             ],

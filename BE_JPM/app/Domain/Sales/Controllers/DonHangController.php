@@ -328,7 +328,7 @@ class DonHangController extends Controller
             $donHang = DonHang::lockForUpdate()->findOrFail($id);
             
             $donHang->ma_van_don = $request->input('ma_van_don', $donHang->ma_van_don);
-            $donHang->ten_don_vi_van_chuyen = $request->input('ten_don_vi_van_chuyen', $donHang->ten_don_vi_van_chuyen ?: 'ViettelPost');
+            $donHang->ten_don_vi_van_chuyen = $request->input('ten_don_vi_van_chuyen') ?: ($donHang->ten_don_vi_van_chuyen ?: null);
             
             $totalPayable = (float) ($donHang->tong_tien + ($donHang->khach_tu_tra_cuoc ? 0 : ($donHang->phi_van_chuyen ?? 0)));
             $daThu = (float) ($donHang->da_thu ?? 0);

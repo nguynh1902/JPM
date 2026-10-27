@@ -115,7 +115,7 @@
                   <div class="d-flex justify-content-between align-items-center mb-2 small text-muted">
                     <span><i class="bi bi-truck me-1"></i> Vận chuyển:</span>
                     <span v-if="isB2B" class="text-success fw-bold">Ưu đãi B2B (Hỗ trợ vận chuyển)</span>
-                    <span v-else class="text-secondary">Cước ViettelPost (Đợi Admin báo)</span>
+                    <span v-else class="text-secondary">Cước vận chuyển (Đợi báo giá)</span>
                   </div>
                   <div class="d-flex justify-content-between align-items-center mb-2 small text-muted">
                     <span><i class="bi bi-wallet2 me-1"></i> Tiền cọc:</span>
@@ -134,7 +134,7 @@
                   </div>
                   <!-- Thông báo đơn hàng chuẩn thực tế -->
                   <div class="alert alert-info py-2 px-3 small mt-3 mb-0 rounded-3 border-0 bg-info-subtle text-info-emphasis" style="font-size: 0.8rem; line-height: 1.4;">
-                    <i class="bi bi-info-circle-fill me-1"></i> Sau khi nhận đơn, Kỹ thuật viên JPM sẽ kiểm tra tồn kho, tính cước vận chuyển ViettelPost và tiền cọc, sau đó gửi link báo giá kèm mã VietQR qua Zalo để quý khách xác nhận.
+                    <i class="bi bi-info-circle-fill me-1"></i> Sau khi nhận đơn, Kỹ thuật viên JPM sẽ kiểm tra tồn kho, tính cước vận chuyển và tiền cọc, sau đó gửi link báo giá kèm mã VietQR qua Zalo để quý khách xác nhận.
                   </div>
                 </div>
 
@@ -585,7 +585,7 @@ export default {
           this.selectedItems.forEach(id => this.cartStore.removeItem(id))
           this.selectedItems = []
           
-          const descText = `Hệ thống đã tiếp nhận đơn yêu cầu #${this.pendingOrderId}. Đội ngũ JPM Marine sẽ kiểm tra phụ tùng, tính cước ViettelPost và tiền cọc, sau đó gửi link báo giá qua Zalo cho Quý khách.`
+          const descText = `Hệ thống đã tiếp nhận đơn yêu cầu #${this.pendingOrderId}. Đội ngũ JPM Marine sẽ kiểm tra phụ tùng, tính cước vận chuyển và tiền cọc, sau đó gửi link báo giá qua Zalo cho Quý khách.`
           const chatMsg = `Chào JPM Marine, tôi vừa gửi đơn hàng #${this.pendingOrderId}. Nhờ Kỹ thuật viên kiểm tra và báo giá giúp tôi nhé!`
             
           Swal.fire({
