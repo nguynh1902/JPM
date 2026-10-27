@@ -210,3 +210,183 @@
 .table-responsive::-webkit-scrollbar-thumb:hover {
   background-color: rgba(86, 106, 127, 0.45) !important;
 }
+
+/* ==========================================================================
+   JPM ADMIN STANDARD - CHUẨN HÓA V-SELECT (@vueform/multiselect) THEO SNEAT 1.0.0
+   Màu chủ đạo Admin: #17a2b8 (Teal hàng hải)
+   Khắc phục triệt để: Lệch chiều cao với form-control, thụt bảng giữa các trang
+   ========================================================================== */
+
+/* 1. Thiết lập biến CSS gốc chuẩn Sneat với màu chủ đạo #17a2b8 */
+:root {
+  --ms-font-size: 0.9375rem;
+  --ms-line-height: 1.53;
+  --ms-bg: #ffffff;
+  --ms-border-color: #d9dee3;
+  --ms-border-width: 1px;
+  --ms-border-width-active: 2px;
+  --ms-radius: 0.375rem;
+  --ms-py: 0.4375rem;
+  --ms-px: 0.875rem;
+  --ms-placeholder-color: #b4bdc6;
+  --ms-border-color-active: #17a2b8;
+  --ms-ring-width: 0.12rem;
+  --ms-ring-color: rgba(23, 162, 184, 0.4);
+  --ms-dropdown-bg: #ffffff;
+  --ms-dropdown-border-color: #d9dee3;
+  --ms-dropdown-border-width: 1px;
+  --ms-dropdown-radius: 0.375rem;
+  --ms-max-height: 20rem;
+  --ms-option-font-size: 0.9375rem;
+  --ms-option-line-height: 1.53;
+  --ms-option-py: 0.45rem;
+  --ms-option-px: 0.875rem;
+  --ms-option-bg-pointed: rgba(23, 162, 184, 0.08);
+  --ms-option-color-pointed: #17a2b8;
+  --ms-option-bg-selected: #17a2b8;
+  --ms-option-color-selected: #ffffff;
+  --ms-option-bg-selected-pointed: #138496;
+  --ms-option-color-selected-pointed: #ffffff;
+  --ms-caret-color: #697a8d;
+  --ms-clear-color: #b4bdc6;
+  --ms-clear-color-hover: #17a2b8;
+}
+
+/* 2. Cố định chiều cao tuyệt đối khớp 100% từng pixel với .form-control và .btn của Sneat (38.95px) */
+.multiselect {
+  min-height: calc(1.53em + 0.875rem + 2px) !important;
+  max-height: calc(1.53em + 0.875rem + 2px) !important;
+  height: calc(1.53em + 0.875rem + 2px) !important;
+  font-family: inherit !important;
+  font-size: 0.9375rem !important;
+  line-height: 1.53 !important;
+  color: #697a8d !important;
+  background-color: #ffffff !important;
+  border: 1px solid #d9dee3 !important;
+  border-radius: 0.375rem !important;
+  box-sizing: border-box !important;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  vertical-align: middle !important;
+}
+
+/* 3. Wrapper bên trong lấp đầy 100% chiều cao, triệt tiêu min-height 40px mặc định của thư viện */
+.multiselect-wrapper {
+  min-height: 0 !important;
+  max-height: 100% !important;
+  height: 100% !important;
+  box-sizing: border-box !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* 4. Nhãn hiển thị giá trị & Placeholder - căn giữa tuyệt đối theo trục dọc */
+.multiselect-single-label,
+.multiselect-placeholder {
+  font-size: 0.9375rem !important;
+  line-height: 1.53 !important;
+  padding-left: 0.875rem !important;
+  padding-right: 2.25rem !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  box-sizing: border-box !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.multiselect-single-label-text {
+  color: #697a8d !important;
+  font-size: 0.9375rem !important;
+}
+
+.multiselect-placeholder {
+  color: #b4bdc6 !important;
+  font-size: 0.9375rem !important;
+}
+
+/* 5. Trạng thái Focus / Active - Đồng bộ 100% hiệu ứng viền phát sáng (Glow) chuẩn của ô input */
+.multiselect.is-active,
+.multiselect.is-open {
+  border-width: 2px !important;
+  border-color: #17a2b8 !important;
+  box-shadow: 0 0 0.25rem 0.12rem rgba(23, 162, 184, 0.4) !important;
+  outline: 0 !important;
+  border-radius: 0.375rem !important;
+}
+
+/* 6. Fix triệt để Menu Dropdown: Thả nổi độc lập bên dưới, không bao giờ xô lệch layout dòng hay đẩy bảng */
+.multiselect-dropdown {
+  top: 100% !important;
+  bottom: auto !important;
+  left: -1px !important;
+  right: auto !important;
+  transform: none !important;
+  margin-top: 4px !important;
+  min-width: calc(100% + 2px) !important;
+  width: max-content !important;
+  max-width: min(480px, 85vw) !important;
+  border: 1px solid #d9dee3 !important;
+  border-radius: 0.375rem !important;
+  box-shadow: 0 10px 25px -5px rgba(67, 89, 113, 0.25), 0 8px 10px -6px rgba(67, 89, 113, 0.2) !important;
+  background-color: #ffffff !important;
+  overflow-y: auto !important;
+  z-index: 1060 !important;
+}
+
+/* 7. Dropdown khi mở lên trên (is-top) */
+.multiselect-dropdown.is-top {
+  top: auto !important;
+  bottom: 100% !important;
+  transform: none !important;
+  margin-top: 0 !important;
+  margin-bottom: 4px !important;
+  border-radius: 0.375rem !important;
+}
+
+/* 8. Tinh chỉnh Option bên trong Menu với màu chủ đạo #17a2b8 */
+.multiselect-option {
+  font-size: 0.9375rem !important;
+  line-height: 1.53 !important;
+  padding: 0.5rem 0.875rem !important;
+  color: #697a8d !important;
+  white-space: nowrap !important;
+  transition: all 0.15s ease !important;
+}
+
+.multiselect-option.is-pointed {
+  background-color: rgba(23, 162, 184, 0.08) !important;
+  color: #17a2b8 !important;
+}
+
+.multiselect-option.is-selected {
+  background-color: #17a2b8 !important;
+  color: #ffffff !important;
+  font-weight: 600 !important;
+}
+
+.multiselect-option.is-selected.is-pointed {
+  background-color: #138496 !important;
+  color: #ffffff !important;
+}
+
+/* 9. Mũi tên Caret icon */
+.multiselect-caret {
+  margin-right: 0.875rem !important;
+  background-color: #697a8d !important;
+  transition: transform 0.2s ease !important;
+}
+
+/* 10. Clear icon */
+.multiselect-clear {
+  margin-right: 0.5rem !important;
+}
+
+.multiselect-clear-icon {
+  background-color: #b4bdc6 !important;
+}
+
+.multiselect-clear-icon:hover {
+  background-color: #17a2b8 !important;
+}
