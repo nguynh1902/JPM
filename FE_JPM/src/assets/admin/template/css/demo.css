@@ -390,3 +390,19 @@
 .multiselect-clear-icon:hover {
   background-color: #17a2b8 !important;
 }
+
+/* Tự động ẩn placeholder khi focus để con trỏ soạn thảo không đè lên số 0 / placeholder */
+input:focus::placeholder,
+textarea:focus::placeholder {
+  color: transparent !important;
+  opacity: 0 !important;
+}
+input:focus::-webkit-input-placeholder {
+  color: transparent !important;
+  opacity: 0 !important;
+}
+input:focus::-moz-placeholder {
+  color: transparent !important;
+  opacity: 0 !important;
+}
+

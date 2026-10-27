@@ -150,7 +150,7 @@
 
   <!-- Modal Form -->
     <div class="modal fade" id="modalModel" tabindex="-1" aria-hidden="true" ref="modalModel">
-      <div class="modal-dialog mt-5" role="document">
+      <div class="modal-dialog modal-lg mt-5" role="document">
         <div class="modal-content border-0 shadow-lg">
           <div class="modal-header border-bottom pb-3">
             <h4 class="modal-title fw-bold text-dark mb-0 fs-4" id="modalModelTitle">

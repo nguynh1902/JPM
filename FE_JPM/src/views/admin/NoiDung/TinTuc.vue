@@ -577,9 +577,6 @@ export default {
   -webkit-box-orient: vertical;  
   overflow: hidden;
 }
-.cursor-pointer {
-  cursor: pointer;
-}
 </style>
 
 

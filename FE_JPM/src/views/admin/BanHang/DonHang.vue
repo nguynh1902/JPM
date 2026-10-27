@@ -150,7 +150,7 @@
                   <th class="text-uppercase" style="width: 21%">Khách Hàng</th>
                   <th class="text-uppercase" style="width: 13%">Thời Gian</th>
                   <th class="text-end text-uppercase" style="width: 13%">Tổng Tiền</th>
-                  <th class="text-end text-uppercase" style="width: 13%">Thanh Toán / Cọc</th>
+                  <th class="text-end text-uppercase" style="width: 13%">Tiền Cọc</th>
                   <th class="text-center text-uppercase" style="width: 11%">Trạng Thái</th>
                   <th class="text-center text-uppercase" style="width: 7%">Hành Động</th>
                 </tr>
@@ -199,35 +199,16 @@
                   <td class="text-end">
                     <!-- Phân loại Đơn Hàng -->
                     <template v-if="item._type === 'order'">
-                      <div v-if="item.paid_amount > 0" class="fw-bold text-success" style="font-size: 0.85rem;">
-                        <i class="bx bx-check-circle me-1"></i>{{ item.paid_amount >= item.total_amount ? 'Đã thu' : 'Đã cọc' }}: {{ formatCurrency(item.paid_amount) }}
-                      </div>
-                      <div v-else-if="item.deposit_required > 0" class="d-flex flex-column align-items-end">
-                        <span class="fw-semibold text-warning d-inline-flex align-items-center" style="font-size: 0.85rem;">
-                          <i class="bx bx-time-five me-1"></i>Chưa cọc
-                        </span>
-                        <span class="text-muted" style="font-size: 0.75rem;">
-                          (YC: {{ formatCurrency(item.deposit_required) }})
-                        </span>
-                      </div>
-                      <span v-else class="text-muted fw-medium" style="font-size: 0.85rem;">Chưa thu</span>
+                      <span v-if="item.paid_amount > 0" class="fw-bold text-success">{{ formatCurrency(item.paid_amount) }}</span>
+                      <span v-else-if="item.deposit_required > 0" class="fw-bold text-dark">{{ formatCurrency(item.deposit_required) }}</span>
+                      <span v-else class="text-muted fw-bold d-block text-center">-</span>
                     </template>
 
                     <!-- Phân loại Báo Giá -->
                     <template v-else>
-                      <!-- Báo giá mới chưa định giá (status = 0): Chưa phát sinh thanh toán hay cọc -> Hiển thị dấu gạch ngang '-' -->
                       <span v-if="item.status === 0" class="text-muted fw-bold d-block text-center">-</span>
-                      <div v-else-if="item.da_thu > 0" class="fw-bold text-success" style="font-size: 0.85rem;">
-                        <i class="bx bx-check-circle me-1"></i>Đã cọc: {{ formatCurrency(item.da_thu) }}
-                      </div>
-                      <div v-else-if="item.deposit_required > 0" class="d-flex flex-column align-items-end">
-                        <span class="fw-semibold text-warning d-inline-flex align-items-center" style="font-size: 0.85rem;">
-                          <i class="bx bx-time-five me-1"></i>Chờ cọc
-                        </span>
-                        <span class="text-muted" style="font-size: 0.75rem;">
-                          (YC: {{ formatCurrency(item.deposit_required) }})
-                        </span>
-                      </div>
+                      <span v-else-if="item.da_thu > 0" class="fw-bold text-success">{{ formatCurrency(item.da_thu) }}</span>
+                      <span v-else-if="item.deposit_required > 0" class="fw-bold text-dark">{{ formatCurrency(item.deposit_required) }}</span>
                       <span v-else class="text-muted fw-bold d-block text-center">-</span>
                     </template>
                   </td>
@@ -235,15 +216,21 @@
                     <!-- Trạng thái Báo Giá -->
                     <template v-if="item._type === 'quote'">
                       <span v-if="item.status === 0" class="badge badge-custom bg-pastel-warning">CHỜ BÁO GIÁ</span>
-                      <span v-else-if="item.status === 1" class="badge badge-custom bg-pastel-info">ĐÃ GỬI BÁO GIÁ</span>
+                      <template v-else-if="item.status === 1">
+                        <span v-if="item.da_thu > 0" class="badge badge-custom bg-pastel-success">ĐÃ CỌC</span>
+                        <span v-else-if="item.deposit_required > 0" class="badge badge-custom bg-pastel-warning">CHỜ CỌC</span>
+                        <span v-else class="badge badge-custom bg-pastel-info">ĐÃ GỬI BÁO GIÁ</span>
+                      </template>
                       <span v-else-if="item.status === 2" class="badge badge-custom bg-pastel-success">ĐÃ CHỐT</span>
                       <span v-else-if="item.status === 3" class="badge badge-custom bg-pastel-danger">ĐÃ HỦY</span>
                       <span v-else class="badge badge-custom bg-pastel-secondary">KHÁC</span>
                     </template>
                     <!-- Trạng thái Đơn Hàng -->
                     <template v-else>
-                      <span v-if="item.status === 0 && Number(item.payment_status) === 0" class="badge badge-custom bg-pastel-warning">CHỜ DUYỆT & CỌC</span>
-                      <span v-else-if="item.status === 0" class="badge badge-custom bg-pastel-info">CHỜ DUYỆT</span>
+                      <template v-if="item.status === 0">
+                        <span v-if="item.deposit_required > 0 && Number(item.paid_amount || 0) === 0" class="badge badge-custom bg-pastel-warning">CHỜ CỌC</span>
+                        <span v-else class="badge badge-custom bg-pastel-info">CHỜ DUYỆT</span>
+                      </template>
                       <span v-else-if="item.status === 1" class="badge badge-custom bg-pastel-secondary">LÊN ĐƠN NHẬT</span>
                       <span v-else-if="item.status === 2" class="badge badge-custom bg-pastel-info">ĐANG GIAO HÀNG</span>
                       <span v-else-if="item.status === 3" class="badge badge-custom bg-pastel-success">HOÀN THÀNH</span>
@@ -272,11 +259,11 @@
                       <button 
                         v-if="(item._type === 'quote' && item.status === 1) || (item._type === 'order' && item.status === 0)" 
                         type="button" 
-                        class="action-btn text-warning" 
+                        class="action-btn text-success" 
                         @click="confirmDepositBtn(item)" 
                         title="Xác nhận đã nhận cọc & Chuyển lên đơn Nhật"
                       >
-                        <i class="bx bx-check-shield"></i>
+                        <i class="bx bx-dollar-circle"></i>
                       </button>
 
                       <!-- Nút Cập Nhật Vận Đơn Giao Hàng -->
@@ -331,7 +318,7 @@
     </div>
     <!-- Modal Chi Tiết & Báo Giá (Từ YeuCauBaoGia) -->
     <div class="modal fade" id="quoteModal" tabindex="-1" aria-hidden="true" ref="quoteModal">
-      <div class="modal-dialog modal-xl mt-5" role="document">
+      <div class="modal-dialog modal-xl mt-3 mt-lg-4" style="max-width: 1400px; width: 95%;" role="document">
         <div class="modal-content border-0 shadow-lg">
           <div class="modal-header border-bottom pb-3">
             <h4 class="modal-title fw-bold text-dark mb-0 fs-4">
@@ -342,55 +329,43 @@
           <form @submit.prevent="saveQuote">
             <div class="modal-body pb-2" v-if="selectedQuote">
               <div class="row">
-                <!-- Cột trái: Thông tin & Ghi chú -->
-                <div class="col-md-4 mb-4 mb-md-0 border-end">
+                <!-- Cột 1 (Trái): Thông tin Khách Hàng & Ghi chú -->
+                <div class="col-lg-3 col-12 mb-3 mb-lg-0 border-end d-flex flex-column">
                   <h6 class="fw-bold mb-3 text-uppercase text-primary" style="font-size: 0.75rem;">Thông tin Khách Hàng</h6>
-                  <div class="mb-4">
+                  <div class="mb-3">
                     <p class="mb-1 fw-bold text-dark">{{ selectedQuote.customer_name }}</p>
                     <p class="mb-1 text-dark"><i class="bx bx-phone text-primary me-2"></i>{{ selectedQuote.customer_phone }}</p>
                     <p class="mb-0 text-dark"><i class="bx bx-envelope text-primary me-2"></i>{{ selectedQuote.customer_email }}</p>
                   </div>
 
-                  <h6 class="fw-bold mb-3 text-uppercase text-primary" style="font-size: 0.75rem;">Ghi Chú (Khách Hàng)</h6>
-                  <div class="mb-4 p-3 bg-label-secondary rounded">
-                    <p class="mb-0 text-dark" style="font-size: 0.9rem; white-space: pre-wrap;">{{ selectedQuote.customer_notes || 'N/A.' }}</p>
+                  <h6 class="fw-bold mb-2 text-uppercase text-primary" style="font-size: 0.75rem;">Ghi Chú (Khách Hàng)</h6>
+                  <div class="p-3 bg-label-secondary rounded flex-grow-1 mb-3 overflow-auto" style="min-height: 140px; max-height: 240px;">
+                    <p class="mb-0 text-dark" style="font-size: 0.85rem; white-space: pre-wrap;">{{ selectedQuote.customer_notes || 'N/A.' }}</p>
                   </div>
 
-                  <h6 class="fw-bold mb-3 text-uppercase text-primary" style="font-size: 0.75rem;">Ghi Chú Zalo (Nội Bộ)</h6>
-                  <div class="mb-4">
-                    <textarea v-if="!isQuoteReadOnly" class="form-control" rows="3" v-model="selectedQuote.zalo_notes" placeholder="Ghi chú kết quả thương lượng Zalo..."></textarea>
-                      <div v-else class="p-3 bg-light rounded text-dark border" style="white-space: pre-wrap; font-size: 0.85rem;">{{ selectedQuote.zalo_notes || 'N/A' }}</div>
-                  </div>
-                  
-                  <div class="row align-items-center mb-3">
-                    <label class="col-md-4 col-form-label fw-bold text-uppercase text-primary" style="font-size: 0.75rem;">Trạng Thái</label>
-                    <div class="col-md-8">
-                      <v-select
-                        v-model="selectedQuote.status" :disabled="isQuoteReadOnly"
-                        :options="[
-                          {value: 0, label: 'Chờ Xử Lý'},
-                          {value: 1, label: 'Đã Báo Giá'},
-                          {value: 2, label: 'Hoàn Tất'},
-                          {value: 3, label: 'Đã Hủy'}
-                        ]"
-                        :can-clear="false"
-                      />
+                  <div class="mt-auto">
+                    <h6 class="fw-bold mb-2 text-uppercase text-primary" style="font-size: 0.75rem;">Ghi Chú Zalo (Nội Bộ)</h6>
+                    <div class="mb-0">
+                      <textarea v-if="!isQuoteReadOnly" class="form-control" rows="3" v-model="selectedQuote.zalo_notes" placeholder="Ghi chú kết quả thương lượng Zalo..."></textarea>
+                      <div v-else class="p-2 bg-light rounded text-dark border" style="white-space: pre-wrap; font-size: 0.85rem;">{{ selectedQuote.zalo_notes || 'N/A' }}</div>
                     </div>
                   </div>
                 </div>
 
-                <!-- Cột phải: Danh sách Phụ Tùng -->
-                <div class="col-md-8">
+                <!-- Cột 2 (Giữa): Danh sách Phụ Tùng (Cuộn dọc) -->
+                <div class="col-lg-6 col-12 mb-3 mb-lg-0">
                   <h6 class="fw-bold mb-3 text-uppercase text-primary" style="font-size: 0.75rem;">Chi Tiết Sản Phẩm Cần Báo Giá</h6>
-                  <div class="table-responsive">
-                    <table class="table table-bordered table-sm mb-4">
-                      <thead class="table-light">
+                  
+                  <!-- Bảng danh sách phụ tùng (cuộn bên trong khi có nhiều sản phẩm) -->
+                  <div class="table-responsive border rounded custom-scroll" style="max-height: 480px; overflow-y: auto;">
+                    <table class="table table-bordered table-sm mb-0 table-sticky-header">
+                      <thead class="table-light sticky-top">
                         <tr>
-                          <th class="text-center text-uppercase" style="width: 5%">STT</th>
-                          <th class="text-uppercase" style="width: 40%">Tên Phụ Tùng</th>
-                          <th class="text-center text-uppercase" style="width: 15%">Số Lượng</th>
-                          <th class="text-uppercase" style="width: 25%">Đơn Giá (VNĐ)</th>
-                          <th class="text-end text-uppercase" style="width: 15%">Thành Tiền</th>
+                          <th class="text-center text-uppercase bg-light" style="width: 7%">STT</th>
+                          <th class="text-uppercase bg-light" style="width: 38%">Tên Phụ Tùng</th>
+                          <th class="text-center text-uppercase bg-light" style="width: 12%">SL</th>
+                          <th class="text-uppercase bg-light" style="width: 23%">Đơn Giá</th>
+                          <th class="text-end text-uppercase bg-light" style="width: 20%">Thành Tiền</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -401,26 +376,22 @@
                           </td>
                         </tr>
                         <tr v-for="(detail, idx) in selectedQuote.items" :key="idx">
-                          <td class="text-center">{{ idx + 1 }}</td>
-                          <td>
+                          <td class="text-center align-middle">{{ idx + 1 }}</td>
+                          <td class="align-middle">
                             <span class="d-block fw-bold" style="font-size: 0.85rem;">{{ detail.part_name }}</span>
                             <span class="text-dark fw-medium" style="font-size: 0.75rem;">Mã: {{ detail.part_code }}</span>
                           </td>
-                          <td class="text-center">{{ detail.qty }}</td>
-                          <td style="min-width: 140px;">
-                            <template v-if="!isQuoteReadOnly">
-                              <input 
-                                type="number" 
-                                class="form-control form-control-sm text-end fw-bold text-dark" 
-                                style="color: #2b343b !important; font-size: 0.875rem;"
-                                v-model.number="detail.price" 
-                                min="0"
-                                placeholder="0" 
-                              />
-                              <div v-if="detail.price > 0" class="text-end text-primary fw-bold mt-1" style="font-size: 0.75rem;">
-                                {{ formatCurrency(detail.price) }}
-                              </div>
-                            </template>
+                          <td class="text-center align-middle">{{ detail.qty }}</td>
+                          <td class="align-middle" style="min-width: 140px;">
+                            <input 
+                              v-if="!isQuoteReadOnly" 
+                              type="number" 
+                              class="form-control form-control-sm text-end fw-bold text-dark" 
+                              :value="detail.price ? detail.price : ''" 
+                              @input="detail.price = $event.target.value === '' ? 0 : Number($event.target.value)" 
+                              min="0"
+                              placeholder="0" 
+                            />
                             <span v-else class="fw-bold text-dark d-block text-end">{{ formatCurrency(detail.price || 0) }}</span>
                           </td>
                           <td class="text-end fw-bold text-danger align-middle">
@@ -431,86 +402,125 @@
                           </td>
                         </tr>
                       </tbody>
-                      <tfoot class="table-light">
-                        <tr>
-                          <td colspan="4" class="text-end text-muted align-middle">Tạm Tính:</td>
-                          <td class="text-end fw-bold text-danger align-middle">{{ formatCurrency(calculateTotal(selectedQuote.items)) }}</td>
-                        </tr>
-                        <tr>
-                          <td colspan="4" class="text-end text-muted align-middle">Phí Vận Chuyển:</td>
-                          <td class="text-end">
-                            <div class="d-flex flex-column align-items-end">
-                              <input 
-                                type="number" 
-                                class="form-control form-control-sm text-end text-danger fw-bold d-inline-block mb-1" 
-                                style="width: 150px; font-size: 0.875rem;" 
-                                v-model.number="selectedQuote.shipping_fee" 
-                                min="0"
-                                :disabled="isQuoteReadOnly || selectedQuote.freight_collect" 
-                                placeholder="0"
-                              >
-                              <div v-if="!selectedQuote.freight_collect && selectedQuote.shipping_fee > 0" class="text-danger fw-semibold mb-1" style="font-size: 0.75rem;">
-                                {{ formatCurrency(selectedQuote.shipping_fee) }}
-                              </div>
-                              <div class="form-check form-switch mb-0">
-                                <input class="form-check-input" type="checkbox" v-model="selectedQuote.freight_collect" :disabled="isQuoteReadOnly" @change="selectedQuote.freight_collect ? selectedQuote.shipping_fee = 0 : null">
-                                <label class="form-check-label text-muted" style="font-size: 0.75rem;">Khách trả cước</label>
-                              </div>
-                            </div>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td colspan="4" class="text-end text-muted align-middle">Yêu Cầu Cọc:</td>
-                          <td class="text-end">
-                            <input 
-                              v-if="!isQuoteReadOnly" 
-                              type="number" 
-                              class="form-control form-control-sm text-end text-primary fw-bold d-inline-block" 
-                              style="width: 150px; font-size: 0.875rem;" 
-                              v-model.number="selectedQuote.deposit_required" 
-                              min="0"
-                              placeholder="0"
-                            >
-                            <div v-if="!isQuoteReadOnly && selectedQuote.deposit_required > 0" class="text-primary fw-semibold mt-1" style="font-size: 0.75rem;">
-                              {{ formatCurrency(selectedQuote.deposit_required) }}
-                            </div>
-                            <span v-else class="fw-bold text-primary fs-6">{{ formatCurrency(selectedQuote.deposit_required || 0) }}</span>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td colspan="4" class="text-end fw-bold text-dark fs-6 align-middle">Tổng Cộng:</td>
-                          <td class="text-end fw-bold text-danger fs-6 align-middle">{{ formatCurrency(calculateTotal(selectedQuote.items) + (selectedQuote.freight_collect ? 0 : (selectedQuote.shipping_fee || 0))) }}</td>
-                        </tr>
-                        <tr>
-                          <td colspan="4" class="text-end text-secondary fw-semibold align-middle">Thu COD Khi Giao Hàng:</td>
-                          <td class="text-end fw-bold text-dark fs-6 align-middle">
-                            {{ formatCurrency(Math.max(0, (calculateTotal(selectedQuote.items) + (selectedQuote.freight_collect ? 0 : (selectedQuote.shipping_fee || 0))) - (selectedQuote.deposit_required || 0))) }}
-                          </td>
-                        </tr>
-                      </tfoot>
                     </table>
+                  </div>
+
+                </div>
+
+                <!-- Cột 3 (Phải): Tổng Hợp Chi Phí & Thanh Toán -->
+                <div class="col-lg-3 col-12 border-start ps-lg-3 pe-lg-3 d-flex flex-column justify-content-between">
+                  <div>
+                    <h6 class="fw-bold mb-3 text-uppercase text-primary" style="font-size: 0.75rem;">Tổng Hợp Chi Phí</h6>
+                    
+                    <!-- Tạm Tính -->
+                    <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
+                      <span class="text-muted fw-semibold" style="font-size: 0.85rem;">Tạm Tính:</span>
+                      <span class="fw-bold text-dark fs-6">{{ formatCurrency(calculateTotal(selectedQuote.items)) }}</span>
+                    </div>
+
+                    <!-- Phí Vận Chuyển -->
+                    <div class="mb-3 pb-2 border-bottom">
+                      <div class="d-flex justify-content-between align-items-center mb-1">
+                        <label class="text-muted fw-semibold mb-0" style="font-size: 0.85rem;">Phí Vận Chuyển:</label>
+                        <div style="width: 140px;">
+                          <input 
+                            type="number" 
+                            class="form-control form-control-sm text-end text-danger fw-bold" 
+                            :value="selectedQuote.shipping_fee ? selectedQuote.shipping_fee : ''" 
+                            @input="selectedQuote.shipping_fee = $event.target.value === '' ? 0 : Number($event.target.value)" 
+                            min="0"
+                            :disabled="isQuoteReadOnly || selectedQuote.freight_collect" 
+                            placeholder="0"
+                          >
+                        </div>
+                      </div>
+                      <div class="d-flex justify-content-between align-items-center mt-1">
+                        <div class="form-check form-switch mb-0">
+                          <input class="form-check-input" type="checkbox" id="freightCollectQuote" v-model="selectedQuote.freight_collect" :disabled="isQuoteReadOnly" @change="selectedQuote.freight_collect ? selectedQuote.shipping_fee = 0 : null">
+                          <label class="form-check-label text-muted" for="freightCollectQuote" style="font-size: 0.75rem;">Khách trả cước</label>
+                        </div>
+                        <span v-if="!selectedQuote.freight_collect" class="text-danger fw-semibold" style="font-size: 0.75rem;">
+                          {{ formatCurrency(selectedQuote.shipping_fee || 0) }}
+                        </span>
+                      </div>
+                    </div>
+
+                    <!-- Yêu Cầu Cọc -->
+                    <div class="mb-3 pb-2 border-bottom">
+                      <div class="d-flex justify-content-between align-items-center mb-1">
+                        <label class="text-muted fw-semibold mb-0" style="font-size: 0.85rem;">Yêu Cầu Cọc:</label>
+                        <div style="width: 140px;" v-if="!isQuoteReadOnly">
+                          <input 
+                            type="number" 
+                            class="form-control form-control-sm text-end text-danger fw-bold" 
+                            :value="selectedQuote.deposit_required ? selectedQuote.deposit_required : ''" 
+                            @input="selectedQuote.deposit_required = $event.target.value === '' ? 0 : Number($event.target.value)" 
+                            min="0"
+                            placeholder="0" 
+                          >
+                        </div>
+                        <span v-else class="fw-bold text-danger fs-6">{{ formatCurrency(selectedQuote.deposit_required || 0) }}</span>
+                      </div>
+                      <div v-if="!isQuoteReadOnly" class="text-end">
+                        <span class="text-danger fw-semibold" style="font-size: 0.75rem;">
+                          {{ formatCurrency(selectedQuote.deposit_required || 0) }}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Cụm Tổng Cộng & Thu COD ở đáy -->
+                  <div class="pt-2 bg-light p-3 rounded border">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                      <span class="fw-bold text-dark" style="font-size: 0.85rem;">Tổng Cộng:</span>
+                      <span class="fw-bold text-danger fs-5">{{ formatCurrency(calculateTotal(selectedQuote.items) + (selectedQuote.freight_collect ? 0 : (selectedQuote.shipping_fee || 0))) }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center pt-2 border-top">
+                      <span class="text-secondary fw-semibold" style="font-size: 0.85rem;">Thu COD:</span>
+                      <span class="fw-bold text-dark fs-5">
+                        {{ formatCurrency(Math.max(0, (calculateTotal(selectedQuote.items) + (selectedQuote.freight_collect ? 0 : (selectedQuote.shipping_fee || 0))) - (selectedQuote.deposit_required || 0))) }}
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
             <div class="modal-footer border-top py-2 mt-2 d-flex justify-content-between align-items-center">
-              <div>
-                <button type="button" class="btn btn-outline-info px-3 me-2 shadow-sm" v-if="canSendQuote && selectedQuote && selectedQuote.token" @click.prevent="copyQuoteLink(selectedQuote)">
+              <div class="d-flex align-items-center gap-2">
+                <!-- Nút Hủy Đơn -->
+                <button 
+                  type="button" 
+                  class="btn btn-outline-danger px-3 shadow-sm" 
+                  v-if="selectedQuote && selectedQuote.status !== 3 && !isQuoteReadOnly" 
+                  @click.prevent="cancelQuoteFromModal(selectedQuote)"
+                  title="Hủy yêu cầu báo giá này"
+                >
+                  <i class="bx bx-x-circle me-1"></i> Hủy Đơn
+                </button>
+
+                <!-- Nút Copy Link Báo Giá -->
+                <button 
+                  type="button" 
+                  class="btn btn-outline-primary px-3 shadow-sm" 
+                  v-if="selectedQuote && selectedQuote.token" 
+                  @click.prevent="copyQuoteLink(selectedQuote)"
+                  title="Sao chép liên kết báo giá"
+                >
                   <i class="bx bx-link me-1"></i> Copy Link Báo Giá
                 </button>
-                <button type="button" class="btn btn-primary px-3 me-2 shadow-sm" v-if="canSendQuote && selectedQuote && !isQuoteReadOnly && canProcessOrders" @click.prevent="openZaloMessage">
-                  <i class="bx bx-chat me-1"></i> Mở Zalo Gửi Khách
-                </button>
-                <button type="button" class="btn btn-warning text-dark fw-bold px-3 me-2 shadow-sm" v-if="selectedQuote && selectedQuote.status === 1 && !isQuoteReadOnly && canProcessOrders" @click.prevent="confirmDepositFromModal(selectedQuote)">
-                  <i class="bx bx-check-shield me-1"></i> Xác Nhận Đã Nhận Cọc & Lên Đơn Nhật
-                </button>
-                <button type="button" class="btn btn-info px-3 text-white shadow-sm" v-if="selectedQuote && selectedQuote.status === 1 && !isQuoteReadOnly && canProcessOrders" @click.prevent="adminChotDon">
-                  <i class="bx bx-check-double me-1"></i> Khách Chốt Không Cọc (Tạo Đơn)
-                </button>
               </div>
-              <div>
-                <button type="button" class="btn btn-outline-secondary px-4 me-2" data-bs-dismiss="modal">Đóng</button>
-                <button type="submit" class="btn btn-primary px-4 shadow-sm" v-if="selectedQuote && !isQuoteReadOnly && canProcessOrders">Lưu Báo Giá</button>
+
+              <!-- Cụm nút bên phải: Đóng & Lưu -->
+              <div class="d-flex align-items-center gap-2">
+                <button type="button" class="btn btn-outline-secondary px-4" data-bs-dismiss="modal">Đóng</button>
+                <button 
+                  type="button" 
+                  class="btn btn-primary px-4 shadow-sm fw-bold" 
+                  v-if="!isQuoteReadOnly" 
+                  @click="saveDraftQuote"
+                >
+                  <i class="bx bx-save me-1"></i> Lưu
+                </button>
               </div>
             </div>
           </form>
@@ -520,83 +530,77 @@
 
     <!-- Modal Chi Tiết Đơn Hàng -->
     <div class="modal fade" id="orderModal" tabindex="-1" aria-hidden="true">
-      <div class="modal-dialog modal-xl mt-5" role="document">
+      <div class="modal-dialog modal-xl mt-3 mt-lg-4" style="max-width: 1400px; width: 95%;" role="document">
         <div class="modal-content border-0 shadow-lg">
           <div class="modal-header border-bottom pb-3">
             <h4 class="modal-title fw-bold text-dark mb-0 fs-4">
               Chi Tiết Đơn Hàng - <span class="text-primary">{{ selectedOrder?.code }}</span>
             </h4>
-            <div>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" ref="quoteModalCloseBtn"></button>
-            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" ref="orderModalCloseBtn"></button>
           </div>
           <div class="modal-body pb-2" v-if="selectedOrder">
             <div class="row">
-              <div class="col-md-4 mb-4 mb-md-0 border-end">
+              <!-- Cột 1 (Trái): Thông tin Khách Hàng & Phân Loại -->
+              <div class="col-lg-3 col-12 mb-3 mb-lg-0 border-end">
                 <h6 class="fw-bold mb-3 text-uppercase text-primary" style="font-size: 0.75rem;">Thông tin Khách Hàng</h6>
-                <div class="mb-4">
+                <div class="mb-3">
                   <p class="mb-1 fw-bold text-dark">{{ selectedOrder.customer_name }}</p>
                   <p class="mb-1 text-dark"><i class="bx bx-phone text-primary me-2"></i>{{ selectedOrder.customer_phone }}</p>
                   <p class="mb-0 text-dark"><i class="bx bx-map text-primary me-2"></i>{{ selectedOrder.address }}</p>
                 </div>
 
                 <h6 class="fw-bold mb-3 text-uppercase text-primary" style="font-size: 0.75rem;">Phân Loại & Thanh Toán</h6>
-                <div class="row align-items-center mb-3">
-                  <label class="col-md-4 col-form-label fw-bold text-uppercase text-primary" style="font-size: 0.75rem;">Loại Đơn</label>
-                  <div class="col-md-8">
-                    <v-select
-                      v-model="selectedOrder.order_type" :disabled="isOrderReadOnly"
-                      :options="[
-                        {value: 'b2c', label: 'B2C (Lẻ)'},
-                        {value: 'b2b', label: 'B2B (Đại Lý)'}
-                      ]"
-                      :can-clear="false"
-                    />
-                  </div>
+                <div class="mb-2">
+                  <label class="form-label fw-bold text-uppercase text-primary mb-1" style="font-size: 0.75rem;">Loại Đơn</label>
+                  <v-select
+                    v-model="selectedOrder.order_type" :disabled="isOrderReadOnly"
+                    :options="[
+                      {value: 'b2c', label: 'B2C (Lẻ)'},
+                      {value: 'b2b', label: 'B2B (Đại Lý)'}
+                    ]"
+                    :can-clear="false"
+                  />
                 </div>
-                <div class="row align-items-center mb-3">
-                  <label class="col-md-4 col-form-label fw-bold text-uppercase text-primary" style="font-size: 0.75rem;">Thanh Toán</label>
-                  <div class="col-md-8">
-                    <v-select
-                      v-model="selectedOrder.payment_status" :disabled="isOrderReadOnly"
-                      :options="[
-                        {value: 0, label: 'Chưa Thanh Toán'},
-                        {value: 1, label: 'Đã Đặt Cọc'},
-                        {value: 2, label: 'Đã Thanh Toán'}
-                      ]"
-                      :can-clear="false"
-                    />
-                  </div>
+                <div class="mb-2">
+                  <label class="form-label fw-bold text-uppercase text-primary mb-1" style="font-size: 0.75rem;">Thanh Toán</label>
+                  <v-select
+                    v-model="selectedOrder.payment_status" :disabled="isOrderReadOnly"
+                    :options="[
+                      {value: 0, label: 'Chưa Thanh Toán'},
+                      {value: 1, label: 'Đã Đặt Cọc'},
+                      {value: 2, label: 'Đã Thanh Toán'}
+                    ]"
+                    :can-clear="false"
+                  />
                 </div>
-                <div class="row align-items-center mb-3">
-                  <label class="col-md-4 col-form-label fw-bold text-uppercase text-primary" style="font-size: 0.75rem;">Xử Lý Đơn</label>
-                  <div class="col-md-8">
-                    <v-select
-                      v-model="selectedOrder.status" :disabled="isOrderReadOnly"
-                      :options="[
-                        {value: 0, label: '0 - Chờ duyệt / Chờ xác nhận'},
-                        {value: 1, label: '1 - Đang chuẩn bị / Đang xử lý'},
-                        {value: 2, label: '2 - Đang giao hàng'},
-                        {value: 3, label: '3 - Hoàn thành / Hoàn tất'},
-                        {value: 4, label: '4 - Đã hủy (Hoàn kho)'}
-                      ]"
-                      :can-clear="false"
-                    />
-                  </div>
+                <div class="mb-0">
+                  <label class="form-label fw-bold text-uppercase text-primary mb-1" style="font-size: 0.75rem;">Xử Lý Đơn</label>
+                  <v-select
+                    v-model="selectedOrder.status" :disabled="isOrderReadOnly"
+                    :options="[
+                      {value: 0, label: '0 - Chờ duyệt / Chờ xác nhận'},
+                      {value: 1, label: '1 - Đang chuẩn bị / Đang xử lý'},
+                      {value: 2, label: '2 - Đang giao hàng'},
+                      {value: 3, label: '3 - Hoàn thành / Hoàn tất'},
+                      {value: 4, label: '4 - Đã hủy (Hoàn kho)'}
+                    ]"
+                    :can-clear="false"
+                  />
                 </div>
               </div>
 
-              <div class="col-md-8">
+              <!-- Cột 2 (Giữa): Sản Phẩm Trong Đơn (Cuộn dọc) -->
+              <div class="col-lg-6 col-12 mb-3 mb-lg-0">
                 <h6 class="fw-bold mb-3 text-uppercase text-primary" style="font-size: 0.75rem;">Sản Phẩm Trong Đơn</h6>
-                <div class="table-responsive">
-                  <table class="table table-bordered table-sm mb-4">
-                    <thead class="table-light">
+                <div class="table-responsive border rounded custom-scroll" style="max-height: 480px; overflow-y: auto;">
+                  <table class="table table-bordered table-sm mb-0 table-sticky-header">
+                    <thead class="table-light sticky-top">
                       <tr>
-                        <th class="text-center text-uppercase" style="width: 5%">STT</th>
-                        <th class="text-uppercase" style="width: 40%">Tên Phụ Tùng</th>
-                        <th class="text-center text-uppercase" style="width: 15%">Số Lượng</th>
-                        <th class="text-uppercase" style="width: 20%">Đơn Giá</th>
-                        <th class="text-end text-uppercase" style="width: 20%">Thành Tiền</th>
+                        <th class="text-center text-uppercase bg-light" style="width: 7%">STT</th>
+                        <th class="text-uppercase bg-light" style="width: 38%">Tên Phụ Tùng</th>
+                        <th class="text-center text-uppercase bg-light" style="width: 15%">SL</th>
+                        <th class="text-uppercase bg-light" style="width: 20%">Đơn Giá</th>
+                        <th class="text-end text-uppercase bg-light" style="width: 20%">Thành Tiền</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -607,8 +611,8 @@
                         </td>
                       </tr>
                       <tr v-for="(detail, idx) in selectedOrder.items" :key="idx">
-                        <td class="text-center">{{ idx + 1 }}</td>
-                        <td>
+                        <td class="text-center align-middle">{{ idx + 1 }}</td>
+                        <td class="align-middle">
                           <span class="d-block fw-bold" style="font-size: 0.85rem;">{{ detail.part_name }}</span>
                           <span class="text-dark fw-medium" style="font-size: 0.75rem;">Mã: {{ detail.part_code }}</span>
                         </td>
@@ -617,7 +621,7 @@
                           <span v-if="detail.in_stock" class="d-block text-secondary" style="font-size: 0.75rem;">Có sẵn</span>
                           <span v-else class="d-block text-danger" style="font-size: 0.75rem;">Hết hàng</span>
                         </td>
-                        <td class="text-end">{{ formatCurrency(detail.price) }}</td>
+                        <td class="text-end align-middle">{{ formatCurrency(detail.price) }}</td>
                         <td class="text-end fw-bold text-danger align-middle">
                           {{ formatCurrency(detail.qty * (detail.price || 0)) }}
                           <div v-if="detail.qty > 1" class="text-dark fw-bold" style="font-size: 0.75rem;">
@@ -626,86 +630,109 @@
                         </td>
                       </tr>
                     </tbody>
-                    <tfoot class="table-light">
-                      <tr>
-                        <td colspan="4" class="text-end text-muted">Tạm Tính:</td>
-                        <td class="text-end fw-bold text-danger">{{ formatCurrency(calculateTotal(selectedOrder.items)) }}</td>
-                      </tr>
-                      <tr>
-                        <td colspan="4" class="text-end text-muted align-middle">Phí Vận Chuyển:</td>
-                        <td class="text-end">
-                          <div class="d-flex flex-column align-items-end">
-                            <input 
-                              type="number" 
-                              class="form-control form-control-sm text-end text-danger fw-bold d-inline-block mb-1" 
-                              style="width: 150px; font-size: 0.875rem;" 
-                              v-model.number="selectedOrder.shipping_fee" 
-                              min="0"
-                              :disabled="isOrderReadOnly || selectedOrder.freight_collect" 
-                              placeholder="0"
-                            >
-                            <div v-if="!selectedOrder.freight_collect && selectedOrder.shipping_fee > 0" class="text-danger fw-semibold mb-1" style="font-size: 0.75rem;">
-                              {{ formatCurrency(selectedOrder.shipping_fee) }}
-                            </div>
-                            <div class="form-check form-switch mb-0">
-                              <input class="form-check-input" type="checkbox" v-model="selectedOrder.freight_collect" :disabled="isOrderReadOnly" @change="selectedOrder.freight_collect ? selectedOrder.shipping_fee = 0 : null">
-                              <label class="form-check-label text-muted" style="font-size: 0.75rem;">Khách trả cước</label>
-                            </div>
-                          </div>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td colspan="4" class="text-end text-muted align-middle">Yêu Cầu Cọc:</td>
-                        <td class="text-end">
-                          <input 
-                            v-if="!isOrderReadOnly" 
-                            type="number" 
-                            class="form-control form-control-sm text-end text-primary fw-bold d-inline-block" 
-                            style="width: 150px; font-size: 0.875rem;" 
-                            v-model.number="selectedOrder.deposit_required" 
-                            min="0"
-                            placeholder="0"
-                          >
-                          <div v-if="!isOrderReadOnly && selectedOrder.deposit_required > 0" class="text-primary fw-semibold mt-1" style="font-size: 0.75rem;">
-                            {{ formatCurrency(selectedOrder.deposit_required) }}
-                          </div>
-                          <span v-else class="fw-bold text-primary fs-6">{{ formatCurrency(selectedOrder.deposit_required || 0) }}</span>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td colspan="4" class="text-end text-muted align-middle">Đã Thu:</td>
-                        <td class="text-end">
-                          <input 
-                            v-if="!isOrderReadOnly" 
-                            type="number" 
-                            class="form-control form-control-sm text-end text-success fw-bold d-inline-block" 
-                            style="width: 150px; font-size: 0.875rem;" 
-                            v-model.number="selectedOrder.paid_amount" 
-                            min="0"
-                            placeholder="0"
-                          >
-                          <div v-if="!isOrderReadOnly && selectedOrder.paid_amount > 0" class="text-success fw-semibold mt-1" style="font-size: 0.75rem;">
-                            {{ formatCurrency(selectedOrder.paid_amount) }}
-                          </div>
-                          <span v-else class="fw-bold text-success fs-6">{{ formatCurrency(selectedOrder.paid_amount || 0) }}</span>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td colspan="4" class="text-end fw-bold text-dark fs-6 align-middle">Cần Thanh Toán:</td>
-                        <td class="text-end fw-bold text-danger fs-6 align-middle">
-                          {{ formatCurrency((calculateTotal(selectedOrder.items) + (selectedOrder.freight_collect ? 0 : (selectedOrder.shipping_fee || 0))) - (selectedOrder.paid_amount || 0)) }}
-                          <div class="text-muted fw-normal" style="font-size: 0.75rem;" v-if="selectedOrder.paid_amount > 0">
-                            (Tổng đơn: {{ formatCurrency(calculateTotal(selectedOrder.items) + (selectedOrder.freight_collect ? 0 : (selectedOrder.shipping_fee || 0))) }})
-                          </div>
-                        </td>
-                      </tr>
-                    </tfoot>
                   </table>
+                </div>
+              </div>
+
+              <!-- Cột 3 (Phải): Chi Phí & Thanh Toán -->
+              <div class="col-lg-3 col-12 border-start ps-lg-3 pe-lg-3 d-flex flex-column justify-content-between">
+                <div>
+                  <h6 class="fw-bold mb-3 text-uppercase text-primary" style="font-size: 0.75rem;">Tổng Hợp Chi Phí</h6>
+                  
+                  <!-- Tạm Tính -->
+                  <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
+                    <span class="text-muted fw-semibold" style="font-size: 0.85rem;">Tạm Tính:</span>
+                    <span class="fw-bold text-dark fs-6">{{ formatCurrency(calculateTotal(selectedOrder.items)) }}</span>
+                  </div>
+
+                  <!-- Phí Vận Chuyển -->
+                  <div class="mb-3 pb-2 border-bottom">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                      <label class="text-muted fw-semibold mb-0" style="font-size: 0.85rem;">Phí Vận Chuyển:</label>
+                      <div style="width: 140px;">
+                        <input 
+                          type="number" 
+                          class="form-control form-control-sm text-end text-danger fw-bold" 
+                          :value="selectedOrder.shipping_fee ? selectedOrder.shipping_fee : ''" 
+                          @input="selectedOrder.shipping_fee = $event.target.value === '' ? 0 : Number($event.target.value)" 
+                          min="0"
+                          :disabled="isOrderReadOnly || selectedOrder.freight_collect" 
+                          placeholder="0"
+                        >
+                      </div>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mt-1">
+                      <div class="form-check form-switch mb-0">
+                        <input class="form-check-input" type="checkbox" id="freightCollectOrder" v-model="selectedOrder.freight_collect" :disabled="isOrderReadOnly" @change="selectedOrder.freight_collect ? selectedOrder.shipping_fee = 0 : null">
+                        <label class="form-check-label text-muted" for="freightCollectOrder" style="font-size: 0.75rem;">Khách trả cước</label>
+                      </div>
+                      <span v-if="!selectedOrder.freight_collect" class="text-danger fw-semibold" style="font-size: 0.75rem;">
+                        {{ formatCurrency(selectedOrder.shipping_fee || 0) }}
+                      </span>
+                    </div>
+                  </div>
+
+                  <!-- Yêu Cầu Cọc -->
+                  <div class="mb-3 pb-2 border-bottom">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                      <label class="text-muted fw-semibold mb-0" style="font-size: 0.85rem;">Yêu Cầu Cọc:</label>
+                      <div style="width: 140px;" v-if="!isOrderReadOnly">
+                        <input 
+                          type="number" 
+                          class="form-control form-control-sm text-end text-danger fw-bold" 
+                          :value="selectedOrder.deposit_required ? selectedOrder.deposit_required : ''" 
+                          @input="selectedOrder.deposit_required = $event.target.value === '' ? 0 : Number($event.target.value)" 
+                          min="0"
+                          placeholder="0" 
+                        >
+                      </div>
+                      <span v-else class="fw-bold text-danger fs-6">{{ formatCurrency(selectedOrder.deposit_required || 0) }}</span>
+                    </div>
+                    <div v-if="!isOrderReadOnly" class="text-end">
+                      <span class="text-danger fw-semibold" style="font-size: 0.75rem;">
+                        {{ formatCurrency(selectedOrder.deposit_required || 0) }}
+                      </span>
+                    </div>
+                  </div>
+
+                  <!-- Đã Thu -->
+                  <div class="mb-3 pb-2 border-bottom">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                      <label class="text-muted fw-semibold mb-0" style="font-size: 0.85rem;">Đã Thu:</label>
+                      <div style="width: 140px;" v-if="!isOrderReadOnly">
+                        <input 
+                          type="number" 
+                          class="form-control form-control-sm text-end text-success fw-bold" 
+                          :value="selectedOrder.paid_amount ? selectedOrder.paid_amount : ''" 
+                          @input="selectedOrder.paid_amount = $event.target.value === '' ? 0 : Number($event.target.value)" 
+                          min="0"
+                          placeholder="0" 
+                        >
+                      </div>
+                      <span v-else class="fw-bold text-success fs-6">{{ formatCurrency(selectedOrder.paid_amount || 0) }}</span>
+                    </div>
+                    <div v-if="!isOrderReadOnly" class="text-end">
+                      <span class="text-success fw-semibold" style="font-size: 0.75rem;">
+                        {{ formatCurrency(selectedOrder.paid_amount || 0) }}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Cụm Cần Thanh Toán ở đáy -->
+                <div class="pt-2 bg-light p-3 rounded border">
+                  <div class="d-flex justify-content-between align-items-center mb-1">
+                    <span class="fw-bold text-dark" style="font-size: 0.85rem;">Cần Thanh Toán:</span>
+                    <span class="fw-bold text-danger fs-5">{{ formatCurrency((calculateTotal(selectedOrder.items) + (selectedOrder.freight_collect ? 0 : (selectedOrder.shipping_fee || 0))) - (selectedOrder.paid_amount || 0)) }}</span>
+                  </div>
+                  <div class="text-end text-muted" style="font-size: 0.75rem;" v-if="selectedOrder.paid_amount > 0">
+                    (Tổng đơn: {{ formatCurrency(calculateTotal(selectedOrder.items) + (selectedOrder.freight_collect ? 0 : (selectedOrder.shipping_fee || 0))) }})
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-          <div class="modal-footer border-top py-3 mt-2 d-flex justify-content-between align-items-center">
+<div class="modal-footer border-top py-3 mt-2 d-flex justify-content-between align-items-center">
             <div class="d-flex gap-2">
               <button type="button" class="btn btn-outline-primary px-3 shadow-sm" @click="openVietQrModal(selectedOrder)" title="Xem mã VietQR">
                 <i class="bx bx-qr-scan me-1"></i> Mã VietQR
@@ -926,6 +953,7 @@ import vSelect from '@vueform/multiselect';
 import axiosClient from '../../../api/axiosClient';
 import { useQuery, useQueryClient, useMutation } from '@tanstack/vue-query';
 import { useAuthStore } from '../../../stores/authStore';
+import { createToaster } from "@meforma/vue-toaster";
 import Swal from 'sweetalert2';
 
 export default {
@@ -936,6 +964,7 @@ export default {
   setup() {
     const queryClient = useQueryClient();
     const authStore = useAuthStore();
+    const toaster = createToaster({ position: "top-right", duration: 3000 });
     
     const { data: rawOrders, isFetching: isFetchingOrders } = useQuery({
       queryKey: ['don-hang'],
@@ -990,7 +1019,7 @@ export default {
       onSettled: () => queryClient.invalidateQueries({ queryKey: ['don-hang'] })
     });
 
-    return { authStore, queryClient, rawOrders, rawQuotes, isFetchingOrders, isFetchingQuotes, deleteQuoteMutation, deleteOrderMutation, saveQuoteMutation, saveOrderMutation };
+    return { authStore, queryClient, rawOrders, rawQuotes, isFetchingOrders, isFetchingQuotes, deleteQuoteMutation, deleteOrderMutation, saveQuoteMutation, saveOrderMutation, toaster };
   },
   data() {
     return {
@@ -1270,25 +1299,18 @@ export default {
         item = this.selectedQuote;
       }
       if (!item.token) {
-        Swal.fire({ icon: 'warning', iconColor: '#ff3e1d', title: 'Thông báo', text: 'Báo giá này chưa có liên kết tra cứu.' });
+        this.toaster.warning('Báo giá này chưa có liên kết tra cứu.');
         return;
       }
       const link = `${window.location.origin}/bao-gia/${item.token}`;
       navigator.clipboard.writeText(link).then(() => {
-        Swal.fire({
-          toast: true,
-          position: 'top-end',
-          icon: 'success',
-          title: 'Đã sao chép link báo giá!',
-          showConfirmButton: false,
-          timer: 2000
-        });
+        this.toaster.success('Đã sao chép link báo giá!');
       });
     },
     quickOpenZalo(item) {
       const phone = (item.customer_phone || '').replace(/[^0-9]/g, '');
       if (!phone) {
-        Swal.fire({ icon: 'warning', iconColor: '#ff3e1d', title: 'Thiếu số điện thoại', text: 'Khách hàng chưa có số điện thoại để gửi Zalo.' });
+        this.toaster.warning('Khách hàng chưa có số điện thoại để gửi Zalo.');
         return;
       }
       const link = item.token ? `${window.location.origin}/bao-gia/${item.token}` : '';
@@ -1360,19 +1382,18 @@ export default {
         document.body.removeChild(link);
         window.URL.revokeObjectURL(url);
       } catch (err) {
-        Swal.fire({ icon: 'error', title: 'Lỗi', text: 'Không thể xuất file đơn đặt hàng Nhật.' });
+        this.toaster.error('Không thể xuất file đơn đặt hàng Nhật.');
       }
     },
     copyMagicLink() {
       if (!this.selectedQuote || !this.selectedQuote.token) {
-        Swal.fire({ icon: 'warning',
-          iconColor: '#ff3e1d', title: 'Lỗi', text: 'Báo giá này chưa có Link tra cứu!' });
+        this.toaster.warning('Báo giá này chưa có Link tra cứu!');
         return;
       }
       const link = `${window.location.origin}/tra-cuu-bao-gia/${this.selectedQuote.token}`;
       const msg = `Chào JPM Marine đã gửi báo giá cho đơn hàng ${this.selectedQuote.code}. Anh/chị xem và chốt đơn tại đây nhé:\n${link}`;
       navigator.clipboard.writeText(msg).then(() => {
-        Swal.fire({ icon: 'success', title: 'Đã copy', text: 'Đã copy đường dẫn Zalo vào khay nhớ tạm.', timer: 2000, showConfirmButton: false });
+        this.toaster.success('Đã copy đường dẫn Zalo vào khay nhớ tạm.');
       });
     },
     async adminChotDon() {
@@ -1396,7 +1417,7 @@ export default {
         try {
           const res = await axiosClient.post(`/admin/yeu-cau-bao-gia/${this.selectedQuote.id}/chuyen-don`);
           if (res?.success || res?.data?.success) {
-            Swal.fire({ icon: 'success', title: 'Thành công', text: res?.message || res?.data?.message });
+            this.toaster.success(res?.message || res?.data?.message || 'Tạo đơn hàng thành công!');
             // Close modal implicitly via reload/invalidation
             this.queryClient.invalidateQueries({ queryKey: ['yeu-cau-bao-gia'] });
             this.queryClient.invalidateQueries({ queryKey: ['don-hang'] });
@@ -1404,7 +1425,41 @@ export default {
           }
         } catch (err) {
           const msg = err.response?.data?.message || 'Không thể tạo đơn.';
-          Swal.fire({ icon: 'error', title: 'Lỗi', text: msg });
+          this.toaster.error(msg);
+        }
+      }
+    },
+    async cancelQuoteFromModal(quote) {
+      if (!quote) return;
+      const result = await Swal.fire({
+        title: 'Hủy Yêu Cầu Báo Giá?',
+        html: `Bạn có chắc chắn muốn hủy yêu cầu <b>${quote.code}</b>?<br><small class="text-muted">Đơn yêu cầu này sẽ chuyển sang trạng thái "Đã Hủy".</small>`,
+        icon: 'warning',
+        iconColor: '#ff3e1d',
+        showCancelButton: true,
+        confirmButtonText: 'Đồng ý Hủy',
+        cancelButtonText: 'Quay lại',
+        reverseButtons: true,
+        animation: false,
+        customClass: {
+          popup: 'swal-shift-up',
+          confirmButton: 'btn btn-danger px-4 shadow-sm',
+          cancelButton: 'btn btn-outline-secondary px-4 me-3'
+        },
+        buttonsStyling: false
+      });
+
+      if (result.isConfirmed) {
+        try {
+          const res = await axiosClient.put(`/admin/yeu-cau-bao-gia/${quote.id}`, { trang_thai: 3 });
+          if (res?.success || res?.data?.success) {
+            this.toaster.success('Đã hủy yêu cầu báo giá thành công!');
+            this.closeModal('quoteModal');
+            this.refreshData();
+          }
+        } catch (err) {
+          const msg = err.response?.data?.message || 'Không thể hủy báo giá.';
+          this.toaster.error(msg);
         }
       }
     },
@@ -1429,10 +1484,10 @@ export default {
 
       if (result.isConfirmed) {
         this.deleteQuoteMutation.mutate(item.id, {
-          onSuccess: () => Swal.fire({ icon: 'success', title: 'Đã xóa!', text: 'Yêu cầu báo giá đã được xóa thành công.', timer: 2000, showConfirmButton: false }),
+          onSuccess: () => this.toaster.success('Yêu cầu báo giá đã được xóa thành công!'),
           onError: (err) => {
             const msg = err?.response?.data?.message || 'Không thể xóa báo giá này.';
-            Swal.fire({ icon: 'error', title: 'Lỗi', text: msg });
+            this.toaster.error(msg);
           }
         });
       }
@@ -1458,10 +1513,10 @@ export default {
 
       if (result.isConfirmed) {
         this.deleteOrderMutation.mutate(item.id, {
-          onSuccess: () => Swal.fire({ icon: 'success', title: 'Đã xóa!', text: 'Đơn hàng đã được xóa thành công.', timer: 2000, showConfirmButton: false }),
+          onSuccess: () => this.toaster.success('Đơn hàng đã được xóa thành công!'),
           onError: (err) => {
             const msg = err?.response?.data?.message || 'Không thể xóa đơn hàng này.';
-            Swal.fire({ icon: 'error', title: 'Lỗi', text: msg });
+            this.toaster.error(msg);
           }
         });
       }
@@ -1483,21 +1538,18 @@ export default {
       if (!items || items.length === 0) return 0;
       return items.reduce((total, item) => total + (item.qty * (item.price || 0)), 0);
     },
-    async saveQuote() {
+    async saveDraftQuote() {
+      if (!this.selectedQuote) return;
       if (this.selectedQuote.items && this.selectedQuote.items.length > 0) {
         this.selectedQuote.total_amount = this.calculateTotal(this.selectedQuote.items) + (this.selectedQuote.freight_collect ? 0 : (this.selectedQuote.shipping_fee || 0));
       } else {
         this.selectedQuote.total_amount = (this.selectedQuote.total_amount || 0) + (this.selectedQuote.freight_collect ? 0 : (this.selectedQuote.shipping_fee || 0));
       }
 
-      if (this.selectedQuote.status === 0 && this.selectedQuote.total_amount > 0) {
-        this.selectedQuote.status = 1;
-      }
-      
       try {
         const payload = {
             tong_tien: this.selectedQuote.total_amount,
-            trang_thai: this.selectedQuote.status,
+            trang_thai: this.selectedQuote.status, // Giữ nguyên trạng thái (nếu 0 thì vẫn là 0 - Chờ Báo Giá)
             ghi_chu_zalo: this.selectedQuote.zalo_notes,
             shipping_fee: this.selectedQuote.freight_collect ? 0 : (this.selectedQuote.shipping_fee || 0),
             freight_collect: this.selectedQuote.freight_collect ? 1 : 0,
@@ -1506,18 +1558,53 @@ export default {
         };
         await this.saveQuoteMutation.mutateAsync({ id: this.selectedQuote.id, payload });
         this.closeModal('quoteModal');
-        Swal.fire({
-          icon: 'success',
-          title: 'Thành công',
-          text: 'Cập nhật báo giá thành công!',
-          timer: 1800,
-          showConfirmButton: false
-        });
+        this.toaster.success('Đã lưu thông tin báo giá thành công!');
       } catch (error) {
-        console.error("Lỗi cập nhật báo giá:", error);
-        const msg = error?.response?.data?.message || 'Lỗi cập nhật báo giá!';
-        Swal.fire({ icon: 'error', title: 'Lỗi', text: msg });
+        console.error("Lỗi lưu báo giá:", error);
+        const msg = error?.response?.data?.message || 'Lỗi lưu thông tin báo giá!';
+        this.toaster.error(msg);
       }
+    },
+    async sendQuoteToCustomer() {
+      if (!this.selectedQuote) return;
+
+      const itemsTotal = this.calculateTotal(this.selectedQuote.items);
+      if (itemsTotal <= 0) {
+        this.toaster.warning('Vui lòng nhập đơn giá cho các phụ tùng trước khi báo giá cho khách hàng!');
+        return;
+      }
+
+      this.selectedQuote.total_amount = itemsTotal + (this.selectedQuote.freight_collect ? 0 : (this.selectedQuote.shipping_fee || 0));
+      this.selectedQuote.status = 1; // Chuyển sang Đã Báo Giá
+
+      try {
+        const payload = {
+            tong_tien: this.selectedQuote.total_amount,
+            trang_thai: 1, // Đã Báo Giá
+            ghi_chu_zalo: this.selectedQuote.zalo_notes,
+            shipping_fee: this.selectedQuote.freight_collect ? 0 : (this.selectedQuote.shipping_fee || 0),
+            freight_collect: this.selectedQuote.freight_collect ? 1 : 0,
+            deposit_required: this.selectedQuote.deposit_required || 0,
+            chi_tiet: this.selectedQuote.items
+        };
+        await this.saveQuoteMutation.mutateAsync({ id: this.selectedQuote.id, payload });
+        this.closeModal('quoteModal');
+
+        // Chuyển tab sang "Đã Báo Giá"
+        this.currentTab = 'quoted_quotes';
+
+        // Mở Zalo gửi khách
+        this.quickOpenZalo(this.selectedQuote);
+
+        this.toaster.success('Đã chuyển sang tab "Đã Báo Giá" và mở Zalo gửi khách!');
+      } catch (error) {
+        console.error("Lỗi gửi báo giá:", error);
+        const msg = error?.response?.data?.message || 'Lỗi khi báo giá cho khách!';
+        this.toaster.error(msg);
+      }
+    },
+    async saveQuote() {
+      return this.saveDraftQuote();
     },
     async saveQuoteSilent() {
       if (!this.selectedQuote) return false;
@@ -1527,10 +1614,6 @@ export default {
         this.selectedQuote.total_amount = (this.selectedQuote.total_amount || 0) + (this.selectedQuote.freight_collect ? 0 : (this.selectedQuote.shipping_fee || 0));
       }
 
-      if (this.selectedQuote.status === 0 && this.selectedQuote.total_amount > 0) {
-        this.selectedQuote.status = 1;
-      }
-      
       try {
         const payload = {
             tong_tien: this.selectedQuote.total_amount,
@@ -1572,23 +1655,13 @@ export default {
         };
         await this.saveOrderMutation.mutateAsync({ id: this.selectedOrder.id, payload });
         this.closeModal('orderModal');
-        Swal.fire({
-          icon: 'success',
-          title: 'Thành công',
-          text: 'Cập nhật đơn hàng thành công!',
-          timer: 1800,
-          showConfirmButton: false
-        });
+        this.toaster.success('Cập nhật đơn hàng thành công!');
         localStorage.removeItem('draft_order_' + this.selectedOrder.id);
       } catch (error) {
         console.warn("Lỗi mạng hoặc API, lưu nháp Offline...", error);
         localStorage.setItem('draft_order_' + this.selectedOrder.id, JSON.stringify(this.selectedOrder));
         const msg = error?.response?.data?.message || "Mất mạng hoặc lỗi hệ thống! Đơn hàng được lưu nháp cục bộ.";
-        Swal.fire({
-          icon: 'warning',
-          title: 'Thông báo',
-          text: msg
-        });
+        this.toaster.warning(msg);
       }
     },
 
@@ -1608,14 +1681,7 @@ export default {
       if (navigator.clipboard) {
         navigator.clipboard.writeText(text);
       }
-      Swal.fire({
-        toast: true,
-        position: 'top-end',
-        icon: 'success',
-        title: msg || 'Đã sao chép!',
-        showConfirmButton: false,
-        timer: 2000
-      });
+      this.toaster.success(msg || 'Đã sao chép!');
     },
 
     async confirmDepositBtn(item) {
@@ -1641,19 +1707,11 @@ export default {
             : `/admin/don-hang/${item.id}/xac-nhan-coc`;
           const res = await axiosClient.post(endpoint, { amount: depositAmt });
           if (res?.success || res?.data?.success) {
-            Swal.fire({
-              icon: 'success',
-              title: 'Thành Công!',
-              text: res?.message || res?.data?.message || 'Đã xác nhận nhận cọc thành công.'
-            });
+            this.toaster.success(res?.message || res?.data?.message || 'Đã xác nhận nhận cọc thành công!');
             this.refreshData();
           }
         } catch (err) {
-          Swal.fire({
-            icon: 'error',
-            title: 'Lỗi',
-            text: err?.response?.data?.message || 'Không thể xác nhận cọc.'
-          });
+          this.toaster.error(err?.response?.data?.message || 'Không thể xác nhận cọc.');
         }
       }
     },
@@ -1678,28 +1736,20 @@ export default {
 
     async saveViettelPostShipping() {
       if (!this.viettelPostOrder || !this.viettelPostForm.ma_van_don.trim()) {
-        Swal.fire({ icon: 'warning', title: 'Thiếu thông tin', text: 'Vui lòng nhập mã vận đơn giao hàng!' });
+        this.toaster.warning('Vui lòng nhập mã vận đơn giao hàng!');
         return;
       }
       this.isSavingViettelPost = true;
       try {
         const res = await axiosClient.post(`/admin/don-hang/${this.viettelPostOrder.id}/cap-nhat-van-chuyen`, this.viettelPostForm);
         if (res?.success || res?.data?.success) {
-          Swal.fire({
-            icon: 'success',
-            title: 'Thành Công!',
-            text: 'Đã cập nhật mã vận đơn và chuyển đơn hàng sang trạng thái Đang Giao Hàng.'
-          });
+          this.toaster.success('Đã cập nhật mã vận đơn và chuyển đơn hàng sang trạng thái Đang Giao Hàng.');
           this.closeModal('viettelPostModal');
           this.closeModal('orderModal');
           this.refreshData();
         }
       } catch (err) {
-        Swal.fire({
-          icon: 'error',
-          title: 'Lỗi',
-          text: err?.response?.data?.message || 'Không thể cập nhật vận chuyển.'
-        });
+        this.toaster.error(err?.response?.data?.message || 'Không thể cập nhật vận chuyển.');
       } finally {
         this.isSavingViettelPost = false;
       }
@@ -1727,20 +1777,12 @@ export default {
         try {
           const res = await axiosClient.post(`/admin/don-hang/${order.id}/hoan-thanh`);
           if (res?.success || res?.data?.success) {
-            Swal.fire({
-              icon: 'success',
-              title: 'Hoàn Tất Đơn Hàng!',
-              text: 'Đơn hàng đã được đánh dấu Hoàn Thành!'
-            });
+            this.toaster.success('Đơn hàng đã được đánh dấu Hoàn Thành!');
             this.closeModal('orderModal');
             this.refreshData();
           }
         } catch (err) {
-          Swal.fire({
-            icon: 'error',
-            title: 'Lỗi',
-            text: err?.response?.data?.message || 'Không thể hoàn thành đơn hàng.'
-          });
+          this.toaster.error(err?.response?.data?.message || 'Không thể hoàn thành đơn hàng.');
         }
       }
     },
@@ -1760,7 +1802,7 @@ export default {
           this.currentVietQr = payload;
         }
       } catch (e) {
-        Swal.fire({ icon: 'error', title: 'Lỗi', text: 'Không thể tạo mã VietQR cho đơn hàng này' });
+        this.toaster.error('Không thể tạo mã VietQR cho đơn hàng này.');
       } finally {
         this.isLoadingQr = false;
       }
@@ -1787,24 +1829,20 @@ export default {
     async sendShippingNotice() {
       if (!this.shippingOrder) return;
       if (!this.shippingForm.ten_nha_xe) {
-        Swal.fire({ icon: 'warning', title: 'Thiếu thông tin', text: 'Vui lòng nhập tên nhà xe / chành xe' });
+        this.toaster.warning('Vui lòng nhập tên nhà xe / chành xe');
         return;
       }
       this.isSendingShipping = true;
       try {
         const res = await axiosClient.post(`/admin/thong-bao/gui-chanh-xe/${this.shippingOrder.id}`, this.shippingForm);
         if (res?.success || res?.data?.success) {
-          Swal.fire({
-            icon: 'success',
-            title: 'Thành Công!',
-            text: 'Đã gửi thông báo xuất bến qua Zalo ZNS / SMS Brandname cho chủ tàu và chành xe.'
-          });
+          this.toaster.success('Đã gửi thông báo xuất bến qua Zalo ZNS / SMS Brandname cho chủ tàu và chành xe.');
           // eslint-disable-next-line no-undef
           const modalEl = bootstrap.Modal.getInstance(document.getElementById('adminShippingModal'));
           if (modalEl) modalEl.hide();
         }
       } catch (err) {
-        Swal.fire({ icon: 'error', title: 'Lỗi', text: err.response?.data?.message || 'Có lỗi xảy ra khi gửi thông báo' });
+        this.toaster.error(err.response?.data?.message || 'Có lỗi xảy ra khi gửi thông báo');
       } finally {
         this.isSendingShipping = false;
       }
@@ -1845,6 +1883,28 @@ input[type=number]::-webkit-outer-spin-button {
 }
 input[type=number] {
   -moz-appearance: textfield;
+}
+/* Cố định tiêu đề bảng khi cuộn danh sách phụ tùng */
+.table-sticky-header thead th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background-color: #f5f5f9 !important;
+  box-shadow: inset 0 -1px 0 #d9dee3;
+}
+/* Ẩn placeholder khi focus để con trỏ chuột không đè lên số 0 */
+input:focus::placeholder,
+textarea:focus::placeholder {
+  color: transparent !important;
+  opacity: 0 !important;
+}
+input:focus::-webkit-input-placeholder {
+  color: transparent !important;
+  opacity: 0 !important;
+}
+input:focus::-moz-placeholder {
+  color: transparent !important;
+  opacity: 0 !important;
 }
 </style>
 

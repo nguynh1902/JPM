@@ -119,7 +119,7 @@
 
     <!-- Modal Form -->
     <div class="modal fade" id="modalRole" tabindex="-1" aria-hidden="true" ref="modalRole">
-      <div class="modal-dialog modal-dialog-scrollable mt-5" style="max-width: 800px;" role="document">
+      <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
         <div class="modal-content border-0 shadow-lg">
           <div class="modal-header border-bottom pb-3">
             <h4 class="modal-title fw-bold text-dark mb-0 fs-4" id="modalRoleTitle">
@@ -171,7 +171,7 @@
 
               <!-- Danh sách quyền hạn -->
               <h6 class="mt-3 fw-bold text-dark text-uppercase fs-6">Thiết lập Quyền Hạn (Permissions)</h6>
-              <div class="border rounded p-3 bg-lighter" style="max-height: 400px; overflow-y: auto;">
+              <div class="border rounded p-3 bg-light" style="max-height: 400px; overflow-y: auto;">
                 
                 <div class="mb-4" v-for="module in permissionModules" :key="module.id">
                   <div class="d-flex align-items-center mb-2 border-bottom pb-2">
@@ -457,12 +457,6 @@ export default {
 </script>
 
 <style scoped>
-.bg-lighter {
-  background-color: #f8f9fa;
-}
-.modal-dialog-scrollable .modal-body {
-  overflow-y: auto;
-}
 </style>
 
 
