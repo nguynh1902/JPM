@@ -77,7 +77,6 @@
                       </div>
                       <div style="width: 200px;">
                           <div class="custom-select-wrapper" :class="{ 'z-active': openDropdown === 'hp' }">
-                            <div class="dropdown-overlay" v-if="openDropdown === 'hp'" @click="closeDropdowns"></div>
                             <div class="custom-select-box" :class="{ 'is-focused': openDropdown === 'hp' }" @click="toggleDropdown('hp')">
                               <span>{{ selectedHp ? selectedHp + ' HP' : 'Tất cả Mã Lực (HP)' }}</span>
                               <i class="bi bi-chevron-down select-arrow"></i>
@@ -90,7 +89,6 @@
                         </div>
                         <div style="width: 200px;">
                           <div class="custom-select-wrapper" :class="{ 'z-active': openDropdown === 'stroke' }">
-                            <div class="dropdown-overlay" v-if="openDropdown === 'stroke'" @click="closeDropdowns"></div>
                             <div class="custom-select-box" :class="{ 'is-focused': openDropdown === 'stroke' }" @click="toggleDropdown('stroke')">
                               <span>{{ selectedStroke ? formatStrokeDropdown(selectedStroke) : 'Tất cả Loại Thì' }}</span>
                               <i class="bi bi-chevron-down select-arrow"></i>
@@ -103,7 +101,6 @@
                         </div>
                         <div style="width: 200px;">
                           <div class="custom-select-wrapper" :class="{ 'z-active': openDropdown === 'nam' }">
-                            <div class="dropdown-overlay" v-if="openDropdown === 'nam'" @click="closeDropdowns"></div>
                             <div class="custom-select-box" :class="{ 'is-focused': openDropdown === 'nam' }" @click="toggleDropdown('nam')">
                               <span>{{ selectedNam ? selectedNam : 'Tất cả Năm' }}</span>
                               <i class="bi bi-chevron-down select-arrow"></i>
@@ -195,7 +192,7 @@
 </template>
 
 <script setup>
-import { computed, ref, onUnmounted, watch } from 'vue';
+import { computed, ref, onMounted, onUnmounted, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { useQuery } from '@tanstack/vue-query';
 import axiosClient from '../../../api/axiosClient';
@@ -271,8 +268,20 @@ const selectStroke = (val) => {
   openDropdown.value = null;
 };
 
-// Đóng dropdown khi component unmount
+// Đóng dropdown khi click ra ngoài (không dùng overlay chặn click)
+const handleClickOutside = (event) => {
+  if (!openDropdown.value) return;
+  if (!event.target.closest('.custom-select-wrapper')) {
+    openDropdown.value = null;
+  }
+};
+
+onMounted(() => {
+  document.addEventListener('click', handleClickOutside);
+});
+
 onUnmounted(() => {
+  document.removeEventListener('click', handleClickOutside);
   openDropdown.value = null;
 });
 

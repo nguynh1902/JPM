@@ -73,9 +73,6 @@
 
         <!-- Khung Tra Cứu Sang Trọng, Thống Nhất Phong Cách TheEvent -->
         <div class="filter-console-card position-relative" data-aos="fade-up" data-aos-delay="100">
-          <!-- OVERLAY để click ra ngoài đóng dropdown -->
-          <div class="dropdown-overlay" v-if="openDropdown" @click="openDropdown = null"></div>
-
           <!-- 1. Hàng 4 Dropdown Lọc Động Cơ -->
           <div class="row g-3 mb-4">
             <!-- Cột 1: Thương Hiệu -->
@@ -851,7 +848,20 @@ export default {
     addToCart(prod) {
       this.cartStore.addItem(prod, 1);
       this.$toast.success("Thêm sản phẩm thành công");
+    },
+    // Đóng dropdown khi click ra ngoài mà không cần overlay chắn màn hình
+    handleClickOutside(event) {
+      if (!this.openDropdown) return;
+      if (!event.target.closest('.custom-select-wrapper')) {
+        this.openDropdown = null;
+      }
     }
+  },
+  mounted() {
+    document.addEventListener('click', this.handleClickOutside);
+  },
+  beforeUnmount() {
+    document.removeEventListener('click', this.handleClickOutside);
   },
 };
 </script>

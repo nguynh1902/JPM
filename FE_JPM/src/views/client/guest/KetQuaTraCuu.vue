@@ -338,7 +338,7 @@
 </template>
 
 <script>
-import { ref, reactive, watch, computed } from 'vue';
+import { ref, reactive, watch, computed, onMounted, onUnmounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useQuery, useQueryClient } from '@tanstack/vue-query';
 import axiosClient from '../../../api/axiosClient';
@@ -633,6 +633,23 @@ export default {
       sortBy.value = val;
       openDropdown.value = null;
     };
+
+    // Đóng dropdown khi click ra ngoài (không dùng overlay chặn click)
+    const handleClickOutside = (event) => {
+      if (!openDropdown.value) return;
+      if (!event.target.closest('.custom-select-wrapper')) {
+        openDropdown.value = null;
+      }
+    };
+
+    onMounted(() => {
+      document.addEventListener('click', handleClickOutside);
+    });
+
+    onUnmounted(() => {
+      document.removeEventListener('click', handleClickOutside);
+      openDropdown.value = null;
+    });
 
     return {
       localKeyword,
