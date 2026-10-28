@@ -146,13 +146,13 @@
               <thead style="position: sticky; top: 0; z-index: 1; background: #fff;">
                 <tr>
                   <th class="text-center text-uppercase" style="width: 5%">STT</th>
-                  <th class="text-uppercase" style="width: 17%">Mã Giao Dịch</th>
+                  <th class="text-uppercase" style="width: 16%">Mã Giao Dịch</th>
                   <th class="text-uppercase" style="width: 21%">Khách Hàng</th>
                   <th class="text-uppercase" style="width: 13%">Thời Gian</th>
                   <th class="text-end text-uppercase" style="width: 13%">Tổng Tiền</th>
                   <th class="text-end text-uppercase" style="width: 13%">Tiền Cọc</th>
                   <th class="text-center text-uppercase" style="width: 11%">Trạng Thái</th>
-                  <th class="text-center text-uppercase" style="width: 7%">Hành Động</th>
+                  <th class="text-center text-uppercase" style="width: 8%; min-width: 130px;">Hành Động</th>
                 </tr>
               </thead>
               <tbody class="table-border-bottom-0">
@@ -255,6 +255,17 @@
                         <i :class="canProcessOrders ? 'bx bx-edit-alt' : 'bx bx-show'"></i>
                       </button>
 
+                      <!-- Nút Copy Link Báo Giá (Báo giá đã hoàn tất) -->
+                      <button 
+                        v-if="item._type === 'quote' && item.status >= 1 && item.token" 
+                        type="button" 
+                        class="action-btn text-info" 
+                        @click="copyQuoteLink(item)" 
+                        title="Sao chép link báo giá gửi khách"
+                      >
+                        <i class="bx bx-link"></i>
+                      </button>
+
                       <!-- Nút Xác Nhận Nhận Cọc (Báo giá hoặc Đơn chờ cọc) -->
                       <button 
                         v-if="(item._type === 'quote' && item.status === 1) || (item._type === 'order' && item.status === 0)" 
@@ -263,7 +274,7 @@
                         @click="confirmDepositBtn(item)" 
                         title="Xác nhận đã nhận cọc & Chuyển lên đơn Nhật"
                       >
-                        <i class="bx bx-dollar-circle"></i>
+                        <i class="bx bx-wallet"></i>
                       </button>
 
                       <!-- Nút Cập Nhật Vận Đơn Giao Hàng -->
@@ -288,15 +299,15 @@
                         <i class="bx bx-check-double"></i>
                       </button>
 
-                      <!-- Nút Xóa -->
+                      <!-- Nút Hủy Đơn / Hủy Báo Giá (Chuyển sang tab Đã Hủy, không xóa mất dữ liệu) -->
                       <button 
-                        v-if="canDeleteOrders" 
+                        v-if="(item._type === 'quote' && item.status !== 3) || (item._type === 'order' && item.status !== 4 && item.status !== 3)" 
                         type="button" 
                         class="action-btn text-danger" 
-                        @click="handleDelete(item)" 
-                        title="Xóa"
+                        @click="handleCancel(item)" 
+                        :title="item._type === 'quote' ? 'Hủy báo giá (chuyển vào Đã Hủy)' : 'Hủy đơn hàng (chuyển vào Đã Hủy)'"
                       >
-                        <i class="bx bx-trash"></i>
+                        <i class="bx bx-x-circle"></i>
                       </button>
                     </div>
                   </td>
@@ -498,11 +509,11 @@
                   <i class="bx bx-x-circle me-1"></i> Hủy Đơn
                 </button>
 
-                <!-- Nút Copy Link Báo Giá -->
+                <!-- Nút Copy Link Báo Giá (Chỉ hiển thị khi đã định giá xong / Đã Báo Giá status >= 1) -->
                 <button 
                   type="button" 
                   class="btn btn-outline-primary px-3 shadow-sm" 
-                  v-if="selectedQuote && selectedQuote.token" 
+                  v-if="selectedQuote && selectedQuote.token && selectedQuote.status >= 1" 
                   @click.prevent="copyQuoteLink(selectedQuote)"
                   title="Sao chép liên kết báo giá"
                 >
@@ -1345,12 +1356,52 @@ export default {
         this.openOrderModal(item);
       }
     },
-    handleDelete(item) {
-      if (item.record_type === 'quote' || item._type === 'quote') {
-        this.deleteQuote(item);
-      } else {
-        this.deleteOrder(item);
+    async handleCancel(item) {
+      if (!item) return;
+      const isQuote = item.record_type === 'quote' || item._type === 'quote';
+      const label = isQuote ? 'yêu cầu báo giá' : 'đơn hàng';
+      
+      const result = await Swal.fire({
+        title: `Hủy ${isQuote ? 'Yêu Cầu Báo Giá' : 'Đơn Hàng'}?`,
+        html: `Bạn có chắc chắn muốn hủy ${label} mã <b>${item.code}</b>?<br><small class="text-muted">Giao dịch sẽ được chuyển về tab "Đã Hủy" để lưu trữ lịch sử, không bị xóa mất dữ liệu.</small>`,
+        icon: 'warning',
+        iconColor: '#ff3e1d',
+        showCancelButton: true,
+        confirmButtonText: 'Có, Hủy Đơn!',
+        cancelButtonText: 'Quay Lại',
+        reverseButtons: true,
+        animation: false,
+        customClass: {
+          popup: 'swal-shift-up',
+          confirmButton: 'btn btn-danger px-4 shadow-sm',
+          cancelButton: 'btn btn-outline-secondary px-4 me-3'
+        },
+        buttonsStyling: false
+      });
+
+      if (result.isConfirmed) {
+        try {
+          if (isQuote) {
+            const res = await axiosClient.put(`/admin/yeu-cau-bao-gia/${item.id}`, { trang_thai: 3 });
+            if (res?.success || res?.data?.success) {
+              this.toaster.success('Đã hủy báo giá và chuyển vào mục Đã Hủy!');
+              this.refreshData();
+            }
+          } else {
+            const res = await axiosClient.put(`/admin/don-hang/${item.id}`, { status: 4 });
+            if (res?.success || res?.data?.success) {
+              this.toaster.success('Đã hủy đơn hàng và hoàn kho thành công!');
+              this.refreshData();
+            }
+          }
+        } catch (err) {
+          const msg = err?.response?.data?.message || 'Không thể hủy giao dịch này.';
+          this.toaster.error(msg);
+        }
       }
+    },
+    handleDelete(item) {
+      return this.handleCancel(item);
     },
     printOrder() {
       window.print();
@@ -1546,10 +1597,18 @@ export default {
         this.selectedQuote.total_amount = (this.selectedQuote.total_amount || 0) + (this.selectedQuote.freight_collect ? 0 : (this.selectedQuote.shipping_fee || 0));
       }
 
+      // Nếu đang là Chờ báo giá (status = 0) và tất cả phụ tùng đều đã được nhập giá (> 0) thì tự động chuyển sang Đã Báo Giá (status = 1)
+      let newStatus = this.selectedQuote.status;
+      const allPriced = this.selectedQuote.items && this.selectedQuote.items.length > 0 && this.selectedQuote.items.every(i => Number(i.price) > 0);
+      if (this.selectedQuote.status === 0 && allPriced) {
+        newStatus = 1;
+        this.selectedQuote.status = 1;
+      }
+
       try {
         const payload = {
             tong_tien: this.selectedQuote.total_amount,
-            trang_thai: this.selectedQuote.status, // Giữ nguyên trạng thái (nếu 0 thì vẫn là 0 - Chờ Báo Giá)
+            trang_thai: newStatus,
             ghi_chu_zalo: this.selectedQuote.zalo_notes,
             shipping_fee: this.selectedQuote.freight_collect ? 0 : (this.selectedQuote.shipping_fee || 0),
             freight_collect: this.selectedQuote.freight_collect ? 1 : 0,
@@ -1558,7 +1617,12 @@ export default {
         };
         await this.saveQuoteMutation.mutateAsync({ id: this.selectedQuote.id, payload });
         this.closeModal('quoteModal');
-        this.toaster.success('Đã lưu thông tin báo giá thành công!');
+        if (newStatus === 1 && this.currentTab === 'pending_quotes') {
+          this.currentTab = 'quoted_quotes';
+          this.toaster.success('Đã hoàn tất báo giá và chuyển sang tab "Đã Báo Giá"!');
+        } else {
+          this.toaster.success('Đã lưu thông tin báo giá thành công!');
+        }
       } catch (error) {
         console.error("Lỗi lưu báo giá:", error);
         const msg = error?.response?.data?.message || 'Lỗi lưu thông tin báo giá!';
