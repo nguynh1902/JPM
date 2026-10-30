@@ -142,6 +142,7 @@ class DonHangController extends Controller
                 'tien_coc_yeu_cau' => $request->deposit_required ?? $donHang->tien_coc_yeu_cau,
                 'da_thu' => $request->paid_amount ?? $donHang->da_thu,
                 'khach_tu_tra_cuoc' => $request->freight_collect ?? $donHang->khach_tu_tra_cuoc,
+                'dia_chi_text' => $request->address ?? $request->dia_chi_text ?? $donHang->dia_chi_text,
             ]);
 
             if ($oldStatus != 4 && $newStatus == 4) {
@@ -296,6 +297,13 @@ class DonHangController extends Controller
         DB::beginTransaction();
         try {
             $donHang = DonHang::lockForUpdate()->findOrFail($id);
+            if ($request->filled('dia_chi_text')) {
+                $donHang->dia_chi_text = $request->input('dia_chi_text');
+            } elseif ($request->filled('address')) {
+                $donHang->dia_chi_text = $request->input('address');
+            } elseif ($request->filled('dia_chi_giao_hang')) {
+                $donHang->dia_chi_text = $request->input('dia_chi_giao_hang');
+            }
             $amount = (float) $request->input('amount', $donHang->tien_coc_yeu_cau);
             if ($amount <= 0 && $donHang->tien_coc_yeu_cau > 0) {
                 $amount = (float) $donHang->tien_coc_yeu_cau;

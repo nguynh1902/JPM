@@ -279,6 +279,7 @@ class YeuCauBaoGiaController extends Controller
                 'phi_van_chuyen'    => $request->input('shipping_fee', $request->input('phi_van_chuyen', $quote->phi_van_chuyen)),
                 'khach_tu_tra_cuoc' => $request->input('freight_collect', $request->input('khach_tu_tra_cuoc', $quote->khach_tu_tra_cuoc)),
                 'tien_coc_yeu_cau'  => $request->input('deposit_required', $request->input('tien_coc_yeu_cau', $quote->tien_coc_yeu_cau)),
+                'dia_chi_giao_hang' => $request->input('dia_chi_giao_hang', $request->input('address', $quote->dia_chi_giao_hang)),
             ]);
 
             // Cập nhật giá từng món hàng nếu có
@@ -419,6 +420,12 @@ class YeuCauBaoGiaController extends Controller
                         'is_expired' => true,
                         'message' => 'Báo giá này đã quá thời hạn giữ giá (' . $validHours . ' giờ). Vui lòng bấm "Yêu Cầu Báo Giá Lại" để nhận giá cập nhật mới nhất.'
                     ], 422);
+                }
+
+                if ($request->filled('dia_chi_giao_hang')) {
+                    $quote->dia_chi_giao_hang = $request->input('dia_chi_giao_hang');
+                } elseif ($request->filled('address')) {
+                    $quote->dia_chi_giao_hang = $request->input('address');
                 }
 
                 $quote->trang_thai = 2; // Khách đã chốt đơn hàng (Chờ cọc)
@@ -612,6 +619,11 @@ class YeuCauBaoGiaController extends Controller
         DB::beginTransaction();
         try {
             $quote = YeuCauBaoGia::with('chiTiet')->findOrFail($id);
+            if ($request->filled('dia_chi_giao_hang')) {
+                $quote->dia_chi_giao_hang = $request->input('dia_chi_giao_hang');
+            } elseif ($request->filled('address')) {
+                $quote->dia_chi_giao_hang = $request->input('address');
+            }
             $amount = (float) $request->input('amount', $quote->tien_coc_yeu_cau);
             if ($amount <= 0 && $quote->tien_coc_yeu_cau > 0) {
                 $amount = (float) $quote->tien_coc_yeu_cau;
@@ -687,6 +699,9 @@ class YeuCauBaoGiaController extends Controller
                 $existingOrder->da_thu = $amount;
                 $existingOrder->trang_thai_thanh_toan = 1;
                 $existingOrder->trang_thai = 1;
+                if ($quote->dia_chi_giao_hang && !$existingOrder->dia_chi_text) {
+                    $existingOrder->dia_chi_text = $quote->dia_chi_giao_hang;
+                }
                 $existingOrder->save();
             }
 

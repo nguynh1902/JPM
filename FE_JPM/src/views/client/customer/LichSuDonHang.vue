@@ -138,6 +138,12 @@
           <span>{{ getLogisticsStatus(order) }}</span>
         </div>
 
+        <!-- Địa chỉ giao hàng tóm tắt -->
+        <div class="px-3 pt-2 pb-0 d-flex align-items-center text-muted" style="font-size: 12px;" v-if="getOrderAddress(order)">
+          <i class="bi bi-geo-alt me-1 text-danger"></i>
+          <span class="text-truncate">{{ getOrderAddress(order) }}</span>
+        </div>
+
         <!-- THẺ ĐƠN TÓM TẮT: KÍCH VÀO MỞ MODAL XEM TẤT CẢ SẢN PHẨM -->
         <div 
           class="card-summary-row cursor-pointer" 
@@ -446,6 +452,13 @@
             <button type="button" class="btn-close" @click="closeProductModal"></button>
           </div>
 
+          <!-- Thanh Thông tin Địa chỉ nhận hàng -->
+          <div class="px-4 py-2 bg-light border-bottom d-flex align-items-center gap-2" style="font-size: 13px;">
+            <i class="bi bi-geo-alt-fill text-danger fs-6"></i>
+            <span class="text-secondary fw-semibold">Địa chỉ nhận hàng:</span>
+            <span class="text-dark fw-medium">{{ getOrderAddress(selectedOrderForModal) || 'Chưa cung cấp địa chỉ nhận hàng' }}</span>
+          </div>
+
           <!-- Modal Body: Danh sách phụ tùng -->
           <div class="modal-body p-0" style="max-height: 60vh; overflow-y: auto;">
             <div class="list-group list-group-flush">
@@ -727,6 +740,14 @@ const getStatusText = (order) => {
     default:
       return 'ĐÃ HỦY';
   }
+};
+
+const getOrderAddress = (order) => {
+  if (!order) return '';
+  if (order._type === 'quote') {
+    return order.dia_chi_giao_hang || '';
+  }
+  return order.dia_chi?.dia_chi_cu_the || order.dia_chi_text || '';
 };
 
 const getLogisticsStatus = (order) => {

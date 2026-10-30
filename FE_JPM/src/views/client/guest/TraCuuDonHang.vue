@@ -51,12 +51,12 @@
               <div class="row mb-4">
                 <div class="col-sm-6 mb-3 mb-sm-0">
                   <p class="text-muted small text-uppercase fw-bold mb-1">Khách Hàng</p>
-                  <p class="mb-0 fw-medium">{{ result.data.khach_hang_ten }}</p>
-                  <p class="mb-0 text-muted">{{ result.data.khach_hang_sdt }}</p>
+                  <p class="mb-0 fw-medium"><i class="bx bx-user me-2 text-primary"></i>{{ result.data.khach_hang_ten }}</p>
+                  <p class="mb-0 text-muted"><i class="bx bx-phone me-2 text-primary"></i>{{ result.data.khach_hang_sdt }}</p>
                 </div>
-                <div class="col-sm-6" v-if="result.type === 'order'">
+                <div class="col-sm-6">
                   <p class="text-muted small text-uppercase fw-bold mb-1">Địa Chỉ Giao Hàng</p>
-                  <p class="mb-0 fw-medium">{{ result.data.dia_chi_text || 'Chưa cung cấp' }}</p>
+                  <p class="mb-0 fw-medium"><i class="bx bx-map me-2 text-primary"></i>{{ result.data.dia_chi_text || result.data.dia_chi_giao_hang || 'Chưa cung cấp' }}</p>
                 </div>
               </div>
 

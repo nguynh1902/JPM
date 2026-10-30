@@ -29,8 +29,10 @@
               <div class="row mb-4">
                 <div class="col-md-6 mb-3 mb-md-0">
                   <h6 class="fw-bold text-uppercase text-secondary mb-3" style="font-size: 0.8rem;">Thông tin Khách Hàng</h6>
-                  <p class="mb-1 fw-bold text-dark">{{ quote.khach_hang_ten }}</p>
+                  <p class="mb-1 fw-bold text-dark"><i class="bx bx-user me-2 text-primary"></i>{{ quote.khach_hang_ten }}</p>
                   <p class="mb-1 text-muted"><i class="bx bx-phone me-2"></i>{{ quote.khach_hang_sdt }}</p>
+                  <p class="mb-1 text-muted" v-if="quote.dia_chi_giao_hang"><i class="bx bx-map me-2 text-primary"></i>{{ quote.dia_chi_giao_hang }}</p>
+                  <p class="mb-1 text-muted fst-italic" v-else><i class="bx bx-map me-2 text-muted"></i>Chưa cập nhật địa chỉ giao hàng</p>
                   <p class="mb-0 text-muted"><i class="bx bx-calendar me-2"></i>{{ new Date(quote.created_at).toLocaleDateString('vi-VN') }}</p>
                 </div>
                 <div class="col-md-6 text-md-end">
@@ -395,9 +397,30 @@ export default {
       let confirmMsg = '';
       let confirmBtnText = 'Đồng ý';
       let confirmBtnColor = '#28a745';
+      let deliveryAddress = this.quote.dia_chi_giao_hang || '';
 
       if (actionType === 'accept') {
         confirmMsg = 'Bạn đồng ý với mức giá này và chốt đặt hàng?';
+        if (!deliveryAddress) {
+          const { value: inputAddress } = await Swal.fire({
+            title: 'Địa Chỉ Giao Hàng',
+            input: 'textarea',
+            inputLabel: 'Quý khách vui lòng cung cấp địa chỉ nhận hàng (bến tàu, chành xe, hoặc số nhà...):',
+            inputPlaceholder: 'Ví dụ: Bến tàu Rạch Giá, Kiên Giang hoặc Số 123 đường ABC, Phường X...',
+            showCancelButton: true,
+            confirmButtonColor: '#28a745',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Xác Nhận & Tiếp Tục',
+            cancelButtonText: 'Hủy',
+            inputValidator: (value) => {
+              if (!value || !value.trim()) {
+                return 'Vui lòng nhập địa chỉ nhận hàng để JPM chuẩn bị phương án giao nhận!';
+              }
+            }
+          });
+          if (!inputAddress) return;
+          deliveryAddress = inputAddress.trim();
+        }
       } else if (actionType === 'reject') {
         confirmMsg = 'Bạn chắc chắn muốn từ chối báo giá này?';
         confirmBtnColor = '#dc3545';
@@ -421,7 +444,10 @@ export default {
       if (result.isConfirmed) {
         this.isSubmitting = true;
         try {
-          const res = await axiosClient.post('/public/yeu-cau-bao-gia/' + this.token + '/action', { action: actionType });
+          const res = await axiosClient.post('/public/yeu-cau-bao-gia/' + this.token + '/action', { 
+            action: actionType,
+            dia_chi_giao_hang: deliveryAddress
+          });
           const message = res?.message ?? res?.data?.message;
           if (res?.success || res?.data?.success) {
             Swal.fire({ icon: 'success', title: 'Thành công', text: message });

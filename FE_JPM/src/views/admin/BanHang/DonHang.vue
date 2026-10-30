@@ -113,7 +113,7 @@
                   v-model="searchQuery"
                 >
               </div>
-              <div style="width: 200px;" class="flex-shrink-0" v-if="currentTab === 'all' || currentTab === 'processing' || currentTab === 'cancelled'">
+              <div style="width: 200px;" class="flex-shrink-0" v-if="currentTab === 'all'">
                 <v-select
                   v-model="typeFilter"
                   :options="[
@@ -165,23 +165,16 @@
                         <i class="bx bx-copy" style="font-size: 0.85rem;"></i>
                       </button>
                     </div>
-                    <!-- Phân loại tinh tế dạng tag nhỏ khi ở các tab hỗn hợp -->
-                    <div class="d-flex align-items-center gap-1 mt-1 flex-wrap" v-if="currentTab === 'all' || currentTab === 'processing' || currentTab === 'cancelled'">
-                      <span v-if="item._type === 'quote'" class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle" style="font-size: 0.68rem; padding: 0.15rem 0.4rem;">
-                        Báo Giá
-                      </span>
-                      <span v-else class="badge bg-primary-subtle text-primary border border-primary-subtle" style="font-size: 0.68rem; padding: 0.15rem 0.4rem;">
-                        Đơn Hàng
-                      </span>
-                      <span v-if="item.order_type === 'b2b'" class="badge bg-secondary-subtle text-secondary border border-secondary-subtle" style="font-size: 0.68rem; padding: 0.15rem 0.4rem;">
-                        B2B Đại Lý
-                      </span>
-                    </div>
                   </td>
                   <td>
-                    <span class="fw-bold text-dark d-block mb-1">{{ item.customer_name }}</span>
+                    <span class="fw-bold text-dark d-block mb-1">
+                      <i class="bx bx-user text-primary me-1"></i>{{ item.customer_name }}
+                    </span>
                     <div class="text-muted" style="font-size: 0.8rem;">
                       {{ item.customer_phone }}
+                    </div>
+                    <div v-if="item.address" class="text-muted text-truncate mt-1" style="font-size: 0.75rem; max-width: 220px;" :title="item.address">
+                      <i class="bx bx-map text-primary me-1"></i>{{ item.address }}
                     </div>
                   </td>
                   <td>
@@ -251,13 +244,13 @@
                         <i :class="canProcessOrders ? 'bx bx-edit-alt' : 'bx bx-show'"></i>
                       </button>
 
-                      <!-- Nút Copy Link Báo Giá (Chỉ hiển thị ở tab ĐÃ BÁO GIÁ để gửi khách) -->
+                      <!-- Nút Copy Link Báo Giá / Đơn Hàng (Chỉ hiển thị ở tab ĐÃ BÁO GIÁ để gửi khách) -->
                       <button 
-                        v-if="item._type === 'quote' && item.status === 1 && item.token" 
+                        v-if="(item._type === 'quote' && item.status === 1 && item.token) || (item._type === 'order' && item.status === 0)" 
                         type="button" 
                         class="action-btn text-info" 
                         @click="copyQuoteLink(item)" 
-                        title="Sao chép link báo giá gửi khách"
+                        :title="item._type === 'quote' ? 'Sao chép link báo giá gửi khách' : 'Sao chép link tra cứu đơn gửi khách'"
                       >
                         <i class="bx bx-link"></i>
                       </button>
@@ -329,9 +322,23 @@
                 <div class="col-lg-3 col-12 mb-3 mb-lg-0 border-end d-flex flex-column">
                   <h6 class="fw-bold mb-3 text-uppercase text-primary" style="font-size: 0.75rem;">Thông tin Khách Hàng</h6>
                   <div class="mb-3">
-                    <p class="mb-1 fw-bold text-dark">{{ selectedQuote.customer_name }}</p>
+                    <p class="mb-1 fw-bold text-dark"><i class="bx bx-user text-primary me-2"></i>{{ selectedQuote.customer_name }}</p>
                     <p class="mb-1 text-dark"><i class="bx bx-phone text-primary me-2"></i>{{ selectedQuote.customer_phone }}</p>
-                    <p class="mb-0 text-dark"><i class="bx bx-envelope text-primary me-2"></i>{{ selectedQuote.customer_email }}</p>
+                    <p class="mb-2 text-dark" v-if="selectedQuote.customer_email"><i class="bx bx-envelope text-primary me-2"></i>{{ selectedQuote.customer_email }}</p>
+                    
+                    <div class="mt-2">
+                      <label class="form-label text-muted small mb-1 fw-semibold"><i class="bx bx-map text-primary me-1"></i>Địa Chỉ Giao Hàng:</label>
+                      <textarea 
+                        v-if="!isQuoteReadOnly"
+                        class="form-control form-control-sm text-dark" 
+                        rows="2"
+                        v-model="selectedQuote.address" 
+                        placeholder="Số nhà, đường, bến tàu, chành xe..."
+                      ></textarea>
+                      <p v-else class="mb-0 text-dark small" style="white-space: pre-wrap;">
+                        <i class="bx bx-map text-primary me-1"></i>{{ selectedQuote.address || 'Chưa cung cấp địa chỉ' }}
+                      </p>
+                    </div>
                   </div>
 
                   <h6 class="fw-bold mb-2 text-uppercase text-primary" style="font-size: 0.75rem;">Ghi Chú (Khách Hàng)</h6>
@@ -589,9 +596,21 @@
               <div class="col-lg-3 col-12 mb-3 mb-lg-0 border-end">
                 <h6 class="fw-bold mb-3 text-uppercase text-primary" style="font-size: 0.75rem;">Thông tin Khách Hàng</h6>
                 <div class="mb-3">
-                  <p class="mb-1 fw-bold text-dark">{{ selectedOrder.customer_name }}</p>
+                  <p class="mb-1 fw-bold text-dark"><i class="bx bx-user text-primary me-2"></i>{{ selectedOrder.customer_name }}</p>
                   <p class="mb-1 text-dark"><i class="bx bx-phone text-primary me-2"></i>{{ selectedOrder.customer_phone }}</p>
-                  <p class="mb-0 text-dark"><i class="bx bx-map text-primary me-2"></i>{{ selectedOrder.address }}</p>
+                  <div class="mt-2">
+                    <label class="form-label text-muted small mb-1 fw-semibold"><i class="bx bx-map text-primary me-1"></i>Địa Chỉ Giao Hàng:</label>
+                    <textarea 
+                      v-if="!isOrderReadOnly"
+                      class="form-control form-control-sm text-dark" 
+                      rows="2"
+                      v-model="selectedOrder.address" 
+                      placeholder="Số nhà, đường, phường/xã, bến tàu, chành xe..."
+                    ></textarea>
+                    <p v-else class="mb-0 text-dark small" style="white-space: pre-wrap;">
+                      <i class="bx bx-map text-primary me-1"></i>{{ selectedOrder.address || 'Chưa có địa chỉ' }}
+                    </p>
+                  </div>
                 </div>
 
                 <h6 class="fw-bold mb-3 text-uppercase text-primary" style="font-size: 0.75rem;">Phân Loại & Thanh Toán</h6>
@@ -786,6 +805,15 @@
               title="Hủy đơn hàng này"
             >
               Hủy Đơn
+            </button>
+            <button 
+              type="button" 
+              class="btn btn-outline-secondary shadow-sm d-inline-flex align-items-center justify-content-center" 
+              style="width: 38px; height: 38px; padding: 0;"
+              @click.prevent="copyQuoteLink(selectedOrder)" 
+              title="Sao chép link tra cứu đơn gửi khách"
+            >
+              <i class="bx bx-link fs-5"></i>
             </button>
             <button 
               type="button" 
@@ -1337,6 +1365,7 @@ export default {
           customer_notes: item.ghi_chu_khach_hang || '',
           zalo_notes: item.ghi_chu_zalo || '',
           token: item.token,
+          address: item.dia_chi_giao_hang || item.dia_chi_text || (item.dia_chi ? item.dia_chi.dia_chi_cu_the : '') || '',
           items: (item.chi_tiet || []).map(i => ({
             id: i.id,
             part_name: i.ten_phu_tung || '',
@@ -1369,7 +1398,7 @@ export default {
           customer_phone: item.khach_hang_sdt || item.khach_hang?.so_dien_thoai || '',
           customer_email: item.khach_hang_email || item.khach_hang?.user?.email || '',
           customer_notes: item.ghi_chu_khach_hang || '',
-          address: item.dia_chi ? item.dia_chi.dia_chi_cu_the : (item.dia_chi_text || 'Chưa có địa chỉ'),
+          address: (item.dia_chi ? item.dia_chi.dia_chi_cu_the : item.dia_chi_text) || '',
           items: (item.chi_tiet || []).map(i => ({
             id: i.id,
             part_name: i.ten_phu_tung || (i.phu_tung ? i.phu_tung.ten_phu_tung : (i.san_pham ? i.san_pham.ten_san_pham : 'Sản phẩm ID: ' + i.id_san_pham)),
@@ -1394,19 +1423,28 @@ export default {
     },
     async copyQuoteLink(item) {
       if (!item) return;
-      if (item.status === 0 && this.selectedQuote && this.selectedQuote.id === item.id) {
-        const saved = await this.saveQuoteSilent();
-        if (!saved) return;
-        item = this.selectedQuote;
+      const isQuote = item._type === 'quote' || (item.code && String(item.code).startsWith('YCBG'));
+      if (isQuote) {
+        if (item.status === 0 && this.selectedQuote && this.selectedQuote.id === item.id) {
+          const saved = await this.saveQuoteSilent();
+          if (!saved) return;
+          item = this.selectedQuote;
+        }
+        if (!item.token) {
+          this.toaster.warning('Báo giá này chưa có liên kết tra cứu.');
+          return;
+        }
+        const link = `${window.location.origin}/bao-gia/${item.token}`;
+        navigator.clipboard.writeText(link).then(() => {
+          this.toaster.success('Đã sao chép link báo giá gửi khách!');
+        });
+      } else {
+        const phone = item.customer_phone || '';
+        const link = `${window.location.origin}/tra-cuu-don-hang?code=${item.code}${phone ? '&phone=' + encodeURIComponent(phone) : ''}`;
+        navigator.clipboard.writeText(link).then(() => {
+          this.toaster.success('Đã sao chép link tra cứu đơn hàng gửi khách!');
+        });
       }
-      if (!item.token) {
-        this.toaster.warning('Báo giá này chưa có liên kết tra cứu.');
-        return;
-      }
-      const link = `${window.location.origin}/bao-gia/${item.token}`;
-      navigator.clipboard.writeText(link).then(() => {
-        this.toaster.success('Đã sao chép link báo giá!');
-      });
     },
     quickOpenZalo(item) {
       const phone = (item.customer_phone || '').replace(/[^0-9]/g, '');
@@ -1697,6 +1735,8 @@ export default {
             tong_tien: this.selectedQuote.total_amount,
             trang_thai: newStatus,
             ghi_chu_zalo: this.selectedQuote.zalo_notes,
+            dia_chi_giao_hang: this.selectedQuote.address,
+            address: this.selectedQuote.address,
             shipping_fee: this.selectedQuote.freight_collect ? 0 : (this.selectedQuote.shipping_fee || 0),
             freight_collect: this.selectedQuote.freight_collect ? 1 : 0,
             deposit_required: this.selectedQuote.deposit_required || 0,
@@ -1728,6 +1768,8 @@ export default {
             tong_tien: this.selectedQuote.total_amount,
             trang_thai: 1, // Đã Báo Giá
             ghi_chu_zalo: this.selectedQuote.zalo_notes,
+            dia_chi_giao_hang: this.selectedQuote.address,
+            address: this.selectedQuote.address,
             shipping_fee: this.selectedQuote.freight_collect ? 0 : (this.selectedQuote.shipping_fee || 0),
             freight_collect: this.selectedQuote.freight_collect ? 1 : 0,
             deposit_required: this.selectedQuote.deposit_required || 0,
@@ -1765,6 +1807,8 @@ export default {
             tong_tien: this.selectedQuote.total_amount,
             trang_thai: this.selectedQuote.status,
             ghi_chu_zalo: this.selectedQuote.zalo_notes,
+            dia_chi_giao_hang: this.selectedQuote.address,
+            address: this.selectedQuote.address,
             shipping_fee: this.selectedQuote.freight_collect ? 0 : (this.selectedQuote.shipping_fee || 0),
             freight_collect: this.selectedQuote.freight_collect ? 1 : 0,
             deposit_required: this.selectedQuote.deposit_required || 0,
@@ -1797,7 +1841,9 @@ export default {
             order_type: typeof this.selectedOrder.order_type === 'object' ? this.selectedOrder.order_type.value : this.selectedOrder.order_type,
             deposit_required: this.selectedOrder.deposit_required || 0,
             paid_amount: this.selectedOrder.paid_amount || 0,
-            freight_collect: this.selectedOrder.freight_collect ? 1 : 0
+            freight_collect: this.selectedOrder.freight_collect ? 1 : 0,
+            address: this.selectedOrder.address,
+            dia_chi_text: this.selectedOrder.address
         };
         await this.saveOrderMutation.mutateAsync({ id: this.selectedOrder.id, payload });
         this.closeModal('orderModal');
@@ -1854,7 +1900,12 @@ export default {
           const endpoint = item._type === 'quote'
             ? `/admin/yeu-cau-bao-gia/${item.id}/xac-nhan-coc`
             : `/admin/don-hang/${item.id}/xac-nhan-coc`;
-          const res = await axiosClient.post(endpoint, { amount: depositAmt });
+          const res = await axiosClient.post(endpoint, { 
+            amount: depositAmt,
+            dia_chi_giao_hang: item.address,
+            address: item.address,
+            dia_chi_text: item.address
+          });
           if (res?.success || res?.data?.success) {
             this.toaster.success(res?.message || res?.data?.message || 'Đã xác nhận nhận cọc thành công!');
             this.closeModal('quoteModal');
