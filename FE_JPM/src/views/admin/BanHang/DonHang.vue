@@ -366,6 +366,61 @@
                     </div>
                   </div>
 
+                  <!-- Thông Tin Vận Chuyển: Khi Đang Xử Lý (status = 2) hiển thị ô nhập; Khi Đã Giao/Hoàn Thành hiển thị thông tin -->
+                  <div class="mb-3 p-2 bg-light border rounded" v-if="selectedQuote.status === 2">
+                    <h6 class="fw-bold mb-2 text-uppercase text-primary" style="font-size: 0.72rem;">
+                      <i class="bx bxs-truck me-1"></i>Thông Tin Vận Chuyển
+                    </h6>
+                    <div class="mb-2">
+                      <label class="form-label text-dark small mb-1 fw-semibold">Đơn vị vận chuyển:</label>
+                      <input 
+                        type="text" 
+                        class="form-control form-control-sm text-dark bg-white" 
+                        v-model="selectedQuote.ten_don_vi_van_chuyen" 
+                        placeholder="ViettelPost, GHTK, Chành xe Tô Châu, Phương Trang..."
+                      />
+                    </div>
+                    <div class="mb-1">
+                      <label class="form-label text-dark small mb-1 fw-semibold">Mã vận đơn:</label>
+                      <input 
+                        type="text" 
+                        class="form-control form-control-sm text-danger fw-bold bg-white" 
+                        v-model="selectedQuote.ma_van_don" 
+                        placeholder="Nhập mã vận đơn (nếu có)..."
+                      />
+                    </div>
+                  </div>
+
+                  <div class="mb-3 p-2 bg-light border rounded" v-else-if="selectedQuote.status >= 3 && (selectedQuote.ten_don_vi_van_chuyen || selectedQuote.ma_van_don)">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                      <h6 class="fw-bold mb-0 text-uppercase text-primary" style="font-size: 0.72rem;">
+                        <i class="bx bxs-truck me-1"></i>Vận Chuyển
+                      </h6>
+                      <span class="badge bg-label-info" style="font-size: 0.65rem;">
+                        {{ selectedQuote.status === 4 ? 'Đã Giao Xong' : 'Đang Vận Chuyển' }}
+                      </span>
+                    </div>
+                    <div class="small text-dark mb-1">
+                      <span class="text-muted">Đơn vị:</span> 
+                      <span class="fw-bold ms-1">{{ selectedQuote.ten_don_vi_van_chuyen || 'Chành xe / Giao trực tiếp' }}</span>
+                    </div>
+                    <div class="small text-dark d-flex align-items-center justify-content-between">
+                      <div>
+                        <span class="text-muted">Mã vận đơn:</span> 
+                        <span class="fw-bold text-danger ms-1">{{ selectedQuote.ma_van_don || 'Chưa có mã' }}</span>
+                      </div>
+                      <button 
+                        v-if="selectedQuote.ma_van_don" 
+                        type="button" 
+                        class="btn btn-sm btn-icon btn-link p-0 text-primary" 
+                        @click="copyText(selectedQuote.ma_van_don, 'Đã sao chép mã vận đơn!')"
+                        title="Sao chép mã vận đơn"
+                      >
+                        <i class="bx bx-copy"></i>
+                      </button>
+                    </div>
+                  </div>
+
                   <h6 class="fw-bold mb-2 text-uppercase text-primary" style="font-size: 0.75rem;">Ghi Chú (Khách Hàng)</h6>
                   <div class="p-3 bg-label-secondary rounded flex-grow-1 mb-3 overflow-auto" style="min-height: 140px; max-height: 240px;">
                     <p class="mb-0 text-dark" style="font-size: 0.85rem; white-space: pre-wrap;">{{ selectedQuote.customer_notes || 'N/A.' }}</p>
@@ -450,21 +505,24 @@
                     <div class="mb-3 pb-2 border-bottom">
                       <div class="d-flex justify-content-between align-items-center mb-1">
                         <label class="text-dark fw-bold mb-0" style="font-size: 0.88rem;">Phí Vận Chuyển:</label>
-                        <div style="width: 140px;">
+                        <div style="width: 140px;" v-if="!isQuoteReadOnly">
                           <input 
                             type="number" 
                             class="form-control form-control-sm text-end text-danger fw-bold" 
                             :value="selectedQuote.shipping_fee ? selectedQuote.shipping_fee : ''" 
                             @input="selectedQuote.shipping_fee = $event.target.value === '' ? 0 : Number($event.target.value)" 
                             min="0"
-                            :disabled="isQuoteReadOnly || selectedQuote.freight_collect" 
+                            :disabled="selectedQuote.freight_collect" 
                             placeholder="0"
                           >
                         </div>
+                        <span v-else class="fw-bold text-danger fs-6">
+                          {{ selectedQuote.freight_collect ? 'Khách trả cước' : formatCurrency(selectedQuote.shipping_fee || 0) }}
+                        </span>
                       </div>
-                      <div class="d-flex justify-content-between align-items-center mt-1">
+                      <div class="d-flex justify-content-between align-items-center mt-1" v-if="!isQuoteReadOnly">
                         <div class="form-check form-switch mb-0">
-                          <input class="form-check-input" type="checkbox" id="freightCollectQuote" v-model="selectedQuote.freight_collect" :disabled="isQuoteReadOnly" @change="selectedQuote.freight_collect ? selectedQuote.shipping_fee = 0 : null">
+                          <input class="form-check-input" type="checkbox" id="freightCollectQuote" v-model="selectedQuote.freight_collect" @change="selectedQuote.freight_collect ? selectedQuote.shipping_fee = 0 : null">
                           <label class="form-check-label text-dark fw-semibold" for="freightCollectQuote" style="font-size: 0.8rem;">Khách trả cước</label>
                         </div>
                         <span v-if="!selectedQuote.freight_collect" class="text-danger fw-semibold" style="font-size: 0.75rem;">
@@ -717,12 +775,13 @@
           </div>
           <div class="modal-body pb-2" v-if="selectedOrder">
             <div class="row">
-              <!-- Cột 1 (Trái): Thông tin Khách Hàng & Phân Loại -->
-              <div class="col-lg-3 col-12 mb-3 mb-lg-0 border-end">
+              <!-- Cột 1 (Trái): Thông tin Khách Hàng, Vận Chuyển & Ghi Chú -->
+              <div class="col-lg-3 col-12 mb-3 mb-lg-0 border-end d-flex flex-column">
                 <h6 class="fw-bold mb-3 text-uppercase text-primary" style="font-size: 0.75rem;">Thông tin Khách Hàng</h6>
                 <div class="mb-3">
                   <p class="mb-1 fw-bold text-dark"><i class="bx bx-user text-primary me-2"></i>{{ selectedOrder.customer_name }}</p>
                   <p class="mb-1 text-dark"><i class="bx bx-phone text-primary me-2"></i>{{ selectedOrder.customer_phone }}</p>
+                  <p class="mb-2 text-dark" v-if="selectedOrder.customer_email"><i class="bx bx-envelope text-primary me-2"></i>{{ selectedOrder.customer_email }}</p>
                   <div class="mt-2">
                     <label class="form-label text-dark small mb-1 fw-bold"><i class="bx bx-map text-primary me-1"></i>Địa Chỉ Giao Hàng:</label>
                     <textarea 
@@ -738,43 +797,67 @@
                   </div>
                 </div>
 
-                <h6 class="fw-bold mb-3 text-uppercase text-primary" style="font-size: 0.75rem;">Phân Loại & Thanh Toán</h6>
-                <div class="mb-2">
-                  <label class="form-label fw-bold text-uppercase text-primary mb-1" style="font-size: 0.75rem;">Loại Đơn</label>
-                  <v-select
-                    v-model="selectedOrder.order_type" :disabled="isOrderInfoReadOnly"
-                    :options="[
-                      {value: 'b2c', label: 'B2C (Lẻ)'},
-                      {value: 'b2b', label: 'B2B (Đại Lý)'}
-                    ]"
-                    :can-clear="false"
-                  />
+                <!-- Thông Tin Vận Chuyển: Khi Đang Xử Lý (status = 1), hiển thị ô nhập; Khi Đang Giao / Hoàn Thành, hiển thị thông tin -->
+                <div class="mb-3 p-2 bg-light border rounded" v-if="selectedOrder.status === 1">
+                  <h6 class="fw-bold mb-2 text-uppercase text-primary" style="font-size: 0.72rem;">
+                    <i class="bx bxs-truck me-1"></i>Thông Tin Vận Chuyển
+                  </h6>
+                  <div class="mb-2">
+                    <label class="form-label text-dark small mb-1 fw-semibold">Đơn vị vận chuyển:</label>
+                    <input 
+                      type="text" 
+                      class="form-control form-control-sm text-dark bg-white" 
+                      v-model="selectedOrder.ten_don_vi_van_chuyen" 
+                      placeholder="ViettelPost, GHTK, Chành xe Tô Châu, Phương Trang..."
+                    />
+                  </div>
+                  <div class="mb-1">
+                    <label class="form-label text-dark small mb-1 fw-semibold">Mã vận đơn:</label>
+                    <input 
+                      type="text" 
+                      class="form-control form-control-sm text-danger fw-bold bg-white" 
+                      v-model="selectedOrder.ma_van_don" 
+                      placeholder="Nhập mã vận đơn (nếu có)..."
+                    />
+                  </div>
                 </div>
-                <div class="mb-2">
-                  <label class="form-label fw-bold text-uppercase text-primary mb-1" style="font-size: 0.75rem;">Thanh Toán</label>
-                  <v-select
-                    v-model="selectedOrder.payment_status" :disabled="isOrderInfoReadOnly"
-                    :options="[
-                      {value: 0, label: 'Chưa Thanh Toán'},
-                      {value: 1, label: 'Đã Đặt Cọc'},
-                      {value: 2, label: 'Đã Thanh Toán'}
-                    ]"
-                    :can-clear="false"
-                  />
+
+                <div class="mb-3 p-2 bg-light border rounded" v-else-if="selectedOrder.status >= 2 || selectedOrder.ten_don_vi_van_chuyen || selectedOrder.ma_van_don">
+                  <div class="d-flex justify-content-between align-items-center mb-1">
+                    <h6 class="fw-bold mb-0 text-uppercase text-primary" style="font-size: 0.72rem;">
+                      <i class="bx bxs-truck me-1"></i>Vận Chuyển
+                    </h6>
+                    <span class="badge bg-label-info" style="font-size: 0.65rem;">
+                      {{ selectedOrder.status === 3 ? 'Đã Giao Xong' : 'Đang Vận Chuyển' }}
+                    </span>
+                  </div>
+                  <div class="small text-dark mb-1">
+                    <span class="text-muted">Đơn vị:</span> 
+                    <span class="fw-bold ms-1">{{ selectedOrder.ten_don_vi_van_chuyen || 'Chành xe / Giao trực tiếp' }}</span>
+                  </div>
+                  <div class="small text-dark d-flex align-items-center justify-content-between">
+                    <div>
+                      <span class="text-muted">Mã vận đơn:</span> 
+                      <span class="fw-bold text-danger ms-1">{{ selectedOrder.ma_van_don || 'Chưa có mã' }}</span>
+                    </div>
+                    <button 
+                      v-if="selectedOrder.ma_van_don" 
+                      type="button" 
+                      class="btn btn-sm btn-icon btn-link p-0 text-primary" 
+                      @click="copyText(selectedOrder.ma_van_don, 'Đã sao chép mã vận đơn!')"
+                      title="Sao chép mã vận đơn"
+                    >
+                      <i class="bx bx-copy"></i>
+                    </button>
+                  </div>
                 </div>
-                <div class="mb-0">
-                  <label class="form-label fw-bold text-uppercase text-primary mb-1" style="font-size: 0.75rem;">Xử Lý Đơn</label>
-                  <v-select
-                    v-model="selectedOrder.status" :disabled="isOrderInfoReadOnly"
-                    :options="[
-                      {value: 0, label: '0 - Chờ duyệt / Chờ xác nhận'},
-                      {value: 1, label: '1 - Đang chuẩn bị / Đang xử lý'},
-                      {value: 2, label: '2 - Đang giao hàng'},
-                      {value: 3, label: '3 - Hoàn thành / Hoàn tất'},
-                      {value: 4, label: '4 - Đã hủy (Hoàn kho)'}
-                    ]"
-                    :can-clear="false"
-                  />
+
+                <!-- Ghi Chú Khách Hàng: Đồng bộ hoàn toàn với Modal Báo Giá -->
+                <div class="flex-grow-1 d-flex flex-column mb-2">
+                  <h6 class="fw-bold mb-2 text-uppercase text-primary" style="font-size: 0.75rem;">Ghi Chú (Khách Hàng)</h6>
+                  <div class="p-3 bg-label-secondary rounded flex-grow-1 overflow-auto" style="min-height: 120px; max-height: 240px;">
+                    <p class="mb-0 text-dark" style="font-size: 0.85rem; white-space: pre-wrap;">{{ selectedOrder.customer_notes || 'Không có ghi chú.' }}</p>
+                  </div>
                 </div>
               </div>
 
@@ -1009,14 +1092,17 @@
                   </div>
                 </div>
 
-                <!-- Cụm Cần Thanh Toán ở đáy -->
+                <!-- Cụm Tổng Cộng & Thu COD ở đáy (Đồng bộ 100% với Modal Báo Giá) -->
                 <div class="mt-3 pt-2 bg-light p-3 rounded border">
-                  <div class="d-flex justify-content-between align-items-center mb-1">
-                    <span class="fw-bold text-dark" style="font-size: 0.9rem;">Cần Thanh Toán:</span>
-                    <span class="fw-bold text-danger fs-5">{{ formatCurrency((calculateTotal(selectedOrder.items) + (selectedOrder.freight_collect ? 0 : (selectedOrder.shipping_fee || 0))) - (selectedOrder.paid_amount || 0)) }}</span>
+                  <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="fw-bold text-dark" style="font-size: 0.9rem;">Tổng Cộng:</span>
+                    <span class="fw-bold text-danger fs-5">{{ formatCurrency(calculateTotal(selectedOrder.items) + (selectedOrder.freight_collect ? 0 : (selectedOrder.shipping_fee || 0))) }}</span>
                   </div>
-                  <div class="text-end text-muted" style="font-size: 0.75rem;" v-if="selectedOrder.paid_amount > 0">
-                    (Tổng đơn: {{ formatCurrency(calculateTotal(selectedOrder.items) + (selectedOrder.freight_collect ? 0 : (selectedOrder.shipping_fee || 0))) }})
+                  <div class="d-flex justify-content-between align-items-center pt-2 border-top">
+                    <span class="text-dark fw-bold" style="font-size: 0.9rem;">Thu COD:</span>
+                    <span :class="selectedOrder.status === 3 ? 'fw-bold text-success fs-5' : 'fw-bold text-dark fs-5'">
+                      {{ formatCurrency(Math.max(0, (calculateTotal(selectedOrder.items) + (selectedOrder.freight_collect ? 0 : (selectedOrder.shipping_fee || 0))) - (selectedOrder.paid_amount || 0))) }}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -1027,7 +1113,7 @@
             <button 
               type="button" 
               class="btn btn-outline-danger px-4 shadow-sm" 
-              v-if="selectedOrder && selectedOrder.status < 2 && !isOrderInfoReadOnly" 
+              v-if="selectedOrder && selectedOrder.status < 2" 
               @click.prevent="handleCancel(selectedOrder)"
               title="Hủy đơn hàng này"
             >
@@ -1058,7 +1144,7 @@
             <button 
               type="button" 
               class="btn btn-primary px-4 shadow-sm" 
-              v-if="selectedOrder && selectedOrder.status === 0 && !isOrderInfoReadOnly" 
+              v-if="selectedOrder && selectedOrder.status === 0" 
               @click="confirmDepositBtn(selectedOrder)"
               title="Khách đã cọc -> Bắt đầu lên đơn xử lý"
             >
@@ -1067,7 +1153,7 @@
             <button 
               type="button" 
               class="btn btn-primary px-4 shadow-sm" 
-              v-if="selectedOrder && selectedOrder.status === 1 && !isOrderInfoReadOnly" 
+              v-if="selectedOrder && selectedOrder.status === 1" 
               @click="startShippingBtn(selectedOrder)" 
               title="Đã gom xong hàng -> Bắt đầu giao hàng"
             >
@@ -1466,9 +1552,9 @@ export default {
     isOrderReadOnly() {
       return this.selectedOrder && this.selectedOrder.status >= 3;
     },
-    // Đơn hàng khi ở trạng thái "Đang giao" (status >= 2) sẽ khóa toàn bộ thông tin giá/phí/địa chỉ/loại đơn
+    // Đơn hàng khi ở trạng thái "Đang xử lý" trở đi (status >= 1) sẽ khóa toàn bộ thông tin giá/phí/địa chỉ/loại đơn (chỉ cho phép sửa biên lai chuyển tiền)
     isOrderInfoReadOnly() {
-      return !this.selectedOrder || Number(this.selectedOrder.status) >= 2;
+      return !this.selectedOrder || Number(this.selectedOrder.status) >= 1;
     },
     // Khu vực biên lai chuyển tiền chỉ khóa khi đơn đã hoàn thành (status 3) hoặc đã hủy (status 4)
     isOrderReceiptReadOnly() {
@@ -1671,6 +1757,8 @@ export default {
           customer_notes: item.ghi_chu_khach_hang || '',
           zalo_notes: item.ghi_chu_zalo || '',
           token: item.token,
+          ma_van_don: item.ma_van_don || '',
+          ten_don_vi_van_chuyen: item.ten_don_vi_van_chuyen || '',
           address: item.dia_chi_giao_hang || item.dia_chi_text || (item.dia_chi ? item.dia_chi.dia_chi_cu_the : '') || '',
           receipt_image: item.anh_chuyen_khoan || '',
           receipt_image_2: item.anh_chuyen_khoan_2 || '',
@@ -2261,8 +2349,60 @@ export default {
         const found = this.orders.find(o => o.customer_notes && o.customer_notes.includes(item.code));
         if (found) {
           targetOrder = found;
+          if (item.ten_don_vi_van_chuyen) targetOrder.ten_don_vi_van_chuyen = item.ten_don_vi_van_chuyen;
+          if (item.ma_van_don) targetOrder.ma_van_don = item.ma_van_don;
         }
       }
+
+      const carrier = (targetOrder.ten_don_vi_van_chuyen || '').trim();
+      const tracking = (targetOrder.ma_van_don || '').trim();
+
+      // Nếu đã có thông tin vận chuyển do người dùng nhập trực tiếp trong modal
+      if (carrier || tracking) {
+        const code = targetOrder.code || targetOrder.ma_don_hang || targetOrder.ma_yeu_cau;
+        const result = await Swal.fire({
+          title: 'Bắt Đầu Giao Hàng?',
+          html: `Xác nhận chuyển đơn <b>${code}</b> sang trạng thái <b>Đang Giao Hàng</b>?<br><br>
+                 <div class="text-start bg-light p-2 rounded border small">
+                   <div class="mb-1"><b>Đơn vị vận chuyển:</b> ${carrier || '<span class="text-muted">Chành xe / Giao trực tiếp</span>'}</div>
+                   <div><b>Mã vận đơn:</b> <span class="text-danger fw-bold">${tracking || '<span class="text-muted">Chưa có mã</span>'}</span></div>
+                 </div><br><small class="text-muted">Đơn hàng sẽ chuyển sang tab "Đang Giao Hàng".</small>`,
+          icon: 'question',
+          showCancelButton: true,
+          confirmButtonText: 'Xác nhận giao hàng',
+          cancelButtonText: 'Kiểm tra lại',
+          customClass: {
+            popup: 'swal-shift-up',
+            confirmButton: 'btn btn-primary px-4 shadow-sm',
+            cancelButton: 'btn btn-outline-secondary px-4 me-3'
+          },
+          buttonsStyling: false
+        });
+
+        if (result.isConfirmed) {
+          try {
+            let orderId = targetOrder.id;
+            const payload = {
+              ma_van_don: tracking || 'Giao chành xe / Giao trực tiếp',
+              ten_don_vi_van_chuyen: carrier || 'Chành xe',
+              status: 2
+            };
+            const res = await axiosClient.post(`/admin/don-hang/${orderId}/cap-nhat-van-chuyen`, payload);
+            if (res?.success || res?.data?.success) {
+              this.toaster.success('Đã cập nhật vận chuyển và chuyển đơn sang tab Đang Giao Hàng!');
+              this.closeModal('orderModal');
+              this.closeModal('quoteModal');
+              this.refreshData();
+            }
+          } catch (err) {
+            this.toaster.error(err?.response?.data?.message || 'Không thể cập nhật vận chuyển.');
+          }
+          return;
+        } else {
+          return;
+        }
+      }
+
       this.openViettelPostModal(targetOrder);
     },
 
