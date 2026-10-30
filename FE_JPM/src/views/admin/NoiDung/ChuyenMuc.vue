@@ -121,8 +121,8 @@
                     <span class="fw-bold text-dark">{{ item.name }}</span>
                   </td>
                   <td class="text-center">
-                    <span v-if="item.type === 'NEWS'" class="fw-semibold text-primary">TIN TỨC</span>
-                    <span v-else class="fw-semibold text-warning">FAQ</span>
+                    <span v-if="item.type === 'NEWS'" class="fw-semibold text-secondary">TIN TỨC</span>
+                    <span v-else class="fw-semibold text-secondary">FAQ</span>
                   </td>
                   <td class="text-center">
                     <span v-if="item.status === 'ACTIVE'" class="badge badge-custom bg-pastel-success">HIỂN THỊ</span>

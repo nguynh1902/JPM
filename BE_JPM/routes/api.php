@@ -281,6 +281,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('admin/don-hang/{id}/xac-nhan-coc', [\App\Domain\Sales\Controllers\DonHangController::class, 'confirmDeposit']);
         Route::post('admin/don-hang/{id}/cap-nhat-van-chuyen', [\App\Domain\Sales\Controllers\DonHangController::class, 'updateShipping']);
         Route::post('admin/don-hang/{id}/hoan-thanh', [\App\Domain\Sales\Controllers\DonHangController::class, 'completeOrder']);
+        Route::post('admin/sales/upload-bien-lai', [\App\Domain\Sales\Controllers\YeuCauBaoGiaController::class, 'uploadReceiptImage']);
+        Route::post('admin/sales/remove-bien-lai', [\App\Domain\Sales\Controllers\YeuCauBaoGiaController::class, 'removeReceiptImage']);
 
         // Nghiệp vụ Kho (Xem tồn kho, cảnh báo cạn, xem thẻ kho & xuất file)
 

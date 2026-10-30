@@ -280,6 +280,7 @@ class YeuCauBaoGiaController extends Controller
                 'khach_tu_tra_cuoc' => $request->input('freight_collect', $request->input('khach_tu_tra_cuoc', $quote->khach_tu_tra_cuoc)),
                 'tien_coc_yeu_cau'  => $request->input('deposit_required', $request->input('tien_coc_yeu_cau', $quote->tien_coc_yeu_cau)),
                 'dia_chi_giao_hang' => $request->input('dia_chi_giao_hang', $request->input('address', $quote->dia_chi_giao_hang)),
+                'anh_chuyen_khoan'  => $request->input('anh_chuyen_khoan', $request->input('receipt_image', $quote->anh_chuyen_khoan)),
             ]);
 
             // Cập nhật giá từng món hàng nếu có
@@ -502,6 +503,7 @@ class YeuCauBaoGiaController extends Controller
                 'khach_hang_sdt'        => $quote->khach_hang_sdt,
                 'khach_hang_email'      => $quote->khach_hang_email,
                 'dia_chi_text'          => $quote->dia_chi_giao_hang,
+                'anh_chuyen_khoan'      => $quote->anh_chuyen_khoan,
                 'ghi_chu_khach_hang'    => $quote->ghi_chu_khach_hang . ($quote->ghi_chu_zalo ? ' | ' . $quote->ghi_chu_zalo : ''),
                 'tong_tien'             => $quote->tong_tien,
                 'phi_van_chuyen'        => $quote->phi_van_chuyen,
@@ -624,6 +626,11 @@ class YeuCauBaoGiaController extends Controller
             } elseif ($request->filled('address')) {
                 $quote->dia_chi_giao_hang = $request->input('address');
             }
+            if ($request->filled('anh_chuyen_khoan')) {
+                $quote->anh_chuyen_khoan = $request->input('anh_chuyen_khoan');
+            } elseif ($request->filled('receipt_image')) {
+                $quote->anh_chuyen_khoan = $request->input('receipt_image');
+            }
             $amount = (float) $request->input('amount', $quote->tien_coc_yeu_cau);
             if ($amount <= 0 && $quote->tien_coc_yeu_cau > 0) {
                 $amount = (float) $quote->tien_coc_yeu_cau;
@@ -656,6 +663,7 @@ class YeuCauBaoGiaController extends Controller
                     'khach_hang_sdt'        => $quote->khach_hang_sdt,
                     'khach_hang_email'      => $quote->khach_hang_email,
                     'dia_chi_text'          => $quote->dia_chi_giao_hang,
+                    'anh_chuyen_khoan'      => $quote->anh_chuyen_khoan,
                     'ghi_chu_khach_hang'    => 'Báo giá #' . $quote->ma_yeu_cau . ($quote->ghi_chu_khach_hang ? ' | ' . $quote->ghi_chu_khach_hang : ''),
                     'tong_tien'             => $quote->tong_tien,
                     'phi_van_chuyen'        => $quote->phi_van_chuyen,
@@ -701,6 +709,9 @@ class YeuCauBaoGiaController extends Controller
                 $existingOrder->trang_thai = 1;
                 if ($quote->dia_chi_giao_hang && !$existingOrder->dia_chi_text) {
                     $existingOrder->dia_chi_text = $quote->dia_chi_giao_hang;
+                }
+                if ($quote->anh_chuyen_khoan && !$existingOrder->anh_chuyen_khoan) {
+                    $existingOrder->anh_chuyen_khoan = $quote->anh_chuyen_khoan;
                 }
                 $existingOrder->save();
             }
@@ -760,5 +771,94 @@ class YeuCauBaoGiaController extends Controller
             DB::rollBack();
             return response()->json(['success' => false, 'message' => 'Lỗi: ' . $e->getMessage()], 500);
         }
+    }
+
+    /**
+     * Upload ảnh chụp màn hình chuyển khoản / biên lai (Hỗ trợ cả File upload và Base64 khi paste Ctrl+V)
+     */
+    public function uploadReceiptImage(Request $request)
+    {
+        try {
+            $url = null;
+            $dir = public_path('uploads/receipts');
+            if (!file_exists($dir)) {
+                mkdir($dir, 0755, true);
+            }
+
+            if ($request->hasFile('file')) {
+                $request->validate([
+                    'file' => 'required|image|mimes:jpeg,png,jpg,webp,gif|max:10240'
+                ]);
+                $file = $request->file('file');
+                $filename = 'receipt_' . date('Ymd_His') . '_' . Str::random(8) . '.' . $file->getClientOriginalExtension();
+                $file->move($dir, $filename);
+                $url = '/uploads/receipts/' . $filename;
+            } elseif ($request->filled('image_base64')) {
+                $base64 = $request->input('image_base64');
+                if (preg_match('/^data:image\/(\w+);base64,/', $base64, $matches)) {
+                    $ext = strtolower($matches[1]);
+                    if ($ext === 'jpeg') $ext = 'jpg';
+                    $data = substr($base64, strpos($base64, ',') + 1);
+                    $data = base64_decode($data);
+                    if ($data !== false) {
+                        $filename = 'receipt_' . date('Ymd_His') . '_' . Str::random(8) . '.' . $ext;
+                        file_put_contents($dir . '/' . $filename, $data);
+                        $url = '/uploads/receipts/' . $filename;
+                    }
+                }
+            }
+
+            if (!$url) {
+                return response()->json(['success' => false, 'message' => 'Không tìm thấy dữ liệu hình ảnh hợp lệ.'], 422);
+            }
+
+            // Nếu truyền type & id, tự động gắn vào record
+            $type = $request->input('type');
+            $id = $request->input('id');
+            if ($type === 'quote' && $id) {
+                $quote = YeuCauBaoGia::find($id);
+                if ($quote) {
+                    $quote->anh_chuyen_khoan = $url;
+                    $quote->save();
+                }
+            } elseif ($type === 'order' && $id) {
+                $order = DonHang::find($id);
+                if ($order) {
+                    $order->anh_chuyen_khoan = $url;
+                    $order->save();
+                }
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Tải lên ảnh chụp màn hình chuyển khoản thành công!',
+                'url' => $url
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'Lỗi tải ảnh: ' . $e->getMessage()], 500);
+        }
+    }
+
+    /**
+     * Gỡ ảnh chụp màn hình chuyển khoản
+     */
+    public function removeReceiptImage(Request $request)
+    {
+        $type = $request->input('type');
+        $id = $request->input('id');
+        if ($type === 'quote' && $id) {
+            $quote = YeuCauBaoGia::find($id);
+            if ($quote) {
+                $quote->anh_chuyen_khoan = null;
+                $quote->save();
+            }
+        } elseif ($type === 'order' && $id) {
+            $order = DonHang::find($id);
+            if ($order) {
+                $order->anh_chuyen_khoan = null;
+                $order->save();
+            }
+        }
+        return response()->json(['success' => true, 'message' => 'Đã gỡ ảnh biên lai']);
     }
 }
