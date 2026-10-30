@@ -277,6 +277,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
         // Nghiệp vụ Báo giá & Đơn hàng (Thủ công chuẩn thực tế)
         Route::post('admin/yeu-cau-bao-gia/{id}/xac-nhan-coc', [\App\Domain\Sales\Controllers\YeuCauBaoGiaController::class, 'confirmDeposit']);
+        Route::post('admin/yeu-cau-bao-gia/{id}/hoan-thanh', [\App\Domain\Sales\Controllers\YeuCauBaoGiaController::class, 'completeQuote']);
         Route::post('admin/don-hang/{id}/xac-nhan-coc', [\App\Domain\Sales\Controllers\DonHangController::class, 'confirmDeposit']);
         Route::post('admin/don-hang/{id}/cap-nhat-van-chuyen', [\App\Domain\Sales\Controllers\DonHangController::class, 'updateShipping']);
         Route::post('admin/don-hang/{id}/hoan-thanh', [\App\Domain\Sales\Controllers\DonHangController::class, 'completeOrder']);

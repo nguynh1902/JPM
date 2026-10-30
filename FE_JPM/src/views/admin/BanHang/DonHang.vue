@@ -152,7 +152,7 @@
                   <th class="text-end text-uppercase" style="width: 13%">Tổng Tiền</th>
                   <th class="text-end text-uppercase" style="width: 13%">Tiền Cọc</th>
                   <th class="text-center text-uppercase" style="width: 11%">Trạng Thái</th>
-                  <th class="text-center text-uppercase" style="width: 8%; min-width: 130px;">Hành Động</th>
+                  <th class="text-center text-uppercase" style="width: 8%; min-width: 100px;">Hành Động</th>
                 </tr>
               </thead>
               <tbody class="table-border-bottom-0">
@@ -217,12 +217,12 @@
                     <template v-if="item._type === 'quote'">
                       <span v-if="item.status === 0" class="badge badge-custom bg-pastel-warning">CHỜ BÁO GIÁ</span>
                       <template v-else-if="item.status === 1">
-                        <span v-if="item.da_thu > 0" class="badge badge-custom bg-pastel-success">ĐÃ CỌC</span>
-                        <span v-else-if="item.deposit_required > 0" class="badge badge-custom bg-pastel-warning">CHỜ CỌC</span>
-                        <span v-else class="badge badge-custom bg-pastel-info">ĐÃ GỬI BÁO GIÁ</span>
+                        <span v-if="item.deposit_required > 0 && Number(item.da_thu || 0) === 0" class="badge badge-custom bg-pastel-warning">CHỜ CỌC</span>
+                        <span v-else class="badge badge-custom bg-pastel-info">ĐÃ BÁO GIÁ</span>
                       </template>
-                      <span v-else-if="item.status === 2" class="badge badge-custom bg-pastel-success">ĐÃ CHỐT</span>
+                      <span v-else-if="item.status === 2" class="badge badge-custom bg-pastel-info">ĐANG XỬ LÝ & GIAO</span>
                       <span v-else-if="item.status === 3" class="badge badge-custom bg-pastel-danger">ĐÃ HỦY</span>
+                      <span v-else-if="item.status === 4" class="badge badge-custom bg-pastel-success">HOÀN THÀNH</span>
                       <span v-else class="badge badge-custom bg-pastel-secondary">KHÁC</span>
                     </template>
                     <!-- Trạng thái Đơn Hàng -->
@@ -231,18 +231,14 @@
                         <span v-if="item.deposit_required > 0 && Number(item.paid_amount || 0) === 0" class="badge badge-custom bg-pastel-warning">CHỜ CỌC</span>
                         <span v-else class="badge badge-custom bg-pastel-info">CHỜ DUYỆT</span>
                       </template>
-                      <span v-else-if="item.status === 1" class="badge badge-custom bg-pastel-secondary">LÊN ĐƠN NHẬT</span>
-                      <span v-else-if="item.status === 2" class="badge badge-custom bg-pastel-info">ĐANG GIAO HÀNG</span>
+                      <span v-else-if="item.status === 1 || item.status === 2" class="badge badge-custom bg-pastel-info">ĐANG XỬ LÝ & GIAO</span>
                       <span v-else-if="item.status === 3" class="badge badge-custom bg-pastel-success">HOÀN THÀNH</span>
                       <span v-else-if="item.status === 4" class="badge badge-custom bg-pastel-danger">ĐÃ HỦY</span>
-                      <span v-else class="badge badge-custom bg-pastel-secondary">ĐANG XỬ LÝ</span>
-                      <div v-if="item.ma_van_don" class="small text-muted font-monospace mt-1">
-                        <i class="bx bxs-truck text-primary me-1"></i>{{ item.ten_don_vi_van_chuyen ? item.ten_don_vi_van_chuyen + ': ' : '' }}{{ item.ma_van_don }}
-                      </div>
+                      <span v-else class="badge badge-custom bg-pastel-secondary">KHÁC</span>
                     </template>
                   </td>
                   <td class="text-center">
-                    <div class="d-flex justify-content-center gap-1">
+                    <div class="d-flex justify-content-center gap-2">
                       <!-- Nút Xử lý / Xem chi tiết -->
                       <button 
                         type="button" 
@@ -250,14 +246,14 @@
                         @click="handleAction(item)" 
                         data-bs-toggle="modal" 
                         :data-bs-target="item._type === 'quote' ? '#quoteModal' : '#orderModal'" 
-                        :title="canProcessOrders ? 'Xử lý' : 'Xem chi tiết'"
+                        :title="canProcessOrders ? (item._type === 'quote' && item.status === 0 ? 'Báo giá' : 'Xử lý') : 'Xem chi tiết'"
                       >
                         <i :class="canProcessOrders ? 'bx bx-edit-alt' : 'bx bx-show'"></i>
                       </button>
 
-                      <!-- Nút Copy Link Báo Giá (Báo giá đã hoàn tất) -->
+                      <!-- Nút Copy Link Báo Giá (Chỉ hiển thị ở tab ĐÃ BÁO GIÁ để gửi khách) -->
                       <button 
-                        v-if="item._type === 'quote' && item.status >= 1 && item.token" 
+                        v-if="item._type === 'quote' && item.status === 1 && item.token" 
                         type="button" 
                         class="action-btn text-info" 
                         @click="copyQuoteLink(item)" 
@@ -266,46 +262,35 @@
                         <i class="bx bx-link"></i>
                       </button>
 
-                      <!-- Nút Xác Nhận Nhận Cọc (Báo giá hoặc Đơn chờ cọc) -->
+                      <!-- Nút Đã Cọc & Lên Đơn (Báo giá hoặc Đơn chờ cọc) -->
                       <button 
                         v-if="(item._type === 'quote' && item.status === 1) || (item._type === 'order' && item.status === 0)" 
                         type="button" 
                         class="action-btn text-success" 
                         @click="confirmDepositBtn(item)" 
-                        title="Xác nhận đã nhận cọc & Chuyển lên đơn Nhật"
+                        title="Đã cọc -> Bắt đầu lên đơn xử lý"
                       >
-                        <i class="bx bx-wallet"></i>
+                        <i class="bx bx-check-circle"></i>
                       </button>
 
-                      <!-- Nút Cập Nhật Vận Đơn Giao Hàng -->
+                      <!-- Nút Khách Hàng Đã Nhận Hàng & Chuyển Tiền (Đơn hàng hoặc Báo giá đang xử lý / đang giao) -->
                       <button 
-                        v-if="item._type === 'order' && (item.status === 1 || item.status === 2)" 
-                        type="button" 
-                        class="action-btn text-primary" 
-                        @click="openViettelPostModal(item)" 
-                        title="Cập nhật mã vận đơn & đơn vị vận chuyển"
-                      >
-                        <i class="bx bxs-truck"></i>
-                      </button>
-
-                      <!-- Nút Xác Nhận Thu COD & Hoàn Thành (Đơn hàng đang giao) -->
-                      <button 
-                        v-if="item._type === 'order' && item.status === 2" 
+                        v-if="(item._type === 'order' && (item.status === 1 || item.status === 2)) || (item._type === 'quote' && item.status === 2)" 
                         type="button" 
                         class="action-btn text-success" 
                         @click="completeOrderBtn(item)" 
-                        title="Xác nhận đã thu COD -> Hoàn tất đơn"
+                        title="Khách hàng đã nhận hàng & chuyển tiền -> Hoàn thành đơn"
                       >
                         <i class="bx bx-check-double"></i>
                       </button>
 
-                      <!-- Nút Hủy Đơn / Hủy Báo Giá (Chuyển sang tab Đã Hủy, không xóa mất dữ liệu) -->
+                      <!-- Nút Hủy Đơn / Hủy Yêu Cầu -->
                       <button 
-                        v-if="(item._type === 'quote' && item.status !== 3) || (item._type === 'order' && item.status !== 4 && item.status !== 3)" 
+                        v-if="(item._type === 'quote' && item.status !== 3 && item.status !== 4) || (item._type === 'order' && item.status !== 4 && item.status !== 3)" 
                         type="button" 
                         class="action-btn text-danger" 
                         @click="handleCancel(item)" 
-                        :title="item._type === 'quote' ? 'Hủy báo giá (chuyển vào Đã Hủy)' : 'Hủy đơn hàng (chuyển vào Đã Hủy)'"
+                        :title="item._type === 'quote' ? 'Hủy yêu cầu báo giá này' : 'Hủy đơn hàng này'"
                       >
                         <i class="bx bx-x-circle"></i>
                       </button>
@@ -496,43 +481,92 @@
                 </div>
               </div>
             </div>
-            <div class="modal-footer border-top py-2 mt-2 d-flex justify-content-between align-items-center">
-              <div class="d-flex align-items-center gap-2">
-                <!-- Nút Hủy Đơn -->
-                <button 
-                  type="button" 
-                  class="btn btn-outline-danger px-3 shadow-sm" 
-                  v-if="selectedQuote && selectedQuote.status !== 3 && !isQuoteReadOnly" 
-                  @click.prevent="cancelQuoteFromModal(selectedQuote)"
-                  title="Hủy yêu cầu báo giá này"
-                >
-                  <i class="bx bx-x-circle me-1"></i> Hủy Đơn
-                </button>
+            <div class="modal-footer border-top py-3 mt-2 bg-light d-flex justify-content-end align-items-center gap-2">
+              <!-- Nút Hủy Đơn: Đặt bên phải cùng với các nút khác, chuẩn btn-outline-danger -->
+              <button 
+                type="button" 
+                class="btn btn-outline-danger px-4 shadow-sm" 
+                v-if="selectedQuote && selectedQuote.status !== 3 && !isQuoteReadOnly" 
+                @click.prevent="cancelQuoteFromModal(selectedQuote)"
+                title="Hủy yêu cầu báo giá này"
+              >
+                Hủy Đơn
+              </button>
 
-                <!-- Nút Copy Link Báo Giá (Chỉ hiển thị khi đã định giá xong / Đã Báo Giá status >= 1) -->
+              <!-- Tiện ích Copy Link & Mã VietQR (khi ĐÃ BÁO GIÁ status >= 1) -->
+              <template v-if="selectedQuote && selectedQuote.status >= 1">
                 <button 
                   type="button" 
-                  class="btn btn-outline-primary px-3 shadow-sm" 
-                  v-if="selectedQuote && selectedQuote.token && selectedQuote.status >= 1" 
+                  class="btn btn-outline-secondary shadow-sm d-inline-flex align-items-center justify-content-center" 
+                  style="width: 38px; height: 38px; padding: 0;"
+                  v-if="selectedQuote.token" 
                   @click.prevent="copyQuoteLink(selectedQuote)"
-                  title="Sao chép liên kết báo giá"
+                  title="Sao chép link báo giá gửi khách"
                 >
-                  <i class="bx bx-link me-1"></i> Copy Link Báo Giá
+                  <i class="bx bx-link fs-5"></i>
                 </button>
-              </div>
 
-              <!-- Cụm nút bên phải: Đóng & Lưu -->
-              <div class="d-flex align-items-center gap-2">
-                <button type="button" class="btn btn-outline-secondary px-4" data-bs-dismiss="modal">Đóng</button>
                 <button 
                   type="button" 
-                  class="btn btn-primary px-4 shadow-sm fw-bold" 
-                  v-if="!isQuoteReadOnly" 
-                  @click="saveDraftQuote"
+                  class="btn btn-outline-secondary shadow-sm d-inline-flex align-items-center justify-content-center" 
+                  style="width: 38px; height: 38px; padding: 0;"
+                  @click.prevent="openVietQrModal(selectedQuote)"
+                  title="Xem mã VietQR chuyển tiền cọc"
                 >
-                  <i class="bx bx-save me-1"></i> Lưu
+                  <i class="bx bx-qr-scan fs-5"></i>
                 </button>
-              </div>
+              </template>
+
+              <!-- Nút Đóng: Chuẩn btn-outline-secondary đồng bộ với các trang khác -->
+              <button type="button" class="btn btn-outline-secondary px-4" data-bs-dismiss="modal">Đóng</button>
+
+              <!-- Khi đang CHỜ BÁO GIÁ (Status 0): Nút Lưu Tạm và Nút Báo Giá -->
+              <template v-if="selectedQuote && selectedQuote.status === 0 && !isQuoteReadOnly">
+                <button 
+                  type="button" 
+                  class="btn btn-outline-primary px-4 shadow-sm" 
+                  @click.prevent="saveDraftQuote"
+                >
+                  Lưu Tạm
+                </button>
+                <button 
+                  type="button" 
+                  class="btn btn-primary px-4 shadow-sm" 
+                  @click.prevent="sendQuoteToCustomer"
+                >
+                  Báo Giá
+                </button>
+              </template>
+
+              <!-- Khi ĐÃ BÁO GIÁ (Status 1): Nút Lưu và Nút Xác Nhận -->
+              <template v-else-if="selectedQuote && selectedQuote.status === 1 && !isQuoteReadOnly">
+                <button 
+                  type="button" 
+                  class="btn btn-outline-primary px-4 shadow-sm" 
+                  @click.prevent="saveDraftQuote"
+                >
+                  Lưu
+                </button>
+                <button 
+                  type="button" 
+                  class="btn btn-primary px-4 shadow-sm" 
+                  @click.prevent="confirmDepositFromModal(selectedQuote)"
+                  title="Khách đã cọc -> Bắt đầu lên đơn xử lý"
+                >
+                  Đã Cọc & Lên Đơn
+                </button>
+              </template>
+
+              <!-- Khi ĐANG XỬ LÝ (Status 2): Nút Khách Hàng Đã Nhận Hàng & Chuyển Tiền -->
+              <button 
+                type="button" 
+                class="btn btn-primary px-4 shadow-sm" 
+                v-if="selectedQuote && selectedQuote.status === 2"
+                @click.prevent="completeOrderBtn(selectedQuote)"
+                title="Khách hàng đã nhận hàng & chuyển tiền -> Hoàn thành đơn"
+              >
+                Khách Hàng Đã Nhận Hàng & Chuyển Tiền
+              </button>
             </div>
           </form>
         </div>
@@ -743,25 +777,50 @@
               </div>
             </div>
           </div>
-<div class="modal-footer border-top py-3 mt-2 d-flex justify-content-between align-items-center">
-            <div class="d-flex gap-2">
-              <button type="button" class="btn btn-outline-primary px-3 shadow-sm" @click="openVietQrModal(selectedOrder)" title="Xem mã VietQR">
-                <i class="bx bx-qr-scan me-1"></i> Mã VietQR
-              </button>
-              <button type="button" class="btn btn-outline-info px-3 shadow-sm" v-if="selectedOrder && (selectedOrder.status === 1 || selectedOrder.status === 2)" @click="openViettelPostModal(selectedOrder)" title="Cập nhật mã vận đơn">
-                <i class="bx bxs-truck me-1"></i> Vận Đơn Giao Hàng
-              </button>
-              <button type="button" class="btn btn-success px-3 shadow-sm" v-if="selectedOrder && selectedOrder.status === 2" @click="completeOrderBtn(selectedOrder)" title="Xác nhận đã giao hàng & thu COD">
-                <i class="bx bx-check-double me-1"></i> Thu COD & Hoàn Thành
-              </button>
-            </div>
-            <div class="d-flex gap-2">
-              <button type="button" class="btn btn-outline-secondary px-4" data-bs-dismiss="modal">Đóng</button>
-              <button type="button" class="btn btn-primary px-4 shadow-sm" @click="saveOrder" v-if="!isOrderReadOnly && canEditOrders">Lưu Thay Đổi</button>
-              <button type="button" class="btn btn-primary px-4 shadow-sm" @click="printOrder">
-                <i class="bx bx-printer me-1"></i> In Hóa Đơn
-              </button>
-            </div>
+          <div class="modal-footer border-top py-3 mt-2 bg-light d-flex justify-content-end align-items-center gap-2">
+            <button 
+              type="button" 
+              class="btn btn-outline-danger px-4 shadow-sm" 
+              v-if="selectedOrder && selectedOrder.status !== 4 && selectedOrder.status !== 3 && !isOrderReadOnly" 
+              @click.prevent="handleCancel(selectedOrder)"
+              title="Hủy đơn hàng này"
+            >
+              Hủy Đơn
+            </button>
+            <button 
+              type="button" 
+              class="btn btn-outline-secondary shadow-sm d-inline-flex align-items-center justify-content-center" 
+              style="width: 38px; height: 38px; padding: 0;"
+              @click="openVietQrModal(selectedOrder)" 
+              title="Xem mã VietQR"
+            >
+              <i class="bx bx-qr-scan fs-5"></i>
+            </button>
+            <button type="button" class="btn btn-outline-secondary px-4" data-bs-dismiss="modal">Đóng</button>
+            <button type="button" class="btn btn-outline-primary px-4 shadow-sm" @click="saveOrder" v-if="!isOrderReadOnly && canEditOrders">
+              Lưu
+            </button>
+            <button 
+              type="button" 
+              class="btn btn-primary px-4 shadow-sm" 
+              v-if="selectedOrder && selectedOrder.status === 0 && !isOrderReadOnly" 
+              @click="confirmDepositBtn(selectedOrder)"
+              title="Khách đã cọc -> Bắt đầu lên đơn xử lý"
+            >
+              Đã Cọc & Lên Đơn
+            </button>
+            <button 
+              type="button" 
+              class="btn btn-primary px-4 shadow-sm" 
+              v-if="selectedOrder && (selectedOrder.status === 1 || selectedOrder.status === 2)" 
+              @click="completeOrderBtn(selectedOrder)" 
+              title="Khách hàng đã nhận hàng & chuyển tiền -> Hoàn thành đơn"
+            >
+              Khách Hàng Đã Nhận Hàng & Chuyển Tiền
+            </button>
+            <button type="button" class="btn btn-outline-secondary px-4 shadow-sm" @click="printOrder">
+              In Hóa Đơn
+            </button>
           </div>
         </div>
       </div>
@@ -773,7 +832,7 @@
         <div class="modal-content border-0 shadow-lg">
           <div class="modal-header bg-primary text-white py-3">
             <h5 class="modal-title fw-bold text-white mb-0">
-              <i class="bx bx-qr-scan me-2"></i>Mã VietQR Napas247 - Đơn Hàng
+              <i class="bx bx-qr-scan me-2"></i>Mã VietQR Napas247 - {{ adminVietQr?.quote_code ? 'Tiền Cọc Báo Giá' : 'Đơn Hàng' }}
             </h5>
             <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
@@ -1107,22 +1166,53 @@ export default {
         .sort((a, b) => b.id - a.id);
     },
     quotedQuotes() {
-      return this.quotes
+      const list = [];
+      const quoteCodes = new Set();
+      this.quotes
         .filter(q => q.status === 1)
-        .map(q => ({ ...q, _type: 'quote' }))
-        .sort((a, b) => b.id - a.id);
+        .forEach(q => {
+          list.push({ ...q, _type: 'quote' });
+          quoteCodes.add(q.code);
+        });
+      this.orders
+        .filter(o => o.status === 0)
+        .forEach(o => {
+          const matchQuote = o.customer_notes && Array.from(quoteCodes).some(code => o.customer_notes.includes(code));
+          if (!matchQuote) {
+            list.push({ ...o, _type: 'order' });
+          }
+        });
+      return list.sort((a, b) => b.id - a.id);
     },
     processingOrders() {
       const list = [];
-      this.quotes.filter(q => q.status === 2).forEach(q => list.push({ ...q, _type: 'quote' }));
-      this.orders.filter(o => o.status !== 3 && o.status !== 4).forEach(o => list.push({ ...o, _type: 'order' }));
+      const quoteCodes = new Set();
+      this.quotes.filter(q => q.status === 2).forEach(q => {
+        list.push({ ...q, _type: 'quote' });
+        quoteCodes.add(q.code);
+      });
+      this.orders.filter(o => o.status === 1 || o.status === 2).forEach(o => {
+        const matchQuote = o.customer_notes && Array.from(quoteCodes).some(code => o.customer_notes.includes(code));
+        if (!matchQuote) {
+          list.push({ ...o, _type: 'order' });
+        }
+      });
       return list.sort((a, b) => b.id - a.id);
     },
     completedOrders() {
-      return this.orders
-        .filter(o => o.status === 3)
-        .map(o => ({ ...o, _type: 'order' }))
-        .sort((a, b) => b.id - a.id);
+      const list = [];
+      const quoteCodes = new Set();
+      this.quotes.filter(q => q.status === 4).forEach(q => {
+        list.push({ ...q, _type: 'quote' });
+        quoteCodes.add(q.code);
+      });
+      this.orders.filter(o => o.status === 3).forEach(o => {
+        const matchQuote = o.customer_notes && Array.from(quoteCodes).some(code => o.customer_notes.includes(code));
+        if (!matchQuote) {
+          list.push({ ...o, _type: 'order' });
+        }
+      });
+      return list.sort((a, b) => b.id - a.id);
     },
     cancelledItems() {
       const list = [];
@@ -1385,12 +1475,14 @@ export default {
             const res = await axiosClient.put(`/admin/yeu-cau-bao-gia/${item.id}`, { trang_thai: 3 });
             if (res?.success || res?.data?.success) {
               this.toaster.success('Đã hủy báo giá và chuyển vào mục Đã Hủy!');
+              this.closeModal('quoteModal');
               this.refreshData();
             }
           } else {
             const res = await axiosClient.put(`/admin/don-hang/${item.id}`, { status: 4 });
             if (res?.success || res?.data?.success) {
               this.toaster.success('Đã hủy đơn hàng và hoàn kho thành công!');
+              this.closeModal('orderModal');
               this.refreshData();
             }
           }
@@ -1597,13 +1689,8 @@ export default {
         this.selectedQuote.total_amount = (this.selectedQuote.total_amount || 0) + (this.selectedQuote.freight_collect ? 0 : (this.selectedQuote.shipping_fee || 0));
       }
 
-      // Nếu đang là Chờ báo giá (status = 0) và tất cả phụ tùng đều đã được nhập giá (> 0) thì tự động chuyển sang Đã Báo Giá (status = 1)
+      // Giữ nguyên trạng thái hiện tại của báo giá khi lưu nháp/lưu thay đổi
       let newStatus = this.selectedQuote.status;
-      const allPriced = this.selectedQuote.items && this.selectedQuote.items.length > 0 && this.selectedQuote.items.every(i => Number(i.price) > 0);
-      if (this.selectedQuote.status === 0 && allPriced) {
-        newStatus = 1;
-        this.selectedQuote.status = 1;
-      }
 
       try {
         const payload = {
@@ -1617,12 +1704,7 @@ export default {
         };
         await this.saveQuoteMutation.mutateAsync({ id: this.selectedQuote.id, payload });
         this.closeModal('quoteModal');
-        if (newStatus === 1 && this.currentTab === 'pending_quotes') {
-          this.currentTab = 'quoted_quotes';
-          this.toaster.success('Đã hoàn tất báo giá và chuyển sang tab "Đã Báo Giá"!');
-        } else {
-          this.toaster.success('Đã lưu thông tin báo giá thành công!');
-        }
+        this.toaster.success('Đã lưu thông tin báo giá thành công!');
       } catch (error) {
         console.error("Lỗi lưu báo giá:", error);
         const msg = error?.response?.data?.message || 'Lỗi lưu thông tin báo giá!';
@@ -1751,14 +1833,17 @@ export default {
     async confirmDepositBtn(item) {
       const depositAmt = item.deposit_required || item.tien_coc_yeu_cau || 0;
       const result = await Swal.fire({
-        title: 'Xác Nhận Đã Nhận Cọc?',
-        html: `Xác nhận bạn đã kiểm tra thông báo ngân hàng và đã nhận đủ tiền cọc <b>${this.formatCurrency(depositAmt)}</b> cho mã <b>${item.code}</b>?<br><small class="text-muted">Đơn hàng sẽ chuyển sang trạng thái "Lên Đơn Nhật" để xuất file PO.</small>`,
+        title: depositAmt > 0 ? 'Đã Cọc & Bắt Đầu Lên Đơn?' : 'Bắt Đầu Lên Đơn Hàng?',
+        html: depositAmt > 0 
+          ? `Xác nhận khách đã cọc đủ <b>${this.formatCurrency(depositAmt)}</b> cho mã <b>${item.code}</b>?<br><small class="text-muted">Đơn hàng sẽ chuyển sang trạng thái "Đang Xử Lý & Giao Hàng" để tiến hành chuẩn bị hàng.</small>`
+          : `Xác nhận bắt đầu lên đơn <b>${item.code}</b> sang trạng thái "Đang Xử Lý & Giao Hàng"?`,
         icon: 'question',
         showCancelButton: true,
-        confirmButtonText: 'Đã nhận cọc, lên đơn ngay',
+        confirmButtonText: depositAmt > 0 ? 'Đã nhận cọc, bắt đầu lên đơn' : 'Xác nhận lên đơn',
         cancelButtonText: 'Hủy',
         customClass: {
-          confirmButton: 'btn btn-success px-4 shadow-sm',
+          popup: 'swal-shift-up',
+          confirmButton: 'btn btn-primary px-4 shadow-sm',
           cancelButton: 'btn btn-outline-secondary px-4 me-3'
         },
         buttonsStyling: false
@@ -1772,6 +1857,8 @@ export default {
           const res = await axiosClient.post(endpoint, { amount: depositAmt });
           if (res?.success || res?.data?.success) {
             this.toaster.success(res?.message || res?.data?.message || 'Đã xác nhận nhận cọc thành công!');
+            this.closeModal('quoteModal');
+            this.closeModal('orderModal');
             this.refreshData();
           }
         } catch (err) {
@@ -1782,8 +1869,8 @@ export default {
 
     async confirmDepositFromModal(quote) {
       if (!quote) return;
+      await this.saveQuoteSilent();
       await this.confirmDepositBtn(quote);
-      this.closeModal('quoteModal');
     },
 
     openViettelPostModal(order) {
@@ -1821,16 +1908,22 @@ export default {
 
     async completeOrderBtn(order) {
       if (!order) return;
-      const codAmt = Math.max(0, order.total_amount - (order.paid_amount || 0));
+      const isQuote = order._type === 'quote' || (order.code && String(order.code).startsWith('YCBG'));
+      const paidAmt = Number(order.paid_amount ?? order.da_thu ?? 0);
+      const totalAmt = Number(order.total_amount || 0) + (order.freight_collect ? 0 : Number(order.shipping_fee || 0));
+      const codAmt = Math.max(0, totalAmt - paidAmt);
+      const code = order.code || order.ma_yeu_cau || order.ma_don_hang;
       const carrier = order.ten_don_vi_van_chuyen || 'Đơn vị vận chuyển';
+
       const result = await Swal.fire({
-        title: 'Xác Nhận Đã Thu COD & Hoàn Thành?',
-        html: `${carrier} đã giao hàng thành công và thu đủ tiền COD <b>${this.formatCurrency(codAmt)}</b> cho đơn <b>${order.code}</b>?<br><small class="text-muted">Đơn hàng sẽ chuyển sang trạng thái "Hoàn Thành" và cập nhật doanh thu 100%.</small>`,
+        title: 'Khách Đã Nhận Hàng & Chuyển Tiền?',
+        html: `${carrier} đã giao hàng thành công và khách đã thanh toán đủ số tiền còn lại <b>${this.formatCurrency(codAmt)}</b> cho đơn <b>${code}</b>?<br><small class="text-muted">Đơn hàng sẽ chuyển sang trạng thái "Hoàn Thành" và cập nhật doanh thu 100%.</small>`,
         icon: 'question',
         showCancelButton: true,
-        confirmButtonText: 'Đã nhận COD, Hoàn thành đơn',
+        confirmButtonText: 'Đã nhận đủ tiền, Hoàn tất đơn',
         cancelButtonText: 'Hủy',
         customClass: {
+          popup: 'swal-shift-up',
           confirmButton: 'btn btn-success px-4 shadow-sm',
           cancelButton: 'btn btn-outline-secondary px-4 me-3'
         },
@@ -1839,10 +1932,14 @@ export default {
 
       if (result.isConfirmed) {
         try {
-          const res = await axiosClient.post(`/admin/don-hang/${order.id}/hoan-thanh`);
+          const endpoint = isQuote 
+            ? `/admin/yeu-cau-bao-gia/${order.id}/hoan-thanh` 
+            : `/admin/don-hang/${order.id}/hoan-thanh`;
+          const res = await axiosClient.post(endpoint);
           if (res?.success || res?.data?.success) {
-            this.toaster.success('Đơn hàng đã được đánh dấu Hoàn Thành!');
+            this.toaster.success(res?.message || res?.data?.message || 'Đơn hàng đã được đánh dấu Hoàn Thành!');
             this.closeModal('orderModal');
+            this.closeModal('quoteModal');
             this.refreshData();
           }
         } catch (err) {
@@ -1851,22 +1948,24 @@ export default {
       }
     },
 
-    async openVietQrModal(order) {
-      if (!order) return;
+    async openVietQrModal(item) {
+      if (!item) return;
       this.isLoadingQr = true;
       this.adminVietQr = null;
       // eslint-disable-next-line no-undef
       const modalEl = new bootstrap.Modal(document.getElementById('adminVietQrModal'));
       modalEl.show();
       try {
-        const res = await axiosClient.get(`/public/vietqr/don-hang/${order.code}`);
+        const isQuote = item._type === 'quote' || (item.code && item.code.startsWith('YCBG'));
+        const endpoint = isQuote ? `/public/vietqr/bao-gia/${item.code}` : `/public/vietqr/don-hang/${item.code}`;
+        const res = await axiosClient.get(endpoint);
         const payload = res?.qr_url ? res : res?.data;
         if (payload && (res.success || payload.success || payload.qr_url)) {
           this.adminVietQr = payload;
           this.currentVietQr = payload;
         }
       } catch (e) {
-        this.toaster.error('Không thể tạo mã VietQR cho đơn hàng này.');
+        this.toaster.error('Không thể tạo mã VietQR cho yêu cầu này.');
       } finally {
         this.isLoadingQr = false;
       }

@@ -702,4 +702,48 @@ class YeuCauBaoGiaController extends Controller
             return response()->json(['success' => false, 'message' => 'Lỗi: ' . $e->getMessage()], 500);
         }
     }
+
+    /**
+     * Xác nhận khách đã nhận hàng và thanh toán đủ số tiền còn lại (Hoàn tất giao dịch báo giá)
+     */
+    public function completeQuote($request = null, $id = null)
+    {
+        if ($request instanceof Request) {
+            $id = $id ?? (int)$request->route('id');
+        } elseif (is_numeric($request)) {
+            $id = (int)$request;
+        } else {
+            $id = (int)request()->route('id');
+        }
+
+        DB::beginTransaction();
+        try {
+            $quote = YeuCauBaoGia::lockForUpdate()->findOrFail($id);
+            $total = (float) ($quote->tong_tien + ($quote->khach_tu_tra_cuoc ? 0 : ($quote->phi_van_chuyen ?? 0)));
+
+            $quote->da_thu = $total;
+            $quote->trang_thai = 4; // 4 = Hoàn thành
+            $quote->save();
+
+            // Nếu có đơn hàng liên kết tương ứng, cũng cập nhật hoàn thành
+            $linkedOrder = DonHang::where('ghi_chu_khach_hang', 'like', '%Báo giá #' . $quote->ma_yeu_cau . '%')->first();
+            if ($linkedOrder) {
+                $linkedOrder->da_thu = $total;
+                $linkedOrder->trang_thai_thanh_toan = 2; // Đã thanh toán 100%
+                $linkedOrder->trang_thai = 3; // Hoàn thành
+                $linkedOrder->save();
+            }
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Đã xác nhận hoàn thành đơn hàng báo giá #' . $quote->ma_yeu_cau . '!',
+                'data'    => $quote->fresh('chiTiet')
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['success' => false, 'message' => 'Lỗi: ' . $e->getMessage()], 500);
+        }
+    }
 }

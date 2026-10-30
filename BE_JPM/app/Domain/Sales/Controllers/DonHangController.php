@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Domain\Sales\Models\DonHang;
 use App\Domain\Sales\Models\ChiTietDonHang;
+use App\Domain\Sales\Models\YeuCauBaoGia;
 use App\Domain\Procurement\Models\TonKho;
 use App\Domain\Procurement\Models\TheKho;
 use App\Domain\Sales\Services\OrderService;
@@ -377,6 +378,16 @@ class DonHangController extends Controller
             $donHang->trang_thai_thanh_toan = 2; // Đã thanh toán 100%
             $donHang->trang_thai = 3; // Hoàn thành
             $donHang->save();
+
+            // Cập nhật yêu cầu báo giá tương ứng nếu đơn hàng này sinh ra từ báo giá
+            if (!empty($donHang->ghi_chu_khach_hang) && preg_match('/Báo giá #(YCBG-[^\s|]+)/', $donHang->ghi_chu_khach_hang, $m)) {
+                $linkedQuote = YeuCauBaoGia::where('ma_yeu_cau', $m[1])->first();
+                if ($linkedQuote) {
+                    $linkedQuote->da_thu = $total;
+                    $linkedQuote->trang_thai = 4; // Hoàn thành
+                    $linkedQuote->save();
+                }
+            }
 
             DB::commit();
 
