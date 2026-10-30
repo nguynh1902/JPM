@@ -292,12 +292,13 @@ export default {
       const r = this.result.data;
       if (this.result.type === 'quote') {
         if (r.trang_thai === 0) return 'Chờ xử lý';
-        if (r.trang_thai === 1) return 'Đã báo giá (Chờ chốt)';
-        if (r.trang_thai === 2) return 'Hoàn tất (Đã chuyển đơn)';
+        if (r.trang_thai === 1) return 'Đã báo giá (Chờ chốt & cọc)';
+        if (r.trang_thai === 2) return 'Đang xử lý (Gom hàng)';
         if (r.trang_thai === 3) return 'Đã hủy';
+        if (r.trang_thai === 4) return 'Hoàn thành';
       } else {
         if (r.trang_thai === 0) return 'Chờ xác nhận';
-        if (r.trang_thai === 1) return 'Đang chuẩn bị & Lên đơn Nhật';
+        if (r.trang_thai === 1) return 'Đang xử lý (Gom hàng)';
         if (r.trang_thai === 2) return 'Đang giao hàng';
         if (r.trang_thai === 3) return 'Hoàn thành';
         if (r.trang_thai === 4) return 'Đã hủy';
@@ -310,11 +311,12 @@ export default {
       if (this.result.type === 'quote') {
         if (r.trang_thai === 0) return 'bg-warning text-dark';
         if (r.trang_thai === 1) return 'bg-info text-white';
-        if (r.trang_thai === 2) return 'bg-success text-white';
+        if (r.trang_thai === 2) return 'bg-primary text-white';
         if (r.trang_thai === 3) return 'bg-danger text-white';
+        if (r.trang_thai === 4) return 'bg-success text-white';
       } else {
         if (r.trang_thai === 0) return 'bg-warning text-dark';
-        if (r.trang_thai === 1) return 'bg-secondary text-white';
+        if (r.trang_thai === 1) return 'bg-primary text-white';
         if (r.trang_thai === 2) return 'bg-info text-white';
         if (r.trang_thai === 3) return 'bg-success text-white';
         if (r.trang_thai === 4) return 'bg-danger text-white';

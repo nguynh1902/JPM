@@ -31,12 +31,19 @@
         :class="{ active: currentTab === '3' }" 
         @click="currentTab = '3'"
       >
-        Vận chuyển <span v-if="countByStage(3) > 0" class="tab-badge">({{ countByStage(3) }})</span>
+        Đang xử lý <span v-if="countByStage(3) > 0" class="tab-badge">({{ countByStage(3) }})</span>
       </div>
       <div 
         class="shopee-tab-item" 
         :class="{ active: currentTab === '4' }" 
         @click="currentTab = '4'"
+      >
+        Đang giao <span v-if="countByStage(4) > 0" class="tab-badge">({{ countByStage(4) }})</span>
+      </div>
+      <div 
+        class="shopee-tab-item" 
+        :class="{ active: currentTab === '5' }" 
+        @click="currentTab = '5'"
       >
         Hoàn thành
       </div>
@@ -124,17 +131,23 @@
               <i v-else-if="getStage(order) === 1 && getOrderPricingType(order) === 2" class="bi bi-hourglass-split me-1"></i>
               <i v-else-if="getStage(order) === 1" class="bi bi-search me-1"></i>
               <i v-else-if="getStage(order) === 2" class="bi bi-qr-scan me-1"></i>
-              <i v-else-if="getStage(order) === 3" class="bi bi-truck me-1"></i>
-              <i v-else-if="getStage(order) === 4" class="bi bi-check-circle me-1"></i>
+              <i v-else-if="getStage(order) === 3" class="bi bi-box-seam me-1"></i>
+              <i v-else-if="getStage(order) === 4" class="bi bi-truck me-1"></i>
+              <i v-else-if="getStage(order) === 5" class="bi bi-check-circle me-1"></i>
               <i v-else class="bi bi-x-circle me-1"></i>
               {{ getStatusText(order) }}
             </span>
           </div>
         </div>
 
-        <!-- Banner thông báo vận chuyển (Khi ở bước 3) -->
-        <div class="logistics-notice" v-if="getStage(order) === 3">
+        <!-- Banner thông báo vận chuyển (Khi ở bước 4: Đang giao) -->
+        <div class="logistics-notice" v-if="getStage(order) === 4">
           <i class="bi bi-truck text-danger me-2"></i>
+          <span>{{ getLogisticsStatus(order) }}</span>
+        </div>
+        <!-- Banner thông báo gom hàng / xuất kho (Khi ở bước 3: Đang xử lý) -->
+        <div class="logistics-notice bg-info-subtle border-info-subtle text-primary" v-else-if="getStage(order) === 3">
+          <i class="bi bi-box-seam me-2"></i>
           <span>{{ getLogisticsStatus(order) }}</span>
         </div>
 
@@ -359,11 +372,18 @@
             <template v-else-if="getStage(order) === 3">
               <div class="text-primary small d-flex align-items-center gap-1 fw-medium">
                 <i class="bi bi-box-seam"></i>
-                <span>Đã ghi nhận cọc. Đang điều phối hàng và gửi qua chành xe liên tỉnh đến quý khách.</span>
+                <span>Đã ghi nhận cọc. Đang chuẩn bị & gom phụ tùng đóng kiện xuất kho.</span>
               </div>
             </template>
 
             <template v-else-if="getStage(order) === 4">
+              <div class="text-primary small d-flex align-items-center gap-1 fw-medium">
+                <i class="bi bi-truck"></i>
+                <span>Đơn hàng đang trên đường vận chuyển qua chành xe / bưu tá đến quý khách.</span>
+              </div>
+            </template>
+
+            <template v-else-if="getStage(order) === 5">
               <div class="text-success small d-flex align-items-center gap-1 fw-medium">
                 <i class="bi bi-check-circle-fill"></i>
                 <span>Giao dịch hoàn tất thành công. Cảm ơn quý khách đã tin dùng phụ tùng JPM!</span>
@@ -410,15 +430,22 @@
               </button>
             </template>
 
-            <!-- Bước 3: Xem chi tiết / Chờ giao -->
+            <!-- Bước 3: Đang xử lý / gom hàng -->
             <template v-else-if="getStage(order) === 3">
-              <a :href="'https://zalo.me/0123456789?text=' + encodeURIComponent('Hỏi tiến độ vận chuyển chành xe cho đơn #' + order.code)" target="_blank" class="btn-shopee btn-shopee-outline">
+              <a :href="'https://zalo.me/0123456789?text=' + encodeURIComponent('Hỏi tiến độ chuẩn bị gom hàng cho đơn #' + order.code)" target="_blank" class="btn-shopee btn-shopee-outline">
+                <i class="bi bi-box-seam me-1"></i> Tiến Độ Chuẩn Bị
+              </a>
+            </template>
+
+            <!-- Bước 4: Đang giao -->
+            <template v-else-if="getStage(order) === 4">
+              <a :href="'https://zalo.me/0123456789?text=' + encodeURIComponent('Hỏi tiến độ vận chuyển chành xe cho đơn #' + order.code)" target="_blank" class="btn-shopee btn-shopee-primary">
                 <i class="bi bi-truck me-1"></i> Tiến Độ Vận Chuyển
               </a>
             </template>
 
-            <!-- Bước 4: Hoàn thành -->
-            <template v-else-if="getStage(order) === 4">
+            <!-- Bước 5: Hoàn thành -->
+            <template v-else-if="getStage(order) === 5">
               <router-link to="/san-pham" class="btn-shopee btn-shopee-primary">
                 Mua Lại
               </router-link>
@@ -625,12 +652,28 @@ const pollingTimer = ref(null);
 const selectedOrderForModal = ref(null);
 
 const allOrders = computed(() => {
-  const qList = (quotes.value || []).map(q => ({
-    ...q,
-    _type: 'quote',
-    code: q.ma_yeu_cau,
-    sortDate: new Date(q.created_at).getTime()
-  }));
+  const orderQuoteCodes = new Set();
+  (orders.value || []).forEach(o => {
+    if (o.ghi_chu_khach_hang) {
+      const m = o.ghi_chu_khach_hang.match(/YCBG-[^\s|]+/);
+      if (m) orderQuoteCodes.add(m[0]);
+    }
+  });
+
+  const qList = (quotes.value || [])
+    .filter(q => {
+      // Khi báo giá đã chuyển thành đơn hàng xử lý (status >= 2), chỉ hiển thị đơn hàng để tránh trùng
+      if (Number(q.trang_thai) >= 2 && orderQuoteCodes.has(q.ma_yeu_cau)) {
+        return false;
+      }
+      return true;
+    })
+    .map(q => ({
+      ...q,
+      _type: 'quote',
+      code: q.ma_yeu_cau,
+      sortDate: new Date(q.created_at).getTime()
+    }));
 
   const oList = (orders.value || []).map(o => ({
     ...o,
@@ -659,8 +702,9 @@ const getStage = (order) => {
     const st = Number(order.trang_thai);
     if (st === 0) return 1; // 1. Đợi Báo Giá
     if (st === 1) return 2; // 2. Báo Giá & Cọc
-    if (st === 2) return 3; // 3. Vận Chuyển
+    if (st === 2) return 3; // 3. Đang Xử Lý / Gom hàng
     if (st === 3) return -1; // Đã Hủy
+    if (st === 4) return 5; // 5. Hoàn Thành
     return 1;
   } else {
     const st = Number(order.trang_thai);
@@ -669,8 +713,9 @@ const getStage = (order) => {
     const depositReq = Number(order.tien_coc_yeu_cau || 0);
 
     if (st === 4) return -1; // Đã Hủy
-    if (st === 3) return 4;  // 4. Hoàn Thành
-    if (st === 1 || st === 2) return 3; // 3. Vận Chuyển
+    if (st === 3) return 5;  // 5. Hoàn Thành
+    if (st === 2) return 4;  // 4. Đang Giao Hàng
+    if (st === 1) return 3;  // 3. Đang Xử Lý / Gom Hàng
 
     if (paySt >= 1 || (depositReq > 0 && daThu >= depositReq)) {
       return 3;
@@ -720,7 +765,7 @@ const getStatusText = (order) => {
     if (st === 4) return 'ĐÃ HỦY';
     if (st === 3) return 'HOÀN THÀNH';
     if (st === 2) return 'ĐANG GIAO HÀNG';
-    if (st === 1) return 'ĐANG CHUẨN BỊ XUẤT KHO';
+    if (st === 1) return 'ĐANG XỬ LÝ (GOM HÀNG)';
     if (st === 0) return paySt === 0 ? 'CHỜ DUYỆT & CỌC' : 'ĐÃ THANH TOÁN';
   }
   const stage = getStage(order);
@@ -734,8 +779,10 @@ const getStatusText = (order) => {
     case 2:
       return 'ĐÃ BÁO GIÁ - CHỜ ĐẶT CỌC';
     case 3:
-      return 'ĐANG VẬN CHUYỂN';
+      return 'ĐANG XỬ LÝ (GOM HÀNG)';
     case 4:
+      return 'ĐANG GIAO HÀNG';
+    case 5:
       return 'HOÀN THÀNH';
     default:
       return 'ĐÃ HỦY';
@@ -757,7 +804,7 @@ const getLogisticsStatus = (order) => {
     const tracking = order.ma_van_don ? ` (Mã vận đơn: ${order.ma_van_don})` : '';
     return `Đang giao hàng ${carrier}${tracking}`;
   }
-  if (st === 1) return 'Đang chuẩn bị & Lên đơn nhà cung cấp Nhật Bản';
+  if (st === 1) return 'Đang chuẩn bị & gom phụ tùng đóng kiện xuất kho';
   return 'Đã nhận cọc & đang điều phối hàng';
 };
 
@@ -1206,11 +1253,16 @@ const formatDate = (dateStr) => {
   border: 1px solid rgba(225, 29, 72, 0.25);
 }
 .stage-status-3 {
+  background-color: #fef3c7;
+  color: #b45309;
+  border: 1px solid rgba(180, 83, 9, 0.25);
+}
+.stage-status-4 {
   background-color: #dbeafe;
   color: #2563eb;
   border: 1px solid rgba(37, 99, 235, 0.25);
 }
-.stage-status-4 {
+.stage-status-5 {
   background-color: #dcfce7;
   color: #16a34a;
   border: 1px solid rgba(22, 163, 74, 0.25);

@@ -44,11 +44,26 @@
             :class="{ active: currentTab === 'processing' }"
             @click="switchTab('processing')"
             role="tab"
-            title="Đơn hàng đang chuẩn bị, xuất kho hoặc gửi chành xe"
+            title="Đơn hàng đang gom phụ tùng, chuẩn bị xuất kho hoặc lên đơn Nhật"
           >
             <i class="bx bx-package me-1"></i>
-            <span>Đang Xử Lý & Giao</span>
+            <span>Đang Xử Lý</span>
             <span v-if="countProcessing > 0" class="tab-count-badge ms-2">{{ countProcessing }}</span>
+          </button>
+        </li>
+
+        <li class="nav-item">
+          <button 
+            type="button"
+            class="nav-link d-flex align-items-center" 
+            :class="{ active: currentTab === 'shipping' }"
+            @click="switchTab('shipping')"
+            role="tab"
+            title="Đơn hàng đã bàn giao vận chuyển (ViettelPost / Chành xe), đang trên đường giao"
+          >
+            <i class="bx bxs-truck me-1"></i>
+            <span>Đang Giao</span>
+            <span v-if="countShipping > 0" class="tab-count-badge ms-2">{{ countShipping }}</span>
           </button>
         </li>
 
@@ -211,7 +226,7 @@
                         <span v-if="item.deposit_required > 0 && Number(item.da_thu || 0) === 0" class="badge badge-custom bg-pastel-warning">CHỜ CỌC</span>
                         <span v-else class="badge badge-custom bg-pastel-info">ĐÃ BÁO GIÁ</span>
                       </template>
-                      <span v-else-if="item.status === 2" class="badge badge-custom bg-pastel-info">ĐANG XỬ LÝ & GIAO</span>
+                      <span v-else-if="item.status === 2" class="badge badge-custom bg-pastel-warning">ĐANG XỬ LÝ</span>
                       <span v-else-if="item.status === 3" class="badge badge-custom bg-pastel-danger">ĐÃ HỦY</span>
                       <span v-else-if="item.status === 4" class="badge badge-custom bg-pastel-success">HOÀN THÀNH</span>
                       <span v-else class="badge badge-custom bg-pastel-secondary">KHÁC</span>
@@ -222,7 +237,8 @@
                         <span v-if="item.deposit_required > 0 && Number(item.paid_amount || 0) === 0" class="badge badge-custom bg-pastel-warning">CHỜ CỌC</span>
                         <span v-else class="badge badge-custom bg-pastel-info">CHỜ DUYỆT</span>
                       </template>
-                      <span v-else-if="item.status === 1 || item.status === 2" class="badge badge-custom bg-pastel-info">ĐANG XỬ LÝ & GIAO</span>
+                      <span v-else-if="item.status === 1" class="badge badge-custom bg-pastel-warning">ĐANG XỬ LÝ</span>
+                      <span v-else-if="item.status === 2" class="badge badge-custom bg-pastel-info">ĐANG GIAO HÀNG</span>
                       <span v-else-if="item.status === 3" class="badge badge-custom bg-pastel-success">HOÀN THÀNH</span>
                       <span v-else-if="item.status === 4" class="badge badge-custom bg-pastel-danger">ĐÃ HỦY</span>
                       <span v-else class="badge badge-custom bg-pastel-secondary">KHÁC</span>
@@ -264,15 +280,26 @@
                         <i class="bx bx-check-circle"></i>
                       </button>
 
-                      <!-- Nút Khách Hàng Đã Nhận Hàng & Chuyển Tiền (Đơn hàng hoặc Báo giá đang xử lý / đang giao) -->
+                      <!-- Nút Gom Đơn Xong -> Chuyển Sang Đang Giao (Đang xử lý / gom hàng) -->
                       <button 
-                        v-if="(item._type === 'order' && (item.status === 1 || item.status === 2)) || (item._type === 'quote' && item.status === 2)" 
+                        v-if="(item._type === 'order' && item.status === 1) || (item._type === 'quote' && item.status === 2)" 
+                        type="button" 
+                        class="action-btn text-success" 
+                        @click="startShippingBtn(item)" 
+                        title="Gom đơn xong -> Chuyển sang Đang Giao"
+                      >
+                        <i class="bx bx-check-circle"></i>
+                      </button>
+
+                      <!-- Nút Khách Hàng Đã Nhận Hàng & Chuyển Tiền (Đang giao hàng) -->
+                      <button 
+                        v-if="item._type === 'order' && item.status === 2" 
                         type="button" 
                         class="action-btn text-success" 
                         @click="completeOrderBtn(item)" 
                         title="Khách hàng đã nhận hàng & chuyển tiền -> Hoàn thành đơn"
                       >
-                        <i class="bx bx-check-double"></i>
+                        <i class="bx bx-check-circle"></i>
                       </button>
 
                       <!-- Nút Hủy Đơn / Hủy Yêu Cầu -->
@@ -469,8 +496,8 @@
                       </div>
                     </div>
 
-                    <!-- KHU VỰC BIÊN LAI CHUYỂN TIỀN (1 ROW 2 PHẦN) -->
-                    <div class="mt-3 pt-2 border-top mb-3">
+                    <!-- KHU VỰC BIÊN LAI CHUYỂN TIỀN (1 ROW 2 PHẦN - Chỉ hiển thị khi ĐÃ BÁO GIÁ status >= 1, ẩn khi CHỜ BÁO GIÁ) -->
+                    <div class="mt-3 pt-2 border-top mb-3" v-if="selectedQuote && selectedQuote.status >= 1">
                       <!-- Input file ẩn để kích hoạt khi bấm nút hoặc bấm ô ảnh -->
                       <input type="file" ref="quoteReceiptSlot1" class="d-none" accept="image/*" @change="onFileSelected($event, 'quote', 1)">
                       <input type="file" ref="quoteReceiptSlot2" class="d-none" accept="image/*" @change="onFileSelected($event, 'quote', 2)">
@@ -500,7 +527,7 @@
                             </div>
                             <template v-else-if="selectedQuote.receipt_image">
                               <img 
-                                :src="selectedQuote.receipt_image" 
+                                :src="getImageUrl(selectedQuote.receipt_image)" 
                                 alt="Biên lai 1" 
                                 class="rounded" 
                                 style="max-height: 95px; max-width: 100%; object-fit: contain;" 
@@ -542,7 +569,7 @@
                             </div>
                             <template v-else-if="selectedQuote.receipt_image_2">
                               <img 
-                                :src="selectedQuote.receipt_image_2" 
+                                :src="getImageUrl(selectedQuote.receipt_image_2)" 
                                 alt="Biên lai 2" 
                                 class="rounded" 
                                 style="max-height: 95px; max-width: 100%; object-fit: contain;" 
@@ -662,15 +689,15 @@
                 </button>
               </template>
 
-              <!-- Khi ĐANG XỬ LÝ (Status 2): Nút Khách Hàng Đã Nhận Hàng & Chuyển Tiền -->
+              <!-- Khi ĐANG XỬ LÝ (Status 2): Nút Gom Đơn Xong -> Chuyển Sang Đang Giao -->
               <button 
                 type="button" 
                 class="btn btn-primary px-4 shadow-sm" 
                 v-if="selectedQuote && selectedQuote.status === 2"
-                @click.prevent="completeOrderBtn(selectedQuote)"
-                title="Khách hàng đã nhận hàng & chuyển tiền -> Hoàn thành đơn"
+                @click.prevent="startShippingBtn(selectedQuote)"
+                title="Đã gom xong hàng -> Bắt đầu giao hàng"
               >
-                Khách Hàng Đã Nhận Hàng & Chuyển Tiền
+                Gom Đơn Xong -> Chuyển Sang Đang Giao
               </button>
             </div>
           </form>
@@ -699,7 +726,7 @@
                   <div class="mt-2">
                     <label class="form-label text-dark small mb-1 fw-bold"><i class="bx bx-map text-primary me-1"></i>Địa Chỉ Giao Hàng:</label>
                     <textarea 
-                      v-if="!isOrderReadOnly"
+                      v-if="!isOrderInfoReadOnly"
                       class="form-control form-control-sm text-dark" 
                       rows="2"
                       v-model="selectedOrder.address" 
@@ -715,7 +742,7 @@
                 <div class="mb-2">
                   <label class="form-label fw-bold text-uppercase text-primary mb-1" style="font-size: 0.75rem;">Loại Đơn</label>
                   <v-select
-                    v-model="selectedOrder.order_type" :disabled="isOrderReadOnly"
+                    v-model="selectedOrder.order_type" :disabled="isOrderInfoReadOnly"
                     :options="[
                       {value: 'b2c', label: 'B2C (Lẻ)'},
                       {value: 'b2b', label: 'B2B (Đại Lý)'}
@@ -726,7 +753,7 @@
                 <div class="mb-2">
                   <label class="form-label fw-bold text-uppercase text-primary mb-1" style="font-size: 0.75rem;">Thanh Toán</label>
                   <v-select
-                    v-model="selectedOrder.payment_status" :disabled="isOrderReadOnly"
+                    v-model="selectedOrder.payment_status" :disabled="isOrderInfoReadOnly"
                     :options="[
                       {value: 0, label: 'Chưa Thanh Toán'},
                       {value: 1, label: 'Đã Đặt Cọc'},
@@ -738,7 +765,7 @@
                 <div class="mb-0">
                   <label class="form-label fw-bold text-uppercase text-primary mb-1" style="font-size: 0.75rem;">Xử Lý Đơn</label>
                   <v-select
-                    v-model="selectedOrder.status" :disabled="isOrderReadOnly"
+                    v-model="selectedOrder.status" :disabled="isOrderInfoReadOnly"
                     :options="[
                       {value: 0, label: '0 - Chờ duyệt / Chờ xác nhận'},
                       {value: 1, label: '1 - Đang chuẩn bị / Đang xử lý'},
@@ -779,9 +806,7 @@
                           <span class="text-dark fw-medium" style="font-size: 0.75rem;">Mã: {{ detail.part_code }}</span>
                         </td>
                         <td class="text-center align-middle">
-                          <span class="fw-bold fs-5 text-dark">{{ detail.qty }}</span>
-                          <span v-if="detail.in_stock" class="d-block text-secondary" style="font-size: 0.75rem;">Có sẵn</span>
-                          <span v-else class="d-block text-danger" style="font-size: 0.75rem;">Hết hàng</span>
+                          <span class="fw-bold fs-6 text-dark">{{ detail.qty }}</span>
                         </td>
                         <td class="text-end align-middle">{{ formatCurrency(detail.price) }}</td>
                         <td class="text-end fw-bold text-danger align-middle">
@@ -811,21 +836,24 @@
                   <div class="mb-3 pb-2 border-bottom">
                     <div class="d-flex justify-content-between align-items-center mb-1">
                       <label class="text-dark fw-bold mb-0" style="font-size: 0.88rem;">Phí Vận Chuyển:</label>
-                      <div style="width: 140px;">
+                      <div style="width: 140px;" v-if="!isOrderInfoReadOnly">
                         <input 
                           type="number" 
                           class="form-control form-control-sm text-end text-danger fw-bold" 
                           :value="selectedOrder.shipping_fee ? selectedOrder.shipping_fee : ''" 
                           @input="selectedOrder.shipping_fee = $event.target.value === '' ? 0 : Number($event.target.value)" 
                           min="0"
-                          :disabled="isOrderReadOnly || selectedOrder.freight_collect" 
+                          :disabled="selectedOrder.freight_collect" 
                           placeholder="0"
                         >
                       </div>
+                      <span v-else class="fw-bold text-danger fs-6">
+                        {{ selectedOrder.freight_collect ? 'Khách trả cước' : formatCurrency(selectedOrder.shipping_fee || 0) }}
+                      </span>
                     </div>
-                    <div class="d-flex justify-content-between align-items-center mt-1">
+                    <div class="d-flex justify-content-between align-items-center mt-1" v-if="!isOrderInfoReadOnly">
                       <div class="form-check form-switch mb-0">
-                        <input class="form-check-input" type="checkbox" id="freightCollectOrder" v-model="selectedOrder.freight_collect" :disabled="isOrderReadOnly" @change="selectedOrder.freight_collect ? selectedOrder.shipping_fee = 0 : null">
+                        <input class="form-check-input" type="checkbox" id="freightCollectOrder" v-model="selectedOrder.freight_collect" @change="selectedOrder.freight_collect ? selectedOrder.shipping_fee = 0 : null">
                         <label class="form-check-label text-dark fw-semibold" for="freightCollectOrder" style="font-size: 0.8rem;">Khách trả cước</label>
                       </div>
                       <span v-if="!selectedOrder.freight_collect" class="text-danger fw-semibold" style="font-size: 0.75rem;">
@@ -838,7 +866,7 @@
                   <div class="mb-3 pb-2 border-bottom">
                     <div class="d-flex justify-content-between align-items-center mb-1">
                       <label class="text-dark fw-bold mb-0" style="font-size: 0.88rem;">Yêu Cầu Cọc:</label>
-                      <div style="width: 140px;" v-if="!isOrderReadOnly">
+                      <div style="width: 140px;" v-if="!isOrderInfoReadOnly">
                         <input 
                           type="number" 
                           class="form-control form-control-sm text-end text-danger fw-bold" 
@@ -850,7 +878,7 @@
                       </div>
                       <span v-else class="fw-bold text-danger fs-6">{{ formatCurrency(selectedOrder.deposit_required || 0) }}</span>
                     </div>
-                    <div v-if="!isOrderReadOnly" class="text-end">
+                    <div v-if="!isOrderInfoReadOnly" class="text-end">
                       <span class="text-danger fw-semibold" style="font-size: 0.75rem;">
                         {{ formatCurrency(selectedOrder.deposit_required || 0) }}
                       </span>
@@ -861,7 +889,7 @@
                   <div class="mb-3 pb-2 border-bottom">
                     <div class="d-flex justify-content-between align-items-center mb-1">
                       <label class="text-dark fw-bold mb-0" style="font-size: 0.88rem;">Đã Thu (Cọc / Trả trước):</label>
-                      <div style="width: 140px;" v-if="!isOrderReadOnly">
+                      <div style="width: 140px;" v-if="!isOrderInfoReadOnly">
                         <input 
                           type="number" 
                           class="form-control form-control-sm text-end text-success fw-bold" 
@@ -873,7 +901,7 @@
                       </div>
                       <span v-else class="fw-bold text-success fs-6">{{ formatCurrency(selectedOrder.paid_amount || 0) }}</span>
                     </div>
-                    <div v-if="!isOrderReadOnly" class="text-end">
+                    <div v-if="!isOrderInfoReadOnly" class="text-end">
                       <span class="text-success fw-semibold" style="font-size: 0.75rem;">
                         {{ formatCurrency(selectedOrder.paid_amount || 0) }}
                       </span>
@@ -901,7 +929,7 @@
                           style="height: 105px; cursor: pointer;"
                           :style="!selectedOrder.receipt_image ? 'border-style: dashed !important;' : ''"
                           @paste="onPasteReceipt($event, 'order', 1)"
-                          @click="!selectedOrder.receipt_image && !isOrderReadOnly ? triggerAddReceiptSlot('order', 1) : null"
+                          @click="!selectedOrder.receipt_image && !isOrderReceiptReadOnly ? triggerAddReceiptSlot('order', 1) : null"
                           tabindex="0"
                           :title="selectedOrder.receipt_image ? 'Nhấp để xem phóng to' : 'Nhấp để tải ảnh hoặc Ctrl+V để dán'"
                         >
@@ -911,7 +939,7 @@
                           </div>
                           <template v-else-if="selectedOrder.receipt_image">
                             <img 
-                              :src="selectedOrder.receipt_image" 
+                              :src="getImageUrl(selectedOrder.receipt_image)" 
                               alt="Biên lai 1" 
                               class="rounded" 
                               style="max-height: 95px; max-width: 100%; object-fit: contain;" 
@@ -919,7 +947,7 @@
                               title="Nhấp để xem phóng to"
                             />
                             <button 
-                              v-if="!isOrderReadOnly" 
+                              v-if="!isOrderReceiptReadOnly" 
                               type="button" 
                               class="btn btn-icon btn-sm bg-white text-danger position-absolute top-0 end-0 m-1 rounded-circle shadow-sm border" 
                               @click.stop="removeReceipt('order', 1)" 
@@ -943,7 +971,7 @@
                           style="height: 105px; cursor: pointer;"
                           :style="!selectedOrder.receipt_image_2 ? 'border-style: dashed !important;' : ''"
                           @paste="onPasteReceipt($event, 'order', 2)"
-                          @click="!selectedOrder.receipt_image_2 && !isOrderReadOnly ? triggerAddReceiptSlot('order', 2) : null"
+                          @click="!selectedOrder.receipt_image_2 && !isOrderReceiptReadOnly ? triggerAddReceiptSlot('order', 2) : null"
                           tabindex="0"
                           :title="selectedOrder.receipt_image_2 ? 'Nhấp để xem phóng to' : 'Nhấp để tải ảnh hoặc Ctrl+V để dán'"
                         >
@@ -953,7 +981,7 @@
                           </div>
                           <template v-else-if="selectedOrder.receipt_image_2">
                             <img 
-                              :src="selectedOrder.receipt_image_2" 
+                              :src="getImageUrl(selectedOrder.receipt_image_2)" 
                               alt="Biên lai 2" 
                               class="rounded" 
                               style="max-height: 95px; max-width: 100%; object-fit: contain;" 
@@ -961,7 +989,7 @@
                               title="Nhấp để xem phóng to"
                             />
                             <button 
-                              v-if="!isOrderReadOnly" 
+                              v-if="!isOrderReceiptReadOnly" 
                               type="button" 
                               class="btn btn-icon btn-sm bg-white text-danger position-absolute top-0 end-0 m-1 rounded-circle shadow-sm border" 
                               @click.stop="removeReceipt('order', 2)" 
@@ -995,10 +1023,11 @@
             </div>
           </div>
           <div class="modal-footer border-top py-3 mt-2 bg-light d-flex justify-content-end align-items-center gap-2">
+            <!-- Nút Hủy Đơn (Chỉ hủy được khi đơn chưa giao hàng) -->
             <button 
               type="button" 
               class="btn btn-outline-danger px-4 shadow-sm" 
-              v-if="selectedOrder && selectedOrder.status !== 4 && selectedOrder.status !== 3 && !isOrderReadOnly" 
+              v-if="selectedOrder && selectedOrder.status < 2 && !isOrderInfoReadOnly" 
               @click.prevent="handleCancel(selectedOrder)"
               title="Hủy đơn hàng này"
             >
@@ -1023,13 +1052,13 @@
               <i class="bx bx-qr-scan fs-5"></i>
             </button>
             <button type="button" class="btn btn-outline-secondary px-4" data-bs-dismiss="modal">Đóng</button>
-            <button type="button" class="btn btn-outline-primary px-4 shadow-sm" @click="saveOrder" v-if="!isOrderReadOnly && canEditOrders">
+            <button type="button" class="btn btn-outline-primary px-4 shadow-sm" @click="saveOrder" v-if="!isOrderInfoReadOnly && canEditOrders">
               Lưu
             </button>
             <button 
               type="button" 
               class="btn btn-primary px-4 shadow-sm" 
-              v-if="selectedOrder && selectedOrder.status === 0 && !isOrderReadOnly" 
+              v-if="selectedOrder && selectedOrder.status === 0 && !isOrderInfoReadOnly" 
               @click="confirmDepositBtn(selectedOrder)"
               title="Khách đã cọc -> Bắt đầu lên đơn xử lý"
             >
@@ -1038,7 +1067,16 @@
             <button 
               type="button" 
               class="btn btn-primary px-4 shadow-sm" 
-              v-if="selectedOrder && (selectedOrder.status === 1 || selectedOrder.status === 2)" 
+              v-if="selectedOrder && selectedOrder.status === 1 && !isOrderInfoReadOnly" 
+              @click="startShippingBtn(selectedOrder)" 
+              title="Đã gom xong hàng -> Bắt đầu giao hàng"
+            >
+              Gom Đơn Xong -> Chuyển Sang Đang Giao
+            </button>
+            <button 
+              type="button" 
+              class="btn btn-success px-4 shadow-sm" 
+              v-if="selectedOrder && selectedOrder.status === 2" 
               @click="completeOrderBtn(selectedOrder)" 
               title="Khách hàng đã nhận hàng & chuyển tiền -> Hoàn thành đơn"
             >
@@ -1209,9 +1247,9 @@
               </div>
 
               <div class="mb-3">
-                <label class="form-label fw-bold">Mã Vận Đơn <span class="text-danger">*</span></label>
-                <input type="text" class="form-control" v-model="viettelPostForm.ma_van_don" placeholder="VD: VP123456789VN, GHN987654..." required>
-                <small class="text-muted">Nhập mã vận đơn hoặc số biên nhận do bên giao vận cấp.</small>
+                <label class="form-label fw-bold">Mã Vận Đơn / Ghi Chú Chành Xe</label>
+                <input type="text" class="form-control" v-model="viettelPostForm.ma_van_don" placeholder="VD: VP123456789VN, GHN987654, Chành xe Tô Châu...">
+                <small class="text-muted">Nhập mã vận đơn hoặc số xe/chành xe (hoặc để trống nếu tự giao).</small>
               </div>
 
               <div class="bg-light p-3 rounded-3 border">
@@ -1254,7 +1292,7 @@
             <div class="d-flex align-items-center gap-2">
               <a 
                 v-if="viewingReceiptImage" 
-                :href="viewingReceiptImage" 
+                :href="getImageUrl(viewingReceiptImage)" 
                 target="_blank" 
                 class="btn btn-sm btn-outline-primary py-1 px-2 d-inline-flex align-items-center gap-1"
                 title="Mở tab mới để phóng to kích thước gốc"
@@ -1267,7 +1305,7 @@
           <div class="modal-body p-2 text-center bg-dark" style="min-height: 350px; display: flex; align-items: center; justify-content: center;">
             <img 
               v-if="viewingReceiptImage" 
-              :src="viewingReceiptImage" 
+              :src="getImageUrl(viewingReceiptImage)" 
               alt="Ảnh chuyển khoản ngân hàng" 
               class="img-fluid rounded" 
               style="max-height: 80vh; max-width: 100%; object-fit: contain; box-shadow: 0 4px 20px rgba(0,0,0,0.5);"
@@ -1428,6 +1466,14 @@ export default {
     isOrderReadOnly() {
       return this.selectedOrder && this.selectedOrder.status >= 3;
     },
+    // Đơn hàng khi ở trạng thái "Đang giao" (status >= 2) sẽ khóa toàn bộ thông tin giá/phí/địa chỉ/loại đơn
+    isOrderInfoReadOnly() {
+      return !this.selectedOrder || Number(this.selectedOrder.status) >= 2;
+    },
+    // Khu vực biên lai chuyển tiền chỉ khóa khi đơn đã hoàn thành (status 3) hoặc đã hủy (status 4)
+    isOrderReceiptReadOnly() {
+      return !this.selectedOrder || Number(this.selectedOrder.status) >= 3;
+    },
 
     // PIPELINE LISTS
     pendingQuotes() {
@@ -1458,15 +1504,24 @@ export default {
     processingOrders() {
       const list = [];
       const quoteCodes = new Set();
-      this.quotes.filter(q => q.status === 2).forEach(q => {
-        list.push({ ...q, _type: 'quote' });
-        quoteCodes.add(q.code);
-      });
-      this.orders.filter(o => o.status === 1 || o.status === 2).forEach(o => {
-        const matchQuote = o.customer_notes && Array.from(quoteCodes).some(code => o.customer_notes.includes(code));
-        if (!matchQuote) {
-          list.push({ ...o, _type: 'order' });
+      this.orders.filter(o => o.status === 1).forEach(o => {
+        list.push({ ...o, _type: 'order' });
+        if (o.customer_notes) {
+          const m = o.customer_notes.match(/YCBG-[^\s|]+/);
+          if (m) quoteCodes.add(m[0]);
         }
+      });
+      this.quotes.filter(q => q.status === 2).forEach(q => {
+        if (!quoteCodes.has(q.code)) {
+          list.push({ ...q, _type: 'quote' });
+        }
+      });
+      return list.sort((a, b) => b.id - a.id);
+    },
+    shippingOrders() {
+      const list = [];
+      this.orders.filter(o => o.status === 2).forEach(o => {
+        list.push({ ...o, _type: 'order' });
       });
       return list.sort((a, b) => b.id - a.id);
     },
@@ -1508,6 +1563,9 @@ export default {
     countProcessing() {
       return this.processingOrders.length;
     },
+    countShipping() {
+      return this.shippingOrders.length;
+    },
     countCompleted() {
       return this.completedOrders.length;
     },
@@ -1527,6 +1585,8 @@ export default {
           return this.quotedQuotes;
         case 'processing':
           return this.processingOrders;
+        case 'shipping':
+          return this.shippingOrders;
         case 'completed':
           return this.completedOrders;
         case 'cancelled':
@@ -1557,8 +1617,9 @@ export default {
     tabTitle() {
       switch (this.currentTab) {
         case 'pending_quotes': return 'Danh Sách Yêu Cầu Chờ Báo Giá';
-        case 'quoted_quotes': return 'Danh Sách Đang Chờ Khách Chốt Giá';
-        case 'processing': return 'Đơn Hàng Đang Xử Lý & Giao Hàng';
+        case 'quoted_quotes': return 'Danh Sách Đang Chờ Khách Chốt Giá & Cọc';
+        case 'processing': return 'Đơn Hàng Đang Xử Lý & Gom Hàng';
+        case 'shipping': return 'Đơn Hàng Đang Vận Chuyển';
         case 'completed': return 'Danh Sách Đơn Hàng Hoàn Thành';
         case 'cancelled': return 'Danh Sách Giao Dịch Đã Hủy';
         case 'all': return 'Toàn Bộ Giao Dịch & Báo Giá';
@@ -1570,6 +1631,7 @@ export default {
         case 'pending_quotes': return 'bx bx-time-five';
         case 'quoted_quotes': return 'bx bx-send';
         case 'processing': return 'bx bx-package';
+        case 'shipping': return 'bx bxs-truck';
         case 'completed': return 'bx bx-check-circle';
         case 'cancelled': return 'bx bx-x-circle';
         case 'all': return 'bx bx-list-ul';
@@ -1580,7 +1642,8 @@ export default {
       switch (this.currentTab) {
         case 'pending_quotes': return 'Khách hàng vừa gửi yêu cầu, cần nhân sự kinh doanh kiểm tra linh kiện và gửi giá';
         case 'quoted_quotes': return 'Báo giá đã hoàn tất gửi cho khách, đang chờ khách phản hồi hoặc đặt cọc giữ hàng';
-        case 'processing': return 'Đơn hàng đang trong tiến trình xuất kho, đóng kiện hoặc đang trên đường chuyển ra chành xe';
+        case 'processing': return 'Đơn hàng đã nhận cọc, đang gom phụ tùng, đóng kiện xuất kho hoặc lên đơn Nhật';
+        case 'shipping': return 'Đơn hàng đã bàn giao cho bên vận chuyển (ViettelPost / Chành xe), đang trên đường giao tới khách';
         case 'completed': return 'Đơn hàng khách đã nhận thành công và đối soát thanh toán đủ 100%';
         case 'cancelled': return 'Các yêu cầu báo giá hoặc đơn hàng đã bị khách hủy hoặc nhân viên hủy bỏ';
         case 'all': return 'Tra cứu tổng thể lịch sử giao dịch và yêu cầu báo giá trên toàn hệ thống';
@@ -2144,8 +2207,8 @@ export default {
       const result = await Swal.fire({
         title: depositAmt > 0 ? 'Đã Cọc & Bắt Đầu Lên Đơn?' : 'Bắt Đầu Lên Đơn Hàng?',
         html: depositAmt > 0 
-          ? `Xác nhận khách đã cọc đủ <b>${this.formatCurrency(depositAmt)}</b> cho mã <b>${item.code}</b>?<br><small class="text-muted">Đơn hàng sẽ chuyển sang trạng thái "Đang Xử Lý & Giao Hàng" để tiến hành chuẩn bị hàng.</small>`
-          : `Xác nhận bắt đầu lên đơn <b>${item.code}</b> sang trạng thái "Đang Xử Lý & Giao Hàng"?`,
+          ? `Xác nhận khách đã cọc đủ <b>${this.formatCurrency(depositAmt)}</b> cho mã <b>${item.code}</b>?<br><small class="text-muted">Đơn hàng sẽ chuyển sang tab "Đang Xử Lý" để tiến hành gom hàng & chuẩn bị xuất kho.</small>`
+          : `Xác nhận bắt đầu lên đơn <b>${item.code}</b> sang tab "Đang Xử Lý"?`,
         icon: 'question',
         showCancelButton: true,
         confirmButtonText: depositAmt > 0 ? 'Đã nhận cọc, bắt đầu lên đơn' : 'Xác nhận lên đơn',
@@ -2174,7 +2237,7 @@ export default {
             receipt_image_2: item.receipt_image_2
           });
           if (res?.success || res?.data?.success) {
-            this.toaster.success(res?.message || res?.data?.message || 'Đã xác nhận nhận cọc thành công!');
+            this.toaster.success(res?.message || res?.data?.message || 'Đã xác nhận nhận cọc thành công! Đơn hàng đã chuyển sang tab Đang Xử Lý.');
             this.closeModal('quoteModal');
             this.closeModal('orderModal');
             this.refreshData();
@@ -2191,30 +2254,57 @@ export default {
       await this.confirmDepositBtn(quote);
     },
 
+    async startShippingBtn(item) {
+      if (!item) return;
+      let targetOrder = item;
+      if (item._type === 'quote') {
+        const found = this.orders.find(o => o.customer_notes && o.customer_notes.includes(item.code));
+        if (found) {
+          targetOrder = found;
+        }
+      }
+      this.openViettelPostModal(targetOrder);
+    },
+
     openViettelPostModal(order) {
       if (!order) return;
       this.viettelPostOrder = order;
       this.viettelPostForm = {
         ma_van_don: order.ma_van_don || '',
-        ten_don_vi_van_chuyen: order.ten_don_vi_van_chuyen || ''
+        ten_don_vi_van_chuyen: order.ten_don_vi_van_chuyen || 'Chành Xe / ViettelPost'
       };
-      // eslint-disable-next-line no-undef
-      const modalEl = new bootstrap.Modal(document.getElementById('viettelPostModal'));
-      modalEl.show();
+      this.closeModal('orderModal');
+      this.closeModal('quoteModal');
+      this.$nextTick(() => {
+        // eslint-disable-next-line no-undef
+        const el = document.getElementById('viettelPostModal');
+        if (el) {
+          const modalEl = bootstrap.Modal.getInstance(el) || new bootstrap.Modal(el);
+          modalEl.show();
+        }
+      });
     },
 
     async saveViettelPostShipping() {
-      if (!this.viettelPostOrder || !this.viettelPostForm.ma_van_don.trim()) {
-        this.toaster.warning('Vui lòng nhập mã vận đơn giao hàng!');
-        return;
-      }
+      if (!this.viettelPostOrder) return;
       this.isSavingViettelPost = true;
       try {
-        const res = await axiosClient.post(`/admin/don-hang/${this.viettelPostOrder.id}/cap-nhat-van-chuyen`, this.viettelPostForm);
+        let orderId = this.viettelPostOrder.id;
+        if (this.viettelPostOrder._type === 'quote') {
+          const linked = this.orders.find(o => o.customer_notes && o.customer_notes.includes(this.viettelPostOrder.code));
+          if (linked) {
+            orderId = linked.id;
+          }
+        }
+        const payload = {
+          ma_van_don: this.viettelPostForm.ma_van_don ? this.viettelPostForm.ma_van_don.trim() : 'Giao chành xe / Giao trực tiếp',
+          ten_don_vi_van_chuyen: this.viettelPostForm.ten_don_vi_van_chuyen ? this.viettelPostForm.ten_don_vi_van_chuyen.trim() : 'Chành xe',
+          status: 2
+        };
+        const res = await axiosClient.post(`/admin/don-hang/${orderId}/cap-nhat-van-chuyen`, payload);
         if (res?.success || res?.data?.success) {
-          this.toaster.success('Đã cập nhật mã vận đơn và chuyển đơn hàng sang trạng thái Đang Giao Hàng.');
+          this.toaster.success('Đã cập nhật vận chuyển và chuyển đơn hàng sang trạng thái Đang Giao Hàng!');
           this.closeModal('viettelPostModal');
-          this.closeModal('orderModal');
           this.refreshData();
         }
       } catch (err) {
@@ -2329,9 +2419,19 @@ export default {
       }
     },
 
+    getImageUrl(path) {
+      if (!path) return '';
+      if (path.startsWith('blob:') || path.startsWith('http:') || path.startsWith('https:') || path.startsWith('data:')) {
+        return path;
+      }
+      const apiBase = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api';
+      const backendHost = apiBase.replace(/\/api\/?$/, '');
+      return `${backendHost}${path.startsWith('/') ? '' : '/'}${path}`;
+    },
+
     openReceiptViewer(imgUrl) {
       if (!imgUrl) return;
-      this.viewingReceiptImage = imgUrl;
+      this.viewingReceiptImage = this.getImageUrl(imgUrl);
       // eslint-disable-next-line no-undef
       const modalEl = new bootstrap.Modal(document.getElementById('receiptViewerModal'));
       modalEl.show();
