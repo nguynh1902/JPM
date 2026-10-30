@@ -281,6 +281,7 @@ class YeuCauBaoGiaController extends Controller
                 'tien_coc_yeu_cau'  => $request->input('deposit_required', $request->input('tien_coc_yeu_cau', $quote->tien_coc_yeu_cau)),
                 'dia_chi_giao_hang' => $request->input('dia_chi_giao_hang', $request->input('address', $quote->dia_chi_giao_hang)),
                 'anh_chuyen_khoan'  => $request->input('anh_chuyen_khoan', $request->input('receipt_image', $quote->anh_chuyen_khoan)),
+                'anh_chuyen_khoan_2'=> $request->input('anh_chuyen_khoan_2', $request->input('receipt_image_2', $quote->anh_chuyen_khoan_2)),
             ]);
 
             // Cập nhật giá từng món hàng nếu có
@@ -504,6 +505,7 @@ class YeuCauBaoGiaController extends Controller
                 'khach_hang_email'      => $quote->khach_hang_email,
                 'dia_chi_text'          => $quote->dia_chi_giao_hang,
                 'anh_chuyen_khoan'      => $quote->anh_chuyen_khoan,
+                'anh_chuyen_khoan_2'    => $quote->anh_chuyen_khoan_2,
                 'ghi_chu_khach_hang'    => $quote->ghi_chu_khach_hang . ($quote->ghi_chu_zalo ? ' | ' . $quote->ghi_chu_zalo : ''),
                 'tong_tien'             => $quote->tong_tien,
                 'phi_van_chuyen'        => $quote->phi_van_chuyen,
@@ -631,6 +633,11 @@ class YeuCauBaoGiaController extends Controller
             } elseif ($request->filled('receipt_image')) {
                 $quote->anh_chuyen_khoan = $request->input('receipt_image');
             }
+            if ($request->filled('anh_chuyen_khoan_2')) {
+                $quote->anh_chuyen_khoan_2 = $request->input('anh_chuyen_khoan_2');
+            } elseif ($request->filled('receipt_image_2')) {
+                $quote->anh_chuyen_khoan_2 = $request->input('receipt_image_2');
+            }
             $amount = (float) $request->input('amount', $quote->tien_coc_yeu_cau);
             if ($amount <= 0 && $quote->tien_coc_yeu_cau > 0) {
                 $amount = (float) $quote->tien_coc_yeu_cau;
@@ -664,6 +671,7 @@ class YeuCauBaoGiaController extends Controller
                     'khach_hang_email'      => $quote->khach_hang_email,
                     'dia_chi_text'          => $quote->dia_chi_giao_hang,
                     'anh_chuyen_khoan'      => $quote->anh_chuyen_khoan,
+                    'anh_chuyen_khoan_2'    => $quote->anh_chuyen_khoan_2,
                     'ghi_chu_khach_hang'    => 'Báo giá #' . $quote->ma_yeu_cau . ($quote->ghi_chu_khach_hang ? ' | ' . $quote->ghi_chu_khach_hang : ''),
                     'tong_tien'             => $quote->tong_tien,
                     'phi_van_chuyen'        => $quote->phi_van_chuyen,
@@ -712,6 +720,9 @@ class YeuCauBaoGiaController extends Controller
                 }
                 if ($quote->anh_chuyen_khoan && !$existingOrder->anh_chuyen_khoan) {
                     $existingOrder->anh_chuyen_khoan = $quote->anh_chuyen_khoan;
+                }
+                if ($quote->anh_chuyen_khoan_2 && !$existingOrder->anh_chuyen_khoan_2) {
+                    $existingOrder->anh_chuyen_khoan_2 = $quote->anh_chuyen_khoan_2;
                 }
                 $existingOrder->save();
             }
@@ -815,16 +826,19 @@ class YeuCauBaoGiaController extends Controller
             // Nếu truyền type & id, tự động gắn vào record
             $type = $request->input('type');
             $id = $request->input('id');
+            $slot = (int) $request->input('slot', 1);
+            $field = ($slot === 2) ? 'anh_chuyen_khoan_2' : 'anh_chuyen_khoan';
+
             if ($type === 'quote' && $id) {
                 $quote = YeuCauBaoGia::find($id);
                 if ($quote) {
-                    $quote->anh_chuyen_khoan = $url;
+                    $quote->{$field} = $url;
                     $quote->save();
                 }
             } elseif ($type === 'order' && $id) {
                 $order = DonHang::find($id);
                 if ($order) {
-                    $order->anh_chuyen_khoan = $url;
+                    $order->{$field} = $url;
                     $order->save();
                 }
             }
@@ -832,7 +846,8 @@ class YeuCauBaoGiaController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Tải lên ảnh chụp màn hình chuyển khoản thành công!',
-                'url' => $url
+                'url' => $url,
+                'slot' => $slot
             ]);
         } catch (\Exception $e) {
             return response()->json(['success' => false, 'message' => 'Lỗi tải ảnh: ' . $e->getMessage()], 500);
@@ -846,16 +861,19 @@ class YeuCauBaoGiaController extends Controller
     {
         $type = $request->input('type');
         $id = $request->input('id');
+        $slot = (int) $request->input('slot', 1);
+        $field = ($slot === 2) ? 'anh_chuyen_khoan_2' : 'anh_chuyen_khoan';
+
         if ($type === 'quote' && $id) {
             $quote = YeuCauBaoGia::find($id);
             if ($quote) {
-                $quote->anh_chuyen_khoan = null;
+                $quote->{$field} = null;
                 $quote->save();
             }
         } elseif ($type === 'order' && $id) {
             $order = DonHang::find($id);
             if ($order) {
-                $order->anh_chuyen_khoan = null;
+                $order->{$field} = null;
                 $order->save();
             }
         }

@@ -202,19 +202,6 @@
                       <span v-else-if="item.deposit_required > 0" class="fw-bold text-dark">{{ formatCurrency(item.deposit_required) }}</span>
                       <span v-else class="text-muted fw-bold d-block text-center">-</span>
                     </template>
-
-                    <!-- Badge Biên lai chuyển khoản (nếu đã có) -->
-                    <div v-if="item.receipt_image" class="mt-1">
-                      <button 
-                        type="button" 
-                        class="btn btn-xs btn-outline-success py-0 px-1 border-0 shadow-none d-inline-flex align-items-center gap-1"
-                        style="font-size: 0.72rem; background: rgba(40,167,69,0.08);"
-                        @click.stop="openReceiptViewer(item.receipt_image)"
-                        title="Xem ảnh chụp màn hình chuyển khoản"
-                      >
-                        <i class="bx bx-receipt"></i> Đã có biên lai
-                      </button>
-                    </div>
                   </td>
                   <td class="text-center">
                     <!-- Trạng thái Báo Giá -->
@@ -253,17 +240,6 @@
                         :title="canProcessOrders ? (item._type === 'quote' && item.status === 0 ? 'Báo giá' : 'Xử lý') : 'Xem chi tiết'"
                       >
                         <i :class="canProcessOrders ? 'bx bx-edit-alt' : 'bx bx-show'"></i>
-                      </button>
-
-                      <!-- Nút Xem Biên Lai Chuyển Khoản (khi đã có ảnh biên lai) -->
-                      <button 
-                        v-if="item.receipt_image" 
-                        type="button" 
-                        class="action-btn text-success" 
-                        @click.stop="openReceiptViewer(item.receipt_image)" 
-                        title="Xem ảnh chụp màn hình chuyển khoản"
-                      >
-                        <i class="bx bx-receipt"></i>
                       </button>
 
                       <!-- Nút Copy Link Báo Giá / Đơn Hàng (Chỉ hiển thị ở tab ĐÃ BÁO GIÁ để gửi khách) -->
@@ -373,85 +349,6 @@
                     <div class="mb-0">
                       <textarea v-if="!isQuoteReadOnly" class="form-control" rows="2" v-model="selectedQuote.zalo_notes" placeholder="Ghi chú kết quả thương lượng Zalo..."></textarea>
                       <div v-else class="p-2 bg-light rounded text-dark border" style="white-space: pre-wrap; font-size: 0.85rem;">{{ selectedQuote.zalo_notes || 'N/A' }}</div>
-                    </div>
-
-                    <!-- Ảnh Chuyển Khoản / Biên Lai Cọc -->
-                    <div class="mt-2 pt-2 border-top">
-                      <div class="d-flex justify-content-between align-items-center mb-1">
-                        <h6 class="fw-bold mb-0 text-uppercase text-primary" style="font-size: 0.75rem;">
-                          <i class="bx bx-receipt me-1"></i>Ảnh Chuyển Khoản (Cọc)
-                        </h6>
-                        <button 
-                          type="button" 
-                          class="btn btn-xs btn-outline-danger py-0 px-2" 
-                          style="font-size: 0.7rem;" 
-                          v-if="selectedQuote.receipt_image && !isQuoteReadOnly" 
-                          @click="removeReceipt('quote')"
-                          title="Gỡ ảnh biên lai"
-                        >
-                          <i class="bx bx-trash"></i> Gỡ
-                        </button>
-                      </div>
-
-                      <!-- Đã có ảnh biên lai -->
-                      <div v-if="selectedQuote.receipt_image" class="border rounded p-2 bg-light text-center">
-                        <img 
-                          :src="selectedQuote.receipt_image" 
-                          alt="Biên lai chuyển khoản" 
-                          class="img-fluid rounded cursor-pointer border shadow-sm mb-1" 
-                          style="max-height: 95px; width: auto; max-width: 100%; object-fit: contain; background: #fff;"
-                          @click="openReceiptViewer(selectedQuote.receipt_image)"
-                          title="Bấm để xem phóng to biên lai"
-                        >
-                        <div class="d-flex justify-content-center gap-1 mt-1">
-                          <button 
-                            type="button" 
-                            class="btn btn-sm btn-outline-primary py-0 px-2" 
-                            style="font-size: 0.72rem;"
-                            @click="openReceiptViewer(selectedQuote.receipt_image)"
-                          >
-                            <i class="bx bx-zoom-in me-1"></i>Phóng to
-                          </button>
-                          <label 
-                            v-if="!isQuoteReadOnly"
-                            class="btn btn-sm btn-outline-secondary py-0 px-2 mb-0" 
-                            style="font-size: 0.72rem; cursor: pointer;"
-                          >
-                            <i class="bx bx-refresh me-1"></i>Đổi ảnh
-                            <input type="file" class="d-none" accept="image/*" @change="onFileSelected($event, 'quote')">
-                          </label>
-                        </div>
-                      </div>
-
-                      <!-- Chưa có ảnh: Vùng Upload / Paste Ctrl+V -->
-                      <div 
-                        v-else-if="!isQuoteReadOnly"
-                        class="border border-dashed rounded p-2 text-center bg-light cursor-pointer"
-                        @paste="onPasteReceipt($event, 'quote')"
-                        tabindex="0"
-                        @click="$refs.quoteReceiptInput?.click()"
-                        title="Nhấp để tải ảnh hoặc bấm Ctrl+V để dán trực tiếp ảnh chụp màn hình"
-                      >
-                        <input 
-                          type="file" 
-                          class="d-none" 
-                          ref="quoteReceiptInput" 
-                          accept="image/*" 
-                          @change="onFileSelected($event, 'quote')"
-                        >
-                        <div v-if="isUploadingReceipt" class="py-1">
-                          <span class="spinner-border spinner-border-sm text-primary"></span>
-                          <span class="ms-1 small text-muted">Đang tải ảnh...</span>
-                        </div>
-                        <div v-else>
-                          <i class="bx bx-cloud-upload fs-4 text-primary d-block mb-1"></i>
-                          <span class="d-block fw-bold text-dark" style="font-size: 0.78rem;">Tải ảnh hoặc Dán (Ctrl+V)</span>
-                          <span class="text-muted" style="font-size: 0.7rem;">Ảnh chuyển khoản Zalo / App ngân hàng</span>
-                        </div>
-                      </div>
-                      <div v-else class="text-muted small fst-italic p-2 border rounded bg-light text-center">
-                        Chưa có ảnh biên lai
-                      </div>
                     </div>
                   </div>
                 </div>
@@ -571,10 +468,110 @@
                         </span>
                       </div>
                     </div>
+
+                    <!-- KHU VỰC BIÊN LAI CHUYỂN TIỀN (1 ROW 2 PHẦN) -->
+                    <div class="mt-3 pt-2 border-top mb-3">
+                      <!-- Input file ẩn để kích hoạt khi bấm nút hoặc bấm ô ảnh -->
+                      <input type="file" ref="quoteReceiptSlot1" class="d-none" accept="image/*" @change="onFileSelected($event, 'quote', 1)">
+                      <input type="file" ref="quoteReceiptSlot2" class="d-none" accept="image/*" @change="onFileSelected($event, 'quote', 2)">
+
+                      <div class="mb-2">
+                        <label class="form-label fw-bold text-dark mb-0 text-uppercase" style="font-size: 0.75rem;">
+                          <i class="bx bx-receipt me-1 text-primary"></i>Biên Lai Chuyển Tiền
+                        </label>
+                      </div>
+
+                      <!-- 1 ROW GỒM 2 PHẦN CHO 2 ẢNH -->
+                      <div class="row g-2">
+                        <!-- Phần 1: Ảnh 1 (Cọc) -->
+                        <div class="col-6">
+                          <div 
+                            class="d-flex flex-column justify-content-center align-items-center border rounded bg-light position-relative p-1" 
+                            style="height: 105px; cursor: pointer;"
+                            :style="!selectedQuote.receipt_image ? 'border-style: dashed !important;' : ''"
+                            @paste="onPasteReceipt($event, 'quote', 1)"
+                            @click="!selectedQuote.receipt_image && !isQuoteReadOnly ? triggerAddReceiptSlot('quote', 1) : null"
+                            tabindex="0"
+                            :title="selectedQuote.receipt_image ? 'Nhấp để xem phóng to' : 'Nhấp để tải ảnh hoặc Ctrl+V để dán'"
+                          >
+                            <div v-if="uploadingKey === 'quote_1'" class="text-center">
+                              <span class="spinner-border spinner-border-sm text-primary"></span>
+                              <div class="text-muted small mt-1" style="font-size: 0.65rem;">Đang tải...</div>
+                            </div>
+                            <template v-else-if="selectedQuote.receipt_image">
+                              <img 
+                                :src="selectedQuote.receipt_image" 
+                                alt="Biên lai 1" 
+                                class="rounded" 
+                                style="max-height: 95px; max-width: 100%; object-fit: contain;" 
+                                @click.stop="openReceiptViewer(selectedQuote.receipt_image)" 
+                                title="Nhấp để xem phóng to"
+                              />
+                              <button 
+                                v-if="!isQuoteReadOnly" 
+                                type="button" 
+                                class="btn btn-icon btn-sm bg-white text-danger position-absolute top-0 end-0 m-1 rounded-circle shadow-sm border" 
+                                @click.stop="removeReceipt('quote', 1)" 
+                                style="width: 24px; height: 24px; padding: 0; line-height: 1;" 
+                                title="Xóa ảnh"
+                              >
+                                <i class="bx bx-trash" style="font-size: 13px;"></i>
+                              </button>
+                            </template>
+                            <div v-else class="text-center text-muted">
+                              <i class="bx bx-image-add fs-3 d-block text-secondary mb-1"></i>
+                              <span style="font-size: 0.68rem;">Ảnh 1</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        <!-- Phần 2: Ảnh 2 (Còn lại) -->
+                        <div class="col-6">
+                          <div 
+                            class="d-flex flex-column justify-content-center align-items-center border rounded bg-light position-relative p-1" 
+                            style="height: 105px; cursor: pointer;"
+                            :style="!selectedQuote.receipt_image_2 ? 'border-style: dashed !important;' : ''"
+                            @paste="onPasteReceipt($event, 'quote', 2)"
+                            @click="!selectedQuote.receipt_image_2 && !isQuoteReadOnly ? triggerAddReceiptSlot('quote', 2) : null"
+                            tabindex="0"
+                            :title="selectedQuote.receipt_image_2 ? 'Nhấp để xem phóng to' : 'Nhấp để tải ảnh hoặc Ctrl+V để dán'"
+                          >
+                            <div v-if="uploadingKey === 'quote_2'" class="text-center">
+                              <span class="spinner-border spinner-border-sm text-primary"></span>
+                              <div class="text-muted small mt-1" style="font-size: 0.65rem;">Đang tải...</div>
+                            </div>
+                            <template v-else-if="selectedQuote.receipt_image_2">
+                              <img 
+                                :src="selectedQuote.receipt_image_2" 
+                                alt="Biên lai 2" 
+                                class="rounded" 
+                                style="max-height: 95px; max-width: 100%; object-fit: contain;" 
+                                @click.stop="openReceiptViewer(selectedQuote.receipt_image_2)" 
+                                title="Nhấp để xem phóng to"
+                              />
+                              <button 
+                                v-if="!isQuoteReadOnly" 
+                                type="button" 
+                                class="btn btn-icon btn-sm bg-white text-danger position-absolute top-0 end-0 m-1 rounded-circle shadow-sm border" 
+                                @click.stop="removeReceipt('quote', 2)" 
+                                style="width: 24px; height: 24px; padding: 0; line-height: 1;" 
+                                title="Xóa ảnh"
+                              >
+                                <i class="bx bx-trash" style="font-size: 13px;"></i>
+                              </button>
+                            </template>
+                            <div v-else class="text-center text-muted">
+                              <i class="bx bx-image-add fs-3 d-block text-secondary mb-1"></i>
+                              <span style="font-size: 0.68rem;">Ảnh 2</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
 
                   <!-- Cụm Tổng Cộng & Thu COD ở đáy -->
-                  <div class="pt-2 bg-light p-3 rounded border">
+                  <div class="mt-3 pt-2 bg-light p-3 rounded border">
                     <div class="d-flex justify-content-between align-items-center mb-2">
                       <span class="fw-bold text-dark" style="font-size: 0.9rem;">Tổng Cộng:</span>
                       <span class="fw-bold text-danger fs-5">{{ formatCurrency(calculateTotal(selectedQuote.items) + (selectedQuote.freight_collect ? 0 : (selectedQuote.shipping_fee || 0))) }}</span>
@@ -752,85 +749,6 @@
                     :can-clear="false"
                   />
                 </div>
-
-                <!-- Ảnh Chuyển Khoản / Biên Lai Đơn Hàng -->
-                <div class="mt-2 pt-2 border-top">
-                  <div class="d-flex justify-content-between align-items-center mb-1">
-                    <h6 class="fw-bold mb-0 text-uppercase text-primary" style="font-size: 0.75rem;">
-                      <i class="bx bx-receipt me-1"></i>Ảnh Chuyển Khoản / Biên Lai
-                    </h6>
-                    <button 
-                      type="button" 
-                      class="btn btn-xs btn-outline-danger py-0 px-2" 
-                      style="font-size: 0.7rem;" 
-                      v-if="selectedOrder.receipt_image && !isOrderReadOnly" 
-                      @click="removeReceipt('order')"
-                      title="Gỡ ảnh biên lai"
-                    >
-                      <i class="bx bx-trash"></i> Gỡ
-                    </button>
-                  </div>
-
-                  <!-- Đã có ảnh biên lai -->
-                  <div v-if="selectedOrder.receipt_image" class="border rounded p-2 bg-light text-center">
-                    <img 
-                      :src="selectedOrder.receipt_image" 
-                      alt="Biên lai chuyển khoản" 
-                      class="img-fluid rounded cursor-pointer border shadow-sm mb-1" 
-                      style="max-height: 95px; width: auto; max-width: 100%; object-fit: contain; background: #fff;"
-                      @click="openReceiptViewer(selectedOrder.receipt_image)"
-                      title="Bấm để xem phóng to biên lai"
-                    >
-                    <div class="d-flex justify-content-center gap-1 mt-1">
-                      <button 
-                        type="button" 
-                        class="btn btn-sm btn-outline-primary py-0 px-2" 
-                        style="font-size: 0.72rem;"
-                        @click="openReceiptViewer(selectedOrder.receipt_image)"
-                      >
-                        <i class="bx bx-zoom-in me-1"></i>Phóng to
-                      </button>
-                      <label 
-                        v-if="!isOrderReadOnly"
-                        class="btn btn-sm btn-outline-secondary py-0 px-2 mb-0" 
-                        style="font-size: 0.72rem; cursor: pointer;"
-                      >
-                        <i class="bx bx-refresh me-1"></i>Đổi ảnh
-                        <input type="file" class="d-none" accept="image/*" @change="onFileSelected($event, 'order')">
-                      </label>
-                    </div>
-                  </div>
-
-                  <!-- Chưa có ảnh: Vùng Upload / Paste Ctrl+V -->
-                  <div 
-                    v-else-if="!isOrderReadOnly"
-                    class="border border-dashed rounded p-2 text-center bg-light cursor-pointer"
-                    @paste="onPasteReceipt($event, 'order')"
-                    tabindex="0"
-                    @click="$refs.orderReceiptInput?.click()"
-                    title="Nhấp để tải ảnh hoặc bấm Ctrl+V để dán trực tiếp ảnh chụp màn hình"
-                  >
-                    <input 
-                      type="file" 
-                      class="d-none" 
-                      ref="orderReceiptInput" 
-                      accept="image/*" 
-                      @change="onFileSelected($event, 'order')"
-                    >
-                    <div v-if="isUploadingReceipt" class="py-1">
-                      <span class="spinner-border spinner-border-sm text-primary"></span>
-                      <span class="ms-1 small text-muted">Đang tải ảnh...</span>
-                    </div>
-                    <div v-else>
-                      <i class="bx bx-cloud-upload fs-4 text-primary d-block mb-1"></i>
-                      <span class="d-block fw-bold text-dark" style="font-size: 0.78rem;">Tải ảnh hoặc Dán (Ctrl+V)</span>
-                      <span class="text-muted" style="font-size: 0.7rem;">Ảnh chuyển khoản Zalo / App ngân hàng</span>
-                    </div>
-                  </div>
-                  <div v-else class="text-muted small fst-italic p-2 border rounded bg-light text-center">
-                    Chưa có ảnh biên lai
-                  </div>
-                </div>
               </div>
 
               <!-- Cột 2 (Giữa): Sản Phẩm Trong Đơn (Cuộn dọc) -->
@@ -961,10 +879,110 @@
                       </span>
                     </div>
                   </div>
+
+                  <!-- KHU VỰC BIÊN LAI CHUYỂN TIỀN (1 ROW 2 PHẦN) -->
+                  <div class="mt-3 pt-2 border-top mb-3">
+                    <!-- Input file ẩn để kích hoạt khi bấm nút hoặc bấm ô ảnh -->
+                    <input type="file" ref="orderReceiptSlot1" class="d-none" accept="image/*" @change="onFileSelected($event, 'order', 1)">
+                    <input type="file" ref="orderReceiptSlot2" class="d-none" accept="image/*" @change="onFileSelected($event, 'order', 2)">
+
+                    <div class="mb-2">
+                      <label class="form-label fw-bold text-dark mb-0 text-uppercase" style="font-size: 0.75rem;">
+                        <i class="bx bx-receipt me-1 text-primary"></i>Biên Lai Chuyển Tiền
+                      </label>
+                    </div>
+
+                    <!-- 1 ROW GỒM 2 PHẦN CHO 2 ẢNH -->
+                    <div class="row g-2">
+                      <!-- Phần 1: Ảnh 1 (Cọc) -->
+                      <div class="col-6">
+                        <div 
+                          class="d-flex flex-column justify-content-center align-items-center border rounded bg-light position-relative p-1" 
+                          style="height: 105px; cursor: pointer;"
+                          :style="!selectedOrder.receipt_image ? 'border-style: dashed !important;' : ''"
+                          @paste="onPasteReceipt($event, 'order', 1)"
+                          @click="!selectedOrder.receipt_image && !isOrderReadOnly ? triggerAddReceiptSlot('order', 1) : null"
+                          tabindex="0"
+                          :title="selectedOrder.receipt_image ? 'Nhấp để xem phóng to' : 'Nhấp để tải ảnh hoặc Ctrl+V để dán'"
+                        >
+                          <div v-if="uploadingKey === 'order_1'" class="text-center">
+                            <span class="spinner-border spinner-border-sm text-primary"></span>
+                            <div class="text-muted small mt-1" style="font-size: 0.65rem;">Đang tải...</div>
+                          </div>
+                          <template v-else-if="selectedOrder.receipt_image">
+                            <img 
+                              :src="selectedOrder.receipt_image" 
+                              alt="Biên lai 1" 
+                              class="rounded" 
+                              style="max-height: 95px; max-width: 100%; object-fit: contain;" 
+                              @click.stop="openReceiptViewer(selectedOrder.receipt_image)" 
+                              title="Nhấp để xem phóng to"
+                            />
+                            <button 
+                              v-if="!isOrderReadOnly" 
+                              type="button" 
+                              class="btn btn-icon btn-sm bg-white text-danger position-absolute top-0 end-0 m-1 rounded-circle shadow-sm border" 
+                              @click.stop="removeReceipt('order', 1)" 
+                              style="width: 24px; height: 24px; padding: 0; line-height: 1;" 
+                              title="Xóa ảnh"
+                            >
+                              <i class="bx bx-trash" style="font-size: 13px;"></i>
+                            </button>
+                          </template>
+                          <div v-else class="text-center text-muted">
+                            <i class="bx bx-image-add fs-3 d-block text-secondary mb-1"></i>
+                            <span style="font-size: 0.68rem;">Ảnh 1</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- Phần 2: Ảnh 2 (Còn lại) -->
+                      <div class="col-6">
+                        <div 
+                          class="d-flex flex-column justify-content-center align-items-center border rounded bg-light position-relative p-1" 
+                          style="height: 105px; cursor: pointer;"
+                          :style="!selectedOrder.receipt_image_2 ? 'border-style: dashed !important;' : ''"
+                          @paste="onPasteReceipt($event, 'order', 2)"
+                          @click="!selectedOrder.receipt_image_2 && !isOrderReadOnly ? triggerAddReceiptSlot('order', 2) : null"
+                          tabindex="0"
+                          :title="selectedOrder.receipt_image_2 ? 'Nhấp để xem phóng to' : 'Nhấp để tải ảnh hoặc Ctrl+V để dán'"
+                        >
+                          <div v-if="uploadingKey === 'order_2'" class="text-center">
+                            <span class="spinner-border spinner-border-sm text-primary"></span>
+                            <div class="text-muted small mt-1" style="font-size: 0.65rem;">Đang tải...</div>
+                          </div>
+                          <template v-else-if="selectedOrder.receipt_image_2">
+                            <img 
+                              :src="selectedOrder.receipt_image_2" 
+                              alt="Biên lai 2" 
+                              class="rounded" 
+                              style="max-height: 95px; max-width: 100%; object-fit: contain;" 
+                              @click.stop="openReceiptViewer(selectedOrder.receipt_image_2)" 
+                              title="Nhấp để xem phóng to"
+                            />
+                            <button 
+                              v-if="!isOrderReadOnly" 
+                              type="button" 
+                              class="btn btn-icon btn-sm bg-white text-danger position-absolute top-0 end-0 m-1 rounded-circle shadow-sm border" 
+                              @click.stop="removeReceipt('order', 2)" 
+                              style="width: 24px; height: 24px; padding: 0; line-height: 1;" 
+                              title="Xóa ảnh"
+                            >
+                              <i class="bx bx-trash" style="font-size: 13px;"></i>
+                            </button>
+                          </template>
+                          <div v-else class="text-center text-muted">
+                            <i class="bx bx-image-add fs-3 d-block text-secondary mb-1"></i>
+                            <span style="font-size: 0.68rem;">Ảnh 2</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
 
                 <!-- Cụm Cần Thanh Toán ở đáy -->
-                <div class="pt-2 bg-light p-3 rounded border">
+                <div class="mt-3 pt-2 bg-light p-3 rounded border">
                   <div class="d-flex justify-content-between align-items-center mb-1">
                     <span class="fw-bold text-dark" style="font-size: 0.9rem;">Cần Thanh Toán:</span>
                     <span class="fw-bold text-danger fs-5">{{ formatCurrency((calculateTotal(selectedOrder.items) + (selectedOrder.freight_collect ? 0 : (selectedOrder.shipping_fee || 0))) - (selectedOrder.paid_amount || 0)) }}</span>
@@ -1373,7 +1391,8 @@ export default {
       isSendingShipping: false,
       // Receipt Viewer & Upload
       viewingReceiptImage: null,
-      isUploadingReceipt: false
+      isUploadingReceipt: false,
+      uploadingKey: ''
     };
   },
   computed: {
@@ -1591,6 +1610,7 @@ export default {
           token: item.token,
           address: item.dia_chi_giao_hang || item.dia_chi_text || (item.dia_chi ? item.dia_chi.dia_chi_cu_the : '') || '',
           receipt_image: item.anh_chuyen_khoan || '',
+          receipt_image_2: item.anh_chuyen_khoan_2 || '',
           items: (item.chi_tiet || []).map(i => ({
             id: i.id,
             part_name: i.ten_phu_tung || '',
@@ -1625,6 +1645,7 @@ export default {
           customer_notes: item.ghi_chu_khach_hang || '',
           address: (item.dia_chi ? item.dia_chi.dia_chi_cu_the : item.dia_chi_text) || '',
           receipt_image: item.anh_chuyen_khoan || '',
+          receipt_image_2: item.anh_chuyen_khoan_2 || '',
           items: (item.chi_tiet || []).map(i => ({
             id: i.id,
             part_name: i.ten_phu_tung || (i.phu_tung ? i.phu_tung.ten_phu_tung : (i.san_pham ? i.san_pham.ten_san_pham : 'Sản phẩm ID: ' + i.id_san_pham)),
@@ -1965,6 +1986,8 @@ export default {
             address: this.selectedQuote.address,
             anh_chuyen_khoan: this.selectedQuote.receipt_image,
             receipt_image: this.selectedQuote.receipt_image,
+            anh_chuyen_khoan_2: this.selectedQuote.receipt_image_2,
+            receipt_image_2: this.selectedQuote.receipt_image_2,
             shipping_fee: this.selectedQuote.freight_collect ? 0 : (this.selectedQuote.shipping_fee || 0),
             freight_collect: this.selectedQuote.freight_collect ? 1 : 0,
             deposit_required: this.selectedQuote.deposit_required || 0,
@@ -2000,6 +2023,8 @@ export default {
             address: this.selectedQuote.address,
             anh_chuyen_khoan: this.selectedQuote.receipt_image,
             receipt_image: this.selectedQuote.receipt_image,
+            anh_chuyen_khoan_2: this.selectedQuote.receipt_image_2,
+            receipt_image_2: this.selectedQuote.receipt_image_2,
             shipping_fee: this.selectedQuote.freight_collect ? 0 : (this.selectedQuote.shipping_fee || 0),
             freight_collect: this.selectedQuote.freight_collect ? 1 : 0,
             deposit_required: this.selectedQuote.deposit_required || 0,
@@ -2041,6 +2066,8 @@ export default {
             address: this.selectedQuote.address,
             anh_chuyen_khoan: this.selectedQuote.receipt_image,
             receipt_image: this.selectedQuote.receipt_image,
+            anh_chuyen_khoan_2: this.selectedQuote.receipt_image_2,
+            receipt_image_2: this.selectedQuote.receipt_image_2,
             shipping_fee: this.selectedQuote.freight_collect ? 0 : (this.selectedQuote.shipping_fee || 0),
             freight_collect: this.selectedQuote.freight_collect ? 1 : 0,
             deposit_required: this.selectedQuote.deposit_required || 0,
@@ -2077,7 +2104,9 @@ export default {
             address: this.selectedOrder.address,
             dia_chi_text: this.selectedOrder.address,
             anh_chuyen_khoan: this.selectedOrder.receipt_image,
-            receipt_image: this.selectedOrder.receipt_image
+            receipt_image: this.selectedOrder.receipt_image,
+            anh_chuyen_khoan_2: this.selectedOrder.receipt_image_2,
+            receipt_image_2: this.selectedOrder.receipt_image_2
         };
         await this.saveOrderMutation.mutateAsync({ id: this.selectedOrder.id, payload });
         this.closeModal('orderModal');
@@ -2140,7 +2169,9 @@ export default {
             address: item.address,
             dia_chi_text: item.address,
             anh_chuyen_khoan: item.receipt_image,
-            receipt_image: item.receipt_image
+            receipt_image: item.receipt_image,
+            anh_chuyen_khoan_2: item.receipt_image_2,
+            receipt_image_2: item.receipt_image_2
           });
           if (res?.success || res?.data?.success) {
             this.toaster.success(res?.message || res?.data?.message || 'Đã xác nhận nhận cọc thành công!');
@@ -2306,14 +2337,24 @@ export default {
       modalEl.show();
     },
 
-    async onFileSelected(event, type) {
+    triggerAddReceiptSlot(type, slot) {
+      if (type === 'quote') {
+        if (slot === 1) this.$refs.quoteReceiptSlot1?.click();
+        else this.$refs.quoteReceiptSlot2?.click();
+      } else {
+        if (slot === 1) this.$refs.orderReceiptSlot1?.click();
+        else this.$refs.orderReceiptSlot2?.click();
+      }
+    },
+
+    async onFileSelected(event, type, slot = 1) {
       const file = event.target.files?.[0];
       if (!file) return;
-      await this.uploadReceiptFile(file, type);
+      await this.uploadReceiptFile(file, type, slot);
       event.target.value = '';
     },
 
-    async onPasteReceipt(event, type) {
+    async onPasteReceipt(event, type, slot = 1) {
       const items = (event.clipboardData || event.originalEvent?.clipboardData)?.items;
       if (!items) return;
       for (const item of items) {
@@ -2321,23 +2362,25 @@ export default {
           event.preventDefault();
           const file = item.getAsFile();
           if (file) {
-            await this.uploadReceiptFile(file, type);
+            await this.uploadReceiptFile(file, type, slot);
             break;
           }
         }
       }
     },
 
-    async uploadReceiptFile(file, type) {
+    async uploadReceiptFile(file, type, slot = 1) {
       const targetObj = type === 'quote' ? this.selectedQuote : this.selectedOrder;
       const id = targetObj?.id;
       if (!id) return;
+      this.uploadingKey = `${type}_${slot}`;
       this.isUploadingReceipt = true;
       try {
         const formData = new FormData();
         formData.append('file', file);
         formData.append('type', type);
         formData.append('id', id);
+        formData.append('slot', slot);
 
         const res = await axiosClient.post('/admin/sales/upload-bien-lai', formData, {
           headers: { 'Content-Type': 'multipart/form-data' }
@@ -2345,12 +2388,14 @@ export default {
 
         const url = res?.url || res?.data?.url;
         if (url) {
+          const prop = slot === 2 ? 'receipt_image_2' : 'receipt_image';
           if (type === 'quote' && this.selectedQuote) {
-            this.selectedQuote.receipt_image = url;
+            this.selectedQuote[prop] = url;
           } else if (type === 'order' && this.selectedOrder) {
-            this.selectedOrder.receipt_image = url;
+            this.selectedOrder[prop] = url;
           }
-          this.toaster.success('Đã tải lên ảnh chụp màn hình chuyển khoản!');
+          const label = slot === 1 ? 'Ảnh cọc' : 'Ảnh chuyển tiền còn lại';
+          this.toaster.success(`Đã tải lên ${label} thành công!`);
           this.refreshData();
         } else {
           this.toaster.error(res?.message || 'Không thể tải ảnh lên.');
@@ -2359,18 +2404,20 @@ export default {
         console.error('Lỗi upload biên lai:', err);
         this.toaster.error(err?.response?.data?.message || 'Lỗi khi tải ảnh biên lai!');
       } finally {
+        this.uploadingKey = '';
         this.isUploadingReceipt = false;
       }
     },
 
-    async removeReceipt(type) {
+    async removeReceipt(type, slot = 1) {
       const targetObj = type === 'quote' ? this.selectedQuote : this.selectedOrder;
       const id = targetObj?.id;
       if (!id) return;
 
+      const slotLabel = slot === 1 ? 'ảnh chuyển cọc' : 'ảnh chuyển tiền còn lại';
       const result = await Swal.fire({
         title: 'Gỡ ảnh biên lai?',
-        text: 'Bạn chắc chắn muốn gỡ ảnh chụp chuyển khoản này?',
+        text: `Bạn chắc chắn muốn gỡ ${slotLabel} này?`,
         icon: 'warning',
         showCancelButton: true,
         confirmButtonText: 'Đồng ý gỡ',
@@ -2385,13 +2432,14 @@ export default {
       if (!result.isConfirmed) return;
 
       try {
-        await axiosClient.post('/admin/sales/remove-bien-lai', { type, id });
+        await axiosClient.post('/admin/sales/remove-bien-lai', { type, id, slot });
+        const prop = slot === 2 ? 'receipt_image_2' : 'receipt_image';
         if (type === 'quote' && this.selectedQuote) {
-          this.selectedQuote.receipt_image = '';
+          this.selectedQuote[prop] = '';
         } else if (type === 'order' && this.selectedOrder) {
-          this.selectedOrder.receipt_image = '';
+          this.selectedOrder[prop] = '';
         }
-        this.toaster.success('Đã gỡ ảnh biên lai chuyển khoản!');
+        this.toaster.success(`Đã gỡ ${slotLabel}!`);
         this.refreshData();
       } catch (err) {
         this.toaster.error('Không thể gỡ ảnh biên lai.');

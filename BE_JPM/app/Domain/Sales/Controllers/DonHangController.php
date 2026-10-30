@@ -144,6 +144,7 @@ class DonHangController extends Controller
                 'khach_tu_tra_cuoc' => $request->freight_collect ?? $donHang->khach_tu_tra_cuoc,
                 'dia_chi_text' => $request->address ?? $request->dia_chi_text ?? $donHang->dia_chi_text,
                 'anh_chuyen_khoan' => $request->input('anh_chuyen_khoan', $request->input('receipt_image', $donHang->anh_chuyen_khoan)),
+                'anh_chuyen_khoan_2' => $request->input('anh_chuyen_khoan_2', $request->input('receipt_image_2', $donHang->anh_chuyen_khoan_2)),
             ]);
 
             if ($oldStatus != 4 && $newStatus == 4) {
@@ -309,6 +310,11 @@ class DonHangController extends Controller
                 $donHang->anh_chuyen_khoan = $request->input('anh_chuyen_khoan');
             } elseif ($request->filled('receipt_image')) {
                 $donHang->anh_chuyen_khoan = $request->input('receipt_image');
+            }
+            if ($request->filled('anh_chuyen_khoan_2')) {
+                $donHang->anh_chuyen_khoan_2 = $request->input('anh_chuyen_khoan_2');
+            } elseif ($request->filled('receipt_image_2')) {
+                $donHang->anh_chuyen_khoan_2 = $request->input('receipt_image_2');
             }
             $amount = (float) $request->input('amount', $donHang->tien_coc_yeu_cau);
             if ($amount <= 0 && $donHang->tien_coc_yeu_cau > 0) {
