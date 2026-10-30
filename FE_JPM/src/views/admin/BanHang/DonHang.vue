@@ -44,10 +44,10 @@
             :class="{ active: currentTab === 'processing' }"
             @click="switchTab('processing')"
             role="tab"
-            title="Đơn hàng đang gom phụ tùng, chuẩn bị xuất kho hoặc lên đơn Nhật"
+            title="Đơn hàng đã đặt cọc, đang gom phụ tùng hoặc lên đơn Nhật"
           >
             <i class="bx bx-package me-1"></i>
-            <span>Đang Xử Lý</span>
+            <span>Đã Cọc & Xử Lý</span>
             <span v-if="countProcessing > 0" class="tab-count-badge ms-2">{{ countProcessing }}</span>
           </button>
         </li>
@@ -226,7 +226,7 @@
                         <span v-if="item.deposit_required > 0 && Number(item.da_thu || 0) === 0" class="badge badge-custom bg-pastel-warning">CHỜ CỌC</span>
                         <span v-else class="badge badge-custom bg-pastel-info">ĐÃ BÁO GIÁ</span>
                       </template>
-                      <span v-else-if="item.status === 2" class="badge badge-custom bg-pastel-warning">ĐANG XỬ LÝ</span>
+                      <span v-else-if="item.status === 2" class="badge badge-custom bg-pastel-warning">ĐÃ CỌC & XỬ LÝ</span>
                       <span v-else-if="item.status === 3" class="badge badge-custom bg-pastel-danger">ĐÃ HỦY</span>
                       <span v-else-if="item.status === 4" class="badge badge-custom bg-pastel-success">HOÀN THÀNH</span>
                       <span v-else class="badge badge-custom bg-pastel-secondary">KHÁC</span>
@@ -237,7 +237,7 @@
                         <span v-if="item.deposit_required > 0 && Number(item.paid_amount || 0) === 0" class="badge badge-custom bg-pastel-warning">CHỜ CỌC</span>
                         <span v-else class="badge badge-custom bg-pastel-info">CHỜ DUYỆT</span>
                       </template>
-                      <span v-else-if="item.status === 1" class="badge badge-custom bg-pastel-warning">ĐANG XỬ LÝ</span>
+                      <span v-else-if="item.status === 1" class="badge badge-custom bg-pastel-warning">ĐÃ CỌC & XỬ LÝ</span>
                       <span v-else-if="item.status === 2" class="badge badge-custom bg-pastel-info">ĐANG GIAO HÀNG</span>
                       <span v-else-if="item.status === 3" class="badge badge-custom bg-pastel-success">HOÀN THÀNH</span>
                       <span v-else-if="item.status === 4" class="badge badge-custom bg-pastel-danger">ĐÃ HỦY</span>
@@ -267,39 +267,6 @@
                         :title="item._type === 'quote' ? 'Sao chép link báo giá gửi khách' : 'Sao chép link tra cứu đơn gửi khách'"
                       >
                         <i class="bx bx-link"></i>
-                      </button>
-
-                      <!-- Nút Đã Cọc & Lên Đơn (Báo giá hoặc Đơn chờ cọc) -->
-                      <button 
-                        v-if="(item._type === 'quote' && item.status === 1) || (item._type === 'order' && item.status === 0)" 
-                        type="button" 
-                        class="action-btn text-success" 
-                        @click="confirmDepositBtn(item)" 
-                        title="Đã cọc -> Bắt đầu lên đơn xử lý"
-                      >
-                        <i class="bx bx-check-circle"></i>
-                      </button>
-
-                      <!-- Nút Gom Đơn Xong -> Chuyển Sang Đang Giao (Đang xử lý / gom hàng) -->
-                      <button 
-                        v-if="(item._type === 'order' && item.status === 1) || (item._type === 'quote' && item.status === 2)" 
-                        type="button" 
-                        class="action-btn text-success" 
-                        @click="startShippingBtn(item)" 
-                        title="Gom đơn xong -> Chuyển sang Đang Giao"
-                      >
-                        <i class="bx bx-check-circle"></i>
-                      </button>
-
-                      <!-- Nút Khách Hàng Đã Nhận Hàng & Chuyển Tiền (Đang giao hàng) -->
-                      <button 
-                        v-if="item._type === 'order' && item.status === 2" 
-                        type="button" 
-                        class="action-btn text-success" 
-                        @click="completeOrderBtn(item)" 
-                        title="Khách hàng đã nhận hàng & chuyển tiền -> Hoàn thành đơn"
-                      >
-                        <i class="bx bx-check-circle"></i>
                       </button>
 
                       <!-- Nút Hủy Đơn / Hủy Yêu Cầu -->
@@ -550,6 +517,29 @@
                       <div v-if="!isQuoteReadOnly" class="text-end">
                         <span class="text-danger fw-semibold" style="font-size: 0.75rem;">
                           {{ formatCurrency(selectedQuote.deposit_required || 0) }}
+                        </span>
+                      </div>
+                    </div>
+
+                    <!-- Đã Thu (Cọc / Trả trước): Hiển thị khi ĐÃ BÁO GIÁ status >= 1 -->
+                    <div class="mb-3 pb-2 border-bottom" v-if="selectedQuote && selectedQuote.status >= 1">
+                      <div class="d-flex justify-content-between align-items-center mb-1">
+                        <label class="text-dark fw-bold mb-0" style="font-size: 0.88rem;">Đã Thu (Cọc / Trả trước):</label>
+                        <div style="width: 140px;" v-if="!isQuoteReadOnly">
+                          <input 
+                            type="number" 
+                            class="form-control form-control-sm text-end text-success fw-bold" 
+                            :value="selectedQuote.da_thu ? selectedQuote.da_thu : ''" 
+                            @input="selectedQuote.da_thu = $event.target.value === '' ? 0 : Number($event.target.value)" 
+                            min="0"
+                            placeholder="0" 
+                          >
+                        </div>
+                        <span v-else class="fw-bold text-success fs-6">{{ formatCurrency(selectedQuote.da_thu || 0) }}</span>
+                      </div>
+                      <div v-if="!isQuoteReadOnly" class="text-end">
+                        <span class="text-success fw-semibold" style="font-size: 0.75rem;">
+                          {{ formatCurrency(selectedQuote.da_thu || 0) }}
                         </span>
                       </div>
                     </div>
@@ -1704,7 +1694,7 @@ export default {
       switch (this.currentTab) {
         case 'pending_quotes': return 'Danh Sách Yêu Cầu Chờ Báo Giá';
         case 'quoted_quotes': return 'Danh Sách Đang Chờ Khách Chốt Giá & Cọc';
-        case 'processing': return 'Đơn Hàng Đang Xử Lý & Gom Hàng';
+        case 'processing': return 'Đơn Hàng Đã Cọc & Xử Lý';
         case 'shipping': return 'Đơn Hàng Đang Vận Chuyển';
         case 'completed': return 'Danh Sách Đơn Hàng Hoàn Thành';
         case 'cancelled': return 'Danh Sách Giao Dịch Đã Hủy';
@@ -2142,6 +2132,7 @@ export default {
             shipping_fee: this.selectedQuote.freight_collect ? 0 : (this.selectedQuote.shipping_fee || 0),
             freight_collect: this.selectedQuote.freight_collect ? 1 : 0,
             deposit_required: this.selectedQuote.deposit_required || 0,
+            da_thu: this.selectedQuote.da_thu || 0,
             chi_tiet: this.selectedQuote.items
         };
         await this.saveQuoteMutation.mutateAsync({ id: this.selectedQuote.id, payload });
@@ -2179,6 +2170,7 @@ export default {
             shipping_fee: this.selectedQuote.freight_collect ? 0 : (this.selectedQuote.shipping_fee || 0),
             freight_collect: this.selectedQuote.freight_collect ? 1 : 0,
             deposit_required: this.selectedQuote.deposit_required || 0,
+            da_thu: this.selectedQuote.da_thu || 0,
             chi_tiet: this.selectedQuote.items
         };
         await this.saveQuoteMutation.mutateAsync({ id: this.selectedQuote.id, payload });
@@ -2222,6 +2214,7 @@ export default {
             shipping_fee: this.selectedQuote.freight_collect ? 0 : (this.selectedQuote.shipping_fee || 0),
             freight_collect: this.selectedQuote.freight_collect ? 1 : 0,
             deposit_required: this.selectedQuote.deposit_required || 0,
+            da_thu: this.selectedQuote.da_thu || 0,
             chi_tiet: this.selectedQuote.items
         };
         await this.saveQuoteMutation.mutateAsync({ id: this.selectedQuote.id, payload });

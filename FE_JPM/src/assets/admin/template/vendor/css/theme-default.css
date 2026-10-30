@@ -917,14 +917,16 @@ html:not(.layout-menu-collapsed) .bg-menu-theme .menu-inner .menu-item .menu-lin
   background-color: #fff !important;
   transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out !important;
 }
-.form-control:focus, .form-select:focus, .multiselect.is-active, .multiselect.is-open, .input-group:focus-within .form-control, .input-group:focus-within .input-group-text, .input-group-merge:focus-within .form-control, .input-group-merge:focus-within .input-group-text {
-  border-width: 2px !important;
-  border-color: #17a2b8 !important;
-  box-shadow: 0 0 0.25rem 0.12rem rgba(23, 162, 184, 0.4) !important;
-  outline: 0 !important;
+.form-control-sm, .form-select-sm {
+  padding: 0.25rem 0.625rem !important;
+  font-size: 0.75rem !important;
+  border-radius: 0.25rem !important;
 }
-.form-control:focus, .form-select:focus {
-  padding: calc(0.4375rem - 1px) calc(0.875rem - 1px) !important;
+.form-control:focus, .form-select:focus, .multiselect.is-active, .multiselect.is-open, .input-group:focus-within .form-control, .input-group:focus-within .input-group-text, .input-group-merge:focus-within .form-control, .input-group-merge:focus-within .input-group-text {
+  border-width: 1px !important;
+  border-color: #17a2b8 !important;
+  box-shadow: 0 0 0 0.2rem rgba(23, 162, 184, 0.25) !important;
+  outline: 0 !important;
 }
 
 /* Multiselect theme overrides - no purple, subtle focus border */
@@ -1106,7 +1108,7 @@ tr:has(.multiselect.is-open) {
    SNEAT INPUT GROUP & INPUT GROUP MERGE (Chuẩn nguyên bản Template Sneat 1.00)
    ====================================================================== */
 .input-group:focus-within {
-  box-shadow: 0 0 0.25rem 0.12rem rgba(23, 162, 184, 0.4) !important;
+  box-shadow: 0 0 0 0.2rem rgba(23, 162, 184, 0.25) !important;
   border-radius: 0.375rem !important;
 }
 .input-group:focus-within .form-control,
@@ -1121,7 +1123,7 @@ tr:has(.multiselect.is-open) {
   transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out !important;
 }
 .input-group-merge:focus-within {
-  box-shadow: 0 0 0.25rem 0.12rem rgba(23, 162, 184, 0.4) !important;
+  box-shadow: 0 0 0 0.2rem rgba(23, 162, 184, 0.25) !important;
   border-radius: 0.375rem !important;
 }
 .input-group-merge .input-group-text {
