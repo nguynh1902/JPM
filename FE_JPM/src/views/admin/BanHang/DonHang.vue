@@ -113,8 +113,17 @@
       <!-- MAIN CONTENT AREA (Chuẩn Sneat Admin) -->
       <div>
         <div class="card">
-          <div class="card-header border-bottom">
+          <div class="card-header border-bottom d-flex justify-content-between align-items-center flex-wrap gap-2">
             <h5 class="mb-0 fw-bold text-dark">{{ tabTitle }}</h5>
+            <button 
+              type="button" 
+              class="btn btn-primary shadow-sm d-flex align-items-center"
+              @click="openCreateOrderModal"
+              title="Lên đơn hàng hoặc tạo báo giá mới cho khách Zalo / tại quầy"
+            >
+              <i class="bx bx-plus me-1 fs-5"></i>
+              <span class="fw-semibold">Lên Đơn Mới (Zalo / Quầy)</span>
+            </button>
           </div>
 
           <!-- Bộ lọc (Filters) chuẩn Admin Sneat -->
@@ -205,7 +214,7 @@
                   <td class="text-end">
                     <!-- Phân loại Đơn Hàng -->
                     <template v-if="item._type === 'order'">
-                      <span v-if="item.paid_amount > 0" class="fw-bold text-success">{{ formatCurrency(item.paid_amount) }}</span>
+                      <span v-if="item.paid_amount > 0" class="fw-bold text-primary">{{ formatCurrency(item.paid_amount) }}</span>
                       <span v-else-if="item.deposit_required > 0" class="fw-bold text-dark">{{ formatCurrency(item.deposit_required) }}</span>
                       <span v-else class="text-muted fw-bold d-block text-center">-</span>
                     </template>
@@ -213,7 +222,7 @@
                     <!-- Phân loại Báo Giá -->
                     <template v-else>
                       <span v-if="item.status === 0" class="text-muted fw-bold d-block text-center">-</span>
-                      <span v-else-if="item.da_thu > 0" class="fw-bold text-success">{{ formatCurrency(item.da_thu) }}</span>
+                      <span v-else-if="item.da_thu > 0" class="fw-bold text-primary">{{ formatCurrency(item.da_thu) }}</span>
                       <span v-else-if="item.deposit_required > 0" class="fw-bold text-dark">{{ formatCurrency(item.deposit_required) }}</span>
                       <span v-else class="text-muted fw-bold d-block text-center">-</span>
                     </template>
@@ -528,17 +537,17 @@
                         <div style="width: 140px;" v-if="!isQuoteReadOnly">
                           <input 
                             type="number" 
-                            class="form-control form-control-sm text-end text-success fw-bold" 
+                            class="form-control form-control-sm text-end text-primary fw-bold" 
                             :value="selectedQuote.da_thu ? selectedQuote.da_thu : ''" 
                             @input="selectedQuote.da_thu = $event.target.value === '' ? 0 : Number($event.target.value)" 
                             min="0"
                             placeholder="0" 
                           >
                         </div>
-                        <span v-else class="fw-bold text-success fs-6">{{ formatCurrency(selectedQuote.da_thu || 0) }}</span>
+                        <span v-else class="fw-bold text-primary fs-6">{{ formatCurrency(selectedQuote.da_thu || 0) }}</span>
                       </div>
                       <div v-if="!isQuoteReadOnly" class="text-end">
-                        <span class="text-success fw-semibold" style="font-size: 0.75rem;">
+                        <span class="text-primary fw-semibold" style="font-size: 0.75rem;">
                           {{ formatCurrency(selectedQuote.da_thu || 0) }}
                         </span>
                       </div>
@@ -965,17 +974,17 @@
                       <div style="width: 140px;" v-if="!isOrderInfoReadOnly">
                         <input 
                           type="number" 
-                          class="form-control form-control-sm text-end text-success fw-bold" 
+                          class="form-control form-control-sm text-end text-primary fw-bold" 
                           :value="selectedOrder.paid_amount ? selectedOrder.paid_amount : ''" 
                           @input="selectedOrder.paid_amount = $event.target.value === '' ? 0 : Number($event.target.value)" 
                           min="0"
                           placeholder="0" 
                         >
                       </div>
-                      <span v-else class="fw-bold text-success fs-6">{{ formatCurrency(selectedOrder.paid_amount || 0) }}</span>
+                      <span v-else class="fw-bold text-primary fs-6">{{ formatCurrency(selectedOrder.paid_amount || 0) }}</span>
                     </div>
                     <div v-if="!isOrderInfoReadOnly" class="text-end">
-                      <span class="text-success fw-semibold" style="font-size: 0.75rem;">
+                      <span class="text-primary fw-semibold" style="font-size: 0.75rem;">
                         {{ formatCurrency(selectedOrder.paid_amount || 0) }}
                       </span>
                     </div>
@@ -1090,7 +1099,7 @@
                   </div>
                   <div class="d-flex justify-content-between align-items-center pt-2 border-top">
                     <span class="text-dark fw-bold" style="font-size: 0.9rem;">Thu COD:</span>
-                    <span :class="selectedOrder.status === 3 ? 'fw-bold text-success fs-5' : 'fw-bold text-dark fs-5'">
+                    <span :class="selectedOrder.status === 3 ? 'fw-bold text-primary fs-5' : 'fw-bold text-dark fs-5'">
                       {{ formatCurrency(Math.max(0, (calculateTotal(selectedOrder.items) + (selectedOrder.freight_collect ? 0 : (selectedOrder.shipping_fee || 0))) - (selectedOrder.paid_amount || 0))) }}
                     </span>
                   </div>
@@ -1335,7 +1344,7 @@
                 </div>
                 <div class="d-flex justify-content-between py-1 small">
                   <span class="text-muted">Khách đã đặt cọc:</span>
-                  <span class="fw-bold text-success">{{ formatCurrency(viettelPostOrder.paid_amount || 0) }}</span>
+                  <span class="fw-bold text-primary">{{ formatCurrency(viettelPostOrder.paid_amount || 0) }}</span>
                 </div>
                 <div class="d-flex justify-content-between py-1 border-top mt-1 pt-1">
                   <span class="fw-bold text-dark">Số tiền thu COD khi giao hàng:</span>
@@ -1393,6 +1402,438 @@
             </span>
             <button type="button" class="btn btn-outline-secondary btn-sm px-4" data-bs-dismiss="modal">Đóng</button>
           </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Lên Đơn Hàng / Báo Giá Mới (Zalo / Tại Quầy) -->
+    <div class="modal fade" id="createOrderModal" tabindex="-1" aria-hidden="true" ref="createOrderModal">
+      <div class="modal-dialog modal-xl mt-3 mt-lg-4 modal-dialog-scrollable" style="max-width: 1400px; width: 95%;" role="document">
+        <div class="modal-content border-0 shadow-lg">
+          <div class="modal-header border-bottom pb-3">
+            <h4 class="modal-title fw-bold text-dark mb-0 fs-4">
+              Báo Giá Yêu Cầu - <span class="text-primary">Tạo Mới (Zalo / Quầy)</span>
+            </h4>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <form @submit.prevent>
+            <div class="modal-body pb-2">
+              <div class="row">
+                <!-- Cột 1 (Trái): Thông tin Khách Hàng & Ghi chú -->
+                <div class="col-lg-3 col-12 mb-3 mb-lg-0 border-end d-flex flex-column">
+                  <h6 class="fw-bold mb-3 text-uppercase text-primary" style="font-size: 0.75rem;">Thông tin Khách Hàng</h6>
+                  
+                  <div class="mb-3">
+                    <!-- Chọn nhanh khách hàng cũ -->
+                    <div class="mb-2">
+                      <v-select
+                        v-model="selectedCustomerQuick"
+                        :options="customersList"
+                        placeholder="Chọn khách cũ (nếu có)..."
+                        :searchable="true"
+                        :can-clear="true"
+                        @change="onSelectCustomerQuick"
+                      />
+                    </div>
+
+                    <!-- Tên khách -->
+                    <div class="mb-2">
+                      <label class="form-label text-dark small mb-1 fw-bold"><i class="bx bx-user text-primary me-1"></i>Họ Tên Khách Hàng <span class="text-danger">*</span></label>
+                      <input 
+                        type="text" 
+                        class="form-control form-control-sm text-dark fw-bold" 
+                        placeholder="VD: Anh Đức (Cano Tuần Châu)" 
+                        v-model="createOrderForm.khach_hang_ten" 
+                        required
+                      />
+                    </div>
+
+                    <!-- SĐT -->
+                    <div class="mb-2">
+                      <label class="form-label text-dark small mb-1 fw-bold"><i class="bx bx-phone text-primary me-1"></i>Số Điện Thoại <span class="text-danger">*</span></label>
+                      <input 
+                        type="text" 
+                        class="form-control form-control-sm text-dark" 
+                        placeholder="VD: 0945678123" 
+                        v-model="createOrderForm.khach_hang_sdt" 
+                        required
+                      />
+                    </div>
+
+                    <!-- Email -->
+                    <div class="mb-2">
+                      <label class="form-label text-dark small mb-1"><i class="bx bx-envelope text-primary me-1"></i>Email (nếu có):</label>
+                      <input 
+                        type="email" 
+                        class="form-control form-control-sm text-dark" 
+                        placeholder="VD: duc.tuanchau@gmail.com" 
+                        v-model="createOrderForm.khach_hang_email" 
+                      />
+                    </div>
+                    
+                    <div class="mt-2">
+                      <label class="form-label text-dark small mb-1 fw-bold"><i class="bx bx-map text-primary me-1"></i>Địa Chỉ Giao Hàng:</label>
+                      <textarea 
+                        class="form-control form-control-sm text-dark" 
+                        rows="2"
+                        v-model="createOrderForm.dia_chi_giao_hang" 
+                        placeholder="Số nhà, đường, bến tàu, chành xe..."
+                      ></textarea>
+                    </div>
+                  </div>
+
+                  <!-- Thông Tin Vận Chuyển: Y HỆT quoteModal -->
+                  <div class="mb-3 p-2 bg-light border rounded">
+                    <h6 class="fw-bold mb-2 text-uppercase text-primary" style="font-size: 0.72rem;">
+                      <i class="bx bxs-truck me-1"></i>Thông Tin Vận Chuyển
+                    </h6>
+                    <div class="mb-2">
+                      <label class="form-label text-dark small mb-1 fw-semibold">Đơn vị vận chuyển:</label>
+                      <input 
+                        type="text" 
+                        class="form-control form-control-sm text-dark bg-white" 
+                        v-model="createOrderForm.ten_don_vi_van_chuyen" 
+                        placeholder="ViettelPost, GHTK, Chành xe Tô Châu, Phương Trang..."
+                      />
+                    </div>
+                    <div class="mb-1">
+                      <label class="form-label text-dark small mb-1 fw-semibold">Mã vận đơn:</label>
+                      <input 
+                        type="text" 
+                        class="form-control form-control-sm text-danger fw-bold bg-white" 
+                        v-model="createOrderForm.ma_van_don" 
+                        placeholder="Nhập mã vận đơn (nếu có)..."
+                      />
+                    </div>
+                  </div>
+
+                  <h6 class="fw-bold mb-2 text-uppercase text-primary" style="font-size: 0.75rem;">Ghi Chú (Khách Hàng)</h6>
+                  <div class="mb-3">
+                    <textarea 
+                      class="form-control form-control-sm text-dark" 
+                      rows="2"
+                      v-model="createOrderForm.ghi_chu_khach_hang" 
+                      placeholder="Yêu cầu từ khách hàng..."
+                    ></textarea>
+                  </div>
+
+                  <div class="mt-auto">
+                    <h6 class="fw-bold mb-2 text-uppercase text-primary" style="font-size: 0.75rem;">Ghi Chú Zalo (Nội Bộ)</h6>
+                    <div class="mb-0">
+                      <textarea 
+                        class="form-control" 
+                        rows="2" 
+                        v-model="createOrderForm.ghi_chu_zalo" 
+                        placeholder="Ghi chú kết quả thương lượng Zalo..."
+                      ></textarea>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Cột 2 (Giữa): Danh sách Phụ Tùng (Cuộn dọc) -->
+                <div class="col-lg-6 col-12 mb-3 mb-lg-0">
+                  <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h6 class="fw-bold mb-0 text-uppercase text-primary" style="font-size: 0.75rem;">Chi Tiết Sản Phẩm Cần Báo Giá</h6>
+                    <button type="button" class="btn btn-xs btn-outline-primary" @click="addCreateOrderItem">
+                      <i class="bx bx-plus me-1"></i>Thêm Dòng
+                    </button>
+                  </div>
+
+                  <!-- Chọn nhanh phụ tùng trong kho -->
+                  <div class="mb-3">
+                    <v-select
+                      v-model="selectedPartQuick"
+                      :options="partsList"
+                      placeholder="Tìm nhanh phụ tùng trong kho để thêm vào bảng..."
+                      :searchable="true"
+                      :can-clear="true"
+                      @change="onSelectPartQuick"
+                    />
+                  </div>
+
+                  <!-- Bảng danh sách phụ tùng (cuộn bên trong khi có nhiều sản phẩm) -->
+                  <div class="table-responsive border rounded custom-scroll" style="max-height: 480px; overflow-y: auto;">
+                    <table class="table table-bordered table-sm mb-0 table-sticky-header">
+                      <thead class="table-light sticky-top">
+                        <tr>
+                          <th class="text-center text-uppercase bg-light" style="width: 7%">STT</th>
+                          <th class="text-uppercase bg-light" style="width: 38%">Tên Phụ Tùng</th>
+                          <th class="text-center text-uppercase bg-light" style="width: 12%">SL</th>
+                          <th class="text-uppercase bg-light" style="width: 23%">Đơn Giá</th>
+                          <th class="text-end text-uppercase bg-light" style="width: 20%">Thành Tiền</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr v-for="(detail, idx) in createOrderForm.chi_tiet" :key="idx">
+                          <td class="text-center align-middle">
+                            {{ idx + 1 }}
+                          </td>
+                          <td class="align-middle">
+                            <input 
+                              type="text" 
+                              class="form-control form-control-sm border-0 p-0 fw-bold text-dark mb-1" 
+                              style="font-size: 0.85rem;" 
+                              placeholder="Tên phụ tùng *" 
+                              v-model="detail.ten_phu_tung" 
+                              required
+                            />
+                            <div class="d-flex align-items-center">
+                              <span class="text-dark fw-medium me-1" style="font-size: 0.75rem;">Mã:</span>
+                              <input 
+                                type="text" 
+                                class="form-control form-control-sm border-0 p-0 text-muted" 
+                                style="font-size: 0.75rem;" 
+                                placeholder="Nhập mã phụ tùng..." 
+                                v-model="detail.ma_phu_tung" 
+                              />
+                            </div>
+                          </td>
+                          <td class="text-center align-middle">
+                            <input 
+                              type="number" 
+                              class="form-control form-control-sm text-center fw-bold" 
+                              v-model.number="detail.so_luong" 
+                              min="1" 
+                              required
+                            />
+                          </td>
+                          <td class="align-middle" style="min-width: 140px;">
+                            <input 
+                              type="number" 
+                              class="form-control form-control-sm text-end fw-bold text-dark" 
+                              :value="detail.don_gia ? detail.don_gia : ''" 
+                              @input="detail.don_gia = $event.target.value === '' ? 0 : Number($event.target.value)" 
+                              min="0"
+                              placeholder="0" 
+                            />
+                          </td>
+                          <td class="text-end fw-bold text-danger align-middle">
+                            {{ formatCurrency(detail.so_luong * (detail.don_gia || 0)) }}
+                            <div v-if="detail.so_luong > 1" class="text-dark fw-bold" style="font-size: 0.75rem;">
+                              x{{ detail.so_luong }} cái
+                            </div>
+                            <div class="mt-1" v-if="createOrderForm.chi_tiet.length > 1">
+                              <button 
+                                type="button" 
+                                class="btn btn-xs btn-link p-0 text-danger" 
+                                @click="removeCreateOrderItem(idx)" 
+                                title="Xóa dòng này"
+                              >
+                                <i class="bx bx-trash" style="font-size: 13px;"></i> Xóa
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                <!-- Cột 3 (Phải): Tổng Hợp Chi Phí & Thanh Toán -->
+                <div class="col-lg-3 col-12 border-start ps-lg-3 pe-lg-3 d-flex flex-column justify-content-between">
+                  <div>
+                    <h6 class="fw-bold mb-3 text-uppercase text-primary" style="font-size: 0.75rem;">Tổng Hợp Chi Phí</h6>
+                    
+                    <!-- Tạm Tính -->
+                    <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
+                      <span class="text-dark fw-bold" style="font-size: 0.88rem;">Tạm Tính:</span>
+                      <span class="fw-bold text-dark fs-6">{{ formatCurrency(createFormSubtotal) }}</span>
+                    </div>
+
+                    <!-- Phí Vận Chuyển -->
+                    <div class="mb-3 pb-2 border-bottom">
+                      <div class="d-flex justify-content-between align-items-center mb-1">
+                        <label class="text-dark fw-bold mb-0" style="font-size: 0.88rem;">Phí Vận Chuyển:</label>
+                        <div style="width: 140px;">
+                          <input 
+                            type="number" 
+                            class="form-control form-control-sm text-end text-danger fw-bold" 
+                            :value="createOrderForm.phi_van_chuyen ? createOrderForm.phi_van_chuyen : ''" 
+                            @input="createOrderForm.phi_van_chuyen = $event.target.value === '' ? 0 : Number($event.target.value)" 
+                            min="0" 
+                            placeholder="0"
+                          />
+                        </div>
+                      </div>
+                      <div class="text-end">
+                        <span class="text-danger fw-semibold" style="font-size: 0.75rem;">
+                          {{ formatCurrency(createOrderForm.phi_van_chuyen || 0) }}
+                        </span>
+                      </div>
+                    </div>
+
+                    <!-- Yêu Cầu Cọc -->
+                    <div class="mb-3 pb-2 border-bottom">
+                      <div class="d-flex justify-content-between align-items-center mb-1">
+                        <label class="text-dark fw-bold mb-0" style="font-size: 0.88rem;">Yêu Cầu Cọc:</label>
+                        <div style="width: 140px;">
+                          <input 
+                            type="number" 
+                            class="form-control form-control-sm text-end text-danger fw-bold" 
+                            :value="createOrderForm.tien_coc_yeu_cau ? createOrderForm.tien_coc_yeu_cau : ''" 
+                            @input="createOrderForm.tien_coc_yeu_cau = $event.target.value === '' ? 0 : Number($event.target.value)" 
+                            min="0" 
+                            placeholder="0"
+                          />
+                        </div>
+                      </div>
+                      <div class="text-end">
+                        <span class="text-danger fw-semibold" style="font-size: 0.75rem;">
+                          {{ formatCurrency(createOrderForm.tien_coc_yeu_cau || 0) }}
+                        </span>
+                      </div>
+                    </div>
+
+                    <!-- Đã Thu (Cọc / Trả trước) -->
+                    <div class="mb-3 pb-2 border-bottom">
+                      <div class="d-flex justify-content-between align-items-center mb-1">
+                        <label class="text-dark fw-bold mb-0" style="font-size: 0.88rem;">Đã Thu (Cọc / Trả trước):</label>
+                        <div style="width: 140px;">
+                          <input 
+                            type="number" 
+                            class="form-control form-control-sm text-end text-primary fw-bold" 
+                            :value="createOrderForm.da_thu ? createOrderForm.da_thu : ''" 
+                            @input="createOrderForm.da_thu = $event.target.value === '' ? 0 : Number($event.target.value)" 
+                            min="0" 
+                            placeholder="0"
+                          />
+                        </div>
+                      </div>
+                      <div class="text-end">
+                        <span class="text-primary fw-semibold" style="font-size: 0.75rem;">
+                          {{ formatCurrency(createOrderForm.da_thu || 0) }}
+                        </span>
+                      </div>
+                    </div>
+
+                    <!-- KHU VỰC BIÊN LAI CHUYỂN TIỀN (1 ROW 2 PHẦN) -->
+                    <div class="mt-3 pt-2 border-top mb-3">
+                      <input type="file" ref="createReceiptSlot1" class="d-none" accept="image/*" @change="handleUploadCreateReceipt($event, 'anh_chuyen_khoan')">
+                      <input type="file" ref="createReceiptSlot2" class="d-none" accept="image/*" @change="handleUploadCreateReceipt($event, 'anh_chuyen_khoan_2')">
+
+                      <div class="mb-2">
+                        <label class="form-label fw-bold text-dark mb-0 text-uppercase" style="font-size: 0.75rem;">
+                          <i class="bx bx-receipt me-1 text-primary"></i>Biên Lai Chuyển Tiền
+                        </label>
+                      </div>
+
+                      <div class="row g-2">
+                        <!-- Ảnh 1 -->
+                        <div class="col-6">
+                          <div 
+                            class="d-flex flex-column justify-content-center align-items-center border rounded bg-light position-relative p-1" 
+                            style="height: 105px; cursor: pointer;"
+                            :style="!createOrderForm.anh_chuyen_khoan ? 'border-style: dashed !important;' : ''"
+                            @click="!createOrderForm.anh_chuyen_khoan ? $refs.createReceiptSlot1.click() : null"
+                            tabindex="0"
+                            title="Nhấp để tải ảnh"
+                          >
+                            <template v-if="createOrderForm.anh_chuyen_khoan">
+                              <img 
+                                :src="getImageUrl(createOrderForm.anh_chuyen_khoan)" 
+                                alt="Biên lai 1" 
+                                class="rounded" 
+                                style="max-height: 95px; max-width: 100%; object-fit: contain;" 
+                                @click.stop="openReceiptViewer(createOrderForm.anh_chuyen_khoan)" 
+                                title="Nhấp để xem phóng to"
+                              />
+                              <button 
+                                type="button" 
+                                class="btn btn-icon btn-sm bg-white text-danger position-absolute top-0 end-0 m-1 rounded-circle shadow-sm border" 
+                                @click.stop="createOrderForm.anh_chuyen_khoan = ''" 
+                                style="width: 24px; height: 24px; padding: 0; line-height: 1;" 
+                                title="Xóa ảnh"
+                              >
+                                <i class="bx bx-trash" style="font-size: 13px;"></i>
+                              </button>
+                            </template>
+                            <div v-else class="text-center text-muted">
+                              <i class="bx bx-image-add fs-3 d-block text-secondary mb-1"></i>
+                              <span style="font-size: 0.68rem;">Ảnh 1</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        <!-- Ảnh 2 -->
+                        <div class="col-6">
+                          <div 
+                            class="d-flex flex-column justify-content-center align-items-center border rounded bg-light position-relative p-1" 
+                            style="height: 105px; cursor: pointer;"
+                            :style="!createOrderForm.anh_chuyen_khoan_2 ? 'border-style: dashed !important;' : ''"
+                            @click="!createOrderForm.anh_chuyen_khoan_2 ? $refs.createReceiptSlot2.click() : null"
+                            tabindex="0"
+                            title="Nhấp để tải ảnh"
+                          >
+                            <template v-if="createOrderForm.anh_chuyen_khoan_2">
+                              <img 
+                                :src="getImageUrl(createOrderForm.anh_chuyen_khoan_2)" 
+                                alt="Biên lai 2" 
+                                class="rounded" 
+                                style="max-height: 95px; max-width: 100%; object-fit: contain;" 
+                                @click.stop="openReceiptViewer(createOrderForm.anh_chuyen_khoan_2)" 
+                                title="Nhấp để xem phóng to"
+                              />
+                              <button 
+                                type="button" 
+                                class="btn btn-icon btn-sm bg-white text-danger position-absolute top-0 end-0 m-1 rounded-circle shadow-sm border" 
+                                @click.stop="createOrderForm.anh_chuyen_khoan_2 = ''" 
+                                style="width: 24px; height: 24px; padding: 0; line-height: 1;" 
+                                title="Xóa ảnh"
+                              >
+                                <i class="bx bx-trash" style="font-size: 13px;"></i>
+                              </button>
+                            </template>
+                            <div v-else class="text-center text-muted">
+                              <i class="bx bx-image-add fs-3 d-block text-secondary mb-1"></i>
+                              <span style="font-size: 0.68rem;">Ảnh 2</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Cụm Tổng Cộng & Thu COD ở đáy -->
+                  <div class="mt-3 pt-2 bg-light p-3 rounded border">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                      <span class="fw-bold text-dark" style="font-size: 0.9rem;">Tổng Cộng:</span>
+                      <span class="fw-bold text-danger fs-5">{{ formatCurrency(createFormGrandTotal) }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center pt-2 border-top">
+                      <span class="text-dark fw-bold" style="font-size: 0.9rem;">Thu COD:</span>
+                      <span class="fw-bold text-dark fs-5">
+                        {{ formatCurrency(createFormRemainingCod) }}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="modal-footer border-top py-3 mt-2 bg-light d-flex justify-content-end align-items-center gap-2">
+              <button type="button" class="btn btn-outline-secondary px-4" data-bs-dismiss="modal">
+                Đóng
+              </button>
+              <button 
+                type="button" 
+                class="btn btn-outline-primary px-4 shadow-sm"
+                :disabled="isSubmittingCreateOrder"
+                @click.prevent="submitCreateOrder('quote')"
+              >
+                Lưu Báo Giá (Gửi Zalo)
+              </button>
+              <button 
+                type="button" 
+                class="btn btn-primary px-4 shadow-sm"
+                :disabled="isSubmittingCreateOrder"
+                @click.prevent="submitCreateOrder('deposit')"
+              >
+                <span v-if="isSubmittingCreateOrder" class="spinner-border spinner-border-sm me-1" role="status"></span>
+                Lên Đơn Trực Tiếp (Đã Cọc & Xử Lý)
+              </button>
+            </div>
+          </form>
         </div>
       </div>
     </div>
@@ -1506,10 +1947,46 @@ export default {
       // Receipt Viewer & Upload
       viewingReceiptImage: null,
       isUploadingReceipt: false,
-      uploadingKey: ''
+      uploadingKey: '',
+      // Lên đơn thủ công (Zalo / Tại quầy)
+      isSubmittingCreateOrder: false,
+      selectedCustomerQuick: null,
+      selectedPartQuick: null,
+      customersList: [],
+      partsList: [],
+      createOrderForm: {
+        khach_hang_ten: '',
+        khach_hang_sdt: '',
+        khach_hang_email: '',
+        dia_chi_giao_hang: '',
+        ghi_chu_khach_hang: '',
+        ghi_chu_zalo: 'Khách chốt qua Zalo',
+        ten_don_vi_van_chuyen: '',
+        ma_van_don: '',
+        phi_van_chuyen: 0,
+        tien_coc_yeu_cau: 0,
+        da_thu: 0,
+        anh_chuyen_khoan: '',
+        anh_chuyen_khoan_2: '',
+        chi_tiet: [
+          { ten_phu_tung: '', ma_phu_tung: '', so_luong: 1, don_gia: 0 }
+        ]
+      }
     };
   },
   computed: {
+    createFormSubtotal() {
+      return (this.createOrderForm?.chi_tiet || []).reduce((sum, item) => {
+        return sum + (Number(item.so_luong || 1) * Number(item.don_gia || 0));
+      }, 0);
+    },
+    createFormGrandTotal() {
+      return this.createFormSubtotal + Number(this.createOrderForm?.phi_van_chuyen || 0);
+    },
+    createFormRemainingCod() {
+      const rem = this.createFormGrandTotal - Number(this.createOrderForm?.da_thu || 0);
+      return rem > 0 ? rem : 0;
+    },
     canViewOrders() {
       return this.authStore?.isAdmin || this.authStore?.hasPermission('Xem Đơn hàng');
     },
@@ -1808,6 +2285,222 @@ export default {
     refreshData() {
       this.queryClient.invalidateQueries({ queryKey: ['yeu-cau-bao-gia'] });
       this.queryClient.invalidateQueries({ queryKey: ['don-hang'] });
+    },
+    openCreateOrderModal() {
+      this.resetCreateOrderForm();
+      this.fetchCustomersAndParts();
+      // eslint-disable-next-line no-undef
+      const modalEl = document.getElementById('createOrderModal');
+      if (modalEl) {
+        // eslint-disable-next-line no-undef
+        const modal = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
+        modal.show();
+      }
+    },
+    resetCreateOrderForm() {
+      this.selectedCustomerQuick = null;
+      this.selectedPartQuick = null;
+      this.createOrderForm = {
+        khach_hang_ten: '',
+        khach_hang_sdt: '',
+        khach_hang_email: '',
+        dia_chi_giao_hang: '',
+        ghi_chu_khach_hang: '',
+        ghi_chu_zalo: 'Khách chốt qua Zalo',
+        ten_don_vi_van_chuyen: '',
+        ma_van_don: '',
+        phi_van_chuyen: 0,
+        tien_coc_yeu_cau: 0,
+        da_thu: 0,
+        anh_chuyen_khoan: '',
+        anh_chuyen_khoan_2: '',
+        chi_tiet: [
+          { ten_phu_tung: '', ma_phu_tung: '', so_luong: 1, don_gia: 0 }
+        ]
+      };
+    },
+    async fetchCustomersAndParts() {
+      if (this.customersList.length === 0) {
+        try {
+          const res = await axiosClient.get('/admin/khach-hang');
+          const data = res.data?.data || res.data || [];
+          this.customersList = (Array.isArray(data) ? data : []).map(c => ({
+            value: c.id,
+            label: `${c.ho_ten || c.name || 'Khách'} - ${c.so_dien_thoai || c.phone || 'Không SĐT'}`,
+            name: c.ho_ten || c.name,
+            phone: c.so_dien_thoai || c.phone,
+            email: c.email || c.user?.email || '',
+            address: c.dia_chi || c.dia_chi_cu_the || ''
+          }));
+        } catch (e) {
+          console.error("Lỗi tải danh sách khách hàng:", e);
+        }
+      }
+      if (this.partsList.length === 0) {
+        try {
+          const res = await axiosClient.get('/admin/phu-tung');
+          const data = res.data?.data || res.data || [];
+          this.partsList = (Array.isArray(data) ? data : []).map(p => ({
+            value: p.id,
+            label: `${p.ma_phu_tung ? `[${p.ma_phu_tung}] ` : ''}${p.ten_phu_tung}`,
+            part_name: p.ten_phu_tung,
+            part_code: p.ma_phu_tung || '',
+            price: Number(p.gia_ban || 0)
+          }));
+        } catch (e) {
+          console.error("Lỗi tải danh sách phụ tùng:", e);
+        }
+      }
+    },
+    onSelectCustomerQuick(val) {
+      if (!val) return;
+      const found = this.customersList.find(c => c.value === val);
+      if (found) {
+        this.createOrderForm.khach_hang_ten = found.name || '';
+        this.createOrderForm.khach_hang_sdt = found.phone || '';
+        this.createOrderForm.khach_hang_email = found.email || '';
+        this.createOrderForm.dia_chi_giao_hang = found.address || '';
+      }
+    },
+    onSelectPartQuick(val) {
+      if (!val) return;
+      const found = this.partsList.find(p => p.value === val);
+      if (found) {
+        const lastItem = this.createOrderForm.chi_tiet[this.createOrderForm.chi_tiet.length - 1];
+        if (lastItem && !lastItem.ten_phu_tung && !lastItem.ma_phu_tung) {
+          lastItem.ten_phu_tung = found.part_name;
+          lastItem.ma_phu_tung = found.part_code;
+          lastItem.don_gia = found.price;
+        } else {
+          this.createOrderForm.chi_tiet.push({
+            ten_phu_tung: found.part_name,
+            ma_phu_tung: found.part_code,
+            so_luong: 1,
+            don_gia: found.price
+          });
+        }
+        this.$nextTick(() => {
+          this.selectedPartQuick = null;
+        });
+      }
+    },
+    addCreateOrderItem() {
+      this.createOrderForm.chi_tiet.push({
+        ten_phu_tung: '',
+        ma_phu_tung: '',
+        so_luong: 1,
+        don_gia: 0
+      });
+    },
+    removeCreateOrderItem(index) {
+      if (this.createOrderForm.chi_tiet.length <= 1) {
+        this.createOrderForm.chi_tiet = [{ ten_phu_tung: '', ma_phu_tung: '', so_luong: 1, don_gia: 0 }];
+      } else {
+        this.createOrderForm.chi_tiet.splice(index, 1);
+      }
+    },
+    setDepositPercent(percent) {
+      const sub = this.createFormSubtotal;
+      this.createOrderForm.tien_coc_yeu_cau = Math.round((sub * percent) / 100);
+      if (this.createOrderForm.da_thu === 0) {
+        this.createOrderForm.da_thu = this.createOrderForm.tien_coc_yeu_cau;
+      }
+    },
+    async handleUploadCreateReceipt(e, key) {
+      const file = e.target.files?.[0];
+      if (!file) return;
+      const formData = new FormData();
+      formData.append('file', file);
+      try {
+        const res = await axiosClient.post('/admin/sales/upload-bien-lai', formData, {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        });
+        const url = res.data?.url || res.url;
+        if (url) {
+          if (key === 'anh_chuyen_khoan') {
+            this.createOrderForm.anh_chuyen_khoan = url;
+          } else {
+            this.createOrderForm.anh_chuyen_khoan_2 = url;
+          }
+          this.toaster.success('Tải biên lai thành công!');
+        }
+      } catch (err) {
+        this.toaster.error('Lỗi tải ảnh biên lai!');
+      }
+    },
+    async submitCreateOrder(actionType) {
+      if (!this.createOrderForm.khach_hang_ten?.trim()) {
+        this.toaster.error('Vui lòng nhập Tên Khách Hàng!');
+        return;
+      }
+      if (!this.createOrderForm.khach_hang_sdt?.trim()) {
+        this.toaster.error('Vui lòng nhập Số Điện Thoại!');
+        return;
+      }
+      const validItems = (this.createOrderForm.chi_tiet || []).filter(item => item.ten_phu_tung && item.ten_phu_tung.trim());
+      if (validItems.length === 0) {
+        this.toaster.error('Vui lòng nhập ít nhất 1 Phụ tùng / Sản phẩm!');
+        return;
+      }
+
+      let targetStatus = 0;
+      if (actionType === 'deposit' || Number(this.createOrderForm.da_thu) > 0) {
+        targetStatus = 2; // Đã Cọc & Xử Lý
+      } else if (actionType === 'quoted') {
+        targetStatus = 1; // Đã Báo Giá
+      }
+
+      const payload = {
+        khach_hang_ten: this.createOrderForm.khach_hang_ten.trim(),
+        khach_hang_sdt: this.createOrderForm.khach_hang_sdt.trim(),
+        khach_hang_email: this.createOrderForm.khach_hang_email?.trim() || null,
+        dia_chi_giao_hang: this.createOrderForm.dia_chi_giao_hang?.trim() || null,
+        ghi_chu_khach_hang: this.createOrderForm.ghi_chu_khach_hang?.trim() || null,
+        ghi_chu_zalo: this.createOrderForm.ghi_chu_zalo?.trim() || null,
+        ten_don_vi_van_chuyen: this.createOrderForm.ten_don_vi_van_chuyen?.trim() || null,
+        ma_van_don: this.createOrderForm.ma_van_don?.trim() || null,
+        phi_van_chuyen: Number(this.createOrderForm.phi_van_chuyen) || 0,
+        tien_coc_yeu_cau: Number(this.createOrderForm.tien_coc_yeu_cau) || 0,
+        da_thu: Number(this.createOrderForm.da_thu) || 0,
+        anh_chuyen_khoan: this.createOrderForm.anh_chuyen_khoan || null,
+        anh_chuyen_khoan_2: this.createOrderForm.anh_chuyen_khoan_2 || null,
+        trang_thai: targetStatus,
+        chi_tiet: validItems.map(item => ({
+          ten_phu_tung: item.ten_phu_tung.trim(),
+          ma_phu_tung: item.ma_phu_tung?.trim() || 'N/A',
+          so_luong: Number(item.so_luong) || 1,
+          don_gia: Number(item.don_gia) || 0
+        }))
+      };
+
+      this.isSubmittingCreateOrder = true;
+      try {
+        await axiosClient.post('/admin/yeu-cau-bao-gia', payload);
+        this.toaster.success(targetStatus === 2 ? 'Lên đơn hàng thành công! Đã chuyển vào tab ĐÃ CỌC & XỬ LÝ.' : 'Tạo yêu cầu báo giá thành công!');
+        
+        // eslint-disable-next-line no-undef
+        const modalEl = document.getElementById('createOrderModal');
+        if (modalEl) {
+          // eslint-disable-next-line no-undef
+          const modal = bootstrap.Modal.getInstance(modalEl);
+          if (modal) modal.hide();
+        }
+
+        this.refreshData();
+
+        if (targetStatus === 2) {
+          this.switchTab('processing');
+        } else if (targetStatus === 1) {
+          this.switchTab('quoted_quotes');
+        } else {
+          this.switchTab('pending_quotes');
+        }
+      } catch (err) {
+        console.error("Lỗi khi tạo đơn:", err);
+        this.toaster.error(err.response?.data?.message || 'Có lỗi xảy ra khi tạo đơn hàng!');
+      } finally {
+        this.isSubmittingCreateOrder = false;
+      }
     },
     async copyQuoteLink(item) {
       if (!item) return;

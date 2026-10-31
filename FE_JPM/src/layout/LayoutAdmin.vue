@@ -114,6 +114,15 @@ export default {
     // Chain the loading process: First all CSS, then all JS
     Promise.all(cssFiles.map(loadCSS))
       .then(() => {
+        // If JS vendor files are already loaded in memory, avoid reloading
+        if (window.Helpers && window.bootstrap && window.Menu) {
+          this.isLoading = false;
+          this.$nextTick(() => {
+            window.dispatchEvent(new Event('admin-layout-ready'));
+          });
+          return;
+        }
+
         return loadScript(helpersJs)
           .then(() => loadScript(configJs))
           .then(() => loadScript(jqueryJs))
@@ -122,7 +131,6 @@ export default {
           .then(() => loadScript(perfectScrollbarJs))
           .then(() => loadScript(menuJs))
           .then(() => loadScript(mainJs))
-          .then(() => loadScript("https://buttons.github.io/buttons.js"))
           .finally(() => {
             this.isLoading = false;
             this.$nextTick(() => {
@@ -143,9 +151,8 @@ export default {
     document.documentElement.removeAttribute("data-theme");
     document.documentElement.removeAttribute("data-template");
 
-    // Cleanup Admin CSS and JS
+    // Cleanup Admin CSS only (keep scripts in memory for instant SPA transitions)
     document.querySelectorAll('link[data-layout="admin"]').forEach(el => el.remove());
-    document.querySelectorAll('script[data-layout="admin"]').forEach(el => el.remove());
   },
 };
 </script>

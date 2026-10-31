@@ -2,7 +2,7 @@ import axios from "axios";
 
 // Đặt tên instance dễ hiểu, gắn chặt với baseURL của Backend
 const axiosClient = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || "http://localhost:8000/api", // Địa chỉ BE Laravel của dự án
+  baseURL: import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8000/api", // Địa chỉ BE Laravel của dự án
   headers: {
     "Content-Type": "application/json",
     Accept: "application/json",

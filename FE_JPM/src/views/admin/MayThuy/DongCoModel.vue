@@ -101,13 +101,13 @@
               <td><span class="fw-bold text-dark">{{ getBrandName(item.thuong_hieu_id) }}</span></td>
               <td><span class="fw-semibold text-secondary">{{ getTypeName(item.loai_dong_co_id) }}</span></td>
               <td class="text-center">
-                <span class="fw-bold text-dark">{{ item.nam_san_xuat || 'N/A' }}</span>
+                <span class="fw-bold text-dark">{{ item.nam_san_xuat || '-' }}</span>
               </td>
               <td class="text-center">
                 <span class="fw-semibold text-secondary" v-if="item.ma_luc">{{ item.ma_luc }} HP</span>
-                <span class="fw-semibold text-secondary" v-else>N/A</span>
+                <span class="fw-semibold text-secondary" v-else>-</span>
               </td>
-              <td class="text-center"><span class="fw-bold text-dark">{{ item.loai_nhip ? item.loai_nhip.toString().replace(/[^0-9]/g, '') : 'N/A' }}</span></td>
+              <td class="text-center"><span class="fw-bold text-dark">{{ item.loai_nhip ? item.loai_nhip.toString().replace(/[^0-9]/g, '') : '-' }}</span></td>
               <td class="text-center">
                 <span v-if="item.trang_thai === 1 || item.trang_thai === true" class="badge badge-custom text-uppercase bg-pastel-success">HOẠT ĐỘNG</span>
                 <span v-else class="badge badge-custom text-uppercase bg-pastel-danger">TẠM KHÓA</span>
@@ -452,11 +452,11 @@ export default {
     },
     getBrandName(id) {
       const brand = (this.brands || []).find(b => b.id === id);
-      return brand ? brand.name : 'N/A';
+      return brand ? brand.name : '-';
     },
     getTypeName(id) {
       const type = (this.equipmentTypes || []).find(t => t.id === id);
-      return type ? type.ten_loai_dong_co : 'N/A';
+      return type ? type.ten_loai_dong_co : '-';
     },
     resetForm() {
       this.isEditMode = false;

@@ -43,7 +43,7 @@ app.component("admin-layout", Admin);
 app.component("client-layout", Client);
 app.component("auth-layout", Auth);
 
-const BACKEND_BASE = (import.meta.env.VITE_API_BASE_URL || "http://localhost:8000/api").replace(/\/api\/?$/, "");
+const BACKEND_BASE = (import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8000/api").replace(/\/api\/?$/, "");
 
 app.mixin({
   methods: {
