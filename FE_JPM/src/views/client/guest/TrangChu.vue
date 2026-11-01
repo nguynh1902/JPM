@@ -230,10 +230,10 @@
             <div class="col-xl-3 col-md-4 client-logo" v-for="brand in brands" :key="brand.id">
               <router-link :to="`/thuong-hieu/${brand.code ? brand.code.toLowerCase() : ''}`" class="d-flex align-items-center justify-content-center w-100 h-100">
                 <img
-                  :src="getImageUrl(brand.logo_path)"
+                  :src="brand.logo_path ? (brand.logo_path.startsWith('http') ? brand.logo_path : brand.logo_path.startsWith('/client/') ? brand.logo_path : 'http://localhost:8000/storage/' + brand.logo_path) : ''"
                   :alt="brand.name"
                   class="img-fluid"
-                  @error="e => e.target.classList.add('d-none')"
+                  @error="e => e.target.style.display='none'"
                 />
               </router-link>
             </div>
@@ -268,7 +268,7 @@
                   <!-- Skeleton Dòng 4: Chân card (Giá & Nút giỏ hàng) -->
                   <div class="mt-auto pt-2 border-top d-flex justify-content-between align-items-center">
                     <div class="skeleton-line" style="width: 50%; height: 20px;"></div>
-                    <div class="skeleton-box rounded" style="width: 34px; height: 34px;"></div>
+                    <div class="skeleton-box" style="width: 34px; height: 34px; border-radius: 4px;"></div>
                   </div>
                 </div>
               </div>
@@ -800,6 +800,11 @@ export default {
   },
   // ===== 5. CÁC HÀM XỬ LÝ SỰ KIỆN & ĐIỀU HƯỚNG (METHODS) =====
   methods: {
+    getImageUrl(path) {
+      if (!path) return "";
+      if (path.startsWith("blob:") || path.startsWith("http")) return path;
+      return `http://localhost:8000${path.startsWith("/") ? "" : "/"}${path}`;
+    },
     searchParts() {
       if (!this.searchKeyword && !this.selectedBrand && !this.selectedEngineType && !this.selectedYear && !this.selectedModel) {
         this.$toast.error("Vui lòng nhập từ khóa hoặc chọn ít nhất 1 điều kiện để tìm kiếm!");

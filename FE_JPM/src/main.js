@@ -51,9 +51,6 @@ app.mixin({
       if (!path) return "";
       if (path.startsWith("blob:") || path.startsWith("http") || path.startsWith("data:")) return path;
       const clean = path.startsWith("/") ? path.slice(1) : path;
-      if (clean.startsWith("client/") || clean.startsWith("assets/")) {
-        return `/${clean}`;
-      }
       if (clean.startsWith("storage/") || clean.startsWith("uploads/")) {
         return `${BACKEND_BASE}/${clean}`;
       }
