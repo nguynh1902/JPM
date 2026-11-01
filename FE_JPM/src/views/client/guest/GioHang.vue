@@ -409,12 +409,6 @@ export default {
     }
   },
   methods: {
-    getImageUrl(path) {
-      if (!path) return 'https://placehold.co/400x300/f8f9fa/a1acb8?text=JPM+Marine'
-      if (path.startsWith('http')) return path
-      if (path.startsWith('/storage/')) return 'http://localhost:8000' + path
-      return 'http://localhost:8000/storage/' + path.replace(/^\/+/, '')
-    },
     formatPrice(price) {
       if (!price) return '0 ₫'
       return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price)
