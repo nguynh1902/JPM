@@ -8,7 +8,7 @@ export const DEFAULT_SETTINGS = {
   homepage_youtube_url: 'https://www.youtube.com/watch?v=5CVzOqvqI38',
   homepage_youtube_id: '5CVzOqvqI38',
   homepage_hero_title: 'JPM MARINE',
-  homepage_hero_subtitle: 'PHỤ TÙNG CHÍNH HÃNG',
+  homepage_hero_subtitle: 'PHỤ TÙNG TÀU THUYỀN NHẬT BẢN',
   company_name: 'JPM Marine',
   company_address: '123 Đường Bạch Đằng, Q. Bình Thạnh, TP. Hồ Chí Minh, Việt Nam',
   company_hotline: '0909 123 456',
@@ -24,7 +24,7 @@ export const DEFAULT_SETTINGS = {
 
 export function useSiteSettings() {
   const { data, isLoading, isError, refetch } = useQuery({
-    queryKey: ['public-site-settings'],
+    queryKey: ['public-site-settings-v2'],
     queryFn: async () => {
       const response = await axiosClient.get('/public/cau-hinh');
       return response.data?.data || response.data || {};
@@ -43,6 +43,10 @@ export function useSiteSettings() {
     return {
       ...DEFAULT_SETTINGS,
       ...data.value,
+      homepage_hero_subtitle:
+        !data.value.homepage_hero_subtitle || data.value.homepage_hero_subtitle === 'PHỤ TÙNG CHÍNH HÃNG'
+          ? DEFAULT_SETTINGS.homepage_hero_subtitle
+          : data.value.homepage_hero_subtitle,
       homepage_youtube_id: data.value.homepage_youtube_id || DEFAULT_SETTINGS.homepage_youtube_id
     };
   });

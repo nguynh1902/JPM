@@ -18,10 +18,10 @@
 
       <div class="container flex-grow-1 d-flex align-items-center position-relative z-3">
         <div class="row w-100">
-          <div class="col-lg-8 text-start">
+          <div class="col-lg-10 text-start">
             <h1 data-aos="fade-up" data-aos-delay="100" class="hero-main-title">
               <span class="hero-title-accent">{{ settings.homepage_hero_title || 'JPM MARINE' }}</span><br />
-              <span class="hero-title-white">{{ settings.homepage_hero_subtitle || 'PHỤ TÙNG CHÍNH HÃNG' }}</span>
+              <span class="hero-title-white">{{ settings.homepage_hero_subtitle || 'PHỤ TÙNG TÀU THUYỀN NHẬT BẢN' }}</span>
             </h1>
 
             <p data-aos="fade-up" data-aos-delay="150" class="hero-subtitle">

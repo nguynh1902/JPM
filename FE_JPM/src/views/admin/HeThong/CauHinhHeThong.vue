@@ -105,7 +105,7 @@
                       type="text" 
                       id="homepage_hero_subtitle" 
                       class="form-control" 
-                      placeholder="PHỤ TÙNG CHÍNH HÃNG" 
+                      placeholder="PHỤ TÙNG TÀU THUYỀN NHẬT BẢN" 
                       v-model="formData.homepage_hero_subtitle"
                     />
                   </div>
@@ -614,7 +614,7 @@ export default {
     const defaultData = {
       homepage_youtube_url: 'https://www.youtube.com/watch?v=5CVzOqvqI38',
       homepage_hero_title: 'JPM MARINE',
-      homepage_hero_subtitle: 'PHỤ TÙNG CHÍNH HÃNG',
+      homepage_hero_subtitle: 'PHỤ TÙNG TÀU THUYỀN NHẬT BẢN',
       company_name: 'JPM Marine',
       company_address: '123 Đường Bạch Đằng, Q. Bình Thạnh, TP. Hồ Chí Minh, Việt Nam',
       company_hotline: '0909 123 456',

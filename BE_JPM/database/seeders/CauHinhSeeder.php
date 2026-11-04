@@ -30,7 +30,7 @@ class CauHinhSeeder extends Seeder
             ],
             [
                 'khoa_cau_hinh' => 'homepage_hero_subtitle',
-                'gia_tri'       => 'PHỤ TÙNG CHÍNH HÃNG',
+                'gia_tri'       => 'PHỤ TÙNG TÀU THUYỀN NHẬT BẢN',
                 'mo_ta'         => 'Slogan / Dòng chữ phụ trên banner trang chủ',
                 'loai_gia_tri'  => 'text',
                 'trang_thai'    => 1,

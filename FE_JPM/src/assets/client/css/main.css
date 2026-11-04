@@ -14,7 +14,7 @@
 :root {
   --default-font: "Roboto", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   --heading-font: "Raleway", sans-serif;
-  --nav-font: "Raleway", sans-serif;
+  --nav-font: var(--default-font);
 }
 
 /* Global Colors - The following color variables are used throughout the website. Updating them here will change the color scheme of the entire website */
@@ -235,10 +235,7 @@ h6 {
   }
 }
 
-/* Mega Menu: Vertical line for items in the 2nd column and beyond */
-.navmenu .dropdown ul li:nth-child(n+7) a {
-  border-left: 1px solid rgba(0, 0, 0, 0.04) !important;
-}
+
 
 /* PHP Email Form Messages
 ------------------------------*/
@@ -290,11 +287,7 @@ h6 {
   100% {
     transform: rotate(360deg);
     }
-  
-  /* Mega Menu: Vertical line for items in the 2nd column and beyond */
-  .navmenu .dropdown ul li:nth-child(n+7) a {
-    border-left: 1px solid rgba(0, 0, 0, 0.04) !important;
-  }
+
 }
 
 /*--------------------------------------------------------------
@@ -357,11 +350,7 @@ h6 {
   .header .navmenu {
     order: 3;
     }
-  
-  /* Mega Menu: Vertical line for items in the 2nd column and beyond */
-  .navmenu .dropdown ul li:nth-child(n+7) a {
-    border-left: 1px solid rgba(0, 0, 0, 0.04) !important;
-  }
+
 }
 
 .scrolled .header {
@@ -509,11 +498,7 @@ h6 {
     left: -100%;
     visibility: visible;
     }
-  
-  /* Mega Menu: Vertical line for items in the 2nd column and beyond */
-  .navmenu .dropdown ul li:nth-child(n+7) a {
-    border-left: 1px solid rgba(0, 0, 0, 0.04) !important;
-  }
+
 }
 
 /* Mobile Navigation */
@@ -649,11 +634,7 @@ h6 {
   .mobile-nav-active .navmenu>ul {
     display: block;
     }
-  
-  /* Mega Menu: Vertical line for items in the 2nd column and beyond */
-  .navmenu .dropdown ul li:nth-child(n+7) a {
-    border-left: 1px solid rgba(0, 0, 0, 0.04) !important;
-  }
+
 }
 
 /*--------------------------------------------------------------
@@ -833,11 +814,7 @@ h6 {
   100% {
     transform: rotate(360deg);
     }
-  
-  /* Mega Menu: Vertical line for items in the 2nd column and beyond */
-  .navmenu .dropdown ul li:nth-child(n+7) a {
-    border-left: 1px solid rgba(0, 0, 0, 0.04) !important;
-  }
+
 }
 
 /*--------------------------------------------------------------
@@ -881,11 +858,7 @@ h6 {
   [data-aos-delay] {
     transition-delay: 0 !important;
     }
-  
-  /* Mega Menu: Vertical line for items in the 2nd column and beyond */
-  .navmenu .dropdown ul li:nth-child(n+7) a {
-    border-left: 1px solid rgba(0, 0, 0, 0.04) !important;
-  }
+
 }
 
 /*--------------------------------------------------------------
@@ -958,11 +931,7 @@ section,
   .section {
     scroll-margin-top: 76px;
     }
-  
-  /* Mega Menu: Vertical line for items in the 2nd column and beyond */
-  .navmenu .dropdown ul li:nth-child(n+7) a {
-    border-left: 1px solid rgba(0, 0, 0, 0.04) !important;
-  }
+
 }
 
 /*--------------------------------------------------------------
@@ -1115,10 +1084,7 @@ section,
   }
 }
 
-/* Mega Menu: Vertical line for items in the 2nd column and beyond */
-.navmenu .dropdown ul li:nth-child(n+7) a {
-  border-left: 1px solid rgba(0, 0, 0, 0.04) !important;
-}
+
 
 .hero .about-info {
   overflow: hidden;
@@ -1261,33 +1227,21 @@ section,
   .schedule .nav-tabs a {
     padding: 8px 60px;
     }
-  
-  /* Mega Menu: Vertical line for items in the 2nd column and beyond */
-  .navmenu .dropdown ul li:nth-child(n+7) a {
-    border-left: 1px solid rgba(0, 0, 0, 0.04) !important;
-  }
+
 }
 
 @media (max-width: 767px) {
   .schedule .nav-tabs a {
     padding: 8px 50px;
     }
-  
-  /* Mega Menu: Vertical line for items in the 2nd column and beyond */
-  .navmenu .dropdown ul li:nth-child(n+7) a {
-    border-left: 1px solid rgba(0, 0, 0, 0.04) !important;
-  }
+
 }
 
 @media (max-width: 480px) {
   .schedule .nav-tabs a {
     padding: 8px 30px;
     }
-  
-  /* Mega Menu: Vertical line for items in the 2nd column and beyond */
-  .navmenu .dropdown ul li:nth-child(n+7) a {
-    border-left: 1px solid rgba(0, 0, 0, 0.04) !important;
-  }
+
 }
 
 .schedule .nav-tabs a.active {
@@ -1306,11 +1260,7 @@ section,
   .schedule .sub-heading {
     width: 75%;
     }
-  
-  /* Mega Menu: Vertical line for items in the 2nd column and beyond */
-  .navmenu .dropdown ul li:nth-child(n+7) a {
-    border-left: 1px solid rgba(0, 0, 0, 0.04) !important;
-  }
+
 }
 
 .schedule .tab-pane {
@@ -1405,11 +1355,7 @@ section,
   .venue .venue-info h3 {
     font-size: 24px;
     }
-  
-  /* Mega Menu: Vertical line for items in the 2nd column and beyond */
-  .navmenu .dropdown ul li:nth-child(n+7) a {
-    border-left: 1px solid rgba(0, 0, 0, 0.04) !important;
-  }
+
 }
 
 .venue .venue-info p {
@@ -1538,11 +1484,7 @@ section,
     transform: scale(1.2);
     transition: none;
     }
-  
-  /* Mega Menu: Vertical line for items in the 2nd column and beyond */
-  .navmenu .dropdown ul li:nth-child(n+7) a {
-    border-left: 1px solid rgba(0, 0, 0, 0.04) !important;
-  }
+
 }
 
 /*--------------------------------------------------------------
@@ -1583,11 +1525,7 @@ section,
     padding: 20px;
     max-width: 75%;
     }
-  
-  /* Mega Menu: Vertical line for items in the 2nd column and beyond */
-  .navmenu .dropdown ul li:nth-child(n+7) a {
-    border-left: 1px solid rgba(0, 0, 0, 0.04) !important;
-  }
+
 }
 
 .sponsors .client-logo:hover img {
@@ -1875,11 +1813,7 @@ section,
   .contact .php-email-form {
     padding: 20px;
     }
-  
-  /* Mega Menu: Vertical line for items in the 2nd column and beyond */
-  .navmenu .dropdown ul li:nth-child(n+7) a {
-    border-left: 1px solid rgba(0, 0, 0, 0.04) !important;
-  }
+
 }
 
 .contact .php-email-form input[type=text],
@@ -2032,12 +1966,7 @@ section,
 .starter-section {
   /* Add your styles here */
 }
-/* Mega Menu: Vertical line for items in the 2nd column and beyond */
-@media (min-width: 1200px) {
-  .navmenu .dropdown ul li:nth-child(n+7) a {
-    border-left: 1px solid rgba(0, 0, 0, 0.04) !important;
-  }
-}
+
 
 /* =========================================
    GLOBAL PAGE TITLE STYLES (JPM KIT)
@@ -2170,11 +2099,7 @@ section,
   0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.5); }
   70% { box-shadow: 0 0 0 15px rgba(255, 255, 255, 0); }
   100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);   }
-  
-  /* Mega Menu: Vertical line for items in the 2nd column and beyond */
-  .navmenu .dropdown ul li:nth-child(n+7) a {
-    border-left: 1px solid rgba(0, 0, 0, 0.04) !important;
-  }
+
 }
 
 
@@ -2839,11 +2764,7 @@ a.footer-contact-value:hover {
     width: calc(25% - 1rem); /* Matches col-lg-3 pe-lg-4 exactly */
     flex-shrink: 0;
     }
-  
-  /* Mega Menu: Vertical line for items in the 2nd column and beyond */
-  .navmenu .dropdown ul li:nth-child(n+7) a {
-    border-left: 1px solid rgba(0, 0, 0, 0.04) !important;
-  }
+
 }
 
 /* Global Table Row Hover & Action Button */
@@ -2986,10 +2907,7 @@ a.footer-contact-value:hover {
   100% { background-position: 400px 0; }
 }
 
-/* Mega Menu: Vertical line for items in the 2nd column and beyond */
-.navmenu .dropdown ul li:nth-child(n+7) a {
-  border-left: 1px solid rgba(0, 0, 0, 0.04) !important;
-}
+
 .skeleton-box, .skeleton-line {
   background: linear-gradient(90deg, #f0f0f0 25%, #e8e8e8 37%, #f0f0f0 63%);
   background-size: 800px 100%;
@@ -3028,95 +2946,192 @@ a.footer-contact-value:hover {
 
 
 
-/* =========================================
-   LUXURY DROPDOWN OVERRIDE (GLOBAL TEMPLATE)
-   ========================================= */
+/* =========================================================
+   LUXURY NAVBAR & MEGA-DROPDOWN DESIGN SYSTEM (JPM GLOBAL)
+   ========================================================= */
 @media (min-width: 1200px) {
-  .navmenu .dropdown ul {
-    border-radius: 4px !important;
-    overflow: hidden !important;
-    padding: 0 !important;
-    background: #ffffff !important;
-    border: 1px solid rgba(0, 0, 0, 0.05) !important;
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08) !important;
-    min-width: 220px !important;
-    width: max-content !important;
+  /* 3-Zone Balanced Header: Left Logo — Center Nav — Right Actions */
+  .header .header-container {
     display: grid !important;
-    grid-template-rows: repeat(6, min-content);
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+  }
+
+  .header .header-container > .logo {
+    justify-self: start;
+  }
+
+  .header .header-container > .navmenu {
+    justify-self: center;
+  }
+
+  .header .header-container > .header-actions {
+    justify-self: end;
+  }
+
+  /* Refined Top-Level Nav Links */
+  .navmenu > ul > li {
+    padding: 16px 15px;
+  }
+
+  .navmenu > ul > li:last-child {
+    padding-right: 15px;
+  }
+
+  .navmenu > ul > li > a,
+  .navmenu > ul > li > a:focus {
+    font-family: var(--default-font);
+    font-size: 0.92rem;
+    font-weight: 500;
+    letter-spacing: 0.15px;
+    color: rgba(255, 255, 255, 0.86);
+    gap: 5px;
+  }
+
+  .navmenu > ul > li > a:before {
+    height: 2px;
+    border-radius: 2px;
+    bottom: -6px;
+  }
+
+  .navmenu > ul > li > a .nav-chevron {
+    font-size: 11px;
+    line-height: 1;
+    margin-left: 1px;
+    opacity: 0.68;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.22s ease, opacity 0.22s ease;
+  }
+
+  .navmenu > ul > li.dropdown:hover > a .nav-chevron {
+    transform: rotate(180deg);
+    opacity: 1;
+  }
+
+  /* Base Dropdown Panel (12px Luxury Surface) */
+  .navmenu .dropdown > ul {
+    left: 0;
+    top: calc(100% + 4px) !important;
+    border-radius: 12px !important;
+    overflow: visible !important;
+    padding: 8px !important;
+    background: #ffffff !important;
+    border: 1px solid rgba(15, 23, 42, 0.08) !important;
+    box-shadow: 0 20px 45px -10px rgba(10, 17, 40, 0.16), 0 4px 12px rgba(10, 17, 40, 0.05) !important;
+    min-width: 230px !important;
+    width: max-content !important;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(6px);
+    transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s ease !important;
+  }
+
+  /* Invisible hover bridge so diagonal mouse movement never drops menu */
+  .navmenu .dropdown > ul::before {
+    content: "";
+    position: absolute;
+    top: -14px;
+    left: 0;
+    right: 0;
+    height: 14px;
+    background: transparent;
+  }
+
+  .navmenu .dropdown:hover > ul {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+
+  /* Mega-Dropdown (Cửa hàng & Thương hiệu) */
+  .navmenu .dropdown > ul.store-dropdown {
+    display: grid !important;
+    grid-template-rows: repeat(9, min-content);
     grid-auto-flow: column;
-    column-gap: 0;
+    grid-auto-columns: minmax(248px, 1fr);
+    column-gap: 17px;
+    row-gap: 2px;
+    padding: 10px !important;
   }
-  
+
+  /* Subtle full-height vertical divider ONLY when 2 columns exist (>= 10 items) */
+  .navmenu .dropdown > ul.store-dropdown:has(li:nth-child(10))::after {
+    content: "";
+    position: absolute;
+    top: 12px;
+    bottom: 12px;
+    left: 50%;
+    width: 1px;
+    background-color: #f1f5f9;
+    pointer-events: none;
+  }
+
   .navmenu .dropdown ul li {
-    min-width: 100% !important;
+    min-width: 0 !important;
   }
-  
+
   .navmenu .dropdown ul a {
-    display: block !important;
-    padding: 10px 18px !important;
-    color: #333333 !important;
-    font-size: 14px !important;
-    font-weight: 500 !important;
+    display: flex !important;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 12px !important;
+    border-radius: 8px !important;
+    border: none !important;
+    font-family: var(--default-font) !important;
+    font-size: 0.875rem !important;
+    font-weight: 400 !important;
+    line-height: 1.45 !important;
     letter-spacing: normal !important;
     text-transform: none !important;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.04) !important;
-    transition: all 0.3s ease !important;
+    color: #334155 !important;
     background: transparent !important;
+    transition: background-color 0.18s ease, color 0.18s ease !important;
   }
-  
-  .navmenu .dropdown ul li:last-child a {
-    border-bottom: none !important;
-  }
-  
+
   .navmenu .dropdown ul a:hover,
   .navmenu .dropdown ul .active,
   .navmenu .dropdown ul .active:hover,
   .navmenu .dropdown ul li:hover > a {
     color: var(--accent-color, #f82249) !important;
-    background: rgba(0, 0, 0, 0.015) !important;
-    }
-  
-  /* Mega Menu: Vertical line for items in the 2nd column and beyond */
-  .navmenu .dropdown ul li:nth-child(n+7) a {
-    border-left: 1px solid rgba(0, 0, 0, 0.04) !important;
+    background: #f8fafc !important;
+  }
+
+  .navmenu .dropdown ul a.active {
+    font-weight: 500 !important;
+    background: rgba(248, 34, 73, 0.05) !important;
+  }
+
+  /* "Xem tất cả ->" CTA Link at bottom of Mega-Dropdown */
+  .navmenu .dropdown ul a.store-dropdown-more-link {
+    color: var(--accent-color, #f82249) !important;
+    font-weight: 600 !important;
+    gap: 6px;
+  }
+
+  .navmenu .dropdown ul a.store-dropdown-more-link i {
+    font-size: 13px !important;
+    margin-left: 4px;
+    transition: transform 0.2s ease !important;
+  }
+
+  .navmenu .dropdown ul a.store-dropdown-more-link:hover {
+    background: rgba(248, 34, 73, 0.06) !important;
+  }
+
+  .navmenu .dropdown ul a.store-dropdown-more-link:hover i {
+    transform: translateX(3px);
   }
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  /* Fix cho Avatar dropdown không bị tràn lề phải */
-  .user-menu-dropdown {
-    right: 0 !important;
-    left: auto !important;
+@media (max-width: 1199px) {
+  .header .header-actions {
+    order: 2;
+    margin-right: 6px;
   }
-
-
-/* Menu Cua Hang Dropdown */
-@media (min-width: 1200px) {
-  .navmenu .dropdown ul.store-dropdown {
-    display: grid !important;
-    grid-template-rows: repeat(9, min-content);
-    grid-auto-flow: column;
-    padding: 10px;
-    gap: 0;
+  .mobile-nav-toggle {
+    margin-right: 0;
   }
 }
 
