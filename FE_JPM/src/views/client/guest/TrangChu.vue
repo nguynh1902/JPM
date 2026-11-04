@@ -72,7 +72,7 @@
         </div>
 
         <!-- Khung Tra Cứu Sang Trọng, Thống Nhất Phong Cách TheEvent -->
-        <div class="filter-console-card position-relative" data-aos="fade-up" data-aos-delay="100">
+        <div class="card filter-console-card position-relative" data-aos="fade-up" data-aos-delay="100">
           <!-- 1. Hàng 4 Dropdown Lọc Động Cơ -->
           <div class="row g-3 mb-4">
             <!-- Cột 1: Thương Hiệu -->
@@ -972,7 +972,7 @@ export default {
 .filter-console-card {
   background: #ffffff;
   border: 1px solid #e2e8f0;
-  border-radius: 4px;
+  border-radius: 12px;
   box-shadow: 0 10px 30px rgba(10, 17, 40, 0.05);
   padding: 32px 36px;
   transition: box-shadow 0.3s ease;
@@ -1012,7 +1012,7 @@ export default {
   justify-content: space-between;
   padding: 0 16px;
   height: 46px;
-  border-radius: 4px;
+  border-radius: 8px;
   border: 1px solid #d1d5db;
   background: #ffffff;
   cursor: pointer;
@@ -1058,7 +1058,7 @@ export default {
   padding: 6px;
   background: #ffffff;
   border: 1px solid #e2e8f0;
-  border-radius: 4px;
+  border-radius: 10px;
   box-shadow: 0 14px 35px rgba(10, 17, 40, 0.15);
   z-index: 1060;
   max-height: 320px;
@@ -1088,7 +1088,7 @@ export default {
   align-items: center;
   gap: 8px;
   transition: all 0.15s ease;
-  border-radius: 4px;
+  border-radius: 6px;
 }
 .custom-dropdown-list li:hover {
   background: #f1f5f9;
@@ -1112,7 +1112,7 @@ export default {
   display: flex;
   align-items: center;
   height: 46px;
-  border-radius: 4px;
+  border-radius: 8px;
   border: 1px solid #d1d5db;
   background: #ffffff;
   padding: 0 16px;
@@ -1160,7 +1160,7 @@ export default {
   font-family: var(--heading-font, 'Raleway', sans-serif);
   font-size: 0.875rem;
   font-weight: 600;
-  border-radius: 4px;
+  border-radius: 8px;
   cursor: pointer;
   transition: all 0.2s ease;
   display: inline-flex;
@@ -1186,7 +1186,7 @@ export default {
   font-size: 0.875rem;
   font-weight: 600;
   letter-spacing: 0.2px;
-  border-radius: 4px;
+  border-radius: 8px;
   cursor: pointer;
   transition: all 0.25s ease;
   display: inline-flex;

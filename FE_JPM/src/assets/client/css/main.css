@@ -38,13 +38,13 @@
   --shadow-lg: 0 12px 24px rgba(10, 17, 40, 0.12);
   --shadow-hover: 0 16px 32px rgba(10, 17, 40, 0.15);
 
-  /* Unified Bootstrap Design System Tokens (Luxury Minimalism 4px) */
-  --bs-border-radius: 4px;
-  --bs-border-radius-sm: 2px;
-  --bs-border-radius-lg: 4px;
-  --bs-border-radius-xl: 6px;
-  --bs-card-border-radius: 4px;
-  --bs-card-inner-border-radius: 4px;
+  /* Unified Bootstrap Design System Tokens (Modern Tech Rounded 12px) */
+  --bs-border-radius: 12px;
+  --bs-border-radius-sm: 6px;
+  --bs-border-radius-lg: 12px;
+  --bs-border-radius-xl: 16px;
+  --bs-card-border-radius: 12px;
+  --bs-card-inner-border-radius: 12px;
 }
 
 /* Nav Menu Colors */
@@ -85,14 +85,14 @@
 ════════════════════════════════════ */
 .group-hover {
   transition: transform 0.3s ease, box-shadow 0.3s ease;
-  border-radius: 4px;
+  border-radius: 12px;
 }
 .group-hover:hover {
   transform: translateY(-4px);
 }
 .list-item-hover {
   transition: background-color 0.25s ease, transform 0.25s ease;
-  border-radius: 4px;
+  border-radius: 12px;
 }
 .list-item-hover:hover {
   transform: translateY(-2px);
@@ -2238,13 +2238,13 @@ section,
    JPM DESIGN SYSTEM OVERRIDES (BOOTSTRAP)
    ========================================= */
 
-/* 1. Cards - Unified 4px Border Radius per Client Standard (Luxury Minimalism) */
+/* 1. Cards - Modern Tech Rounded 12px per Client Standard */
 .card,
 .index-page .card {
   background: var(--surface-color, #fff);
-  border-radius: 4px !important; /* Unified 4px per Client Standard */
-  box-shadow: 0 10px 30px rgba(0,0,0,0.04) !important;
-  border: 1px solid #e0e6f0 !important;
+  border-radius: 12px !important; /* Bo cong 12px mềm mại chuẩn theo yêu cầu */
+  box-shadow: 0 4px 20px rgba(0,0,0,0.03) !important;
+  border: 1px solid #e5e7eb !important;
   overflow: hidden;
   transition: all 0.3s ease;
 }
@@ -2252,8 +2252,8 @@ section,
 .card .card-img-top,
 .index-page .card .card-img-wrapper,
 .index-page .card .card-img-top {
-  border-top-left-radius: 4px !important;
-  border-top-right-radius: 4px !important;
+  border-top-left-radius: 12px !important;
+  border-top-right-radius: 12px !important;
 }
 .card .card-img-wrapper img,
 .index-page .card .card-img-wrapper img {
