@@ -63,11 +63,11 @@
     <!-- ========================================================
          KHỐI 1: TRA CỨU PHỤ TÙNG NHANH (Bộ lọc động cơ thông minh)
          ======================================================== -->
-    <section id="search-parts" class="search-parts-section section position-relative z-3">
+    <section id="search-parts" class="search-parts-section section home-section-slate position-relative z-3">
       <div class="container" data-aos="fade-up">
-        <!-- Tiêu đề Section chuẩn TheEvent -->
+        <!-- Tiêu đề Section chuẩn Editorial Luxury -->
         <div class="section-title" data-aos="fade-up">
-          <h2>Tra Cứu Phụ Tùng Nhanh</h2>
+          <h2>Tra cứu phụ tùng nhanh</h2>
           <p>Chọn thông số phương tiện hoặc nhập mã để tra cứu chính xác phụ tùng cần thiết</p>
         </div>
 
@@ -198,16 +198,16 @@
     <!-- ========================================================
          KHỐI 2: PHỤ TÙNG THEO THƯƠNG HIỆU (Logo nhà sản xuất chính hãng)
          ======================================================== -->
-    <section id="sponsors" class="sponsors section bg-white py-5">
-      <div class="container section-title pb-3" data-aos="fade-up">
-        <h2>Phụ Tùng Theo Thương Hiệu</h2>
+    <section id="sponsors" class="sponsors section bg-white">
+      <div class="container section-title" data-aos="fade-up">
+        <h2>Phụ tùng theo thương hiệu</h2>
         <p>Đa dạng các loại phụ tùng chính hãng từ những thương hiệu hàng đầu thế giới</p>
       </div>
       <div class="container" data-aos="fade-up" data-aos-delay="100">
         <div class="row g-0 clients-wrap">
           <!-- Skeleton loading -->
           <template v-if="isLoadingBrands">
-            <div class="col-xl-3 col-md-4 client-logo" v-for="n in 8" :key="'skel-' + n">
+            <div class="col-6 col-md-4 col-xl-3 client-logo" v-for="n in 8" :key="'skel-' + n">
               <div class="d-flex align-items-center justify-content-center w-100 h-100">
                 <div class="skeleton-box skeleton-box-brand"></div>
               </div>
@@ -216,7 +216,7 @@
 
           <!-- Dynamic brands from API -->
           <template v-else-if="brands && brands.length > 0">
-            <div class="col-xl-3 col-md-4 client-logo" v-for="brand in brands" :key="brand.id">
+            <div class="col-6 col-md-4 col-xl-3 client-logo" v-for="brand in brands" :key="brand.id">
               <router-link :to="`/thuong-hieu/${brand.code ? brand.code.toLowerCase() : ''}`" class="d-flex align-items-center justify-content-center w-100 h-100">
                 <img
                   :src="brand.logo_path ? (brand.logo_path.startsWith('http') ? brand.logo_path : brand.logo_path.startsWith('/client/') ? brand.logo_path : 'http://localhost:8000/storage/' + brand.logo_path) : ''"
@@ -234,9 +234,9 @@
     <!-- ========================================================
          KHỐI 3: SẢN PHẨM BÁN CHẠY (Linh kiện & phụ tùng tiêu biểu)
          ======================================================== -->
-    <section class="products-section section bg-light py-5">
+    <section class="products-section section home-section-slate">
       <div class="container section-title" data-aos="fade-up">
-        <h2>Sản Phẩm Bán Chạy</h2>
+        <h2>Sản phẩm bán chạy</h2>
         <p>Những linh kiện phụ tùng được khách hàng tin dùng nhiều nhất tại JPM Marine</p>
       </div>
       <div class="container" data-aos="fade-up" data-aos-delay="100">
@@ -402,7 +402,7 @@
     <!-- ========================================================
          KHỐI 5: TIN TỨC & KINH NGHIỆM (Cẩm nang kỹ thuật hàng hải)
          ======================================================== -->
-    <section class="news-section section bg-white py-5">
+    <section class="news-section section bg-white">
       <div class="container section-title" data-aos="fade-up">
         <h2>Tin tức & Kinh nghiệm</h2>
         <p>Cập nhật kiến thức bảo dưỡng và tin tức mới nhất về thiết bị tàu thuyền</p>
@@ -859,10 +859,10 @@ export default {
    ============================================================== */
 .news-category {
   font-family: var(--default-font);
-  color: #8392a5; /* Đồng bộ 100% với .product-category của Sản Phẩm Bán Chạy */
-  font-weight: 600;
+  color: #f82249; /* Đỏ Marine Red thương hiệu JPM */
+  font-weight: 700;
   font-size: 0.75rem;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.6px;
   text-transform: uppercase;
   line-height: 1.2;
 }
@@ -887,13 +887,14 @@ export default {
 
 .news-hero-title a,
 .news-card-title a {
-  color: var(--heading-color, #0A1128);
+  color: var(--heading-color, #0A1128) !important;
   text-decoration: none;
-  transition: color 0.2s ease;
 }
 .group-hover:hover .news-hero-title a,
-.list-item-hover:hover .news-card-title a {
-  color: #1e3a8a !important;
+.list-item-hover:hover .news-card-title a,
+.news-hero-title a:hover,
+.news-card-title a:hover {
+  color: var(--heading-color, #0A1128) !important;
 }
 
 .news-summary {
@@ -909,12 +910,16 @@ export default {
 
 .news-meta {
   font-family: var(--default-font);
-  color: #94a3b8; /* Metadata phụ dịu nhẹ chuẩn Editorial, không in đậm tranh chấp tiêu đề */
-  font-size: 0.78rem;
+  color: #64748b; /* Xám Slate vừa vặn, sắc nét trên nền trắng */
+  font-size: 0.8rem;
   font-weight: 500;
   line-height: 1.3;
   display: inline-flex;
   align-items: center;
+}
+.news-meta i {
+  color: inherit;
+  font-size: 0.82rem;
 }
 
 .section-more-link {
@@ -1003,8 +1008,11 @@ export default {
    Khối 1: Tra Cứu Phụ Tùng Nhanh (Smart Filter Console)
    Thống nhất 100% phong cách TheEvent, màu Navy & Red thương hiệu
    ============================================================== */
-.search-parts-section {
-  padding: 55px 0 65px 0;
+.jpm-homepage .section:not(.hero) {
+  padding: 64px 0;
+}
+
+.home-section-slate {
   background-color: #f8fafc;
 }
 

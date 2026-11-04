@@ -98,27 +98,6 @@
 .list-item-hover:hover {
   transform: translateY(-2px);
 }
-.group-hover:hover h1 a,
-.group-hover:hover h2 a,
-.group-hover:hover h3 a,
-.group-hover:hover h4 a,
-.group-hover:hover h5 a,
-.group-hover:hover h6 a,
-.group-hover:hover .card-title a,
-.group-hover:hover .news-title a,
-.list-item-hover:hover h1 a,
-.list-item-hover:hover h2 a,
-.list-item-hover:hover h3 a,
-.list-item-hover:hover h4 a,
-.list-item-hover:hover h5 a,
-.list-item-hover:hover h6 a,
-.list-item-hover:hover .card-title a,
-.list-item-hover:hover .news-title a,
-.group-hover:hover .hero-title-hover,
-.list-item-hover:hover .hero-title-hover {
-  color: #0e1b4d !important; /* Subtle dark blue */
-  transition: color 0.3s ease;
-}
 .group-hover:hover .img-zoom-hover img,
 .list-item-hover:hover .img-zoom-hover img {
   transform: scale(1.05);
@@ -667,10 +646,10 @@ h6 {
 .footer .footer-about .logo span {
   color: #ffffff;
   font-family: var(--heading-font);
-  font-size: 32px;
-  font-weight: 800;
-  letter-spacing: -0.5px;
-  line-height: 1.1;
+  font-size: 26px;
+  font-weight: 600;
+  letter-spacing: 0.8px;
+  line-height: 1.2;
 }
 
 .footer .footer-about p {
@@ -935,38 +914,29 @@ section,
 }
 
 /*--------------------------------------------------------------
-# Global Section Titles
+# Global Section Titles (Editorial Luxury Minimalist)
 --------------------------------------------------------------*/
 .section-title {
   text-align: center;
-  padding-bottom: 40px;
+  padding-bottom: 36px;
   position: relative;
 }
 
 .section-title h2 {
-  font-family: var(--heading-font);
-  font-size: 32px;
+  font-family: var(--default-font);
+  font-size: 28px;
   font-weight: 700;
-  margin-bottom: 14px;
-  padding-bottom: 12px;
+  line-height: 1.28;
+  margin-bottom: 10px;
+  padding-bottom: 0;
   position: relative;
   text-transform: none;
-  letter-spacing: normal;
-  color: var(--heading-color);
+  letter-spacing: -0.3px;
+  color: var(--heading-color, #0A1128);
 }
 
 .section-title h2:after {
-  content: "";
-  position: absolute;
-  display: block;
-  width: 45px;
-  height: 3px;
-  background: var(--accent-color);
-  left: 0;
-  right: 0;
-  bottom: 0;
-  margin: auto;
-  border-radius: 2px;
+  display: none;
 }
 
 .section-title .overline {
@@ -975,9 +945,26 @@ section,
 
 .section-title p {
   font-family: var(--default-font);
-  margin-bottom: 0;
-  font-size: 15px;
-  color: #6c757d;
+  margin: 0 auto;
+  max-width: 620px;
+  font-size: 0.95rem;
+  font-weight: 400;
+  line-height: 1.6;
+  color: #64748b;
+}
+
+@media (max-width: 767px) {
+  .section-title {
+    padding-bottom: 28px;
+  }
+
+  .section-title h2 {
+    font-size: 24px;
+  }
+
+  .section-title p {
+    font-size: 0.9rem;
+  }
 }
 
 /*--------------------------------------------------------------
@@ -1491,10 +1478,23 @@ section,
 # Sponsors Section
 --------------------------------------------------------------*/
 .sponsors .section-title {
-  padding-bottom: 20px;
+  padding-bottom: 24px;
 }
 .sponsors .clients-wrap {
   border: none;
+  row-gap: 42px;
+}
+
+@media (max-width: 991px) {
+  .sponsors .clients-wrap {
+    row-gap: 28px;
+  }
+}
+
+@media (max-width: 640px) {
+  .sponsors .clients-wrap {
+    row-gap: 20px;
+  }
 }
 
 .sponsors .client-logo {
@@ -1502,35 +1502,36 @@ section,
   display: flex;
   justify-content: center;
   align-items: center;
-  border: 1px solid transparent;
-  border-radius: 4px;
-  overflow: visible;
+  height: 96px;
+  border: none;
+  overflow: hidden;
   transition: all 0.4s ease;
   cursor: pointer;
 }
 
-.sponsors .client-logo:hover {
-  /* Loại bỏ nền trắng để giữ vẻ thanh thoát, sang trọng */
-}
-
 .sponsors .client-logo img {
-  padding: 15px 30px; /* Thu hẹp khoảng cách trên/dưới xuống một nửa */
-  max-width: 80%;
-  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-  opacity: 0.8; /* Hơi nhạt nhẹ */
+  padding: 0;
+  width: 64%;
+  max-width: 210px;
+  height: auto;
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease;
+  opacity: 0.85;
 }
 
 @media (max-width: 640px) {
-  .sponsors .client-logo img {
-    padding: 20px;
-    max-width: 75%;
-    }
+  .sponsors .client-logo {
+    height: 80px;
+  }
 
+  .sponsors .client-logo img {
+    width: 72%;
+    max-width: 160px;
+  }
 }
 
 .sponsors .client-logo:hover img {
   transform: scale(1.08);
-  opacity: 1; /* Sáng rõ lên khi hover */
+  opacity: 1;
 }
 
 /*--------------------------------------------------------------
