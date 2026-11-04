@@ -326,73 +326,26 @@
     </section>
 
     <!-- ========================================================
-         KHỐI 4: TẠI SAO CHỌN JPM MARINE (Thế mạnh & Cam kết dịch vụ)
+         KHỐI 4: BANNER QUẢNG BÁ FULL MÀN (home_banner.png nguyên bản)
          ======================================================== -->
-    <section class="why-us-section section dark-background py-5">
-      <div class="container py-4">
+    <section class="home-full-banner">
+      <div class="container py-4 py-lg-5">
         <div class="row align-items-center">
-          <!-- Cột Trái (5 phần): Tiêu đề và Mô tả -->
-          <div class="col-lg-5 mb-5 mb-lg-0 pe-lg-5" data-aos="fade-right">
-            <div class="mb-3">
-              <span class="badge bg-danger-subtle text-danger border border-danger-subtle text-uppercase fw-semibold px-3 py-2 rounded-pill">
-                Thế mạnh vượt trội
-              </span>
-            </div>
-            <h2 class="mb-4 text-white display-6 fw-bold">
-              <span class="fw-light opacity-75">Tại Sao Chọn</span> <br>
-              <span class="text-danger">JPM Marine</span>
+          <div class="col-lg-5 col-md-7">
+            <h2 class="home-banner-title mb-3">
+              Sẵn Sàng Cho Mọi Hải Trình <br />
+              <span class="text-danger">Vững Bền Cùng Sóng Gió</span>
             </h2>
-            <p class="mb-4 text-white-50">
-              Chúng tôi không chỉ cung cấp phụ tùng, chúng tôi mang đến sự an tâm tuyệt đối cho mỗi chuyến ra khơi với dịch vụ tiêu chuẩn quốc tế.
+            <p class="home-banner-desc mb-4">
+              Cung cấp động cơ và phụ tùng tàu thuyền chính hãng Yamaha, Honda Marine, Suzuki, Yanmar. Đảm bảo an toàn tối đa và tối ưu hiệu suất cho từng chuyến ra khơi.
             </p>
-            <router-link to="/ho-tro" class="btn btn-outline-danger px-4 py-2 mt-2 fw-semibold">
-              Nhận Tư Vấn Ngay <i class="bi bi-arrow-right ms-2"></i>
-            </router-link>
-          </div>
-
-          <!-- Cột Phải (7 phần): Danh sách điểm mạnh -->
-          <div class="col-lg-7">
-            <div class="d-flex flex-column gap-3">
-              <!-- Item 1 -->
-              <div class="d-flex align-items-center p-4 feature-card" data-aos="fade-left" data-aos-delay="100">
-                <div class="feature-icon d-flex align-items-center justify-content-center rounded-circle">
-                  <i class="bi bi-shield-check"></i>
-                </div>
-                <div>
-                  <h3 class="feature-title">Hàng Chính Hãng 100%</h3>
-                  <p class="feature-desc">Cam kết cung cấp phụ tùng chính hãng nhập khẩu trực tiếp từ Yamaha, Honda, Suzuki.</p>
-                </div>
-              </div>
-              <!-- Item 2 -->
-              <div class="d-flex align-items-center p-4 feature-card" data-aos="fade-left" data-aos-delay="200">
-                <div class="feature-icon d-flex align-items-center justify-content-center rounded-circle">
-                  <i class="bi bi-truck"></i>
-                </div>
-                <div>
-                  <h3 class="feature-title">Giao Hàng Siêu Tốc</h3>
-                  <p class="feature-desc">Mạng lưới phân phối rộng khắp toàn quốc giúp phụ tùng đến tay nhanh chóng, an toàn.</p>
-                </div>
-              </div>
-              <!-- Item 3 -->
-              <div class="d-flex align-items-center p-4 feature-card" data-aos="fade-left" data-aos-delay="300">
-                <div class="feature-icon d-flex align-items-center justify-content-center rounded-circle">
-                  <i class="bi bi-headset"></i>
-                </div>
-                <div>
-                  <h3 class="feature-title">Hỗ Trợ Kỹ Thuật 24/7</h3>
-                  <p class="feature-desc">Đội ngũ chuyên gia kỹ thuật hàng hải giàu kinh nghiệm luôn sẵn sàng tư vấn chuyên sâu.</p>
-                </div>
-              </div>
-              <!-- Item 4 -->
-              <div class="d-flex align-items-center p-4 feature-card" data-aos="fade-left" data-aos-delay="400">
-                <div class="feature-icon d-flex align-items-center justify-content-center rounded-circle">
-                  <i class="bi bi-tools"></i>
-                </div>
-                <div>
-                  <h3 class="feature-title">Dịch Vụ Tận Bến</h3>
-                  <p class="feature-desc">Đội ngũ cơ động sẵn sàng di chuyển đến bến neo đậu để kiểm tra và khắc phục sự cố.</p>
-                </div>
-              </div>
+            <div class="d-flex flex-wrap gap-3">
+              <router-link to="/san-pham" class="btn btn-danger px-4 py-2 fw-semibold d-inline-flex align-items-center">
+                Khám Phá Cửa Hàng <i class="bi bi-arrow-right ms-2"></i>
+              </router-link>
+              <router-link to="/tra-cuu" class="btn btn-outline-dark px-4 py-2 fw-semibold d-inline-flex align-items-center">
+                <i class="bi bi-search me-2"></i> Tra Cứu Phụ Tùng
+              </router-link>
             </div>
           </div>
         </div>
@@ -1232,6 +1185,67 @@ export default {
 @media (max-width: 991px) {
   .filter-console-card {
     padding: 24px 20px;
+  }
+}
+
+/* ==============================================================
+   Khối 4: Banner Quảng Bá Full Màn (home_banner.png)
+   ============================================================== */
+.home-full-banner {
+  width: 100%;
+  min-height: 480px;
+  background-image: url('/client/image/home_banner.png');
+  background-position: right center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+}
+
+.home-full-banner::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.96) 0%, rgba(255, 255, 255, 0.85) 42%, rgba(255, 255, 255, 0.2) 70%, transparent 100%);
+  pointer-events: none;
+}
+
+.home-banner-title {
+  font-family: var(--default-font);
+  font-size: 2.25rem;
+  font-weight: 800;
+  line-height: 1.25;
+  color: #0A1128;
+  letter-spacing: -0.4px;
+}
+
+.home-banner-desc {
+  font-family: var(--default-font);
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.65;
+  color: #475569;
+}
+
+@media (max-width: 991px) {
+  .home-full-banner {
+    min-height: 400px;
+  }
+  .home-full-banner::before {
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.96) 0%, rgba(255, 255, 255, 0.9) 70%, rgba(255, 255, 255, 0.5) 100%);
+  }
+  .home-banner-title {
+    font-size: 1.75rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .home-banner-title {
+    font-size: 1.4rem;
+  }
+  .home-banner-desc {
+    font-size: 0.9rem;
   }
 }
 </style>
