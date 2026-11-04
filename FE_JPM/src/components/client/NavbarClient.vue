@@ -85,10 +85,18 @@
       <div class="header-actions">
         <!-- Thông báo -->
         <div v-if="isLoggedIn" class="header-dropdown" @mouseenter="markAsRead">
-          <button type="button" class="header-icon-btn border-0 bg-transparent" aria-label="Thông báo">
-            <i class="bi bi-bell"></i>
-            <span v-if="unreadCount > 0" class="header-badge">{{ unreadCount }}</span>
-          </button>
+          <a href="#" @click.prevent class="header-icon-btn" aria-label="Thông báo">
+            <span class="position-relative d-inline-block">
+              <i class="bi bi-bell fs-5" style="line-height: 1"></i>
+              <span
+                v-if="unreadCount > 0"
+                class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                style="font-size: 0.6rem; padding: 2px 4px; margin-top: 2px; margin-left: -2px;"
+              >
+                {{ unreadCount }}
+              </span>
+            </span>
+          </a>
 
           <div class="header-popover notif-popover">
             <div class="notif-header">
@@ -130,28 +138,34 @@
 
         <!-- Tra cứu đơn hàng -->
         <router-link to="/tra-cuu-don-hang" class="header-icon-btn" title="Tra cứu đơn hàng">
-          <i class="bi bi-box-seam"></i>
+          <i class="bi bi-box-seam fs-5" style="line-height: 1"></i>
         </router-link>
 
         <!-- Giỏ hàng -->
         <router-link to="/gio-hang" class="header-icon-btn" title="Giỏ hàng">
-          <i class="bi bi-cart2"></i>
-          <span v-if="cartStore.totalItems > 0" class="header-badge">{{ cartStore.totalItems }}</span>
+          <span class="position-relative d-inline-block">
+            <i class="bi bi-cart2 fs-5" style="line-height: 1"></i>
+            <span
+              v-if="cartStore.totalItems > 0"
+              class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+              style="font-size: 0.6rem; padding: 2px 4px; margin-top: 2px; margin-left: -2px;"
+            >{{ cartStore.totalItems }}</span>
+          </span>
         </router-link>
 
         <!-- Tài khoản -->
         <template v-if="!isLoggedIn">
           <router-link to="/dang-nhap" class="header-icon-btn" title="Đăng nhập">
-            <i class="bi bi-person"></i>
+            <i class="bi bi-person fs-5" style="line-height: 1"></i>
           </router-link>
         </template>
-        <div v-else class="header-dropdown">
-          <router-link to="/tai-khoan" class="header-avatar-btn" title="Tài khoản">
-            <div class="user-avatar">
+        <div v-else class="header-dropdown ms-1">
+          <a href="#" @click.prevent class="header-avatar-btn" title="Tài khoản">
+            <div class="user-avatar" :class="{ 'user-avatar-fallback': !userAvatar }">
               <img v-if="userAvatar" :src="userAvatar" alt="Avatar" class="w-100 h-100 rounded-circle object-fit-cover">
-              <i v-else class="bi bi-person-fill"></i>
+              <i v-else class="bi bi-person-fill fs-6"></i>
             </div>
-          </router-link>
+          </a>
 
           <div class="header-popover user-popover">
             <router-link to="/tai-khoan" class="um-item">
@@ -295,83 +309,55 @@ export default {
 .header-actions {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 24px;
 }
 
 .header-icon-btn {
   position: relative;
-  width: 38px;
-  height: 38px;
-  border-radius: 8px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  color: rgba(255, 255, 255, 0.85);
-  font-size: 1.15rem;
-  line-height: 1;
+  padding: 0 2px;
+  color: var(--nav-color, rgba(255, 255, 255, 0.85));
   text-decoration: none;
   cursor: pointer;
-  transition: background-color 0.2s ease, color 0.2s ease;
+  transition: color 0.3s ease;
 }
 
 .header-icon-btn:hover,
-.header-dropdown:hover > .header-icon-btn {
-  color: #ffffff;
-  background-color: rgba(255, 255, 255, 0.1);
+.header-icon-btn:hover i,
+.header-dropdown:hover > .header-icon-btn,
+.header-dropdown:hover > .header-icon-btn i {
+  color: #ffffff !important;
 }
 
-.header-badge {
-  position: absolute;
-  top: 3px;
-  right: 2px;
-  min-width: 17px;
-  height: 17px;
-  padding: 0 4px;
-  border-radius: 999px;
-  background-color: var(--accent-color, #f82249);
-  color: #ffffff;
-  font-family: var(--default-font);
-  font-size: 10px;
-  font-weight: 700;
-  line-height: 1;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 0 0 2px rgba(10, 17, 40, 0.85);
-}
-
-/* Avatar Trigger */
+/* Avatar Trigger (Original 40x40 borderless circle) */
 .header-avatar-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  margin-left: 4px;
   text-decoration: none;
 }
 
 .user-avatar {
-  width: 36px;
-  height: 36px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #f82249, #c0143a);
-  border: 1.5px solid rgba(255, 255, 255, 0.3);
+  background: transparent;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  overflow: hidden;
-  transition: border-color 0.2s ease;
 }
 
-.header-dropdown:hover .user-avatar,
-.header-avatar-btn:hover .user-avatar {
-  border-color: #ffffff;
+.user-avatar.user-avatar-fallback {
+  background: linear-gradient(135deg, #f82249, #c0143a);
 }
 
 .user-avatar i {
-  color: #ffffff;
-  font-size: 15px;
-  line-height: 1;
+  color: #fff !important;
+  font-size: 14px !important;
+  margin: 0 !important;
 }
 
 /* ===== SHARED POPOVER CONTAINER (12px Luxury Surface) ===== */
