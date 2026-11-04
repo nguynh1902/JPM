@@ -176,50 +176,24 @@ export default {
       hasMoreCategories: false,
       navBrands: [],
       hasMoreBrands: false,
-      notifications: [],
-      unreadCount: 0,
     };
   },
   async mounted() {
-    if (this.isLoggedIn) {
-      this.fetchNotifications();
-    }
     try {
       const res = await axiosClient.get('/public/danh-muc-san-pham');
       const allCats = res.data?.data || res.data || [];
       this.navCategories = allCats.slice(0, 17);
       this.hasMoreCategories = allCats.length > 17;
         
-        const resBrands = await axiosClient.get('/public/thuong-hieu?_t=' + new Date().getTime());
-        const allBrands = resBrands.data?.data || resBrands.data || [];
-        this.navBrands = allBrands.slice(0, 17);
-        this.hasMoreBrands = allBrands.length > 17;
+      const resBrands = await axiosClient.get('/public/thuong-hieu?_t=' + new Date().getTime());
+      const allBrands = resBrands.data?.data || resBrands.data || [];
+      this.navBrands = allBrands.slice(0, 17);
+      this.hasMoreBrands = allBrands.length > 17;
     } catch (e) {
       console.warn('Không tải được danh mục navbar:', e);
     }
   },
-  watch: {
-    isLoggedIn(newVal) {
-      if (newVal) this.fetchNotifications();
-      else { this.notifications = []; this.unreadCount = 0; }
-    }
-  },
   methods: {
-    async fetchNotifications() {
-      try {
-        const res = await axiosClient.get('/client/notifications');
-        this.notifications = res.data || [];
-        this.unreadCount = res.unread_count ?? (res.data || []).filter(n => !n.is_read && !n.read_at).length;
-      } catch (e) {}
-    },
-    async markAsRead() {
-      if (this.unreadCount === 0) return;
-      try {
-        await axiosClient.post('/client/notifications/read');
-        this.unreadCount = 0;
-        this.notifications.forEach(n => n.read_at = new Date());
-      } catch (e) {}
-    },
     async logout() {
       await this.authStore.logout();
       this.$router.push('/dang-nhap');
@@ -393,166 +367,6 @@ export default {
   height: 1px;
   background-color: #f1f5f9;
   margin: 4px 6px;
-}
-
-/* ===== NOTIFICATIONS POPOVER ===== */
-.notif-popover {
-  width: 340px;
-  max-width: calc(100vw - 24px);
-  padding: 0;
-}
-
-.notif-header {
-  padding: 12px 16px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: 1px solid #f1f5f9;
-  border-radius: 12px 12px 0 0;
-  background: #ffffff;
-}
-
-.notif-header-title {
-  font-family: var(--default-font);
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: #0A1128;
-}
-
-.notif-header-badge {
-  background-color: var(--accent-color, #f82249);
-  color: #ffffff;
-  font-family: var(--default-font);
-  font-size: 0.7rem;
-  font-weight: 600;
-  padding: 2px 8px;
-  border-radius: 999px;
-}
-
-.notif-list {
-  max-height: 320px;
-  overflow-y: auto;
-}
-
-.notif-item {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  padding: 12px 16px;
-  border-bottom: 1px solid #f8fafc;
-  text-decoration: none;
-  transition: background-color 0.18s ease;
-}
-
-.notif-item:hover {
-  background-color: #f8fafc;
-}
-
-.notif-item.unread {
-  background-color: rgba(248, 34, 73, 0.03);
-}
-
-.notif-icon {
-  width: 36px;
-  height: 36px;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.notif-icon i {
-  font-size: 1rem;
-  line-height: 1;
-}
-
-.bg-pastel-primary { background: #eff6ff; color: #2563eb; }
-.bg-pastel-success { background: #f0fdf4; color: #16a34a; }
-.bg-pastel-danger { background: #fef2f2; color: #dc2626; }
-
-.notif-content {
-  flex-grow: 1;
-  min-width: 0;
-}
-
-.notif-item-title {
-  font-family: var(--default-font);
-  font-size: 0.84rem;
-  font-weight: 600;
-  color: #0A1128;
-  margin-bottom: 2px;
-}
-
-.notif-item-body {
-  font-family: var(--default-font);
-  font-size: 0.8rem;
-  color: #64748b;
-  line-height: 1.45;
-  margin-bottom: 4px;
-}
-
-.notif-item-date {
-  font-family: var(--default-font);
-  font-size: 0.72rem;
-  color: #94a3b8;
-}
-
-.notif-indicator {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: var(--accent-color, #f82249);
-  margin-top: 6px;
-  flex-shrink: 0;
-}
-
-.notif-empty {
-  padding: 28px 16px;
-  text-align: center;
-  font-family: var(--default-font);
-  color: #94a3b8;
-}
-
-.notif-empty i {
-  font-size: 1.6rem;
-  display: block;
-  margin-bottom: 6px;
-}
-
-.notif-empty span {
-  font-size: 0.84rem;
-}
-
-.notif-footer {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  padding: 10px 16px;
-  background-color: #f8fafc;
-  border-top: 1px solid #f1f5f9;
-  border-radius: 0 0 12px 12px;
-  font-family: var(--default-font);
-  font-size: 0.82rem;
-  font-weight: 600;
-  color: #0A1128;
-  text-decoration: none;
-  transition: color 0.18s ease, background-color 0.18s ease;
-}
-
-.notif-footer i {
-  font-size: 0.82rem;
-  transition: transform 0.2s ease;
-}
-
-.notif-footer:hover {
-  color: var(--accent-color, #f82249);
-  background-color: #f1f5f9;
-}
-
-.notif-footer:hover i {
-  transform: translateX(3px);
 }
 </style>
 
