@@ -999,7 +999,7 @@ export default {
   font-size: 0.9rem;
 }
 
-/* Custom Select Box */
+/* Custom Select Box (Admin-style Smooth Focus & Soft Blur Glow) */
 .custom-select-wrapper {
   position: relative;
 }
@@ -1015,8 +1015,9 @@ export default {
   border-radius: 8px;
   border: 1px solid #d1d5db;
   background: #ffffff;
+  box-shadow: inset 0 0 0 0 rgba(248, 34, 73, 0), 0 2px 6px 0 rgba(248, 34, 73, 0);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
   font-size: 0.875rem;
   font-weight: 400;
   color: #64748b;
@@ -1026,9 +1027,9 @@ export default {
   border-color: #94a3b8;
 }
 .custom-select-box.is-focused {
-  border-width: 2px !important;
+  border-width: 1px !important;
   border-color: var(--accent-color, #f82249) !important;
-  box-shadow: 0 0 0.25rem 0.12rem rgba(248, 34, 73, 0.4) !important;
+  box-shadow: inset 0 0 0 1px var(--accent-color, #f82249), 0 2px 6px 0 rgba(248, 34, 73, 0.3) !important;
   outline: 0 !important;
 }
 .custom-select-box.has-value {
@@ -1065,6 +1066,7 @@ export default {
   overflow-y: auto;
   overflow-x: hidden;
   font-family: var(--default-font);
+  user-select: none;
 }
 .custom-dropdown-list::-webkit-scrollbar {
   width: 6px;
@@ -1107,7 +1109,7 @@ export default {
   background: transparent;
 }
 
-/* Search Input Box */
+/* Search Input Box (Sneat-style Bold 2px Crisp Focus & Downward Soft Shadow, Zero Jitter) */
 .search-input-box {
   display: flex;
   align-items: center;
@@ -1115,13 +1117,14 @@ export default {
   border-radius: 8px;
   border: 1px solid #d1d5db;
   background: #ffffff;
+  box-shadow: inset 0 0 0 0 rgba(248, 34, 73, 0), 0 2px 6px 0 rgba(248, 34, 73, 0);
   padding: 0 16px;
-  transition: all 0.2s ease;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }
 .search-input-box:focus-within {
-  border-width: 2px !important;
+  border-width: 1px !important;
   border-color: var(--accent-color, #f82249) !important;
-  box-shadow: 0 0 0.25rem 0.12rem rgba(248, 34, 73, 0.4) !important;
+  box-shadow: inset 0 0 0 1px var(--accent-color, #f82249), 0 2px 6px 0 rgba(248, 34, 73, 0.3) !important;
   outline: 0 !important;
 }
 .search-input-box:hover {
@@ -1132,6 +1135,7 @@ export default {
   color: #94a3b8;
   margin-right: 10px;
   flex-shrink: 0;
+  transition: color 0.15s ease-in-out;
 }
 .search-input-box:focus-within .search-input-icon {
   color: var(--accent-color, #f82249);
@@ -1148,6 +1152,11 @@ export default {
 }
 .search-input-field::placeholder {
   color: #94a3b8;
+  transition: all 0.25s ease;
+}
+.search-input-field:focus::placeholder {
+  transform: translate(5px);
+  transition: all 0.25s ease;
 }
 
 /* Nút Bấm Thao Tác (Buttons) */
