@@ -71,15 +71,13 @@
           <p>Chọn thông số phương tiện hoặc nhập mã để tra cứu chính xác phụ tùng cần thiết</p>
         </div>
 
-        <!-- Khung Tra Cứu Sang Trọng, Thống Nhất Phong Cách TheEvent -->
+        <!-- Khung Tra Cứu Sang Trọng, Thống Nhất Chuẩn Editorial Luxury -->
         <div class="card filter-console-card position-relative" data-aos="fade-up" data-aos-delay="100">
-          <!-- 1. Hàng 4 Dropdown Lọc Động Cơ -->
-          <div class="row g-3 mb-4">
+          <!-- 1. Hàng 4 Dropdown Lọc Động Cơ (4 cột 3-3-3-3 chuẩn trục dọc) -->
+          <div class="row g-3 mb-3">
             <!-- Cột 1: Thương Hiệu -->
             <div class="col-12 col-sm-6 col-lg-3">
-              <label class="filter-label mb-2">
-                <i class="bi bi-tag text-secondary me-1"></i> Thương hiệu
-              </label>
+              <label class="filter-label mb-2">Thương hiệu</label>
               <div class="custom-select-wrapper" :class="{ 'z-active': openDropdown === 'brand' }">
                 <div class="custom-select-box" :class="{ 'is-focused': openDropdown === 'brand', 'has-value': selectedBrand !== '' }" @click="toggleDropdown('brand')">
                   <span class="text-truncate">{{ brandLabel }}</span>
@@ -94,9 +92,7 @@
 
             <!-- Cột 2: Loại Động Cơ -->
             <div class="col-12 col-sm-6 col-lg-3">
-              <label class="filter-label mb-2">
-                <i class="bi bi-gear text-secondary me-1"></i> Loại động cơ
-              </label>
+              <label class="filter-label mb-2">Loại động cơ</label>
               <div class="custom-select-wrapper" :class="{ 'z-active': openDropdown === 'engineType' }">
                 <div class="custom-select-box" :class="{ 'is-focused': openDropdown === 'engineType', 'has-value': selectedEngineType !== '' }" @click="toggleDropdown('engineType')">
                   <span class="text-truncate">{{ partLabel }}</span>
@@ -111,9 +107,7 @@
 
             <!-- Cột 3: Năm Sản Xuất -->
             <div class="col-12 col-sm-6 col-lg-3">
-              <label class="filter-label mb-2">
-                <i class="bi bi-calendar3 text-secondary me-1"></i> Năm sản xuất
-              </label>
+              <label class="filter-label mb-2">Năm sản xuất</label>
               <div class="custom-select-wrapper" :class="{ 'z-active': openDropdown === 'year' }">
                 <div class="custom-select-box" :class="{ 'is-focused': openDropdown === 'year', 'has-value': selectedYear !== '' }" @click="toggleDropdown('year')">
                   <span class="text-truncate">{{ yearLabel }}</span>
@@ -128,9 +122,7 @@
 
             <!-- Cột 4: Model Động Cơ -->
             <div class="col-12 col-sm-6 col-lg-3">
-              <label class="filter-label mb-2">
-                <i class="bi bi-diagram-3 text-secondary me-1"></i> Model động cơ
-              </label>
+              <label class="filter-label mb-2">Model động cơ</label>
               <div class="custom-select-wrapper" :class="{ 'z-active': openDropdown === 'model' }">
                 <div class="custom-select-box" :class="{ 'is-focused': openDropdown === 'model', 'has-value': selectedModel !== '' }" @click="toggleDropdown('model')">
                   <span class="text-truncate">{{ modelLabel }}</span>
@@ -144,54 +136,51 @@
             </div>
           </div>
 
-          <!-- 2. Hàng Tìm Kiếm Theo Mã & Cụm Nút Thao Tác -->
-          <div class="row g-3 align-items-end">
-            <!-- Ô Tìm kiếm mã -->
-            <div class="col-12 col-lg-8">
+          <!-- 2. Hàng Tìm Kiếm Theo Mã & Cụm Nút Thao Tác (Khớp thẳng trục dọc 9 - 3 với 4 cột trên) -->
+          <div class="row g-3 align-items-end pt-1">
+            <!-- Ô Tìm kiếm mã (Khớp đúng độ rộng 3 cột đầu trên màn Desktop) -->
+            <div class="col-12 col-lg-8 col-xl-9">
               <label class="filter-label mb-2">
-                <i class="bi bi-upc-scan text-secondary me-1"></i> Tìm kiếm theo mã (Tùy chọn)
+                Tìm kiếm theo mã <span class="filter-label-optional ms-1">(Tùy chọn)</span>
               </label>
               <div class="search-input-box">
                 <i class="bi bi-search search-input-icon"></i>
                 <input
                   type="text"
                   class="search-input-field"
-                  placeholder="Nhập mã phụ tùng / model (VD: F250TUR, 688-45941-01...)"
+                  placeholder="Nhập mã phụ tùng OEM hoặc model động cơ (VD: F250TUR, 688-45941-01...)"
                   v-model="searchKeyword"
                   @keyup.enter="searchParts"
                 />
               </div>
             </div>
 
-            <!-- Cụm Nút Thao Tác -->
-            <div class="col-12 col-lg-4">
+            <!-- Cụm Nút Thao Tác (Dùng 100% class Bootstrap 5 chuẩn ăn theo main.css toàn Client) -->
+            <div class="col-12 col-lg-4 col-xl-3">
               <div class="d-flex gap-2">
                 <button
                   type="button"
-                  class="btn-reset-action"
+                  class="btn btn-light filter-control-h px-3 flex-shrink-0 text-nowrap"
                   @click="resetSearch"
-                  title="Đặt lại các bộ lọc"
+                  title="Đặt lại bộ lọc"
                 >
-                  <i class="bi bi-arrow-counterclockwise"></i>
-                  <span>Đặt lại</span>
+                  Đặt lại
                 </button>
                 <button
                   type="button"
-                  class="btn-search-action"
+                  class="btn btn-danger filter-control-h px-4 flex-grow-1 d-inline-flex align-items-center justify-content-center gap-2 text-nowrap"
                   @click="searchParts"
                 >
                   <i class="bi bi-search"></i>
-                  <span>Tìm kiếm phụ tùng</span>
+                  <span>Tra cứu ngay</span>
                 </button>
               </div>
             </div>
           </div>
 
-          <!-- 3. Hàng Từ Khóa Gợi Ý Phổ Biến (Nhẹ nhàng, thanh lịch) -->
+          <!-- 3. Hàng Từ Khóa Gợi Ý (Không vạch đứt, không icon tia sét, đồng bộ bảng màu Slate & Navy) -->
           <div class="popular-tags-row">
-            <span class="popular-tags-label">
-              <i class="bi bi-lightning-charge-fill text-danger me-1"></i>Phổ biến:
-            </span>
+            <span class="popular-tags-label">Tra cứu nhiều:</span>
             <div class="popular-tags-list">
               <a href="javascript:void(0)" class="quick-pill-tag" @click="quickSearch('F250TUR')">Yamaha F250TUR</a>
               <a href="javascript:void(0)" class="quick-pill-tag" @click="quickSearch('300HP')">Mercury 300HP V8</a>
@@ -266,9 +255,9 @@
                   <!-- Skeleton Dòng 3: Mã sản phẩm -->
                   <div class="skeleton-line mb-3" style="width: 55%; height: 13px;"></div>
                   <!-- Skeleton Dòng 4: Chân card (Giá & Nút giỏ hàng) -->
-                  <div class="mt-auto pt-2 border-top d-flex justify-content-between align-items-center">
+                  <div class="mt-auto pt-1 d-flex justify-content-between align-items-center">
                     <div class="skeleton-line" style="width: 50%; height: 20px;"></div>
-                    <div class="skeleton-box" style="width: 34px; height: 34px; border-radius: 4px;"></div>
+                    <div class="skeleton-box" style="width: 36px; height: 36px; border-radius: 8px;"></div>
                   </div>
                 </div>
               </div>
@@ -308,7 +297,7 @@
                   </div>
 
                   <!-- 4. Chân card: Giá bán & Nút giỏ hàng -->
-                  <div class="mt-auto d-flex align-items-center justify-content-between pt-2 border-top">
+                  <div class="mt-auto d-flex align-items-center justify-content-between pt-1">
                     <div>
                       <span v-if="prod.is_gia_lien_he || !prod.gia_ban" class="text-danger fw-bold price-value">Liên hệ</span>
                       <span v-else class="text-danger fw-bold price-value">{{ Number(prod.gia_ban).toLocaleString('vi-VN') }} đ</span>
@@ -329,7 +318,7 @@
         </div>
 
         <div class="text-center mt-5">
-          <router-link to="/san-pham" class="text-danger fw-semibold text-decoration-none d-inline-flex align-items-center fs-6">
+          <router-link to="/san-pham" class="section-more-link">
             Xem tất cả sản phẩm <i class="bi bi-arrow-right ms-2"></i>
           </router-link>
         </div>
@@ -356,7 +345,7 @@
             <p class="mb-4 text-white-50">
               Chúng tôi không chỉ cung cấp phụ tùng, chúng tôi mang đến sự an tâm tuyệt đối cho mỗi chuyến ra khơi với dịch vụ tiêu chuẩn quốc tế.
             </p>
-            <router-link to="/ho-tro" class="btn btn-outline-danger px-4 py-2 mt-2 fw-semibold rounded-pill">
+            <router-link to="/ho-tro" class="btn btn-outline-danger px-4 py-2 mt-2 fw-semibold">
               Nhận Tư Vấn Ngay <i class="bi bi-arrow-right ms-2"></i>
             </router-link>
           </div>
@@ -425,7 +414,7 @@
           <div class="col-lg-5">
             <!-- Skeleton -->
             <div v-if="!videoArticle" class="d-flex flex-column h-100">
-              <div class="skeleton-box skeleton-box-full mb-3"></div>
+              <div class="skeleton-box skeleton-box-full mb-3" style="aspect-ratio: 16/10; border-radius: 12px !important;"></div>
               <div class="px-1">
                 <div class="skeleton-line mb-2 w-50"></div>
                 <div class="skeleton-line mb-2 w-100"></div>
@@ -437,19 +426,19 @@
             <div v-else class="d-flex flex-column h-100 group-hover p-2 position-relative">
               <!-- Khung Thumbnail có nút Play Video -->
               <div
-                class="overflow-hidden mb-3 position-relative img-zoom-hover rounded skeleton-box-full video-thumb-wrap"
+                class="overflow-hidden mb-3 position-relative img-zoom-hover video-thumb-wrap"
                 @click="openVideoModal(videoArticle)"
                 title="Bấm để xem video"
               >
                 <img
                   :src="getImageUrl(videoArticle.thumbnail) || 'https://placehold.co/800x500/f1f3f5/a1acb8?text=JPM+Marine'"
-                  class="img-fluid object-fit-cover h-100 w-100 transition-transform rounded"
+                  class="img-fluid object-fit-cover h-100 w-100 transition-transform"
                   :alt="videoArticle.title"
                   @error="$event.target.src='https://placehold.co/800x500/f1f3f5/a1acb8?text=JPM+Marine'"
                 >
-                <!-- Badge góc: VIDEO -->
-                <span class="badge bg-danger position-absolute top-0 start-0 m-3 d-flex align-items-center gap-1 shadow-sm px-2 py-1 video-badge">
-                  <i class="bi bi-play-circle-fill"></i> VIDEO
+                <!-- Badge góc: VIDEO (Nền kính mờ Deep Navy chuẩn Luxury) -->
+                <span class="position-absolute top-0 start-0 m-3 d-inline-flex align-items-center gap-1 px-2 py-1 video-badge">
+                  <i class="bi bi-play-fill"></i> VIDEO
                 </span>
 
                 <!-- Icon Play Video tròn ở chính giữa ảnh -->
@@ -460,22 +449,21 @@
 
               <!-- Nội dung thông tin bài viết -->
               <div class="d-flex flex-column flex-grow-1 px-1 position-relative">
-                <!-- 1. Danh mục: Chữ đỏ thương hiệu -->
+                <!-- 1. Danh mục: Xám xanh dịu #8392a5 đồng bộ Product Category bên trên -->
                 <div class="news-category mb-1 text-truncate">
                   {{ videoArticle.category || videoArticle.type || videoArticle.loai || 'CẨM NANG HÀNG HẢI' }}
                 </div>
-                <!-- 2. Tiêu đề: chuẩn Roboto .news-hero-title, màu deep navy đậm nét -->
+                <!-- 2. Tiêu đề: Deep Navy #0A1128 sắc nét -->
                 <h5 class="news-hero-title mb-2">
                   <router-link :to="`/tin-tuc/${videoArticle.slug || videoArticle.id}`" class="stretched-link">
                     {{ videoArticle.title }}
                   </router-link>
                 </h5>
-                <!-- 3. Mô tả tóm tắt (3 dòng) -->
-                <p class="text-secondary small mb-3 text-truncate-3">{{ videoArticle.summary }}</p>
-                <!-- 4. Ngày đăng: chuẩn .product-sku của Sản phẩm bán chạy -->
-                <div class="mt-auto product-sku mb-0">
-                  <span class="sku-label me-1"><i class="bi bi-calendar3 me-1"></i>NGÀY:</span>
-                  <span class="sku-code">{{ formatDate(videoArticle.created_at) }}</span>
+                <!-- 3. Mô tả tóm tắt: Cool Slate #64748b trong trẻo -->
+                <p class="news-summary news-summary-lg mb-3 text-truncate-3">{{ videoArticle.summary }}</p>
+                <!-- 4. Ngày đăng: Mảnh nhẹ chuẩn Editorial -->
+                <div class="mt-auto news-meta">
+                  <i class="bi bi-calendar3 me-1"></i>{{ formatDate(videoArticle.created_at) }}
                 </div>
               </div>
             </div>
@@ -484,8 +472,8 @@
           <!-- Danh sách bài viết khác (cột phải 7 phần) -->
           <div class="col-lg-7">
             <!-- Skeleton -->
-            <div v-if="!sideNews || sideNews.length === 0" class="d-flex flex-column justify-content-between h-100">
-              <div v-for="n in 3" :key="'nsk-'+n" class="d-flex align-items-start py-3 border-bottom">
+            <div v-if="!sideNews || sideNews.length === 0" class="d-flex flex-column justify-content-between gap-3 h-100">
+              <div v-for="n in 3" :key="'nsk-'+n" class="d-flex align-items-start p-2">
                 <div class="skeleton-box skeleton-box-sm flex-shrink-0"></div>
                 <div class="ms-3 flex-grow-1">
                   <div class="skeleton-line mb-2 w-25" style="height: 12px;"></div>
@@ -495,15 +483,14 @@
                 </div>
               </div>
             </div>
-            <!-- Data thật: 3 bài viết khác -->
-            <div v-else class="d-flex flex-column justify-content-between h-100">
+            <!-- Data thật: 3 bài viết khác (Không dùng border-bottom cong mép) -->
+            <div v-else class="d-flex flex-column justify-content-between gap-3 h-100">
               <div
-                v-for="(item, idx) in sideNews"
+                v-for="item in sideNews"
                 :key="item.id"
                 class="d-flex align-items-start position-relative list-item-hover p-2"
-                :class="idx < sideNews.length - 1 ? 'border-bottom pb-3 mb-2' : ''"
               >
-                <div class="overflow-hidden img-zoom-hover rounded news-img-thumb flex-shrink-0">
+                <div class="overflow-hidden img-zoom-hover news-img-thumb flex-shrink-0">
                   <img
                     :src="getImageUrl(item.thumbnail) || 'https://placehold.co/400x300/f1f3f5/a1acb8?text=JPM'"
                     class="img-fluid object-fit-cover h-100 w-100 transition-transform"
@@ -512,24 +499,23 @@
                   >
                 </div>
                 <div class="ms-3 flex-grow-1 d-flex flex-column align-self-stretch">
-                  <!-- 1. Danh mục: Chữ đỏ thương hiệu -->
+                  <!-- 1. Danh mục: Xám xanh dịu #8392a5 đồng bộ Product Category -->
                   <div class="news-category mb-1 text-truncate">
                     {{ item.category || item.type || item.loai || 'TIN TỨC' }}
                   </div>
-                  <!-- 2. Tiêu đề: chuẩn Roboto .news-card-title, màu deep navy đậm nét -->
-                  <h6 class="news-card-title fw-semibold mb-1 text-truncate-2">
+                  <!-- 2. Tiêu đề: Deep Navy #0A1128 -->
+                  <h6 class="news-card-title mb-1 text-truncate-2">
                     <router-link :to="`/tin-tuc/${item.slug || item.id}`" class="stretched-link">
                       {{ item.title }}
                     </router-link>
                   </h6>
-                  <!-- 3. Nội dung tóm tắt dưới tên bài viết (tối đa 3 dòng là ...) -->
-                  <p class="text-secondary small mb-2 text-truncate-3">
+                  <!-- 3. Nội dung tóm tắt: Cool Slate #64748b -->
+                  <p class="news-summary mb-2 text-truncate-2">
                     {{ item.summary }}
                   </p>
-                  <!-- 4. Ngày đăng: Mặc định cố định ở dưới cùng (mt-auto) -->
-                  <div class="mt-auto product-sku mb-0">
-                    <span class="sku-label me-1"><i class="bi bi-calendar3 me-1"></i>NGÀY:</span>
-                    <span class="sku-code">{{ formatDate(item.created_at) }}</span>
+                  <!-- 4. Ngày đăng: Mảnh nhẹ chuẩn Editorial -->
+                  <div class="mt-auto news-meta">
+                    <i class="bi bi-calendar3 me-1"></i>{{ formatDate(item.created_at) }}
                   </div>
                 </div>
               </div>
@@ -538,7 +524,7 @@
         </div>
 
         <div class="text-center mt-5">
-          <router-link to="/tin-tuc" class="text-danger fw-semibold text-decoration-none d-inline-flex align-items-center fs-6">
+          <router-link to="/tin-tuc" class="section-more-link">
             Xem tất cả bài viết <i class="bi bi-arrow-right ms-2"></i>
           </router-link>
         </div>
@@ -869,52 +855,98 @@ export default {
 <style scoped>
 /* ==============================================================
    TrangChu: Tinh chỉnh cục bộ cho khối Tin tức & Kinh nghiệm
-   (Cách ly scoped trong trang này, không viết vào main.css chung)
+   Đồng bộ bảng màu Luxury (Deep Navy #0A1128 & Cool Slate) với các phần trên
    ============================================================== */
 .news-category {
-  color: var(--accent-color, #f82249);
+  font-family: var(--default-font);
+  color: #8392a5; /* Đồng bộ 100% với .product-category của Sản Phẩm Bán Chạy */
   font-weight: 600;
   font-size: 0.75rem;
   letter-spacing: 0.5px;
   text-transform: uppercase;
+  line-height: 1.2;
 }
 
 .news-hero-title {
   font-family: var(--default-font);
-  font-size: 1.25rem;
+  font-size: 1.3rem;
   color: var(--heading-color, #0A1128);
-  font-weight: 600;
+  font-weight: 700;
   line-height: 1.35;
-}
-.news-hero-title a,
-.news-card-title a {
-  color: var(--heading-color, #0A1128);
-  text-decoration: none;
-  transition: color 0.25s ease;
-}
-.group-hover:hover .news-hero-title a,
-.list-item-hover:hover .news-card-title a {
-  color: var(--heading-color, #0e1b4d);
+  letter-spacing: -0.2px;
 }
 
 .news-card-title {
   font-family: var(--default-font);
-  font-size: 0.95rem;
+  font-size: 1rem;
   color: var(--heading-color, #0A1128);
   font-weight: 600;
-  line-height: 1.4;
+  line-height: 1.42;
   margin-bottom: 0.25rem;
 }
 
+.news-hero-title a,
+.news-card-title a {
+  color: var(--heading-color, #0A1128);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+.group-hover:hover .news-hero-title a,
+.list-item-hover:hover .news-card-title a {
+  color: #1e3a8a !important;
+}
+
+.news-summary {
+  font-family: var(--default-font);
+  color: #64748b; /* Cool Slate trong trẻo thay cho #6c757d xỉn màu */
+  font-size: 0.85rem;
+  font-weight: 400;
+  line-height: 1.55;
+}
+.news-summary-lg {
+  font-size: 0.9rem;
+}
+
+.news-meta {
+  font-family: var(--default-font);
+  color: #94a3b8; /* Metadata phụ dịu nhẹ chuẩn Editorial, không in đậm tranh chấp tiêu đề */
+  font-size: 0.78rem;
+  font-weight: 500;
+  line-height: 1.3;
+  display: inline-flex;
+  align-items: center;
+}
+
+.section-more-link {
+  color: var(--heading-color, #0A1128);
+  font-family: var(--default-font);
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  transition: color 0.2s ease;
+}
+.section-more-link i {
+  transition: transform 0.2s ease;
+}
+.section-more-link:hover {
+  color: var(--accent-color, #f82249);
+}
+.section-more-link:hover i {
+  transform: translateX(4px);
+}
+
 .news-img-thumb {
-  width: 170px;
+  width: 175px;
   aspect-ratio: 4/3;
   flex-shrink: 0;
+  border-radius: 12px;
 }
 
 .skeleton-box-sm {
-  border-radius: 4px;
-  width: 170px;
+  border-radius: 12px !important;
+  width: 175px;
   aspect-ratio: 4/3;
 }
 
@@ -930,13 +962,20 @@ export default {
    ============================================================== */
 .video-thumb-wrap {
   cursor: pointer;
+  border-radius: 12px;
+  aspect-ratio: 16/10;
 }
 .video-badge {
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.5px;
+  font-family: var(--default-font);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.6px;
+  color: #ffffff;
+  background-color: rgba(10, 17, 40, 0.78);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(6px);
   z-index: 2;
-  border-radius: 4px;
+  border-radius: 6px;
 }
 .video-play-btn {
   width: 58px;
@@ -985,18 +1024,20 @@ export default {
   box-shadow: 0 14px 40px rgba(10, 17, 40, 0.08);
 }
 
-.filter-label {
-  display: flex;
+.filter-console-card .filter-label {
+  display: inline-flex;
   align-items: center;
   font-family: var(--default-font);
-  font-size: 0.85rem;
+  font-size: 0.8125rem;
   font-weight: 600;
   color: var(--heading-color, #0A1128);
   letter-spacing: 0.1px;
 }
 
-.filter-label i {
-  font-size: 0.9rem;
+.filter-label-optional {
+  font-weight: 400;
+  color: #94a3b8;
+  font-size: 0.78rem;
 }
 
 /* Custom Select Box (Admin-style Smooth Focus & Soft Blur Glow) */
@@ -1159,103 +1200,25 @@ export default {
   transition: all 0.25s ease;
 }
 
-/* Nút Bấm Thao Tác (Buttons) */
-.btn-reset-action {
+/* Đồng bộ chiều cao nút với ô input 46px trong bộ lọc (Màu sắc, bo góc, font lấy 100% từ .btn trong main.css) */
+.filter-control-h {
   height: 46px;
-  padding: 0 18px;
-  border: 1px solid #d1d5db;
-  background: #ffffff;
-  color: #475569;
-  font-family: var(--heading-font, 'Raleway', sans-serif);
-  font-size: 0.875rem;
-  font-weight: 600;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  white-space: nowrap;
-  flex-shrink: 0;
-}
-.btn-reset-action:hover {
-  background: #f8fafc;
-  border-color: #94a3b8;
-  color: #0f172a;
 }
 
-.btn-search-action {
-  height: 46px;
-  padding: 0 24px;
-  border: none;
-  background: var(--accent-color, #f82249);
-  color: #ffffff;
-  font-family: var(--heading-font, 'Raleway', sans-serif);
-  font-size: 0.875rem;
-  font-weight: 600;
-  letter-spacing: 0.2px;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.25s ease;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  white-space: nowrap;
-  flex-grow: 1;
-}
-.btn-search-action:hover {
-  background: #d91a3c;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 15px rgba(248, 34, 73, 0.3);
-}
-
-/* Hàng Tags Phổ Biến */
+/* Bố cục hàng Từ Khóa Gợi Ý (Style .popular-tags-label & .quick-pill-tag dùng chung tại main.css) */
 .popular-tags-row {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
   gap: 8px;
-  margin-top: 24px;
-  padding-top: 18px;
-  border-top: 1px dashed #e2e8f0;
-}
-.popular-tags-label {
-  font-family: var(--default-font);
-  font-size: 0.8rem;
-  font-weight: 700;
-  color: #64748b;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  display: flex;
-  align-items: center;
-  margin-right: 4px;
+  margin-top: 18px;
+  padding-top: 4px;
 }
 .popular-tags-list {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 8px;
-}
-.quick-pill-tag {
-  display: inline-flex;
-  align-items: center;
-  padding: 4px 14px;
-  border: 1px solid #e2e8f0;
-  background: #f8fafc;
-  color: #475569;
-  font-size: 0.78rem;
-  font-weight: 500;
-  text-decoration: none;
-  border-radius: 20px;
-  transition: all 0.2s ease;
-}
-.quick-pill-tag:hover {
-  border-color: var(--accent-color, #f82249);
-  color: var(--accent-color, #f82249);
-  background-color: #fff5f6;
-  transform: translateY(-1px);
 }
 
 @media (max-width: 991px) {

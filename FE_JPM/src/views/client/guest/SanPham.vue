@@ -116,13 +116,12 @@
                       >
                       <div class="position-absolute" style="top: 10px; right: 10px; z-index: 10;">
                         <button
-                          class="btn bg-white shadow-sm"
-                          style="width: 32px; height: 32px; padding: 0; display: flex; align-items: center; justify-content: center; border: 1px solid #e5e7eb; border-radius: 4px;"
+                          class="btn btn-cart-action shadow-sm"
                           :title="!prod.is_gia_lien_he && prod.so_luong_ton !== undefined && prod.so_luong_ton <= 0 ? 'Hết hàng' : (prod.is_gia_lien_he ? 'Thêm vào giỏ báo giá' : 'Thêm vào giỏ')"
                           :disabled="!prod.is_gia_lien_he && prod.so_luong_ton !== undefined && prod.so_luong_ton <= 0"
                           @click.prevent="addToCart(prod)"
                         >
-                          <i class="bi bi-cart-plus" style="color: #dc3545; font-size: 1.1rem;"></i>
+                          <i class="bi bi-cart2"></i>
                         </button>
                       </div>
                     </div>
@@ -133,7 +132,7 @@
                       <h5 class="card-title mb-3" style="font-size: 0.95rem; line-height: 1.5; font-weight: 500; color: #1e293b;">
                         <router-link :to="`/chi-tiet-san-pham/${prod.slug}`" class="text-decoration-none stretched-link" style="color: inherit;">{{ prod.ten_san_pham }}</router-link>
                       </h5>
-                      <div class="mt-auto d-flex align-items-center contact-action" style="border-top: 1px solid #f1f5f9; padding-top: 0.75rem; justify-content: flex-end;">
+                      <div class="mt-auto d-flex align-items-center contact-action" style="padding-top: 0.25rem; justify-content: flex-end;">
                         <span v-if="prod.is_gia_lien_he || !prod.gia_ban" class="text-danger fw-bold" style="font-size: 1.1rem;">Liên hệ</span>
                         <span v-else class="text-danger fw-bold" style="font-size: 1.1rem;">{{ formatPrice(prod.gia_ban) }} đ</span>
                       </div>
@@ -192,13 +191,12 @@
                       >
                       <div class="position-absolute" style="top: 10px; right: 10px; z-index: 10;">
                         <button
-                          class="btn bg-white shadow-sm"
-                          style="width: 32px; height: 32px; padding: 0; display: flex; align-items: center; justify-content: center; border: 1px solid #e5e7eb; border-radius: 4px;"
+                          class="btn btn-cart-action shadow-sm"
                           :title="!prod.is_gia_lien_he && prod.so_luong_ton !== undefined && prod.so_luong_ton <= 0 ? 'Hết hàng' : (prod.is_gia_lien_he ? 'Thêm vào giỏ báo giá' : 'Thêm vào giỏ')"
                           :disabled="!prod.is_gia_lien_he && prod.so_luong_ton !== undefined && prod.so_luong_ton <= 0"
                           @click.prevent="addToCart(prod)"
                         >
-                          <i class="bi bi-cart-plus" style="color: #dc3545; font-size: 1.1rem;"></i>
+                          <i class="bi bi-cart2"></i>
                         </button>
                       </div>
                     </div>
@@ -209,7 +207,7 @@
                       <h5 class="card-title mb-3" style="font-size: 0.95rem; line-height: 1.5; font-weight: 500; color: #1e293b;">
                         <router-link :to="`/chi-tiet-san-pham/${prod.slug}`" class="text-decoration-none stretched-link" style="color: inherit;">{{ prod.ten_san_pham }}</router-link>
                       </h5>
-                      <div class="mt-auto d-flex align-items-center contact-action" style="border-top: 1px solid #f1f5f9; padding-top: 0.75rem; justify-content: flex-end;">
+                      <div class="mt-auto d-flex align-items-center contact-action" style="padding-top: 0.25rem; justify-content: flex-end;">
                         <span v-if="prod.is_gia_lien_he || !prod.gia_ban" class="text-danger fw-bold" style="font-size: 1.1rem;">Liên hệ</span>
                         <span v-else class="text-danger fw-bold" style="font-size: 1.1rem;">{{ formatPrice(prod.gia_ban) }} đ</span>
                       </div>

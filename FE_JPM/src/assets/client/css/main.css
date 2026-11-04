@@ -38,13 +38,14 @@
   --shadow-lg: 0 12px 24px rgba(10, 17, 40, 0.12);
   --shadow-hover: 0 16px 32px rgba(10, 17, 40, 0.15);
 
-  /* Unified Bootstrap Design System Tokens (Modern Tech Rounded 12px) */
+  /* Unified Bootstrap Design System Tokens (Modern Tech Rounded: Card 12px, Button/Control 8px) */
   --bs-border-radius: 12px;
   --bs-border-radius-sm: 6px;
   --bs-border-radius-lg: 12px;
   --bs-border-radius-xl: 16px;
   --bs-card-border-radius: 12px;
   --bs-card-inner-border-radius: 12px;
+  --bs-btn-border-radius: 8px;
 }
 
 /* Nav Menu Colors */
@@ -666,13 +667,20 @@ h6 {
 }
 
 .footer .footer-top {
-  background-color: color-mix(in srgb, var(--background-color), white 5%);
-  padding-top: 50px;
+  background-color: color-mix(in srgb, var(--background-color), white 4%);
+  padding-top: 64px;
+  padding-bottom: 48px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .footer .footer-about .logo {
   line-height: 1;
-  margin-bottom: 25px;
+  margin-bottom: 20px;
+  gap: 14px;
+}
+
+.footer .footer-about .logo .footer-logo-emblem svg {
+  margin-bottom: 2px;
 }
 
 .footer .footer-about .logo img {
@@ -680,17 +688,29 @@ h6 {
   margin-right: 6px;
 }
 
-.footer .footer-about .logo span {
-  color: var(--heading-color);
+.footer .footer-about .logo .footer-logo-mark {
+  color: #ffffff;
   font-family: var(--heading-font);
-  font-size: 26px;
+  font-size: 14px;
   font-weight: 700;
-  letter-spacing: 1px;
+  letter-spacing: 4px;
+  line-height: 1;
+  margin-left: 6px;
+}
+
+.footer .footer-about .logo .sitename {
+  color: #ffffff;
+  font-family: var(--heading-font);
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  line-height: 1.2;
 }
 
 .footer .footer-about p {
-  font-size: 14px;
-  font-family: var(--heading-font);
+  font-size: 0.9rem;
+  font-family: var(--default-font);
+  line-height: 1.65;
 }
 
 .footer h4 {
@@ -739,13 +759,17 @@ h6 {
 }
 
 .footer .footer-links ul a {
-  color: color-mix(in srgb, var(--default-color), transparent 30%);
-  display: inline-block;
-  line-height: 1;
+  color: rgba(255, 255, 255, 0.62);
+  font-family: var(--default-font);
+  font-size: 0.885rem;
+  display: inline-flex;
+  align-items: center;
+  line-height: 1.5;
+  transition: color 0.2s ease;
 }
 
 .footer .footer-links ul a:hover {
-  color: var(--accent-color);
+  color: #ffffff;
 }
 
 .footer .footer-contact p {
@@ -753,7 +777,7 @@ h6 {
 }
 
 .footer .copyright {
-  padding: 30px 0;
+  padding: 26px 0;
 }
 
 .footer .copyright p {
@@ -766,22 +790,28 @@ h6 {
 }
 
 .footer .social-links a {
-  font-size: 18px;
-  display: inline-block;
-  background: color-mix(in srgb, var(--default-color), transparent 90%);
-  color: var(--contrast-color);
+  font-size: 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.78);
   line-height: 1;
-  padding: 8px 0;
-  margin-right: 4px;
-  border-radius: 4px;
-  text-align: center;
-  width: 36px;
-  height: 36px;
-  transition: 0.3s;
+  padding: 0;
+  margin: 0;
+  border-radius: 8px;
+  width: 38px;
+  height: 38px;
+  text-decoration: none;
+  transition: all 0.2s ease;
 }
 
 .footer .social-links a:hover {
-  background: var(--accent-color);
+  background: var(--accent-color, #f82249);
+  border-color: var(--accent-color, #f82249);
+  color: #ffffff;
+  transform: translateY(-2px);
   text-decoration: none;
 }
 
@@ -2042,20 +2072,21 @@ section,
 ========================================== */
 /* 1. Primary Solid Button (Override Bootstrap's btn-danger) */
 .btn-danger, .btn-jpm {
-  background: #f82249;
+  background-color: var(--accent-color, #f82249);
   color: #ffffff;
-  border: none;
-  transition: all 0.3s ease;
-  font-weight: 700;
-  border-radius: 10px;
-  box-shadow: 0 4px 20px rgba(248, 34, 73, 0.3);
-  padding: 10px 24px; /* Default unified padding */
+  border: 1px solid var(--accent-color, #f82249);
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+  font-family: var(--default-font);
+  font-weight: 600;
+  border-radius: 8px;
+  box-shadow: none;
+  padding: 10px 20px;
 }
 .btn-danger:hover, .btn-jpm:hover {
-  background: #e01b40;
+  background-color: #e01a3f;
+  border-color: #e01a3f;
   color: #ffffff;
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(248, 34, 73, 0.45);
+  box-shadow: none;
 }
 
 /* 2. Secondary Outline Button - consolidated in unified button block below */
@@ -2105,10 +2136,34 @@ section,
   transform: translate(5px);
   transition: all 0.25s ease;
 }
-.btn {
-  border-radius: 4px !important;
+.index-page .btn {
+  font-family: var(--default-font);
+  font-size: 0.875rem;
   font-weight: 500;
-  letter-spacing: 1px;
+  letter-spacing: 0.1px;
+  border-radius: 8px !important;
+  box-shadow: none !important;
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+.index-page .btn.btn-sm {
+  font-size: 0.8125rem;
+}
+.index-page .btn.btn-lg {
+  font-size: 1rem;
+}
+.index-page .btn.btn-hero-cta {
+  font-family: var(--heading-font);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 2px;
+}
+.index-page .input-group > .btn:not(:first-child) {
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+}
+.index-page .input-group > .btn:first-child:not(:last-child) {
+  border-top-right-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
 }
 
 /* Pulsing Outline Button */
@@ -2296,10 +2351,10 @@ section,
   font-size: 0.8125rem;
   font-weight: 600;
   line-height: 1.53;
-  color: #566a7f;
+  color: var(--heading-color, #0A1128);
   display: inline-flex;
   align-items: center;
-  letter-spacing: 0.2px;
+  letter-spacing: 0.1px;
 }
 
 .index-page .form-control,
@@ -2505,7 +2560,10 @@ input[type="number"] {
   -moz-appearance: textfield;
 }
 
-/* Fix Quantity Selector focus ring */
+/* Fix Quantity Selector focus ring & unified 8px radius */
+.quantity-selector {
+  border-radius: 8px !important;
+}
 .quantity-selector input:focus {
   box-shadow: none !important;
   outline: none !important;
@@ -2679,14 +2737,96 @@ input[type="number"] {
 
 .btn-view-all { font-size: 0.8rem; letter-spacing: 1px; transition: all 0.3s ease; }
 
-/* Footer Customizations */
-.footer-heading::after { content: ''; position: absolute; left: 0; bottom: 0; width: 35px; height: 2px; background: var(--accent-color, #f82249); }
-.footer-link { color: rgba(255,255,255,0.6); text-decoration: none; transition: all 0.3s ease; display: inline-flex; align-items: center; }
-.footer-link:hover { color: #fff; transform: translateX(5px); }
-.footer-link:hover i { color: #fff !important; }
+/* Footer Customizations (Editorial Luxury + Marine Red #f82249 Brand Accents) */
+.footer-heading {
+  font-family: var(--default-font);
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #ffffff;
+  letter-spacing: 0.2px;
+  position: relative;
+  padding-bottom: 10px;
+}
+.footer-heading::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 34px;
+  height: 2px;
+  background: var(--accent-color, #f82249);
+  border-radius: 2px;
+}
+.footer-about-desc {
+  color: rgba(255, 255, 255, 0.62);
+  font-family: var(--default-font);
+  font-size: 0.9rem;
+  line-height: 1.65;
+}
+.footer-contact-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 10px;
+  font-family: var(--default-font);
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+.footer-contact-icon {
+  color: var(--accent-color, #f82249);
+  font-size: 0.95rem;
+  line-height: 1.4;
+  flex-shrink: 0;
+}
+.footer-contact-label {
+  color: rgba(255, 255, 255, 0.5);
+  font-weight: 400;
+  margin-right: 4px;
+}
+.footer-contact-value {
+  color: rgba(255, 255, 255, 0.85);
+  font-weight: 400;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+a.footer-contact-value:hover {
+  color: var(--accent-color, #f82249);
+}
+.footer-link {
+  color: rgba(255, 255, 255, 0.62);
+  font-family: var(--default-font);
+  font-size: 0.885rem;
+  text-decoration: none;
+  transition: color 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+}
+.footer-link:hover {
+  color: #ffffff;
+}
+.footer-link:hover i {
+  color: #ffffff !important;
+}
 
-.social-icon-circle { display: inline-flex; align-items: center; justify-content: center; width: 38px; height: 38px; border-radius: 50%; background: rgba(255,255,255,0.06); color: #fff; text-decoration: none; transition: all 0.3s ease; }
-.social-icon-circle:hover { background: var(--accent-color, #f82249); color: #fff; transform: translateY(-4px); }
+.social-icon-circle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.78);
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+.social-icon-circle:hover {
+  background: var(--accent-color, #f82249);
+  border-color: var(--accent-color, #f82249);
+  color: #ffffff;
+  transform: translateY(-2px);
+}
 
 .hover-white { transition: color 0.3s ease; }
 .hover-white:hover { color: #fff !important; }
@@ -2731,11 +2871,11 @@ input[type="number"] {
   transform: translateX(3px);
 }
 
-/* Product Card & Premium Product Card - Unified 4px Style */
+/* Product Card & Premium Product Card - Unified 12px Style */
 .product-card,
 .premium-product-card { 
   border: 1px solid #eaedf1 !important; 
-  border-radius: 4px !important;
+  border-radius: 12px !important;
   background: #ffffff !important; 
   overflow: hidden !important; 
   transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
@@ -2750,13 +2890,13 @@ input[type="number"] {
 .product-card .card-img-wrapper,
 .premium-product-card .card-img-wrapper { 
   overflow: hidden; 
-  border-radius: 4px 4px 0 0 !important;
+  border-radius: 12px 12px 0 0 !important;
 }
 .product-card .card-img-wrapper img,
 .product-card .card-img-top,
 .premium-product-card .card-img-wrapper img,
 .premium-product-card .card-img-top { 
-  border-radius: 4px 4px 0 0 !important;
+  border-radius: 12px 12px 0 0 !important;
   transition: transform 0.5s ease; 
 }
 .product-card:hover .card-img-wrapper img,
@@ -2834,11 +2974,11 @@ input[type="number"] {
   color: var(--heading-color, #0e1b4d) !important; /* Giữ nguyên màu Xanh đậm đà nguyên bản của Client khi hover */
 }
 
-/* Kẻ ngang bên dưới (trước giá tiền) */
+/* Chân card (bỏ kẻ ngang phân tách để bố cục thoáng sạch hiện đại) */
 .product-card .contact-action,
 .premium-product-card .contact-action {
-  border-top: 1px solid #e2e8f0; 
-  padding-top: 12px !important;
+  border-top: none !important; 
+  padding-top: 4px !important;
   margin-top: auto !important;
   display: flex;
   align-items: center;
@@ -2849,7 +2989,7 @@ input[type="number"] {
 .product-card .price-value,
 .premium-product-card .price-value,
 .premium-product-card .contact-action .text-danger,
-.product-card .border-top .text-danger {
+.product-card .card-body .text-danger {
   color: var(--accent-color, #f82249) !important; /* Đỏ Marine Red thương hiệu */
   font-family: var(--default-font) !important; /* Roboto: số kỹ thuật sắc nét, không bị cách điệu */
   font-size: 1.15rem !important;
@@ -3082,17 +3222,19 @@ input[type="number"] {
 }
 
 /* =========================================
-   JPM FLAT BUTTONS UNIFICATION (CLIENT UI)
-   - Removes glowing box-shadows (nổi nổi)
-   - Unifies Red (Danger) to #F82249
-   - Unifies Blue (Primary) to #2563EB
+   JPM LUXURY FLAT BUTTONS & TAGS SYSTEM (CLIENT UI)
+   - Unified 8px radius, Roboto technical typography, zero neon glow
+   - Danger / CTA Red: #f82249 -> #e01a3f
+   - Light / Secondary Neutral (Đặt lại, Hủy, Đóng): #f1f5f9 -> #e2e8f0, Slate -> Deep Navy
+   - Primary / Dark Brand Navy: #0A1128 -> #16244f
    ========================================= */
 
-/* Unify Danger / Red Buttons (Scoped to Client UI .index-page) */
+/* 1. Danger / Red CTA Buttons */
 .index-page .btn-danger, .index-page .btn-jpm, .index-page .btn-getstarted {
-  background-color: #f82249 !important;
-  border-color: #f82249 !important;
-  color: #fff !important;
+  background-color: var(--accent-color, #f82249) !important;
+  border-color: var(--accent-color, #f82249) !important;
+  color: #ffffff !important;
+  font-weight: 600;
   box-shadow: none !important;
 }
 .index-page .btn-danger:hover, .index-page .btn-danger:focus, .index-page .btn-danger:active, 
@@ -3100,67 +3242,149 @@ input[type="number"] {
 .index-page .btn-getstarted:hover, .index-page .btn-getstarted:focus, .index-page .btn-getstarted:active {
   background-color: #e01a3f !important;
   border-color: #e01a3f !important;
-  color: #fff !important;
+  color: #ffffff !important;
   box-shadow: none !important;
   transform: none !important;
 }
 .index-page .btn-outline-danger, .index-page .btn-outline-jpm {
-  color: #f82249 !important;
-  border-color: #f82249 !important;
+  color: var(--accent-color, #f82249) !important;
+  border-color: var(--accent-color, #f82249) !important;
   background-color: transparent !important;
+  font-weight: 600;
   box-shadow: none !important;
-  transition: background-color 0.2s ease, color 0.2s ease !important;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease !important;
 }
 .index-page .btn-outline-danger:hover, .index-page .btn-outline-danger:active,
 .index-page .btn-outline-jpm:hover, .index-page .btn-outline-jpm:active {
-  background-color: #f82249 !important;
-  border-color: #f82249 !important;
-  color: #fff !important;
+  background-color: var(--accent-color, #f82249) !important;
+  border-color: var(--accent-color, #f82249) !important;
+  color: #ffffff !important;
   box-shadow: none !important;
 }
 .index-page .btn-outline-danger:focus, .index-page .btn-outline-jpm:focus {
   background-color: transparent !important;
-  border-color: #f82249 !important;
-  color: #f82249 !important;
+  border-color: var(--accent-color, #f82249) !important;
+  color: var(--accent-color, #f82249) !important;
   box-shadow: none !important;
   outline: none !important;
 }
-.index-page .text-danger { color: #f82249 !important; }
-.index-page .bg-danger { background-color: #f82249 !important; }
 
-/* Unify Primary / Blue Buttons (Scoped to Client UI .index-page) */
-.index-page .btn-primary {
-  background-color: #2563eb !important;
-  border-color: #2563eb !important;
-  color: #fff !important;
+/* 2. Light / Secondary Neutral Buttons (Chuẩn nút phụ Đặt lại / Hủy / Đóng toàn Client) */
+.index-page .btn-light,
+.index-page .btn-secondary {
+  --bs-btn-color: #475569;
+  --bs-btn-bg: #f1f5f9;
+  --bs-btn-border-color: #e2e8f0;
+  --bs-btn-hover-color: #0A1128;
+  --bs-btn-hover-bg: #e2e8f0;
+  --bs-btn-hover-border-color: #cbd5e1;
+  --bs-btn-active-color: #0A1128;
+  --bs-btn-active-bg: #e2e8f0;
+  --bs-btn-active-border-color: #cbd5e1;
+  background-color: #f1f5f9 !important;
+  border: 1px solid #e2e8f0 !important;
+  color: #475569;
+  font-weight: 500;
   box-shadow: none !important;
 }
-.index-page .btn-primary:hover, .index-page .btn-primary:focus, .index-page .btn-primary:active {
-  background-color: #1d4ed8 !important;
-  border-color: #1d4ed8 !important;
-  color: #fff !important;
+.index-page .btn-light:hover, .index-page .btn-light:focus, .index-page .btn-light:active,
+.index-page .btn-secondary:hover, .index-page .btn-secondary:focus, .index-page .btn-secondary:active {
+  background-color: #e2e8f0 !important;
+  border-color: #cbd5e1 !important;
+  color: var(--heading-color, #0A1128);
   box-shadow: none !important;
   transform: none !important;
 }
-.index-page .btn-outline-primary {
-  color: #2563eb !important;
-  border-color: #2563eb !important;
-  background-color: transparent !important;
-  box-shadow: none !important;
-  transition: background-color 0.2s ease, color 0.2s ease !important;
-}
-.index-page .btn-outline-primary:hover, .index-page .btn-outline-primary:active {
-  background-color: #2563eb !important;
-  border-color: #2563eb !important;
-  color: #fff !important;
+.index-page .btn-outline-secondary {
+  background-color: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  color: #475569;
+  font-weight: 500;
   box-shadow: none !important;
 }
-.index-page .btn-outline-primary:focus {
+.index-page .btn-outline-secondary:hover, .index-page .btn-outline-secondary:focus, .index-page .btn-outline-secondary:active {
+  background-color: #f1f5f9 !important;
+  border-color: #cbd5e1 !important;
+  color: var(--heading-color, #0A1128) !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+/* 3. Primary / Dark Brand Navy Buttons (#0A1128 Deep Navy đồng bộ nhận diện JPM) */
+.index-page .btn-primary,
+.index-page .btn-dark {
+  background-color: var(--heading-color, #0A1128) !important;
+  border-color: var(--heading-color, #0A1128) !important;
+  color: #ffffff !important;
+  font-weight: 600;
+  box-shadow: none !important;
+}
+.index-page .btn-primary:hover, .index-page .btn-primary:focus, .index-page .btn-primary:active,
+.index-page .btn-dark:hover, .index-page .btn-dark:focus, .index-page .btn-dark:active {
+  background-color: #16244f !important;
+  border-color: #16244f !important;
+  color: #ffffff !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+.index-page .btn-outline-primary,
+.index-page .btn-outline-dark {
+  color: var(--heading-color, #0A1128) !important;
+  border-color: var(--heading-color, #0A1128) !important;
   background-color: transparent !important;
-  border-color: #2563eb !important;
-  color: #2563eb !important;
+  font-weight: 600;
+  box-shadow: none !important;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease !important;
+}
+.index-page .btn-outline-primary:hover, .index-page .btn-outline-primary:active,
+.index-page .btn-outline-dark:hover, .index-page .btn-outline-dark:active {
+  background-color: var(--heading-color, #0A1128) !important;
+  border-color: var(--heading-color, #0A1128) !important;
+  color: #ffffff !important;
+  box-shadow: none !important;
+}
+.index-page .btn-outline-primary:focus,
+.index-page .btn-outline-dark:focus {
+  background-color: transparent !important;
+  border-color: var(--heading-color, #0A1128) !important;
+  color: var(--heading-color, #0A1128) !important;
   box-shadow: none !important;
   outline: none !important;
+}
+
+.index-page .text-danger { color: #f82249 !important; }
+.index-page .bg-danger { background-color: #f82249 !important; }
+
+/* 4. Shared Quick Filter Tag / Chip Utility (Bo 6px chuẩn tỷ lệ toàn Client) */
+.index-page .popular-tags-label {
+  font-family: var(--default-font);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #8392a5;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: inline-flex;
+  align-items: center;
+  margin-right: 4px;
+}
+.index-page .quick-pill-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 12px;
+  border: 1px solid #e2e8f0;
+  background: #f8fafc;
+  color: #475569;
+  font-family: var(--default-font);
+  font-size: 0.78rem;
+  font-weight: 500;
+  text-decoration: none;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+.index-page .quick-pill-tag:hover {
+  border-color: #cbd5e1;
+  color: var(--heading-color, #0A1128);
+  background-color: #f1f5f9;
 }
 
 /* Remove default Bootstrap focus ring globally for all buttons in Client UI for a cleaner flat look */
@@ -3262,32 +3486,35 @@ input[type="number"] {
   letter-spacing: 0.3px;
 }
 
-/* Nút thêm giỏ hàng ở chân card */
+/* Nút thêm giỏ hàng ở chân card - Hướng 2: Nền xám trung tính, icon Deep Navy, hover Đỏ thương hiệu, bo góc 8px thống nhất Client */
 .btn-cart-action {
-  width: 34px;
-  height: 34px;
+  width: 36px;
+  height: 36px;
   padding: 0;
-  border-radius: 4px !important;
-  color: var(--accent-color, #f82249) !important;
-  border: 1.5px solid var(--accent-color, #f82249) !important; /* Viền đỏ 1.5px đậm nét, rõ ràng */
-  background-color: #ffffff !important;
-  transition: all 0.25s ease;
+  border-radius: 8px !important;
+  color: var(--heading-color, #0A1128) !important;
+  border: 1px solid #e2e8f0 !important;
+  background-color: #f1f5f9 !important;
+  transition: all 0.2s ease;
   position: relative;
   z-index: 2;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  letter-spacing: 0 !important;
 }
 .btn-cart-action i {
   font-size: 1.05rem !important;
-  -webkit-text-stroke: 0.35px currentColor; /* Nét vẽ icon đậm đà, chắc chắn */
+  line-height: 1;
+  -webkit-text-stroke: 0.25px currentColor;
 }
-.btn-cart-action:hover {
+.btn-cart-action:hover,
+.btn-cart-action:active {
   background-color: var(--accent-color, #f82249) !important;
   color: #ffffff !important;
   border-color: var(--accent-color, #f82249) !important;
   transform: translateY(-2px);
-  box-shadow: 0 4px 10px rgba(248, 34, 73, 0.25);
+  box-shadow: 0 4px 10px rgba(248, 34, 73, 0.25) !important;
 }
 
 .skeleton-box-brand {

@@ -241,8 +241,7 @@
                             {{ diag.nhom_phu_tung ? diag.nhom_phu_tung.ten_nhom : diag.ten_so_do }}
                           </h5>
                           <p class="text-muted mb-2" style="font-size: 0.8rem;" v-if="diag.model">MODEL: {{ diag.model.ten_model }}</p>
-                          <div class="mt-auto">
-                            <hr class="my-2 opacity-25">
+                          <div class="mt-auto pt-1">
                             <div class="d-flex justify-content-end align-items-center">
                               <span class="text-danger fw-bold" style="font-size: 0.9rem;">Xem sơ đồ <i class="bi bi-arrow-right"></i></span>
                             </div>
@@ -267,8 +266,8 @@
                         <div class="card-img-wrapper overflow-hidden img-zoom-hover">
                           <img :src="prod.hinh_anh ? prod.hinh_anh : 'https://placehold.co/400x300/f8f9fa/a1acb8?text=No+Image'" class="card-img-top w-100 transition-transform" style="aspect-ratio: 4/3; object-fit: cover;" :alt="prod.ten_phu_tung">
                           <div class="position-absolute" style="top: 10px; right: 10px; z-index: 10;">
-                            <button class="btn bg-white shadow-sm" style="width: 32px; height: 32px; padding: 0; display: flex; align-items: center; justify-content: center; border: 1px solid #e5e7eb; border-radius: 4px;" title="Thêm vào giỏ" @click.prevent="addToCart(prod)">
-                              <i class="bi bi-cart-plus" style="color: #dc3545; font-size: 1.1rem;"></i>
+                            <button class="btn btn-cart-action shadow-sm" title="Thêm vào giỏ" @click.prevent="addToCart(prod)">
+                              <i class="bi bi-cart2"></i>
                             </button>
                           </div>
                         </div>
@@ -280,7 +279,7 @@
                             <router-link :to="`/chi-tiet-phu-tung/${prod.ma_phu_tung || prod.id}`" class="text-decoration-none stretched-link" style="color: inherit;">{{ prod.ten_phu_tung }}</router-link>
                           </h5>
                           <p class="text-muted mb-3" style="font-size: 0.75rem;">Mã OEM: <strong style="color: #334155;">{{ prod.ma_phu_tung }}</strong></p>
-                          <div class="mt-auto d-flex align-items-center contact-action" style="border-top: 1px solid #f1f5f9; padding-top: 0.75rem; justify-content: flex-end;">
+                          <div class="mt-auto d-flex align-items-center contact-action" style="padding-top: 0.25rem; justify-content: flex-end;">
                             <span v-if="prod.is_gia_lien_he || !prod.gia_ban" class="text-danger fw-bold" style="font-size: 1.1rem;">Liên hệ</span>
                             <span v-else class="text-danger fw-bold" style="font-size: 1.1rem;">{{ Number(prod.gia_ban).toLocaleString('vi-VN') }} đ</span>
                           </div>
