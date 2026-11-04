@@ -1005,39 +1005,49 @@ section,
 }
 
 .hero h1,
-.hero h2,
 .hero-main-title {
   margin: 0 0 16px 0;
   font-family: var(--heading-font);
-  font-size: 42px;
-  font-weight: 700;
-  letter-spacing: 0.5px;
   line-height: 1.2;
-  text-transform: uppercase;
   color: #fff;
 }
 
+/* Tên thương hiệu (JPM MARINE) - Tăng kích thước cân đối, rõ nét */
 .hero h1 span,
 .hero h2 span,
 .hero-main-title .hero-title-accent {
+  display: inline-block;
   color: var(--accent-color);
+  font-size: 30px;
   font-weight: 700;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
 }
 
+/* Định vị cốt lõi (PHỤ TÙNG TÀU THUYỀN NHẬT BẢN) - Nét 600 thanh thoát, kích thước vừa vặn */
 .hero-main-title .hero-title-white {
+  display: block;
   color: #ffffff;
-  font-weight: 700;
+  font-size: 44px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  line-height: 1.2;
+  text-transform: uppercase;
   font-style: normal;
+  text-shadow: 0 2px 16px rgba(0, 0, 0, 0.4);
 }
 
 .hero p,
 .hero-subtitle {
   font-family: var(--default-font);
-  color: rgba(255, 255, 255, 0.85);
+  color: rgba(255, 255, 255, 0.9);
   margin: 0 0 28px 0;
-  font-size: 17px;
+  font-size: 16px;
   line-height: 1.6;
   max-width: 580px;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.35);
 }
 
 .btn-hero-cta {
@@ -1046,7 +1056,12 @@ section,
   font-weight: 600;
   letter-spacing: 2px;
   padding: 12px 34px;
-  border: 1px solid rgba(255, 255, 255, 0.85);
+  border: 1.5px solid rgba(255, 255, 255, 0.85);
+  border-radius: 8px;
+  background: rgba(10, 17, 40, 0.25);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
   transition: all 0.3s ease;
 }
 
@@ -1054,20 +1069,65 @@ section,
   background: var(--accent-color);
   border-color: var(--accent-color);
   color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(248, 34, 73, 0.35);
+}
+
+@media (max-width: 1199px) {
+  .hero-main-title .hero-title-accent {
+    font-size: 26px;
+    letter-spacing: 2px;
+  }
+  .hero-main-title .hero-title-white {
+    font-size: 38px;
+  }
+}
+
+@media (max-width: 991px) {
+  .hero-main-title .hero-title-accent {
+    font-size: 22px;
+    letter-spacing: 1.5px;
+    margin-bottom: 6px;
+  }
+  .hero-main-title .hero-title-white {
+    font-size: 32px;
+    line-height: 1.25;
+  }
+  .hero p,
+  .hero-subtitle {
+    font-size: 15px;
+    line-height: 1.5;
+  }
 }
 
 @media (max-width: 768px) {
   .hero h1,
-  .hero h2,
   .hero-main-title {
-    font-size: 28px;
-    line-height: 34px;
+    margin-bottom: 12px;
+  }
+
+  .hero-main-title .hero-title-accent {
+    font-size: 18px;
+    letter-spacing: 1px;
+    margin-bottom: 4px;
+  }
+
+  .hero-main-title .hero-title-white {
+    font-size: 24px;
+    line-height: 1.3;
   }
 
   .hero p,
   .hero-subtitle {
-    font-size: 15px;
-    line-height: 22px;
+    font-size: 14px;
+    line-height: 20px;
+    margin-bottom: 22px;
+  }
+
+  .btn-hero-cta {
+    padding: 10px 24px;
+    font-size: 12px;
+    letter-spacing: 1.5px;
   }
 }
 
@@ -1094,7 +1154,8 @@ section,
 .hero .about-info h2 {
   font-size: 24px;
   font-weight: 600;
-  letter-spacing: 1px;
+  letter-spacing: normal;
+  text-transform: none;
   margin-bottom: 8px;
   color: #fff;
 }

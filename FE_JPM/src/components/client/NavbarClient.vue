@@ -81,61 +81,8 @@
         <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
       </nav>
 
-      <!-- Vùng 3 (Phải): Cụm tiện ích Thông báo / Tra cứu đơn / Giỏ hàng / Tài khoản -->
+      <!-- Vùng 3 (Phải): Cụm tiện ích Tra cứu đơn / Giỏ hàng / Tài khoản -->
       <div class="header-actions">
-        <!-- Thông báo -->
-        <div v-if="isLoggedIn" class="header-dropdown" @mouseenter="markAsRead">
-          <a href="#" @click.prevent class="header-icon-btn" aria-label="Thông báo">
-            <span class="position-relative d-inline-block">
-              <i class="bi bi-bell fs-5" style="line-height: 1"></i>
-              <span
-                v-if="unreadCount > 0"
-                class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
-                style="font-size: 0.6rem; padding: 2px 4px; margin-top: 2px; margin-left: -2px;"
-              >
-                {{ unreadCount }}
-              </span>
-            </span>
-          </a>
-
-          <div class="header-popover notif-popover">
-            <div class="notif-header">
-              <span class="notif-header-title">Thông báo của bạn</span>
-              <span v-if="unreadCount > 0" class="notif-header-badge">{{ unreadCount }} mới</span>
-            </div>
-
-            <div v-if="notifications.length > 0" class="notif-list">
-              <router-link
-                v-for="notif in notifications"
-                :key="notif.id"
-                :to="notif.data.url || '#'"
-                class="notif-item"
-                :class="{ unread: !notif.read_at }"
-              >
-                <div class="notif-icon" :class="'bg-pastel-' + (notif.data.color || 'primary')">
-                  <i :class="'bi ' + (notif.data.icon || 'bi-bell-fill')"></i>
-                </div>
-                <div class="notif-content">
-                  <div class="notif-item-title">{{ notif.data.title }}</div>
-                  <div class="notif-item-body">{{ notif.data.body }}</div>
-                  <div class="notif-item-date">{{ new Date(notif.created_at).toLocaleDateString('vi-VN') }}</div>
-                </div>
-                <span v-if="!notif.read_at" class="notif-indicator"></span>
-              </router-link>
-            </div>
-
-            <div v-else class="notif-empty">
-              <i class="bi bi-bell-slash"></i>
-              <span>Không có thông báo nào</span>
-            </div>
-
-            <router-link to="/tai-khoan" class="notif-footer">
-              <span>Xem tất cả thông báo</span>
-              <i class="bi bi-arrow-right"></i>
-            </router-link>
-          </div>
-        </div>
-
         <!-- Tra cứu đơn hàng -->
         <router-link to="/tra-cuu-don-hang" class="header-icon-btn" title="Tra cứu đơn hàng">
           <i class="bi bi-box-seam fs-5" style="line-height: 1"></i>

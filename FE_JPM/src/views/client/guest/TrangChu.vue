@@ -20,7 +20,7 @@
         <div class="row w-100">
           <div class="col-lg-10 text-start">
             <h1 data-aos="fade-up" data-aos-delay="100" class="hero-main-title">
-              <span class="hero-title-accent">{{ settings.homepage_hero_title || 'JPM MARINE' }}</span><br />
+              <span class="hero-title-accent">{{ settings.homepage_hero_title || 'JPM MARINE' }}</span>
               <span class="hero-title-white">{{ settings.homepage_hero_subtitle || 'PHỤ TÙNG TÀU THUYỀN NHẬT BẢN' }}</span>
             </h1>
 
@@ -1189,31 +1189,24 @@ export default {
 }
 
 /* ==============================================================
-   Khối 4: Banner Quảng Bá Full Màn (home_banner.png)
+   Khối 4: Banner Quảng Bá Full Màn (home_banner.png nguyên bản 100%)
    ============================================================== */
 .home-full-banner {
   width: 100%;
-  min-height: 480px;
+  aspect-ratio: 3 / 1;
+  min-height: 420px;
   background-image: url('/client/image/home_banner.png');
-  background-position: right center;
+  background-position: center;
   background-size: cover;
   background-repeat: no-repeat;
   display: flex;
   align-items: center;
-  overflow: hidden;
-}
-
-.home-full-banner::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(90deg, rgba(255, 255, 255, 0.96) 0%, rgba(255, 255, 255, 0.85) 42%, rgba(255, 255, 255, 0.2) 70%, transparent 100%);
-  pointer-events: none;
+  position: relative;
 }
 
 .home-banner-title {
   font-family: var(--default-font);
-  font-size: 2.25rem;
+  font-size: 2.1rem;
   font-weight: 800;
   line-height: 1.25;
   color: #0A1128;
@@ -1222,30 +1215,30 @@ export default {
 
 .home-banner-desc {
   font-family: var(--default-font);
-  font-size: 1rem;
+  font-size: 0.95rem;
   font-weight: 400;
-  line-height: 1.65;
-  color: #475569;
+  line-height: 1.6;
+  color: #334155;
+  max-width: 480px;
 }
 
 @media (max-width: 991px) {
   .home-full-banner {
-    min-height: 400px;
-  }
-  .home-full-banner::before {
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.96) 0%, rgba(255, 255, 255, 0.9) 70%, rgba(255, 255, 255, 0.5) 100%);
+    min-height: 380px;
+    aspect-ratio: auto;
+    padding: 50px 0;
   }
   .home-banner-title {
-    font-size: 1.75rem;
+    font-size: 1.7rem;
   }
 }
 
 @media (max-width: 576px) {
   .home-banner-title {
-    font-size: 1.4rem;
+    font-size: 1.35rem;
   }
   .home-banner-desc {
-    font-size: 0.9rem;
+    font-size: 0.88rem;
   }
 }
 </style>
