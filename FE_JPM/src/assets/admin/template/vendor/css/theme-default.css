@@ -922,6 +922,12 @@ html:not(.layout-menu-collapsed) .bg-menu-theme .menu-inner .menu-item .menu-lin
   font-size: 0.75rem !important;
   border-radius: 0.25rem !important;
 }
+.multiselect-search,
+.multiselect-tags-search {
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
 .form-control:focus,
 .form-select:focus,
 .multiselect.is-active,
@@ -946,7 +952,8 @@ html:not(.layout-menu-collapsed) .bg-menu-theme .menu-inner .menu-item .menu-lin
   background-color: #eefbfd !important;
   color: #17a2b8 !important;
 }
-input[type="file"].form-control::file-selector-button { padding: 0.4375rem 0.875rem !important; margin: -0.4375rem -0.875rem !important; margin-inline-end: 0.875rem !important; background-color: #f8f9fa !important; border-right: 1px solid #d9dee3 !important; color: #697a8d !important; }
+input[type="file"].form-control::file-selector-button { padding: 0.4375rem 0.875rem !important; margin: -0.4375rem -0.875rem !important; margin-inline-end: 0.875rem !important; background-color: #f8f9fa !important; border-right: 1px solid #d9dee3 !important; color: #697a8d !important; transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out !important; }
+input[type="file"].form-control:focus::file-selector-button { border-right-color: #17a2b8 !important; box-shadow: inset 1px 0 0 0 #17a2b8, inset 0 1px 0 0 #17a2b8, inset 0 -1px 0 0 #17a2b8 !important; }
 /* Khôi phục nguyên bản Card Sneat 1.00 (Không viền sắc nét, bo góc mềm mại 0.5rem, bóng dịu nhẹ, không hiệu ứng hover) */
 .card {
   background-color: #fff !important;

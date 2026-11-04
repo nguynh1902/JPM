@@ -308,6 +308,12 @@
 }
 
 /* 5. Trạng thái Focus / Active - Đồng bộ 100% viền đậm 2px không giật & bóng đổ dưới chuẩn Sneat */
+.multiselect-search,
+.multiselect-tags-search {
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
 .multiselect.is-active,
 .multiselect.is-open {
   border-width: 1px !important;

@@ -16752,6 +16752,12 @@ html:not(.layout-footer-fixed) .content-wrapper {
 }
 
 /* Khi kích hoạt hoặc mở menu: Viền 2px sắc nét không giật + bóng đổ nhẹ hướng xuống chuẩn Sneat */
+.multiselect-search,
+.multiselect-tags-search {
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
 .multiselect.is-active,
 .multiselect.is-open {
   border-width: 1px !important;
