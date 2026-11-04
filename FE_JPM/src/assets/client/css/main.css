@@ -675,12 +675,7 @@ h6 {
 
 .footer .footer-about .logo {
   line-height: 1;
-  margin-bottom: 20px;
-  gap: 14px;
-}
-
-.footer .footer-about .logo .footer-logo-emblem svg {
-  margin-bottom: 2px;
+  margin-bottom: 16px;
 }
 
 .footer .footer-about .logo img {
@@ -688,23 +683,13 @@ h6 {
   margin-right: 6px;
 }
 
-.footer .footer-about .logo .footer-logo-mark {
+.footer .footer-about .logo span {
   color: #ffffff;
   font-family: var(--heading-font);
-  font-size: 14px;
-  font-weight: 700;
-  letter-spacing: 4px;
-  line-height: 1;
-  margin-left: 6px;
-}
-
-.footer .footer-about .logo .sitename {
-  color: #ffffff;
-  font-family: var(--heading-font);
-  font-size: 22px;
-  font-weight: 700;
-  letter-spacing: 0.4px;
-  line-height: 1.2;
+  font-size: 32px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  line-height: 1.1;
 }
 
 .footer .footer-about p {

@@ -6,13 +6,6 @@
           <!-- Cột 1: Branding & Thông tin chung -->
           <div class="col-lg-4 col-md-6 footer-about pe-lg-5">
             <router-link to="/" class="logo d-inline-flex align-items-center text-decoration-none">
-              <span class="footer-logo-emblem d-inline-flex flex-column align-items-center justify-content-center flex-shrink-0">
-                <svg width="42" height="26" viewBox="0 0 32 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M14.5 1 L14.5 19 L2 19 Z" fill="white" />
-                  <path d="M17.5 1 L30 19 L17.5 19 Z" fill="white" />
-                </svg>
-                <span class="footer-logo-mark">JPM</span>
-              </span>
               <span class="sitename">{{ settings.company_name || 'JPM Marine' }}</span>
             </router-link>
             <p class="footer-about-desc mb-4">
