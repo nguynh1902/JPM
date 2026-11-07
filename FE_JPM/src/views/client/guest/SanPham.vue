@@ -121,7 +121,7 @@
                   </div>
                   
                   <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4">
-                    <div class="col" v-for="prod in cat.products" :key="prod.id">
+                    <div class="col" v-for="prod in (cat.products ? cat.products.slice(0, 3) : [])" :key="prod.id">
                       <!-- PRODUCT CARD (100% ĐỒNG BỘ TRANG CHỦ) -->
                       <div class="card h-100 product-card position-relative">
                         <div class="card-img-wrapper position-relative overflow-hidden bg-light d-flex align-items-center justify-content-center">
