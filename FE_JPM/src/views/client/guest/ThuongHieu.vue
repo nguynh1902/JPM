@@ -45,7 +45,7 @@
     </section>
 
     <!-- ========================================================
-         MAIN CATALOG AREA (BỐ CỤC 2 CỘT CHUẨN DESIGN SYSTEM 4PX CARD)
+         MAIN CATALOG AREA (BỐ CỤC 2 CỘT CHUẨN ĐỒNG BỘ 12PX CARD)
          ======================================================== -->
     <section class="catalog-content-section">
       <div class="container">
@@ -54,8 +54,8 @@
           <div class="col-lg-3">
             <div class="card catalog-sidebar-card border-0 p-3">
               <div class="skeleton-line mb-3 w-50" style="height: 18px;"></div>
-              <div class="skeleton-line mb-2 w-100" style="height: 42px; border-radius: 4px;"></div>
-              <div class="skeleton-line mb-2 w-100" style="height: 42px; border-radius: 4px;"></div>
+              <div class="skeleton-line mb-2 w-100" style="height: 42px; border-radius: 8px;"></div>
+              <div class="skeleton-line mb-2 w-100" style="height: 42px; border-radius: 8px;"></div>
             </div>
           </div>
           <div class="col-lg-9">
@@ -64,8 +64,8 @@
                 <div class="skeleton-line w-50" style="height: 24px;"></div>
                 <div class="skeleton-line w-25" style="height: 24px;"></div>
               </div>
-              <div class="skeleton-line mb-4 w-100" style="height: 42px; border-radius: 4px;"></div>
-              <div v-for="n in 5" :key="'skel-row-' + n" class="skeleton-line mb-2 w-100" style="height: 48px; border-radius: 4px;"></div>
+              <div class="skeleton-line mb-4 w-100" style="height: 44px; border-radius: 8px;"></div>
+              <div v-for="n in 5" :key="'skel-row-' + n" class="skeleton-line mb-2 w-100" style="height: 48px;"></div>
             </div>
           </div>
         </div>
@@ -77,7 +77,6 @@
             <div class="card catalog-sidebar-card sticky-sidebar">
               <div class="catalog-sidebar-header">
                 <h3 class="catalog-sidebar-title">
-                  <i class="bi bi-grid-fill text-danger me-2"></i>
                   Loại Động Cơ
                 </h3>
               </div>
@@ -90,10 +89,7 @@
                   :class="{ active: selectedLoai === loai.value }"
                   @click="selectLoai(loai.value)"
                 >
-                  <span class="d-flex align-items-center gap-2">
-                    <i class="bi bi-gear-wide-connected sidebar-btn-icon"></i>
-                    <span class="sidebar-btn-text">{{ loai.label }}</span>
-                  </span>
+                  <span class="sidebar-btn-text">{{ loai.label }}</span>
                   <span class="sidebar-btn-badge">{{ getLoaiCount(loai.value) }}</span>
                 </button>
               </div>
@@ -112,7 +108,7 @@
               </div>
 
               <div class="catalog-card-body p-3 p-md-4">
-                <!-- FILTER BAR ĐỒNG BỘ CHUẨN 4PX & CAO 42PX -->
+                <!-- FILTER BAR ĐỒNG BỘ CHUẨN 8PX & CAO 44PX -->
                 <div class="catalog-filter-bar mb-4">
                   <div class="row g-2 align-items-center">
                     <!-- Ô tìm kiếm mã Model -->
@@ -138,7 +134,7 @@
                     </div>
 
                     <!-- Dropdown Mã Lực (HP) -->
-                    <div class="col-12 col-sm-4 col-md filter-dropdown-col">
+                    <div class="col-6 col-sm-4 col-md-auto filter-dropdown-col">
                       <div class="custom-select-wrapper" :class="{ 'z-active': openDropdown === 'hp' }">
                         <div
                           class="custom-select-box"
@@ -158,7 +154,7 @@
                     </div>
 
                     <!-- Dropdown Loại Thì -->
-                    <div class="col-12 col-sm-4 col-md filter-dropdown-col">
+                    <div class="col-6 col-sm-4 col-md-auto filter-dropdown-col">
                       <div class="custom-select-wrapper" :class="{ 'z-active': openDropdown === 'stroke' }">
                         <div
                           class="custom-select-box"
@@ -178,7 +174,7 @@
                     </div>
 
                     <!-- Dropdown Năm Sản Xuất -->
-                    <div class="col-12 col-sm-4 col-md filter-dropdown-col">
+                    <div class="col-6 col-sm-4 col-md-auto filter-dropdown-col">
                       <div class="custom-select-wrapper" :class="{ 'z-active': openDropdown === 'nam' }">
                         <div
                           class="custom-select-box"
@@ -214,7 +210,7 @@
 
                 <!-- BẢNG DỮ LIỆU MODEL CHUẨN THẨM MỸ HÀNG HẢI -->
                 <div class="table-responsive custom-scrollbar">
-                  <table class="table table-hover catalog-table mb-0 align-middle">
+                  <table class="table catalog-table mb-0 align-middle">
                     <thead>
                       <tr>
                         <th class="th-stt text-center">STT</th>
@@ -235,7 +231,7 @@
                             </div>
                             <h6 class="fw-bold text-dark mb-1">Không tìm thấy model phù hợp</h6>
                             <p class="text-muted small mb-3">Vui lòng điều chỉnh hoặc xóa bớt tiêu chí lọc</p>
-                            <button class="btn btn-outline-danger btn-sm px-3 py-1 rounded-1" @click="clearFilters">
+                            <button class="btn btn-outline-danger btn-sm px-3 py-1 rounded-2" @click="clearFilters">
                               <i class="bi bi-arrow-counterclockwise me-1"></i> Xóa tất cả bộ lọc
                             </button>
                           </div>
@@ -460,7 +456,7 @@ const filteredModels = computed(() => {
   padding-top: 100px;
   padding-bottom: 28px;
   background: #ffffff;
-  border-bottom: 1px solid #e0e6f0;
+  border-bottom: 1px solid #edf2f7;
   margin-bottom: 30px;
 }
 
@@ -522,8 +518,8 @@ const filteredModels = computed(() => {
   width: 140px;
   height: 64px;
   background: #ffffff;
-  border: 1px solid #e0e6f0;
-  border-radius: 4px;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
   padding: 8px 16px;
   box-shadow: 0 4px 12px rgba(10, 17, 40, 0.04);
 }
@@ -535,13 +531,13 @@ const filteredModels = computed(() => {
 }
 
 /* ========================================================
-   2. SIDEBAR CARD (LOẠI ĐỘNG CƠ - CHUẨN 4PX SẮC NÉT)
+   2. SIDEBAR CARD (LOẠI ĐỘNG CƠ)
    ======================================================== */
 .catalog-sidebar-card {
-  border-radius: 4px !important;
-  border: 1px solid #e0e6f0 !important;
+  border-radius: 12px !important;
+  border: 1px solid #edf2f7 !important;
   background: #ffffff;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04) !important;
+  box-shadow: 0 4px 14px rgba(10, 17, 40, 0.03);
   overflow: hidden;
 }
 
@@ -561,7 +557,7 @@ const filteredModels = computed(() => {
 
 .catalog-sidebar-title {
   font-family: var(--heading-font);
-  font-size: 0.98rem;
+  font-size: 1rem;
   font-weight: 700;
   color: #0A1128;
   margin: 0;
@@ -584,7 +580,7 @@ const filteredModels = computed(() => {
   border: 1px solid transparent;
   background: transparent;
   padding: 10px 14px;
-  border-radius: 4px;
+  border-radius: 8px;
   font-family: var(--default-font);
   font-weight: 500;
   font-size: 0.92rem;
@@ -600,17 +596,17 @@ const filteredModels = computed(() => {
 }
 
 .catalog-sidebar-btn.active {
-  background: rgba(248, 34, 73, 0.06);
-  border-left: 3px solid var(--accent-color, #f82249) !important;
+  background: rgba(248, 34, 73, 0.07);
+  border-color: rgba(248, 34, 73, 0.2);
   color: var(--accent-color, #f82249);
   font-weight: 700;
 }
 
 .sidebar-btn-badge {
   font-size: 0.75rem;
-  font-weight: 700;
+  font-weight: 600;
   padding: 2px 8px;
-  border-radius: 4px;
+  border-radius: 999px;
   background: #f1f5f9;
   color: #64748b;
   transition: all 0.2s ease;
@@ -622,13 +618,13 @@ const filteredModels = computed(() => {
 }
 
 /* ========================================================
-   3. CONTENT CARD (BẢNG MODEL & BỘ LỌC - CHUẨN 4PX SẮC NÉT)
+   3. CONTENT CARD (BẢNG MODEL & BỘ LỌC)
    ======================================================== */
 .catalog-content-card {
-  border-radius: 4px !important;
-  border: 1px solid #e0e6f0 !important;
+  border-radius: 12px !important;
+  border: 1px solid #edf2f7 !important;
   background: #ffffff;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04) !important;
+  box-shadow: 0 4px 16px rgba(10, 17, 40, 0.04);
   overflow: visible;
 }
 
@@ -636,7 +632,7 @@ const filteredModels = computed(() => {
   padding: 16px 24px;
   border-bottom: 1px solid #f1f5f9;
   background: #ffffff;
-  border-radius: 4px 4px 0 0;
+  border-radius: 12px 12px 0 0;
 }
 
 .catalog-card-title {
@@ -651,9 +647,9 @@ const filteredModels = computed(() => {
   background: #0A1128;
   color: #ffffff;
   font-size: 0.78rem;
-  font-weight: 700;
+  font-weight: 600;
   padding: 4px 12px;
-  border-radius: 4px;
+  border-radius: 999px;
 }
 
 /* ========================================================
@@ -662,8 +658,8 @@ const filteredModels = computed(() => {
 .search-input-box {
   display: flex;
   align-items: center;
-  height: 42px;
-  border-radius: 4px;
+  height: 44px;
+  border-radius: 8px;
   border: 1px solid #d1d5db;
   background: #ffffff;
   box-shadow: inset 0 0 0 0 rgba(248, 34, 73, 0), 0 2px 6px 0 rgba(248, 34, 73, 0);
@@ -736,8 +732,8 @@ const filteredModels = computed(() => {
 }
 
 .filter-dropdown-col {
-  flex: 1 1 0;
-  min-width: 130px;
+  min-width: 145px;
+  flex-grow: 1;
 }
 
 /* Custom Select Controls */
@@ -755,8 +751,8 @@ const filteredModels = computed(() => {
   align-items: center;
   justify-content: space-between;
   padding: 0 14px;
-  height: 42px;
-  border-radius: 4px;
+  height: 44px;
+  border-radius: 8px;
   border: 1px solid #d1d5db;
   background: #ffffff;
   box-shadow: inset 0 0 0 0 rgba(248, 34, 73, 0), 0 2px 6px 0 rgba(248, 34, 73, 0);
@@ -810,7 +806,7 @@ const filteredModels = computed(() => {
   padding: 6px;
   background: #ffffff;
   border: 1px solid #e2e8f0;
-  border-radius: 4px;
+  border-radius: 8px;
   box-shadow: 0 12px 30px rgba(10, 17, 40, 0.12);
   z-index: 1055;
   max-height: 250px;
@@ -826,7 +822,7 @@ const filteredModels = computed(() => {
   padding: 8px 12px;
   font-size: 0.85rem;
   color: #334155;
-  border-radius: 4px;
+  border-radius: 6px;
   cursor: pointer;
   transition: all 0.15s ease;
   white-space: nowrap;
@@ -844,16 +840,16 @@ const filteredModels = computed(() => {
 }
 
 .btn-reset-filter {
-  height: 42px;
+  height: 44px;
   padding: 0 16px;
   font-size: 0.85rem;
   font-weight: 600;
-  border-radius: 4px;
+  border-radius: 8px;
   transition: all 0.2s ease;
 }
 
 /* ========================================================
-   5. DATA TABLE (CHUẨN KỸ THUẬT HÀNG HẢI)
+   5. DATA TABLE
    ======================================================== */
 .catalog-table {
   border-collapse: separate;
@@ -908,41 +904,39 @@ const filteredModels = computed(() => {
   margin-top: 2px;
 }
 
-/* Badge Mã lực: Màu trung tính sang trọng, bỏ màu xanh dương lạc điệu */
 .hp-badge {
   display: inline-block;
   padding: 3px 8px;
-  background-color: #f1f5f9;
-  color: #0A1128;
+  background-color: #eff6ff;
+  color: #1d4ed8;
   font-weight: 700;
   font-size: 0.82rem;
-  border-radius: 4px;
-  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  border: 1px solid #dbeafe;
 }
 
 .stroke-badge {
   display: inline-block;
   padding: 3px 8px;
-  background-color: #ffffff;
-  color: #475569;
+  background-color: #f8fafc;
+  color: #334155;
   font-weight: 600;
   font-size: 0.82rem;
-  border-radius: 4px;
+  border-radius: 6px;
   border: 1px solid #e2e8f0;
 }
 
-/* Nút Sơ Đồ: Sắc nét, viền đỏ Marine, dứt khoát chuẩn CTA */
 .btn-view-diagram {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 5px 14px;
+  padding: 6px 14px;
   font-size: 0.82rem;
   font-weight: 600;
-  border-radius: 4px;
+  border-radius: 8px;
   color: var(--accent-color, #f82249);
-  background: transparent;
-  border: 1.5px solid var(--accent-color, #f82249);
+  background: rgba(248, 34, 73, 0.06);
+  border: 1px solid rgba(248, 34, 73, 0.25);
   text-decoration: none;
   white-space: nowrap;
   transition: all 0.25s ease;

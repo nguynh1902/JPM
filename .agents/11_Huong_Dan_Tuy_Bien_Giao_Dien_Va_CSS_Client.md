@@ -28,14 +28,9 @@ Trong dự án JPM, mối quan hệ giữa **Tài nguyên CSS gốc** và **Mã 
 ```
 
 ### 👉 Ý nghĩa sống còn của mô hình này:
-1. **Tính nhất quán tuyệt đối (Global UI Consistency):**
-   * Coi tầng CSS gốc (`main.css`) như một **thư viện mở rộng của Bootstrap**. Mọi component, màu sắc, nút bấm, thẻ card, huy hiệu đã được định nghĩa chuẩn hóa một lần duy nhất tại đây.
-   * **CÓ RỒI THÌ DÙNG LẠI:** Khi Tầng Vue gọi `class="btn btn-danger"`, thì từ **Trang chủ đến Trang Tra Cứu, Giỏ Hàng, Sơ Đồ hay Chi Tiết ĐỀU PHẢI ĂN CHUNG MỘT MÃ MÀU ĐỎ DUY NHẤT** (`--bs-danger: #f82249`), cùng một độ bo góc và cùng một hiệu ứng hover.
-   * **TUYỆT ĐỐI CẤM:** Không có chuyện ở Trang chủ nút đỏ này, sang trang Giỏ hàng lại tự chế ra một màu đỏ khác hoặc dùng style riêng!
-2. **Khả năng biến hình đồng loạt (Universal Re-theming):**
-   * Khi bạn muốn **thay đổi toàn bộ phong cách giao diện** (ví dụ: đổi từ phong cách góc cạnh sang bo tròn mềm mại, đổi từ tông Navy/Đỏ sang tông Xanh Lá/Cam, hay đổi độ dày viền của Card):
-   * Bạn **CHỈ CẦN SỬA DUY NHẤT** tại các biến và class component trong file CSS gốc (`main.css`).
-   * **HÀNG CHỤC TRANG VUE CLIENT** (`TrangChu.vue`, `SoDoPhuTung.vue`, `ChiTietPhuTung.vue`, `GioHang.vue`, `ThuongHieu.vue`, `TinTuc.vue`,...) sẽ **TỰ ĐỘNG BIẾN HÌNH ĐỒNG LOẠT** theo phong cách mới ngay lập tức mà bạn không cần phải tốn công đi sửa từng file `.vue` đơn lẻ!
+Khi bạn muốn **thay đổi toàn bộ phong cách giao diện** (ví dụ: đổi từ phong cách góc cạnh sang bo tròn mềm mại, đổi từ tông Navy/Đỏ sang tông Xanh Lá/Cam, hay đổi độ dày viền của Card):
+* Bạn **CHỈ CẦN SỬA DUY NHẤT** tại các biến và class component trong file CSS gốc (`main.css`).
+* **HÀNG CHỤC TRANG VUE CLIENT** (`TrangChu.vue`, `SoDoPhuTung.vue`, `ChiTietPhuTung.vue`, `GioHang.vue`, `ThuongHieu.vue`, `TinTuc.vue`,...) sẽ **TỰ ĐỘNG BIẾN HÌNH ĐỒNG LOẠT** theo phong cách mới ngay lập tức mà bạn không cần phải tốn công đi sửa từng file `.vue` đơn lẻ!
 
 ---
 
@@ -263,40 +258,4 @@ Sau khi chỉnh sửa xong trong `main.css`:
 
 ---
 
-## 6. QUY TRÌNH NÂNG CẤP & ĐỒNG BỘ GIAO DIỆN CLIENT — LẤY TRANG CHỦ LÀM TRUNG TÂM (STANDARD OPERATING PROCEDURE)
-
-> **Mục tiêu:** Nâng cấp toàn bộ các trang giao diện con của Client thành **MỘT THỂ THỐNG NHẤT**, đồng bộ 100% phong cách với Trang chủ đã hoàn thiện, tuyệt đối không để xảy ra tình trạng "trang này một kiểu, trang kia phong cách khác".
-
-Mọi lập trình viên và AI khi tham gia nâng cấp giao diện Client **BẮT BUỘC** tuân thủ nghiêm ngặt 4 nguyên tắc sau:
-
-### 🌟 NGUYÊN TẮC 1: Lấy Trang Chủ (`TrangChu.vue`) Làm Thước Đo Chuẩn Mực Duy Nhất (Design Anchor)
-- `TrangChu.vue` đã được thiết kế hoàn thiện và là chuẩn mực trung tâm của dự án:
-  - Cụm tiêu đề trang (`.section-title` với font `Raleway`, phụ đề `Roboto`, text uppercase màu đỏ Marine).
-  - Khung thẻ Card chuẩn Luxury 4px (`.card.product-card`, viền mỏng `#e0e6f0`, bóng đổ mờ nhẹ nhàng, không lem góc).
-  - Trạng thái tải giả lập (Skeleton Loading) cân đối, chuẩn tỉ lệ khung hình.
-  - Bảng màu: Deep Navy Blue (`#0A1128`) cho uy tín kỹ thuật + Đỏ Marine (`#f82249`) làm điểm nhấn hành động.
-- Khi làm việc trên bất kỳ trang con nào (`SanPham.vue`, `ChiTietSanPham.vue`, `KetQuaTraCuu.vue`, `SoDoPhuTung.vue`, `GioHang.vue`, `TinTuc.vue`...), **phải đối chiếu và đưa toàn bộ phong cách về cùng một thể thống nhất với Trang chủ**.
-
-### 🔒 NGUYÊN TẮC 2: Tách Biệt Tuyệt Đối — CHỈ SỬA GIAO DIỆN, KHÔNG ĐỤNG VÀO CODE XỬ LÝ
-- **Chỉ sửa:** Template HTML, cấu trúc thẻ Bootstrap 5, class màu sắc/tiện ích, bố cục chia cột responsive, khối Skeleton loading, Empty state.
-- **TUYỆT ĐỐI CẤM ĐỤNG VÀO CODE XỬ LÝ:**
-  - Không sửa các hàm gọi API, không đổi tên biến dữ liệu (`data`, `props`).
-  - Không sửa logic tính toán trong `computed`, các hành động trong `methods` (như `addToCart`, phân trang, filter logic).
-  - Không sửa cấu trúc Pinia stores (`authStore`, `cartStore`).
-- **Mục đích:** Đảm bảo hệ thống chạy mượt mà, giữ nguyên vẹn 100% tính ổn định của nghiệp vụ trong khi giao diện được nâng cấp lên một tầm cao mới.
-
-### 📋 NGUYÊN TẮC 3: Quy Trình Rà Soát & Báo Cáo Bố Cục Từng Trang Trước Khi Làm (Page Audit & Proposal)
-Trước khi bắt tay vào chỉnh sửa một trang cụ thể:
-1. Đọc và phân tích kỹ lưỡng file `.vue` của trang đó.
-2. Đối chiếu với `TrangChu.vue` và báo cáo rõ cho chủ dự án:
-   - Trang này hiện tại đang lệch phong cách ở những điểm nào?
-   - Cần bổ sung thêm bố cục nào để cân xứng và chuyên nghiệp (ví dụ: Breadcrumb điều hướng, thanh Filter Bar cố định, Sticky Sidebar danh mục, Skeleton loading khi chờ dữ liệu, Empty state khi không có kết quả)?
-3. Nhận được sự đồng thuận từ chủ dự án mới tiến hành thực hiện.
-
-### ✋ NGUYÊN TẮC 4: Chỉ Làm Đúng Trang Được Chỉ Định (Targeted Execution)
-- Tập trung cao độ: Chỉ chỉnh sửa đúng trang mà chủ dự án yêu cầu tại thời điểm đó.
-- Không tự ý sửa lan man sang các page khác khi chưa có lệnh. Hoàn thiện xuất sắc từng page trước khi chuyển sang page tiếp theo.
-
----
-
-*Tài liệu này được cập nhật và lưu trữ chính thức tại `.agents/11_Huong_Dan_Tuy_Bien_Giao_Dien_Va_CSS_Client.md` nhằm định hướng cho toàn bộ lập trình viên và AI tham gia phát triển giao diện JPM.*
+*Tài liệu này được biên soạn và lưu trữ chính thức tại `.agents/11_Huong_Dan_Tuy_Bien_Giao_Dien_Va_CSS_Client.md` nhằm định hướng cho toàn bộ lập trình viên và AI tham gia phát triển giao diện JPM.*
