@@ -203,12 +203,12 @@ export default {
 </script>
 
 <style scoped>
-/* Fix header background for inner pages */
-.header.header-inner-page {
-  --background-color: rgba(1, 8, 33, 1);
-}
+/* Fix header background for inner pages (100% opaque Deep Navy, no bleed-through on scroll) */
+.header.header-inner-page,
 .scrolled .header.header-inner-page {
-  --background-color: rgba(1, 8, 33, 0.82);
+  --background-color: rgba(1, 8, 33, 1) !important;
+  background-color: rgba(1, 8, 33, 1) !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.18);
 }
 
 /* Ensure navbar links are immediately responsive to clicks */

@@ -342,6 +342,14 @@ h6 {
   --background-color: rgba(1, 8, 33, 0.82);
 }
 
+/* Inner Pages Header: Always 100% Solid Deep Navy to prevent content bleed-through */
+.header.header-inner-page,
+.scrolled .header.header-inner-page {
+  --background-color: rgba(1, 8, 33, 1) !important;
+  background-color: rgba(1, 8, 33, 1) !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.22) !important;
+}
+
 /*--------------------------------------------------------------
 # Navigation Menu
 --------------------------------------------------------------*/

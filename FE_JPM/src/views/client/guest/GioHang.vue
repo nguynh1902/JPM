@@ -1,66 +1,118 @@
 <template>
   <main class="cart-page-bg main-page">
     
-    <section id="cart" class="section" style="padding-top: 110px;">
+    <!-- ========================================================
+         PAGE HEADER & BREADCRUMB BANNER
+         ======================================================== -->
+    <section class="cart-header-banner">
       <div class="container">
-        
-        <!-- Header -->
-        <div class="row mb-4">
-          <div class="col-12" data-aos="fade-down">
-            <h2 class="jpm-page-title">Giỏ Hàng <span class="text-danger">Báo Giá</span></h2>
-            <p class="text-muted">Kiểm tra phụ tùng và gửi yêu cầu để nhận mức chiết khấu tốt nhất từ JPM Marine.</p>
+        <!-- Breadcrumb chuẩn hệ thống -->
+        <nav aria-label="breadcrumb" class="custom-breadcrumb mb-3" data-aos="fade-down">
+          <ol class="breadcrumb mb-0 align-items-center">
+            <li class="breadcrumb-item">
+              <router-link to="/" class="breadcrumb-link">
+                <i class="bi bi-house-door me-1"></i> Trang chủ
+              </router-link>
+            </li>
+            <li class="breadcrumb-item active fw-bold text-dark" aria-current="page">
+              Giỏ hàng báo giá
+            </li>
+          </ol>
+        </nav>
+
+        <!-- Cart Title & Trust Badges -->
+        <div class="d-flex flex-column flex-md-row align-items-start align-items-md-center justify-content-between gap-3" data-aos="fade-up">
+          <div>
+            <span class="cart-eyebrow">
+              <i class="bi bi-patch-check-fill me-1"></i> QUY TRÌNH BÁO GIÁ MINH BẠCH
+            </span>
+            <h1 class="cart-page-title mb-2">
+              Giỏ Hàng <span class="cart-title-accent">Báo Giá</span>
+            </h1>
+            <p class="cart-page-subtitle mb-0">
+              Kiểm tra phụ tùng, số lượng và gửi yêu cầu để nhận mức chiết khấu đại lý tốt nhất từ JPM Marine.
+            </p>
+          </div>
+
+          <!-- Trust Badges (Desktop) -->
+          <div class="cart-header-trust d-none d-lg-flex align-items-center gap-3">
+            <div class="trust-card">
+              <div class="trust-icon-wrap text-success">
+                <i class="bi bi-patch-check"></i>
+              </div>
+              <div>
+                <div class="trust-title">Chuẩn Mã OEM</div>
+                <div class="trust-sub">100% Phụ tùng Nhật</div>
+              </div>
+            </div>
+            <div class="trust-card">
+              <div class="trust-icon-wrap text-danger">
+                <i class="bi bi-truck"></i>
+              </div>
+              <div>
+                <div class="trust-title">Chành Xe Toàn Quốc</div>
+                <div class="trust-sub">Giao nhanh bến cảng</div>
+              </div>
+            </div>
           </div>
         </div>
+      </div>
+    </section>
 
-        <div class="row gy-5" v-if="cartItems.length > 0">
+    <!-- ========================================================
+         MAIN CART AREA
+         ======================================================== -->
+    <section class="cart-content-section">
+      <div class="container">
+        
+        <div class="row gy-4" v-if="cartItems.length > 0">
           
-          <!-- LEFT COLUMN: CART ITEMS -->
-          <div class="col-lg-7 col-xl-8" data-aos="fade-up" data-aos-delay="100">
-            <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
-              <div class="card-header bg-white px-4 border-bottom d-flex flex-wrap justify-content-between align-items-center gap-2" style="height: 76px;">
-                <div class="d-flex align-items-center">
-                  <h4 class="mb-0 jpm-card-title">Danh Sách Sản Phẩm</h4>
+          <!-- LEFT COLUMN: CART ITEMS & TRUST SECTION -->
+          <div class="col-lg-7 col-xl-8">
+            
+            <!-- 1. Danh sách sản phẩm table card -->
+            <div class="card catalog-cart-card border-0 mb-4" data-aos="fade-up">
+              <div class="card-header bg-white px-4 py-3 border-bottom d-flex flex-wrap justify-content-between align-items-center gap-2">
+                <div class="d-flex align-items-center gap-2">
+                  <h5 class="mb-0 jpm-card-title">Danh Sách Phụ Tùng Đã Chọn</h5>
+                  <span class="badge-item-count">{{ cartItems.length }} phụ tùng</span>
                 </div>
-                <div class="d-flex align-items-center gap-2 ms-auto">
-                  <span class="badge rounded-pill px-3 py-2 text-nowrap" style="background-color: #fde6ea; color: #f82249; font-weight: 700;">{{ cartItems.length }} Sản phẩm</span>
-                  <button v-if="selectedItems.length > 0" class="btn btn-outline-jpm px-3 text-nowrap" style="padding: 4px 12px; font-size: 0.85rem;" @click="removeSelectedItems">
-                    <i class="bi bi-trash3 me-1"></i> Xóa ({{ selectedItems.length }})
+                <div class="d-flex align-items-center gap-2">
+                  <button v-if="selectedItems.length > 0" class="btn btn-outline-danger btn-sm rounded-8" @click="removeSelectedItems">
+                    <i class="bi bi-trash3 me-1"></i> Xóa đã chọn ({{ selectedItems.length }})
                   </button>
                 </div>
               </div>
               
               <div class="card-body p-0">
                 <div class="table-responsive">
-                  <table class="table align-middle mb-0">
-                    <thead class="bg-white">
-                      <tr style="border-bottom: 2px solid #e2e8f0;">
-                        <th class="text-center border-0" style="width: 44px; padding-left: 1.25rem;">
+                  <table class="table align-middle mb-0 custom-cart-table">
+                    <thead>
+                      <tr>
+                        <th class="text-center th-check" style="width: 46px;">
                           <input class="form-check-input custom-checkbox" type="checkbox" v-model="selectAll" title="Chọn tất cả">
                         </th>
-                        <th class="text-center text-uppercase border-0" style="width: 80px; font-size: 0.85rem; letter-spacing: 0.5px;">REF</th>
-                        <th class="text-uppercase border-0" style="font-size: 0.85rem; letter-spacing: 0.5px;">MÃ & TÊN</th>
-                        <th class="text-center text-uppercase border-0" style="width: 150px; font-size: 0.85rem; letter-spacing: 0.5px;">GIÁ BÁN</th>
-                        <th class="text-center text-uppercase border-0" style="width: 150px; font-size: 0.85rem; letter-spacing: 0.5px;">SỐ LƯỢNG</th>
-                        <th class="text-center text-uppercase border-0" style="width: 100px; font-size: 0.85rem; letter-spacing: 0.5px;">THAO TÁC</th>
+                        <th class="text-center" style="width: 80px;">ẢNH / REF</th>
+                        <th>MÃ & TÊN PHỤ TÙNG</th>
+                        <th class="text-center" style="width: 140px;">ĐƠN GIÁ</th>
+                        <th class="text-center" style="width: 130px;">SỐ LƯỢNG</th>
+                        <th class="text-center" style="width: 70px;">XÓA</th>
                       </tr>
                     </thead>
                     <tbody>
-                      <tr v-if="cartItems.length === 0">
-                        <td colspan="6" class="text-center py-4 text-muted">Giỏ hàng trống.</td>
-                      </tr>
-                      <tr v-for="item in cartItems" :key="item.ma_phu_tung" class="table-row-hover" style="transition: all 0.2s ease;">
-                        <td class="text-center" style="width: 44px; padding-left: 1.25rem;">
+                      <tr v-for="item in cartItems" :key="item.ma_phu_tung" class="table-row-hover">
+                        <td class="text-center th-check">
                           <input class="form-check-input custom-checkbox" type="checkbox" :value="item.ma_phu_tung" v-model="selectedItems">
                         </td>
                         <td class="text-center">
-                          <div class="d-inline-flex justify-content-center align-items-center border rounded bg-white p-1" style="width: 60px; height: 60px;">
-                            <img v-if="item.hinh_anh" :src="getImageUrl(item.hinh_anh)" style="max-height: 48px; max-width: 48px; object-fit: contain;" :alt="item.ten_phu_tung">
+                          <div class="cart-item-thumb">
+                            <img v-if="item.hinh_anh" :src="getImageUrl(item.hinh_anh)" :alt="item.ten_phu_tung">
                             <i v-else class="bi bi-image text-muted fs-4"></i>
                           </div>
                         </td>
                         <td>
                           <div class="d-flex align-items-center gap-2 flex-wrap">
-                            <span class="fw-bold" style="color: var(--heading-color); font-size: 0.95rem;">{{ item.ma_phu_tung }}</span>
+                            <span class="part-code">{{ item.ma_phu_tung }}</span>
                             <span 
                               v-if="item.loai_san_pham" 
                               class="badge rounded-pill d-inline-flex align-items-center gap-1" 
@@ -70,21 +122,25 @@
                               {{ item.loai_san_pham === 'san_pham' ? 'Sản phẩm' : 'Phụ tùng' }}
                             </span>
                           </div>
-                          <div class="text-muted small fw-medium mt-1">{{ item.ten_phu_tung }}</div>
+                          <div class="part-name mt-1">{{ item.ten_phu_tung }}</div>
                         </td>
                         <td class="text-center">
-                          <span v-if="item.is_gia_lien_he || !item.gia_ban || parseFloat(item.gia_ban) <= 0" class="text-danger fw-bold" style="font-size: 0.95rem;">Liên hệ</span>
-                          <span v-else class="fw-bold text-danger text-nowrap" style="font-size: 0.95rem;">{{ formatPrice(item.gia_ban) }}</span>
+                          <span v-if="item.is_gia_lien_he || !item.gia_ban || parseFloat(item.gia_ban) <= 0" class="part-price-quote">Liên hệ</span>
+                          <span v-else class="part-price-val">{{ formatPrice(item.gia_ban) }}</span>
                         </td>
                         <td class="text-center">
-                          <div class="qty-selector d-inline-flex align-items-center mx-auto" style="width: 110px;">
-                            <button class="qty-btn" @click="updateQuantity(item, -1)"><i class="bi bi-dash"></i></button>
-                            <input type="text" class="qty-input w-100 text-center border-0 bg-transparent fw-bold" v-model="item.quantity" readonly>
-                            <button class="qty-btn" @click="updateQuantity(item, 1)"><i class="bi bi-plus"></i></button>
+                          <div class="qty-selector d-inline-flex align-items-center mx-auto">
+                            <button type="button" class="qty-btn" @click="updateQuantity(item, -1)" title="Giảm số lượng">
+                              <i class="bi bi-dash"></i>
+                            </button>
+                            <input type="text" class="qty-input" v-model="item.quantity" readonly>
+                            <button type="button" class="qty-btn" @click="updateQuantity(item, 1)" title="Tăng số lượng">
+                              <i class="bi bi-plus"></i>
+                            </button>
                           </div>
                         </td>
                         <td class="text-center">
-                          <button class="btn btn-outline-danger btn-sm rounded px-2 py-1 fw-bold text-nowrap d-inline-flex align-items-center justify-content-center shadow-none" @click="removeItem(item)" title="Xóa">
+                          <button class="btn btn-delete-item" @click="removeItem(item)" title="Xóa phụ tùng này">
                             <i class="bi bi-trash3"></i>
                           </button>
                         </td>
@@ -93,108 +149,179 @@
                   </table>
                 </div>
               </div>
-              
             </div>
+
+            <!-- 2. Quy trình & Cam kết (Cân bằng chiều cao bố cục 2 cột, không để khoảng trống khi cuộn) -->
+            <div class="card catalog-cart-card border-0 mb-4" data-aos="fade-up" data-aos-delay="100">
+              <div class="card-body p-4">
+                <div class="d-flex align-items-center justify-content-between mb-3 pb-2 border-bottom">
+                  <h6 class="workflow-title mb-0">
+                    <i class="bi bi-arrow-repeat text-danger me-2"></i>Quy Trình Tiếp Nhận & Xử Lý Đơn Hàng Tại JPM Marine
+                  </h6>
+                  <span class="badge rounded-pill bg-light text-secondary px-3 py-1 small">Cam kết minh bạch</span>
+                </div>
+                
+                <div class="row g-3 pt-1">
+                  <div class="col-md-4">
+                    <div class="workflow-step">
+                      <div class="step-num">01</div>
+                      <div class="step-content">
+                        <div class="step-heading">Kiểm Tra Mã OEM</div>
+                        <div class="step-desc">Đội ngũ kỹ thuật đối chiếu chính xác mã phụ tùng với sơ đồ rã máy động cơ của bạn.</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="workflow-step">
+                      <div class="step-num">02</div>
+                      <div class="step-content">
+                        <div class="step-heading">Báo Tồn Kho & Cước</div>
+                        <div class="step-desc">Kiểm tra tồn kho kho Nhật/Việt Nam, tính cước chành xe và gửi thông báo qua Zalo.</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="workflow-step">
+                      <div class="step-num">03</div>
+                      <div class="step-content">
+                        <div class="step-heading">Giao Hàng Chành Xe</div>
+                        <div class="step-desc">Đóng gói an toàn chống va đập máy thủy, giao hỏa tốc đến chành xe hoặc bến cảng.</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="mt-3 pt-3 border-top d-flex flex-wrap justify-content-between align-items-center gap-2 small text-muted">
+                  <div class="d-flex align-items-center gap-2">
+                    <i class="bi bi-headset text-danger fs-5"></i>
+                    <span>Cần hỗ trợ tra mã máy gấp? Hotline / Zalo: <strong class="text-dark">0123 456 789</strong></span>
+                  </div>
+                  <div class="text-success fw-medium">
+                    <i class="bi bi-clock-history me-1"></i> Phản hồi trong 15-30 phút trong giờ làm việc
+                  </div>
+                </div>
+              </div>
+            </div>
+
           </div>
 
           <!-- RIGHT COLUMN: CHECKOUT SIDEBAR -->
-          <div class="col-lg-5 col-xl-4" data-aos="fade-up" data-aos-delay="200">
-            <div class="card border-0 shadow-sm rounded-4 sticky-sidebar">
-              <div class="card-header bg-white px-4 border-bottom d-flex align-items-center" style="height: 76px;">
-                <h4 class="mb-0 jpm-card-title">Thông Tin Đặt Hàng & Báo Giá</h4>
+          <div class="col-lg-5 col-xl-4">
+            <div class="card catalog-cart-card border-0 sticky-sidebar" data-aos="fade-up" data-aos-delay="150">
+              <div class="card-header bg-white px-4 py-3 border-bottom d-flex align-items-center" style="min-height: 64px;">
+                <h5 class="mb-0 jpm-card-title">Thông Tin Đặt Hàng & Báo Giá</h5>
               </div>
               
               <div class="card-body p-4">
                 
-                <!-- Summary -->
-                <div class="summary-box mb-4 p-3 rounded-3 bg-light border">
-                  <div class="d-flex justify-content-between mb-2">
-                    <span class="text-muted fw-medium">Tổng sản phẩm:</span>
-                    <strong class="text-dark">{{ totalQuantity }}</strong>
+                <!-- Bảng tóm tắt tài chính -->
+                <div class="summary-box mb-4 p-3 rounded-8">
+                  <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="text-secondary small fw-medium">Số lượng đã chọn:</span>
+                    <strong class="text-dark">{{ totalQuantity }} món</strong>
                   </div>
-                  <div class="d-flex justify-content-between align-items-center mb-2 small text-muted">
-                    <span><i class="bi bi-truck me-1"></i> Vận chuyển:</span>
-                    <span v-if="isB2B" class="text-success fw-bold">Ưu đãi B2B (Hỗ trợ vận chuyển)</span>
-                    <span v-else class="text-secondary">Cước vận chuyển (Đợi báo giá)</span>
+                  <div class="d-flex justify-content-between align-items-center mb-2 small text-secondary">
+                    <span><i class="bi bi-truck me-1"></i> Cước vận chuyển:</span>
+                    <span v-if="isB2B" class="text-success fw-bold">Ưu đãi đại lý B2B</span>
+                    <span v-else class="text-secondary fw-medium">Báo cước theo chành xe</span>
                   </div>
-                  <div class="d-flex justify-content-between align-items-center mb-2 small text-muted">
-                    <span><i class="bi bi-wallet2 me-1"></i> Tiền cọc:</span>
-                    <span class="text-warning fw-bold">Đợi Admin báo cọc</span>
+                  <div class="d-flex justify-content-between align-items-center mb-2 small text-secondary">
+                    <span><i class="bi bi-wallet2 me-1"></i> Tiền đặt cọc:</span>
+                    <span class="text-secondary fw-medium">Chờ KTV xác nhận tồn</span>
                   </div>
-                  <div class="d-flex justify-content-between align-items-baseline pt-2 border-top">
-                    <span class="text-muted fw-medium">Tạm tính tiền hàng:</span>
+                  <div class="d-flex justify-content-between align-items-baseline pt-2 mt-2 border-top">
+                    <span class="text-dark fw-bold">Tạm tính tiền hàng:</span>
                     <div class="text-end">
                       <strong class="text-muted fs-5 fw-bold" v-if="selectedItems.length === 0">0 ₫</strong>
-                      <strong class="text-danger fs-5 fw-bold" v-else-if="hasPricedItems">{{ formatPrice(pricedTotalAmount) }}</strong>
-                      <strong class="text-danger fs-5 fw-bold" v-else>Liên hệ báo giá</strong>
-                      <div v-if="isMixedCart && selectedItems.length > 0" class="small text-muted fst-italic">
+                      <strong class="summary-price-accent fs-5 fw-bold" v-else-if="hasPricedItems">{{ formatPrice(pricedTotalAmount) }}</strong>
+                      <strong class="summary-price-accent fs-5 fw-bold" v-else>Liên hệ báo giá</strong>
+                      <div v-if="isMixedCart && selectedItems.length > 0" class="small text-muted fst-italic mt-1">
                         (+ {{ contactItemCount }} phụ tùng chờ tư vấn giá)
                       </div>
                     </div>
                   </div>
-                  <!-- Thông báo đơn hàng chuẩn thực tế -->
-                  <div class="alert alert-info py-2 px-3 small mt-3 mb-0 rounded-3 border-0 bg-info-subtle text-info-emphasis" style="font-size: 0.8rem; line-height: 1.4;">
-                    <i class="bi bi-info-circle-fill me-1"></i> Sau khi nhận đơn, Kỹ thuật viên JPM sẽ kiểm tra tồn kho, tính cước vận chuyển và tiền cọc, sau đó gửi link báo giá kèm mã VietQR qua Zalo để quý khách xác nhận.
+                  
+                  <!-- Hướng dẫn quy trình xác nhận -->
+                  <div class="b2b-notice-box mt-3">
+                    <i class="bi bi-info-circle-fill text-danger me-1 flex-shrink-0 mt-0"></i>
+                    <span>Sau khi nhận đơn, Kỹ thuật viên JPM sẽ kiểm tra tồn kho, tính cước vận chuyển và gửi link báo giá kèm mã VietQR qua Zalo để quý khách xác nhận.</span>
                   </div>
                 </div>
 
-                <!-- Form -->
+                <!-- Form Giao Hàng & Báo Giá -->
                 <form @submit.prevent="submitQuotation">
                   
                   <!-- If Not Authenticated (GUEST) -->
                   <div v-if="!isAuthenticated">
                     <div class="mb-3">
-                      <label class="form-label fw-bold text-dark" style="font-size: 0.9rem;">Họ và tên <span class="text-danger">*</span></label>
-                      <input type="text" class="form-control" v-model="checkoutForm.name" required placeholder="Nhập tên của bạn...">
+                      <label class="form-label field-label">Họ và tên <span class="text-danger">*</span></label>
+                      <input type="text" class="form-control custom-form-input" v-model="checkoutForm.name" required placeholder="Nhập tên của bạn...">
                     </div>
                     <div class="mb-3">
-                      <label class="form-label fw-bold text-dark" style="font-size: 0.9rem;">Số điện thoại / Zalo <span class="text-danger">*</span></label>
-                      <input type="tel" class="form-control" v-model="checkoutForm.phone" required placeholder="Nhập số điện thoại...">
+                      <label class="form-label field-label">Số điện thoại / Zalo <span class="text-danger">*</span></label>
+                      <input type="tel" class="form-control custom-form-input" v-model="checkoutForm.phone" required placeholder="Nhập số điện thoại nhận báo giá...">
                     </div>
                     <div class="mb-3">
-                      <label class="form-label fw-bold text-dark" style="font-size: 0.9rem;">Email (Tuỳ chọn)</label>
-                      <input type="email" class="form-control" v-model="checkoutForm.email" placeholder="Nhập email...">
+                      <label class="form-label field-label">Email (Tuỳ chọn)</label>
+                      <input type="email" class="form-control custom-form-input" v-model="checkoutForm.email" placeholder="Nhập email nhận hóa đơn...">
                     </div>
                     <div class="mb-3">
-                      <label class="form-label fw-bold text-dark" style="font-size: 0.9rem;">Địa chỉ giao hàng <span class="text-danger">*</span></label>
-                      <textarea class="form-control" v-model="checkoutForm.address" required rows="2" placeholder="Nhập địa chỉ nhận hàng (Hoặc điền Tỉnh/Thành phố để báo cước vận chuyển)"></textarea>
+                      <label class="form-label field-label">Địa chỉ nhận hàng <span class="text-danger">*</span></label>
+                      <textarea class="form-control custom-form-input custom-textarea" v-model="checkoutForm.address" required rows="2" placeholder="Số nhà, Tỉnh/Thành phố hoặc Tên Chành Xe quen thuộc"></textarea>
                     </div>
                   </div>
 
                   <!-- If Authenticated (MEMBER) -->
                   <div v-else class="mb-4">
-                    <label class="form-label fw-bold text-dark mb-2" style="font-size: 0.9rem;">Thông tin & Địa chỉ giao hàng</label>
-                    <div v-if="selectedAddress" class="border rounded p-3 bg-light position-relative">
-                      <div class="fw-bold mb-1">{{ selectedAddress.ten_nguoi_nhan }}</div>
-                      <div class="text-muted small mb-1"><i class="bi bi-telephone-fill me-1"></i> {{ selectedAddress.so_dien_thoai }}</div>
-                      <div class="small text-secondary" style="line-height: 1.4;">{{ selectedAddress.dia_chi_cu_the }}</div>
-                      <!-- Option to change address -->
-                      <div class="mt-2 text-end" v-if="addresses.length > 0">
-                        <a href="#" class="text-decoration-none fw-bold" style="color: var(--accent-color, #f82249); font-size: 0.85rem;" data-bs-toggle="modal" data-bs-target="#addressModal" @click="modalState = 'list'">Thay đổi địa chỉ</a>
+                    <label class="form-label field-label mb-2">Thông tin & Địa chỉ giao hàng</label>
+                    
+                    <!-- Has selected address -->
+                    <div v-if="selectedAddress" class="address-preview-card p-3 rounded-8 position-relative">
+                      <div class="d-flex align-items-start gap-2">
+                        <i class="bi bi-geo-alt-fill text-danger fs-5 mt-n1 flex-shrink-0"></i>
+                        <div class="flex-grow-1">
+                          <div class="fw-bold text-dark">{{ selectedAddress.ten_nguoi_nhan }}</div>
+                          <div class="text-muted small mt-1">
+                            <i class="bi bi-telephone-fill me-1"></i> {{ selectedAddress.so_dien_thoai }}
+                          </div>
+                          <div class="small text-secondary mt-1" style="line-height: 1.4;">
+                            {{ selectedAddress.dia_chi_cu_the }}
+                          </div>
+                        </div>
+                      </div>
+                      <div class="mt-2 text-end pt-2 border-top" v-if="addresses.length > 0">
+                        <button type="button" class="btn btn-link p-0 text-decoration-none address-change-link" data-bs-toggle="modal" data-bs-target="#addressModal" @click="modalState = 'list'">
+                          Thay đổi địa chỉ <i class="bi bi-chevron-right ms-1"></i>
+                        </button>
                       </div>
                     </div>
-                    <div v-else class="alert alert-warning small p-3">
-                      Bạn chưa có địa chỉ nào trong Sổ địa chỉ.
-                      <a href="#" class="alert-link fw-bold d-block mt-2" data-bs-toggle="modal" data-bs-target="#addressModal" @click.prevent="openAddAddress">Thêm địa chỉ ngay</a>
+
+                    <!-- No address -->
+                    <div v-else class="no-address-box p-3 rounded-8 text-center">
+                      <i class="bi bi-geo-alt text-muted fs-3 mb-2 d-block"></i>
+                      <p class="text-muted small mb-2">Bạn chưa có địa chỉ nào trong Sổ địa chỉ.</p>
+                      <button type="button" class="btn btn-outline-danger btn-sm rounded-8" data-bs-toggle="modal" data-bs-target="#addressModal" @click.prevent="openAddAddress">
+                        <i class="bi bi-plus-lg me-1"></i> Thêm địa chỉ ngay
+                      </button>
                     </div>
                   </div>
 
                   <!-- Note Input (Common) -->
                   <div class="mb-4">
-                    <label class="form-label fw-bold text-dark" style="font-size: 0.9rem;">Ghi chú (Tuỳ chọn)</label>
-                    <textarea class="form-control" v-model="checkoutForm.note" rows="3" style="min-height: 70px;" placeholder="Yêu cầu hóa đơn, giao gấp..."></textarea>
+                    <label class="form-label field-label">Ghi chú (Tuỳ chọn)</label>
+                    <textarea class="form-control custom-form-input custom-textarea" v-model="checkoutForm.note" rows="2" placeholder="Ghi chú số khung, chành xe nhận, yêu cầu hóa đơn..."></textarea>
                   </div>
 
                   <!-- Submit Button -->
-                  <button type="submit" class="btn btn-jpm w-100 py-3 d-flex justify-content-center align-items-center shadow-sm" :disabled="isSubmitting || selectedItems.length === 0">
-                    <span v-if="isSubmitting" class="spinner-border spinner-border-sm me-2"></span>
-                    <span v-else class="fw-bold" style="letter-spacing: 0;">{{ buttonText }}</span>
-                    <i class="bi bi-arrow-right ms-2" v-if="!isSubmitting && selectedItems.length > 0"></i>
+                  <button type="submit" class="btn btn-jpm-submit w-100 d-flex justify-content-center align-items-center gap-2" :disabled="isSubmitting || selectedItems.length === 0">
+                    <span v-if="isSubmitting" class="spinner-border spinner-border-sm"></span>
+                    <span v-else class="fw-bold">{{ buttonText }}</span>
+                    <i class="bi bi-arrow-right" v-if="!isSubmitting && selectedItems.length > 0"></i>
                   </button>
                   
-                  <p class="security-text text-center mt-3 mb-0 text-muted" style="font-size: 0.85rem;">
-                    <i class="bi bi-shield-check text-success me-1"></i> Thông tin được bảo mật hoàn toàn
-                  </p>
+                  <div class="security-guarantee-text text-center mt-3 mb-0">
+                    <i class="bi bi-shield-check text-success me-1"></i> Cam kết bảo mật thông tin & chính hãng 100%
+                  </div>
                 </form>
 
               </div>
@@ -204,66 +331,84 @@
         </div>
 
         <!-- Empty Cart -->
-        <div class="empty-cart-container text-center py-5" v-else data-aos="fade-up">
-          <img src="https://cdn-icons-png.flaticon.com/512/11329/11329060.png" width="120" alt="Empty Cart" class="mb-4 opacity-50">
-          <h3 class="fw-bold text-dark mb-3">Giỏ hàng của bạn đang trống</h3>
-          <p class="text-muted mb-4 fs-5">Hãy tìm kiếm phụ tùng bạn cần và thêm vào giỏ hàng nhé!</p>
-          <router-link to="/san-pham" class="btn btn-jpm d-inline-block px-5 py-3 text-decoration-none shadow">
-            Khám phá phụ tùng máy thủy
-          </router-link>
+        <div class="empty-cart-card card border-0 p-5 text-center" v-else data-aos="fade-up">
+          <div class="empty-icon-wrap mx-auto mb-3">
+            <i class="bi bi-cart-x"></i>
+          </div>
+          <h3 class="fw-bold text-dark mb-2">Giỏ Hàng Báo Giá Đang Trống</h3>
+          <p class="text-muted mb-4 fs-6" style="max-width: 480px; margin: 0 auto;">
+            Bạn chưa thêm linh kiện hoặc phụ tùng nào vào giỏ hàng. Hãy tìm kiếm phụ tùng qua sơ đồ rã máy hoặc catalog thương hiệu.
+          </p>
+          <div class="d-flex flex-wrap justify-content-center gap-3">
+            <router-link to="/san-pham" class="btn btn-jpm-submit px-4 text-decoration-none">
+              Khám Phá Cửa Hàng Phụ Tùng
+            </router-link>
+            <router-link to="/thuong-hieu/yamaha" class="btn btn-outline-secondary rounded-8 px-4 text-decoration-none">
+              Tra Cứu Theo Thương Hiệu
+            </router-link>
+          </div>
         </div>
 
       </div>
     </section>
 
-    <!-- Address Modal — Teleport to body -->
+    <!-- ========================================================
+         ADDRESS MODAL (TELEPORTED TO BODY)
+         ======================================================== -->
     <Teleport to="body">
       <div class="modal fade" id="addressModal" tabindex="-1" aria-labelledby="addressModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
-          <div class="modal-content" style="border-radius: 4px; border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
-            <div class="modal-header border-bottom-0 pb-0 mt-2">
-              <h5 class="modal-title fw-bold text-dark" id="addressModalLabel">Địa Chỉ Của Tôi</h5>
+          <div class="modal-content custom-modal-content">
+            <div class="modal-header border-bottom px-4 py-3">
+              <h5 class="modal-title fw-bold text-dark fs-5" id="addressModalLabel">
+                {{ modalState === 'list' ? 'Sổ Địa Chỉ Giao Hàng' : (editingAddressId ? 'Cập Nhật Địa Chỉ' : 'Thêm Địa Chỉ Mới') }}
+              </h5>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
+            <div class="modal-body p-4">
+              <!-- Danh sách địa chỉ -->
               <div v-if="modalState === 'list'" class="address-list">
-                <div v-for="addr in addresses" :key="addr.id" class="address-item p-3 mb-3 border rounded position-relative d-flex align-items-start gap-3" :class="{'border-danger': selectedAddressId === addr.id}" style="cursor: pointer;" @click="selectedAddressId = addr.id">
+                <div v-if="addresses.length === 0" class="text-center py-4 text-muted small">
+                  Chưa có địa chỉ nào được lưu.
+                </div>
+                <div v-for="addr in addresses" :key="addr.id" class="address-item p-3 mb-3 border rounded-8 position-relative d-flex align-items-start gap-3" :class="{'selected-addr': selectedAddressId === addr.id}" style="cursor: pointer;" @click="selectedAddressId = addr.id">
                   <div class="radio-wrap mt-1">
-                    <input class="form-check-input" type="radio" :name="'address_radio'" :value="addr.id" v-model="selectedAddressId" style="transform: scale(1.2);">
+                    <input class="form-check-input custom-checkbox" type="radio" :name="'address_radio'" :value="addr.id" v-model="selectedAddressId">
                   </div>
                   <div class="flex-grow-1">
                     <div class="d-flex justify-content-between align-items-center mb-1">
                       <span class="fw-bold text-dark">{{ addr.ten_nguoi_nhan }}</span>
-                      <a href="#" class="text-decoration-none" style="color: #0d6efd; font-size: 0.85rem;" @click.prevent="openEditAddress(addr)">Cập nhật</a>
+                      <a href="#" class="text-decoration-none small text-primary fw-medium" @click.stop.prevent="openEditAddress(addr)">Sửa</a>
                     </div>
                     <div class="text-muted small mb-1">(+84) {{ addr.so_dien_thoai }}</div>
                     <div class="small text-secondary" style="line-height: 1.4;">{{ addr.dia_chi_cu_the }}</div>
-                    <span v-if="addr.la_mac_dinh" class="badge text-danger mt-2" style="background: rgba(248,34,73,0.1);">Mặc định</span>
+                    <span v-if="addr.la_mac_dinh" class="badge bg-danger-subtle text-danger mt-2 rounded-pill px-2 py-1 small">Mặc định</span>
                   </div>
                 </div>
               </div>
               
+              <!-- Form thêm / sửa địa chỉ -->
               <div v-else class="address-form-inline">
                 <form @submit.prevent="saveAddress">
                   <div class="mb-3">
-                    <label class="form-label small fw-bold text-dark">Họ và tên <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control form-control-sm" v-model="addressForm.ten_nguoi_nhan" required placeholder="Tên người nhận">
+                    <label class="form-label small fw-bold text-dark">Họ và tên người nhận <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control custom-form-input" v-model="addressForm.ten_nguoi_nhan" required placeholder="Tên người nhận hàng...">
                   </div>
                   <div class="mb-3">
                     <label class="form-label small fw-bold text-dark">Số điện thoại <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control form-control-sm" v-model="addressForm.so_dien_thoai" required placeholder="SĐT liên hệ">
+                    <input type="text" class="form-control custom-form-input" v-model="addressForm.so_dien_thoai" required placeholder="Số điện thoại...">
                   </div>
                   <div class="mb-3">
-                    <label class="form-label small fw-bold text-dark">Địa chỉ cụ thể <span class="text-danger">*</span></label>
-                    <textarea class="form-control form-control-sm" v-model="addressForm.dia_chi_cu_the" required rows="2" placeholder="Số nhà, đường, phường/xã, quận/huyện, tỉnh/thành phố..."></textarea>
+                    <label class="form-label small fw-bold text-dark">Địa chỉ cụ thể / Chành xe <span class="text-danger">*</span></label>
+                    <textarea class="form-control custom-form-input" v-model="addressForm.dia_chi_cu_the" required rows="2" placeholder="Số nhà, đường, xã/phường, tỉnh/thành phố hoặc bến chành xe..."></textarea>
                   </div>
                   <div class="mb-3 form-check">
-                    <input type="checkbox" class="form-check-input" id="laMacDinh" v-model="addressForm.la_mac_dinh">
-                    <label class="form-check-label small" for="laMacDinh">Đặt làm địa chỉ mặc định</label>
+                    <input type="checkbox" class="form-check-input custom-checkbox" id="laMacDinh" v-model="addressForm.la_mac_dinh">
+                    <label class="form-check-label small ms-2 cursor-pointer" for="laMacDinh">Đặt làm địa chỉ nhận hàng mặc định</label>
                   </div>
                   <div class="d-flex gap-2 mt-4">
-                    <button type="button" class="btn btn-light flex-grow-1" style="font-size: 0.9rem;" @click="modalState = 'list'">Hủy</button>
-                    <button type="submit" class="btn btn-jpm flex-grow-1" style="font-size: 0.9rem;" :disabled="isSavingAddress">
+                    <button type="button" class="btn btn-light rounded-8 flex-grow-1" @click="modalState = 'list'">Hủy</button>
+                    <button type="submit" class="btn btn-jpm-submit rounded-8 flex-grow-1" :disabled="isSavingAddress">
                       <span v-if="isSavingAddress" class="spinner-border spinner-border-sm me-2"></span>
                       Lưu địa chỉ
                     </button>
@@ -271,10 +416,10 @@
                 </form>
               </div>
             </div>
-            <div class="modal-footer border-top-0 pt-0 mb-2" v-if="modalState === 'list'">
-              <a href="#" class="btn btn-jpm w-100 py-2 d-flex justify-content-center align-items-center gap-2" @click.prevent="openAddAddress">
+            <div class="modal-footer border-top px-4 py-3" v-if="modalState === 'list'">
+              <button type="button" class="btn btn-jpm-submit w-100 py-2 d-flex justify-content-center align-items-center gap-2" @click.prevent="openAddAddress">
                 <i class="bi bi-plus-lg"></i> Thêm Địa Chỉ Mới
-              </a>
+              </button>
             </div>
           </div>
         </div>
@@ -355,8 +500,8 @@ export default {
       }, 0)
     },
     buttonText() {
-      if (this.selectedItems.length === 0) return 'VUI LÒNG CHỌN SẢN PHẨM'
-      return 'GỬI ĐƠN ĐẶT HÀNG & BÁO GIÁ'
+      if (this.selectedItems.length === 0) return 'Vui lòng chọn sản phẩm'
+      return 'Gửi Yêu Cầu Báo Giá'
     },
     totalAmount() {
       if (this.selectedItems.length === 0) return this.formatPrice(0)
@@ -389,7 +534,6 @@ export default {
     }
   },
   mounted() {
-    // Không tự động tick sẵn toàn bộ sản phẩm để người dùng tự chọn món mong muốn
     try {
       const userStr = localStorage.getItem('auth_user')
       const token = localStorage.getItem('auth_token')
@@ -426,12 +570,12 @@ export default {
     },
     async removeItem(item) {
       const result = await Swal.fire({
-        title: 'Xóa sản phẩm?',
+        title: 'Xóa phụ tùng?',
         text: `"${item.ten_phu_tung}" sẽ bị xóa khỏi giỏ hàng.`,
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#f82249',
-        cancelButtonColor: '#aaa',
+        cancelButtonColor: '#64748b',
         confirmButtonText: 'Xóa',
         cancelButtonText: 'Hủy',
       })
@@ -443,12 +587,12 @@ export default {
     async removeSelectedItems() {
       if (this.selectedItems.length === 0) return
       const result = await Swal.fire({
-        title: `Xóa ${this.selectedItems.length} sản phẩm?`,
-        text: 'Hành động này không thể hoàn tác.',
+        title: `Xóa ${this.selectedItems.length} phụ tùng?`,
+        text: 'Hành động này sẽ xóa các sản phẩm đã chọn khỏi giỏ.',
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#f82249',
-        cancelButtonColor: '#aaa',
+        cancelButtonColor: '#64748b',
         confirmButtonText: 'Xóa',
         cancelButtonText: 'Hủy',
       })
@@ -488,7 +632,7 @@ export default {
         this.modalState = 'list'
       } catch (error) {
         console.error(error)
-        Swal.fire({ icon: 'error', title: 'Lỗi', text: 'Không thể lưu địa chỉ. Vui lòng thử lại!' })
+        Swal.fire({ icon: 'error', title: 'Lỗi', text: 'Không thể lưu địa chỉ. Vui lòng thử lại!', confirmButtonColor: '#f82249' })
       } finally {
         this.isSavingAddress = false
       }
@@ -630,35 +774,176 @@ export default {
 
 <style scoped>
 /* ===============================================================
-   GIAO DIỆN GIỎ HÀNG GỐC 2 CỘT CHUẨN JPM MARINE
+   CART PAGE DESIGN SYSTEM — UNIFIED JPM MARINE DNA
+   Tokens: Cards 12px, Inputs/Buttons 8px, Deep Navy & Marine Red
    =============================================================== */
 .cart-page-bg {
   min-height: 100vh;
-  padding-bottom: 50px;
+  padding-bottom: 60px;
   background-color: #f8fafc;
   font-family: var(--default-font, system-ui, -apple-system, sans-serif);
   color: var(--default-color, #212529);
 }
 
-.jpm-page-title {
+/* ===== BANNER HEADER ===== */
+.cart-header-banner {
+  padding-top: 100px;
+  padding-bottom: 28px;
+  background: #ffffff;
+  border-bottom: 1px solid #edf2f7;
+  margin-bottom: 28px;
+}
+
+.custom-breadcrumb .breadcrumb-item + .breadcrumb-item::before {
+  content: ">";
+  font-size: 1.15rem;
+  line-height: 1;
+  vertical-align: middle;
+  color: #94a3b8;
+  padding: 0 8px;
+}
+
+.breadcrumb-link {
+  color: #64748b;
+  text-decoration: none;
+  font-size: 0.875rem;
+  transition: color 0.15s ease;
+}
+
+.breadcrumb-link:hover {
+  color: var(--accent-color, #f82249);
+}
+
+.cart-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--accent-color, #f82249);
+  background: rgba(248, 34, 73, 0.08);
+  padding: 4px 10px;
+  border-radius: 6px;
+  margin-bottom: 8px;
+}
+
+.cart-page-title {
+  font-size: 2rem;
   font-weight: 800;
-  color: var(--heading-color, #0e1b4d);
+  color: #0A1128;
   letter-spacing: -0.5px;
+  line-height: 1.2;
+}
+
+.cart-title-accent {
+  color: var(--accent-color, #f82249);
+}
+
+.cart-page-subtitle {
+  color: #64748b;
+  font-size: 0.95rem;
+  max-width: 650px;
+}
+
+.cart-header-trust {
+  display: flex;
+}
+
+.trust-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #f8fafc;
+  border: 1px solid #edf2f7;
+  border-radius: 10px;
+  padding: 10px 16px;
+}
+
+.trust-icon-wrap {
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+.trust-title {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #0A1128;
+}
+
+.trust-sub {
+  font-size: 0.75rem;
+  color: #64748b;
+}
+
+/* ===== SHARED 12PX CARDS ===== */
+.catalog-cart-card {
+  border-radius: 12px !important;
+  border: 1px solid #edf2f7 !important;
+  background: #ffffff;
+  box-shadow: 0 4px 16px rgba(10, 17, 40, 0.04) !important;
+  overflow: hidden;
 }
 
 .jpm-card-title {
+  font-size: 1.05rem;
   font-weight: 700;
-  color: var(--heading-color, #0e1b4d);
-  font-size: 1.15rem;
+  color: #0A1128;
+  letter-spacing: -0.2px;
+}
+
+.badge-item-count {
+  background: #fff1f2;
+  color: #e11d48;
+  border: 1px solid #fecdd3;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 999px;
+}
+
+.rounded-8 {
+  border-radius: 8px !important;
+}
+
+/* ===== TABLE STYLING ===== */
+.custom-cart-table {
+  width: 100%;
+}
+
+.custom-cart-table thead th {
+  background-color: #f8fafc;
+  color: #475569;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  border-bottom: 1px solid #edf2f7;
+  padding: 14px 16px;
+}
+
+.custom-cart-table tbody td {
+  padding: 16px;
+  border-bottom: 1px solid #edf2f7;
+  vertical-align: middle;
+}
+
+.th-check {
+  padding-left: 18px !important;
+  padding-right: 12px !important;
+}
+
+.table-row-hover {
+  transition: background-color 0.15s ease;
 }
 
 .table-row-hover:hover {
-  background-color: #f8fafc;
+  background-color: #fbfcfe;
 }
 
 .custom-checkbox {
-  width: 16px;
-  height: 16px;
+  width: 17px;
+  height: 17px;
   border-color: #cbd5e1;
   border-radius: 4px;
   cursor: pointer;
@@ -666,13 +951,63 @@ export default {
   vertical-align: middle;
   transition: all 0.15s ease-in-out;
 }
+
 .custom-checkbox:checked {
-  background-color: #f82249;
-  border-color: #f82249;
+  background-color: var(--accent-color, #f82249);
+  border-color: var(--accent-color, #f82249);
 }
+
 .custom-checkbox:focus {
-  border-color: #f82249;
-  box-shadow: 0 0 0 0.15rem rgba(248, 34, 73, 0.2);
+  border-color: var(--accent-color, #f82249);
+  box-shadow: 0 0 0 2px rgba(248, 34, 73, 0.2);
+}
+
+.cart-item-thumb {
+  width: 60px;
+  height: 60px;
+  border-radius: 8px;
+  border: 1px solid #edf2f7;
+  background: #ffffff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+}
+
+.cart-item-thumb img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.part-code {
+  font-weight: 700;
+  color: #0A1128;
+  font-size: 0.95rem;
+}
+
+.part-name {
+  color: #475569;
+  font-size: 0.85rem;
+  line-height: 1.4;
+  font-weight: 400;
+}
+
+.part-price-val {
+  color: var(--accent-color, #f82249);
+  font-weight: 700;
+  font-size: 0.95rem;
+  white-space: nowrap;
+}
+
+.part-price-quote {
+  color: var(--accent-color, #f82249);
+  font-weight: 700;
+  font-size: 0.9rem;
+  background: rgba(248, 34, 73, 0.08);
+  padding: 3px 10px;
+  border-radius: 6px;
+  white-space: nowrap;
 }
 
 .badge-san-pham {
@@ -693,49 +1028,261 @@ export default {
   padding: 2px 8px;
 }
 
+/* Quantity Selector: 38px height, 8px radius */
 .qty-selector {
   background: #ffffff;
   border: 1px solid #e2e8f0;
-  border-radius: 6px;
+  border-radius: 8px;
   overflow: hidden;
-  height: 36px;
+  height: 38px;
+  width: 110px;
 }
+
 .qty-btn {
   background: #f8fafc;
   border: none;
   color: #334155;
-  width: 32px;
+  width: 34px;
   height: 100%;
   font-weight: bold;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.2s;
+  transition: all 0.15s ease;
+  cursor: pointer;
 }
+
 .qty-btn:hover {
-  background-color: #e2e8f0;
-  color: #0e1b4d;
+  background-color: #edf2f7;
+  color: #0A1128;
 }
+
 .qty-input {
-  width: 40px;
+  width: 42px;
   height: 100%;
   border: none;
   text-align: center;
-  font-weight: 600;
-  color: var(--heading-color, #0e1b4d);
+  font-weight: 700;
+  color: #0A1128;
   background: transparent;
+  font-size: 0.9rem;
 }
+
 .qty-input:focus {
   outline: none;
 }
 
+.btn-delete-item {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  border: 1px solid #fee2e2;
+  background: #fff5f5;
+  color: #ef4444;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+  cursor: pointer;
+}
+
+.btn-delete-item:hover {
+  background: #ef4444;
+  color: #ffffff;
+  border-color: #ef4444;
+}
+
+/* ===== REASSURANCE / WORKFLOW TRUST BOX ===== */
+.workflow-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #0A1128;
+}
+
+.workflow-step {
+  display: flex;
+  gap: 12px;
+  padding: 12px;
+  background: #f8fafc;
+  border-radius: 8px;
+  border: 1px solid #edf2f7;
+  height: 100%;
+}
+
+.step-num {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--accent-color, #f82249);
+  opacity: 0.85;
+  line-height: 1;
+}
+
+.step-heading {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #0A1128;
+  margin-bottom: 4px;
+}
+
+.step-desc {
+  font-size: 0.78rem;
+  color: #64748b;
+  line-height: 1.4;
+}
+
+/* ===== RIGHT COLUMN / CHECKOUT SIDEBAR ===== */
 .sticky-sidebar {
   position: sticky;
-  top: 100px;
+  top: 90px;
 }
 
 .summary-box {
   background: #f8fafc;
+  border: 1px solid #edf2f7;
+}
+
+.summary-price-accent {
+  color: var(--accent-color, #f82249);
+}
+
+.b2b-notice-box {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  color: #166534;
+  font-size: 0.78rem;
+  line-height: 1.45;
+  padding: 10px 12px;
+  border-radius: 8px;
+}
+
+.b2b-notice-box i {
+  color: #16a34a !important;
+  font-size: 1rem;
+}
+
+.field-label {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #0A1128;
+  margin-bottom: 6px;
+}
+
+.custom-form-input {
+  border-radius: 8px !important;
+  border: 1px solid #e2e8f0;
+  font-size: 0.875rem;
+  padding: 9px 13px;
+  color: #0A1128;
+  transition: all 0.2s ease;
+}
+
+.custom-form-input:focus {
+  border-color: #f82249 !important;
+  box-shadow: inset 0 0 0 1px #f82249, 0 2px 6px 0 rgba(248, 34, 73, 0.25) !important;
+  outline: none;
+}
+
+.custom-textarea {
+  resize: vertical;
+  min-height: 64px;
+}
+
+/* Address Box in Sidebar */
+.address-preview-card {
+  background: #f8fafc;
+  border: 1px solid #edf2f7;
+}
+
+.address-change-link {
+  color: var(--accent-color, #f82249);
+  font-weight: 600;
+  font-size: 0.82rem;
+}
+
+.address-change-link:hover {
+  text-decoration: underline !important;
+}
+
+.no-address-box {
+  background: #f8fafc;
+  border: 1px dashed #cbd5e1;
+}
+
+/* Submit Button */
+.btn-jpm-submit {
+  height: 48px;
+  background-color: var(--accent-color, #f82249);
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(248, 34, 73, 0.25);
+}
+
+.btn-jpm-submit:hover:not(:disabled) {
+  background-color: #d91438;
+  color: #ffffff;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(248, 34, 73, 0.35);
+}
+
+.btn-jpm-submit:disabled {
+  background-color: #e2e8f0;
+  color: #94a3b8;
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+.security-guarantee-text {
+  font-size: 0.8rem;
+  color: #64748b;
+}
+
+/* ===== EMPTY CART STATE ===== */
+.empty-cart-card {
+  border-radius: 12px !important;
+  background: #ffffff;
+  box-shadow: 0 4px 20px rgba(10, 17, 40, 0.04);
+}
+
+.empty-icon-wrap {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: #fff1f2;
+  color: var(--accent-color, #f82249);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.5rem;
+}
+
+/* ===== ADDRESS MODAL ===== */
+.custom-modal-content {
+  border-radius: 12px;
+  border: 1px solid #edf2f7;
+  box-shadow: 0 20px 45px -10px rgba(10, 17, 40, 0.2);
+}
+
+.address-item {
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
+  transition: all 0.15s ease;
+}
+
+.address-item:hover {
+  border-color: #cbd5e1;
+  background: #f8fafc;
+}
+
+.address-item.selected-addr {
+  border-color: var(--accent-color, #f82249) !important;
+  background: rgba(248, 34, 73, 0.02);
 }
 
 .cursor-pointer {
