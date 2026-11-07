@@ -992,16 +992,21 @@ export default {
 /* Custom Input Form: 8px bo góc chuẩn search-input-box và select-box của Trang Chủ */
 .custom-form-input {
   border-radius: 8px !important;
-  border: 1px solid #d1d5db;
+  border: 1px solid #e2e8f0;
   font-size: 0.875rem;
   padding: 9px 13px;
   color: #0A1128;
-  transition: all 0.2s ease;
+  background-color: #ffffff;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.custom-form-input:hover {
+  border-color: #cbd5e1;
 }
 
 .custom-form-input:focus {
   border-color: #f82249 !important;
-  box-shadow: inset 0 0 0 1px #f82249, 0 2px 6px 0 rgba(248, 34, 73, 0.25) !important;
+  box-shadow: 0 0 0 3px rgba(248, 34, 73, 0.12) !important;
   outline: none;
 }
 

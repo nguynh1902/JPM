@@ -1001,7 +1001,7 @@ export default {
   font-size: 0.78rem;
 }
 
-/* Custom Select Box (Admin-style Smooth Focus & Soft Blur Glow) */
+/* Custom Select Box (Refined Client Focus with Subtle Aura) */
 .custom-select-wrapper {
   position: relative;
 }
@@ -1015,23 +1015,23 @@ export default {
   padding: 0 16px;
   height: 46px;
   border-radius: 8px;
-  border: 1px solid #d1d5db;
+  border: 1px solid #e2e8f0;
   background: #ffffff;
-  box-shadow: inset 0 0 0 0 rgba(248, 34, 73, 0), 0 2px 6px 0 rgba(248, 34, 73, 0);
+  box-shadow: none;
   cursor: pointer;
-  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
   font-size: 0.875rem;
   font-weight: 400;
   color: #64748b;
   font-family: var(--default-font);
 }
 .custom-select-box:hover {
-  border-color: #94a3b8;
+  border-color: #cbd5e1;
 }
 .custom-select-box.is-focused {
   border-width: 1px !important;
   border-color: var(--accent-color, #f82249) !important;
-  box-shadow: inset 0 0 0 1px var(--accent-color, #f82249), 0 2px 6px 0 rgba(248, 34, 73, 0.3) !important;
+  box-shadow: 0 0 0 3px rgba(248, 34, 73, 0.12) !important;
   outline: 0 !important;
 }
 .custom-select-box.has-value {
@@ -1117,20 +1117,20 @@ export default {
   align-items: center;
   height: 46px;
   border-radius: 8px;
-  border: 1px solid #d1d5db;
+  border: 1px solid #e2e8f0;
   background: #ffffff;
-  box-shadow: inset 0 0 0 0 rgba(248, 34, 73, 0), 0 2px 6px 0 rgba(248, 34, 73, 0);
+  box-shadow: none;
   padding: 0 16px;
-  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 .search-input-box:focus-within {
   border-width: 1px !important;
   border-color: var(--accent-color, #f82249) !important;
-  box-shadow: inset 0 0 0 1px var(--accent-color, #f82249), 0 2px 6px 0 rgba(248, 34, 73, 0.3) !important;
+  box-shadow: 0 0 0 3px rgba(248, 34, 73, 0.12) !important;
   outline: 0 !important;
 }
 .search-input-box:hover {
-  border-color: #94a3b8;
+  border-color: #cbd5e1;
 }
 .search-input-icon {
   font-size: 1rem;
