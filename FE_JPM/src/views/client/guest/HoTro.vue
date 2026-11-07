@@ -1,36 +1,19 @@
 <template>
   <main class="support-page pb-5">
 
-    <!-- ════════════════════════════════════════════════════════════════
-         SECTION 1: HERO BANNER WITH SUBMERGED WATERMARK IMAGE
-    ════════════════════════════════════════════════════════════════ -->
-    <section class="hero-editorial-section position-relative overflow-hidden">
-      <!-- Submerged Marine Image (Ảnh chìm trong nền) -->
-      <div class="hero-submerged-bg"></div>
-
-      <div class="container position-relative z-1 py-5">
-        <div class="row align-items-center py-lg-4">
-
-          <!-- Left Column: Big Title + Description + Pill Button -->
-          <div class="col-lg-6 text-start">
-            <h1 class="hero-main-heading mb-4">
-              Trung Tâm<br />
-              Hỗ Trợ <span class="text-secondary fw-bold">&amp; Kỹ Thuật</span><br />
-              Hàng Hải
-            </h1>
-            <p class="hero-subtext text-muted mb-4">
-              Đồng hành cùng mọi hải trình của bạn. Đội ngũ kỹ sư và chuyên viên JPM Marine luôn sẵn sàng tư vấn tra cứu mã phụ tùng OEM, hướng dẫn bảo dưỡng động cơ và giải đáp chính sách bảo hành 24/7.
-            </p>
-            <button type="button" class="btn btn-dark-pill px-4 py-2" @click="scrollToContact">
-              Gửi yêu cầu ngay
-            </button>
+    <!-- Header chuẩn Giỏ Hàng -->
+    <section class="section pb-2" style="padding-top: 110px;">
+      <div class="container">
+        <div class="row mb-3">
+          <div class="col-12" data-aos="fade-down">
+            <h2 class="jpm-page-title">Trung Tâm <span class="text-danger">Hỗ Trợ &amp; Kỹ Thuật</span></h2>
+            <p class="text-muted">Đồng hành cùng mọi hải trình của bạn. Đội ngũ kỹ sư và chuyên viên JPM Marine luôn sẵn sàng tư vấn tra cứu mã phụ tùng OEM và hỗ trợ 24/7.</p>
           </div>
-
         </div>
       </div>
     </section>
 
-    <div class="container py-4 my-2">
+    <div class="container pb-4">
       
       <!-- 2. MAIN CONTACT SECTION (2-COLUMN LAYOUT MATCHING REFERENCE) -->
       <section id="contact" class="contact section mb-5 pb-5 border-bottom">
@@ -327,63 +310,19 @@ export default {
 <style scoped>
 .support-page {
   min-height: 100vh;
-  padding-top: 70px;
   background-color: #ffffff;
 }
 
-.support-page section:not(.hero-editorial-section) {
+.support-page section {
   background-color: #ffffff !important;
 }
 
-/* ── SECTION 1: HERO BANNER WITH SUBMERGED WATERMARK IMAGE ── */
-.hero-editorial-section {
-  padding-top: 30px;
-  padding-bottom: 40px;
-}
-
-.hero-submerged-bg {
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 65%;
-  height: 100%;
-  background-image: url('https://images.unsplash.com/photo-1569263979104-865ab7cd8d13?w=1600&auto=format&fit=crop&q=85');
-  background-size: cover;
-  background-position: center right;
-  opacity: 0.95;
-  mask-image: linear-gradient(to right, transparent 0%, transparent 15%, rgba(0, 0, 0, 0.45) 45%, rgba(0, 0, 0, 1) 80%);
-  -webkit-mask-image: linear-gradient(to right, transparent 0%, transparent 15%, rgba(0, 0, 0, 0.45) 45%, rgba(0, 0, 0, 1) 80%);
-  pointer-events: none;
-}
-
-.hero-main-heading {
-  font-family: var(--heading-font);
-  font-size: clamp(1.8rem, 2.6vw, 2.2rem);
-  font-weight: 700;
-  color: #111827;
-  line-height: 1.25;
-  letter-spacing: normal;
-}
-
-.hero-subtext {
-  font-size: 0.95rem;
-  line-height: 1.7;
-  max-width: 480px;
-}
-
-.btn-dark-pill {
-  background-color: #27272a;
-  color: #ffffff;
-  font-weight: 600;
-  font-size: 0.88rem;
-  border-radius: 50rem;
-  border: none;
-  transition: all 0.25s ease;
-}
-.btn-dark-pill:hover {
-  background-color: #f82249;
-  color: #ffffff;
-  transform: translateY(-2px);
+/* ── PAGE TITLE (MATCHING GIO HANG) ── */
+.jpm-page-title {
+  font-family: var(--heading-font, 'Raleway', sans-serif);
+  font-weight: 800;
+  color: #0A1128;
+  letter-spacing: -0.5px;
 }
 
 /* ── 2. LEFT COLUMN: KEEP CLOSE / GET IN TOUCH ── */

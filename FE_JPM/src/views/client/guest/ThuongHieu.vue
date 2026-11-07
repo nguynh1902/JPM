@@ -1,54 +1,18 @@
 <template>
   <main class="brand-catalog-page main-page">
     <!-- ========================================================
-         PAGE HEADER & BREADCRUMB BANNER
+         MAIN CATALOG AREA (ĐỒNG BỘ 100% VỚI GIỎ HÀNG)
          ======================================================== -->
-    <section class="brand-header-banner">
+    <section class="catalog-content-section pb-5" style="padding-top: 110px;">
       <div class="container">
-        <!-- Breadcrumb chuẩn hệ thống -->
-        <nav aria-label="breadcrumb" class="custom-breadcrumb mb-3" data-aos="fade-down">
-          <ol class="breadcrumb mb-0 align-items-center">
-            <li class="breadcrumb-item">
-              <router-link to="/" class="breadcrumb-link">
-                <i class="bi bi-house-door me-1"></i> Trang chủ
-              </router-link>
-            </li>
-            <li class="breadcrumb-item">
-              <router-link to="/#sponsors" class="breadcrumb-link">Thương hiệu</router-link>
-            </li>
-            <li class="breadcrumb-item active fw-bold text-dark" aria-current="page">
-              {{ brandName }}
-            </li>
-          </ol>
-        </nav>
 
-        <!-- Brand Title & Logo Container -->
-        <div class="d-flex flex-column flex-md-row align-items-start align-items-md-center justify-content-between gap-3" data-aos="fade-up">
-          <div>
-            <span class="brand-eyebrow">
-              <i class="bi bi-patch-check-fill me-1"></i> CATALOG TRA CỨU CHÍNH HÃNG
-            </span>
-            <h1 class="brand-page-title mb-2">
-              Tra cứu Phụ Tùng <span class="brand-title-accent">{{ brandName }}</span>
-            </h1>
-            <p class="brand-page-subtitle mb-0">
-              Lựa chọn loại động cơ, năm sản xuất và mã lực để tìm kiếm phụ tùng chính xác nhất.
-            </p>
-          </div>
-
-          <!-- Logo thương hiệu nổi bật trên Card trắng tinh tế -->
-          <div v-if="brandLogo" class="brand-logo-badge d-none d-md-flex align-items-center justify-content-center flex-shrink-0">
-            <img :src="brandLogo" :alt="brandName" class="brand-logo-img" @error="$event.target.style.display='none'" />
+        <!-- Header chuẩn Giỏ Hàng -->
+        <div class="row mb-4">
+          <div class="col-12" data-aos="fade-down">
+            <h2 class="jpm-page-title">Tra Cứu Phụ Tùng <span class="text-danger">{{ brandName }}</span></h2>
+            <p class="text-muted">Lựa chọn loại động cơ, năm sản xuất và mã lực để tìm kiếm phụ tùng chính xác nhất.</p>
           </div>
         </div>
-      </div>
-    </section>
-
-    <!-- ========================================================
-         MAIN CATALOG AREA (BỐ CỤC 2 CỘT CHUẨN ĐỒNG BỘ 12PX CARD)
-         ======================================================== -->
-    <section class="catalog-content-section">
-      <div class="container">
         <!-- Skeleton Loading khi đang tải dữ liệu -->
         <div v-if="isLoading" class="row g-4">
           <div class="col-lg-3">
@@ -99,126 +63,130 @@
           <!-- ================= BÊN PHẢI: BẢNG MODEL & BỘ LỌC ================= -->
           <div class="col-lg-9">
             <div class="card catalog-content-card">
-              <!-- Header của Card -->
-              <div class="catalog-card-header d-flex flex-wrap justify-content-between align-items-center gap-2">
-                <h2 class="catalog-card-title mb-0">
-                  Danh sách Model — <span class="text-danger">{{ activeLoaiLabel }}</span>
-                </h2>
-                <span class="catalog-count-badge">{{ filteredModels.length }} Models</span>
+              <!-- 1. Header của Card: Đồng bộ 100% Giỏ Hàng -->
+              <div class="card-header bg-white px-4 py-3 border-bottom d-flex flex-wrap justify-content-between align-items-center gap-2" style="min-height: 60px;">
+                <div class="d-flex align-items-center">
+                  <h5 class="mb-0 jpm-card-title">
+                    Danh Sách Model — <span class="text-danger">{{ activeLoaiLabel }}</span>
+                  </h5>
+                </div>
+                <div class="d-flex align-items-center gap-2 ms-auto">
+                  <span class="badge-item-count">{{ filteredModels.length }} Models</span>
+                </div>
               </div>
 
-              <div class="catalog-card-body p-3 p-md-4">
-                <!-- FILTER BAR ĐỒNG BỘ CHUẨN 8PX & CAO 44PX -->
-                <div class="catalog-filter-bar mb-4">
-                  <div class="row g-2 align-items-center">
-                    <!-- Ô tìm kiếm mã Model -->
-                    <div class="col-12 col-md-5 col-xl-5">
-                      <div class="search-input-box">
-                        <i class="bi bi-search search-input-icon"></i>
-                        <input
-                          type="text"
-                          class="search-input-field"
-                          placeholder="Tìm mã Model (VD: BF150, 300HP...)"
-                          v-model="searchCode"
-                        />
-                        <button
-                          v-if="searchCode"
-                          type="button"
-                          class="btn-clear-search"
-                          @click="searchCode = ''"
-                          title="Xóa tìm kiếm"
-                        >
-                          <i class="bi bi-x-circle-fill"></i>
-                        </button>
-                      </div>
-                    </div>
-
-                    <!-- Dropdown Mã Lực (HP) -->
-                    <div class="col-6 col-sm-4 col-md-auto filter-dropdown-col">
-                      <div class="custom-select-wrapper" :class="{ 'z-active': openDropdown === 'hp' }">
-                        <div
-                          class="custom-select-box"
-                          :class="{ 'is-focused': openDropdown === 'hp', 'has-value': selectedHp !== '' }"
-                          @click="toggleDropdown('hp')"
-                        >
-                          <span class="text-truncate">{{ selectedHp ? selectedHp + ' HP' : 'Tất cả Mã Lực (HP)' }}</span>
-                          <i class="bi bi-chevron-down select-arrow" :class="{ rotated: openDropdown === 'hp' }"></i>
-                        </div>
-                        <ul class="custom-dropdown-list align-right" v-show="openDropdown === 'hp'">
-                          <li @click="selectHp('')" :class="{ active: selectedHp === '' }">Tất cả Mã Lực (HP)</li>
-                          <li v-for="hp in hpList" :key="hp" @click="selectHp(hp)" :class="{ active: selectedHp === String(hp) }">
-                            {{ hp }} HP
-                          </li>
-                        </ul>
-                      </div>
-                    </div>
-
-                    <!-- Dropdown Loại Thì -->
-                    <div class="col-6 col-sm-4 col-md-auto filter-dropdown-col">
-                      <div class="custom-select-wrapper" :class="{ 'z-active': openDropdown === 'stroke' }">
-                        <div
-                          class="custom-select-box"
-                          :class="{ 'is-focused': openDropdown === 'stroke', 'has-value': selectedStroke !== '' }"
-                          @click="toggleDropdown('stroke')"
-                        >
-                          <span class="text-truncate">{{ selectedStroke ? formatStrokeDropdown(selectedStroke) : 'Tất cả Loại Thì' }}</span>
-                          <i class="bi bi-chevron-down select-arrow" :class="{ rotated: openDropdown === 'stroke' }"></i>
-                        </div>
-                        <ul class="custom-dropdown-list align-right" v-show="openDropdown === 'stroke'">
-                          <li @click="selectStroke('')" :class="{ active: selectedStroke === '' }">Tất cả Loại Thì</li>
-                          <li v-for="stroke in strokesList" :key="stroke" @click="selectStroke(stroke)" :class="{ active: selectedStroke === stroke }">
-                            {{ formatStrokeDropdown(stroke) }}
-                          </li>
-                        </ul>
-                      </div>
-                    </div>
-
-                    <!-- Dropdown Năm Sản Xuất -->
-                    <div class="col-6 col-sm-4 col-md-auto filter-dropdown-col">
-                      <div class="custom-select-wrapper" :class="{ 'z-active': openDropdown === 'nam' }">
-                        <div
-                          class="custom-select-box"
-                          :class="{ 'is-focused': openDropdown === 'nam', 'has-value': selectedNam !== '' }"
-                          @click="toggleDropdown('nam')"
-                        >
-                          <span class="text-truncate">{{ selectedNam ? 'Năm ' + selectedNam : 'Tất cả Năm' }}</span>
-                          <i class="bi bi-chevron-down select-arrow" :class="{ rotated: openDropdown === 'nam' }"></i>
-                        </div>
-                        <ul class="custom-dropdown-list align-right" v-show="openDropdown === 'nam'">
-                          <li @click="selectNam('')" :class="{ active: selectedNam === '' }">Tất cả Năm</li>
-                          <li v-for="year in yearsList" :key="year" @click="selectNam(year)" :class="{ active: selectedNam === String(year) }">
-                            {{ year }}
-                          </li>
-                        </ul>
-                      </div>
-                    </div>
-
-                    <!-- Nút Xóa Lọc Nhanh -->
-                    <div v-if="searchCode || selectedNam || selectedHp || selectedStroke" class="col-auto">
+              <!-- 2. Filter Bar: Nằm riêng biệt với px-4 py-3 và border-bottom -->
+              <div class="catalog-filter-bar px-4 py-3 border-bottom bg-white">
+                <div class="row g-2 align-items-center">
+                  <!-- Ô tìm kiếm Model -->
+                  <div class="col-12 col-md-5 col-xl-5">
+                    <div class="search-input-box">
+                      <i class="bi bi-search search-input-icon"></i>
+                      <input
+                        type="text"
+                        class="search-input-field"
+                        placeholder="Tìm kiếm Model (VD: BF150, 300HP...)"
+                        v-model="searchCode"
+                      />
                       <button
+                        v-if="searchCode"
                         type="button"
-                        class="btn btn-outline-danger btn-reset-filter d-inline-flex align-items-center gap-1 text-nowrap"
-                        @click="clearFilters"
-                        title="Xóa tất cả bộ lọc"
+                        class="btn-clear-search"
+                        @click="searchCode = ''"
+                        title="Xóa tìm kiếm"
                       >
-                        <i class="bi bi-arrow-counterclockwise"></i>
-                        <span>Xóa lọc</span>
+                        <i class="bi bi-x-circle-fill"></i>
                       </button>
                     </div>
                   </div>
-                </div>
 
-                <!-- BẢNG DỮ LIỆU MODEL CHUẨN THẨM MỸ HÀNG HẢI -->
-                <div class="table-responsive custom-scrollbar">
-                  <table class="table catalog-table mb-0 align-middle">
+                  <!-- Dropdown Mã Lực (HP) -->
+                  <div class="col-6 col-sm-4 col-md-auto filter-dropdown-col">
+                    <div class="custom-select-wrapper" :class="{ 'z-active': openDropdown === 'hp' }">
+                      <div
+                        class="custom-select-box"
+                        :class="{ 'is-focused': openDropdown === 'hp', 'has-value': selectedHp !== '' }"
+                        @click="toggleDropdown('hp')"
+                      >
+                        <span class="text-truncate">{{ selectedHp ? selectedHp + ' HP' : 'Tất cả Mã Lực (HP)' }}</span>
+                        <i class="bi bi-chevron-down select-arrow" :class="{ rotated: openDropdown === 'hp' }"></i>
+                      </div>
+                      <ul class="custom-dropdown-list align-right" v-show="openDropdown === 'hp'">
+                        <li @click="selectHp('')" :class="{ active: selectedHp === '' }">Tất cả Mã Lực (HP)</li>
+                        <li v-for="hp in hpList" :key="hp" @click="selectHp(hp)" :class="{ active: selectedHp === String(hp) }">
+                          {{ hp }} HP
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+
+                  <!-- Dropdown Loại Thì -->
+                  <div class="col-6 col-sm-4 col-md-auto filter-dropdown-col">
+                    <div class="custom-select-wrapper" :class="{ 'z-active': openDropdown === 'stroke' }">
+                      <div
+                        class="custom-select-box"
+                        :class="{ 'is-focused': openDropdown === 'stroke', 'has-value': selectedStroke !== '' }"
+                        @click="toggleDropdown('stroke')"
+                      >
+                        <span class="text-truncate">{{ selectedStroke ? formatStrokeDropdown(selectedStroke) : 'Tất cả Loại Thì' }}</span>
+                        <i class="bi bi-chevron-down select-arrow" :class="{ rotated: openDropdown === 'stroke' }"></i>
+                      </div>
+                      <ul class="custom-dropdown-list align-right" v-show="openDropdown === 'stroke'">
+                        <li @click="selectStroke('')" :class="{ active: selectedStroke === '' }">Tất cả Loại Thì</li>
+                        <li v-for="stroke in strokesList" :key="stroke" @click="selectStroke(stroke)" :class="{ active: selectedStroke === stroke }">
+                          {{ formatStrokeDropdown(stroke) }}
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+
+                  <!-- Dropdown Năm Sản Xuất -->
+                  <div class="col-6 col-sm-4 col-md-auto filter-dropdown-col">
+                    <div class="custom-select-wrapper" :class="{ 'z-active': openDropdown === 'nam' }">
+                      <div
+                        class="custom-select-box"
+                        :class="{ 'is-focused': openDropdown === 'nam', 'has-value': selectedNam !== '' }"
+                        @click="toggleDropdown('nam')"
+                      >
+                        <span class="text-truncate">{{ selectedNam ? 'Năm ' + selectedNam : 'Tất cả Năm' }}</span>
+                        <i class="bi bi-chevron-down select-arrow" :class="{ rotated: openDropdown === 'nam' }"></i>
+                      </div>
+                      <ul class="custom-dropdown-list align-right" v-show="openDropdown === 'nam'">
+                        <li @click="selectNam('')" :class="{ active: selectedNam === '' }">Tất cả Năm</li>
+                        <li v-for="year in yearsList" :key="year" @click="selectNam(year)" :class="{ active: selectedNam === String(year) }">
+                          {{ year }}
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+
+                  <!-- Nút Xóa Lọc Nhanh -->
+                  <div v-if="searchCode || selectedNam || selectedHp || selectedStroke" class="col-auto">
+                    <button
+                      type="button"
+                      class="btn btn-outline-danger btn-reset-filter d-inline-flex align-items-center gap-1 text-nowrap"
+                      @click="clearFilters"
+                      title="Xóa tất cả bộ lọc"
+                    >
+                      <i class="bi bi-arrow-counterclockwise"></i>
+                      <span>Xóa lọc</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 3. BẢNG DỮ LIỆU MODEL: p-0 để bảng tràn viền sát mép thẻ Card hệt Giỏ Hàng -->
+              <div class="card-body p-0">
+                <div class="table-responsive">
+                  <table class="table align-middle mb-0 custom-model-table">
                     <thead>
                       <tr>
                         <th class="th-stt text-center">STT</th>
-                        <th class="th-model">Model Động Cơ</th>
-                        <th class="th-hp text-center">Mã Lực</th>
-                        <th class="th-stroke text-center">Loại Thì</th>
-                        <th class="th-year text-center">Năm SX</th>
-                        <th class="th-action text-center">Thao Tác</th>
+                        <th class="th-model text-start">MODEL ĐỘNG CƠ</th>
+                        <th class="th-hp text-center">MÃ LỰC</th>
+                        <th class="th-stroke text-center">LOẠI THÌ</th>
+                        <th class="th-year text-center">NĂM SX</th>
+                        <th class="th-action text-center">THAO TÁC</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -231,33 +199,30 @@
                             </div>
                             <h6 class="fw-bold text-dark mb-1">Không tìm thấy model phù hợp</h6>
                             <p class="text-muted small mb-3">Vui lòng điều chỉnh hoặc xóa bớt tiêu chí lọc</p>
-                            <button class="btn btn-outline-danger btn-sm px-3 py-1 rounded-2" @click="clearFilters">
+                            <button class="btn btn-outline-danger btn-sm px-3 py-1 btn-rounded-8" @click="clearFilters">
                               <i class="bi bi-arrow-counterclockwise me-1"></i> Xóa tất cả bộ lọc
                             </button>
                           </div>
                         </td>
                       </tr>
 
-                      <!-- Dòng dữ liệu Model -->
-                      <tr v-for="(model, index) in filteredModels" :key="model.id" class="catalog-table-row">
-                        <td class="text-center text-muted fw-medium">{{ index + 1 }}</td>
-                        <td>
+                      <!-- Dòng dữ liệu Model (padding 16px, hover nhẹ #fbfcfe, viền mảnh chuẩn Giỏ Hàng) -->
+                      <tr v-for="(model, index) in filteredModels" :key="model.id" class="table-row-hover">
+                        <td class="th-stt text-center text-muted fw-medium">{{ index + 1 }}</td>
+                        <td class="th-model text-start">
                           <div class="model-name">{{ model.name }}</div>
-                          <div v-if="model.code && model.code !== model.name" class="model-code-sub">
-                            Mã: {{ model.code }}
-                          </div>
                         </td>
-                        <td class="text-center">
+                        <td class="th-hp text-center">
                           <span v-if="model.hp" class="hp-badge">{{ model.hp }} HP</span>
                           <span v-else class="text-muted">-</span>
                         </td>
-                        <td class="text-center">
+                        <td class="th-stroke text-center">
                           <span class="stroke-badge">{{ model.stroke ? formatStrokeText(model.stroke) : '-' }}</span>
                         </td>
-                        <td class="text-center text-secondary fw-semibold" style="font-size: 0.9rem;">
+                        <td class="th-year text-center text-secondary fw-semibold" style="font-size: 0.9rem;">
                           {{ model.year || '-' }}
                         </td>
-                        <td class="text-center">
+                        <td class="th-action text-center">
                           <router-link
                             :to="`/thuong-hieu/${brandRoute}/${model.loai}/${model.year}/${model.code}/so-do`"
                             class="btn btn-view-diagram"
@@ -271,18 +236,17 @@
                     </tbody>
                   </table>
                 </div>
+              </div>
 
-                <!-- CHÂN BẢNG: THỐNG KÊ & CHỈ DẪN -->
-                <div class="d-flex flex-column flex-sm-row justify-content-between align-items-center gap-2 mt-3 pt-3 border-top">
-                  <span class="text-muted small">
-                    Hiển thị <b class="text-dark">{{ filteredModels.length }}</b> trong tổng số <b class="text-dark">{{ modelsList.length }}</b> models của hãng {{ brandName }}
-                  </span>
-                  <span class="text-muted small fst-italic">
-                    <i class="bi bi-info-circle me-1 text-danger"></i> Bấm "Sơ Đồ" để tra cứu từng cụm linh kiện chi tiết
-                  </span>
-                </div>
-
-              </div> <!-- end card-body -->
+              <!-- 4. CHÂN BẢNG: THỐNG KÊ & CHỈ DẪN (Đồng bộ px-4 py-3) -->
+              <div class="card-footer bg-white px-4 py-3 border-top d-flex flex-column flex-sm-row justify-content-between align-items-center gap-2">
+                <span class="text-muted small">
+                  Hiển thị <b class="text-dark">{{ filteredModels.length }}</b> trong tổng số <b class="text-dark">{{ modelsList.length }}</b> models của hãng {{ brandName }}
+                </span>
+                <span class="text-muted small fst-italic">
+                  <i class="bi bi-info-circle me-1 text-danger"></i> Bấm "Sơ Đồ" để tra cứu từng cụm linh kiện chi tiết
+                </span>
+              </div>
             </div> <!-- end card -->
           </div> <!-- END COL-LG-9 -->
         </div> <!-- END ROW -->
@@ -450,84 +414,13 @@ const filteredModels = computed(() => {
 }
 
 /* ========================================================
-   1. PAGE HEADER & BREADCRUMB BANNER
+   1. PAGE HEADER (MATCHING GIO HANG)
    ======================================================== */
-.brand-header-banner {
-  padding-top: 100px;
-  padding-bottom: 28px;
-  background: #ffffff;
-  border-bottom: 1px solid #edf2f7;
-  margin-bottom: 30px;
-}
-
-.custom-breadcrumb .breadcrumb-item + .breadcrumb-item::before {
-  content: "›";
-  font-size: 1.15rem;
-  line-height: 1;
-  vertical-align: middle;
-  color: #94a3b8;
-  padding: 0 8px;
-}
-
-.breadcrumb-link {
-  color: #64748b;
-  font-size: 0.85rem;
-  font-weight: 500;
-  transition: color 0.2s ease;
-}
-
-.breadcrumb-link:hover {
-  color: var(--accent-color, #f82249) !important;
-}
-
-.brand-eyebrow {
-  display: inline-flex;
-  align-items: center;
-  font-family: var(--default-font);
-  font-size: 0.75rem;
-  font-weight: 700;
-  letter-spacing: 1.5px;
-  color: var(--accent-color, #f82249);
-  margin-bottom: 6px;
-  text-transform: uppercase;
-}
-
-.brand-page-title {
-  font-family: var(--heading-font);
-  font-size: clamp(1.6rem, 3vw, 2.2rem);
-  font-weight: 700;
+.jpm-page-title {
+  font-family: var(--heading-font, 'Raleway', sans-serif);
+  font-weight: 800;
   color: #0A1128;
-  letter-spacing: -0.2px;
-  line-height: 1.25;
-}
-
-.brand-title-accent {
-  color: var(--accent-color, #f82249);
-  text-transform: uppercase;
-}
-
-.brand-page-subtitle {
-  font-family: var(--default-font);
-  font-size: 0.95rem;
-  color: #64748b;
-  max-width: 650px;
-  line-height: 1.5;
-}
-
-.brand-logo-badge {
-  width: 140px;
-  height: 64px;
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 10px;
-  padding: 8px 16px;
-  box-shadow: 0 4px 12px rgba(10, 17, 40, 0.04);
-}
-
-.brand-logo-img {
-  max-width: 100%;
-  max-height: 100%;
-  object-fit: contain;
+  letter-spacing: -0.5px;
 }
 
 /* ========================================================
@@ -624,32 +517,28 @@ const filteredModels = computed(() => {
   border-radius: 12px !important;
   border: 1px solid #edf2f7 !important;
   background: #ffffff;
-  box-shadow: 0 4px 16px rgba(10, 17, 40, 0.04);
-  overflow: visible;
+  box-shadow: 0 4px 20px rgba(10, 17, 40, 0.04);
+  overflow: hidden;
 }
 
-.catalog-card-header {
-  padding: 16px 24px;
-  border-bottom: 1px solid #f1f5f9;
-  background: #ffffff;
-  border-radius: 12px 12px 0 0;
-}
-
-.catalog-card-title {
-  font-family: var(--heading-font);
-  font-size: 1.15rem;
+.jpm-card-title {
+  font-family: var(--heading-font, 'Raleway', sans-serif);
   font-weight: 700;
+  font-size: 1rem;
   color: #0A1128;
 }
 
-.catalog-count-badge {
-  font-family: var(--default-font);
-  background: #0A1128;
-  color: #ffffff;
-  font-size: 0.78rem;
-  font-weight: 600;
-  padding: 4px 12px;
-  border-radius: 999px;
+.badge-item-count {
+  background: #fff1f2;
+  color: #e11d48;
+  border: 1px solid #fecdd3;
+  font-size: 11.5px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  letter-spacing: 0.3px;
 }
 
 /* ========================================================
@@ -839,6 +728,11 @@ const filteredModels = computed(() => {
   font-weight: 700;
 }
 
+.custom-dropdown-list li.active:hover {
+  background: rgba(248, 34, 73, 0.14);
+  color: var(--accent-color, #f82249);
+}
+
 .btn-reset-filter {
   height: 44px;
   padding: 0 16px;
@@ -849,59 +743,79 @@ const filteredModels = computed(() => {
 }
 
 /* ========================================================
-   5. DATA TABLE
+   5. DATA TABLE (ĐỒNG BỘ 100% BẢNG GIỎ HÀNG)
    ======================================================== */
-.catalog-table {
-  border-collapse: separate;
-  border-spacing: 0;
+.custom-model-table {
+  width: 100%;
 }
 
-.catalog-table thead tr th {
-  background-color: #f8fafc;
-  color: #475569;
-  font-family: var(--default-font);
-  font-size: 0.78rem;
+.custom-model-table thead th {
+  background-color: #ffffff !important;
+  color: #0A1128 !important;
+  font-family: var(--heading-font, 'Raleway', sans-serif);
+  font-size: 0.8rem;
   font-weight: 700;
-  letter-spacing: 0.6px;
+  letter-spacing: 0.5px;
   text-transform: uppercase;
-  padding: 12px 14px;
-  border-top: none;
-  border-bottom: 2px solid #e2e8f0;
-  white-space: nowrap;
+  border-bottom: 2px solid #e2e8f0 !important;
+  padding-top: 14px;
+  padding-bottom: 14px;
+  vertical-align: middle;
 }
 
-.th-stt { width: 6%; }
-.th-model { width: 38%; }
-.th-hp { width: 14%; }
-.th-stroke { width: 12%; }
-.th-year { width: 12%; }
-.th-action { width: 18%; }
-
-.catalog-table tbody tr {
-  transition: background-color 0.18s ease;
-}
-
-.catalog-table tbody tr:hover {
-  background-color: #f8fafc;
-}
-
-.catalog-table tbody td {
-  padding: 12px 14px;
+.custom-model-table tbody td {
+  padding: 16px 12px;
   border-bottom: 1px solid #f1f5f9;
-  font-size: 0.88rem;
+  vertical-align: middle;
+  background-color: #ffffff;
+}
+
+.th-stt {
+  width: 60px;
+  padding-left: 24px !important;
+  padding-right: 12px !important;
+}
+
+.th-model {
+  /* co giãn tự nhiên */
+}
+
+.th-hp {
+  width: 130px;
+  white-space: nowrap !important;
+}
+
+.th-stroke {
+  width: 120px;
+  white-space: nowrap !important;
+}
+
+.th-year {
+  width: 110px;
+  white-space: nowrap !important;
+}
+
+.th-action {
+  width: 130px;
+  padding-right: 24px !important;
+  padding-left: 12px !important;
+  white-space: nowrap !important;
+}
+
+.table-row-hover {
+  transition: background-color 0.15s ease;
+}
+
+.table-row-hover:hover td {
+  background-color: #fbfcfe !important;
 }
 
 .model-name {
+  font-family: var(--heading-font, 'Raleway', sans-serif);
   font-weight: 700;
   color: #0A1128;
-  font-size: 0.94rem;
-  line-height: 1.35;
-}
-
-.model-code-sub {
-  font-size: 0.78rem;
-  color: #64748b;
-  margin-top: 2px;
+  font-size: 0.95rem;
+  line-height: 1.4;
 }
 
 .hp-badge {
@@ -911,7 +825,7 @@ const filteredModels = computed(() => {
   color: #1d4ed8;
   font-weight: 700;
   font-size: 0.82rem;
-  border-radius: 6px;
+  border-radius: 4px;
   border: 1px solid #dbeafe;
 }
 
@@ -922,24 +836,25 @@ const filteredModels = computed(() => {
   color: #334155;
   font-weight: 600;
   font-size: 0.82rem;
-  border-radius: 6px;
+  border-radius: 4px;
   border: 1px solid #e2e8f0;
 }
 
+/* Nút Thao Tác Sơ Đồ: Outline Red chuẩn Giỏ Hàng */
 .btn-view-diagram {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 6px 14px;
-  font-size: 0.82rem;
+  padding: 6px 16px;
+  font-size: 0.84rem;
   font-weight: 600;
   border-radius: 8px;
   color: var(--accent-color, #f82249);
-  background: rgba(248, 34, 73, 0.06);
-  border: 1px solid rgba(248, 34, 73, 0.25);
+  background-color: #ffffff;
+  border: 1px solid var(--accent-color, #f82249);
   text-decoration: none;
   white-space: nowrap;
-  transition: all 0.25s ease;
+  transition: all 0.2s ease;
 }
 
 .btn-view-diagram .arrow-icon {
@@ -947,7 +862,7 @@ const filteredModels = computed(() => {
 }
 
 .btn-view-diagram:hover {
-  background: var(--accent-color, #f82249);
+  background-color: var(--accent-color, #f82249);
   border-color: var(--accent-color, #f82249);
   color: #ffffff;
   transform: translateY(-1px);

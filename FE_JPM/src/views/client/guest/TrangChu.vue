@@ -1099,9 +1099,13 @@ export default {
   color: #0f172a;
 }
 .custom-dropdown-list li.active {
-  background: var(--accent-color, #f82249);
-  color: #ffffff;
+  background: rgba(248, 34, 73, 0.08);
+  color: var(--accent-color, #f82249);
   font-weight: 600;
+}
+.custom-dropdown-list li.active:hover {
+  background: rgba(248, 34, 73, 0.14);
+  color: var(--accent-color, #f82249);
 }
 
 .dropdown-overlay {

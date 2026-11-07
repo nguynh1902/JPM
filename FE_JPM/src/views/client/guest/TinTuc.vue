@@ -1,31 +1,14 @@
 <template>
   <main class="news-wireframe-page bg-white">
 
-    <!-- ════════════════════════════════════════════════════════════════
-         SECTION 1: HERO BANNER WITH SUBMERGED WATERMARK IMAGE
-    ════════════════════════════════════════════════════════════════ -->
-    <section class="hero-editorial-section position-relative overflow-hidden">
-      <!-- Submerged Marine Image (Ảnh chìm trong nền) -->
-      <div class="hero-submerged-bg"></div>
-
-      <div class="container position-relative z-1 py-5">
-        <div class="row align-items-center py-lg-4">
-
-          <!-- Left Column: Big Title + Description + Pill Button -->
-          <div class="col-lg-6 text-start">
-            <h1 class="hero-main-heading mb-4">
-              Khám Phá<br />
-              Thế Giới <span class="text-secondary fw-bold">Công Nghệ</span><br />
-              Hàng Hải
-            </h1>
-            <p class="hero-subtext text-muted mb-4">
-              Tổng hợp những kiến thức chuyên sâu về vận hành tàu thuyền, cẩm nang bảo dưỡng động cơ thủy định kỳ và xu hướng thiết bị hàng hải hiện đại nhất từ đội ngũ kỹ sư JPM Marine.
-            </p>
-            <button type="button" class="btn btn-dark-pill px-4 py-2" @click="scrollToSection('top-destinations')">
-              Khám phá ngay
-            </button>
+    <!-- Header chuẩn Giỏ Hàng -->
+    <section class="section pb-2" style="padding-top: 110px;">
+      <div class="container">
+        <div class="row mb-3">
+          <div class="col-12" data-aos="fade-down">
+            <h2 class="jpm-page-title">Tin Tức <span class="text-danger">&amp; Cẩm Nang</span></h2>
+            <p class="text-muted">Tổng hợp những kiến thức chuyên sâu về vận hành tàu thuyền, cẩm nang bảo dưỡng động cơ thủy và xu hướng công nghệ hàng hải.</p>
           </div>
-
         </div>
       </div>
     </section>
@@ -34,7 +17,7 @@
          SECTION 2: TOP DESTINATIONS EQUIVALENT ("Tiêu Điểm Chuyên Mục")
          Tabs Row + Outline Pill Button + 4 Portrait Cards
     ════════════════════════════════════════════════════════════════ -->
-    <section id="top-destinations" class="py-5">
+    <section id="top-destinations" class="pb-5">
       <div class="container">
         <!-- Section Title -->
         <h2 class="section-editorial-title mb-3">Tiêu Điểm Chuyên Mục</h2>
@@ -674,43 +657,14 @@ export default {
 <style scoped>
 .news-wireframe-page {
   min-height: 100vh;
-  padding-top: 70px;
 }
 
-/* ── SECTION 1: HERO BANNER ── */
-.hero-editorial-section {
-  padding-top: 30px;
-  padding-bottom: 40px;
-}
-
-.hero-submerged-bg {
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 65%;
-  height: 100%;
-  background-image: url('https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=1600&auto=format&fit=crop&q=85');
-  background-size: cover;
-  background-position: center right;
-  opacity: 0.95;
-  mask-image: linear-gradient(to right, transparent 0%, transparent 15%, rgba(0, 0, 0, 0.45) 45%, rgba(0, 0, 0, 1) 80%);
-  -webkit-mask-image: linear-gradient(to right, transparent 0%, transparent 15%, rgba(0, 0, 0, 0.45) 45%, rgba(0, 0, 0, 1) 80%);
-  pointer-events: none;
-}
-
-.hero-main-heading {
-  font-family: var(--heading-font);
-  font-size: clamp(1.8rem, 2.6vw, 2.2rem);
-  font-weight: 700;
-  color: #111827;
-  line-height: 1.25;
-  letter-spacing: normal;
-}
-
-.hero-subtext {
-  font-size: 0.95rem;
-  line-height: 1.7;
-  max-width: 460px;
+/* ── PAGE TITLE (MATCHING GIO HANG) ── */
+.jpm-page-title {
+  font-family: var(--heading-font, 'Raleway', sans-serif);
+  font-weight: 800;
+  color: #0A1128;
+  letter-spacing: -0.5px;
 }
 
 .collage-card {
