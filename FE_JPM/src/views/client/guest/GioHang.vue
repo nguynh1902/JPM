@@ -187,7 +187,7 @@
                     <div v-else class="no-address-box p-3 text-center">
                       <i class="bi bi-geo-alt text-danger fs-3 mb-1 d-block"></i>
                       <p class="text-muted small mb-2">Bạn chưa có địa chỉ nào trong Sổ địa chỉ.</p>
-                      <button type="button" class="btn btn-blue-action btn-sm btn-rounded-8" data-bs-toggle="modal" data-bs-target="#addressModal" @click.prevent="openAddAddress">
+                      <button type="button" class="btn btn-outline-danger btn-sm btn-rounded-8" data-bs-toggle="modal" data-bs-target="#addressModal" @click.prevent="openAddAddress">
                         <i class="bi bi-plus-lg me-1"></i> Thêm địa chỉ ngay
                       </button>
                     </div>
@@ -1033,23 +1033,23 @@ export default {
   border-radius: 8px;
 }
 
-.btn-blue-action {
-  background-color: #0d6efd !important;
-  border-color: #0d6efd !important;
-  color: #ffffff !important;
+.btn-outline-danger {
+  border-radius: 8px !important;
+}
+
+.no-address-box .btn-outline-danger {
+  background-color: #ffffff;
+  color: var(--accent-color, #f82249);
+  border: 1px solid var(--accent-color, #f82249);
   font-weight: 600;
   padding: 6px 16px;
-  border-radius: 8px !important;
-  box-shadow: 0 2px 6px rgba(13, 110, 253, 0.2);
   transition: all 0.2s ease;
 }
 
-.btn-blue-action:hover {
-  background-color: #0b5ed7 !important;
-  border-color: #0a58ca !important;
+.no-address-box .btn-outline-danger:hover {
+  background-color: var(--accent-color, #f82249) !important;
+  border-color: var(--accent-color, #f82249) !important;
   color: #ffffff !important;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(13, 110, 253, 0.3);
 }
 
 /* Submit Button: 8px bo góc chuẩn btn-cart-action và filter-control ở Trang Chủ */
