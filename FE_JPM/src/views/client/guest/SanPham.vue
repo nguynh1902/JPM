@@ -1,5 +1,5 @@
 <template>
-  <main class="main-page bg-white">
+  <main class="shop-catalog-page main-page">
 
     <section id="products-section" class="section pb-5" style="padding-top: 110px;">
       <div class="container">
@@ -17,60 +17,71 @@
           
           <!-- SIDEBAR -->
           <div class="jpm-split-sidebar mb-4 mb-lg-0">
-            <div class="card sticky-top catalog-sidebar-card shadow-sm" style="border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; top: 110px; z-index: 10; background: #fff;">
-              <div class="card-header bg-white border-bottom py-3 px-4 d-flex justify-content-between align-items-center" style="border-radius: 12px 12px 0 0; min-height: 56px;">
-                <h4 class="mb-0 jpm-card-title d-flex align-items-center" style="font-size: 1rem; font-weight: 700; color: #1e293b;">
-                  <i class="bi bi-funnel-fill me-2" style="color: #f82249;"></i>Bộ Lọc
-                </h4>
-                <button class="btn btn-sm btn-link text-danger text-decoration-none p-0 shadow-none fw-semibold" style="font-size: 0.85rem;" @click="resetFilters">Xóa tất cả</button>
+            <div class="card sticky-sidebar catalog-sidebar-card shadow-sm">
+              <div class="catalog-sidebar-header">
+                <h4 class="catalog-sidebar-title mb-0">Bộ Lọc</h4>
+                <button 
+                  type="button"
+                  class="btn-reset-sidebar-filter" 
+                  :class="{ 'is-hidden': !(selectedCategories.length > 0 || searchInput) }"
+                  @click="resetFilters"
+                >
+                  Xóa lọc
+                </button>
               </div>
                 
-              <div class="card-body p-4 custom-scrollbar" style="max-height: calc(100vh - 180px); overflow-y: auto;">
-                <!-- TIM KIEM -->
-                <div class="mb-4 pb-4 border-bottom">
-                  <h6 class="section-label mb-3 fw-bold" style="font-size: 0.85rem; color: #1e293b;"><i class="bi bi-search me-1 text-muted"></i> Tìm Sản Phẩm</h6>
-                  <div class="position-relative">
-                    <i class="bi bi-search position-absolute text-muted" style="left: 12px; top: 50%; transform: translateY(-50%); font-size: 0.85rem; pointer-events: none;"></i>
-                    <input 
-                      type="text" 
-                      class="form-control shop-search-input" 
-                      placeholder="Nhập tên hoặc mã..." 
-                      v-model="searchInput" 
-                      @keyup.enter="performSearch"
-                    >
-                  </div>
+              <div class="catalog-sidebar-body custom-scrollbar">
+                <!-- TÌM KIẾM SẢN PHẨM -->
+                <div class="search-input-box mb-3">
+                  <i class="bi bi-search search-input-icon"></i>
+                  <input 
+                    type="text" 
+                    class="search-input-field" 
+                    placeholder="Tìm tên hoặc mã..." 
+                    v-model="searchInput" 
+                    @keyup.enter="performSearch"
+                  >
+                  <button 
+                    v-if="searchInput" 
+                    type="button" 
+                    class="btn-clear-search" 
+                    @click="searchInput = ''; searchKeyword = ''"
+                    title="Xóa tìm kiếm"
+                  >
+                    <i class="bi bi-x-circle-fill"></i>
+                  </button>
                 </div>
 
-                <!-- DANH MUC -->
-                <div class="mb-2">
-                  <h6 class="section-label mb-3 fw-bold" style="font-size: 0.85rem; color: #1e293b;"><i class="bi bi-tags-fill me-1 text-muted"></i> Danh Mục</h6>
+                <!-- DANH MỤC THIẾT BỊ -->
+                <div class="sidebar-category-section">
+                  <div class="sidebar-section-title mb-2 text-muted fw-bold">
+                    Danh Mục Thiết Bị
+                  </div>
                   <div v-if="isLoadingCategories" class="text-center py-4">
                     <div class="spinner-border spinner-border-sm text-danger"></div>
                   </div>
-                  <div v-else class="d-flex flex-column gap-1">
-                    <div 
+                  <div v-else class="catalog-nav-list">
+                    <!-- Nút Tất Cả Sản Phẩm -->
+                    <button
+                      type="button"
+                      class="catalog-nav-btn"
+                      :class="{ active: selectedCategories.length === 0 }"
+                      @click="selectAllCategories"
+                    >
+                      <span class="catalog-nav-text">Tất cả sản phẩm</span>
+                    </button>
+
+                    <!-- Danh mục lấy từ API -->
+                    <button 
                       v-for="cat in categories" 
                       :key="cat.id"
-                      class="category-filter-item px-2 py-2 rounded-2"
-                      :class="{ 'category-item-active': selectedCategories.includes(cat.slug) }"
+                      type="button"
+                      class="catalog-nav-btn"
+                      :class="{ active: selectedCategories.includes(cat.slug) }"
+                      @click="selectCategory(cat.slug)"
                     >
-                      <label class="form-check m-0 d-flex align-items-center flex-grow-1 user-select-none" style="cursor: pointer;">
-                        <input 
-                          class="form-check-input me-2 mt-0 custom-category-checkbox shadow-none" 
-                          type="checkbox" 
-                          :checked="selectedCategories.includes(cat.slug)" 
-                          @change="selectCategory(cat.slug)" 
-                          :id="'cat_'+cat.id"
-                        >
-                        <span 
-                          class="category-name flex-grow-1"
-                          :class="selectedCategories.includes(cat.slug) ? 'fw-bold text-danger' : 'text-secondary'"
-                          style="font-size: 0.9rem; text-transform: capitalize; transition: 0.2s;"
-                        >
-                          {{ cat.ten_danh_muc.toLowerCase() }}
-                        </span>
-                      </label>
-                    </div>
+                      <span class="catalog-nav-text" :title="cat.ten_danh_muc">{{ cat.ten_danh_muc }}</span>
+                    </button>
                   </div>
                 </div>
               </div>
@@ -86,14 +97,15 @@
             <div v-if="isGroupedMode">
               <div v-if="isLoadingGrouped" class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4">
                 <div class="col" v-for="i in 6" :key="i">
-                  <div class="card h-100 premium-product-card border-0 shadow-sm">
+                  <div class="card h-100 product-card border-0 shadow-sm">
                     <div class="card-img-wrapper skeleton-box" style="aspect-ratio: 4/3;"></div>
                     <div class="card-body p-3">
                       <div class="skeleton-line" style="width: 50%; height: 12px; margin-bottom: 10px;"></div>
                       <div class="skeleton-line" style="width: 90%; height: 16px; margin-bottom: 8px;"></div>
                       <div class="skeleton-line" style="width: 70%; height: 16px; margin-bottom: 16px;"></div>
-                      <div class="d-flex justify-content-end">
-                        <div class="skeleton-line" style="width: 40%; height: 22px;"></div>
+                      <div class="d-flex justify-content-between align-items-center pt-2">
+                        <div class="skeleton-line" style="width: 45%; height: 22px;"></div>
+                        <div class="skeleton-box" style="width: 36px; height: 36px; border-radius: 8px;"></div>
                       </div>
                     </div>
                   </div>
@@ -102,7 +114,7 @@
               <div v-else-if="groupedCategories.length > 0">
                 <div v-for="cat in groupedCategories" :key="cat.id" class="mb-5">
                   <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-2">
-                    <h4 class="fw-bold mb-0" style="color: var(--heading-color); font-size: 1.25rem;">{{ cat.ten_danh_muc }}</h4>
+                    <h4 class="fw-bold mb-0 text-capitalize" style="color: var(--heading-color, #0A1128); font-size: 1.25rem; font-family: var(--heading-font, 'Raleway', sans-serif);">{{ cat.ten_danh_muc }}</h4>
                     <button class="btn btn-link text-danger fw-bold text-decoration-none d-flex align-items-center gap-1 p-0 shadow-none hover-underline" @click="viewCategory(cat.slug)">
                       Xem thêm <i class="bi bi-arrow-right"></i>
                     </button>
@@ -110,37 +122,52 @@
                   
                   <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4">
                     <div class="col" v-for="prod in cat.products" :key="prod.id">
-                      <!-- PRODUCT CARD -->
-                      <div class="card h-100 premium-product-card group-hover position-relative">
-                        <div class="card-img-wrapper overflow-hidden img-zoom-hover">
+                      <!-- PRODUCT CARD (100% ĐỒNG BỘ TRANG CHỦ) -->
+                      <div class="card h-100 product-card position-relative">
+                        <div class="card-img-wrapper position-relative overflow-hidden bg-light d-flex align-items-center justify-content-center">
                           <img
                             :src="getImageUrl(prod.hinh_anh_chinh)"
-                            class="card-img-top w-100 transition-transform"
+                            class="card-img-top w-100 transition-transform card-img-product"
                             style="aspect-ratio: 4/3; object-fit: cover;"
                             :alt="prod.ten_san_pham"
-                            @error="$event.target.src='https://placehold.co/400x300/f8f9fa/a1acb8?text=JPM'"
+                            @error="$event.target.src='https://placehold.co/400x300/f8f9fa/a1acb8?text=JPM+Marine'"
                           >
-                          <div class="position-absolute" style="top: 10px; right: 10px; z-index: 10;">
+                        </div>
+                        <div class="card-body text-start p-3 d-flex flex-column bg-white">
+                          <!-- 1. Danh mục sản phẩm -->
+                          <div class="product-category mb-1 text-truncate" :title="prod.danh_muc ? prod.danh_muc.ten_danh_muc : (getCategoryName(prod.danh_muc_san_pham_id) || 'OEM')">
+                            {{ prod.danh_muc ? prod.danh_muc.ten_danh_muc : (getCategoryName(prod.danh_muc_san_pham_id) || 'OEM') }}
+                          </div>
+
+                          <!-- 2. Tên sản phẩm -->
+                          <h5 class="card-title mb-1">
+                            <router-link :to="`/chi-tiet-san-pham/${prod.slug}`" class="text-decoration-none stretched-link">
+                              {{ prod.ten_san_pham }}
+                            </router-link>
+                          </h5>
+
+                          <!-- 3. Mã sản phẩm SKU (Chuẩn kỹ thuật & hàng hải) -->
+                          <div class="product-sku mb-3">
+                            <template v-if="prod.ma_san_pham">
+                              <span class="sku-label">Mã:</span> <span class="sku-code">{{ prod.ma_san_pham }}</span>
+                            </template>
+                            <template v-else>&nbsp;</template>
+                          </div>
+
+                          <!-- 4. Chân card: Giá bán & Nút giỏ hàng (Cùng hàng, cân đối chuẩn Trang Chủ) -->
+                          <div class="mt-auto d-flex align-items-center justify-content-between pt-1">
+                            <div>
+                              <span v-if="prod.is_gia_lien_he || !prod.gia_ban" class="text-danger fw-bold price-value">Liên hệ</span>
+                              <span v-else class="text-danger fw-bold price-value">{{ formatPrice(prod.gia_ban) }} đ</span>
+                            </div>
                             <button
-                              class="btn btn-cart-action shadow-sm"
-                              :title="!prod.is_gia_lien_he && prod.so_luong_ton !== undefined && prod.so_luong_ton <= 0 ? 'Hết hàng' : (prod.is_gia_lien_he ? 'Thêm vào giỏ báo giá' : 'Thêm vào giỏ')"
+                              class="btn btn-cart-action position-relative z-2"
+                              :title="!prod.is_gia_lien_he && prod.so_luong_ton !== undefined && prod.so_luong_ton <= 0 ? 'Hết hàng' : (prod.is_gia_lien_he ? 'Yêu cầu báo giá' : 'Thêm vào giỏ')"
                               :disabled="!prod.is_gia_lien_he && prod.so_luong_ton !== undefined && prod.so_luong_ton <= 0"
                               @click.prevent="addToCart(prod)"
                             >
-                              <i class="bi bi-cart2"></i>
+                              <i :class="prod.is_gia_lien_he ? 'bi bi-chat-dots' : 'bi bi-cart2'"></i>
                             </button>
-                          </div>
-                        </div>
-                        <div class="card-body text-start p-3 d-flex flex-column bg-white">
-                          <div class="d-flex justify-content-between align-items-start mb-2">
-                            <span class="text-muted fw-bold text-uppercase" style="letter-spacing: 0.5px; font-size: 0.75rem;">{{ prod.danh_muc?.ten_danh_muc || getCategoryName(prod.danh_muc_san_pham_id) || 'OEM' }}</span>
-                          </div>
-                          <h5 class="card-title mb-3" style="font-size: 0.95rem; line-height: 1.5; font-weight: 500; color: #1e293b;">
-                            <router-link :to="`/chi-tiet-san-pham/${prod.slug}`" class="text-decoration-none stretched-link" style="color: inherit;">{{ prod.ten_san_pham }}</router-link>
-                          </h5>
-                          <div class="mt-auto d-flex align-items-center contact-action" style="padding-top: 0.25rem; justify-content: flex-end;">
-                            <span v-if="prod.is_gia_lien_he || !prod.gia_ban" class="text-danger fw-bold" style="font-size: 1.1rem;">Liên hệ</span>
-                            <span v-else class="text-danger fw-bold" style="font-size: 1.1rem;">{{ formatPrice(prod.gia_ban) }} đ</span>
                           </div>
                         </div>
                       </div>
@@ -148,40 +175,72 @@
                   </div>
                 </div>
               </div>
-              <div v-else class="text-center py-5 card shadow-sm mt-4" style="border: 1px solid #e2e8f0; border-radius: 12px; background: #fff;">
-                 <p class="text-muted mb-0">Chưa có sản phẩm nào.</p>
+              <div v-else class="text-center py-5 my-4">
+                 <div class="empty-icon-circle mb-3">
+                   <i class="bi bi-box-seam"></i>
+                 </div>
+                 <h5 class="empty-state-title mb-1">Chưa Có Sản Phẩm Nào</h5>
+                 <p class="empty-state-desc mx-auto mb-0">Danh mục sản phẩm hiện đang được cập nhật.</p>
               </div>
             </div>
 
             <!-- FILTERED MODE (With search or category selected) -->
             <div v-else>
-              <div class="mb-4 border-bottom pb-2" v-if="selectedCategories.length === 1 && !searchKeyword">
-                <h4 class="fw-bold text-uppercase mb-0" style="color: var(--heading-color);">
-                  {{ getCategoryName(selectedCategories[0]) }}
+              <!-- Thanh điều khiển: Tiêu đề + Dropdown Sắp xếp -->
+              <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 pb-2 border-bottom gap-2">
+                <h4 class="fw-bold mb-0 text-capitalize" style="color: var(--heading-color, #0A1128); font-size: 1.25rem; font-family: var(--heading-font, 'Raleway', sans-serif);">
+                  <template v-if="selectedCategories.length === 1 && !searchKeyword">
+                    {{ getCategoryName(selectedCategories[0]) }}
+                  </template>
+                  <template v-else-if="selectedCategories.length > 1 && !searchKeyword">
+                    Bộ Lọc ({{ selectedCategories.length }} danh mục)
+                  </template>
+                  <template v-else-if="searchKeyword">
+                    Kết quả: "{{ searchKeyword }}"
+                  </template>
+                  <template v-else>
+                    Tất Cả Sản Phẩm
+                  </template>
                 </h4>
-              </div>
-              <div class="mb-4 border-bottom pb-2" v-else-if="selectedCategories.length > 1 && !searchKeyword">
-                <h4 class="fw-bold text-uppercase mb-0" style="color: var(--heading-color);">
-                  Sản phẩm theo bộ lọc ({{ selectedCategories.length }} danh mục)
-                </h4>
-              </div>
-              <div class="mb-4 border-bottom pb-2" v-else-if="searchKeyword">
-                <h4 class="fw-bold text-uppercase mb-0" style="color: var(--heading-color);">
-                  Kết quả tìm kiếm cho: "{{ searchKeyword }}"
-                </h4>
+
+                <!-- Dropdown Sắp Xếp Chuẩn Luxury (Đồng bộ 100% Thương Hiệu) -->
+                <div class="d-flex align-items-center gap-2">
+                  <span class="text-muted small fw-medium text-nowrap d-none d-sm-inline">Sắp xếp:</span>
+                  <div class="custom-select-wrapper" :class="{ 'z-active': isSortDropdownOpen }">
+                    <div 
+                      class="custom-select-box shop-sort-box" 
+                      :class="{ 'is-focused': isSortDropdownOpen }"
+                      @click.stop="isSortDropdownOpen = !isSortDropdownOpen"
+                    >
+                      <span class="text-truncate">{{ currentSortLabel }}</span>
+                      <i class="bi bi-chevron-down select-arrow" :class="{ rotated: isSortDropdownOpen }"></i>
+                    </div>
+                    <ul class="custom-dropdown-list align-right shadow-sm" v-show="isSortDropdownOpen">
+                      <li 
+                        v-for="opt in sortOptions" 
+                        :key="opt.value" 
+                        :class="{ active: sortBy === opt.value }"
+                        @click="selectSort(opt.value)"
+                      >
+                        {{ opt.label }}
+                      </li>
+                    </ul>
+                  </div>
+                </div>
               </div>
               
               <!-- Loading Skeleton -->
               <div v-if="isLoadingProducts" class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4">
                 <div class="col" v-for="i in 6" :key="i">
-                  <div class="card h-100 premium-product-card border-0 shadow-sm">
+                  <div class="card h-100 product-card border-0 shadow-sm">
                     <div class="card-img-wrapper skeleton-box" style="aspect-ratio: 4/3;"></div>
                     <div class="card-body p-3">
                       <div class="skeleton-line" style="width: 50%; height: 12px; margin-bottom: 10px;"></div>
                       <div class="skeleton-line" style="width: 90%; height: 16px; margin-bottom: 8px;"></div>
                       <div class="skeleton-line" style="width: 70%; height: 16px; margin-bottom: 16px;"></div>
-                      <div class="d-flex justify-content-end">
-                        <div class="skeleton-line" style="width: 40%; height: 22px;"></div>
+                      <div class="d-flex justify-content-between align-items-center pt-2">
+                        <div class="skeleton-line" style="width: 45%; height: 22px;"></div>
+                        <div class="skeleton-box" style="width: 36px; height: 36px; border-radius: 8px;"></div>
                       </div>
                     </div>
                   </div>
@@ -191,50 +250,71 @@
               <!-- Grid -->
               <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4" v-else-if="products.length > 0">
                 <div class="col" v-for="prod in products" :key="prod.id">
-                  <!-- PRODUCT CARD -->
-                  <div class="card h-100 premium-product-card group-hover position-relative">
-                    <div class="card-img-wrapper overflow-hidden img-zoom-hover">
+                  <!-- PRODUCT CARD (100% ĐỒNG BỘ TRANG CHỦ) -->
+                  <div class="card h-100 product-card position-relative">
+                    <div class="card-img-wrapper position-relative overflow-hidden bg-light d-flex align-items-center justify-content-center">
                       <img
                         :src="getImageUrl(prod.hinh_anh_chinh)"
-                        class="card-img-top w-100 transition-transform"
+                        class="card-img-top w-100 transition-transform card-img-product"
                         style="aspect-ratio: 4/3; object-fit: cover;"
                         :alt="prod.ten_san_pham"
-                        @error="$event.target.src='https://placehold.co/400x300/f8f9fa/a1acb8?text=JPM'"
+                        @error="$event.target.src='https://placehold.co/400x300/f8f9fa/a1acb8?text=JPM+Marine'"
                       >
-                      <div class="position-absolute" style="top: 10px; right: 10px; z-index: 10;">
+                    </div>
+                    <div class="card-body text-start p-3 d-flex flex-column bg-white">
+                      <!-- 1. Danh mục sản phẩm -->
+                      <div class="product-category mb-1 text-truncate" :title="prod.danh_muc ? prod.danh_muc.ten_danh_muc : (getCategoryName(prod.danh_muc_san_pham_id) || 'OEM')">
+                        {{ prod.danh_muc ? prod.danh_muc.ten_danh_muc : (getCategoryName(prod.danh_muc_san_pham_id) || 'OEM') }}
+                      </div>
+
+                      <!-- 2. Tên sản phẩm -->
+                      <h5 class="card-title mb-1">
+                        <router-link :to="`/chi-tiet-san-pham/${prod.slug}`" class="text-decoration-none stretched-link">
+                          {{ prod.ten_san_pham }}
+                        </router-link>
+                      </h5>
+
+                      <!-- 3. Mã sản phẩm SKU (Chuẩn kỹ thuật & hàng hải) -->
+                      <div class="product-sku mb-3">
+                        <template v-if="prod.ma_san_pham">
+                          <span class="sku-label">Mã:</span> <span class="sku-code">{{ prod.ma_san_pham }}</span>
+                        </template>
+                        <template v-else>&nbsp;</template>
+                      </div>
+
+                      <!-- 4. Chân card: Giá bán & Nút giỏ hàng (Cùng hàng, cân đối chuẩn Trang Chủ) -->
+                      <div class="mt-auto d-flex align-items-center justify-content-between pt-1">
+                        <div>
+                          <span v-if="prod.is_gia_lien_he || !prod.gia_ban" class="text-danger fw-bold price-value">Liên hệ</span>
+                          <span v-else class="text-danger fw-bold price-value">{{ formatPrice(prod.gia_ban) }} đ</span>
+                        </div>
                         <button
-                          class="btn btn-cart-action shadow-sm"
-                          :title="!prod.is_gia_lien_he && prod.so_luong_ton !== undefined && prod.so_luong_ton <= 0 ? 'Hết hàng' : (prod.is_gia_lien_he ? 'Thêm vào giỏ báo giá' : 'Thêm vào giỏ')"
+                          class="btn btn-cart-action position-relative z-2"
+                          :title="!prod.is_gia_lien_he && prod.so_luong_ton !== undefined && prod.so_luong_ton <= 0 ? 'Hết hàng' : (prod.is_gia_lien_he ? 'Yêu cầu báo giá' : 'Thêm vào giỏ')"
                           :disabled="!prod.is_gia_lien_he && prod.so_luong_ton !== undefined && prod.so_luong_ton <= 0"
                           @click.prevent="addToCart(prod)"
                         >
-                          <i class="bi bi-cart2"></i>
+                          <i :class="prod.is_gia_lien_he ? 'bi bi-chat-dots' : 'bi bi-cart2'"></i>
                         </button>
-                      </div>
-                    </div>
-                    <div class="card-body text-start p-3 d-flex flex-column bg-white">
-                      <div class="d-flex justify-content-between align-items-start mb-2">
-                        <span class="text-muted fw-bold text-uppercase" style="letter-spacing: 0.5px; font-size: 0.75rem;">{{ prod.danh_muc?.ten_danh_muc || getCategoryName(prod.danh_muc_san_pham_id) || 'OEM' }}</span>
-                      </div>
-                      <h5 class="card-title mb-3" style="font-size: 0.95rem; line-height: 1.5; font-weight: 500; color: #1e293b;">
-                        <router-link :to="`/chi-tiet-san-pham/${prod.slug}`" class="text-decoration-none stretched-link" style="color: inherit;">{{ prod.ten_san_pham }}</router-link>
-                      </h5>
-                      <div class="mt-auto d-flex align-items-center contact-action" style="padding-top: 0.25rem; justify-content: flex-end;">
-                        <span v-if="prod.is_gia_lien_he || !prod.gia_ban" class="text-danger fw-bold" style="font-size: 1.1rem;">Liên hệ</span>
-                        <span v-else class="text-danger fw-bold" style="font-size: 1.1rem;">{{ formatPrice(prod.gia_ban) }} đ</span>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
               
-              <!-- Empty State -->
-              <div class="text-center py-5 card p-5 shadow-sm mt-4" style="border: 1px solid #e2e8f0; border-radius: 12px; background: #fff;" v-else>
-                <i class="bi bi-box-seam text-muted" style="font-size: 3.5rem; opacity: 0.4;"></i>
-                <h5 class="mt-4 fw-bold text-uppercase" style="letter-spacing: 0.5px; color: #1e293b;">Không tìm thấy sản phẩm</h5>
-                <p class="text-muted mt-2" style="font-weight: 400; font-size: 0.95rem;">Rất tiếc, không có sản phẩm nào phù hợp với bộ lọc hiện tại của bạn.</p>
+              <!-- Empty State (Không nằm trong Card) -->
+              <div class="text-center py-5 my-4" v-else>
+                <div class="empty-icon-circle mb-3">
+                  <i class="bi bi-box-seam"></i>
+                </div>
+                <h5 class="empty-state-title mb-2">Chưa Có Sản Phẩm Phù Hợp</h5>
+                <p class="empty-state-desc mb-4 mx-auto">Rất tiếc, hiện chưa có sản phẩm nào phù hợp với bộ lọc bạn đã chọn.</p>
                 <div>
-                  <button class="btn btn-danger mt-3 px-4 py-2 fw-semibold" style="border-radius: 8px; background-color: #f82249; border-color: #f82249; font-size: 0.9rem;" @click="resetFilters">
+                  <button 
+                    type="button"
+                    class="btn btn-reset-filters shadow-sm" 
+                    @click="resetFilters"
+                  >
                     <i class="bi bi-arrow-counterclockwise me-1"></i> Xóa bộ lọc
                   </button>
                 </div>
@@ -284,7 +364,7 @@
 </template>
 
 <script setup>
-import { ref, watch, computed } from 'vue';
+import { ref, watch, computed, onMounted, onUnmounted } from 'vue';
 import { useQuery } from '@tanstack/vue-query';
 import axiosClient from '../../../api/axiosClient';
 import { useRoute, useRouter } from 'vue-router';
@@ -314,6 +394,33 @@ const searchKeyword = ref(route.query.keyword || '');
 const selectedCategories = ref(route.query.danh_muc ? (Array.isArray(route.query.danh_muc) ? route.query.danh_muc : [route.query.danh_muc]) : []);
 const sortBy = ref(route.query.sort || 'newest');
 const currentPage = ref(parseInt(route.query.page) || 1);
+
+// Custom Luxury Sort Dropdown
+const isSortDropdownOpen = ref(false);
+const sortOptions = [
+  { value: 'newest', label: 'Mới nhất' },
+  { value: 'price_asc', label: 'Giá: Thấp đến cao' },
+  { value: 'price_desc', label: 'Giá: Cao đến thấp' },
+];
+const currentSortLabel = computed(() => {
+  return sortOptions.find(opt => opt.value === sortBy.value)?.label || 'Mới nhất';
+});
+const selectSort = (val) => {
+  sortBy.value = val;
+  isSortDropdownOpen.value = false;
+};
+const handleClickOutside = (event) => {
+  if (isSortDropdownOpen.value && !event.target.closest('.custom-select-wrapper')) {
+    isSortDropdownOpen.value = false;
+  }
+};
+onMounted(() => {
+  document.addEventListener('click', handleClickOutside);
+});
+onUnmounted(() => {
+  document.removeEventListener('click', handleClickOutside);
+  isSortDropdownOpen.value = false;
+});
 
 // Computed property for mode
 const isGroupedMode = computed(() => {
@@ -424,18 +531,21 @@ const performSearch = () => {
 };
 
 const viewCategory = (slug) => {
+  selectedCategories.value = [slug];
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+};
+
+const selectAllCategories = () => {
+  selectedCategories.value = [];
+};
+
+const selectCategory = (slug) => {
+  if (selectedCategories.value.includes(slug)) {
+    selectedCategories.value = [];
+  } else {
     selectedCategories.value = [slug];
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-  
-  const selectCategory = (slug) => {
-    const index = selectedCategories.value.indexOf(slug);
-    if (index > -1) {
-        selectedCategories.value.splice(index, 1);
-    } else {
-        selectedCategories.value.push(slug);
-    }
-  };
+  }
+};
 
 const getCategoryName = (catIdOrSlug) => {
   const cat = categories.value.find(c => c.id == catIdOrSlug || c.slug === catIdOrSlug);
@@ -477,6 +587,12 @@ const scrollToProducts = () => {
 </script>
 
 <style scoped>
+/* ── SHOP PAGE LUXURY SLATE BACKGROUND ── */
+.shop-catalog-page {
+  background-color: #f8fafc;
+  min-height: 100vh;
+}
+
 /* ── PAGE TITLE (MATCHING GIO HANG) ── */
 .jpm-page-title {
   font-family: var(--heading-font, 'Raleway', sans-serif);
@@ -485,44 +601,339 @@ const scrollToProducts = () => {
   letter-spacing: -0.5px;
 }
 
-/* ── SEARCH INPUT IN SIDEBAR ── */
-.shop-search-input {
-  padding-left: 36px !important;
-  border-radius: 8px !important;
-  border: 1px solid #e2e8f0 !important;
-  font-size: 0.88rem !important;
-  background-color: #ffffff !important;
-  height: 40px;
-  transition: all 0.2s ease;
-}
-.shop-search-input:focus {
-  border-color: #f82249 !important;
-  box-shadow: 0 0 0 3px rgba(248, 34, 73, 0.12) !important;
-  outline: none !important;
+/* ── LUXURY CUSTOM SELECT & DROPDOWN (ĐỒNG BỘ 100% THƯƠNG HIỆU) ── */
+.custom-select-wrapper {
+  position: relative;
+  display: inline-block;
 }
 
-/* ── CATEGORY FILTER ITEMS ── */
-.category-filter-item {
+.custom-select-wrapper.z-active {
+  z-index: 1050;
+}
+
+.custom-select-box.shop-sort-box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 14px;
+  height: 38px;
+  min-width: 155px;
   border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
+  box-shadow: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.86rem;
+  font-weight: 500;
+  color: #1e293b;
+  font-family: var(--default-font, sans-serif);
+  user-select: none;
+}
+
+.custom-select-box.shop-sort-box:hover {
+  border-color: #cbd5e1;
+}
+
+.custom-select-box.shop-sort-box.is-focused {
+  border-color: #f82249 !important;
+  box-shadow: 0 0 0 3px rgba(248, 34, 73, 0.12) !important;
+  outline: 0 !important;
+}
+
+.select-arrow {
+  transition: transform 0.2s ease;
+  font-size: 11px;
+  color: #94a3b8;
+  margin-left: 8px;
+  flex-shrink: 0;
+}
+
+.select-arrow.rotated,
+.custom-select-box.shop-sort-box.is-focused .select-arrow {
+  transform: rotate(180deg);
+  color: #f82249;
+}
+
+.custom-dropdown-list {
+  position: absolute;
+  min-width: 100%;
+  width: max-content;
+  max-width: 220px;
+  top: calc(100% + 4px);
+  list-style: none;
+  margin: 0;
+  padding: 6px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  box-shadow: 0 12px 30px rgba(10, 17, 40, 0.12);
+  z-index: 1055;
+}
+
+.custom-dropdown-list.align-right {
+  right: 0;
+  left: auto;
+}
+
+.custom-dropdown-list li {
+  padding: 8px 12px;
+  font-size: 0.85rem;
+  color: #334155;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.custom-dropdown-list li:hover {
+  background: #f1f5f9;
+  color: #0A1128;
+}
+
+.custom-dropdown-list li.active {
+  background: rgba(248, 34, 73, 0.08);
+  color: #f82249;
+  font-weight: 700;
+}
+
+/* ── SIDEBAR LUXURY STYLING (ĐỒNG BỘ 100% THUONG HIEU) ── */
+.catalog-sidebar-card {
+  border-radius: 12px !important;
+  border: 1px solid #edf2f7 !important;
+  background: #ffffff;
+  box-shadow: 0 4px 14px rgba(10, 17, 40, 0.03);
+  overflow: hidden;
+}
+
+@media (min-width: 992px) {
+  .sticky-sidebar {
+    position: sticky;
+    top: 90px;
+    z-index: 10;
+  }
+}
+
+.catalog-sidebar-header {
+  height: 54px;
+  min-height: 54px;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #f1f5f9;
+  background: #ffffff;
+  box-sizing: border-box;
+}
+
+.catalog-sidebar-title {
+  font-family: var(--heading-font, 'Raleway', sans-serif);
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #0A1128;
+  margin: 0;
+  line-height: 1;
+}
+
+.btn-reset-sidebar-filter {
+  background: transparent;
+  border: none;
+  color: #f82249;
+  font-size: 0.82rem;
+  font-weight: 600;
+  padding: 0;
+  cursor: pointer;
+  line-height: 1;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
+}
+
+.btn-reset-sidebar-filter.is-hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.btn-reset-sidebar-filter:hover {
+  color: #d8143a;
+  text-decoration: underline;
+}
+
+.catalog-sidebar-body {
+  padding: 14px;
+  max-height: calc(100vh - 160px);
+  overflow-y: auto;
+}
+
+.sidebar-section-title {
+  font-size: 0.75rem;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: #64748b;
+  padding-left: 4px;
+}
+
+/* ── SEARCH INPUT IN SIDEBAR (MATCHING THUONG HIEU) ── */
+.search-input-box {
+  display: flex;
+  align-items: center;
+  height: 42px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
+  box-shadow: none;
+  padding: 0 12px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  width: 100%;
+}
+
+.search-input-box:focus-within {
+  border-color: #f82249 !important;
+  box-shadow: 0 0 0 3px rgba(248, 34, 73, 0.12) !important;
+  outline: 0 !important;
+}
+
+.search-input-box:hover {
+  border-color: #cbd5e1;
+}
+
+.search-input-icon {
+  font-size: 0.9rem;
+  color: #94a3b8;
+  margin-right: 8px;
+  flex-shrink: 0;
+  transition: color 0.15s ease-in-out;
+}
+
+.search-input-box:focus-within .search-input-icon {
+  color: #f82249;
+}
+
+.search-input-field {
+  flex: 1;
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: 0.875rem;
+  font-family: var(--default-font, sans-serif);
+  color: #0A1128;
+  font-weight: 400;
+  padding: 0;
+  height: 100%;
+}
+
+.search-input-field::placeholder {
+  color: #94a3b8;
+}
+
+.btn-clear-search {
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  font-size: 0.9rem;
+  cursor: pointer;
+  padding: 0;
+  margin-left: 6px;
+  line-height: 1;
+  flex-shrink: 0;
+  transition: color 0.15s ease;
+}
+
+.btn-clear-search:hover {
+  color: #dc2626;
+}
+
+/* ── NAVIGATION LIST IN SIDEBAR ── */
+.catalog-nav-list {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.catalog-nav-btn {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  border: 1px solid transparent;
+  background: transparent;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-family: var(--default-font, sans-serif);
+  font-weight: 500;
+  font-size: 0.88rem;
+  color: #334155;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  text-align: left;
+}
+
+.catalog-nav-btn:hover {
+  background: #f8fafc;
+  color: #0A1128;
+}
+
+.catalog-nav-btn.active {
+  background: rgba(248, 34, 73, 0.08);
+  border-color: rgba(248, 34, 73, 0.2);
+  color: #f82249;
+  font-weight: 700;
+}
+
+.catalog-nav-text {
+  width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── LUXURY EMPTY STATE ── */
+.empty-icon-circle {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: #f1f5f9;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #94a3b8;
+  font-size: 1.85rem;
+  transition: all 0.3s ease;
+}
+
+.empty-state-title {
+  font-family: var(--heading-font, 'Raleway', sans-serif);
+  font-weight: 700;
+  font-size: 1.15rem;
+  color: #0A1128;
+  letter-spacing: -0.2px;
+}
+
+.empty-state-desc {
+  max-width: 440px;
+  font-size: 0.92rem;
+  color: #64748b;
+  line-height: 1.5;
+}
+
+.btn-reset-filters {
+  background-color: #f82249 !important;
+  border: 1px solid #f82249 !important;
+  color: #ffffff !important;
+  border-radius: 8px !important;
+  font-size: 0.88rem !important;
+  font-weight: 600 !important;
+  padding: 8px 22px !important;
   transition: all 0.2s ease;
 }
-.category-filter-item:hover {
-  background-color: #f8fafc;
+
+.btn-reset-filters:hover {
+  background-color: #e0163d !important;
+  border-color: #e0163d !important;
+  box-shadow: 0 4px 12px rgba(248, 34, 73, 0.25) !important;
+  transform: translateY(-1px);
 }
-.category-filter-item.category-item-active {
-  background-color: rgba(248, 34, 73, 0.08);
-}
-.custom-category-checkbox {
-  border-color: #cbd5e1 !important;
-  border-radius: 4px !important;
-  cursor: pointer;
-}
-.custom-category-checkbox:checked {
-  background-color: #f82249 !important;
-  border-color: #f82249 !important;
-}
-.custom-category-checkbox:focus {
-  box-shadow: 0 0 0 3px rgba(248, 34, 73, 0.12) !important;
+
+.btn-reset-filters:focus {
+  box-shadow: 0 0 0 3px rgba(248, 34, 73, 0.15) !important;
 }
 
 /* ── PAGINATION BUTTONS ── */

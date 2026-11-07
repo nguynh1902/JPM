@@ -237,16 +237,6 @@
                   </table>
                 </div>
               </div>
-
-              <!-- 4. CHÂN BẢNG: THỐNG KÊ & CHỈ DẪN (Đồng bộ px-4 py-3) -->
-              <div class="card-footer bg-white px-4 py-3 border-top d-flex flex-column flex-sm-row justify-content-between align-items-center gap-2">
-                <span class="text-muted small">
-                  Hiển thị <b class="text-dark">{{ filteredModels.length }}</b> trong tổng số <b class="text-dark">{{ modelsList.length }}</b> models của hãng {{ brandName }}
-                </span>
-                <span class="text-muted small fst-italic">
-                  <i class="bi bi-info-circle me-1 text-danger"></i> Bấm "Sơ Đồ" để tra cứu từng cụm linh kiện chi tiết
-                </span>
-              </div>
             </div> <!-- end card -->
           </div> <!-- END COL-LG-9 -->
         </div> <!-- END ROW -->
