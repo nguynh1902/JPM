@@ -69,6 +69,9 @@ PHẢI đứng từ vị thế của CHUYÊN GIA KỸ THUẬT & THỰC TIỄN KI
    - Mọi URL khi thay đổi BẮT BUỘC phải giữ lại redirect backward-compatible để không bao giờ bị lỗi 404.
 
 5. CHUẨN GIAO DIỆN TOÀN HỆ THỐNG - ADMIN, STAFF & CLIENT (BOOTSTRAP 5 & KIẾN TRÚC CSS RẠCH RÒI):
+   - **Nguyên tắc "Code một thể thống nhất" (Single Unified View - Cấm xé nhỏ):**
+     + Mọi page giao diện (Trang chủ, Chi tiết sản phẩm, Tra cứu catalog, Giỏ hàng, Đơn hàng...) bắt buộc phải được code trọn vẹn (toàn bộ Section, Filter, Lưới Card, Table, Action và Modal) trong **CÙNG MỘT FILE `.vue` DUY NHẤT**.
+     + Tuyệt đối CẤM xé nhỏ thành các sub-component con lắt nhắt (như HeroSection.vue, FilterSection.vue...) gây rối luồng dữ liệu (props/emits) và khó bảo trì.
    - **Triết lý thống nhất:** Mọi tác nhân (Admin, Staff, Client) đều viết markup bằng **100% Bootstrap 5 chuẩn**, gọn gàng, ngữ nghĩa cao, tối giản.
    - **Phân định rạch ròi kiến trúc CSS: Toàn cục (`main.css`/`demo.css`) vs Cục bộ (`<style scoped>`):**
      - **`main.css` (Client) & `demo.css` (Admin):** Đóng vai trò như **Framework CSS dùng chung toàn website** (giống như Bootstrap core).

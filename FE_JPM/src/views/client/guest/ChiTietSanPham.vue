@@ -194,43 +194,64 @@
         <!-- SẢN PHẨM CÙNG DANH MỤC -->
         <div class="mb-5" data-aos="fade-up" v-if="relatedProducts && relatedProducts.length > 0">
           <div class="d-flex align-items-center justify-content-between mb-4 border-bottom pb-2">
-            <h4 class="fw-bold text-uppercase mb-0" style="color: var(--heading-color);">
+            <h4 class="fw-bold mb-0 text-capitalize section-catalog-title">
               Những Sản Phẩm Khác
             </h4>
             <router-link :to="sanPham?.danh_muc ? { path: '/san-pham', query: { danh_muc: sanPham.danh_muc.slug } } : '/san-pham'" class="text-decoration-none text-danger fw-bold d-flex align-items-center gap-1 hover-underline" style="font-size: 0.95rem;">
               Xem tất cả <i class="bi bi-arrow-right"></i>
             </router-link>
           </div>
-          <div class="row g-4">
-            <div class="col-6 col-md-4 col-lg-3" v-for="part in relatedProducts.slice(0, 8)" :key="part.id">
-                            <div class="card h-100 premium-product-card group-hover position-relative">
-                  <div class="card-img-wrapper overflow-hidden img-zoom-hover">
-                    <img
-                      :src="part.hinh_anh_chinh ? getImageUrl(part.hinh_anh_chinh) : 'https://images.unsplash.com/photo-1559523161-0fc0d8b38a7a?auto=format&fit=crop&q=80&w=400'"
-                      class="card-img-top w-100 transition-transform"
-                      style="aspect-ratio: 4/3; object-fit: cover;"
-                      :alt="part.ten_san_pham"
-                      @error="$event.target.src='https://placehold.co/300x200/f8f9fa/a1acb8?text=JPM+Marine'"
-                    >
-                    <div class="position-absolute" style="top: 10px; right: 10px; z-index: 10;">
-                      <button class="btn btn-cart-action shadow-sm" title="Thêm vào giỏ" @click.prevent="addToCart(part, true)">
-                        <i class="bi bi-cart2"></i>
-                      </button>
-                    </div>
+          <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-4 g-4">
+            <div class="col" v-for="part in relatedProducts.slice(0, 4)" :key="part.id">
+              <!-- PRODUCT CARD (100% ĐỒNG BỘ TRANG CHỦ & CỬA HÀNG) -->
+              <div class="card h-100 product-card position-relative">
+                <div class="card-img-wrapper position-relative overflow-hidden bg-light d-flex align-items-center justify-content-center">
+                  <img
+                    :src="getImageUrl(part.hinh_anh_chinh)"
+                    class="card-img-top w-100 transition-transform card-img-product"
+                    style="aspect-ratio: 4/3; object-fit: cover;"
+                    :alt="part.ten_san_pham"
+                    @error="$event.target.src='https://placehold.co/400x300/f8f9fa/a1acb8?text=JPM+Marine'"
+                  >
+                </div>
+                <div class="card-body text-start p-3 d-flex flex-column bg-white">
+                  <!-- 1. Danh mục sản phẩm -->
+                  <div class="product-category mb-1 text-truncate" :title="part.danh_muc ? part.danh_muc.ten_danh_muc : 'OEM'">
+                    {{ part.danh_muc ? part.danh_muc.ten_danh_muc : 'OEM' }}
                   </div>
-                  <div class="card-body text-start p-3 d-flex flex-column bg-white">
-                    <div class="d-flex justify-content-between align-items-start mb-2">
-                      <span class="text-muted fw-bold text-uppercase" style="letter-spacing: 0.5px; font-size: 0.75rem;">{{ part.ma_san_pham }}</span>
+
+                  <!-- 2. Tên sản phẩm -->
+                  <h5 class="card-title mb-1">
+                    <router-link :to="`/chi-tiet-san-pham/${part.slug}`" class="text-decoration-none stretched-link">
+                      {{ part.ten_san_pham }}
+                    </router-link>
+                  </h5>
+
+                  <!-- 3. Mã sản phẩm SKU (Chuẩn kỹ thuật & hàng hải) -->
+                  <div class="product-sku mb-3">
+                    <template v-if="part.ma_san_pham">
+                      <span class="sku-label">Mã:</span> <span class="sku-code">{{ part.ma_san_pham }}</span>
+                    </template>
+                    <template v-else>&nbsp;</template>
+                  </div>
+
+                  <!-- 4. Chân card: Giá bán & Nút giỏ hàng (Cùng hàng, cân đối chuẩn Trang Chủ) -->
+                  <div class="mt-auto d-flex align-items-center justify-content-between pt-1">
+                    <div>
+                      <span v-if="part.is_gia_lien_he || !part.gia_ban" class="text-danger fw-bold price-value">Liên hệ</span>
+                      <span v-else class="text-danger fw-bold price-value">{{ formatPrice(part.gia_ban) }} đ</span>
                     </div>
-                    <h5 class="card-title mb-3" style="font-size: 0.95rem; line-height: 1.5; font-weight: 500; color: #1e293b;">
-                      <router-link :to="`/chi-tiet-san-pham/${part.slug}`" class="text-decoration-none stretched-link" style="color: inherit;">{{ part.ten_san_pham }}</router-link>
-                    </h5>
-                    <div class="mt-auto d-flex align-items-center contact-action" style="padding-top: 0.25rem; justify-content: flex-end;">
-                      <span v-if="part.is_gia_lien_he || !part.gia_ban" class="text-danger fw-bold" style="font-size: 1.1rem;">Liên hệ</span>
-                      <span v-else class="text-danger fw-bold" style="font-size: 1.1rem;">{{ formatPrice(part.gia_ban) }} đ</span>
-                    </div>
+                    <button
+                      class="btn btn-cart-action position-relative z-2"
+                      :title="!part.is_gia_lien_he && part.so_luong_ton !== undefined && part.so_luong_ton <= 0 ? 'Hết hàng' : (part.is_gia_lien_he ? 'Yêu cầu báo giá' : 'Thêm vào giỏ')"
+                      :disabled="!part.is_gia_lien_he && part.so_luong_ton !== undefined && part.so_luong_ton <= 0"
+                      @click.prevent="addToCart(part, true)"
+                    >
+                      <i :class="part.is_gia_lien_he ? 'bi bi-chat-dots' : 'bi bi-cart2'"></i>
+                    </button>
                   </div>
                 </div>
+              </div>
             </div>
           </div>
         </div>
@@ -241,47 +262,46 @@
             <h4 class="fw-bold text-uppercase mb-0" style="color: var(--heading-color);">
               Câu Hỏi Thường Gặp
             </h4>
-            <a href="#" class="text-decoration-none text-danger fw-bold d-flex align-items-center gap-1 hover-underline" style="font-size: 0.95rem;">
+            <router-link to="/ho-tro#faq-section" class="text-decoration-none text-danger fw-bold d-flex align-items-center gap-1 hover-underline" style="font-size: 0.95rem;">
               Xem tất cả <i class="bi bi-arrow-right"></i>
-            </a>
+            </router-link>
           </div>
           
-          
-            <div class="row g-4" v-if="faqs.length > 0">
-              <!-- Cột trái -->
-              <div class="col-lg-6">
-                <div class="faq-list-container d-flex flex-column">
-                  <div v-for="faq in faqs.slice(0, Math.ceil(faqs.length / 2))" :key="faq.id" class="faq-list-item d-flex pb-4 border-bottom position-relative mb-4 h-100">
-                    <div class="flex-shrink-0 mt-0">
-                      <i class="bi bi-question-circle-fill text-danger fs-4"></i>
-                    </div>
-                    <div class="ms-3 flex-grow-1">
-                      <h6 class="fw-bold mb-2" style="font-size: 1.05rem; line-height: 1.4;">
-                        <a href="#" class="text-dark text-decoration-none stretched-link transition-color" onmouseover="this.style.color='#f82249'" onmouseout="this.style.color=''">{{ faq.question }}</a>
-                      </h6>
-                      <div class="text-danger fw-bold text-uppercase mt-2" style="letter-spacing: 0.5px; font-size: 0.8rem;">Xem chi tiết <i class="bi bi-arrow-right ms-1"></i></div>
-                    </div>
+          <div class="row g-4" v-if="faqs.length > 0">
+            <!-- Cột trái -->
+            <div class="col-lg-6">
+              <div class="faq-list-container d-flex flex-column">
+                <div v-for="faq in faqs.slice(0, Math.ceil(faqs.length / 2))" :key="faq.id" class="faq-list-item d-flex pb-4 border-bottom position-relative mb-4 h-100">
+                  <div class="flex-shrink-0 mt-0">
+                    <i class="bi bi-question-circle-fill text-danger fs-4"></i>
+                  </div>
+                  <div class="ms-3 flex-grow-1">
+                    <h6 class="fw-bold mb-2" style="font-size: 1.05rem; line-height: 1.4;">
+                      <a href="#" class="text-dark text-decoration-none stretched-link transition-color" onmouseover="this.style.color='#f82249'" onmouseout="this.style.color=''">{{ faq.question }}</a>
+                    </h6>
+                    <div class="text-danger fw-bold text-uppercase mt-2" style="letter-spacing: 0.5px; font-size: 0.8rem;">Xem chi tiết <i class="bi bi-arrow-right ms-1"></i></div>
                   </div>
                 </div>
               </div>
-              <!-- Cột phải -->
-              <div class="col-lg-6">
-                <div class="faq-list-container d-flex flex-column">
-                  <div v-for="faq in faqs.slice(Math.ceil(faqs.length / 2))" :key="faq.id" class="faq-list-item d-flex pb-4 border-bottom position-relative mb-4 h-100">
-                    <div class="flex-shrink-0 mt-0">
-                      <i class="bi bi-question-circle-fill text-danger fs-4"></i>
-                    </div>
-                    <div class="ms-3 flex-grow-1">
-                      <h6 class="fw-bold mb-2" style="font-size: 1.05rem; line-height: 1.4;">
-                        <a href="#" class="text-dark text-decoration-none stretched-link transition-color" onmouseover="this.style.color='#f82249'" onmouseout="this.style.color=''">{{ faq.question }}</a>
-                      </h6>
-                      <div class="text-danger fw-bold text-uppercase mt-2" style="letter-spacing: 0.5px; font-size: 0.8rem;">Xem chi tiết <i class="bi bi-arrow-right ms-1"></i></div>
-                    </div>
+            </div>
+            <!-- Cột phải -->
+            <div class="col-lg-6">
+              <div class="faq-list-container d-flex flex-column">
+                <div v-for="faq in faqs.slice(Math.ceil(faqs.length / 2))" :key="faq.id" class="faq-list-item d-flex pb-4 border-bottom position-relative mb-4 h-100">
+                  <div class="flex-shrink-0 mt-0">
+                    <i class="bi bi-question-circle-fill text-danger fs-4"></i>
+                  </div>
+                  <div class="ms-3 flex-grow-1">
+                    <h6 class="fw-bold mb-2" style="font-size: 1.05rem; line-height: 1.4;">
+                      <a href="#" class="text-dark text-decoration-none stretched-link transition-color" onmouseover="this.style.color='#f82249'" onmouseout="this.style.color=''">{{ faq.question }}</a>
+                    </h6>
+                    <div class="text-danger fw-bold text-uppercase mt-2" style="letter-spacing: 0.5px; font-size: 0.8rem;">Xem chi tiết <i class="bi bi-arrow-right ms-1"></i></div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
+        </div>
         </div>
       </section>
   </main>
@@ -498,6 +518,14 @@ onMounted(() => {
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+
+/* ── SECTION TITLE LUXURY ── */
+.section-catalog-title {
+  color: var(--heading-color, #0A1128);
+  font-family: var(--heading-font, 'Raleway', sans-serif);
+  font-size: 1.25rem;
+  letter-spacing: -0.2px;
 }
 </style>
 

@@ -47,25 +47,114 @@ Toàn bộ tài nguyên gốc của template TheEvent 1.0.0 được lưu trữ 
 
 Mọi lập trình viên và AI khi code hoặc sửa các trang Client (Trang chủ, Tra cứu Catalog, Chi tiết sơ đồ rã máy, Giỏ hàng, Lịch sử đơn hàng, Tin tức...) **BẮT BUỘC** sử dụng các cấu trúc chuẩn sau:
 
-### 3.1. Cấu trúc Khối nội dung (Section & Section Title)
-Mọi section trên trang Client phải tuân thủ chuẩn của TheEvent:
+### 3.1. Cấu trúc Khối Section & Lưới Card Sản Phẩm Hoàn Chỉnh (Unified Section + Grid + Product Card)
+> **Nguyên tắc tích hợp:** Section, Grid và Card là **MỘT KHỐI THỐNG NHẤT KHÔNG TÁCH RỜI**. Card sản phẩm luôn nằm lồng trực tiếp bên trong các cột (`col`) của lưới Grid Bootstrap 5 trong Section.
+
+Cấu trúc chuẩn mẫu áp dụng đồng bộ cho mọi trang danh sách (Trang Chủ, Sản Phẩm Cùng Danh Mục, Kết Quả Tra Cứu Catalog...):
+
 ```html
+<!-- =========================================================================
+     SECTION: KHỐI DANH MỤC / SẢN PHẨM TIÊU BIỂU (RÁP LIỀN HOÀN CHỈNH)
+     ========================================================================= -->
 <section class="section py-5">
   <div class="container">
-    <!-- Tiêu đề Section chuẩn TheEvent -->
-    <div class="section-title text-center mb-5">
-      <span class="text-uppercase text-danger fw-bold small">DANH MỤC PHỤ TÙNG</span>
-      <h2 class="fw-bold text-dark mt-1">Tra Cứu Theo Thương Hiệu</h2>
-      <p class="text-muted">Chọn thương hiệu động cơ thủy để bắt đầu tra cứu sơ đồ rã máy chi tiết</p>
+    
+    <!-- 1. TIÊU ĐỀ KHỐI (SECTION TITLE CHUẨN HIỆN ĐẠI, THOÁNG ĐÃNG) -->
+    <div class="section-title text-center mb-5" data-aos="fade-up">
+      <span class="text-uppercase text-danger fw-bold small tracking-wider">DANH MỤC PHỤ TÙNG</span>
+      <h2 class="fw-bold text-dark mt-1">Sản Phẩm & Phụ Tùng Nổi Bật</h2>
+      <p class="text-muted">Linh kiện hàng hải chính hãng, nhập khẩu trực tiếp từ các hãng mẹ Nhật Bản</p>
     </div>
 
-    <!-- Nội dung dùng Grid Bootstrap 5 -->
-    <div class="row g-4">
-      <!-- Cột con -->
+    <!-- 2. LƯỚI BỐ CỤC CHUẨN (2 CỘT MOBILE - 3 CỘT TABLET - 4 CỘT DESKTOP) -->
+    <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-4 justify-content-center" data-aos="fade-up" data-aos-delay="100">
+      
+      <!-- CỘT CON LẶP QUA TỪNG PHỤ TÙNG -->
+      <div class="col" v-for="item in danhSachPhuTung" :key="item.id">
+        
+        <!-- THẺ CARD SẢN PHẨM (LUXURY MINIMALISM 4PX BO GÓC) -->
+        <div class="card h-100 product-card position-relative">
+          
+          <!-- A. ẢNH SẢN PHẨM & BADGE CHÍNH HÃNG (Bo cong 4px góc trên) -->
+          <div class="card-img-wrapper position-relative overflow-hidden bg-light d-flex align-items-center justify-content-center">
+            <img 
+              :src="getImageUrl(item.hinh_anh_chinh)" 
+              :alt="item.ten_san_pham" 
+              class="card-img-top w-100 transition-transform card-img-product"
+              @error="$event.target.src='https://placehold.co/400x300/f8f9fa/a1acb8?text=JPM+Marine'"
+            >
+            <span v-if="item.is_oem" class="badge bg-danger position-absolute top-0 start-0 m-2">
+              OEM Japan
+            </span>
+          </div>
+
+          <!-- B. THÂN THÔNG TIN (4 TẦNG THỰC DỤNG) -->
+          <div class="card-body text-start p-3 d-flex flex-column bg-white">
+            
+            <!-- Tầng 1: Danh mục / Thương hiệu -->
+            <div class="product-category mb-1 text-truncate" :title="item.danh_muc?.ten_danh_muc || 'Phụ Tùng OEM'">
+              {{ item.danh_muc?.ten_danh_muc || 'Phụ Tùng OEM' }}
+            </div>
+
+            <!-- Tầng 2: Tên sản phẩm / Linh kiện (Stretched-link dẫn đến chi tiết) -->
+            <h5 class="card-title mb-1">
+              <router-link :to="`/chi-tiet-san-pham/${item.slug}`" class="text-decoration-none stretched-link">
+                {{ item.ten_san_pham }}
+              </router-link>
+            </h5>
+
+            <!-- Tầng 3: Mã SKU kỹ thuật (Tư duy kỹ thuật tàu thủy) -->
+            <div class="product-sku mb-3">
+              <template v-if="item.ma_san_pham">
+                <span class="sku-label text-muted">Mã:</span> <span class="sku-code fw-bold">{{ item.ma_san_pham }}</span>
+              </template>
+              <template v-else>&nbsp;</template>
+            </div>
+
+            <!-- Tầng 4: Chân Card - Giá bán & Nút giỏ hàng bo góc tròn -->
+            <div class="mt-auto d-flex align-items-center justify-content-between pt-1">
+              <div>
+                <span v-if="item.is_gia_lien_he || !item.gia_ban" class="text-danger fw-bold price-value">
+                  Liên hệ
+                </span>
+                <span v-else class="text-danger fw-bold price-value">
+                  {{ Number(item.gia_ban).toLocaleString('vi-VN') }} đ
+                </span>
+              </div>
+
+              <!-- Nút thêm giỏ hàng nhanh (z-index cao để không bị stretched-link chiếm) -->
+              <button
+                v-if="!item.is_gia_lien_he && item.gia_ban"
+                class="btn btn-cart-action position-relative z-2"
+                title="Thêm vào giỏ hàng"
+                @click.prevent="addToCart(item)"
+              >
+                <i class="bi bi-cart2"></i>
+              </button>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
     </div>
+
+    <!-- 3. NÚT XEM TẤT CẢ CUỐI SECTION (NÚT PILL HIỆN ĐẠI 2026+ KÈM MŨI TÊN CHUYỂN ĐỘNG) -->
+    <div class="text-center mt-5" data-aos="fade-up">
+      <router-link to="/san-pham" class="btn btn-outline-danger px-4 py-2 fw-semibold d-inline-flex align-items-center gap-2 group-hover">
+        <span>Xem Toàn Bộ Catalog</span>
+        <i class="bi bi-arrow-right transition-transform"></i>
+      </router-link>
+    </div>
+
   </div>
 </section>
 ```
+
+#### Quy chuẩn chi tiết của Thẻ Card Sản Phẩm:
+- **Độ cong Card thống nhất toàn bộ Client:** Toàn bộ thẻ `.card`, `.product-card`, `.premium-product-card` trên giao diện Client được quy chuẩn bo góc sắc nét, thanh lịch chuẩn **`border-radius: 4px;`** (Luxury Minimalism) tự động ăn theo template `main.css`.
+- **Cơ chế tự động hóa qua CSS Template:** Khi lập trình viên viết code chỉ cần khai báo class `card` (hoặc `product-card`), thẻ sẽ **tự động thừa hưởng độ cong 4px**, viền mỏng `#e0e6f0`, đổ bóng mờ thanh lịch và hiệu ứng overflow clipping. **Tuyệt đối không cần thêm các class bo góc rời rạc** (`rounded-3`, `rounded-2`) hay dùng inline `style="border-radius: ..."` gây bất nhất giao diện giữa các trang.
+- **Ảnh thẻ con (`.card-img-wrapper`, `.card-img-top`):** Tự động bo góc trên `4px` (`border-top-left-radius: 4px; border-top-right-radius: 4px;`) để ảnh ôm khít tuyệt đối góc cong của Card, không bị lem góc vuông thừa ra ngoài.
 
 ### 3.2. Nút bấm chuẩn Client (TheEvent Buttons)
 Không tự viết class nút tùy biến. Sử dụng hệ nút Bootstrap được TheEvent style hóa:
@@ -86,39 +175,7 @@ Không tự viết class nút tùy biến. Sử dụng hệ nút Bootstrap đư�
 </button>
 ```
 
-### 3.3. Thẻ Sản Phẩm / Phụ Tùng / Card Chung (Product & Card Standard)
-- **Quy chuẩn độ cong Card thống nhất toàn bộ Client:** Toàn bộ thẻ `.card`, `.product-card`, `.premium-product-card` trên giao diện Client được quy chuẩn bo góc sắc nét, thanh lịch chuẩn **`border-radius: 4px;`** (Luxury Minimalism 4px nguyên bản của hệ thống) tự động ăn theo template `main.css`.
-- **Cơ chế tự động hóa qua CSS Template:** Khi lập trình viên viết code chỉ cần khai báo class `card` (hoặc `product-card`), thẻ sẽ **tự động thừa hưởng độ cong 4px**, viền mỏng `#e0e6f0`, đổ bóng mờ thanh lịch và hiệu ứng overflow clipping. **Tuyệt đối không cần thêm các class bo góc rời rạc** (`rounded-3`, `rounded-2`) hay dùng inline `style="border-radius: ..."` gây bất nhất giao diện giữa các trang.
-- **Ảnh thẻ con (`.card-img-wrapper`, `.card-img-top`):** Tự động bo góc trên `4px` (`border-top-left-radius: 4px; border-top-right-radius: 4px;`) để ảnh ôm khít tuyệt đối góc cong của Card, không bị lem góc vuông thừa ra ngoài.
-
-Cấu trúc mẫu chuẩn cho Card:
-```html
-<div class="card h-100 product-card position-relative">
-  <!-- Ảnh sản phẩm / sơ đồ -->
-  <div class="card-img-wrapper position-relative overflow-hidden bg-light d-flex align-items-center justify-content-center">
-    <img :src="item.image" :alt="item.name" class="card-img-top w-100 transition-transform" />
-    <span v-if="item.is_oem" class="badge bg-danger position-absolute top-0 start-0 m-2">Chính Hãng OEM</span>
-  </div>
-  <!-- Thông tin -->
-  <div class="card-body d-flex flex-column justify-content-between p-3 bg-white">
-    <div>
-      <div class="product-category mb-1 text-truncate">{{ item.brand_name }}</div>
-      <h5 class="card-title mb-1">
-        <router-link :to="`/chi-tiet-san-pham/${item.slug}`" class="stretched-link">{{ item.name }}</router-link>
-      </h5>
-      <div class="product-sku mb-3">
-        <span class="sku-label">Mã:</span> <span class="sku-code">{{ item.sku }}</span>
-      </div>
-      <div class="text-danger fw-bold price-value">{{ formatCurrency(item.price) }}</div>
-    </div>
-    <div class="d-grid mt-2">
-      <button class="btn btn-outline-danger btn-sm">Xem Chi Tiết</button>
-    </div>
-  </div>
-</div>
-```
-
-### 3.4. Bảng Giỏ Hàng & Lịch Sử Đơn Hàng (Tables)
+### 3.3. Bảng Giỏ Hàng & Lịch Sử Đơn Hàng (Tables)
 Bảng ở Client phải gọn gàng, thoáng đãng, tuân thủ phong cách Bootstrap 5:
 ```html
 <div class="table-responsive">
@@ -142,7 +199,7 @@ Bảng ở Client phải gọn gàng, thoáng đãng, tuân thủ phong cách Bo
 </div>
 ```
 
-### 3.5. Ô tìm kiếm & Bộ lọc (Search Bar & Filter Inputs)
+### 3.4. Ô tìm kiếm & Bộ lọc (Search Bar & Filter Inputs)
 Dùng `.input-group` kết hợp icon Bootstrap Icons:
 ```html
 <div class="input-group">

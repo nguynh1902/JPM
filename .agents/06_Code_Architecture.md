@@ -37,35 +37,40 @@ app/
 └── Infrastructure/           # Tầng Giao Tiếp Bên Ngoài (Zalo API, Payment Gateway)
 ```
 
-## 2. CẤU TRÚC THƯ MỤC FRONTEND (VUE 3 - FEATURE-DRIVEN)
-Frontend sẽ KHÔNG sử dụng cấu trúc gom chung `src/views` và `src/components` thành bãi rác. Chúng ta sử dụng cấu trúc **Feature-Driven** (Gói gọn mọi file liên quan đến 1 nghiệp vụ vào chung 1 thư mục).
+## 2. CẤU TRÚC THƯ MỤC FRONTEND (VUE 3 - SINGLE UNIFIED VIEW)
+Frontend tổ chức rạch ròi theo 2 phân hệ **Admin & Staff (`views/admin/`)** và **Khách hàng (`views/client/`)**, tuân thủ nguyên tắc **"Code một thể thống nhất - Tuyệt đối không xé lẻ lắt nhắt"**.
 
+### 2.1. Cấu trúc thư mục thực tế (`FE_JPM/src/`)
 ```text
 src/
-├── modules/                  # Chứa các tính năng theo luồng nghiệp vụ
-│   ├── CatalogSearch/        # (Luồng 3: Tra cứu Sơ đồ)
-│   │   ├── components/       # DiagramViewer.vue, RefTable.vue
-│   │   ├── views/            # CatalogHome.vue, DiagramDetail.vue
-│   │   ├── store/            # Pinia / Vue Query cấu hình cho module
-│   │   └── composables/      # Logic reuse (VD: useDiagramZoom.js)
-│   ├── Checkout/             # (Luồng Bán Hàng)
-│   ├── AdminPIM/             # (Tool Nhập liệu Data)
-│   │   ├── components/       # ImageMapper.vue, ExcelUploader.vue
-│   │   └── views/            # DiagramEditor.vue
-│   └── AdminCrossDocking/    # (Tool Nhận Hàng)
-│       └── components/       # BarcodeScanner.vue
+├── views/                    # Toàn bộ màn hình giao diện (Single Unified Views)
+│   ├── admin/                # Phân hệ Quản trị & Vận hành nội bộ (Theme Sneat)
+│   │   ├── BanHang/          # DonHang.vue (Yêu cầu, Báo giá, Gom PO Nhật, Duyệt cọc)
+│   │   ├── MayThuy/          # ThuongHieu.vue, DongCoModel.vue, LoaiDongCo.vue
+│   │   ├── PhuTung/          # PhuTung.vue, SoDoPhuTung.vue (Tool map sơ đồ nổ)
+│   │   ├── LinhKien/         # MaThayThe.vue, CapNhatLinhKien.vue
+│   │   ├── Kho/              # Kho.vue, TonKho.vue, TheKho.vue
+│   │   ├── NhanSu/           # NhanVien.vue, PhanQuyen.vue
+│   │   └── HeThong/          # CauHinhHeThong.vue, DanhSachThongBao.vue
+│   │
+│   ├── client/               # Phân hệ Khách hàng & Cửa hàng (Theme TheEvent)
+│   │   ├── guest/            # TrangChu.vue, SoDoPhuTung.vue, ChiTietSanPham.vue, GioHang.vue...
+│   │   └── customer/         # Garage.vue, LichSuDonHang.vue, TaiKhoan.vue...
+│   └── auth/                 # XacThuc.vue (Đăng nhập, Đăng ký, Quên mật khẩu)
 │
-├── shared/                   # Dùng chung cho toàn bộ dự án
-│   ├── components/           # Button, Modal, DataTable (Các UI Element nguyên thủy)
-│   ├── layouts/              # AdminLayout.vue (Sneat), ClientLayout.vue (TheEvent)
-│   ├── assets/               # CSS, SCSS, Images chung
-│   └── utils/                # Helpers, API Axios instances
-│
-└── router/                   # Cấu hình Route
-    ├── admin.js              # Load các route Admin
-    ├── client.js             # Load các route Client
-    └── index.js              # Gộp route
+├── layout/                   # Khung Layout dùng chung (LayoutAdmin, LayoutClient, LayoutAuth)
+├── stores/                   # Pinia State Management (authStore.js, cartStore.js)
+├── api/                      # axiosClient.js (Cấu hình baseURL, Interceptor Bearer Token)
+├── utils/                    # offlineSyncService.js (IndexedDB hàng đợi offline)
+└── router/                   # index.js (Định tuyến Kebab-case, Auth & Permission Guards)
 ```
+
+### 2.2. Nguyên tắc "Code một thể thống nhất" (Single Unified View - Cấm xé nhỏ)
+* **Không xé nhỏ thành các component con lắt nhắt:** Toàn bộ cấu trúc của một trang (Khối tiêu đề, Bộ lọc tra cứu, Lưới Card / Bảng dữ liệu, Nút hành động, và cả Popup Modal tương tác) bắt buộc phải được code trọn vẹn trong **CÙNG MỘT FILE `.vue` DUY NHẤT**.
+* **Lợi ích thực chiến:** 
+  1. Luồng dữ liệu chạy thông suốt từ trên xuống dưới, không cần truyền `props` hay `emit` qua nhiều tầng component ảo phức tạp.
+  2. Mọi logic (State, Watcher, Computed, Modal handler) nằm ngay trước mắt, dễ bảo trì, dễ sửa lỗi và dễ tái sử dụng.
+  3. Tránh hoàn toàn tình trạng phân mảnh mã nguồn (Over-componentization). Mọi page tiếp theo bắt buộc phải tuân thủ nghiêm ngặt nguyên tắc này giống như `TrangChu.vue`.
 
 ## 3. THIẾT KẾ CÁC TẦNG KIẾN TRÚC KỸ THUẬT
 

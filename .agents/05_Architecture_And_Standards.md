@@ -9,7 +9,7 @@ Mọi Lập trình viên và AI tham gia vào dự án JPM bắt buộc phải t
 ## 1. KIẾN TRÚC TỔNG THỂ (TECH-STACK & ARCHITECTURE)
 *   **Kiến trúc:** Tách bạch Frontend và Backend (SPA giao tiếp qua RESTful API). Bắt buộc áp dụng **Modular Monolith** (Domain-Driven Design) cho Backend thay vì Flat MVC truyền thống.
 *   **Backend:** Laravel 11/12 (PHP 8.2+). Sử dụng mô hình `Controller -> Service -> Repository/Model` để tái sử dụng logic và dễ dàng testing.
-*   **Frontend:** Vue.js 3 sử dụng **Options API** (để đồng nhất với code cũ), công cụ build Vite. Bắt buộc cấu trúc theo **Feature-Driven** (`src/modules/...`).
+*   **Frontend:** Vue.js 3 (Composition API / Options API), công cụ build Vite. Bắt buộc cấu trúc theo **Single Unified View** (`src/views/client/...` và `src/views/admin/...`), toàn bộ khối giao diện, bảng, modal của 1 trang nằm trọn vẹn trong 1 file duy nhất, cấm xé nhỏ thành các component con lắt nhắt.
 *   **Database:** MySQL (MariaDB). Tối ưu hóa Indexing (đặc biệt là Composite Indexes) cho các cột thường xuyên query như `SKU`, `ma_phu_tung`, `thuong_hieu_id`.
 
 ## 2. QUY CHUẨN GIAO DIỆN (UI/UX STRICT RULES)
