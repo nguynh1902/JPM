@@ -19,7 +19,7 @@
           <div class="jpm-split-sidebar mb-4 mb-lg-0">
             <div class="card sticky-sidebar catalog-sidebar-card shadow-sm">
               <div class="catalog-sidebar-header">
-                <h4 class="catalog-sidebar-title mb-0">Bộ Lọc</h4>
+                <h3 class="catalog-sidebar-title mb-0">Bộ Lọc</h3>
                 <button 
                   type="button"
                   class="btn-reset-sidebar-filter" 
@@ -54,7 +54,7 @@
 
                 <!-- DANH MỤC THIẾT BỊ -->
                 <div class="sidebar-category-section">
-                  <div class="sidebar-section-title mb-2 text-muted fw-bold">
+                  <div class="sidebar-section-title mb-2">
                     Danh Mục Thiết Bị
                   </div>
                   <div v-if="isLoadingCategories" class="text-center py-4">
@@ -69,6 +69,7 @@
                       @click="selectAllCategories"
                     >
                       <span class="catalog-nav-text">Tất cả sản phẩm</span>
+                      <i class="bi bi-chevron-right catalog-nav-arrow ms-auto"></i>
                     </button>
 
                     <!-- Danh mục lấy từ API -->
@@ -81,6 +82,7 @@
                       @click="selectCategory(cat.slug)"
                     >
                       <span class="catalog-nav-text" :title="cat.ten_danh_muc">{{ cat.ten_danh_muc }}</span>
+                      <i class="bi bi-chevron-right catalog-nav-arrow ms-auto"></i>
                     </button>
                   </div>
                 </div>
@@ -728,11 +730,11 @@ const scrollToProducts = () => {
 
 .catalog-sidebar-title {
   font-family: var(--heading-font, 'Raleway', sans-serif);
-  font-size: 0.95rem;
+  font-size: 1.15rem;
   font-weight: 700;
   color: #0A1128;
   margin: 0;
-  line-height: 1;
+  line-height: 1.2;
 }
 
 .btn-reset-sidebar-filter {
@@ -744,7 +746,7 @@ const scrollToProducts = () => {
   padding: 0;
   cursor: pointer;
   line-height: 1;
-  transition: opacity 0.2s ease, visibility 0.2s ease;
+  transition: opacity 0.2s ease, visibility 0.2s ease, color 0.15s ease;
 }
 
 .btn-reset-sidebar-filter.is-hidden {
@@ -765,11 +767,14 @@ const scrollToProducts = () => {
 }
 
 .sidebar-section-title {
-  font-size: 0.75rem;
-  letter-spacing: 0.5px;
+  font-family: var(--heading-font, 'Raleway', sans-serif);
+  font-size: 0.8125rem;
+  font-weight: 800;
+  letter-spacing: 0.6px;
   text-transform: uppercase;
-  color: #64748b;
-  padding-left: 4px;
+  color: #0A1128; /* Deep Navy chuẩn thương hiệu JPM - tương phản sắc nét với danh sách con */
+  padding: 0 4px 8px 4px;
+  border-bottom: 1px solid #f1f5f9;
 }
 
 /* ── SEARCH INPUT IN SIDEBAR (MATCHING THUONG HIEU) ── */
@@ -847,11 +852,13 @@ const scrollToProducts = () => {
   display: flex;
   flex-direction: column;
   gap: 3px;
+  padding-top: 4px;
 }
 
 .catalog-nav-btn {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   width: 100%;
   border: 1px solid transparent;
   background: transparent;
@@ -860,15 +867,17 @@ const scrollToProducts = () => {
   font-family: var(--default-font, sans-serif);
   font-weight: 500;
   font-size: 0.88rem;
-  color: #334155;
+  color: #475569; /* Slate trung tính, mềm mại hơn so với tiêu đề Navy */
   transition: all 0.2s ease;
   cursor: pointer;
   text-align: left;
 }
 
 .catalog-nav-btn:hover {
-  background: #f8fafc;
+  background: #f1f5f9;
   color: #0A1128;
+  font-weight: 600;
+  transform: translateX(2px);
 }
 
 .catalog-nav-btn.active {
@@ -879,10 +888,30 @@ const scrollToProducts = () => {
 }
 
 .catalog-nav-text {
-  width: 100%;
+  flex: 1;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.catalog-nav-arrow {
+  font-size: 0.72rem;
+  opacity: 0;
+  transform: translateX(-4px);
+  transition: all 0.2s ease;
+  color: inherit;
+  flex-shrink: 0;
+}
+
+.catalog-nav-btn:hover .catalog-nav-arrow {
+  opacity: 0.6;
+  transform: translateX(0);
+}
+
+.catalog-nav-btn.active .catalog-nav-arrow {
+  opacity: 1;
+  transform: translateX(0);
+  color: #f82249;
 }
 
 /* ── LUXURY EMPTY STATE ── */
