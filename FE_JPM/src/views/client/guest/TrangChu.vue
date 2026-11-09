@@ -77,62 +77,56 @@
           <div class="row g-3 mb-3">
             <!-- Cột 1: Thương Hiệu -->
             <div class="col-12 col-sm-6 col-lg-3">
-              <label class="filter-label mb-2">Thương hiệu</label>
-              <div class="custom-select-wrapper" :class="{ 'z-active': openDropdown === 'brand' }">
-                <div class="custom-select-box" :class="{ 'is-focused': openDropdown === 'brand', 'has-value': selectedBrand !== '' }" @click="toggleDropdown('brand')">
-                  <span class="text-truncate">{{ brandLabel }}</span>
-                  <i class="bi bi-chevron-down select-arrow" :class="{ 'rotated': openDropdown === 'brand' }"></i>
-                </div>
-                <ul class="custom-dropdown-list" v-show="openDropdown === 'brand'">
-                  <li @click="selectOption('brand', '')" :class="{ active: selectedBrand === '' }">Tất cả thương hiệu</li>
-                  <li v-for="b in brands" :key="b.id" @click="selectOption('brand', b.id)" :class="{ active: selectedBrand === b.id }">{{ b.name }}</li>
-                </ul>
-              </div>
+              <JpmSelect
+                label="Thương hiệu"
+                v-model="selectedBrand"
+                :options="brands || []"
+                placeholder="Chọn thương hiệu"
+                all-option-label="Tất cả thương hiệu"
+                value-key="id"
+                label-key="name"
+              />
             </div>
 
             <!-- Cột 2: Loại Động Cơ -->
             <div class="col-12 col-sm-6 col-lg-3">
-              <label class="filter-label mb-2">Loại động cơ</label>
-              <div class="custom-select-wrapper" :class="{ 'z-active': openDropdown === 'engineType' }">
-                <div class="custom-select-box" :class="{ 'is-focused': openDropdown === 'engineType', 'has-value': selectedEngineType !== '' }" @click="toggleDropdown('engineType')">
-                  <span class="text-truncate">{{ partLabel }}</span>
-                  <i class="bi bi-chevron-down select-arrow" :class="{ 'rotated': openDropdown === 'engineType' }"></i>
-                </div>
-                <ul class="custom-dropdown-list" v-show="openDropdown === 'engineType'">
-                  <li @click="selectOption('engineType', '')" :class="{ active: selectedEngineType === '' }">Tất cả loại động cơ</li>
-                  <li v-for="p in engineTypes" :key="p.id" @click="selectOption('engineType', p.id)" :class="{ active: selectedEngineType === p.id }">{{ p.ten_loai_dong_co }}</li>
-                </ul>
-              </div>
+              <JpmSelect
+                label="Loại động cơ"
+                v-model="selectedEngineType"
+                :options="engineTypes || []"
+                placeholder="Chọn loại động cơ"
+                all-option-label="Tất cả loại động cơ"
+                value-key="id"
+                label-key="ten_loai_dong_co"
+                :disabled="!selectedBrand"
+              />
             </div>
 
             <!-- Cột 3: Năm Sản Xuất -->
             <div class="col-12 col-sm-6 col-lg-3">
-              <label class="filter-label mb-2">Năm sản xuất</label>
-              <div class="custom-select-wrapper" :class="{ 'z-active': openDropdown === 'year' }">
-                <div class="custom-select-box" :class="{ 'is-focused': openDropdown === 'year', 'has-value': selectedYear !== '' }" @click="toggleDropdown('year')">
-                  <span class="text-truncate">{{ yearLabel }}</span>
-                  <i class="bi bi-chevron-down select-arrow" :class="{ 'rotated': openDropdown === 'year' }"></i>
-                </div>
-                <ul class="custom-dropdown-list" v-show="openDropdown === 'year'">
-                  <li @click="selectOption('year', '')" :class="{ active: selectedYear === '' }">Tất cả các năm</li>
-                  <li v-for="y in years" :key="y" @click="selectOption('year', y)" :class="{ active: selectedYear === y }">{{ y }}</li>
-                </ul>
-              </div>
+              <JpmSelect
+                label="Năm sản xuất"
+                v-model="selectedYear"
+                :options="years || []"
+                placeholder="Chọn năm sản xuất"
+                all-option-label="Tất cả các năm"
+                :disabled="!selectedBrand"
+              />
             </div>
 
             <!-- Cột 4: Model Động Cơ -->
             <div class="col-12 col-sm-6 col-lg-3">
-              <label class="filter-label mb-2">Model động cơ</label>
-              <div class="custom-select-wrapper" :class="{ 'z-active': openDropdown === 'model' }">
-                <div class="custom-select-box" :class="{ 'is-focused': openDropdown === 'model', 'has-value': selectedModel !== '' }" @click="toggleDropdown('model')">
-                  <span class="text-truncate">{{ modelLabel }}</span>
-                  <i class="bi bi-chevron-down select-arrow" :class="{ 'rotated': openDropdown === 'model' }"></i>
-                </div>
-                <ul class="custom-dropdown-list" v-show="openDropdown === 'model'">
-                  <li @click="selectOption('model', '')" :class="{ active: selectedModel === '' }">Tất cả model</li>
-                  <li v-for="m in engineModels" :key="m.id" @click="selectOption('model', m.id)" :class="{ active: selectedModel === m.id }">{{ m.ten_model }}</li>
-                </ul>
-              </div>
+              <JpmSelect
+                label="Model động cơ"
+                v-model="selectedModel"
+                :options="engineModels || []"
+                placeholder="Chọn model động cơ"
+                all-option-label="Tất cả model"
+                value-key="id"
+                label-key="ten_model"
+                :disabled="!selectedBrand"
+                :searchable="true"
+              />
             </div>
           </div>
 
@@ -242,77 +236,15 @@
       <div class="container" data-aos="fade-up" data-aos-delay="100">
         <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-4 justify-content-center">
           <!-- Skeleton khi đang load (8 sản phẩm = 2 hàng) -->
-          <template v-if="!hotProducts">
+          <template v-if="!hotProducts || isLoadingHotProducts">
             <div class="col" v-for="n in 8" :key="'sk-' + n">
-              <div class="card h-100">
-                <div class="card-img-wrapper skeleton-box card-img-product"></div>
-                <div class="card-body p-3 d-flex flex-column">
-                  <!-- Skeleton Dòng 1: Danh mục -->
-                  <div class="skeleton-line mb-2" style="width: 45%; height: 12px;"></div>
-                  <!-- Skeleton Dòng 2: Tên sản phẩm (2 dòng) -->
-                  <div class="skeleton-line mb-1" style="width: 100%; height: 15px;"></div>
-                  <div class="skeleton-line mb-2" style="width: 75%; height: 15px;"></div>
-                  <!-- Skeleton Dòng 3: Mã sản phẩm -->
-                  <div class="skeleton-line mb-3" style="width: 55%; height: 13px;"></div>
-                  <!-- Skeleton Dòng 4: Chân card (Giá & Nút giỏ hàng) -->
-                  <div class="mt-auto pt-1 d-flex justify-content-between align-items-center">
-                    <div class="skeleton-line" style="width: 50%; height: 20px;"></div>
-                    <div class="skeleton-box" style="width: 36px; height: 36px; border-radius: 8px;"></div>
-                  </div>
-                </div>
-              </div>
+              <ProductCard :loading="true" />
             </div>
           </template>
           <!-- Data thật -->
           <template v-else>
             <div class="col" v-for="prod in hotProducts" :key="prod.id">
-              <div class="card h-100 product-card position-relative">
-                <div class="card-img-wrapper position-relative overflow-hidden bg-light d-flex align-items-center justify-content-center">
-                  <img
-                    :src="getImageUrl(prod.hinh_anh_chinh) || 'https://images.unsplash.com/photo-1559523161-0fc0d8b38a7a?auto=format&fit=crop&q=80&w=400'"
-                    class="card-img-top w-100 transition-transform card-img-product"
-                    :alt="prod.ten_san_pham"
-                    @error="$event.target.src='https://placehold.co/300x200/f8f9fa/a1acb8?text=JPM+Marine'"
-                  >
-                </div>
-                <div class="card-body text-start p-3 d-flex flex-column bg-white">
-                  <!-- 1. Danh mục sản phẩm (Đứng riêng một hàng độc lập, không lo bị dài) -->
-                  <div class="product-category mb-1 text-truncate" :title="prod.danh_muc ? prod.danh_muc.ten_danh_muc : 'OEM'">
-                    {{ prod.danh_muc ? prod.danh_muc.ten_danh_muc : 'OEM' }}
-                  </div>
-
-                  <!-- 2. Tên sản phẩm (Chuẩn font Roboto, hiển thị đúng chữ hoa/thường theo Admin nhập) -->
-                  <h5 class="card-title mb-1">
-                    <router-link :to="`/chi-tiet-san-pham/${prod.slug}`" class="text-decoration-none stretched-link">
-                      {{ prod.ten_san_pham }}
-                    </router-link>
-                  </h5>
-
-                  <!-- 3. Mã sản phẩm (Đặt ngay dưới tên SP: Chuẩn tư duy kỹ thuật & tra cứu phụ tùng) -->
-                  <div class="product-sku mb-3">
-                    <template v-if="prod.ma_san_pham">
-                      <span class="sku-label">Mã:</span> <span class="sku-code">{{ prod.ma_san_pham }}</span>
-                    </template>
-                    <template v-else>&nbsp;</template>
-                  </div>
-
-                  <!-- 4. Chân card: Giá bán & Nút giỏ hàng -->
-                  <div class="mt-auto d-flex align-items-center justify-content-between pt-1">
-                    <div>
-                      <span v-if="prod.is_gia_lien_he || !prod.gia_ban" class="text-danger fw-bold price-value">Liên hệ</span>
-                      <span v-else class="text-danger fw-bold price-value">{{ Number(prod.gia_ban).toLocaleString('vi-VN') }} đ</span>
-                    </div>
-                    <button
-                      v-if="!prod.is_gia_lien_he && prod.gia_ban"
-                      class="btn btn-cart-action"
-                      title="Thêm vào giỏ hàng"
-                      @click.prevent="addToCart(prod)"
-                    >
-                      <i class="bi bi-cart2"></i>
-                    </button>
-                  </div>
-                </div>
-              </div>
+              <ProductCard :product="prod" @add-to-cart="addToCart" />
             </div>
           </template>
         </div>
@@ -530,9 +462,15 @@ import { useQuery } from '@tanstack/vue-query';
 import axiosClient from '../../../api/axiosClient';
 import { useCartStore } from '../../../stores/cartStore';
 import { useSiteSettings } from '../../../composables/useSiteSettings';
+import ProductCard from '../../../components/client/ProductCard.vue';
+import JpmSelect from '../../../components/client/JpmSelect.vue';
 
 export default {
   name: "TrangChu",
+  components: {
+    ProductCard,
+    JpmSelect
+  },
   setup() {
     // ===== 1. KHỞI TẠO STATE, PINIA STORES & SITE SETTINGS =====
     const { settings } = useSiteSettings();

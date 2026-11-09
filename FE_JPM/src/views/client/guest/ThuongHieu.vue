@@ -102,62 +102,35 @@
 
                   <!-- Dropdown Mã Lực (HP) -->
                   <div class="col-6 col-sm-4 col-md-auto filter-dropdown-col">
-                    <div class="custom-select-wrapper" :class="{ 'z-active': openDropdown === 'hp' }">
-                      <div
-                        class="custom-select-box"
-                        :class="{ 'is-focused': openDropdown === 'hp', 'has-value': selectedHp !== '' }"
-                        @click="toggleDropdown('hp')"
-                      >
-                        <span class="text-truncate">{{ selectedHp ? selectedHp + ' HP' : 'Tất cả Mã Lực (HP)' }}</span>
-                        <i class="bi bi-chevron-down select-arrow" :class="{ rotated: openDropdown === 'hp' }"></i>
-                      </div>
-                      <ul class="custom-dropdown-list align-right" v-show="openDropdown === 'hp'">
-                        <li @click="selectHp('')" :class="{ active: selectedHp === '' }">Tất cả Mã Lực (HP)</li>
-                        <li v-for="hp in hpList" :key="hp" @click="selectHp(hp)" :class="{ active: selectedHp === String(hp) }">
-                          {{ hp }} HP
-                        </li>
-                      </ul>
-                    </div>
+                    <JpmSelect
+                      v-model="selectedHp"
+                      :options="hpOptions"
+                      placeholder="Tất cả Mã Lực (HP)"
+                      value-key="value"
+                      label-key="label"
+                    />
                   </div>
 
                   <!-- Dropdown Loại Thì -->
                   <div class="col-6 col-sm-4 col-md-auto filter-dropdown-col">
-                    <div class="custom-select-wrapper" :class="{ 'z-active': openDropdown === 'stroke' }">
-                      <div
-                        class="custom-select-box"
-                        :class="{ 'is-focused': openDropdown === 'stroke', 'has-value': selectedStroke !== '' }"
-                        @click="toggleDropdown('stroke')"
-                      >
-                        <span class="text-truncate">{{ selectedStroke ? formatStrokeDropdown(selectedStroke) : 'Tất cả Loại Thì' }}</span>
-                        <i class="bi bi-chevron-down select-arrow" :class="{ rotated: openDropdown === 'stroke' }"></i>
-                      </div>
-                      <ul class="custom-dropdown-list align-right" v-show="openDropdown === 'stroke'">
-                        <li @click="selectStroke('')" :class="{ active: selectedStroke === '' }">Tất cả Loại Thì</li>
-                        <li v-for="stroke in strokesList" :key="stroke" @click="selectStroke(stroke)" :class="{ active: selectedStroke === stroke }">
-                          {{ formatStrokeDropdown(stroke) }}
-                        </li>
-                      </ul>
-                    </div>
+                    <JpmSelect
+                      v-model="selectedStroke"
+                      :options="strokeOptions"
+                      placeholder="Tất cả Loại Thì"
+                      value-key="value"
+                      label-key="label"
+                    />
                   </div>
 
                   <!-- Dropdown Năm Sản Xuất -->
                   <div class="col-6 col-sm-4 col-md-auto filter-dropdown-col">
-                    <div class="custom-select-wrapper" :class="{ 'z-active': openDropdown === 'nam' }">
-                      <div
-                        class="custom-select-box"
-                        :class="{ 'is-focused': openDropdown === 'nam', 'has-value': selectedNam !== '' }"
-                        @click="toggleDropdown('nam')"
-                      >
-                        <span class="text-truncate">{{ selectedNam ? 'Năm ' + selectedNam : 'Tất cả Năm' }}</span>
-                        <i class="bi bi-chevron-down select-arrow" :class="{ rotated: openDropdown === 'nam' }"></i>
-                      </div>
-                      <ul class="custom-dropdown-list align-right" v-show="openDropdown === 'nam'">
-                        <li @click="selectNam('')" :class="{ active: selectedNam === '' }">Tất cả Năm</li>
-                        <li v-for="year in yearsList" :key="year" @click="selectNam(year)" :class="{ active: selectedNam === String(year) }">
-                          {{ year }}
-                        </li>
-                      </ul>
-                    </div>
+                    <JpmSelect
+                      v-model="selectedNam"
+                      :options="yearOptions"
+                      placeholder="Tất cả Năm"
+                      value-key="value"
+                      label-key="label"
+                    />
                   </div>
 
                   <!-- Nút Xóa Lọc Nhanh -->
@@ -250,6 +223,7 @@ import { computed, ref, onMounted, onUnmounted, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { useQuery } from '@tanstack/vue-query';
 import axiosClient from '../../../api/axiosClient';
+import JpmSelect from '../../../components/client/JpmSelect.vue';
 
 const route = useRoute();
 
@@ -375,6 +349,21 @@ const hpList = computed(() => {
     .map(m => m.hp);
   return [...new Set(hps)].sort((a, b) => b - a);
 });
+
+const hpOptions = computed(() => [
+  { value: '', label: 'Tất cả Mã Lực (HP)' },
+  ...hpList.value.map(hp => ({ value: String(hp), label: `${hp} HP` }))
+]);
+
+const strokeOptions = computed(() => [
+  { value: '', label: 'Tất cả Loại Thì' },
+  ...strokesList.value.map(s => ({ value: String(s), label: formatStrokeDropdown(s) }))
+]);
+
+const yearOptions = computed(() => [
+  { value: '', label: 'Tất cả Năm' },
+  ...yearsList.value.map(y => ({ value: String(y), label: `Năm ${y}` }))
+]);
 
 // 🔹 Lọc model theo: Loại đang chọn + Năm + HP + Mã + Thì 🔹
 const filteredModels = computed(() => {

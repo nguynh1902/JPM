@@ -99,18 +99,7 @@
             <div v-if="isGroupedMode">
               <div v-if="isLoadingGrouped" class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4">
                 <div class="col" v-for="i in 6" :key="i">
-                  <div class="card h-100 product-card border-0 shadow-sm">
-                    <div class="card-img-wrapper skeleton-box" style="aspect-ratio: 4/3;"></div>
-                    <div class="card-body p-3">
-                      <div class="skeleton-line" style="width: 50%; height: 12px; margin-bottom: 10px;"></div>
-                      <div class="skeleton-line" style="width: 90%; height: 16px; margin-bottom: 8px;"></div>
-                      <div class="skeleton-line" style="width: 70%; height: 16px; margin-bottom: 16px;"></div>
-                      <div class="d-flex justify-content-between align-items-center pt-2">
-                        <div class="skeleton-line" style="width: 45%; height: 22px;"></div>
-                        <div class="skeleton-box" style="width: 36px; height: 36px; border-radius: 8px;"></div>
-                      </div>
-                    </div>
-                  </div>
+                  <ProductCard :loading="true" />
                 </div>
               </div>
               <div v-else-if="groupedCategories.length > 0">
@@ -124,55 +113,7 @@
                   
                   <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4">
                     <div class="col" v-for="prod in (cat.products ? cat.products.slice(0, 3) : [])" :key="prod.id">
-                      <!-- PRODUCT CARD (100% ĐỒNG BỘ TRANG CHỦ) -->
-                      <div class="card h-100 product-card position-relative">
-                        <div class="card-img-wrapper position-relative overflow-hidden bg-light d-flex align-items-center justify-content-center">
-                          <img
-                            :src="getImageUrl(prod.hinh_anh_chinh)"
-                            class="card-img-top w-100 transition-transform card-img-product"
-                            style="aspect-ratio: 4/3; object-fit: cover;"
-                            :alt="prod.ten_san_pham"
-                            @error="$event.target.src='https://placehold.co/400x300/f8f9fa/a1acb8?text=JPM+Marine'"
-                          >
-                        </div>
-                        <div class="card-body text-start p-3 d-flex flex-column bg-white">
-                          <!-- 1. Danh mục sản phẩm -->
-                          <div class="product-category mb-1 text-truncate" :title="prod.danh_muc ? prod.danh_muc.ten_danh_muc : (getCategoryName(prod.danh_muc_san_pham_id) || 'OEM')">
-                            {{ prod.danh_muc ? prod.danh_muc.ten_danh_muc : (getCategoryName(prod.danh_muc_san_pham_id) || 'OEM') }}
-                          </div>
-
-                          <!-- 2. Tên sản phẩm -->
-                          <h5 class="card-title mb-1">
-                            <router-link :to="`/chi-tiet-san-pham/${prod.slug}`" class="text-decoration-none stretched-link">
-                              {{ prod.ten_san_pham }}
-                            </router-link>
-                          </h5>
-
-                          <!-- 3. Mã sản phẩm SKU (Chuẩn kỹ thuật & hàng hải) -->
-                          <div class="product-sku mb-3">
-                            <template v-if="prod.ma_san_pham">
-                              <span class="sku-label">Mã:</span> <span class="sku-code">{{ prod.ma_san_pham }}</span>
-                            </template>
-                            <template v-else>&nbsp;</template>
-                          </div>
-
-                          <!-- 4. Chân card: Giá bán & Nút giỏ hàng (Cùng hàng, cân đối chuẩn Trang Chủ) -->
-                          <div class="mt-auto d-flex align-items-center justify-content-between pt-1">
-                            <div>
-                              <span v-if="prod.is_gia_lien_he || !prod.gia_ban" class="text-danger fw-bold price-value">Liên hệ</span>
-                              <span v-else class="text-danger fw-bold price-value">{{ formatPrice(prod.gia_ban) }} đ</span>
-                            </div>
-                            <button
-                              class="btn btn-cart-action position-relative z-2"
-                              :title="!prod.is_gia_lien_he && prod.so_luong_ton !== undefined && prod.so_luong_ton <= 0 ? 'Hết hàng' : (prod.is_gia_lien_he ? 'Yêu cầu báo giá' : 'Thêm vào giỏ')"
-                              :disabled="!prod.is_gia_lien_he && prod.so_luong_ton !== undefined && prod.so_luong_ton <= 0"
-                              @click.prevent="addToCart(prod)"
-                            >
-                              <i :class="prod.is_gia_lien_he ? 'bi bi-chat-dots' : 'bi bi-cart2'"></i>
-                            </button>
-                          </div>
-                        </div>
-                      </div>
+                      <ProductCard :product="prod" @add-to-cart="addToCart" />
                     </div>
                   </div>
                 </div>
@@ -234,73 +175,14 @@
               <!-- Loading Skeleton -->
               <div v-if="isLoadingProducts" class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4">
                 <div class="col" v-for="i in 6" :key="i">
-                  <div class="card h-100 product-card border-0 shadow-sm">
-                    <div class="card-img-wrapper skeleton-box" style="aspect-ratio: 4/3;"></div>
-                    <div class="card-body p-3">
-                      <div class="skeleton-line" style="width: 50%; height: 12px; margin-bottom: 10px;"></div>
-                      <div class="skeleton-line" style="width: 90%; height: 16px; margin-bottom: 8px;"></div>
-                      <div class="skeleton-line" style="width: 70%; height: 16px; margin-bottom: 16px;"></div>
-                      <div class="d-flex justify-content-between align-items-center pt-2">
-                        <div class="skeleton-line" style="width: 45%; height: 22px;"></div>
-                        <div class="skeleton-box" style="width: 36px; height: 36px; border-radius: 8px;"></div>
-                      </div>
-                    </div>
-                  </div>
+                  <ProductCard :loading="true" />
                 </div>
               </div>
 
               <!-- Grid -->
               <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4" v-else-if="products.length > 0">
                 <div class="col" v-for="prod in products" :key="prod.id">
-                  <!-- PRODUCT CARD (100% ĐỒNG BỘ TRANG CHỦ) -->
-                  <div class="card h-100 product-card position-relative">
-                    <div class="card-img-wrapper position-relative overflow-hidden bg-light d-flex align-items-center justify-content-center">
-                      <img
-                        :src="getImageUrl(prod.hinh_anh_chinh)"
-                        class="card-img-top w-100 transition-transform card-img-product"
-                        style="aspect-ratio: 4/3; object-fit: cover;"
-                        :alt="prod.ten_san_pham"
-                        @error="$event.target.src='https://placehold.co/400x300/f8f9fa/a1acb8?text=JPM+Marine'"
-                      >
-                    </div>
-                    <div class="card-body text-start p-3 d-flex flex-column bg-white">
-                      <!-- 1. Danh mục sản phẩm -->
-                      <div class="product-category mb-1 text-truncate" :title="prod.danh_muc ? prod.danh_muc.ten_danh_muc : (getCategoryName(prod.danh_muc_san_pham_id) || 'OEM')">
-                        {{ prod.danh_muc ? prod.danh_muc.ten_danh_muc : (getCategoryName(prod.danh_muc_san_pham_id) || 'OEM') }}
-                      </div>
-
-                      <!-- 2. Tên sản phẩm -->
-                      <h5 class="card-title mb-1">
-                        <router-link :to="`/chi-tiet-san-pham/${prod.slug}`" class="text-decoration-none stretched-link">
-                          {{ prod.ten_san_pham }}
-                        </router-link>
-                      </h5>
-
-                      <!-- 3. Mã sản phẩm SKU (Chuẩn kỹ thuật & hàng hải) -->
-                      <div class="product-sku mb-3">
-                        <template v-if="prod.ma_san_pham">
-                          <span class="sku-label">Mã:</span> <span class="sku-code">{{ prod.ma_san_pham }}</span>
-                        </template>
-                        <template v-else>&nbsp;</template>
-                      </div>
-
-                      <!-- 4. Chân card: Giá bán & Nút giỏ hàng (Cùng hàng, cân đối chuẩn Trang Chủ) -->
-                      <div class="mt-auto d-flex align-items-center justify-content-between pt-1">
-                        <div>
-                          <span v-if="prod.is_gia_lien_he || !prod.gia_ban" class="text-danger fw-bold price-value">Liên hệ</span>
-                          <span v-else class="text-danger fw-bold price-value">{{ formatPrice(prod.gia_ban) }} đ</span>
-                        </div>
-                        <button
-                          class="btn btn-cart-action position-relative z-2"
-                          :title="!prod.is_gia_lien_he && prod.so_luong_ton !== undefined && prod.so_luong_ton <= 0 ? 'Hết hàng' : (prod.is_gia_lien_he ? 'Yêu cầu báo giá' : 'Thêm vào giỏ')"
-                          :disabled="!prod.is_gia_lien_he && prod.so_luong_ton !== undefined && prod.so_luong_ton <= 0"
-                          @click.prevent="addToCart(prod)"
-                        >
-                          <i :class="prod.is_gia_lien_he ? 'bi bi-chat-dots' : 'bi bi-cart2'"></i>
-                        </button>
-                      </div>
-                    </div>
-                  </div>
+                  <ProductCard :product="prod" @add-to-cart="addToCart" />
                 </div>
               </div>
               
@@ -372,6 +254,7 @@ import axiosClient from '../../../api/axiosClient';
 import { useRoute, useRouter } from 'vue-router';
 import { useCartStore } from '../../../stores/cartStore';
 import { createToaster } from '@meforma/vue-toaster';
+import ProductCard from '../../../components/client/ProductCard.vue';
 
 const route = useRoute();
 const router = useRouter();

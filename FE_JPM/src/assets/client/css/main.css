@@ -10,42 +10,118 @@
 # Font & Color Variables
 # Help: https://bootstrapmade.com/color-system/
 --------------------------------------------------------------*/
-/* Fonts */
+/* ═════════════════════════════════════════════════════════════════
+   JPM DESIGN SYSTEM 2026 OFFICIAL TOKENS (PO DECISION 01 & PHASE 3)
+   ═════════════════════════════════════════════════════════════════ */
 :root {
-  --default-font: "Roboto", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-  --heading-font: "Raleway", sans-serif;
-  --nav-font: "Raleway", sans-serif;
-}
+  /* 1. Brand Identity */
+  --jpm-color-navy-dark: #0A1128;
+  --jpm-color-navy-subtle: #101E42;
+  --jpm-color-red-marine: #F82249;
+  --jpm-color-red-hover: #D9163A;
+  --jpm-color-blue-electric: #0284C7;
+  --jpm-color-gold-marine: #D97706;
 
-/* Global Colors - The following color variables are used throughout the website. Updating them here will change the color scheme of the entire website */
-:root { 
-  --background-color: #f8f9fa; /* Very light gray for better contrast and modern feel */
-  --default-color: #495057; /* Softer dark gray for text (European readability) */
-  --heading-color: #0A1128; /* Deep Navy Blue */
-  --accent-color: #f82249; /* Bright Marine Red (sáng hơn bản thẫm, nhưng không bị hồng) */
-  --surface-color: #ffffff; /* Clean white cards */
-  --contrast-color: #ffffff; 
-  
-  /* Overwrite Bootstrap Default Red */
-  --bs-danger: #f82249;
+  /* 2. Neutral Slate Grayscale Scale */
+  --jpm-neutral-900: #0F172A;
+  --jpm-neutral-800: #1E293B;
+  --jpm-neutral-700: #334155;
+  --jpm-neutral-500: #64748B;
+  --jpm-neutral-400: #94A3B8;
+  --jpm-neutral-300: #CBD5E1;
+  --jpm-neutral-200: #E2E8F0;
+  --jpm-neutral-100: #F1F5F9;
+  --jpm-neutral-50:  #F8FAFC;
+  --jpm-neutral-0:   #FFFFFF;
+
+  /* 3. Semantic Status */
+  --jpm-status-stock-bg: #DCFCE7;
+  --jpm-status-stock-text: #15803D;
+  --jpm-status-quote-bg: #DBEAFE;
+  --jpm-status-quote-text: #1D4ED8;
+  --jpm-status-order-bg: #FEF3C7;
+  --jpm-status-order-text: #B45309;
+  --jpm-status-super-bg: #EDE9FE;
+  --jpm-status-super-text: #6D28D9;
+  --jpm-status-out-bg: #FEE2E2;
+  --jpm-status-out-text: #B91C1C;
+
+  /* 4. Border Radius System (PO Decision 01) */
+  --jpm-radius-card: 12px;
+  --jpm-radius-control: 8px;
+  --jpm-radius-badge: 6px;
+  --jpm-radius-circle: 50%;
+
+  /* 5. Spacing Scale */
+  --jpm-space-1: 4px;
+  --jpm-space-2: 8px;
+  --jpm-space-3: 12px;
+  --jpm-space-4: 16px;
+  --jpm-space-5: 20px;
+  --jpm-space-6: 24px;
+  --jpm-space-8: 32px;
+
+  /* 6. Shadows (Elevations) */
+  --jpm-shadow-sm: 0 1px 3px rgba(10, 17, 40, 0.05), 0 1px 2px rgba(10, 17, 40, 0.03);
+  --jpm-shadow-md: 0 4px 12px -2px rgba(10, 17, 40, 0.08), 0 2px 6px -2px rgba(10, 17, 40, 0.04);
+  --jpm-shadow-lg: 0 12px 24px -4px rgba(10, 17, 40, 0.12), 0 4px 10px -2px rgba(10, 17, 40, 0.06);
+  --jpm-shadow-xl: 0 24px 48px -12px rgba(10, 17, 40, 0.20);
+
+  /* 7. Typography */
+  --jpm-font-heading: 'Raleway', sans-serif;
+  --jpm-font-body: 'Roboto', sans-serif;
+  --jpm-font-mono: 'Roboto Mono', monospace;
+
+  /* 8. Layout Offset */
+  --jpm-header-height: 80px;
+
+  /* ═════════════════════════════════════════════════════════════════
+     GLOBAL BRIDGES: Ánh xạ các biến cũ sang Design Tokens 2026
+     ═════════════════════════════════════════════════════════════════ */
+  --default-font: var(--jpm-font-body);
+  --heading-font: var(--jpm-font-heading);
+  --nav-font: var(--jpm-font-heading);
+
+  --background-color: var(--jpm-neutral-50, #F8FAFC);
+  --default-color: var(--jpm-neutral-700, #334155);
+  --heading-color: var(--jpm-color-navy-dark, #0A1128);
+  --accent-color: var(--jpm-color-red-marine, #F82249);
+  --surface-color: var(--jpm-neutral-0, #FFFFFF);
+  --contrast-color: #FFFFFF;
+
+  /* Overwrite Bootstrap Default Red & Primary */
+  --bs-danger: var(--jpm-color-red-marine, #F82249);
   --bs-danger-rgb: 248, 34, 73;
-  --bs-primary: #0A1128;
+  --bs-primary: var(--jpm-color-navy-dark, #0A1128);
   --bs-primary-rgb: 10, 17, 40;
 
   /* Premium Box Shadows */
-  --shadow-sm: 0 2px 4px rgba(10, 17, 40, 0.05);
-  --shadow-md: 0 4px 12px rgba(10, 17, 40, 0.08);
-  --shadow-lg: 0 12px 24px rgba(10, 17, 40, 0.12);
+  --shadow-sm: var(--jpm-shadow-sm);
+  --shadow-md: var(--jpm-shadow-md);
+  --shadow-lg: var(--jpm-shadow-lg);
   --shadow-hover: 0 16px 32px rgba(10, 17, 40, 0.15);
 
   /* Unified Bootstrap Design System Tokens (Modern Tech Rounded: Card 12px, Button/Control 8px) */
-  --bs-border-radius: 12px;
-  --bs-border-radius-sm: 6px;
-  --bs-border-radius-lg: 12px;
+  --bs-border-radius: var(--jpm-radius-card, 12px);
+  --bs-border-radius-sm: var(--jpm-radius-badge, 6px);
+  --bs-border-radius-lg: var(--jpm-radius-card, 12px);
   --bs-border-radius-xl: 16px;
-  --bs-card-border-radius: 12px;
-  --bs-card-inner-border-radius: 12px;
-  --bs-btn-border-radius: 8px;
+  --bs-card-border-radius: var(--jpm-radius-card, 12px);
+  --bs-card-inner-border-radius: var(--jpm-radius-card, 12px);
+  --bs-btn-border-radius: var(--jpm-radius-control, 8px);
+  --bs-modal-border-radius: var(--jpm-radius-card, 12px);
+  --bs-modal-inner-border-radius: var(--jpm-radius-card, 12px);
+}
+
+@media (max-width: 1199.98px) {
+  :root {
+    --jpm-header-height: 72px;
+  }
+}
+@media (max-width: 767.98px) {
+  :root {
+    --jpm-header-height: 64px;
+  }
 }
 
 /* Nav Menu Colors */
@@ -1971,9 +2047,9 @@ section,
 /* ============================
    GLOBAL LINK
 ==============================*/
-.jpm-link-minimal { display: inline-flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 600; color: #0e1b4d; text-transform: uppercase; text-decoration: none; transition: 0.2s; letter-spacing: 0.5px; }
+.jpm-link-minimal { display: inline-flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 600; color: var(--jpm-color-navy-dark, #0A1128); text-transform: uppercase; text-decoration: none; transition: 0.2s; letter-spacing: 0.5px; }
 .jpm-link-minimal i { font-size: 16px; }
-.jpm-link-minimal:hover { color: #f82249; transform: scale(1.05); }
+.jpm-link-minimal:hover { color: var(--jpm-color-red-marine, #F82249); transform: scale(1.05); }
 
 /* ============================
    NEWS OVERLAY CARD
@@ -1982,7 +2058,7 @@ section,
   position: relative;
   display: block;
   overflow: hidden;
-  border-radius: 4px;
+  border-radius: var(--jpm-radius-card, 12px);
   aspect-ratio: 16/9;
   text-decoration: none !important;
   box-shadow: 0 4px 12px rgba(0,0,0,0.05);
@@ -2219,7 +2295,7 @@ section,
   text-transform: uppercase;
   font-size: 0.8rem;
   letter-spacing: 0.5px;
-  color: #0e1b4d;
+  color: var(--jpm-color-navy-dark, #0A1128);
   font-weight: 700;
   border-bottom: 2px solid #e2e8f0 !important;
   padding-top: 12px;
@@ -2247,13 +2323,13 @@ section,
   width: 28px;
   height: 28px;
   background-color: #f1f3f7;
-  color: #0e1b4d;
+  color: var(--jpm-color-navy-dark, #0A1128);
   border-radius: 50%;
   font-size: 0.8rem;
   font-weight: 700;
 }
 .model-code {
-  color: #0e1b4d;
+  color: var(--jpm-color-navy-dark, #0A1128);
   font-size: 0.95rem;
   font-weight: 800;
   letter-spacing: 0.5px;
@@ -2281,7 +2357,7 @@ section,
 
 /* JPM Unified Card Titles */
 .jpm-card-title {
-  color: var(--heading-color, #0e1b4d) !important;
+  color: var(--heading-color, #0A1128) !important;
   font-weight: 700;
 }
 
@@ -2321,7 +2397,7 @@ section,
 }
 .product-card:hover .card-title a,
 .premium-product-card:hover .card-title a {
-  color: var(--heading-color, #0e1b4d) !important; /* Giữ nguyên màu Xanh đậm đà nguyên bản của Client khi hover */
+  color: var(--heading-color, #0A1128) !important;
 }
 .card-hover:hover {
   border-color: var(--accent-color, #f82249) !important;
@@ -2481,7 +2557,7 @@ section,
   padding: 6px;
   background: #ffffff;
   border: 1px solid #e2e8f0;
-  border-radius: 10px;
+  border-radius: var(--jpm-radius-control, 8px);
   box-shadow: 0 14px 35px rgba(10, 17, 40, 0.15);
   z-index: 1060;
   max-height: 320px;
@@ -2577,7 +2653,7 @@ input[type="number"] {
 }
 .category-list .list-group-item:hover {
   background-color: #f8f9fa;
-  color: #0e1b4d;
+  color: var(--jpm-color-navy-dark, #0A1128);
 }
 .category-list .list-group-item.active {
   background-color: transparent;
@@ -2616,7 +2692,7 @@ input[type="number"] {
   text-transform: uppercase;
   font-size: 0.8rem;
   letter-spacing: 0.5px;
-  color: #0e1b4d;
+  color: var(--jpm-color-navy-dark, #0A1128);
   font-weight: 700;
   border-bottom: 2px solid #e2e8f0 !important;
   padding-top: 12px;
@@ -2640,7 +2716,7 @@ input[type="number"] {
   color: #555;
   border: none;
   margin: 0 2px;
-  border-radius: 4px;
+  border-radius: var(--jpm-radius-control, 8px);
   padding: 8px 16px;
   font-weight: 500;
   transition: all 0.2s;
@@ -2955,7 +3031,7 @@ a.footer-contact-value:hover {
 }
 .product-card:hover .card-title a,
 .premium-product-card:hover .card-title a {
-  color: var(--heading-color, #0e1b4d) !important; /* Giữ nguyên màu Xanh đậm đà nguyên bản của Client khi hover */
+  color: var(--heading-color, #0A1128) !important;
 }
 
 /* Chân card (bỏ kẻ ngang phân tách để bố cục thoáng sạch hiện đại) */
@@ -2990,10 +3066,9 @@ a.footer-contact-value:hover {
   background: linear-gradient(90deg, #f0f0f0 25%, #e8e8e8 37%, #f0f0f0 63%);
   background-size: 800px 100%;
   animation: skeleton-shimmer 1.4s ease infinite;
-  border-radius: 8px;
 }
-.skeleton-box { border-radius: 4px !important; width: 100%; display: block; }
-.skeleton-line { display: block; border-radius: 4px !important; }
+.skeleton-box { border-radius: var(--jpm-radius-control, 8px) !important; width: 100%; display: block; }
+.skeleton-line { display: block; border-radius: var(--jpm-radius-badge, 6px) !important; }
 
 /* ==============================================================
    TIỆN ÍCH DÙNG CHUNG TOÀN CỤC (GLOBAL UTILITIES - TƯƠNG TỰ BOOTSTRAP)
@@ -3269,20 +3344,21 @@ a.footer-contact-value:hover {
 
 .modal-content {
   border: none;
-  border-radius: 14px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15), 0 6px 20px rgba(0, 0, 0, 0.08);
+  border-radius: var(--jpm-radius-card, 12px) !important;
+  box-shadow: var(--jpm-shadow-xl, 0 24px 48px -12px rgba(10, 17, 40, 0.20)) !important;
+  overflow: hidden;
 }
 
 .modal-header {
   border-bottom: 1px solid #f0f2f5;
   padding: 1.1rem 1.5rem;
-  border-radius: 14px 14px 0 0;
+  border-radius: 12px 12px 0 0 !important;
 }
 
 .modal-footer {
   border-top: 1px solid #f0f2f5;
   padding: 1rem 1.5rem;
-  border-radius: 0 0 14px 14px;
+  border-radius: 0 0 12px 12px !important;
 }
 
 .modal-body {
@@ -3564,6 +3640,299 @@ a.footer-contact-value:hover {
   width: 120px;
   height: 40px;
   background: #e2e8f0;
-  border-radius: 4px;
+  border-radius: var(--jpm-radius-control, 8px);
 }
+
+/* ═════════════════════════════════════════════════════════════════
+   JPM DESIGN SYSTEM 2026 - BASIC UI CONSISTENCY (WP-01.4)
+   ═════════════════════════════════════════════════════════════════ */
+
+/* Nút yêu cầu báo giá ở chân Card (Cân bằng đối xứng với nút Cart) */
+.btn-quote-action {
+  height: 36px;
+  padding: 0 12px;
+  border-radius: var(--jpm-radius-control, 8px) !important;
+  color: var(--jpm-status-quote-text, #1D4ED8) !important;
+  border: 1px solid #bfdbfe !important;
+  background-color: var(--jpm-status-quote-bg, #DBEAFE) !important;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  position: relative;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  text-decoration: none;
+  cursor: pointer;
+}
+.btn-quote-action:hover,
+.btn-quote-action:active {
+  background-color: #1D4ED8 !important;
+  color: #ffffff !important;
+  border-color: #1D4ED8 !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(29, 78, 216, 0.25) !important;
+}
+
+/* Nút Navy Tech chuẩn */
+.btn-jpm-navy {
+  background-color: var(--jpm-color-navy-dark, #0A1128);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--jpm-radius-control, 8px);
+  font-weight: 600;
+  padding: 0.5rem 1rem;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+.btn-jpm-navy:hover {
+  background-color: var(--jpm-color-navy-subtle, #101E42);
+  color: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: var(--jpm-shadow-md);
+}
+
+/* Nút Primary Red chuẩn */
+.btn-jpm-primary {
+  background-color: var(--jpm-color-red-marine, #F82249);
+  color: #ffffff;
+  border: 1px solid var(--jpm-color-red-marine, #F82249);
+  border-radius: var(--jpm-radius-control, 8px);
+  font-weight: 600;
+  padding: 0.5rem 1.25rem;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+.btn-jpm-primary:hover {
+  background-color: var(--jpm-color-red-hover, #D9163A);
+  color: #ffffff;
+  border-color: var(--jpm-color-red-hover, #D9163A);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(248, 34, 73, 0.25);
+}
+
+/* Badges trạng thái chuẩn JPM */
+.jpm-badge-oem {
+  font-family: var(--jpm-font-mono, 'Roboto Mono', monospace);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--jpm-neutral-800, #1E293B);
+  background-color: var(--jpm-neutral-100, #F1F5F9);
+  border: 1px solid var(--jpm-neutral-300, #CBD5E1);
+  border-radius: var(--jpm-radius-badge, 6px);
+  padding: 2px 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.badge-stock-in {
+  background-color: var(--jpm-status-stock-bg, #DCFCE7) !important;
+  color: var(--jpm-status-stock-text, #15803D) !important;
+  border-radius: var(--jpm-radius-badge, 6px) !important;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 3px 8px;
+}
+.badge-stock-quote {
+  background-color: var(--jpm-status-quote-bg, #DBEAFE) !important;
+  color: var(--jpm-status-quote-text, #1D4ED8) !important;
+  border-radius: var(--jpm-radius-badge, 6px) !important;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 3px 8px;
+}
+.badge-stock-order {
+  background-color: var(--jpm-status-order-bg, #FEF3C7) !important;
+  color: var(--jpm-status-order-text, #B45309) !important;
+  border-radius: var(--jpm-radius-badge, 6px) !important;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 3px 8px;
+}
+.badge-stock-super {
+  background-color: var(--jpm-status-super-bg, #EDE9FE) !important;
+  color: var(--jpm-status-super-text, #6D28D9) !important;
+  border-radius: var(--jpm-radius-badge, 6px) !important;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 3px 8px;
+}
+.badge-stock-out {
+  background-color: var(--jpm-status-out-bg, #FEE2E2) !important;
+  color: var(--jpm-status-out-text, #B91C1C) !important;
+  border-radius: var(--jpm-radius-badge, 6px) !important;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 3px 8px;
+}
+
+/* ═════════════════════════════════════════════════════════════════
+   JPM GLOBAL UI STANDARDS & BRIDGES (DESIGN SYSTEM 2026)
+   Standardizes buttons, controls, badges, and empty states.
+   ═════════════════════════════════════════════════════════════════ */
+
+/* --- Global Button Consistency --- */
+.btn {
+  font-family: var(--heading-font, 'Raleway', sans-serif);
+  border-radius: var(--jpm-radius-control, 8px);
+  font-weight: 600;
+  transition: all 0.2s ease-in-out;
+}
+
+.btn-primary {
+  background-color: var(--jpm-color-navy-dark, #0A1128);
+  border-color: var(--jpm-color-navy-dark, #0A1128);
+  color: #ffffff;
+}
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active {
+  background-color: var(--jpm-color-navy-subtle, #101E42) !important;
+  border-color: var(--jpm-color-navy-subtle, #101E42) !important;
+  color: #ffffff !important;
+  box-shadow: var(--jpm-shadow-md);
+}
+
+.btn-danger {
+  background-color: var(--jpm-color-red-marine, #F82249);
+  border-color: var(--jpm-color-red-marine, #F82249);
+  color: #ffffff;
+}
+.btn-danger:hover,
+.btn-danger:focus,
+.btn-danger:active {
+  background-color: var(--jpm-color-red-hover, #D9163A) !important;
+  border-color: var(--jpm-color-red-hover, #D9163A) !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 12px rgba(248, 34, 73, 0.25);
+}
+
+.btn-outline-danger {
+  color: var(--jpm-color-red-marine, #F82249);
+  border-color: var(--jpm-color-red-marine, #F82249);
+}
+.btn-outline-danger:hover,
+.btn-outline-danger:focus,
+.btn-outline-danger:active {
+  background-color: var(--jpm-color-red-marine, #F82249) !important;
+  border-color: var(--jpm-color-red-marine, #F82249) !important;
+  color: #ffffff !important;
+}
+
+.btn-outline-primary {
+  color: var(--jpm-color-navy-dark, #0A1128);
+  border-color: var(--jpm-color-navy-dark, #0A1128);
+}
+.btn-outline-primary:hover,
+.btn-outline-primary:focus,
+.btn-outline-primary:active {
+  background-color: var(--jpm-color-navy-dark, #0A1128) !important;
+  border-color: var(--jpm-color-navy-dark, #0A1128) !important;
+  color: #ffffff !important;
+}
+
+/* --- Global Form Control Consistency --- */
+.form-control,
+.form-select {
+  font-family: var(--default-font, 'Roboto', sans-serif);
+  border-radius: var(--jpm-radius-control, 8px);
+  border-color: var(--jpm-neutral-300, #CBD5E1);
+  color: var(--jpm-neutral-800, #1E293B);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.form-control:focus,
+.form-select:focus {
+  border-color: var(--jpm-color-navy-dark, #0A1128);
+  box-shadow: 0 0 0 3px rgba(10, 17, 40, 0.12);
+}
+
+/* --- Global Badge Consistency --- */
+.badge:not(.rounded-pill) {
+  border-radius: var(--jpm-radius-badge, 6px);
+}
+
+/* --- Global Empty State Pattern --- */
+.empty-state {
+  text-align: center;
+  padding: 3rem 1.5rem;
+}
+.empty-icon-circle {
+  width: 80px;
+  height: 80px;
+  border-radius: var(--jpm-radius-avatar, 50%);
+  background-color: var(--jpm-neutral-100, #F1F5F9);
+  color: var(--jpm-neutral-400, #94A3B8);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.25rem;
+  margin-bottom: 1.25rem;
+}
+.empty-state-title {
+  font-family: var(--heading-font, 'Raleway', sans-serif);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--jpm-color-navy-dark, #0A1128);
+  margin-bottom: 0.5rem;
+}
+.empty-state-desc {
+  font-size: 0.9375rem;
+  color: var(--jpm-neutral-500, #64748B);
+  max-width: 420px;
+  margin: 0 auto 1.5rem auto;
+  line-height: 1.6;
+}
+
+/* ═════════════════════════════════════════════════════════════════
+   LEGACY BRIDGE: SHOPEE BUTTONS STANDARDIZATION (JPM 2026)
+   Standardizes legacy .btn-shopee buttons from customer order history
+   to match JPM 2026 tokens without modifying page-level templates.
+   ═════════════════════════════════════════════════════════════════ */
+.btn-shopee,
+button.btn-shopee,
+a.btn-shopee {
+  border-radius: var(--jpm-radius-control, 8px) !important;
+  font-family: var(--heading-font, 'Raleway', sans-serif) !important;
+  font-weight: 600 !important;
+  transition: all 0.2s ease !important;
+}
+.btn-shopee-primary,
+button.btn-shopee-primary,
+a.btn-shopee-primary {
+  background-color: var(--jpm-color-red-marine, #F82249) !important;
+  border-color: var(--jpm-color-red-marine, #F82249) !important;
+  color: #ffffff !important;
+}
+.btn-shopee-primary:hover,
+button.btn-shopee-primary:hover,
+a.btn-shopee-primary:hover {
+  background-color: var(--jpm-color-red-hover, #D9163A) !important;
+  border-color: var(--jpm-color-red-hover, #D9163A) !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 12px rgba(248, 34, 73, 0.25) !important;
+}
+.btn-shopee-outline,
+button.btn-shopee-outline,
+a.btn-shopee-outline {
+  border: 1px solid var(--jpm-neutral-300, #CBD5E1) !important;
+  background-color: #ffffff !important;
+  color: var(--jpm-neutral-700, #334155) !important;
+}
+.btn-shopee-outline:hover,
+button.btn-shopee-outline:hover,
+a.btn-shopee-outline:hover {
+  border-color: var(--jpm-color-navy-dark, #0A1128) !important;
+  color: var(--jpm-color-navy-dark, #0A1128) !important;
+  background-color: var(--jpm-neutral-50, #F8FAFC) !important;
+}
+
 

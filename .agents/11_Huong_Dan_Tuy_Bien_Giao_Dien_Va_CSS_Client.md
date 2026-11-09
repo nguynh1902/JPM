@@ -1,261 +1,236 @@
-# HƯỚNG DẪN TÙY BIẾN GIAO DIỆN & QUY TRÌNH SỬA CSS CLIENT
-*(Cẩm Nang Thay Đổi Phong Cách Thiết Kế, Bảng Màu & Kiểu Dáng Component Chuẩn Bootstrap 5)*
-
-> **Cấp độ:** Bắt buộc đọc và tuân thủ khi thay đổi giao diện, đổi theme (re-theming), hoặc tinh chỉnh phong cách thị giác của phân hệ Khách hàng (Client Storefront).  
-> **Nguyên tắc nền tảng:** *"Coi bộ CSS template gốc như một thư viện Framework/Design System; viết page bằng 100% cú pháp Bootstrap 5 ngữ nghĩa để toàn bộ website tự động biến hình đồng bộ khi CSS gốc thay đổi."*
-
----
-
-## 1. BẢN CHẤT KIẾN TRÚC & TRIẾT LÝ HOẠT ĐỘNG (ARCHITECTURE PHILOSOPHY)
-
-Trong dự án JPM, mối quan hệ giữa **Tài nguyên CSS gốc** và **Mã nguồn các trang Vue** hoạt động theo mô hình **Design System 2 Tầng**:
-
-```text
-┌────────────────────────────────────────────────────────────────────────┐
-│ TẦNG 1: FRAMEWORK & DESIGN SYSTEM LÕI (FE_JPM/src/assets/client/css/) │
-│ - Chứa CSS Tokens, biến màu sắc (:root), typography, bóng đổ          │
-│ - Chuẩn hóa và ghi đè các component Bootstrap 5 chính quy             │
-│   (.btn-danger, .btn-primary, .card, .badge, .table, .form-control)   │
-└───────────────────────────────────┬────────────────────────────────────┘
-                                    │ Kế thừa tự động 100%
-                                    ▼
-┌────────────────────────────────────────────────────────────────────────┐
-│ TẦNG 2: CÁC PAGE VUE GIAO DIỆN (FE_JPM/src/views/client/...)          │
-│ - Viết bằng 100% ngôn ngữ Bootstrap 5 chuẩn ngữ nghĩa                 │
-│   (<div class="card">, <button class="btn btn-danger">, <div class="row">)│
-│ - KHÔNG TỰ CHẾ CLASS CSS RIÊNG, KHÔNG DÙNG INLINE STYLE MÀU SẮC        │
-└────────────────────────────────────────────────────────────────────────┘
-```
-
-### 👉 Ý nghĩa sống còn của mô hình này:
-Khi bạn muốn **thay đổi toàn bộ phong cách giao diện** (ví dụ: đổi từ phong cách góc cạnh sang bo tròn mềm mại, đổi từ tông Navy/Đỏ sang tông Xanh Lá/Cam, hay đổi độ dày viền của Card):
-* Bạn **CHỈ CẦN SỬA DUY NHẤT** tại các biến và class component trong file CSS gốc (`main.css`).
-* **HÀNG CHỤC TRANG VUE CLIENT** (`TrangChu.vue`, `SoDoPhuTung.vue`, `ChiTietPhuTung.vue`, `GioHang.vue`, `ThuongHieu.vue`, `TinTuc.vue`,...) sẽ **TỰ ĐỘNG BIẾN HÌNH ĐỒNG LOẠT** theo phong cách mới ngay lập tức mà bạn không cần phải tốn công đi sửa từng file `.vue` đơn lẻ!
+# HƯỚNG DẪN TÙY BIẾN GIAO DIỆN & ĐẶC TẢ KỸ THUẬT TRIỂN KHAI CSS/VUE CLIENT 2026
+**Dự án:** Japan Marine Parts Management (JPM)  
+**Phân hệ:** Frontend Client Web Storefront  
+**Tài liệu:** `.agents/11_Huong_Dan_Tuy_Bien_Giao_Dien_Va_CSS_Client.md`  
+**Cấp độ:** Bắt buộc đọc và tuân thủ khi thay đổi giao diện, đổi theme, chỉnh sửa CSS hoặc triển khai component trong phân hệ Client.  
+**Trạng thái phiên bản:** v2.0-2026 (Đã tích hợp đầy đủ Technical Implementation Specification của Phase 3 theo phê duyệt của Product Owner).
 
 ---
 
-## 2. BẢN ĐỒ VỊ TRÍ CODE GỐC TRONG THƯ MỤC TÀI NGUYÊN CLIENT
+## 1. NGUYÊN TẮC BẢO TOÀN KIẾN TRÚC KỸ THUẬT (TECHNICAL INTEGRITY DIRECTIVES)
+
+Quá trình chuyển đổi từ đặc tả thiết kế sang mã nguồn trong tương lai (Phase 4) bắt buộc phải tuân thủ nghiêm ngặt 3 nguyên tắc nền tảng:
+1. **Không sửa đổi hợp đồng API Backend (Zero Backend API Drift):** Mọi endpoint Laravel hiện tại (`/api/public/*`, `/api/client/*`) được giữ nguyên 100%. Thiết kế mới được xây dựng để khớp hoàn hảo với cấu trúc dữ liệu JSON mà backend đang cung cấp.
+2. **Bảo toàn cơ chế Định giá Thẩm quyền (Authoritative Pricing Preserved):** Frontend tuyệt đối không tự ý tính toán giảm giá, thuế hay tổng tiền đơn hàng. Toàn bộ tính toán tài chính và giá báo giá phải do Laravel Backend quyết định.
+3. **Chuyển đổi từng bước an toàn (Additive Non-destructive Migration):** Không xóa sổ 3.569 dòng `main.css` trong một lần refactor. Thư viện Design Tokens và các component mới sẽ được đưa vào theo dạng module độc lập bổ trợ, sau đó từng màn hình sẽ được nâng cấp dần.
+
+---
+
+## 2. BẢN ĐỒ DÒNG CODE VÀ TÙY BIẾN TRONG `main.css` (CODE MAP)
 
 Toàn bộ tài nguyên giao diện của Client nằm tập trung tại:
 📁 `FE_JPM/src/assets/client/`
+- `css/main.css`: CSS giao diện chính của TheEvent (biến màu, typography, ghi đè Bootstrap).
+- `vendor/bootstrap/`: Core Bootstrap 5.3+.
+- `vendor/bootstrap-icons/`: Thư viện icon chính thức (`bi bi-*`).
 
-```text
-FE_JPM/src/assets/client/
-├── css/
-│   └── main.css                  <-- [TRỌNG TÂM SỐ 1]: Nơi diễn ra 100% việc đổi style/theme
-├── vendor/
-│   ├── bootstrap/
-│   │   ├── css/bootstrap.min.css <-- Core Bootstrap 5.3+ nguyên bản
-│   │   └── js/bootstrap.bundle.min.js
-│   ├── bootstrap-icons/          <-- Bộ icon chuẩn Bootstrap (bi bi-*)
-│   ├── glightbox/                <-- Thư viện phóng to xem ảnh sơ đồ/phụ tùng
-│   └── swiper/                   <-- Thư viện trượt slide sản phẩm/banner
-└── js/
-    └── main.js                   <-- Khởi tạo hiệu ứng animation TheEvent
-```
+### Bản đồ dòng code chi tiết trong `FE_JPM/src/assets/client/css/main.css`:
 
-### Cơ chế nạp & cách ly an toàn (`FE_JPM/src/layout/LayoutClient.vue`):
-Toàn bộ các file CSS/JS trên được nạp động khi người dùng ở giao diện Client, và tự động dọn dẹp khi chuyển sang Admin Portal. Do đó, **mọi thay đổi trong `main.css` của Client tuyệt đối an toàn và không bao giờ làm ảnh hưởng đến Admin (Sneat)**.
-
----
-
-## 3. BẢN ĐỒ DÒNG CODE CHI TIẾT TRONG `main.css` (CODE MAP)
-
-Khi mở file `FE_JPM/src/assets/client/css/main.css`, bạn hãy tìm đến các vùng dòng sau để chỉnh sửa đúng mục tiêu:
-
-| Dòng code | Hạng mục thành phần | Mục đích tùy biến |
+| Dòng code | Hạng mục thành phần | Mục đích tùy biến theo Design System 2026 |
 |---|---|---|
-| **Dòng 14 – 48** | **`:root` Variables & Tokens** | Bảng màu chủ đạo, font chữ, độ cong viền toàn cục (`--bs-border-radius`), các mức đổ bóng (`--shadow-*`). |
-| **Dòng 50 – 75** | **Nav Menu Colors** | Màu sắc thanh Menu Navigation, màu chữ khi hover, nền dropdown. |
-| **Dòng 86 – 128** | **Interaction Utilities** | Hiệu ứng nhấc nổi khi hover (`group-hover`, `list-item-hover`, phóng to ảnh). |
+| **Dòng 14 – 48** | **`:root` Variables & Tokens** | Khai báo các Design Tokens JPM 2026 (`--jpm-color-*`, `--jpm-radius-*`, `--jpm-shadow-*`). |
+| **Dòng 50 – 75** | **Nav Menu Colors** | Màu sắc thanh Menu Navigation, màu chữ khi hover, nền dropdown kính mờ. |
+| **Dòng 86 – 128** | **Interaction Utilities** | Hiệu ứng nhấc nổi khi hover (`group-hover`, phóng to ảnh thumbnail). |
 | **Dòng 2028 – 2038** | **Page Titles** | Kiểu dáng tiêu đề trang chuẩn (`.jpm-page-title`). |
-| **Dòng 2040 – 2065** | **Buttons (Nút bấm)** | Ghi đè nút bấm Bootstrap: `.btn-danger`, `.btn-jpm`, `.btn-primary`. |
-| **Dòng 2075 – 2100** | **Form Controls (Cơ bản)** | Chiều cao, đường viền, màu placeholder của ô nhập liệu form. |
+| **Dòng 2040 – 2065** | **Buttons (Nút bấm)** | Ghi đè nút bấm Bootstrap: `.btn-primary` (Navy), `.btn-danger` (Marine Red), bo góc chuẩn 8px. |
+| **Dòng 2075 – 2100** | **Form Controls (Cơ bản)** | Chiều cao 44px, viền 1px `--jpm-neutral-200`, bo góc chuẩn 8px của ô nhập liệu form. |
 | **Dòng 2162 – 2220** | **Custom Tables** | Kiểu dáng bảng phụ tùng, bảng giỏ hàng (`.custom-table`), huy hiệu số Ref (`.ref-badge`). |
-| **Dòng 2240 – 2278** | **Cards & Product Cards** | Kiểu dáng khung thẻ Card (`.card`, `.product-card`, `.premium-product-card`), bo góc viền ảnh. |
-| **Dòng 2280 – 2325** | **Input Group & Search** | Kiểu dáng thanh tìm kiếm, hiệu ứng viền phát sáng khi focus (`focus-within`). |
-| **Dòng 2326 – 2346** | **Badges & Tags** | Kiểu dáng nhãn dán, badge OEM, badge danh mục (`.badge-pill-jpm`). |
+| **Dòng 2240 – 2278** | **Cards & Product Cards** | Kiểu dáng khung thẻ Card (`.card`, `.product-card`), bo góc chuẩn 12px, viền ảnh ôm khít. |
+| **Dòng 2280 – 2325** | **Input Group & Search** | Kiểu dáng thanh tìm kiếm nhanh, hiệu ứng viền phát sáng khi focus (`focus-within`). |
+| **Dòng 2326 – 2346** | **Badges & Tags** | Kiểu dáng nhãn dán, badge OEM, badge trạng thái tồn kho, bo góc chuẩn 6px. |
 
 ---
 
-## 4. HƯỚNG DẪN THỰC CHIẾN: CÁC BƯỚC ĐỔI GIAO DIỆN SANG PHONG CÁCH MỚI
+## 3. ĐẶC TẢ CSS VARIABLES CHUẨN HÓA (:ROOT TOKENS 2026)
 
-### 4.1. Thay Đổi Bảng Màu Chủ Đạo (Re-theming Color Palette)
-Để đổi toàn bộ tông màu của website Client (ví dụ: chuyển từ Navy/Đỏ sang Deep Teal/Cam hoặc tông màu theo bộ nhận diện mới), bạn chỉ cần sửa cụm `:root` ở **dòng 20 - 34** trong `main.css`:
+Đoạn mã CSS Variables đặc tả đầy đủ hệ thống Design Tokens 2026 chuẩn bị sẵn sàng cho bước triển khai:
 
 ```css
-/* Vị trí: FE_JPM/src/assets/client/css/main.css (Dòng 20 - 34) */
-:root { 
-  --background-color: #f8f9fa; /* Màu nền tổng thể website */
-  --default-color: #495057;    /* Màu chữ nội dung chính */
-  --surface-color: #ffffff;    /* Màu nền các thẻ Card / Box */
-  
-  /* 1. MÀU TIÊU ĐỀ & MÀU CHÍNH (PRIMARY) */
-  --heading-color: #0A1128;    /* SỬA TẠI ĐÂY: Màu xanh Navy hoặc màu bạn muốn */
-  --bs-primary: #0A1128;
-  --bs-primary-rgb: 10, 17, 40;
+:root {
+  /* 1. MÀU THƯƠNG HIỆU (BRAND COLORS) */
+  --jpm-color-navy-dark: #0A1128;
+  --jpm-color-navy-subtle: #101E42;
+  --jpm-color-red-marine: #F82249;
+  --jpm-color-red-hover: #D9163A;
+  --jpm-color-blue-electric: #0284C7;
+  --jpm-color-gold-marine: #D97706;
 
-  /* 2. MÀU ĐIỂM NHẤN HÀNH ĐỘNG (ACCENT / DANGER) */
-  --accent-color: #f82249;     /* SỬA TẠI ĐÂY: Màu đỏ Marine hoặc màu cam/vàng mới */
-  --bs-danger: #f82249;
-  --bs-danger-rgb: 248, 34, 73;
-}
-```
-> **Cơ chế lan truyền:** Toàn bộ nút `.btn-danger`, nút `.btn-primary`, tiêu đề `<h1>` – `<h5>`, nhãn giá tiền, icon nổi bật, thanh tiến trình trên toàn bộ website sẽ **lập tức chuyển sang màu mới**.
+  /* 2. THANG SẮC ĐỘ TRUNG TÍNH (NEUTRAL SLATE SCALE) */
+  --jpm-neutral-900: #0F172A;
+  --jpm-neutral-800: #1E293B;
+  --jpm-neutral-700: #334155;
+  --jpm-neutral-500: #64748B;
+  --jpm-neutral-400: #94A3B8;
+  --jpm-neutral-300: #CBD5E1;
+  --jpm-neutral-200: #E2E8F0;
+  --jpm-neutral-100: #F1F5F9;
+  --jpm-neutral-50:  #F8FAFC;
+  --jpm-neutral-0:   #FFFFFF;
 
----
+  /* 3. HỆ THỐNG BO GÓC CHUẨN HÓA (PO DECISION 01) */
+  --jpm-radius-card: 12px;
+  --jpm-radius-control: 8px;
+  --jpm-radius-badge: 6px;
+  --jpm-radius-circle: 50%;
 
-### 4.2. Thay Đổi Kiểu Dáng Thẻ Card (`.card`, `.product-card`)
-Thẻ Card là thành phần thị giác xuất hiện nhiều nhất (sản phẩm, phụ tùng, thương hiệu, tin tức). Để thay đổi phong cách thẻ Card:
+  /* 4. HỆ THỐNG ĐỔ BÓNG MỎNG (ELEVATIONS) */
+  --jpm-shadow-sm: 0 1px 3px rgba(10, 17, 40, 0.05), 0 1px 2px rgba(10, 17, 40, 0.03);
+  --jpm-shadow-md: 0 4px 12px -2px rgba(10, 17, 40, 0.08), 0 2px 6px -2px rgba(10, 17, 40, 0.04);
+  --jpm-shadow-lg: 0 12px 24px -4px rgba(10, 17, 40, 0.12), 0 4px 10px -2px rgba(10, 17, 40, 0.06);
+  --jpm-shadow-xl: 0 24px 48px -12px rgba(10, 17, 40, 0.20);
 
-#### A. Đổi độ bo cong viền (Border Radius):
-* **Nếu muốn phong cách góc cạnh / cơ khí sắc nét (Luxury Minimalism nguyên bản):**
-  Đặt `border-radius: 4px !important;` (hoặc `0px` nếu muốn phẳng hoàn toàn).
-* **Nếu muốn phong cách hiện đại, trẻ trung, mềm mại:**
-  Đặt `border-radius: 12px !important;` hoặc `16px !important;`.
+  /* 5. TYPOGRAPHY */
+  --jpm-font-heading: 'Raleway', sans-serif;
+  --jpm-font-body: 'Roboto', sans-serif;
+  --jpm-font-mono: 'Roboto Mono', monospace;
 
-#### B. Nơi sửa trong `main.css`:
-Hãy tìm đến **dòng 2240 – 2270**:
-```css
-/* Vị trí: main.css dòng 2240 */
-.card,
-.index-page .card {
-  background: var(--surface-color, #fff);
-  
-  /* 1. Sửa độ cong bo góc Card */
-  border-radius: 4px !important; /* Đổi thành 12px nếu muốn bo tròn mềm */
-  
-  /* 2. Sửa độ bóng (Box Shadow) */
-  box-shadow: 0 10px 30px rgba(0,0,0,0.04) !important; /* Đổi bóng đậm/nhạt tùy thích */
-  
-  /* 3. Sửa đường viền (Border) */
-  border: 1px solid #e0e6f0 !important; /* Hoặc border: none !important nếu dùng bóng đổ không viền */
-  
-  overflow: hidden;
-  transition: all 0.3s ease;
-}
-
-/* 4. ĐỒNG BỘ BO GÓC ẢNH CON: Rất quan trọng để ảnh không bị lem góc vuông ra ngoài */
-.card .card-img-wrapper,
-.card .card-img-top,
-.index-page .card .card-img-wrapper,
-.index-page .card .card-img-top {
-  border-top-left-radius: 4px !important;  /* Phải bằng đúng border-radius của card bên trên */
-  border-top-right-radius: 4px !important;
-}
-
-/* 5. Sửa hiệu ứng khi Hover vào sản phẩm */
-.product-card:hover,
-.premium-product-card:hover {
-  transform: translateY(-8px); /* Độ nhấc nổi cao hay thấp */
-  box-shadow: 0 16px 40px rgba(0,0,0,0.1) !important;
+  /* 6. HEADER OFFSET THEO BREAKPOINT */
+  --jpm-header-height: 80px; /* Mặc định Desktop; 72px trên Tablet; 64px trên Mobile */
 }
 ```
 
 ---
 
-### 4.3. Thay Đổi Kiểu Dáng Nút Bấm (Button Styling)
-Toàn bộ các nút mua hàng, thêm vào giỏ, gửi báo giá được quản lý tại **dòng 2040 – 2060**:
+## 4. CẤU TRÚC TỔ CHỨC FILE VÀ COMPONENT ĐỀ XUẤT (FE ARCHITECTURE)
 
-```css
-/* Vị trí: main.css dòng 2044 */
-.btn-danger, .btn-jpm {
-  background: var(--accent-color, #f82249);
-  color: #ffffff;
-  border: none;
-  font-weight: 700;
-  
-  /* Sửa kiểu dáng nút */
-  border-radius: 4px; /* Đổi thành 50px nếu muốn nút con nhộng (Pill button), hoặc 4px theo chuẩn */
-  box-shadow: 0 4px 15px rgba(248, 34, 73, 0.25); /* Tắt bóng nếu muốn phong cách Flat */
-  padding: 10px 24px;
-  
-  transition: all 0.3s ease;
-}
+Dự kiến cấu trúc thư mục phân bổ tại `FE_JPM/src/` trong giai đoạn thực thi Phase 4:
 
-.btn-danger:hover, .btn-jpm:hover {
-  background: #e01b40;
-  transform: translateY(-2px); /* Hiệu ứng nhấc nhẹ khi rê chuột */
-  box-shadow: 0 8px 20px rgba(248, 34, 73, 0.35);
-}
+```
+FE_JPM/src/
+├── assets/
+│   └── client/
+│       └── css/
+│           ├── design-tokens.css         <-- File nạp các biến CSS Tokens 2026 độc lập
+│           └── main.css                  <-- CSS chính (được tinh chỉnh an toàn)
+│
+├── components/
+│   └── common/                           <-- Thư viện thành phần dùng chung (PO Decision 03)
+│       ├── ProductCard.vue               <-- Thẻ sản phẩm chuẩn, cân đối nút báo giá
+│       ├── JpmSelect.vue                 <-- Dropdown kỹ thuật lọc 4 cấp
+│       └── HotspotPin.vue                <-- Ghim bản vẽ sơ đồ rã máy (PO Decision 02)
+│
+├── stores/
+│   ├── diagramStore.ts                   <-- Pinia Store đồng bộ sơ đồ hai chiều
+│   ├── cartStore.ts                      <-- Pinia Store giỏ hàng & báo giá
+│   └── fitmentFilterStore.ts             <-- Pinia Store bộ lọc 4 cấp
+│
+└── views/client/                         <-- 20 màn hình Client (nâng cấp dần template)
 ```
 
 ---
 
-### 4.4. Thay Đổi Kiểu Dáng Ô Nhập Liệu & Thanh Tìm Kiếm (Inputs & Search)
-Tìm đến **dòng 2280 – 2320**:
-```css
-/* Vị trí: main.css dòng 2280 */
-.index-page .form-control, .index-page .form-select, .index-page .input-group-text {
-  border-radius: 4px; /* Bo góc ô nhập */
-  padding: 12px 14px;
-  border: 1.5px solid #e0e6f0;
-  background-color: #ffffff;
+## 5. ĐẶC TẢ KỸ THUẬT PINIA STORE ĐỒNG BỘ SƠ ĐỒ RÃ MÁY (USEDIAGRAMSTORE.TS)
+
+Quản lý trạng thái tương tác hai chiều tại `SoDoPhuTung.vue`:
+
+```typescript
+import { defineStore } from 'pinia';
+
+export interface ChiTietSoDo {
+  id: number;
+  so_do_id: number;
+  ref_number: string;     // Số thứ tự linh kiện trên bản vẽ (vd: "1", "12A")
+  qty: number;            // Số lượng lắp
+  x: number;              // Tọa độ X (phần trăm 0 - 100)
+  y: number;              // Tọa độ Y (phần trăm 0 - 100)
+  width: number;
+  height: number;
+  phu_tung?: {
+    id: number;
+    ma_phu_tung: string;  // Mã OEM
+    ten_phu_tung: string;
+    gia_ban: number;
+    is_gia_lien_he: boolean;
+    so_luong_ton: number;
+    hinh_anh?: string;
+  };
 }
 
-/* Hiệu ứng viền phát sáng khi người dùng click vào ô tìm kiếm */
-.index-page .form-control:focus, .index-page .form-select:focus {
-  border-color: var(--accent-color) !important;
-  box-shadow: 0 0 0.25rem 0.12rem rgba(248, 34, 73, 0.25) !important;
-}
+export const useDiagramStore = defineStore('diagramStore', {
+  state: () => ({
+    activeModelCode: '' as string,
+    activeSoDoId: null as number | null,
+    chiTiets: [] as ChiTietSoDo[],
+    selectedRefNumber: null as string | null,
+    hoveredRefNumber: null as string | null,
+    zoomLevel: 1.0,
+    panPosition: { x: 0, y: 0 },
+    isFullscreen: false,
+    filterKeyword: ''
+  }),
+
+  getters: {
+    selectedPart(state): ChiTietSoDo | undefined {
+      if (!state.selectedRefNumber) return undefined;
+      return state.chiTiets.find(item => item.ref_number === state.selectedRefNumber);
+    },
+    filteredChiTiets(state): ChiTietSoDo[] {
+      if (!state.filterKeyword.trim()) return state.chiTiets;
+      const kw = state.filterKeyword.toLowerCase();
+      return state.chiTiets.filter(item => 
+        item.ref_number.toLowerCase().includes(kw) ||
+        (item.phu_tung?.ma_phu_tung && item.phu_tung.ma_phu_tung.toLowerCase().includes(kw)) ||
+        (item.phu_tung?.ten_phu_tung && item.phu_tung.ten_phu_tung.toLowerCase().includes(kw))
+      );
+    }
+  },
+
+  actions: {
+    selectRef(refNumber: string) {
+      this.selectedRefNumber = refNumber;
+    },
+    hoverRef(refNumber: string | null) {
+      this.hoveredRefNumber = refNumber;
+    },
+    resetView() {
+      this.zoomLevel = 1.0;
+      this.panPosition = { x: 0, y: 0 };
+    }
+  }
+});
 ```
 
 ---
 
-### 4.5. Thay Đổi Font Chữ (Typography)
-Để đổi sang font chữ khác (ví dụ: Inter, Montserrat, Be Vietnam Pro):
-1. Nhúng font mới vào thẻ `<head>` trong `FE_JPM/index.html` hoặc `@import` đầu `main.css`.
-2. Sửa định nghĩa biến tại **dòng 14 – 18** trong `main.css`:
-   ```css
-   :root {
-     --default-font: "Be Vietnam Pro", sans-serif;
-     --heading-font: "Montserrat", sans-serif;
-     --nav-font: "Montserrat", sans-serif;
-   }
-   ```
+## 6. MA TRẬN DỌN DẸP & THAY THẾ BIỂU TƯỢNG BOXICONS (PO DECISION 04)
+
+Bảng quy đổi trực tiếp toàn bộ 41 vị trí class Boxicons cũ bị lỗi trên Client sang Bootstrap Icons chính thức:
+
+| Vị trí file trong source | Class Boxicons cũ (Lỗi) | Class Bootstrap Icons thay thế (Chuẩn) | Ý nghĩa hiển thị |
+| :--- | :--- | :--- | :--- |
+| `TraCuuBaoGia.vue` | `bx bx-search-alt` | `bi bi-search` | Kính lúp tra cứu mã báo giá |
+| `TraCuuBaoGia.vue` | `bx bx-file` | `bi bi-file-earmark-text` | Biểu tượng tài liệu báo giá |
+| `TraCuuBaoGia.vue` | `bx bx-time-five` | `bi bi-clock-history` | Đồng hồ đếm ngược 72 giờ |
+| `TraCuuBaoGia.vue` | `bx bx-check-circle` | `bi bi-check-circle-fill` | Trạng thái báo giá đã duyệt |
+| `TraCuuDonHang.vue` | `bx bx-package` | `bi bi-box-seam` | Kiện hàng phụ tùng |
+| `TraCuuDonHang.vue` | `bx bx-car` / `bx bx-ship`| `bi bi-truck` / `bi bi-water` | Vận chuyển hàng hải & bộ |
+| `TraCuuDonHang.vue` | `bx bx-map-pin` | `bi bi-geo-alt-fill` | Địa chỉ cảng đích |
+| `AccountSidebar.vue` | `bx bx-user` | `bi bi-person` | Hồ sơ người dùng |
+| `AccountSidebar.vue` | `bx bx-wrench` | `bi bi-wrench-adjustable` | Tủ máy Marine Garage |
+| `AccountSidebar.vue` | `bx bx-history` | `bi bi-clock-history` | Lịch sử mua hàng |
 
 ---
 
-## 5. BỘ QUY TẮC VÀNG BẮT BUỘC KHI SỬA CSS CLIENT (STRICT RULES)
+## 7. MA TRẬN QUẢN TRỊ RỦI RO KỸ THUẬT (TECHNICAL RISK MATRIX)
 
-Để giữ cho dự án luôn sạch, dễ bảo trì và không bao giờ bị lỗi hiển thị chéo giữa các màn hình, bạn **bắt buộc tuân thủ 5 quy tắc vàng** sau:
+| Rủi ro kỹ thuật | Mức độ | Hậu quả tiềm tàng | Giải pháp phòng ngừa & Khắc phục |
+| :--- | :--- | :--- | :--- |
+| **1. Xung đột CSS khi nâng cấp** | Trung bình | Biến đổi token có thể ảnh hưởng ngoài ý muốn lên các trang chưa kịp refactor | Sử dụng tiền tố rõ ràng `--jpm-*` chỉ áp dụng trong phạm vi phân hệ Client; giữ nguyên các class Bootstrap core |
+| **2. Lệch tọa độ Hotspot sơ đồ** | Cao | Khi ảnh rã máy chưa tải xong kích thước tự nhiên (`naturalWidth`), việc tính tọa độ ban đầu có thể bị lệch | Lắng nghe sự kiện `@load` của thẻ ảnh trước khi render ghim Pins; khóa tỷ lệ trong Transform Container |
+| **3. Spam query lọc 4 cấp** | Thấp | Thợ máy thao tác bấm đổi hãng/model liên tục có thể gửi dồn dập request API | Debounce 300ms kết hợp bộ nhớ đệm TanStack Vue Query (`staleTime: 5 * 60 * 1000`) |
 
-### ⚠️ QUY TẮC 1: Sửa CSS phải đi theo cú pháp và Component chuẩn của Bootstrap 5
-Khi thêm hoặc sửa style trong `main.css`, bạn phải ghi đè đúng các class Bootstrap chuẩn:
-* Nút bấm: `.btn-primary`, `.btn-danger`, `.btn-outline-danger`.
-* Bảng: `.table`, `.table-hover`, `.table-responsive`.
-* Thẻ: `.card`, `.card-body`, `.card-header`.
-* Form: `.form-control`, `.form-select`, `.input-group`.
-* Huy hiệu: `.badge`, `.rounded-pill`.
+---
 
-### ⚠️ QUY TẮC 2: Tuyệt đối CẤM đưa class cục bộ của 1 trang vào `main.css`
-* **CẤM:** Không được viết các class mang tính chất của riêng 1 trang vào `main.css` (ví dụ: `.news-page-title`, `.home-banner-img`, `.contact-form-box`...).
-* **CẤM:** Không được ép số dòng tóm tắt (`-webkit-line-clamp`) của 1 block trên 1 page vào `main.css`.
-* **GIẢI PHÁP:** Nếu trang nào có một chi tiết hiển thị riêng biệt (ví dụ tóm tắt tin ở Trang chủ muốn 3 dòng, ở trang Tin tức muốn 2 dòng), **hãy viết vào khối `<style scoped>` ở cuối file `.vue` của trang đó**. Vue sẽ tự động gắn mã hash `data-v-xxx` để cách ly 100%, không làm hỏng trang khác.
+## 8. QUY TRÌNH KIỂM TRA BIÊN DỊCH VÀ NGHIỆM THU (VERIFICATION COMMANDS)
 
-### ⚠️ QUY TẮC 3: Tuyệt đối CẤM dùng Inline `style=""` để can thiệp màu sắc, bo góc
-* Inline `style=""` **CHỈ ĐƯỢC PHÉP DÙNG** cho kích thước vật lý hoặc thông số động:
-  * Chiều rộng cột bảng: `style="width: 15%;"`
-  * Chiều cao cố định khung ảnh: `style="height: 400px;"`
-  * Tọa độ hotspot trên sơ đồ rã máy: `style="top: 35%; left: 60%;"`
-* **CẤM:** Không viết `style="background: red; border-radius: 8px; color: blue;"` trực tiếp vào thẻ HTML. Hãy dùng class Bootstrap hoặc class đã định nghĩa trong `main.css`.
-
-### ⚠️ QUY TẮC 4: Giữ nguyên sự cách ly tuyệt đối với Admin (Sneat)
-Không sửa các file vendor gốc trong `vendor/bootstrap/`. Mọi tùy biến chỉ đặt trong `main.css` của Client. Nhờ đó, giao diện Portal Admin (`LayoutAdmin.vue` dùng Sneat) hoàn toàn độc lập và không bao giờ bị ảnh hưởng khi bạn thay đổi giao diện Client.
-
-### ⚠️ QUY TẮC 5: Kiểm tra và Build thử nghiệm sau mỗi lần đổi phong cách
-Sau khi chỉnh sửa xong trong `main.css`:
-1. Mở trình duyệt kiểm tra các trang trọng điểm:
-   * Trang chủ (`/`)
-   * Trang tra cứu sơ đồ rã máy (`/thuong-hieu/.../so-do`)
-   * Trang chi tiết phụ tùng (`/chi-tiet-phu-tung/...`)
-   * Trang giỏ hàng (`/gio-hang`)
-2. Chạy lệnh kiểm tra biên dịch Vite trong thư mục `FE_JPM`:
+Sau mỗi lần cập nhật CSS hoặc component tại phân hệ Client:
+1. Mở terminal tại thư mục `FE_JPM`:
    ```bash
+   cd c:\xampp\htdocs\JPM\FE_JPM
    npm run build
    ```
-   Nếu terminal báo `✓ built in ...s` thành công không có lỗi CSS Syntax là giao diện đã sẵn sàng đưa vào vận hành!
+2. Nếu terminal thông báo `✓ built in ...s` thành công mà không phát sinh lỗi biên dịch CSS hay thiếu biến là mã nguồn đạt tiêu chuẩn vận hành an toàn.
 
 ---
 
-*Tài liệu này được biên soạn và lưu trữ chính thức tại `.agents/11_Huong_Dan_Tuy_Bien_Giao_Dien_Va_CSS_Client.md` nhằm định hướng cho toàn bộ lập trình viên và AI tham gia phát triển giao diện JPM.*
+*Tài liệu này được lưu trữ chính thức tại `.agents/11_Huong_Dan_Tuy_Bien_Giao_Dien_Va_CSS_Client.md` nhằm định hướng kỹ thuật cho toàn bộ lập trình viên và AI phát triển giao diện JPM.*

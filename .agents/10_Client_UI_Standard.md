@@ -1,329 +1,237 @@
-# QUY CHUẨN LẬP TRÌNH GIAO DIỆN CLIENT (BOOTSTRAP 5 & THEEVENT 1.0.0)
-
-> **Cấp độ:** Bắt buộc tuân thủ 100% cho mọi trang Khách hàng (Client: Khách vãng lai, Thợ, Garage, Đối tác B2B).  
-> **Nguyên tắc cốt lõi:** *"Code bằng ngôn ngữ Bootstrap 5 gọn gàng như Admin, ăn trọn bộ tài nguyên TheEvent 1.0.0, tuyệt đối không tự chế CSS riêng."*
-
----
-
-## 1. NGUYÊN LÝ 2 TẦNG (ARCHITECTURE PHILOSOPHY)
-
-Tương tự như cấu trúc chuẩn của Admin (Sneat), toàn bộ giao diện Client của JPM được xây dựng theo mô hình 2 tầng tách biệt rõ ràng:
-
-1. **Tầng cú pháp lập trình (Markup Language): 100% Bootstrap 5**
-   - Mọi cấu trúc trang, lưới phân cột, khối nội dung, bảng giỏ hàng, form tra cứu đều sử dụng class chính quy của **Bootstrap 5** (`container`, `row`, `col-12`, `col-md-6`, `col-lg-4`, `card`, `table`, `table-hover`, `form-control`, `input-group`, `d-flex`, `align-items-center`, `gap-2`, `mb-3`...).
-   - HTML viết gãy gọn, sạch sẽ, chuẩn ngữ nghĩa, không lồng ghép thẻ thừa.
-
-2. **Tầng hiển thị giao diện (Theme & UI Assets): 100% TheEvent 1.0.0**
-   - Bản thân **TheEvent chính là một template cao cấp được xây dựng trên nền Bootstrap 5.3+** bởi BootstrapMade.
-   - Khi áp dụng TheEvent, toàn bộ giao diện tự động mang phong cách hiện đại, thanh lịch với:
-     - **Font chữ:** `Raleway` (Tiêu đề, Navigation, Nút bấm) & `Roboto` (Nội dung văn bản).
-     - **Màu sắc thương hiệu JPM Marine:**
-       - Deep Navy Blue (`#0A1128`): Đại diện cho biển sâu, uy tín kỹ thuật, dùng cho Header, Navbar, Tiêu đề chính.
-       - Bright Marine Red (`#f82249`): Màu nhấn nổi bật cho nút Mua ngay, Giỏ hàng, Giá tiền, Badge ưu đãi.
-       - Clean White (`#ffffff`) & Light Gray (`#f8f9fa`): Cho nền thẻ card và nền section tạo độ tương phản cao, dễ đọc.
-     - **Hệ thống Icon:** **Bootstrap Icons (`bi bi-*`)** chính hãng.
+# QUY CHUẨN LẬP TRÌNH GIAO DIỆN CLIENT & UNIFIED DESIGN SYSTEM 2026
+**Dự án:** Japan Marine Parts Management (JPM)  
+**Phân hệ:** Frontend Client Web Storefront  
+**Tài liệu:** `.agents/10_Client_UI_Standard.md`  
+**Cấp độ:** Bắt buộc tuân thủ 100% cho mọi lập trình viên và AI Agent khi phân tích, thiết kế hoặc xây dựng giao diện Client.  
+**Trạng thái phiên bản:** v2.0-2026 (Đã tích hợp toàn diện 11 tài liệu đặc tả của Phase 3 Unified Design System theo phê duyệt của Product Owner).
 
 ---
 
-## 2. NƠI CHỨA TÀI NGUYÊN VÀ CƠ CHẾ NẠP CSS CLIENT
+## 0. CHỈ THỊ ĐIỀU HÀNH DÀNH RIÊNG CHO AI AGENT (AGENT GOVERNANCE DIRECTIVES)
 
-### 2.1. Thư mục tài nguyên duy nhất của Client
-Toàn bộ tài nguyên gốc của template TheEvent 1.0.0 được lưu trữ tập trung tại:
-📁 `FE_JPM/src/assets/client/`
-- `vendor/bootstrap/css/bootstrap.min.css`: Core Bootstrap 5.
-- `vendor/bootstrap-icons/bootstrap-icons.css`: Hệ thống icon chính thức (`bi bi-*`).
-- `css/main.css`: CSS giao diện chính của TheEvent (biến màu `--accent-color`, `--heading-color`, typography, animation).
-- `vendor/glightbox/`: Thư viện xem ảnh phóng to (Gallery sơ đồ, ảnh phụ tùng).
-- `vendor/swiper/`: Thư viện Carousel banner và slider sản phẩm.
-- `vendor/bootstrap/js/bootstrap.bundle.min.js`: JS tương tác modal, dropdown của Bootstrap.
+Mọi AI Agent (Antigravity, Claude, Copilot, Cursor...) khi làm việc với phân hệ Client của JPM **BẮT BUỘC** ghi nhớ và tuân thủ các quy tắc sau:
 
-### 2.2. Cơ chế cách ly hoàn toàn qua `LayoutClient.vue`
-- File [`FE_JPM/src/layout/LayoutClient.vue`](file:///c:/xampp/htdocs/JPM/FE_JPM/src/layout/LayoutClient.vue) chịu trách nhiệm nạp các tài nguyên này cho người dùng ngoài Client.
-- Khi chuyển đổi giữa Client và Admin, hệ thống đảm bảo CSS của TheEvent và Sneat không bao giờ xung đột với nhau.
+1. **JPM Client đã có Design System 2026 chính thức:** Không suy diễn từ các giao diện Bootstrap thông thường. Mọi thiết kế phải theo định vị **"MODERN LUXURY MARINE TECHNOLOGY E-COMMERCE"** ("Tối giản đường nét – Tối đa khoảng thở – Chính xác kỹ thuật – Đậm chất biển sâu").
+2. **DEC-01 (Border Radius chuẩn hóa 4 cấp):**
+   - Card sản phẩm, Khung Panel, Modal: **`12px`** (`--jpm-radius-card`).
+   - Button, Input, Select, Dropdown menu: **`8px`** (`--jpm-radius-control`).
+   - Tag, Badge trạng thái, Chip lọc: **`6px`** (`--jpm-radius-badge`).
+   - Avatar người dùng, Nút icon tròn: **`50%`** (`--jpm-radius-circle`).
+   *(Triệt tiêu hoàn toàn quy chuẩn cũ 4px và các giá trị tự phát khác).*
+3. **DEC-02 (Interactive Hotspots trên Exploded Diagram):**
+   - Hỗ trợ tương tác hai chiều (Two-way reactive bridge) giữa Ghim Hotspot trên bản vẽ rã máy và Dòng phụ tùng trên bảng danh mục.
+   - Sử dụng tọa độ phần trăm bất biến (`x`, `y`, `width`, `height`) từ cơ sở dữ liệu `chi_tiet_so_dos`.
+4. **DEC-03 (Reusable Shared Components):**
+   - `ProductCard.vue` và `JpmSelect.vue` là 2 component dùng chung cốt lõi được định hướng xây dựng.
+   - Khắc phục triệt để lỗi khuyết nút giỏ hàng khi sản phẩm cần báo giá: Chân thẻ luôn cân đối 100% với nhãn giá và nút hành động tương ứng (`Thêm giỏ` hoặc `Yêu cầu báo giá`).
+5. **DEC-04 (Hệ thống Biểu tượng 100% Bootstrap Icons):**
+   - Phân hệ Client chỉ sử dụng duy nhất Bootstrap Icons (`bi bi-*`). Tuyệt đối không dùng Boxicons (`bx bx-*`) trên Client.
+6. **LƯU Ý CỰC KỲ QUAN TRỌNG VỀ TRẠNG THÁI HIỆN TẠI (SPECIFICATION VS IMPLEMENTATION):**
+   - Bộ Design System 2026 là **TÀI LIỆU ĐẶC TẢ KỸ THUẬT VÀ ĐỊNH HƯỚNG KIẾN TRÚC**, **KHÔNG ĐỒNG NGHĨA** với việc các component như `ProductCard.vue`, `JpmSelect.vue` đã tồn tại sẵn trong source code.
+   - Agent **KHÔNG ĐƯỢC GIẢ ĐỊNH** rằng các component này đã được import hoặc có sẵn trong source code khi chưa triển khai Phase 4.
+   - Các điểm Pending (Đơn hàng hỗn hợp, Sơ đồ mobile, Autocomplete scope, Dark mode) là đề xuất đang chờ PO chốt, chưa phải quyết định chính thức.
 
 ---
 
-## 3. HỆ THỐNG COMPONENT CHUẨN CLIENT (THEEVENT DESIGN SYSTEM)
+## 1. TRIẾT LÝ KIẾN TRÚC GIAO DIỆN CLIENT (ARCHITECTURE PHILOSOPHY)
 
-Mọi lập trình viên và AI khi code hoặc sửa các trang Client (Trang chủ, Tra cứu Catalog, Chi tiết sơ đồ rã máy, Giỏ hàng, Lịch sử đơn hàng, Tin tức...) **BẮT BUỘC** sử dụng các cấu trúc chuẩn sau:
+Toàn bộ giao diện Client được xây dựng theo mô hình **3 Tầng Thống Nhất**:
 
-### 3.1. Cấu trúc Khối Section & Lưới Card Sản Phẩm Hoàn Chỉnh (Unified Section + Grid + Product Card)
-> **Nguyên tắc tích hợp:** Section, Grid và Card là **MỘT KHỐI THỐNG NHẤT KHÔNG TÁCH RỜI**. Card sản phẩm luôn nằm lồng trực tiếp bên trong các cột (`col`) của lưới Grid Bootstrap 5 trong Section.
-
-Cấu trúc chuẩn mẫu áp dụng đồng bộ cho mọi trang danh sách (Trang Chủ, Sản Phẩm Cùng Danh Mục, Kết Quả Tra Cứu Catalog...):
-
-```html
-<!-- =========================================================================
-     SECTION: KHỐI DANH MỤC / SẢN PHẨM TIÊU BIỂU (RÁP LIỀN HOÀN CHỈNH)
-     ========================================================================= -->
-<section class="section py-5">
-  <div class="container">
-    
-    <!-- 1. TIÊU ĐỀ KHỐI (SECTION TITLE CHUẨN HIỆN ĐẠI, THOÁNG ĐÃNG) -->
-    <div class="section-title text-center mb-5" data-aos="fade-up">
-      <span class="text-uppercase text-danger fw-bold small tracking-wider">DANH MỤC PHỤ TÙNG</span>
-      <h2 class="fw-bold text-dark mt-1">Sản Phẩm & Phụ Tùng Nổi Bật</h2>
-      <p class="text-muted">Linh kiện hàng hải chính hãng, nhập khẩu trực tiếp từ các hãng mẹ Nhật Bản</p>
-    </div>
-
-    <!-- 2. LƯỚI BỐ CỤC CHUẨN (2 CỘT MOBILE - 3 CỘT TABLET - 4 CỘT DESKTOP) -->
-    <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-4 justify-content-center" data-aos="fade-up" data-aos-delay="100">
-      
-      <!-- CỘT CON LẶP QUA TỪNG PHỤ TÙNG -->
-      <div class="col" v-for="item in danhSachPhuTung" :key="item.id">
-        
-        <!-- THẺ CARD SẢN PHẨM (LUXURY MINIMALISM 4PX BO GÓC) -->
-        <div class="card h-100 product-card position-relative">
-          
-          <!-- A. ẢNH SẢN PHẨM & BADGE CHÍNH HÃNG (Bo cong 4px góc trên) -->
-          <div class="card-img-wrapper position-relative overflow-hidden bg-light d-flex align-items-center justify-content-center">
-            <img 
-              :src="getImageUrl(item.hinh_anh_chinh)" 
-              :alt="item.ten_san_pham" 
-              class="card-img-top w-100 transition-transform card-img-product"
-              @error="$event.target.src='https://placehold.co/400x300/f8f9fa/a1acb8?text=JPM+Marine'"
-            >
-            <span v-if="item.is_oem" class="badge bg-danger position-absolute top-0 start-0 m-2">
-              OEM Japan
-            </span>
-          </div>
-
-          <!-- B. THÂN THÔNG TIN (4 TẦNG THỰC DỤNG) -->
-          <div class="card-body text-start p-3 d-flex flex-column bg-white">
-            
-            <!-- Tầng 1: Danh mục / Thương hiệu -->
-            <div class="product-category mb-1 text-truncate" :title="item.danh_muc?.ten_danh_muc || 'Phụ Tùng OEM'">
-              {{ item.danh_muc?.ten_danh_muc || 'Phụ Tùng OEM' }}
-            </div>
-
-            <!-- Tầng 2: Tên sản phẩm / Linh kiện (Stretched-link dẫn đến chi tiết) -->
-            <h5 class="card-title mb-1">
-              <router-link :to="`/chi-tiet-san-pham/${item.slug}`" class="text-decoration-none stretched-link">
-                {{ item.ten_san_pham }}
-              </router-link>
-            </h5>
-
-            <!-- Tầng 3: Mã SKU kỹ thuật (Tư duy kỹ thuật tàu thủy) -->
-            <div class="product-sku mb-3">
-              <template v-if="item.ma_san_pham">
-                <span class="sku-label text-muted">Mã:</span> <span class="sku-code fw-bold">{{ item.ma_san_pham }}</span>
-              </template>
-              <template v-else>&nbsp;</template>
-            </div>
-
-            <!-- Tầng 4: Chân Card - Giá bán & Nút giỏ hàng bo góc tròn -->
-            <div class="mt-auto d-flex align-items-center justify-content-between pt-1">
-              <div>
-                <span v-if="item.is_gia_lien_he || !item.gia_ban" class="text-danger fw-bold price-value">
-                  Liên hệ
-                </span>
-                <span v-else class="text-danger fw-bold price-value">
-                  {{ Number(item.gia_ban).toLocaleString('vi-VN') }} đ
-                </span>
-              </div>
-
-              <!-- Nút thêm giỏ hàng nhanh (z-index cao để không bị stretched-link chiếm) -->
-              <button
-                v-if="!item.is_gia_lien_he && item.gia_ban"
-                class="btn btn-cart-action position-relative z-2"
-                title="Thêm vào giỏ hàng"
-                @click.prevent="addToCart(item)"
-              >
-                <i class="bi bi-cart2"></i>
-              </button>
-            </div>
-
-          </div>
-        </div>
-
-      </div>
-    </div>
-
-    <!-- 3. NÚT XEM TẤT CẢ CUỐI SECTION (NÚT PILL HIỆN ĐẠI 2026+ KÈM MŨI TÊN CHUYỂN ĐỘNG) -->
-    <div class="text-center mt-5" data-aos="fade-up">
-      <router-link to="/san-pham" class="btn btn-outline-danger px-4 py-2 fw-semibold d-inline-flex align-items-center gap-2 group-hover">
-        <span>Xem Toàn Bộ Catalog</span>
-        <i class="bi bi-arrow-right transition-transform"></i>
-      </router-link>
-    </div>
-
-  </div>
-</section>
 ```
-
-#### Quy chuẩn chi tiết của Thẻ Card Sản Phẩm:
-- **Độ cong Card thống nhất toàn bộ Client:** Toàn bộ thẻ `.card`, `.product-card`, `.premium-product-card` trên giao diện Client được quy chuẩn bo góc sắc nét, thanh lịch chuẩn **`border-radius: 4px;`** (Luxury Minimalism) tự động ăn theo template `main.css`.
-- **Cơ chế tự động hóa qua CSS Template:** Khi lập trình viên viết code chỉ cần khai báo class `card` (hoặc `product-card`), thẻ sẽ **tự động thừa hưởng độ cong 4px**, viền mỏng `#e0e6f0`, đổ bóng mờ thanh lịch và hiệu ứng overflow clipping. **Tuyệt đối không cần thêm các class bo góc rời rạc** (`rounded-3`, `rounded-2`) hay dùng inline `style="border-radius: ..."` gây bất nhất giao diện giữa các trang.
-- **Ảnh thẻ con (`.card-img-wrapper`, `.card-img-top`):** Tự động bo góc trên `4px` (`border-top-left-radius: 4px; border-top-right-radius: 4px;`) để ảnh ôm khít tuyệt đối góc cong của Card, không bị lem góc vuông thừa ra ngoài.
-
-### 3.2. Nút bấm chuẩn Client (TheEvent Buttons)
-Không tự viết class nút tùy biến. Sử dụng hệ nút Bootstrap được TheEvent style hóa:
-```html
-<!-- Nút Mua ngay / Gửi yêu cầu báo giá (Accent Marine Red) -->
-<button class="btn btn-danger px-4 py-2 fw-semibold">
-  <i class="bi bi-cart-plus me-1"></i> Thêm Vào Giỏ
-</button>
-
-<!-- Nút Xem chi tiết / Tra cứu (Navy Blue) -->
-<button class="btn btn-primary px-4 py-2 fw-semibold">
-  <i class="bi bi-search me-1"></i> Tra Cứu Catalog
-</button>
-
-<!-- Nút Viền mỏng (Outline) -->
-<button class="btn btn-outline-danger px-3 py-2">
-  <i class="bi bi-file-earmark-pdf me-1"></i> Xem Bản Vẽ
-</button>
-```
-
-### 3.3. Bảng Giỏ Hàng & Lịch Sử Đơn Hàng (Tables)
-Bảng ở Client phải gọn gàng, thoáng đãng, tuân thủ phong cách Bootstrap 5:
-```html
-<div class="table-responsive">
-  <table class="table table-hover align-middle mb-0">
-    <thead class="table-light">
-      <tr>
-        <th class="text-center" style="width: 5%">
-          <input type="checkbox" class="form-check-input" v-model="selectAll" />
-        </th>
-        <th style="width: 45%">Sản Phẩm & Phụ Tùng</th>
-        <th class="text-center" style="width: 15%">Đơn Giá</th>
-        <th class="text-center" style="width: 15%">Số Lượng</th>
-        <th class="text-center" style="width: 15%">Thành Tiền</th>
-        <th class="text-center" style="width: 5%">Xóa</th>
-      </tr>
-    </thead>
-    <tbody>
-      <!-- Hàng dữ liệu căn giữa STT, Checkbox, Đơn giá, Nút xóa -->
-    </tbody>
-  </table>
-</div>
-```
-
-### 3.4. Ô tìm kiếm & Bộ lọc (Search Bar & Filter Inputs)
-Dùng `.input-group` kết hợp icon Bootstrap Icons:
-```html
-<div class="input-group">
-  <input type="text" class="form-control py-2 ps-3" placeholder="Nhập mã phụ tùng, số seri máy..." v-model="searchQuery" />
-  <button class="btn btn-danger px-4" type="button" @click="handleSearch">
-    <i class="bi bi-search me-1"></i> Tìm Kiếm
-  </button>
-</div>
+┌────────────────────────────────────────────────────────────────────────┐
+│ TẦNG 1: THIẾT KẾ ĐỊNH DANH (DESIGN SYSTEM & TOKENS 2026)               │
+│ - Tông màu biển sâu Deep Navy (#0A1128), Đỏ Marine (#F82249), Slate.   │
+│ - Typography: Raleway (Heading/Brand) + Roboto (Body, Tabular Numbers).│
+│ - Hệ bo góc chuẩn hóa 4 cấp (12px, 8px, 6px, 50%).                     │
+├────────────────────────────────────────────────────────────────────────┤
+│ TẦNG 2: CÚ PHÁP LẬP TRÌNH (100% BOOTSTRAP 5 CHUẨN NGỮ NGHĨA)           │
+│ - Mọi cấu trúc trang, lưới phân cột dùng class chính quy Bootstrap 5:  │
+│   (container, row, col-*, card, table, form-control, d-flex...).       │
+│ - HTML sạch sẽ, gãy gọn, chuẩn accessibility WCAG 2.1 AA.              │
+├────────────────────────────────────────────────────────────────────────┤
+│ TẦNG 3: CÁCH LY PHÂN HỆ QUA LAYOUTCLIENT.VUE                           │
+│ - Phân định rõ ràng: Client dùng TheEvent assets, Admin dùng Sneat.    │
+│ - Quản lý khoảng đệm Header Offset tập trung qua --jpm-header-height.   │
+└────────────────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## 4. NGUYÊN TẮC PHÂN ĐỊNH KIẾN TRÚC CSS: `main.css` (DÙNG CHUNG TOÀN CỤC) VS `<style scoped>` (ĐẶC THÙ TỪNG TRANG)
+## 2. HỆ THỐNG MÀU SẮC & DESIGN TOKENS CHUẨN HÓA
 
-### 4.1. Vai trò của `main.css` (Tương tự Bootstrap Framework Core)
-- File `FE_JPM/src/assets/client/css/main.css` đóng vai trò như **Framework CSS / Design System dùng chung toàn website Client**, tương tự như vai trò của Bootstrap core.
-- **CHỈ CHỨA NHỮNG GÌ DÙNG CHUNG VÀ TÁI SỬ DỤNG TRÊN TOÀN BỘ CÁC TRANG CLIENT:**
-  1. **Design Tokens & Biến CSS toàn cục:** `--accent-color`, `--heading-color`, `--heading-font`, `--default-font`...
-  2. **Chuẩn hóa & Ghi đè Component Bootstrap 5 chính quy:** Tùy biến `.btn-primary`, `.btn-danger`, `.badge.bg-danger`, `.card`, `.dropdown` theo màu sắc và tỷ lệ thương hiệu JPM Marine:
-     ```css
-     /* Tinh chỉnh chuẩn Bootstrap trong main.css của Client */
-     .btn-primary {
-       --bs-btn-bg: #0A1128;
-       --bs-btn-border-color: #0A1128;
-       --bs-btn-hover-bg: #1a2750;
-       --bs-btn-hover-border-color: #1a2750;
-       --bs-btn-color: #ffffff;
-     }
-     .btn-danger {
-       --bs-btn-bg: #f82249;
-       --bs-btn-border-color: #f82249;
-       --bs-btn-hover-bg: #e0163c;
-       --bs-btn-hover-border-color: #e0163c;
-       --bs-btn-color: #ffffff;
-     }
-     .badge.bg-danger {
-       background-color: #f82249 !important;
-     }
-     .card {
-       border-radius: 4px !important;
-       box-shadow: 0 10px 30px rgba(0,0,0,0.04) !important;
-       border: 1px solid #e0e6f0 !important;
-       overflow: hidden;
-     }
-     ```
-  3. **Tiện ích dùng chung toàn cục (Global Shared Utilities):** Các class tiện ích tái sử dụng ở mọi trang như `.text-truncate-2`, `.text-truncate-3`, `.skeleton-box`, `.skeleton-line`...
-  4. **Component nghiệp vụ dùng chung (Global Core Components):** Thẻ sản phẩm dùng chung `.product-card`, `.premium-product-card`, nút giỏ hàng `.btn-cart-action`, tiêu đề khối `.section-title`.
-- ❌ **TUYỆT ĐỐI CẤM ĐƯA VÀO `main.css`:**
-  - **CẤM** viết các class mang tính đặc thù cục bộ của một trang hay một section riêng biệt (ví dụ: `.news-section .card-title`, `.news-img-thumb`, `.cat-bar`, `.zone`, `.lat-title`...).
-  - **CẤM** cấu hình số dòng hiển thị nội dung (`-webkit-line-clamp`) cục bộ cho một trang vào `main.css`. Vì mỗi trang có yêu cầu hiển thị khác nhau (trang này tóm tắt 3 dòng, trang khác tóm tắt 2 dòng hoặc 1 dòng hoặc hiển thị đầy đủ). Đưa vào `main.css` sẽ gây ô nhiễm stylesheet toàn cục, ghi đè không kiểm soát và làm vỡ layout các trang khác!
+### 2.1. Bảng màu thương hiệu (Brand Identity)
+- **Primary Brand Color (`--jpm-color-navy-dark`):** `#0A1128` – Đại diện cho biển sâu Nhật Bản, uy tín kỹ thuật, dùng cho Header, Navbar, Footer, Section Dark, Heading H1/H2. Độ tương phản: 14.8:1 (WCAG AAA).
+- **Secondary Brand Color (`--jpm-color-navy-subtle`):** `#101E42` – Tầng biển nổi, dùng cho Dropdown nền tối, Card tối, Active menu.
+- **Accent / Primary CTA (`--jpm-color-red-marine`):** `#F82249` – Màu đỏ cứu sinh hàng hải & nhiệt huyết công nghệ. Dùng cho nút Thêm vào giỏ, nút Tìm kiếm chính, Hotspot Active pin, Badge Sale.
+- **Accent Hover (`--jpm-color-red-hover`):** `#D9163A` – Đỏ trầm khi hover nút chính.
+- **Technical Action / Info (`--jpm-color-blue-electric`):** `#0284C7` – Xanh công nghệ hàng hải, dùng cho link mã OEM, nút xem sơ đồ rã máy, Breadcrumb active.
+- **Luxury Marine Metallic (`--jpm-color-gold-marine`):** `#D97706` – Ánh đồng chân vịt hàng hải, dùng cho huy hiệu đại lý chính thức và hạng Garage VIP.
 
-### 4.2. Vai trò và Quy định của `<style scoped>` trong Component Vue (Cục bộ từng trang)
-- Mỗi trang hoặc component Vue (`.vue`) khi có các tinh chỉnh hiển thị **riêng biệt của chính nó** thì **BẮT BUỘC** viết trong khối `<style scoped>` ở cuối file `.vue` tương ứng.
-- **Thuộc tính `scoped`** của Vue sẽ tự động gắn mã hash nhận diện (ví dụ `[data-v-xxxxxx]`), đảm bảo CSS được **cách ly tuyệt đối 100%**, không bao giờ bị rò rỉ hay gây xung đột với các trang khác trong hệ thống.
-- **Những trường hợp BẮT BUỘC viết trong `<style scoped>` của trang:**
-  1. **Số dòng hiển thị nội dung đặc thù của block trong trang:** Ví dụ đoạn tóm tắt bài viết ở Trang chủ cần hiển thị tối đa 3 dòng kèm dấu `...` (`-webkit-line-clamp: 3;`), trong khi ở trang Tin tức cần hiển thị 2 dòng hoặc hiển thị đầy đủ.
-  2. **Kích thước ảnh, thumbnail hoặc tỷ lệ khung hình (aspect-ratio) đặc thù:** Ví dụ thumbnail tin tức Trang chủ là 170px (tỷ lệ 4/3), banner riêng của từng trang...
-  3. **Khoảng cách lề (`margin`/`padding`) và layout tinh chỉnh cục bộ:** Ví dụ khoảng cách sát giữa danh mục, tiêu đề và tóm tắt của block tin tức Trang chủ, ngày tháng cố định đáy (`mt-auto`).
-  4. **Màu sắc danh mục hoặc trạng thái hover riêng biệt của component:** Ví dụ `.news-category` chữ đỏ thương hiệu, hover tiêu đề giữ nguyên màu Navy `#0A1128` (không bị chuyển đỏ).
-  5. **Hiệu ứng đặc thù không thể làm bằng class utility:** Zoom sơ đồ nổ, phóng to thu nhỏ bản vẽ tương tác SVG/Canvas...
-- ❌ **LƯU Ý TRÁNH LẠM DỤNG TRONG `<style scoped>`:**
-  - Không tự chế class cho những thứ Bootstrap 5 đã hỗ trợ sẵn: Luôn ưu tiên dùng class utility của Bootstrap (`d-flex`, `align-items-center`, `justify-content-between`, `gap-*`, `mb-*`, `text-center`, `fw-bold`, `rounded-3`, `shadow-sm`).
-  - Không viết lại các tiện ích đã có sẵn trong `main.css` (như `.text-truncate-2`, `.text-truncate-3`).
+### 2.2. Thang sắc độ trung tính (Neutral Slate Scale)
+- `--jpm-neutral-900`: `#0F172A` (Deep Charcoal - Tiêu đề, Tên phụ tùng, Giá in đậm).
+- `--jpm-neutral-800`: `#1E293B` (Slate Bold - Nội dung quan trọng, Nhãn form).
+- `--jpm-neutral-700`: `#334155` (Slate Standard - Thân bài viết, Mô tả kỹ thuật).
+- `--jpm-neutral-500`: `#64748B` (Slate Muted - Metadata, Ngày đăng, Mã phụ tùng phụ).
+- `--jpm-neutral-400`: `#94A3B8` (Slate Light - Placeholder ô nhập liệu).
+- `--jpm-neutral-300`: `#CBD5E1` (Border Focus/Active, Divider bảng phụ tùng).
+- `--jpm-neutral-200`: `#E2E8F0` (Border Subtle - Viền Card chuẩn, đường chia bảng).
+- `--jpm-neutral-100`: `#F1F5F9` (Neutral Surface - Nền ô tìm kiếm, nền bảng zebra).
+- `--jpm-neutral-50`:  `#F8FAFC` (Page Background - Nền toàn trang Client 2026).
+- `--jpm-neutral-0`:   `#FFFFFF` (Card Surface - Mặt nổi của Card sản phẩm, Modal).
 
-### 4.3. Quy định nghiêm ngặt về Inline Style (`style="..."`)
-- Inline `style=""` **DUY NHẤT** được chấp nhận cho **kích thước vật lý hoặc thông số động** (Physical / Dynamic Dimensions):
-  - Chiều rộng cột bảng cố định (VD: `style="width: 5%;"`, `style="width: 15%;"`).
-  - Chiều cao khung ảnh sản phẩm hoặc khung vẽ sơ đồ (VD: `style="height: 200px;"`, `style="height: 500px;"`).
-  - Tọa độ hotspot đánh số phụ tùng trên bản vẽ sơ đồ nổ (VD: `style="top: 42%; left: 68%;"`).
-- **TUYỆT ĐỐI CẤM** dùng inline `style=""` để chỉnh màu sắc, viền bo góc, đổ bóng hay khoảng cách lề. Mọi thuộc tính đó phải dùng class Bootstrap utility, class dùng chung trong `main.css`, hoặc `<style scoped>` nếu là tinh chỉnh riêng của trang.
+### 2.3. Hệ màu trạng thái nghiệp vụ phụ tùng
+- **Còn hàng (In Stock):** Nền `#DCFCE7`, Chữ `#15803D` (Huy hiệu Sẵn sàng giao ngay).
+- **Chờ báo giá (Quote Required):** Nền `#DBEAFE`, Chữ `#1D4ED8` (Giá biến động theo tỷ giá JPY/USD).
+- **Hàng đặt trước (Pre-order):** Nền `#FEF3C7`, Chữ `#B45309` (Đặt từ xưởng Nhật Bản).
+- **Mã thay thế (Superseded):** Nền `#EDE9FE`, Chữ `#6D28D9` (Cảnh báo nâng cấp mã OEM).
+- **Tạm hết hàng (Out of Stock):** Nền `#FEE2E2`, Chữ `#B91C1C`.
 
 ---
 
-## 5. BẮT BUỘC CHÚ THÍCH (COMMENT) BẰNG TIẾNG VIỆT TOÀN DIỆN
+## 3. HỆ THỐNG TYPOGRAPHY (ĐỒ HỌA CHỮ CHUẨN HÓA)
 
-> **Mục tiêu tối thượng:** Bất kỳ lập trình viên, kỹ sư hay AI tiếp quản dự án sau này đều có thể đọc lướt qua là hiểu ngay mục đích, cấu trúc nghiệp vụ và vị trí từng khối giao diện mà không cần phải đoán mò hay dịch ngược code.
+- **Font Tiêu đề & Thương hiệu:** `Raleway` (Google Font - Geometric Sans).
+- **Font Thân trang, Biểu mẫu & Bảng:** `Roboto` (Google Font - Legibility tối ưu).
+- **Font Mã OEM & Số liệu kỹ thuật:** `Roboto Mono` kết hợp `font-variant-numeric: tabular-nums;` để triệt tiêu hiện tượng xê dịch pixel chiều ngang khi số nhảy.
 
-### 5.1. Chú thích trong Template Vue (HTML Markup)
-Mọi section, khối chức năng, bộ lọc, card, modal và các phân nhánh điều kiện (`v-if` / `v-else`) bắt buộc phải có thẻ chú thích tiếng Việt rõ ràng:
-- **Tiêu đề khối / Section:** Đặt ở đầu mỗi thẻ `<section>` hoặc `<div>` lớn.
-  ```html
-  <!-- Khối 1: Tra Cứu Phụ Tùng Nhanh (Bộ Lọc Động Cơ Thông Minh) -->
-  <section id="search-parts" class="...">
-  ```
-  ```html
-  <!-- Khối 4: Tại Sao Chọn JPM Marine (Điểm Mạnh Vượt Trội) -->
-  <section class="why-us-section ...">
-  ```
-- **Phân nhánh trạng thái dữ liệu (Loading / Empty / Real Data):**
-  ```html
-  <!-- Trạng thái Skeleton Loading khi đang nạp dữ liệu từ API -->
-  <template v-if="isLoading">...</template>
+### Thang phân cấp chữ (Type Scale):
+- **Display 1:** 44px (Desktop) / 32px (Mobile) - Weight 800 - Line height 1.15.
+- **H1:** 32px (Desktop) / 24px (Mobile) - Weight 700 - Line height 1.25.
+- **H2:** 24px (Desktop) / 20px (Mobile) - Weight 700 - Line height 1.30.
+- **H3:** 20px (Desktop) / 18px (Mobile) - Weight 600 - Line height 1.35.
+- **H4:** 16px (Desktop) / 15px (Mobile) - Weight 600 - Line height 1.40.
+- **Body Standard:** 14px - Weight 400 - Line height 1.50.
+- **Body Small:** 13px (Desktop) / 12px (Mobile) - Weight 400 - Line height 1.45.
+- **Technical OEM:** 13px (Roboto Mono) - Weight 600 - Letter spacing +0.05em.
+- **Price Hero:** 22px - Weight 700. Price Card: 16px - Weight 700.
 
-  <!-- Trạng thái hiển thị dữ liệu thật -->
-  <template v-else>...</template>
-  ```
-- **Các khối con quan trọng (Cột, Form, Action Buttons):**
-  ```html
-  <!-- Cột Trái: Tiêu đề và Mô tả giới thiệu -->
-  <!-- Cột Phải: Danh sách các thẻ điểm mạnh dịch vụ -->
-  <!-- Nút Thêm Vào Giỏ Hàng Nhanh -->
-  ```
+---
 
-### 5.2. Chú thích trong Script Vue (Logic & Composables)
-Mọi khai báo biến trạng thái (State), truy vấn dữ liệu (Vue Query), thuộc tính tính toán (Computed), theo dõi (Watchers) và phương thức (Methods) phải có chú thích 1-2 dòng bằng tiếng Việt:
-```javascript
-// Lấy danh sách thương hiệu động cơ từ API công khai (cache RAM 30 phút)
-const { data: brands, isLoading: isLoadingBrands } = useQuery(...);
+## 4. HỆ THỐNG BO GÓC, ĐỔ BÓNG & KHOẢNG CÁCH (PO DECISION 01)
 
-// Tự động đặt lại bộ lọc con khi thương hiệu cha bị thay đổi
-watch(selectedBrand, () => {
-  selectedEngineType.value = "";
-  selectedModel.value = "";
-});
-
-// Thêm phụ tùng vào giỏ hàng và hiển thị thông báo toast
-const addToCart = (product) => { ... };
-```
-
-### 5.3. Chú thích trong Stylesheet (`main.css`)
-Mọi đoạn CSS mở rộng, ghi đè hoặc bổ sung phải được gom nhóm và phân cách bằng tiêu đề khối rõ ràng:
+### 4.1. Bảng quy chuẩn Bo góc (Border Radius):
 ```css
-/* ==============================================================
-   KHỐI TIN TỨC BENTO GRID (TIN TUC & KINH NGHIEM) - 3 CỘT
-   ============================================================== */
+--jpm-radius-card: 12px;     /* Card sản phẩm, Khung Panel, Modal, Khung sơ đồ */
+--jpm-radius-control: 8px;   /* Button, Input, Select (JpmSelect), Dropdown, Tooltip */
+--jpm-radius-badge: 6px;     /* Tag lọc, Badge trạng thái, Chip, Mã OEM Pill, Hotspot pin */
+--jpm-radius-circle: 50%;    /* Avatar, Nút icon tròn, Đèn báo trạng thái */
 ```
 
+### 4.2. Hệ thống Đổ bóng xanh mỏng (Elevations):
+- `--jpm-shadow-sm`: `0 1px 3px rgba(10, 17, 40, 0.05), 0 1px 2px rgba(10, 17, 40, 0.03)` (Card tĩnh mặc định).
+- `--jpm-shadow-md`: `0 4px 12px -2px rgba(10, 17, 40, 0.08), 0 2px 6px -2px rgba(10, 17, 40, 0.04)` (Card hover bay nổi 4px).
+- `--jpm-shadow-lg`: `0 12px 24px -4px rgba(10, 17, 40, 0.12), 0 4px 10px -2px rgba(10, 17, 40, 0.06)` (Dropdown mở, Tooltip).
+- `--jpm-shadow-xl`: `0 24px 48px -12px rgba(10, 17, 40, 0.20)` (Modal popup, Drawer).
+
+---
+
+## 5. BỐ CỤC TOÀN HỆ THỐNG & GIẢI QUYẾT LỖI LAYOUT OFFSET
+
+### 5.1. Cơ chế bù trừ Header Offset tập trung (Centralized Layout Offset):
+- **Bãi bỏ hoàn toàn anti-pattern:** Tuyệt đối không viết `style="padding-top: 110px;"` trong các file Vue con.
+- **Quản trị duy nhất tại `LayoutClient.vue`:**
+  - Desktop ( $\ge$ 1200px ): `--jpm-header-height: 80px;`
+  - Tablet ( 768px - 1199px ): `--jpm-header-height: 72px;`
+  - Mobile ( < 768px ): `--jpm-header-height: 64px;`
+  - Toàn bộ nội dung `<router-view />` được bọc trong container có `padding-top: var(--jpm-header-height);`.
+
+### 5.2. Khung chứa (Container System):
+- Độ rộng tối ưu hóa 2026: **`max-width: 1320px`** (`container-xxl`).
+- Lưới sản phẩm chuẩn Catalog: 4 Cột trên Desktop lớn, 3 Cột trên Laptop, 2 Cột trên Tablet/Mobile landscape, 1-2 Cột trên Mobile dọc.
+
+---
+
+## 6. ĐẶC TẢ THÀNH PHẦN DÙNG CHUNG CỐT LÕI (PO DECISION 03)
+
+### 6.1. Component `ProductCard.vue`
+- **Mục tiêu:** Thống nhất hiển thị phụ tùng trên toàn bộ 20 màn hình, xóa bỏ việc viết lặp HTML thẻ sản phẩm.
+- **Giải quyết lỗi bất đối xứng chân thẻ khi báo giá:**
+  - Hàng có giá: Giá niêm yết bên trái + Nút `Thêm giỏ` (`bi-cart-plus`) bên phải.
+  - Hàng cần báo giá: Nhãn `Giá: Liên hệ` bên trái + Nút `Yêu cầu báo giá` (`bi-file-earmark-text`) có cùng kích thước bên phải.
+  - Chân thẻ luôn luôn đối xứng và thẳng hàng 100% trên toàn bộ lưới Grid.
+- **API Props đề xuất:** `id`, `tenPhuTung`, `maOem`, `thuongHieu`, `hinhAnhUrl`, `giaBan`, `isGiaLienHe`, `tonKho`, `trangThaiHang`, `isSuperseded`, `maMoiNhat`.
+- **Emits đề xuất:** `@add-to-cart`, `@request-quote`, `@quick-view`.
+
+### 6.2. Component `JpmSelect.vue`
+- **Mục tiêu:** Dropdown kỹ thuật chuyên dụng thay thế `<select>` mặc định của trình duyệt, hỗ trợ chuỗi lọc động 4 cấp:
+  $$\text{Brand} \longrightarrow \text{Engine Type} \longrightarrow \text{Horsepower/Model} \longrightarrow \text{Engine Model}$$
+- **Tính năng bắt buộc:** Tìm kiếm trong menu (`searchable`), Xóa chọn (`clearable`), Tải động (`loading`), Trạng thái khóa (`disabled` khi cấp cha chưa chọn), Điều hướng bàn phím đầy đủ (`Tab`, `ArrowDown`, `ArrowUp`, `Enter`, `Escape`).
+
+---
+
+## 7. ĐẶC TẢ BẢN VẼ RÃ MÁY & INTERACTIVE HOTSPOTS (PO DECISION 02)
+
+Tại màn hình `SoDoPhuTung.vue`:
+1. **Ánh xạ tọa độ phần trăm:** Dữ liệu tọa độ từ bảng `chi_tiet_so_dos` (`x`, `y`, `width`, `height`) được đặt trực tiếp dạng CSS:
+   `left: x%; top: y%; transform: translate(-50%, -50%);`
+   Cả ảnh bản vẽ và các Hotspot Pin cùng nằm chung trong Transform Stage Container để khi Pan và Zoom không bao giờ bị lệch vị trí.
+2. **Kênh đồng bộ hai chiều (Two-way Reactive Bridge):**
+   - Click Hotspot trên bản vẽ $\to$ Kích hoạt trạng thái Selected (đỏ Marine, sóng radar) $\to$ Tự động cuộn mượt dòng tương ứng trên bảng danh mục (`scrollIntoView({ behavior: 'smooth', block: 'nearest' })`).
+   - Click dòng trên bảng $\to$ Kích hoạt Hotspot tương ứng trên bản vẽ $\to$ Phóng to Pin và di chuyển bản vẽ đưa Pin vào trung tâm.
+3. **Thích ứng trên Mobile:** Chuyển sang mô hình Tabbed Workspace (Tab Bản vẽ Pinch-Zoom + Tab Danh mục phụ tùng) kết hợp Bottom Sheet nổi tóm tắt linh kiện khi chạm ngón tay.
+
+---
+
+## 8. QUY CHUẨN BIỂU TƯỢNG (PO DECISION 04)
+
+- Phân hệ Client sử dụng **100% Bootstrap Icons (`bi bi-*`)**.
+- Tuyệt đối cấm sử dụng Boxicons (`bx bx-*`) trên Client.
+- Quy chuẩn kích thước icon: 14px (Badge/Tag), 16px (Nút nhỏ, Bảng), 18px (Nút chuẩn, Menu), 24px (Khối tiêu đề).
+- Khoảng cách icon và văn bản: Luôn kèm class `me-1` hoặc `me-2` (4px - 8px), không để icon dính sát chữ.
+
+---
+
+## 9. QUY CHUẨN PHÂN ĐỊNH CSS TOÀN CỤC VS CỤC BỘ
+
+- **`main.css` (CSS dùng chung toàn Client):**
+  - Chỉ chứa: Design tokens `:root`, tùy biến các class chính quy Bootstrap 5 (`.btn-primary`, `.btn-danger`, `.badge`, `.card`), utility dùng chung (`.text-truncate-2`), class component nền tảng (`.product-card`, `.btn-cart-action`).
+  - CẤM: Đưa class đặc thù của 1 trang, số dòng line-clamp cục bộ, hay margin/padding riêng của 1 section vào `main.css`.
+- **`<style scoped>` trong Component Vue:**
+  - Dành riêng cho tinh chỉnh cục bộ của trang: Số dòng tóm tắt `-webkit-line-clamp`, tỷ lệ khung ảnh riêng của trang, khoảng cách lề cục bộ.
+- **Inline Style (`style="..."`):**
+  - DUY NHẤT được chấp nhận cho thông số vật lý động: Chiều rộng cột bảng (`style="width: 15%;"`), Tọa độ Hotspot động trên sơ đồ (`style="top: 42%; left: 68%;"`).
+  - TUYỆT ĐỐI CẤM dùng inline style cho màu sắc, bo góc, đổ bóng hay khoảng cách lề.
+
+---
+
+## 10. DANH MỤC 20 MÀN HÌNH CLIENT & ĐỊNH HƯỚNG BỐ CỤC
+
+1. `TrangChu.vue`: Đại sảnh công nghệ, Hero banner tích hợp bộ lọc 4 cấp `JpmSelect.vue`, Lưới phụ tùng `ProductCard.vue`.
+2. `KetQuaTraCuu.vue`: Trung tâm tìm kiếm mã OEM và danh mục, Sidebar bộ lọc dải giá/kho hàng, Lưới sản phẩm `ProductCard.vue`.
+3. `ThuongHieu.vue`: Trang các hãng mẹ (Yanmar, Yamaha, Suzuki, Honda), Series Selector, Catalog ủy quyền.
+4. `SoDoPhuTung.vue`: Không gian bản vẽ rã máy tương tác hai chiều, Split View Resizer, Hotspots pins tỏa sáng, Toolbar Zoom/Pan.
+5. `ChiTietPhuTung.vue`: Hồ sơ kỹ thuật phụ tùng theo mã OEM, Bảng tra cứu model tương thích (Fitment Guide), Link mở sơ đồ rã máy.
+6. `SanPham.vue`: Danh mục toàn bộ phụ tùng, Sticky filter sidebar, Lưới sản phẩm chuẩn 4 cột.
+7. `ChiTietSanPham.vue`: Chi tiết sản phẩm bán lẻ, Tab thông số kỹ thuật, Băng tải sản phẩm gợi ý bảo dưỡng.
+8. `GioHang.vue`: Quản lý giỏ hàng hỗn hợp (Nhóm hàng có sẵn tính tổng cọc + Nhóm hàng báo giá kỹ thuật).
+9. `TraCuuBaoGia.vue`: Tra cứu mã báo giá, Đồng hồ đếm ngược 72 giờ, Thay thế toàn bộ icon Boxicons lỗi sang Bootstrap Icons.
+10. `TraCuuDonHang.vue`: Theo dõi 5 chặng vận chuyển từ Nhật Bản về cảng Việt Nam, Thay thế toàn bộ Boxicons sang Bootstrap Icons.
+11. `TinTuc.vue`: Tạp chí hàng hải, Bento grid tin tức kỹ thuật, Thẻ bài viết bo góc 12px.
+12. `ChiTietTinTuc.vue`: Bài viết chuyên sâu, Widget phụ tùng liên quan trực tiếp đến bài viết (`ProductCard.vue`).
+13. `HoTro.vue`: Trung tâm trợ giúp, Hotline kỹ sư 24/7, Accordion FAQ câu hỏi thường gặp.
+14. `LayoutTaiKhoan.vue`: Khung bố cục cá nhân, `AccountSidebar.vue` đồng bộ 100% Bootstrap Icons và bo góc 12px.
+15. `TaiKhoan.vue`: Hồ sơ chủ tàu/thợ máy, Thông tin xuất hóa đơn GTGT công ty hàng hải, Địa chỉ nhận hàng tại bến cảng.
+16. `Garage.vue`: Tủ máy Marine Garage cá nhân, Danh sách động cơ sở hữu, Modal thêm máy dùng `JpmSelect.vue`.
+17. `GarageChiTietMay.vue`: Chi tiết từng động cơ đã lưu, Sổ bảo dưỡng định kỳ, Sơ đồ rã máy tương thích riêng cho máy.
+18. `VatTuThuongMua.vue`: Danh mục vật tư tiêu hao định kỳ (lọc dầu, bugi, anode...), Nút mua lại nguyên gói theo chu kỳ.
+19. `LichSuDonHang.vue`: Quản lý toàn bộ đơn hàng đã giao dịch, Tải hóa đơn VAT và phiếu bảo hành chính hãng.
+20. `XacThuc.vue`: Cổng đăng nhập/đăng ký thợ máy và chủ tàu, Split screen công nghệ biển sâu sang trọng.
+
+---
+
+## 11. BẢNG TỔNG HỢP TRẠNG THÁI QUYẾT ĐỊNH & ĐIỂM CHỜ PHÊ DUYỆT
+
+| Mã quyết định | Nội dung quyết định | Trạng thái |
+| :--- | :--- | :--- |
+| **DEC-01** | Border Radius: Card/Modal 12px, Controls 8px, Badges 6px, Circle 50% | **ĐÃ PHÊ DUYỆT (Official)** |
+| **DEC-02** | Exploded Diagram Hotspots tương tác 2 chiều (Ghim <--> Bảng) | **ĐÃ PHÊ DUYỆT (Official)** |
+| **DEC-03** | Reusable Shared Components: `ProductCard.vue` & `JpmSelect.vue` | **ĐÃ PHÊ DUYỆT (Official)** |
+| **DEC-04** | Hệ thống Icon: 100% Bootstrap Icons (`bi bi-*`), loại bỏ Boxicons | **ĐÃ PHÊ DUYỆT (Official)** |
+| **DEC-PENDING-01** | Cho phép thanh toán cọc hàng có sẵn và gửi báo giá hàng hiếm cùng lúc | *Chờ PO phê duyệt* |
+| **DEC-PENDING-02** | Mô hình Tabbed Workspace + Bottom Sheet cho sơ đồ trên Mobile < 400px | *Chờ PO phê duyệt* |
+| **DEC-PENDING-03** | Mở rộng phạm vi tìm kiếm nhanh gồm Mã OEM, Tên phụ tùng và Model máy | *Chờ PO phê duyệt* |
+| **DEC-PENDING-04** | Hoàn thiện chuẩn Light/Slate ở Phase 4, chuyển Dark Mode sang Phase 5 | *Chờ PO phê duyệt* |
+
+---
+
+*Tài liệu này là SOURCE OF TRUTH tối cao cho toàn bộ hoạt động thiết kế và lập trình giao diện JPM Client.*

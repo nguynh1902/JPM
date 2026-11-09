@@ -234,18 +234,7 @@
               <!-- LOADING SKELETON -->
               <div v-if="isFetchingGlobal" class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4">
                 <div class="col" v-for="i in 6" :key="i">
-                  <div class="card h-100 product-card border-0 shadow-sm">
-                    <div class="card-img-wrapper skeleton-box" style="aspect-ratio: 4/3;"></div>
-                    <div class="card-body p-3">
-                      <div class="skeleton-line" style="width: 50%; height: 12px; margin-bottom: 10px;"></div>
-                      <div class="skeleton-line" style="width: 90%; height: 16px; margin-bottom: 8px;"></div>
-                      <div class="skeleton-line" style="width: 70%; height: 16px; margin-bottom: 16px;"></div>
-                      <div class="d-flex justify-content-between align-items-center pt-2">
-                        <div class="skeleton-line" style="width: 45%; height: 22px;"></div>
-                        <div class="skeleton-box" style="width: 36px; height: 36px; border-radius: 8px;"></div>
-                      </div>
-                    </div>
-                  </div>
+                  <ProductCard :loading="true" />
                 </div>
               </div>
 
@@ -312,50 +301,7 @@
 
                     <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4">
                       <div class="col" v-for="prod in (filters.nhom_phu_tung_id ? group.items : group.items.slice(0, 3))" :key="prod.id">
-                        <div class="card h-100 product-card position-relative">
-                          <!-- 1. Ảnh sản phẩm -->
-                          <div class="card-img-wrapper position-relative overflow-hidden bg-light d-flex align-items-center justify-content-center">
-                            <img 
-                              :src="prod.hinh_anh ? prod.hinh_anh : 'https://placehold.co/400x300/f8f9fa/a1acb8?text=JPM+Marine'" 
-                              class="card-img-top w-100 transition-transform card-img-product" 
-                              style="aspect-ratio: 4/3; object-fit: cover;" 
-                              :alt="prod.ten_phu_tung"
-                              @error="$event.target.src='https://placehold.co/400x300/f8f9fa/a1acb8?text=JPM+Marine'"
-                            >
-                          </div>
-                          <!-- 2. Thân Card thông tin -->
-                          <div class="card-body text-start p-3 d-flex flex-column bg-white">
-                            <div class="product-category mb-1 text-truncate">
-                              {{ prod.thuong_hieu ? prod.thuong_hieu.name : 'CHÍNH HÃNG OEM' }}
-                            </div>
-                            <h5 class="card-title mb-1">
-                              <router-link :to="`/chi-tiet-phu-tung/${prod.ma_phu_tung || prod.id}`" class="text-decoration-none stretched-link">
-                                {{ prod.ten_phu_tung }}
-                              </router-link>
-                            </h5>
-                            <div class="product-sku mb-3">
-                              <template v-if="prod.ma_phu_tung">
-                                <span class="sku-label">Mã:</span> <span class="sku-code">{{ prod.ma_phu_tung }}</span>
-                              </template>
-                              <template v-else>&nbsp;</template>
-                            </div>
-                            <!-- 3. Chân Card: Giá & Giỏ hàng ngang hàng -->
-                            <div class="mt-auto d-flex align-items-center justify-content-between pt-1">
-                              <div>
-                                <span v-if="prod.is_gia_lien_he || !prod.gia_ban" class="text-danger fw-bold price-value">Liên hệ</span>
-                                <span v-else class="text-danger fw-bold price-value">{{ Number(prod.gia_ban).toLocaleString('vi-VN') }} đ</span>
-                              </div>
-                              <button 
-                                class="btn btn-cart-action" 
-                                title="Thêm vào giỏ" 
-                                @click.prevent="addToCart(prod)"
-                                style="position: relative; z-index: 2;"
-                              >
-                                <i class="bi bi-cart2"></i>
-                              </button>
-                            </div>
-                          </div>
-                        </div>
+                        <ProductCard :product="prod" @add-to-cart="addToCart" />
                       </div>
                     </div>
                   </div>
@@ -416,9 +362,13 @@ import { useRoute, useRouter } from 'vue-router';
 import { useQuery, useQueryClient } from '@tanstack/vue-query';
 import axiosClient from '../../../api/axiosClient';
 import { useCartStore } from '../../../stores/cartStore';
+import ProductCard from '../../../components/client/ProductCard.vue';
 
 export default {
   name: "KetQuaTraCuu",
+  components: {
+    ProductCard
+  },
   setup() {
     const route = useRoute();
     const router = useRouter();
