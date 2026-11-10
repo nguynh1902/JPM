@@ -1,5 +1,5 @@
 <template>
-  <div class="jpm-select-container" ref="selectContainerRef">
+  <div class="jpm-select-container" :class="{ 'is-active': isOpen }" ref="selectContainerRef">
     <!-- Nhãn phía trên nếu có -->
     <label v-if="label" class="filter-label mb-2 d-flex align-items-center justify-content-between">
       <span>{{ label }}</span>
@@ -95,7 +95,7 @@
           </div>
 
           <!-- Danh sách Options -->
-          <ul class="custom-dropdown-list list-unstyled mb-0 custom-scrollbar">
+          <ul class="jpm-select-options custom-dropdown-list list-unstyled mb-0 custom-scrollbar">
             <!-- Mục Tất cả / Bỏ chọn nếu có allOptionLabel -->
             <li
               v-if="allOptionLabel && !searchQuery"
@@ -366,6 +366,10 @@ watch(() => props.options, () => {
   width: 100%;
 }
 
+.jpm-select-container.is-active {
+  z-index: 1050;
+}
+
 .custom-select-wrapper {
   position: relative;
 }
@@ -445,8 +449,10 @@ watch(() => props.options, () => {
 
 /* Panel Menu Dropdown */
 .custom-dropdown-panel {
+  position: absolute;
   top: calc(100% + 4px);
   left: 0;
+  width: 100%;
   background-color: var(--jpm-neutral-0, #FFFFFF);
   border: 1px solid var(--jpm-neutral-200, #E2E8F0);
   border-radius: var(--jpm-radius-control, 8px);
@@ -455,9 +461,29 @@ watch(() => props.options, () => {
   z-index: 1060;
 }
 
-.custom-dropdown-list {
-  max-height: 240px;
-  overflow-y: auto;
+/* Đảm bảo danh sách options bên trong Panel luôn ở normal flow, độc lập hoàn toàn khỏi mọi style ngoài */
+.custom-dropdown-panel .jpm-select-options,
+.custom-dropdown-panel .custom-dropdown-list,
+.custom-dropdown-panel ul {
+  position: static !important;
+  top: auto !important;
+  left: auto !important;
+  right: auto !important;
+  bottom: auto !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  background: transparent !important;
+  margin: 0 !important;
+  padding: 4px 0 !important;
+  max-height: 240px !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  display: block !important;
+  list-style: none !important;
 }
 
 .dropdown-item-option {

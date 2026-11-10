@@ -213,7 +213,7 @@
             <div class="col-6 col-md-4 col-xl-3 client-logo" v-for="brand in brands" :key="brand.id">
               <router-link :to="`/thuong-hieu/${brand.code ? brand.code.toLowerCase() : ''}`" class="d-flex align-items-center justify-content-center w-100 h-100">
                 <img
-                  :src="brand.logo_path ? (brand.logo_path.startsWith('http') ? brand.logo_path : brand.logo_path.startsWith('/client/') ? brand.logo_path : 'http://localhost:8000/storage/' + brand.logo_path) : ''"
+                  :src="brand.logo_path ? (brand.logo_path.startsWith('http') || brand.logo_path.startsWith('/client/') ? brand.logo_path : getImageUrl(brand.logo_path.startsWith('storage/') ? brand.logo_path : 'storage/' + brand.logo_path)) : ''"
                   :alt="brand.name"
                   class="img-fluid"
                   @error="e => e.target.style.display='none'"
@@ -425,7 +425,7 @@
       aria-hidden="true"
     >
       <div class="modal-dialog modal-dialog-centered modal-lg">
-        <div class="modal-content bg-dark border-0 shadow-lg overflow-hidden rounded-3 text-white">
+        <div class="modal-content bg-dark border-0 shadow-lg overflow-hidden text-white" style="border-radius: var(--jpm-radius-modal, 12px) !important;">
           <div class="modal-header border-0 pb-0 pt-3 px-3 d-flex justify-content-between align-items-center">
             <h6 class="modal-title fw-semibold text-truncate pe-3" id="homeNewsVideoModalLabel">
               <i class="bi bi-play-circle-fill text-danger me-2"></i>{{ activeVideoItem?.title }}
@@ -439,7 +439,7 @@
             ></button>
           </div>
           <div class="modal-body p-2 p-md-3">
-            <div class="ratio ratio-16x9 rounded-3 overflow-hidden bg-black shadow">
+            <div class="ratio ratio-16x9 overflow-hidden bg-black shadow" style="border-radius: var(--jpm-radius-control, 8px);">
               <iframe
                 v-if="activeVideoItem && activeVideoEmbedUrl"
                 :src="activeVideoEmbedUrl"
@@ -652,35 +652,15 @@ export default {
   data() {
     return {
       searchKeyword: "",
-      openDropdown: null,
     };
-  },
-  computed: {
-    brandLabel() {
-      if (!this.selectedBrand || !this.brands) return 'Chọn thương hiệu';
-      const b = this.brands.find(x => x.id === this.selectedBrand);
-      return b ? b.name : 'Chọn thương hiệu';
-    },
-    partLabel() {
-      if (!this.selectedEngineType || !this.engineTypes) return 'Chọn loại động cơ';
-      const p = this.engineTypes.find(x => x.id === this.selectedEngineType);
-      return p ? p.ten_loai_dong_co : 'Chọn loại động cơ';
-    },
-    yearLabel() {
-      return this.selectedYear || 'Chọn năm sản xuất';
-    },
-    modelLabel() {
-      if (!this.selectedModel || !this.engineModels) return 'Chọn model động cơ';
-      const m = this.engineModels.find(x => x.id === this.selectedModel);
-      return m ? m.ten_model : 'Chọn model động cơ';
-    }
   },
   // ===== 5. CÁC HÀM XỬ LÝ SỰ KIỆN & ĐIỀU HƯỚNG (METHODS) =====
   methods: {
     getImageUrl(path) {
       if (!path) return "";
       if (path.startsWith("blob:") || path.startsWith("http")) return path;
-      return `http://localhost:8000${path.startsWith("/") ? "" : "/"}${path}`;
+      const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
+      return `${baseUrl}${path.startsWith("/") ? "" : "/"}${path}`;
     },
     searchParts() {
       if (!this.searchKeyword && !this.selectedBrand && !this.selectedEngineType && !this.selectedYear && !this.selectedModel) {
@@ -709,37 +689,14 @@ export default {
       this.searchKeyword = keyword;
       this.searchParts();
     },
-    toggleDropdown(name) {
-      this.openDropdown = this.openDropdown === name ? null : name;
-    },
-    selectOption(dropdown, value) {
-      if (dropdown === 'brand') this.selectedBrand = value;
-      else if (dropdown === 'engineType') this.selectedEngineType = value;
-      else if (dropdown === 'year') this.selectedYear = value;
-      else if (dropdown === 'model') this.selectedModel = value;
-      this.openDropdown = null;
-    },
     goToCategory(cat) {
       this.$router.push('/danh-sach-phu-tung');
     },
     addToCart(prod) {
       this.cartStore.addItem(prod, 1);
       this.$toast.success("Thêm sản phẩm thành công");
-    },
-    // Đóng dropdown khi click ra ngoài mà không cần overlay chắn màn hình
-    handleClickOutside(event) {
-      if (!this.openDropdown) return;
-      if (!event.target.closest('.custom-select-wrapper')) {
-        this.openDropdown = null;
-      }
     }
-  },
-  mounted() {
-    document.addEventListener('click', this.handleClickOutside);
-  },
-  beforeUnmount() {
-    document.removeEventListener('click', this.handleClickOutside);
-  },
+  }
 };
 </script>
 
@@ -749,7 +706,7 @@ export default {
    Đồng bộ bảng màu Luxury (Deep Navy #0A1128 & Cool Slate) với các phần trên
    ============================================================== */
 .news-category {
-  font-family: var(--default-font);
+  font-family: var(--heading-font, 'Raleway', sans-serif);
   color: #f82249; /* Đỏ Marine Red thương hiệu JPM */
   font-weight: 700;
   font-size: 0.75rem;
@@ -759,7 +716,7 @@ export default {
 }
 
 .news-hero-title {
-  font-family: var(--default-font);
+  font-family: var(--heading-font, 'Raleway', sans-serif);
   font-size: 1.3rem;
   color: var(--heading-color, #0A1128);
   font-weight: 700;
@@ -768,7 +725,7 @@ export default {
 }
 
 .news-card-title {
-  font-family: var(--default-font);
+  font-family: var(--heading-font, 'Raleway', sans-serif);
   font-size: 1rem;
   color: var(--heading-color, #0A1128);
   font-weight: 600;
@@ -815,7 +772,7 @@ export default {
 
 .section-more-link {
   color: var(--heading-color, #0A1128);
-  font-family: var(--default-font);
+  font-family: var(--heading-font, 'Raleway', sans-serif);
   font-size: 0.95rem;
   font-weight: 600;
   text-decoration: none;
@@ -862,7 +819,7 @@ export default {
   aspect-ratio: 16/10;
 }
 .video-badge {
-  font-family: var(--default-font);
+  font-family: var(--heading-font, 'Raleway', sans-serif);
   font-size: 0.7rem;
   font-weight: 600;
   letter-spacing: 0.6px;
@@ -926,7 +883,7 @@ export default {
 .filter-console-card .filter-label {
   display: inline-flex;
   align-items: center;
-  font-family: var(--default-font);
+  font-family: var(--heading-font, 'Raleway', sans-serif);
   font-size: 0.8125rem;
   font-weight: 600;
   color: var(--heading-color, #0A1128);
@@ -937,120 +894,6 @@ export default {
   font-weight: 400;
   color: #94a3b8;
   font-size: 0.78rem;
-}
-
-/* Custom Select Box (Refined Client Focus with Subtle Aura) */
-.custom-select-wrapper {
-  position: relative;
-}
-.custom-select-wrapper.z-active {
-  z-index: 1050;
-}
-.custom-select-box {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 16px;
-  height: 46px;
-  border-radius: 8px;
-  border: 1px solid #e2e8f0;
-  background: #ffffff;
-  box-shadow: none;
-  cursor: pointer;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
-  font-size: 0.875rem;
-  font-weight: 400;
-  color: #64748b;
-  font-family: var(--default-font);
-}
-.custom-select-box:hover {
-  border-color: #cbd5e1;
-}
-.custom-select-box.is-focused {
-  border-width: 1px !important;
-  border-color: var(--accent-color, #f82249) !important;
-  box-shadow: 0 0 0 3px rgba(248, 34, 73, 0.12) !important;
-  outline: 0 !important;
-}
-.custom-select-box.has-value {
-  color: var(--heading-color, #0A1128);
-  font-weight: 500;
-}
-.select-arrow {
-  transition: transform 0.2s ease;
-  font-size: 11px;
-  color: #94a3b8;
-}
-.select-arrow.rotated,
-.custom-select-box.is-focused .select-arrow {
-  transform: rotate(180deg);
-  color: var(--accent-color, #f82249);
-}
-
-/* Dropdown Menu */
-.custom-dropdown-list {
-  position: absolute;
-  min-width: 100%;
-  width: max-content;
-  max-width: 320px;
-  top: calc(100% + 4px);
-  list-style: none;
-  margin: 0;
-  padding: 6px;
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 10px;
-  box-shadow: 0 14px 35px rgba(10, 17, 40, 0.15);
-  z-index: 1060;
-  max-height: 320px;
-  overflow-y: auto;
-  overflow-x: hidden;
-  font-family: var(--default-font);
-  user-select: none;
-}
-.custom-dropdown-list::-webkit-scrollbar {
-  width: 6px;
-}
-.custom-dropdown-list::-webkit-scrollbar-track {
-  background: #f8fafc;
-  border-radius: 4px;
-}
-.custom-dropdown-list::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 4px;
-}
-.custom-dropdown-list li {
-  white-space: nowrap;
-  padding: 9px 14px;
-  cursor: pointer;
-  font-size: 0.875rem;
-  font-weight: 400;
-  color: #334155;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  transition: all 0.15s ease;
-  border-radius: 6px;
-}
-.custom-dropdown-list li:hover {
-  background: #f1f5f9;
-  color: #0f172a;
-}
-.custom-dropdown-list li.active {
-  background: rgba(248, 34, 73, 0.08);
-  color: var(--accent-color, #f82249);
-  font-weight: 600;
-}
-.custom-dropdown-list li.active:hover {
-  background: rgba(248, 34, 73, 0.14);
-  color: var(--accent-color, #f82249);
-}
-
-.dropdown-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 50;
-  background: transparent;
 }
 
 /* Search Input Box (Sneat-style Bold 2px Crisp Focus & Downward Soft Shadow, Zero Jitter) */
@@ -1147,11 +990,11 @@ export default {
 }
 
 .home-banner-title {
-  font-family: var(--default-font);
+  font-family: var(--heading-font, 'Raleway', sans-serif);
   font-size: 2.1rem;
   font-weight: 800;
   line-height: 1.25;
-  color: #0A1128;
+  color: var(--heading-color, #0A1128);
   letter-spacing: -0.4px;
 }
 

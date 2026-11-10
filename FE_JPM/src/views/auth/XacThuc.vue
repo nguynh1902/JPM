@@ -43,14 +43,14 @@
 
         <div class="mt-auto mb-auto pb-5">
           <!-- BADGE -->
-          <div class="d-inline-flex align-items-center mb-4" style="border-left: 3px solid var(--accent-color); padding-left: 14px;">
+          <div class="d-inline-flex align-items-center mb-4" style="border-left: 3px solid var(--jpm-color-red-marine, #F82249); padding-left: 14px;">
             <span style="color: rgba(255, 255, 255, 0.9); font-size: 14px; font-weight: 500; line-height: 1;">Đơn vị uy tín hàng đầu Việt Nam</span>
           </div>
           
           <!-- HEADLINE -->
-          <h1 data-aos="fade-up" data-aos-delay="100" style="font-family: var(--heading-font); font-size: clamp(32px, 3.2vw, 44px); font-weight: 700; color: #fff; line-height: 1.2; margin-bottom: 24px; text-shadow: 0 4px 24px rgba(0, 0, 0, 0.5);">
+          <h1 data-aos="fade-up" data-aos-delay="100" style="font-family: var(--heading-font, 'Raleway', sans-serif); font-size: clamp(32px, 3.2vw, 44px); font-weight: 700; color: #fff; line-height: 1.2; margin-bottom: 24px; text-shadow: 0 4px 24px rgba(0, 0, 0, 0.5);">
             Hệ Thống Phụ Tùng<br />
-            <span style="color: var(--accent-color);">Tàu Thuyền</span>
+            <span style="color: var(--jpm-color-red-marine, #F82249);">Tàu Thuyền</span>
           </h1>
           
           <!-- PARAGRAPH -->
@@ -73,7 +73,7 @@
         </div>
       </div>
 
-      <!-- CỘT PHẢI: BỐ CỤC CŨ (SLIM COLUMN) NHƯNG VỚI STYLE MINIMAL INPUT MỚI -->
+      <!-- CỘT PHẢI: BỐ CỤC CHUẨN GLASSMORPHISM DEEP NAVY -->
       <div class="col-12 col-md-6 col-lg-4 d-flex align-items-center justify-content-center h-100" style="background: rgba(10, 17, 40, 0.55); backdrop-filter: blur(20px); border-left: 1px solid rgba(255,255,255,0.05); box-shadow: -15px 0 50px rgba(10, 17, 40, 0.6); min-width: 420px; max-width: 480px;">
         <div class="w-100 p-4 p-xl-5">
           
@@ -81,7 +81,7 @@
             <!-- FORM ĐĂNG NHẬP -->
             <div v-if="activeForm === 'login'" key="login">
               <h2 class="text-white mb-3 auth-heading">Đăng Nhập</h2>
-              <p class="mb-4 auth-subtext">Chưa có tài khoản? <a href="#" @click.prevent="switchToRegister" class="text-decoration-none ms-1" style="color: var(--accent-color); font-weight: 500;">Đăng ký ngay</a>
+              <p class="mb-4 auth-subtext">Chưa có tài khoản? <a href="#" @click.prevent="switchToRegister" class="text-decoration-none ms-1" style="color: var(--jpm-color-red-marine, #F82249); font-weight: 600;">Đăng ký ngay</a>
               </p>
 
               <form @submit.prevent="handleLogin">
@@ -118,7 +118,7 @@
                 <hr class="flex-grow-1 m-0 auth-divider">
               </div>
 
-              <button type="button" class="btn w-100 text-white d-flex justify-content-center align-items-center gap-2 hover-bg-google" style="padding: 11px; font-size: 0.9rem; font-weight: 500; border: 1px solid rgba(255,255,255,0.18); background: rgba(255,255,255,0.03); border-radius: 6px;">
+              <button type="button" class="btn w-100 text-white d-flex justify-content-center align-items-center gap-2 hover-bg-google" style="padding: 11px; font-size: 0.9rem; font-weight: 500; border: 1px solid rgba(255,255,255,0.18); background: rgba(255,255,255,0.04); border-radius: var(--jpm-radius-control, 8px);">
                 <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="G" style="width: 18px;">
                 Google
               </button>
@@ -127,7 +127,7 @@
             <!-- FORM ĐĂNG KÝ -->
             <div v-else-if="activeForm === 'register'" key="register">
               <h2 class="text-white mb-3 auth-heading">Tạo Tài Khoản</h2>
-              <p class="mb-4 auth-subtext">Đã có tài khoản? <a href="#" @click.prevent="switchToLogin" class="text-decoration-none ms-1" style="color: var(--accent-color); font-weight: 500;">Đăng nhập ngay</a>
+              <p class="mb-4 auth-subtext">Đã có tài khoản? <a href="#" @click.prevent="switchToLogin" class="text-decoration-none ms-1" style="color: var(--jpm-color-red-marine, #F82249); font-weight: 600;">Đăng nhập ngay</a>
               </p>
 
               <div v-if="authStore.error" class="alert alert-danger py-2 small mb-3">{{ authStore.error }}</div>
@@ -181,7 +181,7 @@
                 <hr class="flex-grow-1 m-0 auth-divider">
               </div>
 
-              <button type="button" class="btn w-100 text-white d-flex justify-content-center align-items-center gap-2 hover-bg-google" style="padding: 11px; font-size: 0.9rem; font-weight: 500; border: 1px solid rgba(255,255,255,0.18); background: rgba(255,255,255,0.03); border-radius: 6px;">
+              <button type="button" class="btn w-100 text-white d-flex justify-content-center align-items-center gap-2 hover-bg-google" style="padding: 11px; font-size: 0.9rem; font-weight: 500; border: 1px solid rgba(255,255,255,0.18); background: rgba(255,255,255,0.04); border-radius: var(--jpm-radius-control, 8px);">
                 <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="G" style="width: 18px;">
                 Google
               </button>
@@ -279,9 +279,9 @@ export default {
       showResetConfirmPw: false,
       
       bgImages: [
-        "https://images.unsplash.com/photo-1502680390469-be75c86b636f?q=80&w=1400&auto=format&fit=crop",
-        "https://images.unsplash.com/photo-1567899378494-47b22a2ae96a?q=80&w=1400&auto=format&fit=crop",
-        "https://images.unsplash.com/photo-1505118380757-91f5f5632de0?q=80&w=1400&auto=format&fit=crop"
+        "https://images.unsplash.com/photo-1502680390469-be75c86b636f?q=80&w=1600&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1567899378494-47b22a2ae96a?q=80&w=1600&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1505118380757-91f5f5632de0?q=80&w=1600&auto=format&fit=crop"
       ],
       activeImgIndex: 0,
       timer: null
@@ -344,14 +344,28 @@ export default {
       const email = this.forgotEmail || this.forgotForm.email;
       try {
         const res = await axiosClient.post('/forgot-password', { email });
-        alert(res?.message || "Đã gửi liên kết khôi phục đến email: " + email);
+        const msg = res?.message || "Đã gửi liên kết khôi phục đến email: " + email;
+        if (this.$toast) {
+          this.$toast.success(msg);
+        } else {
+          alert(msg);
+        }
       } catch (err) {
-        alert(err.response?.data?.message || "Không thể gửi yêu cầu khôi phục mật khẩu, vui lòng kiểm tra lại email!");
+        const msg = err.response?.data?.message || "Không thể gửi yêu cầu khôi phục mật khẩu, vui lòng kiểm tra lại email!";
+        if (this.$toast) {
+          this.$toast.error(msg);
+        } else {
+          alert(msg);
+        }
       }
     },
     async handleReset() {
       if (this.resetForm.password !== this.resetForm.password_confirmation) {
-        alert("Mật khẩu xác nhận không khớp!");
+        if (this.$toast) {
+          this.$toast.error("Mật khẩu xác nhận không khớp!");
+        } else {
+          alert("Mật khẩu xác nhận không khớp!");
+        }
         return;
       }
       try {
@@ -360,11 +374,21 @@ export default {
           token: this.$route.query.token,
           email: this.$route.query.email
         });
-        alert(res?.message || "Đổi mật khẩu thành công!");
+        const msg = res?.message || "Đổi mật khẩu thành công!";
+        if (this.$toast) {
+          this.$toast.success(msg);
+        } else {
+          alert(msg);
+        }
         this.activeForm = 'login';
         this.$router.push('/dang-nhap');
       } catch (err) {
-        alert(err.response?.data?.message || "Đặt lại mật khẩu thất bại, vui lòng thử lại!");
+        const msg = err.response?.data?.message || "Đặt lại mật khẩu thất bại, vui lòng thử lại!";
+        if (this.$toast) {
+          this.$toast.error(msg);
+        } else {
+          alert(msg);
+        }
       }
     },
     async handleLogin() {
@@ -374,13 +398,22 @@ export default {
         const cartStore = useCartStore();
         await cartStore.fetchFromCloud();
 
+        if (this.$toast) {
+          this.$toast.success("Đăng nhập thành công!");
+        }
+
         if (authStore.isStaffOrAdmin) {
           this.$router.push('/portal/dashboard');
         } else {
           this.$router.push('/');
         }
       } else {
-        alert(authStore.error || "Đăng nhập thất bại");
+        const msg = authStore.error || "Đăng nhập thất bại, vui lòng kiểm tra lại thông tin!";
+        if (this.$toast) {
+          this.$toast.error(msg);
+        } else {
+          alert(msg);
+        }
       }
     },
     async handleRegister() {
@@ -391,14 +424,23 @@ export default {
       const authStore = useAuthStore();
       const success = await authStore.register(this.registerForm);
       if (success) {
+        if (this.$toast) {
+          this.$toast.success("Đăng ký tài khoản thành công!");
+        }
         if (authStore.isLoggedIn) {
           const cartStore = useCartStore();
           await cartStore.fetchFromCloud();
           this.$router.push('/');
         } else {
-          alert("Đăng ký thành công! Vui lòng đăng nhập.");
           this.activeForm = 'login';
-          this.$router.push('/');
+          this.$router.push('/dang-nhap');
+        }
+      } else {
+        const msg = authStore.error || "Đăng ký thất bại, vui lòng kiểm tra lại thông tin!";
+        if (this.$toast) {
+          this.$toast.error(msg);
+        } else {
+          alert(msg);
         }
       }
     }
@@ -409,145 +451,150 @@ export default {
 <style scoped>
 
 .auth-label {
+  font-family: var(--heading-font, 'Raleway', sans-serif);
   font-size: 0.85rem;
   letter-spacing: normal;
   text-transform: none;
-  font-weight: 500;
+  font-weight: 600;
   color: rgba(255, 255, 255, 0.9);
   margin-bottom: 0.35rem;
 }
 .auth-submit-btn {
-  background-color: var(--accent-color);
+  background-color: var(--jpm-color-red-marine, #F82249);
   padding: 12px;
+  font-family: var(--heading-font, 'Raleway', sans-serif);
   font-size: 0.95rem;
   font-weight: 600;
   letter-spacing: normal;
   text-transform: none;
-  border-radius: 6px;
-  box-shadow: 0 4px 15px rgba(239, 35, 60, 0.2);
+  border-radius: var(--jpm-radius-control, 8px);
+  box-shadow: 0 4px 15px rgba(248, 34, 73, 0.25);
   border: none;
   transition: all 0.3s ease;
 }
 .auth-submit-btn:hover {
+  background-color: var(--jpm-color-red-hover, #D9163A);
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(239, 35, 60, 0.3);
+  box-shadow: 0 6px 20px rgba(248, 34, 73, 0.4);
 }
 .auth-pw-icon {
-  opacity: 0.5;
+  opacity: 0.55;
   cursor: pointer;
   font-size: 1.1rem;
-  padding-right: 12px;
-  transition: opacity 0.3s ease;
+  padding-right: 14px;
+  transition: opacity 0.2s ease, color 0.2s ease;
 }
 .auth-pw-icon:hover {
-  opacity: 0.9;
+  opacity: 1;
+  color: var(--jpm-color-red-marine, #F82249);
 }
 .auth-divider {
-  border-color: rgba(255,255,255,0.15);
+  border-color: rgba(255, 255, 255, 0.15);
 }
 .auth-heading {
-  font-family: var(--heading-font);
+  font-family: var(--heading-font, 'Raleway', sans-serif);
   font-size: 26px;
   font-weight: 700;
-  letter-spacing: normal;
+  letter-spacing: -0.3px;
   text-transform: none;
 }
 .auth-subtext {
-  color: rgba(255,255,255,0.65);
+  color: rgba(255, 255, 255, 0.65);
   font-size: 0.88rem;
   letter-spacing: normal;
   font-weight: 400;
 }
 
-/* Transisiton form */
-.fade-enter-active, .fade-leave-active { transition: opacity 0.4s ease; }
-.fade-enter-from, .fade-leave-to { opacity: 0; }
-    /* ORIGINAL GLASSMORPHISM INPUTS */
-    .minimal-input {
-      background: rgba(255, 255, 255, 0.08) !important;
-      border: 1px solid rgba(255, 255, 255, 0.2) !important;
-      border-radius: 6px !important;
-      color: #fff !important;
-      padding: 10px 14px !important;
-      font-size: 0.92rem;
-      font-weight: 400;
-      box-shadow: none !important;
-      transition: all 0.2s ease;
-    }
-    
-    .minimal-input:focus {
-      border-color: var(--accent-color) !important;
-      background: rgba(239, 35, 60, 0.05) !important;
-      box-shadow: 0 0 0 3px rgba(239, 35, 60, 0.2) !important;
-    }
-    
-    .minimal-input::placeholder {
-      color: rgba(255, 255, 255, 0.45) !important;
-    }
-    
-    /* FIX AUTOFILL */
-    .minimal-input:-webkit-autofill,
-    .minimal-input:-webkit-autofill:hover, 
-    .minimal-input:-webkit-autofill:focus, 
-    .minimal-input:-webkit-autofill:active{
-        -webkit-text-fill-color: white !important;
-        transition: background-color 50000s ease-in-out 0s !important;
-        caret-color: white;
-    }
+/* Transition form */
+.fade-enter-active, .fade-leave-active { transition: opacity 0.35s ease, transform 0.35s ease; }
+.fade-enter-from, .fade-leave-to { opacity: 0; transform: translateY(4px); }
+
+/* ORIGINAL GLASSMORPHISM INPUTS */
+.minimal-input {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  border-radius: var(--jpm-radius-control, 8px) !important;
+  color: #fff !important;
+  padding: 10px 14px !important;
+  font-size: 0.92rem;
+  font-weight: 400;
+  box-shadow: none !important;
+  transition: all 0.2s ease;
+}
+
+.minimal-input:focus {
+  border-color: var(--jpm-color-red-marine, #F82249) !important;
+  background: rgba(248, 34, 73, 0.06) !important;
+  box-shadow: 0 0 0 3px rgba(248, 34, 73, 0.2) !important;
+}
+
+.minimal-input::placeholder {
+  color: rgba(255, 255, 255, 0.45) !important;
+}
+
+/* FIX AUTOFILL */
+.minimal-input:-webkit-autofill,
+.minimal-input:-webkit-autofill:hover, 
+.minimal-input:-webkit-autofill:focus, 
+.minimal-input:-webkit-autofill:active {
+  -webkit-text-fill-color: white !important;
+  transition: background-color 50000s ease-in-out 0s !important;
+  caret-color: white;
+}
 
 /* Minimal Checkbox */
 .minimal-checkbox {
   background-color: transparent;
-  border: 1px solid rgba(255,255,255,0.5);
-  border-radius: 2px;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 4px;
   cursor: pointer;
-  width: 15px;
-  height: 15px;
+  width: 16px;
+  height: 16px;
   margin-left: 0 !important;
+  transition: all 0.2s ease;
 }
 .minimal-checkbox:checked {
-  background-color: #fff;
-  border-color: #fff;
+  background-color: var(--jpm-color-red-marine, #F82249);
+  border-color: var(--jpm-color-red-marine, #F82249);
 }
 .minimal-checkbox:focus {
-  box-shadow: none;
-  border-color: #fff;
+  box-shadow: 0 0 0 2px rgba(248, 34, 73, 0.25);
+  border-color: var(--jpm-color-red-marine, #F82249);
 }
 
 .hover-lift {
   transition: transform 0.3s ease, opacity 0.3s ease;
 }
 .hover-lift:hover {
-  transform: translateX(-5px);
+  transform: translateX(-4px);
   opacity: 1 !important;
 }
 
 /* Button Hover Effects */
 .hover-lift-btn {
-  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease, filter 0.3s ease;
+  transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.25s ease, background-color 0.25s ease;
   border: none !important;
   outline: none !important;
 }
 .hover-lift-btn:focus, .hover-lift-btn:active {
   outline: none !important;
-  box-shadow: 0 4px 15px rgba(239, 35, 60, 0.2) !important;
+  box-shadow: 0 4px 15px rgba(248, 34, 73, 0.25) !important;
 }
 .hover-lift-btn:hover:not(:disabled) {
-  transform: translateY(-3px);
-  box-shadow: 0 10px 25px rgba(239, 35, 60, 0.5) !important;
-  filter: brightness(1.1);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px rgba(248, 34, 73, 0.45) !important;
 }
 .hover-lift-btn:active:not(:disabled) {
   transform: translateY(0px);
-  box-shadow: 0 4px 10px rgba(239, 35, 60, 0.3) !important;
+  box-shadow: 0 4px 10px rgba(248, 34, 73, 0.3) !important;
 }
 
 .hover-bg-google {
-  transition: all 0.3s ease;
+  transition: all 0.25s ease;
 }
 .hover-bg-google:hover {
-  background: rgba(255, 255, 255, 0.15) !important;
-  border-color: rgba(255, 255, 255, 0.4) !important;
+  background: rgba(255, 255, 255, 0.12) !important;
+  border-color: rgba(255, 255, 255, 0.35) !important;
   transform: translateY(-2px);
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
