@@ -1,10 +1,10 @@
 <template>
   <div>
             
-            <!-- THONG TIN CA NHAN -->
-            <div class="card border-0 tk-card mb-4">
-              <div class="card-header bg-transparent border-bottom tk-card-header">
-                <h5 class="mb-0 tk-heading">Thông tin cá nhân</h5>
+            <!-- THÔNG TIN CÁ NHÂN -->
+            <div class="card border-0 jpm-card mb-4">
+              <div class="card-header jpm-card-header">
+                <h5 class="jpm-card-title">Thông tin cá nhân</h5>
               </div>
               <div class="card-body p-4">
                 <form @submit.prevent="saveProfile">
@@ -45,10 +45,10 @@
             </div>
 
             <!-- ĐỊA CHỈ GIAO HÀNG -->
-            <div class="card border-0 tk-card">
-              <div class="card-header bg-transparent border-bottom tk-card-header d-flex justify-content-between align-items-center">
-                <h5 class="mb-0 tk-heading">Địa chỉ giao hàng</h5>
-                <button class="btn btn-blue-primary btn-sm d-inline-flex align-items-center gap-2 px-3 py-2 fw-semibold" @click="openAddAddressModal">
+            <div class="card border-0 jpm-card">
+              <div class="card-header jpm-card-header">
+                <h5 class="jpm-card-title">Địa chỉ giao hàng</h5>
+                <button class="btn btn-blue-primary btn-action-header" @click="openAddAddressModal">
                   <i class="bi bi-plus-lg"></i>
                   <span>Thêm địa chỉ mới</span>
                 </button>
@@ -85,12 +85,12 @@
                         <button v-if="!address.la_mac_dinh" @click="setDefault(address.id)" class="btn p-0 text-secondary hover-red btn-set-default">Đặt mặc định</button>
                         
                         <!-- Nút Sửa -->
-                        <button class="btn p-0 action-btn" title="Sửa địa chỉ" @click.prevent="openEditAddressModal(address)">
-                          <i class="bi bi-pencil-square text-secondary hover-red" style="font-size: 1.15rem;"></i>
+                        <button class="btn btn-edit-row" title="Sửa địa chỉ" @click.prevent="openEditAddressModal(address)">
+                          <i class="bi bi-pencil-square"></i>
                         </button>
                         <!-- Nút Xóa -->
-                        <button class="btn p-0 action-btn" title="Xóa địa chỉ" @click.prevent="deleteAddress(address.id)">
-                          <i class="bi bi-trash3 hover-red" style="font-size: 1.15rem; color: #94a3b8;"></i>
+                        <button class="btn btn-delete-row" title="Xóa địa chỉ" @click.prevent="deleteAddress(address.id)">
+                          <i class="bi bi-trash3"></i>
                         </button>
                       </div>
                     </div>
@@ -484,19 +484,6 @@ const setDefault = (id) => {
   color: var(--jpm-color-navy-dark, #0A1128);
 }
 
-.btn-outline-secondary {
-  border-color: #cbd5e1 !important;
-  color: #475569 !important;
-  font-weight: 600;
-  border-radius: var(--jpm-radius-control, 8px) !important;
-  transition: all 0.2s ease;
-}
-.btn-outline-secondary:hover {
-  background-color: #f1f5f9 !important;
-  border-color: #94a3b8 !important;
-  color: var(--jpm-color-navy-dark, #0A1128) !important;
-}
-
 /* Sổ Địa Chỉ Card Styling */
 .address-item-card {
   border-radius: var(--jpm-radius-control, 8px) !important;
@@ -554,20 +541,6 @@ const setDefault = (id) => {
   justify-content: center;
   color: var(--jpm-color-red-marine, #F82249);
   font-size: 2rem;
-}
-
-.btn-blue-primary {
-  background-color: #0d6efd !important;
-  border-color: #0d6efd !important;
-  color: #ffffff !important;
-  border-radius: var(--jpm-radius-control, 8px) !important;
-  font-weight: 600;
-  transition: all 0.2s ease;
-}
-.btn-blue-primary:hover {
-  background-color: #0b5ed7 !important;
-  border-color: #0a58ca !important;
-  color: #ffffff !important;
 }
 
 .hover-red:hover {

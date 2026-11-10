@@ -47,9 +47,20 @@ Mọi AI Agent (Antigravity, Claude, Copilot, Cursor...) khi làm việc với p
      * Dưới avatar người dùng, chỉ hiển thị chữ trơn (plain text) đại diện vai trò: `Admin`, `Nhân viên`, hoặc `Khách hàng`.
      * Font chữ: 13.5px, màu slate trung tính `#64748b`, font-weight 500.
      * TUYỆT ĐỐI KHÔNG đóng khung vai trò vào card/badge nền đỏ, nền hồng, không có viền bao và không gắn icon khiên/khóa bảo vệ làm rối mắt.
-   - **Phân định màu sắc nút bấm hành động (Action Button Color Hierarchy):**
-     * **Nút Thêm mới đối tượng (Thêm địa chỉ mới, Thêm sản phẩm mới):** Sử dụng màu **Xanh Primary chuẩn Bootstrap 5 (`#0d6efd`)** thông qua class `.btn-blue-primary` (với bo góc 8px). Điều này tránh xung đột màu đỏ với các nút Chỉnh sửa/Xóa và tránh bị `main.css` biến thành màu xanh Navy gần đen.
+   - **Phân định màu sắc & kích thước nút bấm hành động (Action Button Hierarchy & Standardization):**
+     * **Nút Thêm mới đối tượng (Thêm địa chỉ mới, Thêm sản phẩm mới):** Sử dụng màu **Xanh Primary chuẩn Bootstrap 5 (`#0d6efd`)** thông qua class `.btn-blue-primary` (bo góc 8px). Đã đưa vào CSS template dùng chung (`main.css`), tuyệt đối không khai báo cục bộ trong `<style scoped>`.
      * **Nút Hành động Chính / Chỉnh sửa / Mua hàng / Lưu:** Sử dụng màu **Đỏ Marine (`#F82249` / `.btn-danger`)**.
+     * **Quy chuẩn kích thước nút bấm trên Card Header (`.btn-action-header`):**
+       - Khóa cứng: `height: 38px !important; min-height: 38px !important; max-height: 38px !important; line-height: 36px !important;`
+       - Padding: `0 16px !important;`
+       - Font size: `13.5px !important; font-weight: 600;`
+       - Border-radius: `var(--jpm-radius-control, 8px) !important;`
+       - Display: `inline-flex !important; align-items: center !important; justify-content: center !important; gap: 6px !important;`
+       - **Đảm bảo:** Cả thẻ `<button>` và thẻ `<router-link>` (thẻ `<a>`) trên mọi trang đều có kích thước điểm ảnh chính xác 100% như nhau, triệt tiêu hiện tượng lệch 38px vs 33px.
+     * **Bộ ba lớp Component Card chuẩn toàn Client (`main.css`):**
+       - `.jpm-card`: Bo góc 12px, viền `#e2e8f0`, đổ bóng mềm `0 4px 16px rgba(10, 17, 40, 0.04)`.
+       - `.jpm-card-header`: Padding `16px 24px`, chiều cao khóa `min-height: 70px`, viền đáy `1px solid #e2e8f0`.
+       - `.jpm-card-title`: Font Raleway 700, 18px (`1.125rem`), màu Deep Navy `#0A1128`.
    - **Xóa bỏ lỗi chồng khoảng đệm (Section Padding Stacking Elimination):**
      * Trong các khung trang tài khoản (LayoutTaiKhoan.vue), thẻ `<section>` bắt buộc mang `class="py-0" style="background: transparent;"` để triệt tiêu padding 60px 0 và nền trắng mặc định của template TheEvent, loại bỏ khoảng cách trống 170px và dải trắng vô duyên. Khoảng đệm header chuẩn hóa là `padding-top: 92px` trên thẻ `<main>`.
 

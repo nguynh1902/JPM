@@ -2149,15 +2149,194 @@ section,
   box-shadow: none;
 }
 
-/* 2. Secondary Outline Button - consolidated in unified button block below */
+/* 2. Primary Blue Button (Thêm mới - Bootstrap Standard Blue #0d6efd / DEC-05) */
+.btn-blue-primary,
+.btn-primary-blue {
+  background-color: #0d6efd !important;
+  border: 1px solid #0d6efd !important;
+  color: #ffffff !important;
+  font-family: var(--default-font, 'Roboto', sans-serif);
+  font-weight: 600;
+  border-radius: var(--jpm-radius-control, 8px) !important;
+  transition: all 0.2s ease;
+}
+.btn-blue-primary:hover,
+.btn-primary-blue:hover {
+  background-color: #0b5ed7 !important;
+  border-color: #0a58ca !important;
+  color: #ffffff !important;
+}
 
+/* 3. Secondary Outline Button (Viền xám chuẩn Design System 2026) */
+.btn-outline-secondary {
+  border: 1px solid #cbd5e1 !important;
+  color: #475569 !important;
+  font-family: var(--default-font, 'Roboto', sans-serif);
+  font-weight: 600;
+  border-radius: var(--jpm-radius-control, 8px) !important;
+  transition: all 0.2s ease;
+  background-color: transparent !important;
+}
+.btn-outline-secondary:hover {
+  background-color: #f1f5f9 !important;
+  border-color: #94a3b8 !important;
+  color: var(--jpm-color-navy-dark, #0A1128) !important;
+}
 
+/* 4. Unified Card Header Action Button (Thống nhất 100% kích thước & vị trí cho button trên Card Header toàn Client) */
+.btn-action-header {
+  height: 38px !important;
+  min-height: 38px !important;
+  max-height: 38px !important;
+  padding: 0 16px !important;
+  font-size: 13.5px !important;
+  font-weight: 600 !important;
+  line-height: 36px !important;
+  border-radius: var(--jpm-radius-control, 8px) !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 6px !important;
+  white-space: nowrap !important;
+  box-sizing: border-box !important;
+  text-decoration: none !important;
+}
+.btn-action-header i {
+  font-size: 15px !important;
+  line-height: 1 !important;
+}
 
+/* 5. Unified JPM Card & Header Component (Đồng bộ khung Card toàn Client) */
+.jpm-card {
+  box-shadow: 0 4px 16px rgba(10, 17, 40, 0.04) !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: var(--jpm-radius-card, 12px) !important;
+  background-color: #ffffff !important;
+}
 
+.jpm-card-header {
+  padding: 16px 24px !important;
+  min-height: 70px !important;
+  background-color: transparent !important;
+  border-bottom: 1px solid #e2e8f0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+}
 
+.jpm-card-title {
+  font-family: var(--heading-font, 'Raleway', sans-serif) !important;
+  color: var(--jpm-color-navy-dark, #0A1128) !important;
+  font-weight: 700 !important;
+  font-size: 1.125rem !important; /* 18px */
+  line-height: 1.4 !important;
+  margin-bottom: 0 !important;
+}
 
+/* 6. Unified Row & Header Utility Buttons (Nút thao tác dòng & nút quay lại header) */
+.btn-back-header {
+  width: 36px !important;
+  height: 36px !important;
+  min-width: 36px !important;
+  border-radius: var(--jpm-radius-control, 8px) !important;
+  border: 1px solid #e2e8f0 !important;
+  background-color: #ffffff !important;
+  color: #475569 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-decoration: none !important;
+  transition: all 0.2s ease !important;
+  font-size: 1.05rem !important;
+  align-self: center;
+}
+.btn-back-header:hover {
+  background-color: #f1f5f9 !important;
+  border-color: #cbd5e1 !important;
+  color: var(--jpm-color-navy-dark, #0A1128) !important;
+}
 
+.btn-cart-row {
+  width: 32px !important;
+  height: 32px !important;
+  min-width: 32px !important;
+  padding: 0 !important;
+  border-radius: var(--jpm-radius-control, 8px) !important;
+  border: 1px solid #e2e8f0 !important;
+  background-color: #f8fafc !important;
+  color: var(--jpm-color-navy-dark, #0A1128) !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: all 0.2s ease !important;
+  font-size: 1.05rem !important;
+}
+.btn-cart-row:hover {
+  background-color: var(--accent-color, #f82249) !important;
+  border-color: var(--accent-color, #f82249) !important;
+  color: #ffffff !important;
+  transform: translateY(-1px);
+  box-shadow: 0 3px 8px rgba(248, 34, 73, 0.25) !important;
+}
 
+.btn-delete-row {
+  width: 32px !important;
+  height: 32px !important;
+  min-width: 32px !important;
+  padding: 0 !important;
+  border-radius: var(--jpm-radius-control, 8px) !important;
+  border: 1px solid #e2e8f0 !important;
+  background-color: #ffffff !important;
+  color: #94a3b8 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: all 0.2s ease !important;
+  font-size: 1.05rem !important;
+}
+.btn-delete-row:hover {
+  background-color: #fee2e2 !important;
+  border-color: #fca5a5 !important;
+  color: #dc2626 !important;
+  transform: translateY(-1px);
+}
+
+.btn-edit-row {
+  width: 32px !important;
+  height: 32px !important;
+  min-width: 32px !important;
+  padding: 0 !important;
+  border-radius: var(--jpm-radius-control, 8px) !important;
+  border: 1px solid #e2e8f0 !important;
+  background-color: #ffffff !important;
+  color: #64748b !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: all 0.2s ease !important;
+  font-size: 1.05rem !important;
+}
+.btn-edit-row:hover {
+  background-color: #f1f5f9 !important;
+  border-color: #cbd5e1 !important;
+  color: var(--jpm-color-navy-dark, #0A1128) !important;
+  transform: translateY(-1px);
+}
+
+/* 7. Part Code Badge (Chip mã phụ tùng kỹ thuật chuẩn) */
+.part-code-badge {
+  font-family: var(--jpm-font-mono, 'Roboto Mono', monospace);
+  font-size: 12px;
+  font-weight: 600;
+  background-color: #f1f5f9;
+  color: var(--jpm-color-navy-dark, #0A1128);
+  padding: 2px 7px;
+  border-radius: var(--jpm-radius-badge, 6px);
+  border: 1px solid #e2e8f0;
+  letter-spacing: 0.3px;
+  display: inline-flex;
+  align-items: center;
+}
 
 /* =========================================================
    II. THÀNH PHẦN UI CƠ BẢN (COMPONENTS)

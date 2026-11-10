@@ -1,23 +1,23 @@
 <template>
-<div class="flex-grow-1 d-flex flex-column">
-    <div class="card border-0 flex-grow-1 vt-main-card">
-      <div class="card-header bg-transparent border-bottom d-flex justify-content-between align-items-center" style="padding: 16px 24px; min-height: 70px; border-bottom: 1px solid #e2e8f0 !important;">
-        <h5 class="mb-0 vt-heading">Vật tư thường mua</h5>
-        <router-link to="/san-pham" class="btn btn-blue-primary btn-sm d-inline-flex align-items-center gap-2 px-3 py-2 fw-semibold">
+<div>
+    <div class="card border-0 jpm-card">
+      <div class="card-header jpm-card-header">
+        <h5 class="jpm-card-title">Vật tư thường mua</h5>
+        <router-link to="/san-pham" class="btn btn-blue-primary btn-action-header">
           <i class="bi bi-plus-lg"></i>
           <span>Thêm sản phẩm mới</span>
         </router-link>
       </div>
       
       <!-- Loading State -->
-      <div class="card-body p-4 text-center" v-if="isLoading">
+      <div class="card-body px-4 py-3 text-center" v-if="isLoading">
         <div class="spinner-border text-danger mt-4" role="status"></div>
         <p class="mt-2 text-muted">Đang tải danh sách vật tư...</p>
       </div>
 
-      <div class="card-body p-4" v-else>
+      <div class="card-body px-4 py-3" v-else>
         <!-- Empty State -->
-        <div class="text-center py-5 d-flex flex-column align-items-center justify-content-center" v-if="items.length === 0" style="min-height: 380px;">
+        <div class="text-center py-4 d-flex flex-column align-items-center justify-content-center" v-if="items.length === 0" style="min-height: 280px;">
           <div class="empty-icon-wrap mb-4">
             <i class="bi bi-bookmark-heart"></i>
           </div>
@@ -69,8 +69,8 @@
                 <span>Thêm giỏ</span>
               </button>
               <!-- Nút Xóa -->
-              <button class="btn p-0 action-btn ms-1" title="Bỏ lưu" @click.stop="removeItem(item.san_pham_id)" style="border: none; background: transparent;">
-                <i class="bi bi-trash3 hover-red" style="font-size: 1.25rem; color: #94a3b8;"></i>
+              <button class="btn btn-delete-row ms-1" title="Bỏ lưu" @click.stop="removeItem(item.san_pham_id)">
+                <i class="bi bi-trash3"></i>
               </button>
             </div>
             
@@ -206,19 +206,6 @@ const addToQuote = (sanPham) => {
   justify-content: center;
   color: var(--jpm-color-red-marine, #F82249);
   font-size: 2rem;
-}
-.btn-blue-primary {
-  background-color: #0d6efd !important;
-  border-color: #0d6efd !important;
-  color: #ffffff !important;
-  border-radius: var(--jpm-radius-control, 8px) !important;
-  font-weight: 600;
-  transition: all 0.2s ease;
-}
-.btn-blue-primary:hover {
-  background-color: #0b5ed7 !important;
-  border-color: #0a58ca !important;
-  color: #ffffff !important;
 }
 
 .hover-red:hover {

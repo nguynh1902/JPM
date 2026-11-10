@@ -1,16 +1,16 @@
 <template>
-<div class="flex-grow-1 d-flex flex-column">
-            <div class="card border-0 flex-grow-1 garage-main-card">
-              <div class="card-header bg-transparent border-bottom d-flex justify-content-between align-items-center" style="padding: 16px 24px; min-height: 70px; border-bottom: 1px solid #e2e8f0 !important;">
-                <h5 class="mb-0 garage-heading">Danh sách động cơ</h5>
+<div>
+            <div class="card border-0 jpm-card">
+              <div class="card-header jpm-card-header">
+                <h5 class="jpm-card-title">Danh sách động cơ</h5>
               </div>
-              <div class="card-body p-4">
+              <div class="card-body px-4 py-3">
 
                 <!-- Loading Skeleton -->
                 <div v-if="isLoadingGarage">
-                  <div v-for="i in 2" :key="i" class="p-4 border rounded-3 d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-3 bg-white">
+                  <div v-for="i in 2" :key="i" class="p-3 border rounded-3 d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-2 bg-white">
                     <div class="d-flex align-items-center gap-3">
-                      <div class="placeholder-glow rounded-3" style="width: 60px; height: 60px;">
+                      <div class="placeholder-glow rounded-3" style="width: 48px; height: 48px;">
                         <div class="placeholder w-100 h-100 rounded-3"></div>
                       </div>
                       <div class="placeholder-glow w-100">
@@ -23,8 +23,8 @@
                 </div>
 
                 <!-- Empty State -->
-                <div class="text-center py-5 d-flex flex-column align-items-center justify-content-center" v-else-if="garage.length === 0" style="min-height: 400px;">
-                  <div class="empty-icon-wrap mb-4">
+                <div class="text-center py-4 d-flex flex-column align-items-center justify-content-center" v-else-if="garage.length === 0" style="min-height: 300px;">
+                  <div class="empty-icon-wrap mb-3">
                     <i class="bi bi-tools"></i>
                   </div>
                   <h5 class="mb-2 garage-heading">Garage của bạn đang trống</h5>
@@ -38,35 +38,34 @@
                 </div>
 
                 <!-- Garage List -->
-                <div class="d-flex flex-column gap-3" v-else>
-                  <div v-for="may in garage" :key="may.id" class="p-4 border garage-item-card d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3" @click="router.push(`/garage/${may.id}`)">
+                <div class="d-flex flex-column gap-2" v-else>
+                  <div v-for="may in garage" :key="may.id" class="px-3 py-3 border garage-item-card d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3" @click="router.push(`/garage/${may.id}`)">
                     
                     <!-- Left: Machine Info -->
                     <div>
                       <!-- Model Name & Brand Badge -->
-                      <h6 class="mb-1 d-flex align-items-center gap-2 flex-wrap" style="font-size: 16px; font-weight: 700; color: var(--jpm-color-navy-deep, #0A1128);">
+                      <h6 class="mb-0 d-flex align-items-center gap-2 flex-wrap" style="font-size: 15.5px; font-weight: 700; color: var(--jpm-color-navy-dark, #0A1128);">
                         {{ may.dong_co_model?.ten_model || 'Chưa rõ Model' }}
                         <span v-if="may.dong_co_model?.thuong_hieu?.name" class="badge brand-tag-badge">{{ may.dong_co_model.thuong_hieu.name }}</span>
                       </h6>
                       
                       <!-- Specs -->
-                      <div class="d-flex align-items-center gap-4 mt-2 text-muted flex-wrap" style="font-size: 13.5px;">
+                      <div class="d-flex align-items-center gap-3 mt-1 text-muted flex-wrap" style="font-size: 13px;">
                         <span v-if="may.dong_co_model?.ma_luc"><i class="bi bi-lightning-charge me-1 text-warning"></i>{{ may.dong_co_model.ma_luc }} HP</span>
-                        <span v-if="may.dong_co_model?.ma_model" class="fst-italic text-secondary"><i class="bi bi-upc-scan me-1"></i>{{ may.dong_co_model.ma_model }}</span>
                         <span v-if="may.dong_co_model?.nam_san_xuat || may.dong_co_model?.nam_bat_dau"><i class="bi bi-calendar3 me-1"></i>Năm: {{ may.dong_co_model?.nam_san_xuat || may.dong_co_model?.nam_bat_dau || '' }}</span>
                       </div>
                     </div>
 
                     <!-- Right: Actions -->
-                    <div class="d-flex align-items-center gap-3 pe-2 flex-shrink-0 mt-3 mt-md-0">
+                    <div class="d-flex align-items-center gap-2 pe-1 flex-shrink-0 mt-2 mt-md-0">
                       <!-- Sơ đồ / Tra phụ tùng -->
-                      <button class="btn btn-outline-secondary btn-sm px-3 d-flex align-items-center gap-2 fw-semibold" @click.stop="router.push('/tra-cuu?brand=' + may.dong_co_model?.thuong_hieu_id + '&engineType=' + may.dong_co_model?.loai_dong_co_id + '&model=' + may.dong_co_model_id + '&year=' + (may.dong_co_model?.nam_san_xuat || ''))">
+                      <button class="btn btn-outline-secondary btn-action-header" @click.stop="router.push('/tra-cuu?brand=' + may.dong_co_model?.thuong_hieu_id + '&engineType=' + may.dong_co_model?.loai_dong_co_id + '&model=' + may.dong_co_model_id + '&year=' + (may.dong_co_model?.nam_san_xuat || ''))">
                         <i class="bi bi-search"></i>Tra phụ tùng
                       </button>
 
                       <!-- Delete -->
-                      <button class="btn p-0 action-btn ms-2" title="Xóa máy khỏi Garage" @click.stop="deleteMay(may.id)" style="border: none; background: transparent;">
-                        <i class="bi bi-trash3 hover-red" style="font-size: 1.25rem; color: #94a3b8;"></i>
+                      <button class="btn btn-delete-row" title="Xóa máy khỏi Garage" @click.stop="deleteMay(may.id)">
+                        <i class="bi bi-trash3"></i>
                       </button>
                     </div>
                   </div>
