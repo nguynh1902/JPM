@@ -38,30 +38,30 @@
           </nav>
 
           <div class="d-flex align-items-center gap-2">
-            <!-- Quick Search Input -->
-            <div class="position-relative" style="width: 210px;">
+            <!-- Quick Search Input (Chuẩn Hóa .news-search-box 8px) -->
+            <div class="news-search-box">
+              <i class="bi bi-search search-input-icon"></i>
               <input
                 type="text"
                 v-model.trim="searchQuery"
-                class="form-control form-control-sm rounded-pill ps-3 pe-4 border-secondary-subtle shadow-none"
+                class="search-input-field"
                 placeholder="Tìm kiếm bài viết..."
-                style="font-size: 0.82rem; height: 34px;"
               />
               <button
                 v-if="searchQuery"
                 type="button"
-                class="btn btn-link text-muted p-0 position-absolute top-50 end-0 translate-middle-y me-2 text-decoration-none"
+                class="btn-clear-search"
                 @click="searchQuery = ''"
+                title="Xóa tìm kiếm"
               >
-                <i class="bi bi-x-circle-fill" style="font-size: 0.8rem;"></i>
+                <i class="bi bi-x-circle-fill"></i>
               </button>
-              <i v-else class="bi bi-search text-muted position-absolute top-50 end-0 translate-middle-y me-3" style="font-size: 0.78rem; pointer-events: none;"></i>
             </div>
 
             <button
               v-if="topCategoryArticles.length > 4"
               type="button"
-              class="btn btn-outline-pill"
+              class="btn btn-outline-action"
               @click="showAllTopCategory = !showAllTopCategory"
             >
               {{ showAllTopCategory ? 'Thu gọn danh sách' : 'Khám phá tất cả chuyên mục' }}
@@ -70,17 +70,17 @@
         </div>
 
         <!-- Empty State if search/tab has no results -->
-        <div v-if="!isFetching && displayedTopCategoryArticles.length === 0" class="text-center py-5 bg-light rounded-2 my-2">
+        <div v-if="!isFetching && displayedTopCategoryArticles.length === 0" class="text-center py-5 bg-light rounded-3 my-2 border">
           <i class="bi bi-journal-text text-muted fs-1 d-block mb-2"></i>
           <p class="text-muted mb-3">Không tìm thấy bài viết nào khớp với bộ lọc hiện tại.</p>
-          <button type="button" class="btn btn-outline-pill" @click="resetFilters">Xem tất cả bài viết</button>
+          <button type="button" class="btn btn-outline-action" @click="resetFilters">Xem tất cả bài viết</button>
         </div>
 
         <!-- 4 Tall Portrait Cards Grid -->
         <div v-else class="row row-cols-1 row-cols-sm-2 row-cols-lg-4 g-4">
           <div class="col" v-for="item in displayedTopCategoryArticles" :key="item.id">
             <router-link :to="`/tin-tuc/${item.id}`" class="text-decoration-none d-block group-hover h-100">
-              <div class="portrait-card-img position-relative rounded-2 overflow-hidden mb-3 bg-light shadow-xs">
+              <div class="portrait-card-img position-relative rounded-3 overflow-hidden mb-3 bg-light shadow-xs">
                 <img :src="getImageUrl(item.img)" :alt="item.title" class="w-100 h-100 object-fit-cover transition-transform" @error="onImgError" />
               </div>
               <h5 class="fw-bold text-dark mb-1 text-truncate-2 hero-title-hover" style="font-size: 0.98rem; line-height: 1.4;">
@@ -105,7 +105,7 @@
           <button
             v-if="moreLatestStories.length > 0"
             type="button"
-            class="btn btn-outline-pill"
+            class="btn btn-outline-action"
             @click="showMoreLatest = !showMoreLatest"
           >
             {{ showMoreLatest ? 'Thu gọn bài viết' : 'Xem thêm bài viết' }}
@@ -116,7 +116,7 @@
           <!-- Left: 1 Large Featured Story -->
           <div class="col-lg-6">
             <router-link :to="`/tin-tuc/${latestMainStory.id}`" class="text-decoration-none d-block group-hover">
-              <div class="latest-main-img position-relative rounded-4 overflow-hidden mb-3 bg-light shadow-xs">
+              <div class="latest-main-img position-relative rounded-3 overflow-hidden mb-3 bg-light shadow-xs">
                 <img :src="getImageUrl(latestMainStory.img)" :alt="latestMainStory.title" class="w-100 h-100 object-fit-cover transition-transform" @error="onImgError" />
                 <div
                   v-if="latestMainStory.hasVideo"
@@ -127,10 +127,10 @@
                   <i class="bi bi-play-fill fs-4 ms-1"></i>
                 </div>
               </div>
-              <div class="text-muted fw-semibold mb-1" style="font-size: 0.8rem;">
+              <div class="text-danger fw-semibold mb-1" style="font-size: 0.8rem;">
                 {{ latestMainStory.cat }}
               </div>
-              <h3 class="fw-bold text-dark mb-2 hero-title-hover" style="font-size: 1.35rem; line-height: 1.35;">
+              <h3 class="fw-bold mb-2 hero-title-hover" style="font-size: 1.35rem; line-height: 1.35; color: var(--jpm-color-navy-dark, #0A1128);">
                 {{ latestMainStory.title }}
               </h3>
               <div class="text-muted mb-2" style="font-size: 0.78rem;">
@@ -150,7 +150,7 @@
               :to="`/tin-tuc/${story.id}`"
               class="d-flex gap-3 align-items-center text-decoration-none group-hover"
             >
-              <div class="latest-side-thumb position-relative rounded-4 overflow-hidden flex-shrink-0 bg-light shadow-xs">
+              <div class="latest-side-thumb position-relative rounded-3 overflow-hidden flex-shrink-0 bg-light shadow-xs">
                 <img :src="getImageUrl(story.img)" :alt="story.title" class="w-100 h-100 object-fit-cover transition-transform" @error="onImgError" />
                 <div
                   v-if="story.hasVideo"
@@ -162,10 +162,10 @@
                 </div>
               </div>
               <div class="flex-grow-1 min-w-0">
-                <div class="text-muted fw-semibold mb-1" style="font-size: 0.76rem;">
+                <div class="text-danger fw-semibold mb-1" style="font-size: 0.76rem;">
                   {{ story.cat }}
                 </div>
-                <h5 class="fw-bold text-dark mb-2 text-truncate-2 hero-title-hover" style="font-size: 1rem; line-height: 1.4;">
+                <h5 class="fw-bold mb-2 text-truncate-2 hero-title-hover" style="font-size: 1rem; line-height: 1.4; color: var(--jpm-color-navy-dark, #0A1128);">
                   {{ story.title }}
                 </h5>
                 <div class="text-muted" style="font-size: 0.76rem;">
@@ -180,7 +180,7 @@
         <div v-if="showMoreLatest && moreLatestStories.length > 0" class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4 mt-3 pt-4 border-top">
           <div class="col" v-for="extra in moreLatestStories" :key="extra.id">
             <router-link :to="`/tin-tuc/${extra.id}`" class="text-decoration-none d-block group-hover h-100">
-              <div class="rounded-4 overflow-hidden mb-3 bg-light position-relative" style="aspect-ratio: 16/10;">
+              <div class="rounded-3 overflow-hidden mb-3 bg-light position-relative" style="aspect-ratio: 16/10;">
                 <img :src="getImageUrl(extra.img)" :alt="extra.title" class="w-100 h-100 object-fit-cover transition-transform" @error="onImgError" />
                 <div
                   v-if="extra.hasVideo"
@@ -191,8 +191,8 @@
                   <i class="bi bi-play-fill fs-4 ms-1"></i>
                 </div>
               </div>
-              <div class="text-muted fw-semibold mb-1" style="font-size: 0.75rem;">{{ extra.cat }}</div>
-              <h6 class="fw-bold text-dark mb-1 text-truncate-2 hero-title-hover" style="font-size: 0.95rem; line-height: 1.4;">{{ extra.title }}</h6>
+              <div class="text-danger fw-semibold mb-1" style="font-size: 0.75rem;">{{ extra.cat }}</div>
+              <h6 class="fw-bold mb-1 text-truncate-2 hero-title-hover" style="font-size: 0.95rem; line-height: 1.4; color: var(--jpm-color-navy-dark, #0A1128);">{{ extra.title }}</h6>
               <div class="text-muted" style="font-size: 0.75rem;">{{ extra.dateFormatted }} • {{ extra.read }}</div>
             </router-link>
           </div>
@@ -216,7 +216,7 @@
                 {{ highlightMain.avLetter }}
               </div>
               <div>
-                <h6 class="fw-bold text-dark mb-0" style="font-size: 0.98rem;">{{ highlightMain.author }}</h6>
+                <h6 class="fw-bold mb-0" style="font-size: 0.98rem; color: var(--jpm-color-navy-dark, #0A1128);">{{ highlightMain.author }}</h6>
                 <small class="text-muted" style="font-size: 0.8rem;">Chuyên gia Kỹ thuật JPM Marine</small>
               </div>
             </div>
@@ -227,7 +227,7 @@
             </div>
 
             <router-link :to="`/tin-tuc/${highlightMain.id}`" class="text-decoration-none">
-              <h4 class="fw-bold text-dark mb-3 hero-title-hover" style="font-size: 1.12rem; line-height: 1.4;">
+              <h4 class="fw-bold mb-3 hero-title-hover" style="font-size: 1.12rem; line-height: 1.4; color: var(--jpm-color-navy-dark, #0A1128);">
                 {{ highlightMain.title }}
               </h4>
             </router-link>
@@ -239,7 +239,7 @@
 
           <!-- Column 2 (Middle): Tall Portrait Image Card -->
           <div class="col-lg-4 col-md-6">
-            <router-link :to="`/tin-tuc/${highlightMain.id}`" class="d-block position-relative rounded-4 overflow-hidden shadow-xs group-hover highlight-middle-card">
+            <router-link :to="`/tin-tuc/${highlightMain.id}`" class="d-block position-relative rounded-3 overflow-hidden shadow-xs group-hover highlight-middle-card">
               <img :src="getImageUrl(highlightMain.img)" :alt="highlightMain.title" class="w-100 h-100 object-fit-cover transition-transform" @error="onImgError" />
               <!-- Pagination Dots Indicator (Wireframe Aesthetic) -->
               <div class="position-absolute bottom-0 start-50 translate-middle-x mb-3 d-flex gap-1">
@@ -255,7 +255,7 @@
           <div class="col-lg-4 col-md-6 d-flex flex-column justify-content-between h-100" v-if="highlightVideo">
             <div>
               <router-link :to="`/tin-tuc/${highlightVideo.id}`" class="d-block text-decoration-none group-hover">
-                <div class="position-relative rounded-4 overflow-hidden mb-3 bg-light shadow-xs highlight-video-card">
+                <div class="position-relative rounded-3 overflow-hidden mb-3 bg-light shadow-xs highlight-video-card">
                   <img :src="getImageUrl(highlightVideo.img)" :alt="highlightVideo.title" class="w-100 h-100 object-fit-cover transition-transform" @error="onImgError" />
                   <div
                     class="position-absolute top-50 start-50 translate-middle rounded-circle d-flex align-items-center justify-content-center play-circle-btn shadow"
@@ -265,15 +265,15 @@
                     <i class="bi bi-play-fill fs-4 ms-1"></i>
                   </div>
                 </div>
-                <h5 class="fw-bold text-dark mb-1 text-truncate-2 hero-title-hover" style="font-size: 0.98rem; line-height: 1.4;">
+                <h5 class="fw-bold mb-1 text-truncate-2 hero-title-hover" style="font-size: 0.98rem; line-height: 1.4; color: var(--jpm-color-navy-dark, #0A1128);">
                   {{ highlightVideo.title }}
                 </h5>
-                <span class="text-muted d-block mb-4" style="font-size: 0.8rem;">{{ highlightVideo.cat }}</span>
+                <span class="text-danger d-block mb-4" style="font-size: 0.8rem;">{{ highlightVideo.cat }}</span>
               </router-link>
             </div>
 
             <div class="text-end mt-2">
-              <button type="button" class="btn btn-outline-pill" @click="selectTabAndScroll('Bảo Dưỡng Động Cơ')">
+              <button type="button" class="btn btn-outline-action" @click="selectTabAndScroll('Bảo Dưỡng Động Cơ')">
                 Xem thêm tiêu điểm
               </button>
             </div>
@@ -283,9 +283,9 @@
     </section>
 
     <!-- ════════════════════════════════════════════════════════════════
-         SECTION 5: NEWSLETTER BANNER ("Get Your Travel Inspiration Straight to Your Inbox")
+         SECTION 5: NEWSLETTER BANNER (OCEAN GRADIENT)
     ════════════════════════════════════════════════════════════════ -->
-    <section class="newsletter-banner-section mt-4">
+    <section class="newsletter-banner-section mt-4 mb-5 shadow-sm">
       <div class="container py-5">
         <div class="row justify-content-center text-center py-3">
           <div class="col-lg-7 col-md-9">
@@ -299,11 +299,10 @@
                 type="email"
                 v-model.trim="newsletterEmail"
                 required
-                class="form-control rounded-pill px-4 py-2 border-0 shadow-sm"
+                class="form-control px-3 py-2 border-0 shadow-sm news-subscribe-input"
                 placeholder="Nhập địa chỉ email của bạn..."
-                style="height: 44px; font-size: 0.9rem;"
               />
-              <button type="submit" class="btn btn-dark-pill px-4 flex-shrink-0" style="height: 44px;">
+              <button type="submit" class="btn btn-news-subscribe px-4 flex-shrink-0">
                 Đăng ký
               </button>
             </form>
@@ -328,7 +327,7 @@
       aria-hidden="true"
     >
       <div class="modal-dialog modal-dialog-centered modal-lg">
-        <div class="modal-content bg-dark border-0 shadow-lg overflow-hidden rounded-4 text-white">
+        <div class="modal-content border-0 shadow-lg overflow-hidden rounded-3 text-white" style="background-color: var(--jpm-color-navy-dark, #0A1128);">
           <div class="modal-header border-0 pb-0 pt-3 px-3 d-flex justify-content-between align-items-center">
             <h6 class="modal-title fw-semibold text-truncate pe-3" id="newsVideoModalLabel">
               <i class="bi bi-play-circle-fill text-danger me-2"></i>{{ activeVideoModalItem?.title }}
@@ -464,7 +463,8 @@ export default {
     const getImageUrl = (path) => {
       if (!path) return FALLBACK_IMG;
       if (typeof path === 'string' && path.startsWith('http')) return path;
-      return `http://localhost:8000/storage/${path}`;
+      const baseUrl = import.meta.env.VITE_STORAGE_BASE_URL || 'http://localhost:8000/storage';
+      return `${baseUrl.replace(/\/$/, '')}/${String(path).replace(/^\//, '')}`;
     };
 
     // === Fetch Categories ===
@@ -687,45 +687,99 @@ export default {
   background: linear-gradient(to top, rgba(248, 34, 73, 0.85) 0%, rgba(14, 27, 77, 0.25) 60%, transparent 100%);
 }
 
-/* ── TYPOGRAPHY & BUTTONS (WIREFRAME STYLE) ── */
+/* ── TYPOGRAPHY & BUTTONS (DESIGN SYSTEM 2026) ── */
 .section-editorial-title {
-  font-family: var(--heading-font);
+  font-family: var(--heading-font, 'Raleway', sans-serif);
   font-size: clamp(1.4rem, 2.2vw, 1.75rem);
   font-weight: 700;
-  color: #111827;
+  color: var(--jpm-color-navy-dark, #0A1128);
   letter-spacing: normal;
 }
 
-.btn-dark-pill {
-  background-color: #27272a;
-  color: #ffffff;
-  font-weight: 600;
-  font-size: 0.88rem;
-  border-radius: 50rem;
-  border: none;
-  transition: all 0.25s ease;
-}
-.btn-dark-pill:hover {
-  background-color: #f82249;
-  color: #ffffff;
-  transform: translateY(-2px);
+/* ── SEARCH INPUT IN TABS (MATCHING SAN PHAM / HO TRO) ── */
+.news-search-box {
+  width: 220px;
+  height: 36px;
+  border-radius: var(--jpm-radius-control, 8px);
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
+  padding: 0 10px;
+  display: flex;
+  align-items: center;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-.btn-outline-pill {
+.news-search-box:focus-within {
+  border-color: #f82249 !important;
+  box-shadow: 0 0 0 3px rgba(248, 34, 73, 0.12) !important;
+}
+
+.news-search-box .search-input-icon {
+  font-size: 0.85rem;
+  color: #94a3b8;
+  margin-right: 6px;
+  flex-shrink: 0;
+  transition: color 0.15s ease;
+}
+
+.news-search-box:focus-within .search-input-icon {
+  color: #f82249;
+}
+
+.news-search-box .search-input-field {
+  flex: 1;
+  border: none !important;
+  background: transparent !important;
+  outline: none !important;
+  box-shadow: none !important;
+  font-size: 0.82rem;
+  color: #0A1128;
+  padding: 0;
+  height: 100%;
+}
+
+.news-search-box .search-input-field::placeholder {
+  color: #94a3b8;
+}
+
+.btn-clear-search {
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+
+.btn-clear-search:hover {
+  color: #f82249;
+}
+
+/* ── ACTION BUTTONS (DEC-01: 8PX BORDER RADIUS) ── */
+.btn-outline-action {
   background-color: #ffffff;
-  color: #1f2937;
-  border: 1px solid #d1d5db;
-  border-radius: 50rem;
-  padding: 6px 18px;
-  font-size: 0.8rem;
+  color: #334155;
+  border: 1px solid #cbd5e1;
+  border-radius: var(--jpm-radius-control, 8px);
+  height: 36px;
+  padding: 0 16px;
+  font-size: 0.84rem;
   font-weight: 600;
   white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   transition: all 0.2s ease;
 }
-.btn-outline-pill:hover {
-  border-color: #111827;
-  background-color: #111827;
+
+.btn-outline-action:hover {
+  border-color: var(--jpm-color-navy-dark, #0A1128);
+  background-color: var(--jpm-color-navy-dark, #0A1128);
   color: #ffffff;
+  transform: translateY(-1px);
 }
 
 /* ── SECTION 2: TABS & PORTRAIT CARDS ── */
@@ -740,20 +794,20 @@ export default {
   border: none;
   border-bottom: 2px solid transparent;
   padding: 6px 14px;
-  font-size: 0.86rem;
+  font-size: 0.88rem;
   font-weight: 600;
-  color: #6b7280;
+  color: #64748b;
   white-space: nowrap;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 .wireframe-tab-btn:hover {
-  color: #111827;
+  color: var(--jpm-color-navy-dark, #0A1128);
 }
 .wireframe-tab-btn.active {
-  color: #111827;
+  color: var(--jpm-color-red-marine, #f82249);
   font-weight: 700;
-  border-bottom-color: #111827;
+  border-bottom-color: var(--jpm-color-red-marine, #f82249);
 }
 
 .portrait-card-img {
@@ -773,7 +827,7 @@ export default {
 .author-circle-avatar {
   width: 48px;
   height: 48px;
-  background-color: #0e1b4d;
+  background-color: var(--jpm-color-navy-dark, #0A1128);
   font-size: 1.1rem;
 }
 
@@ -790,7 +844,7 @@ export default {
 .play-circle-btn {
   width: 48px;
   height: 48px;
-  background-color: rgba(17, 24, 39, 0.78);
+  background-color: rgba(10, 17, 40, 0.78);
   color: #ffffff;
   transition: all 0.25s ease;
   z-index: 2;
@@ -803,7 +857,7 @@ export default {
 .play-circle-btn-sm {
   width: 32px;
   height: 32px;
-  background-color: rgba(17, 24, 39, 0.85);
+  background-color: rgba(10, 17, 40, 0.85);
   color: #ffffff;
   font-size: 0.9rem;
   transition: all 0.25s ease;
@@ -826,14 +880,45 @@ export default {
   background-color: #ffffff;
 }
 
-/* ── SECTION 5: NEWSLETTER BANNER ── */
+/* ── SECTION 5: NEWSLETTER BANNER (OCEAN GRADIENT) ── */
 .newsletter-banner-section {
-  background: linear-gradient(135deg, #4b5563 0%, #374151 50%, #1f2937 100%);
+  background: linear-gradient(135deg, #0A1128 0%, #101E42 55%, #182855 100%);
+  border-radius: var(--jpm-radius-card, 12px);
 }
 .newsletter-heading {
   font-size: clamp(1.6rem, 2.8vw, 2.25rem);
   line-height: 1.3;
   letter-spacing: -0.5px;
+}
+
+.news-subscribe-input {
+  height: 44px;
+  border-radius: var(--jpm-radius-control, 8px) !important;
+  font-size: 0.9rem;
+}
+
+.news-subscribe-input:focus {
+  box-shadow: 0 0 0 3px rgba(248, 34, 73, 0.25) !important;
+  border-color: #f82249 !important;
+}
+
+.btn-news-subscribe {
+  background-color: var(--jpm-color-red-marine, #f82249);
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 0.88rem;
+  height: 44px;
+  border-radius: var(--jpm-radius-control, 8px);
+  border: none;
+  box-shadow: 0 4px 12px rgba(248, 34, 73, 0.25);
+  transition: all 0.25s ease;
+}
+
+.btn-news-subscribe:hover {
+  background-color: #d91639;
+  color: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(248, 34, 73, 0.35);
 }
 
 /* ── SHARED HOVER & TRUNCATION ── */

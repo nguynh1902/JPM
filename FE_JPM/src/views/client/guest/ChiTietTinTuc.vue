@@ -1,8 +1,8 @@
 <template>
-  <main class="jpm-news-detail main-page">
+  <main class="jpm-news-detail main-page" style="padding-top: 110px;">
     
     <!-- SKELETON LOADING -->
-    <div v-if="isFetching" class="container py-5" style="max-width: 1120px;">
+    <div v-if="isFetching" class="container py-4" style="max-width: 1120px;">
       <div class="skeleton-line mb-4" style="width: 120px; height: 16px;"></div>
       <div class="skeleton-line mb-2" style="width: 140px; height: 14px;"></div>
       <div class="skeleton-line mb-3" style="width: 75%; height: 42px;"></div>
@@ -11,7 +11,7 @@
         <div class="skeleton-line" style="width: 180px; height: 36px;"></div>
         <div class="skeleton-line" style="width: 100px; height: 16px;"></div>
       </div>
-      <div class="skeleton-box mb-5" style="height: 440px; border-radius: 16px;"></div>
+      <div class="skeleton-box mb-5" style="height: 440px; border-radius: 12px;"></div>
       <div class="row g-5">
         <div class="col-lg-8">
           <div class="skeleton-line mb-3" style="width: 100%; height: 18px;"></div>
@@ -19,7 +19,7 @@
           <div class="skeleton-line mb-3" style="width: 90%; height: 18px;"></div>
         </div>
         <div class="col-lg-4">
-          <div class="skeleton-box" style="height: 280px; border-radius: 16px;"></div>
+          <div class="skeleton-box" style="height: 280px; border-radius: 12px;"></div>
         </div>
       </div>
     </div>
@@ -27,15 +27,15 @@
     <!-- ERROR STATE -->
     <div v-else-if="error" class="container py-5 text-center" style="max-width: 1120px;">
       <i class="bi bi-exclamation-triangle text-danger display-1 mb-3"></i>
-      <h2 class="fw-bold">Không tìm thấy bài viết</h2>
+      <h2 class="fw-bold" style="color: var(--jpm-color-navy-dark, #0A1128);">Không tìm thấy bài viết</h2>
       <p class="text-secondary mb-4">Bài viết này không tồn tại hoặc đã bị xóa.</p>
-      <router-link to="/tin-tuc" class="btn btn-dark rounded-pill px-4">
+      <router-link to="/tin-tuc" class="btn btn-outline-dark px-4" style="border-radius: var(--jpm-radius-control, 8px); font-weight: 600;">
         <i class="bi bi-arrow-left me-2"></i> Quay lại danh sách
       </router-link>
     </div>
 
     <!-- ARTICLE CONTENT (WIREFRAME LAYOUT) -->
-    <article v-else-if="article" class="article-wrapper py-4 py-lg-5">
+    <article v-else-if="article" class="article-wrapper py-3 py-lg-4">
       <div class="container" style="max-width: 1120px;">
         
         <!-- 1. TOP BACK LINK (< All Blog Posts) -->
@@ -52,14 +52,14 @@
           <div class="mb-2">
             <router-link
               :to="{ path: '/tin-tuc', query: { category: article.category } }"
-              class="article-category-label text-decoration-none"
+              class="article-category-label text-decoration-none text-danger fw-semibold"
             >
               {{ article.category }}
             </router-link>
           </div>
 
           <!-- Main Title (H1) -->
-          <h1 class="article-main-title fw-bold text-dark mb-3">
+          <h1 class="article-main-title fw-bold mb-3" style="color: var(--jpm-color-navy-dark, #0A1128);">
             {{ article.title }}
           </h1>
 
@@ -77,7 +77,7 @@
                 class="author-avatar rounded-circle object-fit-cover"
               >
               <div>
-                <div class="fw-bold text-dark" style="font-size: 0.9rem; line-height: 1.25;">
+                <div class="fw-bold" style="font-size: 0.9rem; line-height: 1.25; color: var(--jpm-color-navy-dark, #0A1128);">
                   {{ article.author || 'Kỹ sư Trưởng JPM' }}
                 </div>
                 <div class="text-muted" style="font-size: 0.78rem;">
@@ -95,7 +95,7 @@
         </header>
 
         <!-- 3. HERO FEATURED IMAGE -->
-        <div class="article-hero-img rounded-4 overflow-hidden mb-5">
+        <div class="article-hero-img rounded-3 overflow-hidden mb-5">
           <img
             :src="getImageUrl(article.thumbnail) || fallback"
             :alt="article.title"
@@ -115,7 +115,7 @@
             ></div>
 
             <!-- YouTube Video (nếu bài viết có đính kèm video) -->
-            <div v-if="article.youtube_url && getYoutubeEmbedUrl(article.youtube_url)" class="mt-5 rounded-4 overflow-hidden shadow-sm">
+            <div v-if="article.youtube_url && getYoutubeEmbedUrl(article.youtube_url)" class="mt-5 rounded-3 overflow-hidden shadow-sm">
               <iframe
                 width="100%"
                 height="420"
@@ -129,7 +129,7 @@
 
             <!-- Thư viện ảnh phụ (Gallery Lightbox) -->
             <div v-if="galleryImages && galleryImages.length > 0" class="mt-5 pt-3 border-top">
-              <h4 class="fw-bold text-dark mb-3" style="font-size: 1.15rem;">Hình ảnh thực tế đính kèm</h4>
+              <h4 class="fw-bold mb-3" style="font-size: 1.15rem; color: var(--jpm-color-navy-dark, #0A1128);">Hình ảnh thực tế đính kèm</h4>
               <div class="row g-3">
                 <div class="col-6 col-md-4" v-for="(img, idx) in galleryImages" :key="idx">
                   <div class="rounded-3 overflow-hidden shadow-sm gallery-thumb" style="aspect-ratio: 4/3; cursor: pointer;">
@@ -159,23 +159,23 @@
               </div>
             </div>
 
-            <!-- Từ khóa / Tags -->
+            <!-- Từ khóa / Tags (DEC-01: 6px bo góc) -->
             <div class="mt-5 pt-4 border-top d-flex flex-wrap gap-2 align-items-center">
               <span class="text-muted small fw-semibold me-1">Chủ đề:</span>
               <router-link
                 v-if="article.category"
                 :to="{ path: '/tin-tuc', query: { category: article.category } }"
-                class="tag-pill text-decoration-none"
+                class="tag-badge text-decoration-none"
               >
                 {{ article.category }}
               </router-link>
-              <router-link :to="{ path: '/tin-tuc', query: { search: 'Động cơ' } }" class="tag-pill text-decoration-none">
+              <router-link :to="{ path: '/tin-tuc', query: { search: 'Động cơ' } }" class="tag-badge text-decoration-none">
                 Động cơ thủy
               </router-link>
-              <router-link :to="{ path: '/tin-tuc', query: { category: 'Bảo Dưỡng Động Cơ' } }" class="tag-pill text-decoration-none">
+              <router-link :to="{ path: '/tin-tuc', query: { category: 'Bảo Dưỡng Động Cơ' } }" class="tag-badge text-decoration-none">
                 Bảo dưỡng định kỳ
               </router-link>
-              <router-link to="/tra-cuu" class="tag-pill text-decoration-none">
+              <router-link to="/tra-cuu" class="tag-badge text-decoration-none">
                 Phụ tùng OEM JPM
               </router-link>
             </div>
@@ -187,7 +187,7 @@
               
               <!-- Table of Contents -->
               <div class="toc-widget mb-4 pb-2">
-                <div class="sidebar-label fw-bold text-dark mb-3">
+                <div class="sidebar-label fw-bold mb-3" style="color: var(--jpm-color-navy-dark, #0A1128);">
                   Mục lục bài viết
                 </div>
                 <ul class="toc-list list-unstyled m-0">
@@ -210,7 +210,7 @@
 
               <!-- Share the article -->
               <div class="share-widget mb-4 pb-2">
-                <div class="sidebar-label fw-bold text-dark mb-3">
+                <div class="sidebar-label fw-bold mb-3" style="color: var(--jpm-color-navy-dark, #0A1128);">
                   Chia sẻ bài viết
                 </div>
                 <div class="d-flex align-items-center gap-2">
@@ -249,9 +249,9 @@
                 </div>
               </div>
 
-              <!-- Promotional CTA Box ("Smarter Care, Happier Patients" equivalent) -->
-              <div class="promo-cta-card rounded-4 p-4">
-                <h4 class="fw-bold text-dark mb-2" style="font-size: 1.15rem; line-height: 1.35;">
+              <!-- Promotional CTA Box (Chuẩn Hóa 12px Card & Nút Đỏ Marine 8px) -->
+              <div class="promo-cta-card rounded-3 p-4">
+                <h4 class="fw-bold mb-2" style="font-size: 1.15rem; line-height: 1.35; color: var(--jpm-color-navy-dark, #0A1128);">
                   Vận Hành Bền Bỉ, An Tâm Vươn Khơi
                 </h4>
                 <p class="text-secondary mb-4" style="font-size: 0.84rem; line-height: 1.6;">
@@ -259,8 +259,8 @@
                 </p>
                 <router-link
                   to="/tra-cuu"
-                  class="btn btn-dark w-100 rounded-2 py-2 fw-semibold"
-                  style="font-size: 0.85rem;"
+                  class="btn btn-danger w-100 py-2 fw-semibold"
+                  style="border-radius: var(--jpm-radius-control, 8px); background-color: var(--jpm-color-red-marine, #F82249); font-size: 0.88rem;"
                 >
                   Khám phá ngay
                 </router-link>
@@ -273,7 +273,7 @@
 
         <!-- 5. RELATED BLOGS SECTION -->
         <div v-if="relatedArticles && relatedArticles.length > 0" class="related-blogs-section mt-5 pt-5 border-top bg-white">
-          <h2 class="fw-bold text-dark mb-4" style="font-size: 1.65rem; letter-spacing: -0.4px;">
+          <h2 class="fw-bold mb-4" style="font-size: 1.65rem; letter-spacing: -0.4px; color: var(--jpm-color-navy-dark, #0A1128);">
             Bài viết liên quan
           </h2>
 
@@ -550,6 +550,13 @@ export default {
       }
     };
 
+    const getImageUrl = (path) => {
+      if (!path) return FALLBACK;
+      if (typeof path === 'string' && path.startsWith('http')) return path;
+      const baseUrl = import.meta.env.VITE_STORAGE_BASE_URL || 'http://localhost:8000/storage';
+      return `${baseUrl.replace(/\/$/, '')}/${String(path).replace(/^\//, '')}`;
+    };
+
     return {
       article,
       relatedArticles,
@@ -561,6 +568,7 @@ export default {
       getAuthorRole,
       galleryImages,
       getYoutubeEmbedUrl,
+      getImageUrl,
       isFetching,
       error,
       formatDate,
@@ -576,34 +584,33 @@ export default {
 /* ── PAGE BACKGROUND & BASE ── */
 .jpm-news-detail {
   background-color: #ffffff;
-  color: #111827;
+  color: #1E293B;
 }
 
 /* ── TOP BACK LINK ── */
 .back-link {
-  color: #4b5563;
+  color: #64748b;
   font-size: 0.85rem;
   font-weight: 500;
   transition: color 0.2s ease;
 }
 .back-link:hover {
-  color: #111827;
+  color: var(--jpm-color-red-marine, #f82249);
 }
 
 /* ── ARTICLE HEADER ── */
 .article-category-label {
-  color: #374151;
   font-size: 0.82rem;
   font-weight: 600;
   letter-spacing: 0.2px;
   transition: color 0.2s ease;
 }
 .article-category-label:hover {
-  color: #f82249;
+  color: #d91639 !important;
 }
 
 .article-main-title {
-  font-family: var(--heading-font);
+  font-family: var(--heading-font, 'Raleway', sans-serif);
   font-size: clamp(1.6rem, 2.6vw, 2.1rem);
   font-weight: 700;
   line-height: 1.25;
@@ -640,7 +647,7 @@ export default {
 .article-html-content {
   font-size: 0.98rem;
   line-height: 1.8;
-  color: #374151;
+  color: #334155;
 }
 
 .article-html-content :deep(p) {
@@ -648,7 +655,7 @@ export default {
 }
 
 .article-html-content :deep(h2) {
-  color: #111827;
+  color: var(--jpm-color-navy-dark, #0A1128);
   font-size: 1.38rem;
   font-weight: 700;
   letter-spacing: -0.3px;
@@ -658,7 +665,7 @@ export default {
 }
 
 .article-html-content :deep(h3) {
-  color: #111827;
+  color: var(--jpm-color-navy-dark, #0A1128);
   font-size: 1.05rem;
   font-weight: 700;
   margin-top: 1.75rem;
@@ -669,8 +676,8 @@ export default {
 .article-html-content :deep(.article-example) {
   color: #4b5563;
   font-size: 0.94rem;
-  background: rgba(17, 24, 39, 0.03);
-  border-left: 3px solid #111827;
+  background: rgba(10, 17, 40, 0.03);
+  border-left: 3px solid var(--jpm-color-navy-dark, #0A1128);
   padding: 0.7rem 1rem;
   border-radius: 0 8px 8px 0;
   margin-bottom: 1.5rem;
@@ -679,7 +686,7 @@ export default {
 .article-html-content :deep(img) {
   max-width: 100%;
   height: auto;
-  border-radius: 4px;
+  border-radius: var(--jpm-radius-card, 12px);
   margin: 1.75rem 0;
 }
 
@@ -693,19 +700,21 @@ export default {
   margin-bottom: 0.45rem;
 }
 
-/* ── TAG PILLS ── */
-.tag-pill {
-  font-size: 0.78rem;
-  color: #374151;
-  background-color: #ffffff;
-  border: 1px solid #e5e7eb;
-  padding: 0.35rem 0.85rem;
-  border-radius: 999px;
+/* ── TAG BADGES (DEC-01: 6PX BORDER RADIUS) ── */
+.tag-badge {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #334155;
+  background-color: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  padding: 0.35rem 0.75rem;
+  border-radius: var(--jpm-radius-badge, 6px);
   transition: all 0.2s ease;
 }
-.tag-pill:hover {
-  border-color: #111827;
-  color: #111827;
+.tag-badge:hover {
+  border-color: #f82249;
+  color: #f82249;
+  background-color: rgba(248, 34, 73, 0.06);
 }
 
 /* ── RIGHT SIDEBAR (TOC + SHARE + PROMO CTA) ── */
@@ -720,7 +729,7 @@ export default {
 }
 
 .toc-list {
-  border-left: 2px solid #e5e7eb;
+  border-left: 2px solid #e2e8f0;
 }
 
 .toc-item {
@@ -741,35 +750,35 @@ export default {
 }
 
 .toc-item.active::before {
-  background-color: #111827;
+  background-color: var(--jpm-color-red-marine, #f82249);
 }
 
 .toc-link {
   display: block;
   font-size: 0.82rem;
   line-height: 1.45;
-  color: #6b7280;
+  color: #64748b;
   transition: color 0.2s ease;
 }
 
 .toc-item.active .toc-link,
 .toc-link:hover {
-  color: #111827;
+  color: var(--jpm-color-red-marine, #f82249);
   font-weight: 600;
 }
 
-/* Social Share Icons */
+/* Social Share Icons (DEC-01: 50% CIRCLE) */
 .social-icon-btn {
-  width: 32px;
-  height: 32px;
-  border-radius: 6px;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
   border: none;
-  background-color: #1f2937;
+  background-color: var(--jpm-color-navy-dark, #0A1128);
   color: #ffffff;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.82rem;
+  font-size: 0.85rem;
   transition: all 0.2s ease;
 }
 .social-icon-btn:hover {
@@ -777,10 +786,11 @@ export default {
   transform: translateY(-2px);
 }
 
-/* Promo CTA Card */
+/* Promo CTA Card (DEC-01: 12PX CARD) */
 .promo-cta-card {
-  background-color: #e5e7eb;
-  border: 1px solid rgba(17, 24, 39, 0.06);
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: var(--jpm-radius-card, 12px);
 }
 
 /* ── RELATED BLOGS SECTION ── */
@@ -790,21 +800,22 @@ export default {
 
 .related-blog-card {
   padding: 16px;
-  border-radius: 16px;
+  border-radius: var(--jpm-radius-card, 12px);
   background-color: #ffffff;
-  border: 1px solid #e5e7eb;
+  border: 1px solid #e2e8f0;
   transition: all 0.25s ease;
 }
 
 .related-blog-card:hover {
   border-color: #cbd5e1;
-  box-shadow: 0 10px 28px rgba(15, 23, 42, 0.06);
+  box-shadow: 0 10px 28px rgba(10, 17, 40, 0.08);
   transform: translateY(-3px);
 }
 
 .related-thumb-wrap {
   aspect-ratio: 16 / 10;
-  background-color: #e5e7eb;
+  background-color: #f1f5f9;
+  border-radius: var(--jpm-radius-card, 12px);
 }
 
 .related-category {
