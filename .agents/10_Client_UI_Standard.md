@@ -18,17 +18,21 @@ Mọi AI Agent (Antigravity, Claude, Copilot, Cursor...) khi làm việc với p
    - Tag, Badge trạng thái, Chip lọc: **`6px`** (`--jpm-radius-badge`).
    - Avatar người dùng, Nút icon tròn: **`50%`** (`--jpm-radius-circle`).
    *(Triệt tiêu hoàn toàn quy chuẩn cũ 4px và các giá trị tự phát khác).*
-3. **DEC-02 (Interactive Hotspots trên Exploded Diagram):**
+3. **NGUYÊN TẮC KẾ THỪA TỰ ĐỘNG TỪ TEMPLATE (AUTOMATIC TEMPLATE INHERITANCE - ZERO REDUNDANT SCOPED CSS):**
+   - Toàn bộ quy chuẩn về Bo góc (`Card 12px`, `Control 8px`, `Badge 6px`), Bảng màu (`Deep Navy`, `Marine Red`), Bóng đổ và Typography đã được đóng gói tập trung tại `FE_JPM/src/assets/client/css/main.css`.
+   - Các Page chỉ cần sử dụng đúng class ngữ nghĩa chuẩn Bootstrap 5 (`.card`, `.btn`, `.form-control`, `.form-select`, `.badge`) là **TỰ ĐỘNG KẾ THỪA 100%**, KHÔNG CẦN và TUYỆT ĐỐI KHÔNG đi sửa từng dòng từng phần trong `<style scoped>` của từng Page code.
+   - Tránh tuyệt đối việc tự đặt các class con rồi gõ cứng `border-radius: 12px !important` hay `border-radius: 8px !important` trong từng file `.vue`.
+4. **DEC-02 (Interactive Hotspots trên Exploded Diagram):**
    - Hỗ trợ tương tác hai chiều (Two-way reactive bridge) giữa Ghim Hotspot trên bản vẽ rã máy và Dòng phụ tùng trên bảng danh mục.
    - Sử dụng tọa độ phần trăm bất biến (`x`, `y`, `width`, `height`) từ cơ sở dữ liệu `chi_tiet_so_dos`.
-4. **DEC-03 (Reusable Shared Components):**
+5. **DEC-03 (Reusable Shared Components):**
    - `ProductCard.vue` và `JpmSelect.vue` là 2 component dùng chung cốt lõi được định hướng xây dựng.
    - Khắc phục triệt để lỗi khuyết nút giỏ hàng khi sản phẩm cần báo giá: Chân thẻ luôn cân đối 100% với nhãn giá và nút hành động tương ứng (`Thêm giỏ` hoặc `Yêu cầu báo giá`).
-5. **DEC-04 (Hệ thống Biểu tượng 100% Bootstrap Icons):**
+6. **DEC-04 (Hệ thống Biểu tượng 100% Bootstrap Icons):**
    - Phân hệ Client chỉ sử dụng duy nhất Bootstrap Icons (`bi bi-*`). Tuyệt đối không dùng Boxicons (`bx bx-*`) trên Client.
-6. **LƯU Ý CỰC KỲ QUAN TRỌNG VỀ TRẠNG THÁI HIỆN TẠI (SPECIFICATION VS IMPLEMENTATION):**
-   - Bộ Design System 2026 là **TÀI LIỆU ĐẶC TẢ KỸ THUẬT VÀ ĐỊNH HƯỚNG KIẾN TRÚC**, **KHÔNG ĐỒNG NGHĨA** với việc các component như `ProductCard.vue`, `JpmSelect.vue` đã tồn tại sẵn trong source code.
-   - Agent **KHÔNG ĐƯỢC GIẢ ĐỊNH** rằng các component này đã được import hoặc có sẵn trong source code khi chưa triển khai Phase 4.
+7. **LƯU Ý CỰC KỲ QUAN TRỌNG VỀ TRẠNG THÁI HIỆN TẠI (SPECIFICATION VS IMPLEMENTATION):**
+   - Bộ Design System 2026 đầy đủ 11 tài liệu đặc tả được lưu trữ tập trung tại `.agents/Phase_3_Unified_Design_System/`.
+   - Tài liệu đặc tả là định hướng kiến trúc, các component dùng chung như `ProductCard.vue`, `JpmSelect.vue` khi đưa vào thực tế phải đảm bảo tính tương thích ngược và không làm hồi quy giao diện hiện có.
    - Các điểm Pending (Đơn hàng hỗn hợp, Sơ đồ mobile, Autocomplete scope, Dark mode) là đề xuất đang chờ PO chốt, chưa phải quyết định chính thức.
 
 ---
@@ -187,7 +191,8 @@ Tại màn hình `SoDoPhuTung.vue`:
   - Chỉ chứa: Design tokens `:root`, tùy biến các class chính quy Bootstrap 5 (`.btn-primary`, `.btn-danger`, `.badge`, `.card`), utility dùng chung (`.text-truncate-2`), class component nền tảng (`.product-card`, `.btn-cart-action`).
   - CẤM: Đưa class đặc thù của 1 trang, số dòng line-clamp cục bộ, hay margin/padding riêng của 1 section vào `main.css`.
 - **`<style scoped>` trong Component Vue:**
-  - Dành riêng cho tinh chỉnh cục bộ của trang: Số dòng tóm tắt `-webkit-line-clamp`, tỷ lệ khung ảnh riêng của trang, khoảng cách lề cục bộ.
+  - Dành riêng cho tinh chỉnh cục bộ đặc thù: Số dòng tóm tắt `-webkit-line-clamp`, tỷ lệ khung ảnh riêng của trang, khoảng cách lề cục bộ.
+  - **CẤM:** Không viết lặp lại các quy chuẩn toàn cục (`border-radius: 12px`, `border-radius: 8px`, màu nền, font chữ) trong `<style scoped>` vì các component đã tự động kế thừa từ `main.css`. Chỉ can thiệp khi trang đó tồn tại class tự chế cũ bị lệch chuẩn.
 - **Inline Style (`style="..."`):**
   - DUY NHẤT được chấp nhận cho thông số vật lý động: Chiều rộng cột bảng (`style="width: 15%;"`), Tọa độ Hotspot động trên sơ đồ (`style="top: 42%; left: 68%;"`).
   - TUYỆT ĐỐI CẤM dùng inline style cho màu sắc, bo góc, đổ bóng hay khoảng cách lề.

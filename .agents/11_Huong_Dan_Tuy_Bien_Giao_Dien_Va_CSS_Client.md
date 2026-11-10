@@ -13,6 +13,7 @@ Quá trình chuyển đổi từ đặc tả thiết kế sang mã nguồn trong
 1. **Không sửa đổi hợp đồng API Backend (Zero Backend API Drift):** Mọi endpoint Laravel hiện tại (`/api/public/*`, `/api/client/*`) được giữ nguyên 100%. Thiết kế mới được xây dựng để khớp hoàn hảo với cấu trúc dữ liệu JSON mà backend đang cung cấp.
 2. **Bảo toàn cơ chế Định giá Thẩm quyền (Authoritative Pricing Preserved):** Frontend tuyệt đối không tự ý tính toán giảm giá, thuế hay tổng tiền đơn hàng. Toàn bộ tính toán tài chính và giá báo giá phải do Laravel Backend quyết định.
 3. **Chuyển đổi từng bước an toàn (Additive Non-destructive Migration):** Không xóa sổ 3.569 dòng `main.css` trong một lần refactor. Thư viện Design Tokens và các component mới sẽ được đưa vào theo dạng module độc lập bổ trợ, sau đó từng màn hình sẽ được nâng cấp dần.
+4. **Kế thừa tự động từ Global CSS (Automatic Global Inheritance - Zero Redundant Scoped Code):** Toàn bộ cấu hình Bo góc (Card 12px, Control 8px, Badge 6px), Màu sắc và Phông chữ chuẩn đã được tích hợp tập trung vào `main.css`. Khi xây dựng hoặc chỉnh sửa từng Page, lập trình viên CHỈ CẦN gọi đúng class ngữ nghĩa chuẩn của Bootstrap 5 (`.card`, `.btn`, `.form-control`, `.badge`) là giao diện tự động đồng bộ 100%. TUYỆT ĐỐI KHÔNG viết lặp lại các dòng CSS bo góc hay màu sắc vào từng `<style scoped>` của file Vue con.
 
 ---
 

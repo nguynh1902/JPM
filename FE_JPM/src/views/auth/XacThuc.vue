@@ -1,21 +1,15 @@
 <template>
-  <div class="container-fluid vh-100 p-0 overflow-hidden font-sans position-relative">
+  <div class="container-fluid vh-100 p-0 overflow-hidden position-relative">
     
-    <!-- ================= LAYER 1: HÌNH ẢNH FULL MÀN HÌNH ================= -->
-    <div class="position-absolute w-100 h-100 z-0">
-      <div
-        v-for="(img, idx) in bgImages"
-        :key="idx"
-        class="position-absolute w-100 h-100"
-        :style="{
-          backgroundImage: 'url(' + img + ')',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          transition: 'opacity 1.5s ease-in-out',
-          opacity: idx === activeImgIndex ? 1 : 0
-        }"
-      ></div>
-    </div>
+    <!-- ================= LAYER 1: HÌNH ẢNH NỀN CỐ ĐỊNH (NGỌN SÓNG BIỂN NGỌC) ================= -->
+    <div
+      class="position-absolute w-100 h-100 z-0"
+      style="
+        background-image: url('https://images.unsplash.com/photo-1502680390469-be75c86b636f?q=80&w=1600&auto=format&fit=crop');
+        background-size: cover;
+        background-position: center;
+      "
+    ></div>
     
     <!-- ================= LAYER 2: GRADIENT BẢO VỆ CHỮ ================= -->
     <div class="position-absolute w-100 h-100 z-1" style="background: linear-gradient(90deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0) 100%); pointer-events: none;"></div>
@@ -61,13 +55,13 @@
           <!-- BULLETS -->
           <ul data-aos="fade-up" data-aos-delay="200" class="list-unstyled d-flex flex-column gap-3" style="font-size: 15px; color: rgba(255, 255, 255, 0.85); font-weight: 500; margin: 0;">
             <li class="d-flex align-items-center gap-3">
-              <i class="bi bi-check2-circle text-danger fs-5"></i> Phụ tùng chính hãng 100%
+              <i class="bi bi-check2-circle fs-5" style="color: var(--jpm-color-red-marine, #F82249);"></i> Phụ tùng chính hãng 100%
             </li>
             <li class="d-flex align-items-center gap-3">
-              <i class="bi bi-check2-circle text-danger fs-5"></i> Giao hàng toàn quốc nhanh chóng
+              <i class="bi bi-check2-circle fs-5" style="color: var(--jpm-color-red-marine, #F82249);"></i> Giao hàng toàn quốc nhanh chóng
             </li>
             <li class="d-flex align-items-center gap-3">
-              <i class="bi bi-check2-circle text-danger fs-5"></i> Hỗ trợ kỹ thuật 24/7
+              <i class="bi bi-check2-circle fs-5" style="color: var(--jpm-color-red-marine, #F82249);"></i> Hỗ trợ kỹ thuật 24/7
             </li>
           </ul>
         </div>
@@ -276,15 +270,7 @@ export default {
       forgotForm: { email: '' },
       resetForm: { password: '', password_confirmation: '' },
       showResetPw: false,
-      showResetConfirmPw: false,
-      
-      bgImages: [
-        "https://images.unsplash.com/photo-1502680390469-be75c86b636f?q=80&w=1600&auto=format&fit=crop",
-        "https://images.unsplash.com/photo-1567899378494-47b22a2ae96a?q=80&w=1600&auto=format&fit=crop",
-        "https://images.unsplash.com/photo-1505118380757-91f5f5632de0?q=80&w=1600&auto=format&fit=crop"
-      ],
-      activeImgIndex: 0,
-      timer: null
+      showResetConfirmPw: false
     }
   },
   computed: {
@@ -305,12 +291,6 @@ export default {
   },
   mounted() {
     this.syncFormFromRoute();
-    this.timer = setInterval(() => {
-      this.activeImgIndex = (this.activeImgIndex + 1) % this.bgImages.length;
-    }, 5000);
-  },
-  beforeUnmount() {
-    if (this.timer) clearInterval(this.timer);
   },
   methods: {
     syncFormFromRoute() {

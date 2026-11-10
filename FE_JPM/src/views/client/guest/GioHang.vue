@@ -10,7 +10,7 @@
         <!-- Header -->
         <div class="row mb-4">
           <div class="col-12" data-aos="fade-down">
-            <h2 class="jpm-page-title">Giỏ Hàng <span class="text-danger">Báo Giá</span></h2>
+            <h2 class="jpm-page-title">Giỏ Hàng <span style="color: var(--jpm-color-red-marine, #F82249);">Báo Giá</span></h2>
             <p class="text-muted">Kiểm tra phụ tùng và gửi yêu cầu để nhận mức chiết khấu tốt nhất từ JPM Marine.</p>
           </div>
         </div>
@@ -146,11 +146,11 @@
                   <!-- Trường hợp 2A: Khách vãng lai (Guest) -->
                   <div v-if="!isAuthenticated">
                     <div class="mb-3">
-                      <label class="form-label field-label">Họ và tên <span class="text-danger">*</span></label>
+                      <label class="form-label field-label">Họ và tên <span style="color: var(--jpm-color-red-marine, #F82249);">*</span></label>
                       <input type="text" class="form-control custom-form-input" v-model="checkoutForm.name" required placeholder="Nhập tên của bạn...">
                     </div>
                     <div class="mb-3">
-                      <label class="form-label field-label">Số điện thoại / Zalo <span class="text-danger">*</span></label>
+                      <label class="form-label field-label">Số điện thoại / Zalo <span style="color: var(--jpm-color-red-marine, #F82249);">*</span></label>
                       <input type="tel" class="form-control custom-form-input" v-model="checkoutForm.phone" required placeholder="Nhập số điện thoại nhận báo giá...">
                     </div>
                     <div class="mb-3">
@@ -158,7 +158,7 @@
                       <input type="email" class="form-control custom-form-input" v-model="checkoutForm.email" placeholder="Nhập email nhận hóa đơn...">
                     </div>
                     <div class="mb-3">
-                      <label class="form-label field-label">Địa chỉ nhận hàng <span class="text-danger">*</span></label>
+                      <label class="form-label field-label">Địa chỉ nhận hàng <span style="color: var(--jpm-color-red-marine, #F82249);">*</span></label>
                       <textarea class="form-control custom-form-input custom-textarea" v-model="checkoutForm.address" required rows="2" placeholder="Số nhà, Tỉnh/Thành phố hoặc Tên Chành Xe quen thuộc"></textarea>
                     </div>
                   </div>
@@ -179,13 +179,13 @@
                         <i class="bi bi-telephone me-1"></i> {{ selectedAddress.so_dien_thoai }}
                       </div>
                       <div class="small text-secondary mt-2 pt-2 border-top" style="line-height: 1.45;">
-                        <i class="bi bi-geo-alt text-danger me-1"></i> {{ selectedAddress.dia_chi_cu_the }}
+                        <i class="bi bi-geo-alt me-1" style="color: var(--jpm-color-red-marine, #F82249);"></i> {{ selectedAddress.dia_chi_cu_the }}
                       </div>
                     </div>
 
                     <!-- Trạng thái 2: CHƯA CÓ ĐỊA CHỈ (Gọn gàng, tối giản, không hiệu ứng rườm rà) -->
                     <div v-else class="no-address-box p-3 text-center">
-                      <i class="bi bi-geo-alt text-danger fs-3 mb-1 d-block"></i>
+                      <i class="bi bi-geo-alt fs-3 mb-1 d-block" style="color: var(--jpm-color-red-marine, #F82249);"></i>
                       <p class="text-muted small mb-2">Bạn chưa có địa chỉ nào trong Sổ địa chỉ.</p>
                       <button type="button" class="btn btn-outline-danger btn-sm btn-rounded-8" data-bs-toggle="modal" data-bs-target="#addressModal" @click.prevent="openAddAddress">
                         <i class="bi bi-plus-lg me-1"></i> Thêm địa chỉ ngay
@@ -265,11 +265,11 @@
                   <div class="flex-grow-1">
                     <div class="d-flex justify-content-between align-items-center mb-1">
                       <span class="fw-bold text-dark">{{ addr.ten_nguoi_nhan }}</span>
-                      <a href="#" class="text-decoration-none small text-danger fw-semibold" @click.stop.prevent="openEditAddress(addr)">Sửa</a>
+                      <a href="#" class="text-decoration-none small fw-semibold" style="color: var(--jpm-color-red-marine, #F82249);" @click.stop.prevent="openEditAddress(addr)">Sửa</a>
                     </div>
                     <div class="text-muted small mb-1">(+84) {{ addr.so_dien_thoai }}</div>
                     <div class="small text-secondary" style="line-height: 1.4;">{{ addr.dia_chi_cu_the }}</div>
-                    <span v-if="addr.la_mac_dinh" class="badge bg-danger-subtle text-danger mt-2 px-2 py-1 small rounded-1">Mặc định</span>
+                    <span v-if="addr.la_mac_dinh" class="badge mt-2 px-2 py-1 small" style="border-radius: var(--jpm-radius-badge, 6px); background-color: rgba(248, 34, 73, 0.08); color: var(--jpm-color-red-marine, #F82249); font-weight: 600;">Mặc định</span>
                   </div>
                 </div>
               </div>
@@ -278,15 +278,15 @@
               <div v-else class="address-form-inline">
                 <form @submit.prevent="saveAddress">
                   <div class="mb-3">
-                    <label class="form-label small fw-bold text-dark">Họ và tên người nhận <span class="text-danger">*</span></label>
+                    <label class="form-label small fw-bold text-dark">Họ và tên người nhận <span style="color: var(--jpm-color-red-marine, #F82249);">*</span></label>
                     <input type="text" class="form-control custom-form-input" v-model="addressForm.ten_nguoi_nhan" required placeholder="Tên người nhận hàng...">
                   </div>
                   <div class="mb-3">
-                    <label class="form-label small fw-bold text-dark">Số điện thoại <span class="text-danger">*</span></label>
+                    <label class="form-label small fw-bold text-dark">Số điện thoại <span style="color: var(--jpm-color-red-marine, #F82249);">*</span></label>
                     <input type="text" class="form-control custom-form-input" v-model="addressForm.so_dien_thoai" required placeholder="Số điện thoại...">
                   </div>
                   <div class="mb-3">
-                    <label class="form-label small fw-bold text-dark">Địa chỉ cụ thể / Chành xe <span class="text-danger">*</span></label>
+                    <label class="form-label small fw-bold text-dark">Địa chỉ cụ thể / Chành xe <span style="color: var(--jpm-color-red-marine, #F82249);">*</span></label>
                     <textarea class="form-control custom-form-input" v-model="addressForm.dia_chi_cu_the" required rows="2" placeholder="Số nhà, đường, xã/phường, tỉnh/thành phố hoặc bến chành xe..."></textarea>
                   </div>
                   <div class="mb-3 form-check">
@@ -683,7 +683,7 @@ export default {
 
 /* ===== SHARED 12PX CARDS (CHUẨN PRODUCT-CARD VÀ FILTER CONSOLE TRANG CHỦ) ===== */
 .catalog-cart-card {
-  border-radius: 12px !important;
+  border-radius: var(--jpm-radius-card, 12px) !important;
   border: 1px solid #e2e8f0 !important;
   background: #ffffff;
   box-shadow: 0 4px 16px rgba(10, 17, 40, 0.04) !important;
@@ -694,18 +694,18 @@ export default {
   font-family: var(--heading-font, 'Raleway', sans-serif);
   font-size: 1.05rem;
   font-weight: 700;
-  color: #0A1128;
+  color: var(--jpm-color-navy-deep, #0A1128);
   letter-spacing: -0.2px;
 }
 
 .badge-item-count {
-  background: #fff1f2;
-  color: #e11d48;
-  border: 1px solid #fecdd3;
+  background: rgba(248, 34, 73, 0.08);
+  color: var(--jpm-color-red-marine, #F82249);
+  border: 1px solid rgba(248, 34, 73, 0.2);
   font-size: 11.5px;
   font-weight: 700;
   padding: 4px 10px;
-  border-radius: 4px; /* Viền vuông kỹ thuật chuẩn JPM Marine (thay vì tròn vo 999px) */
+  border-radius: var(--jpm-radius-badge, 6px);
   display: inline-flex;
   align-items: center;
   letter-spacing: 0.3px;
@@ -713,7 +713,7 @@ export default {
 
 /* Utility bo góc 8px đồng bộ Trang Chủ */
 .btn-rounded-8 {
-  border-radius: 8px !important;
+  border-radius: var(--jpm-radius-control, 8px) !important;
 }
 
 /* ===== TABLE STYLING ===== */
@@ -794,19 +794,19 @@ export default {
 }
 
 .custom-checkbox:checked {
-  background-color: var(--accent-color, #f82249);
-  border-color: var(--accent-color, #f82249);
+  background-color: var(--jpm-color-red-marine, #F82249);
+  border-color: var(--jpm-color-red-marine, #F82249);
 }
 
 .custom-checkbox:focus {
-  border-color: var(--accent-color, #f82249);
+  border-color: var(--jpm-color-red-marine, #F82249);
   box-shadow: 0 0 0 2px rgba(248, 34, 73, 0.2);
 }
 
 .cart-item-thumb {
   width: 60px;
   height: 60px;
-  border-radius: 8px; /* Bo góc 8px chuẩn thumbnail Trang Chủ */
+  border-radius: var(--jpm-radius-control, 8px); /* Bo góc 8px chuẩn thumbnail Trang Chủ */
   border: 1px solid #e2e8f0;
   background: #ffffff;
   display: inline-flex;
@@ -824,7 +824,7 @@ export default {
 .part-code {
   font-family: var(--heading-font, 'Raleway', sans-serif);
   font-weight: 700;
-  color: #0A1128;
+  color: var(--jpm-color-navy-deep, #0A1128);
   font-size: 0.95rem;
 }
 
@@ -836,19 +836,19 @@ export default {
 }
 
 .part-price-val {
-  color: var(--accent-color, #f82249);
+  color: var(--jpm-color-red-marine, #F82249);
   font-weight: 700;
   font-size: 0.95rem;
   white-space: nowrap;
 }
 
 .part-price-quote {
-  color: var(--accent-color, #f82249);
+  color: var(--jpm-color-red-marine, #F82249);
   font-weight: 700;
   font-size: 0.85rem;
   background: rgba(248, 34, 73, 0.08);
   padding: 3px 10px;
-  border-radius: 6px;
+  border-radius: var(--jpm-radius-badge, 6px);
   white-space: nowrap;
 }
 
@@ -856,7 +856,7 @@ export default {
 .qty-selector {
   background: #ffffff;
   border: 1px solid #d1d5db;
-  border-radius: 8px;
+  border-radius: var(--jpm-radius-control, 8px);
   overflow: hidden;
   height: 36px;
   width: 110px;
@@ -899,10 +899,10 @@ export default {
 .btn-delete-item {
   width: 34px;
   height: 34px;
-  border-radius: 8px; /* Bo góc 8px chuẩn nút Trang Chủ như nãy */
-  border: 1px solid var(--accent-color, #f82249); /* Viền màu đỏ chuẩn JPM Marine */
+  border-radius: var(--jpm-radius-control, 8px); /* Bo góc 8px chuẩn nút Trang Chủ */
+  border: 1px solid var(--jpm-color-red-marine, #F82249); /* Viền màu đỏ chuẩn JPM Marine */
   background-color: #ffffff; /* Nền outline trắng sạch sẽ */
-  color: var(--accent-color, #f82249); /* Icon thùng rác màu đỏ chuẩn */
+  color: var(--jpm-color-red-marine, #F82249); /* Icon thùng rác màu đỏ chuẩn */
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -912,9 +912,9 @@ export default {
 }
 
 .btn-delete-item:hover {
-  background-color: var(--accent-color, #f82249);
+  background-color: var(--jpm-color-red-marine, #F82249);
   color: #ffffff;
-  border-color: var(--accent-color, #f82249);
+  border-color: var(--jpm-color-red-marine, #F82249);
   transform: translateY(-1px);
   box-shadow: 0 4px 10px rgba(248, 34, 73, 0.25);
 }
@@ -937,14 +937,14 @@ export default {
 }
 
 .summary-val {
-  color: #0A1128;
+  color: var(--jpm-color-navy-deep, #0A1128);
   font-family: var(--heading-font, 'Raleway', sans-serif);
   font-size: 0.95rem;
   font-weight: 700;
 }
 
 .summary-total-label {
-  color: #0A1128;
+  color: var(--jpm-color-navy-deep, #0A1128);
   font-family: var(--heading-font, 'Raleway', sans-serif);
   font-size: 0.95rem;
   font-weight: 700;
@@ -958,7 +958,7 @@ export default {
 }
 
 .summary-price-accent {
-  color: var(--accent-color, #f82249);
+  color: var(--jpm-color-red-marine, #F82249);
   font-family: var(--heading-font, 'Raleway', sans-serif);
   font-size: 1.25rem;
   letter-spacing: -0.3px;
@@ -991,11 +991,11 @@ export default {
 
 /* Custom Input Form: 8px bo góc chuẩn search-input-box và select-box của Trang Chủ */
 .custom-form-input {
-  border-radius: 8px !important;
+  border-radius: var(--jpm-radius-control, 8px) !important;
   border: 1px solid #e2e8f0;
   font-size: 0.875rem;
   padding: 9px 13px;
-  color: #0A1128;
+  color: var(--jpm-color-navy-deep, #0A1128);
   background-color: #ffffff;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
@@ -1005,7 +1005,7 @@ export default {
 }
 
 .custom-form-input:focus {
-  border-color: #f82249 !important;
+  border-color: var(--jpm-color-red-marine, #F82249) !important;
   box-shadow: 0 0 0 3px rgba(248, 34, 73, 0.12) !important;
   outline: none;
 }
@@ -1019,11 +1019,11 @@ export default {
 .address-preview-card {
   background: #f8fafc;
   border: 1px solid #e2e8f0;
-  border-radius: 8px;
+  border-radius: var(--jpm-radius-control, 8px);
 }
 
 .address-change-link {
-  color: var(--accent-color, #f82249);
+  color: var(--jpm-color-red-marine, #F82249);
   font-weight: 600;
   font-size: 0.82rem;
 }
@@ -1035,32 +1035,32 @@ export default {
 .no-address-box {
   background: #f8fafc;
   border: 1px dashed #cbd5e1;
-  border-radius: 8px;
+  border-radius: var(--jpm-radius-control, 8px);
 }
 
 .btn-outline-danger {
-  border-radius: 8px !important;
+  border-radius: var(--jpm-radius-control, 8px) !important;
 }
 
 .no-address-box .btn-outline-danger {
   background-color: #ffffff;
-  color: var(--accent-color, #f82249);
-  border: 1px solid var(--accent-color, #f82249);
+  color: var(--jpm-color-red-marine, #F82249);
+  border: 1px solid var(--jpm-color-red-marine, #F82249);
   font-weight: 600;
   padding: 6px 16px;
   transition: all 0.2s ease;
 }
 
 .no-address-box .btn-outline-danger:hover {
-  background-color: var(--accent-color, #f82249) !important;
-  border-color: var(--accent-color, #f82249) !important;
+  background-color: var(--jpm-color-red-marine, #F82249) !important;
+  border-color: var(--jpm-color-red-marine, #F82249) !important;
   color: #ffffff !important;
 }
 
 /* Submit Button: 8px bo góc chuẩn btn-cart-action và filter-control ở Trang Chủ */
 .btn-jpm-submit {
   height: 48px;
-  border-radius: 8px !important;
+  border-radius: var(--jpm-radius-control, 8px) !important;
   font-family: var(--heading-font, 'Raleway', sans-serif);
   font-weight: 700;
   font-size: 0.95rem;
@@ -1089,7 +1089,7 @@ export default {
 
 /* ===== EMPTY CART STATE ===== */
 .empty-cart-card {
-  border-radius: 12px !important;
+  border-radius: var(--jpm-radius-card, 12px) !important;
   border: 1px solid #e2e8f0 !important;
   background: #ffffff;
   box-shadow: 0 4px 20px rgba(10, 17, 40, 0.04);
@@ -1099,8 +1099,8 @@ export default {
   width: 80px;
   height: 80px;
   border-radius: 50%;
-  background: #fff1f2;
-  color: var(--accent-color, #f82249);
+  background: rgba(248, 34, 73, 0.08);
+  color: var(--jpm-color-red-marine, #F82249);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1109,14 +1109,14 @@ export default {
 
 /* ===== ADDRESS MODAL ===== */
 .custom-modal-content {
-  border-radius: 12px !important;
+  border-radius: var(--jpm-radius-card, 12px) !important;
   border: 1px solid #e2e8f0;
   box-shadow: 0 20px 45px -10px rgba(10, 17, 40, 0.2);
 }
 
 .address-item {
   border: 1px solid #e2e8f0;
-  border-radius: 8px;
+  border-radius: var(--jpm-radius-control, 8px);
   background: #ffffff;
   transition: all 0.15s ease;
 }
@@ -1127,7 +1127,7 @@ export default {
 }
 
 .address-item.selected-addr {
-  border-color: var(--accent-color, #f82249) !important;
+  border-color: var(--jpm-color-red-marine, #F82249) !important;
   background: rgba(248, 34, 73, 0.02);
 }
 
