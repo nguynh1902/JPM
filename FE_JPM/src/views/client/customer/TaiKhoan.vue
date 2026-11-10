@@ -4,7 +4,7 @@
             <!-- THONG TIN CA NHAN -->
             <div class="card border-0 tk-card mb-4">
               <div class="card-header bg-transparent border-bottom tk-card-header">
-                <h5 class="mb-0 tk-heading">Thông Tin Cá Nhân & Doanh Nghiệp</h5>
+                <h5 class="mb-0 tk-heading">Thông tin cá nhân</h5>
               </div>
               <div class="card-body p-4">
                 <form @submit.prevent="saveProfile">
@@ -47,8 +47,8 @@
             <!-- ĐỊA CHỈ GIAO HÀNG -->
             <div class="card border-0 tk-card">
               <div class="card-header bg-transparent border-bottom tk-card-header d-flex justify-content-between align-items-center">
-                <h5 class="mb-0 tk-heading">Sổ Địa Chỉ Giao Hàng</h5>
-                <button class="btn btn-danger btn-sm d-inline-flex align-items-center gap-2 px-3 py-2 fw-semibold" @click="openAddAddressModal">
+                <h5 class="mb-0 tk-heading">Địa chỉ giao hàng</h5>
+                <button class="btn btn-blue-primary btn-sm d-inline-flex align-items-center gap-2 px-3 py-2 fw-semibold" @click="openAddAddressModal">
                   <i class="bi bi-plus-lg"></i>
                   <span>Thêm địa chỉ mới</span>
                 </button>
@@ -453,17 +453,22 @@ const setDefault = (id) => {
 
 <style scoped>
 .tk-card {
-  box-shadow: 0 4px 20px rgba(10, 17, 40, 0.04);
-  border: 1px solid #eef2f6 !important;
+  box-shadow: 0 4px 16px rgba(10, 17, 40, 0.04) !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: var(--jpm-radius-card, 12px) !important;
   background-color: #ffffff;
 }
 .tk-card-header {
-  padding: 20px 24px;
-  border-bottom: 1px solid #f1f5f9 !important;
+  padding: 16px 24px;
+  min-height: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #e2e8f0 !important;
 }
 .tk-heading {
-  font-family: var(--font-heading, 'Raleway', sans-serif);
-  color: var(--jpm-color-navy-deep, #0A1128);
+  font-family: var(--heading-font, 'Raleway', sans-serif);
+  color: var(--jpm-color-navy-dark, #0A1128);
   font-weight: 700;
   letter-spacing: -0.01em;
 }
@@ -476,7 +481,20 @@ const setDefault = (id) => {
 }
 .tk-form-input {
   font-size: 15px;
-  color: var(--jpm-color-navy-deep, #0A1128);
+  color: var(--jpm-color-navy-dark, #0A1128);
+}
+
+.btn-outline-secondary {
+  border-color: #cbd5e1 !important;
+  color: #475569 !important;
+  font-weight: 600;
+  border-radius: var(--jpm-radius-control, 8px) !important;
+  transition: all 0.2s ease;
+}
+.btn-outline-secondary:hover {
+  background-color: #f1f5f9 !important;
+  border-color: #94a3b8 !important;
+  color: var(--jpm-color-navy-dark, #0A1128) !important;
 }
 
 /* Sổ Địa Chỉ Card Styling */
@@ -536,6 +554,20 @@ const setDefault = (id) => {
   justify-content: center;
   color: var(--jpm-color-red-marine, #F82249);
   font-size: 2rem;
+}
+
+.btn-blue-primary {
+  background-color: #0d6efd !important;
+  border-color: #0d6efd !important;
+  color: #ffffff !important;
+  border-radius: var(--jpm-radius-control, 8px) !important;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+.btn-blue-primary:hover {
+  background-color: #0b5ed7 !important;
+  border-color: #0a58ca !important;
+  color: #ffffff !important;
 }
 
 .hover-red:hover {

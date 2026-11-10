@@ -10,11 +10,7 @@
           </button>
         </div>
         <h5 class="account-user-name mb-1">{{ userName }}</h5>
-        <div class="mt-2">
-          <span class="badge account-role-badge">
-            <i class="bi bi-shield-check me-1"></i>Thành viên chính thức
-          </span>
-        </div>
+        <p class="account-user-role mb-0">{{ userRoleLabel }}</p>
       </div>
 
       <!-- Modern Floating Pill Navigation -->
@@ -25,7 +21,7 @@
         </router-link>
         <router-link to="/garage" class="account-pill-link" active-class="active-pill-link">
           <i class="bi bi-tools fs-5"></i>
-          <span>Hạm đội Garage</span>
+          <span>Garage của tôi</span>
         </router-link>
         <router-link to="/vat-tu-thuong-mua" class="account-pill-link" active-class="active-pill-link">
           <i class="bi bi-bookmark-heart fs-5"></i>
@@ -82,6 +78,21 @@ const userName = computed(() => {
   return props.customName || authStore.user?.name || "Tài khoản";
 });
 
+const userRoleLabel = computed(() => {
+  const user = authStore.user;
+  if (!user) return 'Khách hàng';
+  
+  if (authStore.isAdmin || user.is_admin) return 'Admin';
+  
+  const roles = user.roles || [];
+  const roleNames = roles.map(r => String(typeof r === 'string' ? r : (r?.name || '')).toLowerCase().trim());
+  if (authStore.isStaffOrAdmin || roleNames.some(r => r === 'staff' || r.includes('nhân viên')) || user.nhan_vien) {
+    return 'Nhân viên';
+  }
+  
+  return 'Khách hàng';
+});
+
 const logout = async () => {
   const result = await Swal.fire({
     title: "Đăng xuất?",
@@ -136,19 +147,13 @@ const logout = async () => {
   font-family: var(--heading-font, 'Raleway', sans-serif);
   font-size: 1.125rem;
   font-weight: 700;
-  color: var(--jpm-color-navy-deep, #0A1128);
+  color: var(--jpm-color-navy-dark, #0A1128);
 }
 
-.account-role-badge {
-  background: rgba(2, 132, 199, 0.08);
-  color: #0284c7;
-  border: 1px solid rgba(2, 132, 199, 0.2);
-  border-radius: var(--jpm-radius-badge, 6px);
-  font-size: 12px;
-  font-weight: 600;
-  padding: 4px 10px;
-  display: inline-flex;
-  align-items: center;
+.account-user-role {
+  font-size: 13.5px;
+  color: #64748b;
+  font-weight: 500;
 }
 
 .account-nav-list {

@@ -34,6 +34,7 @@ Toàn bộ tài nguyên giao diện của Client nằm tập trung tại:
 | **Dòng 86 – 128** | **Interaction Utilities** | Hiệu ứng nhấc nổi khi hover (`group-hover`, phóng to ảnh thumbnail). |
 | **Dòng 2028 – 2038** | **Page Titles** | Kiểu dáng tiêu đề trang chuẩn (`.jpm-page-title`). |
 | **Dòng 2040 – 2065** | **Buttons (Nút bấm)** | Ghi đè nút bấm Bootstrap: `.btn-primary` (Navy), `.btn-danger` (Marine Red), bo góc chuẩn 8px. |
+| **Tiện ích nút bấm** | **`.btn-blue-primary`** | Màu Xanh Primary chuẩn Bootstrap (`#0d6efd`) cho nút Thêm mới (Thêm địa chỉ, Thêm sản phẩm) để không bị biến thành Navy `#0A1128`. |
 | **Dòng 2075 – 2100** | **Form Controls (Cơ bản)** | Chiều cao 44px, viền 1px `--jpm-neutral-200`, bo góc chuẩn 8px của ô nhập liệu form. |
 | **Dòng 2162 – 2220** | **Custom Tables** | Kiểu dáng bảng phụ tùng, bảng giỏ hàng (`.custom-table`), huy hiệu số Ref (`.ref-badge`). |
 | **Dòng 2240 – 2278** | **Cards & Product Cards** | Kiểu dáng khung thẻ Card (`.card`, `.product-card`), bo góc chuẩn 12px, viền ảnh ôm khít. |

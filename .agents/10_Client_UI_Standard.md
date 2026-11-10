@@ -30,10 +30,28 @@ Mọi AI Agent (Antigravity, Claude, Copilot, Cursor...) khi làm việc với p
    - Khắc phục triệt để lỗi khuyết nút giỏ hàng khi sản phẩm cần báo giá: Chân thẻ luôn cân đối 100% với nhãn giá và nút hành động tương ứng (`Thêm giỏ` hoặc `Yêu cầu báo giá`).
 6. **DEC-04 (Hệ thống Biểu tượng 100% Bootstrap Icons):**
    - Phân hệ Client chỉ sử dụng duy nhất Bootstrap Icons (`bi bi-*`). Tuyệt đối không dùng Boxicons (`bx bx-*`) trên Client.
-7. **LƯU Ý CỰC KỲ QUAN TRỌNG VỀ TRẠNG THÁI HIỆN TẠI (SPECIFICATION VS IMPLEMENTATION):**
-   - Bộ Design System 2026 đầy đủ 11 tài liệu đặc tả được lưu trữ tập trung tại `.agents/Phase_3_Unified_Design_System/`.
-   - Tài liệu đặc tả là định hướng kiến trúc, các component dùng chung như `ProductCard.vue`, `JpmSelect.vue` khi đưa vào thực tế phải đảm bảo tính tương thích ngược và không làm hồi quy giao diện hiện có.
-   - Các điểm Pending (Đơn hàng hỗn hợp, Sơ đồ mobile, Autocomplete scope, Dark mode) là đề xuất đang chờ PO chốt, chưa phải quyết định chính thức.
+7. **HỢP NHẤT TOÀN DIỆN THIẾT KẾ PHASE 3 VÀO TÀI LIỆU .AGENTS (UNIFIED SOURCE OF TRUTH):**
+   - Toàn bộ 11 tài liệu đặc tả của Phase 3 Unified Design System (Bao gồm Design Foundation, Layout, Component Library, Interaction, Hotspots, Page Blueprint, Responsive, Accessibility, Technical Implementation, Decision Log) đã được **XÁC NHẬP VÀ ĐÓNG GÓI TRỌN VẸN 100%** vào thư mục `.agents/` (tập trung tại `10_Client_UI_Standard.md` và `11_Huong_Dan_Tuy_Bien_Giao_Dien_Va_CSS_Client.md`).
+   - Thư mục riêng lẻ `Phase_3_Unified_Design_System` được dọn dẹp và xóa bỏ hoàn toàn nhằm tinh gọn dự án, triệt tiêu phân mảnh tài liệu. Mọi Agent và Kỹ sư chỉ tra cứu duy nhất tại `.agents/`.
+
+8. **CHỈ THỊ THỰC CHIẾN TINH GỌN TỪ PRODUCT OWNER (PO LEAN UX DIRECTIVE 2026):**
+   - **Tên màn hình & Tiêu đề thẻ dứt khoát, tự nhiên:**
+     * `Garage của tôi` (thay cho mọi cách gọi rườm rà như `Hạm đội Garage`).
+     * `Thông tin cá nhân` (thay cho `Thông Tin Cá Nhân & Doanh Nghiệp`).
+     * `Địa chỉ giao hàng` (thay cho `Sổ Địa Chỉ Giao Hàng`).
+     * `Vật tư thường mua` (thay cho `Vật Tư Thường Mua & Định Kỳ`).
+     * `Danh sách động cơ` (thay cho `Danh Sách Động Cơ Trong Garage`).
+   - **Triệt tiêu toàn bộ dòng phụ đề đếm số lượng thừa (No Redundant Counters):**
+     * Tuyệt đối không chèn các dòng text nhỏ đếm số lượng dưới tiêu đề card (như: "0 động cơ đang quản lý trong garage", "Quản lý và đặt nhanh các vật tư tiêu hao (0 mục)"). Giao diện phải sạch sẽ, tinh giản.
+   - **Hiển thị vai trò tài khoản dạng văn bản thuần (Plain Text Role):**
+     * Dưới avatar người dùng, chỉ hiển thị chữ trơn (plain text) đại diện vai trò: `Admin`, `Nhân viên`, hoặc `Khách hàng`.
+     * Font chữ: 13.5px, màu slate trung tính `#64748b`, font-weight 500.
+     * TUYỆT ĐỐI KHÔNG đóng khung vai trò vào card/badge nền đỏ, nền hồng, không có viền bao và không gắn icon khiên/khóa bảo vệ làm rối mắt.
+   - **Phân định màu sắc nút bấm hành động (Action Button Color Hierarchy):**
+     * **Nút Thêm mới đối tượng (Thêm địa chỉ mới, Thêm sản phẩm mới):** Sử dụng màu **Xanh Primary chuẩn Bootstrap 5 (`#0d6efd`)** thông qua class `.btn-blue-primary` (với bo góc 8px). Điều này tránh xung đột màu đỏ với các nút Chỉnh sửa/Xóa và tránh bị `main.css` biến thành màu xanh Navy gần đen.
+     * **Nút Hành động Chính / Chỉnh sửa / Mua hàng / Lưu:** Sử dụng màu **Đỏ Marine (`#F82249` / `.btn-danger`)**.
+   - **Xóa bỏ lỗi chồng khoảng đệm (Section Padding Stacking Elimination):**
+     * Trong các khung trang tài khoản (LayoutTaiKhoan.vue), thẻ `<section>` bắt buộc mang `class="py-0" style="background: transparent;"` để triệt tiêu padding 60px 0 và nền trắng mặc định của template TheEvent, loại bỏ khoảng cách trống 170px và dải trắng vô duyên. Khoảng đệm header chuẩn hóa là `padding-top: 92px` trên thẻ `<main>`.
 
 ---
 
@@ -232,6 +250,7 @@ Tại màn hình `SoDoPhuTung.vue`:
 | **DEC-02** | Exploded Diagram Hotspots tương tác 2 chiều (Ghim <--> Bảng) | **ĐÃ PHÊ DUYỆT (Official)** |
 | **DEC-03** | Reusable Shared Components: `ProductCard.vue` & `JpmSelect.vue` | **ĐÃ PHÊ DUYỆT (Official)** |
 | **DEC-04** | Hệ thống Icon: 100% Bootstrap Icons (`bi bi-*`), loại bỏ Boxicons | **ĐÃ PHÊ DUYỆT (Official)** |
+| **DEC-05** | Phân cấp nút Thêm mới (Xanh Bootstrap `#0d6efd`) vs Nút chính (Đỏ Marine `#F82249`), Plain text Role | **ĐÃ PHÊ DUYỆT (Official)** |
 | **DEC-PENDING-01** | Cho phép thanh toán cọc hàng có sẵn và gửi báo giá hàng hiếm cùng lúc | *Chờ PO phê duyệt* |
 | **DEC-PENDING-02** | Mô hình Tabbed Workspace + Bottom Sheet cho sơ đồ trên Mobile < 400px | *Chờ PO phê duyệt* |
 | **DEC-PENDING-03** | Mở rộng phạm vi tìm kiếm nhanh gồm Mã OEM, Tên phụ tùng và Model máy | *Chờ PO phê duyệt* |

@@ -4,7 +4,7 @@
     <!-- Back button + Header -->
     <div class="mb-4">
       <router-link to="/garage" class="d-inline-flex align-items-center gap-2 text-muted mb-3 text-decoration-none hover-red" style="font-size: 13.5px; font-weight: 500;">
-        <i class="bi bi-arrow-left"></i> Quay lại Hạm Đội Garage
+        <i class="bi bi-arrow-left"></i> Quay lại Garage của tôi
       </router-link>
 
       <!-- Skeleton Header -->
@@ -19,7 +19,7 @@
       <div v-else-if="garageData" class="p-4 border machine-header-card bg-white d-flex align-items-start justify-content-between flex-column flex-md-row gap-3">
         <div>
           <div class="d-flex align-items-center gap-2 flex-wrap mb-1">
-            <h5 class="page-title mb-0">{{ garageData.dong_co_model?.ten_model || 'Chưa rõ Model' }}</h5>
+            <h5 class="garage-detail-title mb-0">{{ garageData.dong_co_model?.ten_model || 'Chưa rõ Model' }}</h5>
             <span class="badge brand-tag-badge">
               {{ garageData.dong_co_model?.thuong_hieu?.name }}
             </span>
@@ -45,11 +45,8 @@
 
     <!-- Content -->
     <div class="card border-0 flex-grow-1 machine-main-card">
-      <div class="card-header bg-transparent border-bottom d-flex justify-content-between align-items-center" style="padding: 20px 24px;">
-        <div>
-          <h6 class="mb-0 page-title" style="font-size: 1.1rem;">Phụ Tùng Đã Lưu Trong Động Cơ</h6>
-          <span class="text-muted" style="font-size: 13.5px;">{{ totalItems }} phụ tùng trong {{ groups.length }} nhóm phân loại</span>
-        </div>
+      <div class="card-header bg-transparent border-bottom d-flex justify-content-between align-items-center" style="padding: 16px 24px; min-height: 70px; border-bottom: 1px solid #e2e8f0 !important;">
+        <h5 class="mb-0 garage-detail-title">Phụ tùng đã lưu trong động cơ</h5>
       </div>
 
       <div class="card-body p-4">
@@ -74,7 +71,7 @@
           <div class="empty-icon-wrap mb-4">
             <i class="bi bi-box-seam"></i>
           </div>
-          <h5 class="mb-2 page-title">Chưa có phụ tùng nào</h5>
+          <h5 class="mb-2 garage-detail-title">Chưa có phụ tùng nào</h5>
           <p class="text-muted mb-4" style="font-size: 14.5px; max-width: 440px; line-height: 1.6;">Xem sơ đồ kỹ thuật chi tiết của động cơ và bấm lưu các phụ tùng cần bảo dưỡng định kỳ.</p>
           <router-link :to="`/tra-cuu?brand=${garageData?.dong_co_model?.thuong_hieu_id}&engineType=${garageData?.dong_co_model?.loai_dong_co_id}&model=${garageData?.dong_co_model_id}&year=${garageData?.dong_co_model?.nam_san_xuat || ''}`" class="btn btn-danger px-4 py-2 fw-semibold d-inline-flex align-items-center gap-2">
             <i class="bi bi-search"></i>
@@ -89,7 +86,7 @@
             <!-- Group Header -->
             <div class="d-flex align-items-center gap-2 mb-2">
               <div style="width: 3px; height: 16px; background: var(--jpm-color-red-marine, #F82249); border-radius: 2px;"></div>
-              <h6 class="mb-0 fw-bold" style="font-size: 12.5px; letter-spacing: 0.5px; color: var(--jpm-color-navy-deep, #0A1128);">
+              <h6 class="mb-0 fw-bold" style="font-size: 12.5px; letter-spacing: 0.5px; color: var(--jpm-color-navy-dark, #0A1128);">
                 {{ group.nhom_ten }}
               </h6>
               <span class="badge" style="background-color: #f1f5f9; color: #64748b; font-size: 11px; border-radius: var(--jpm-radius-badge, 6px);">
@@ -107,7 +104,7 @@
                 @click="router.push('/chi-tiet-phu-tung/' + item.phu_tung?.ma_phu_tung)">
 
                 <!-- Part Image -->
-                <div class="flex-shrink-0 d-flex align-items-center justify-content-center border rounded-2" style="width: 60px; height: 60px; background: #fff;">
+                <div class="flex-shrink-0 d-flex align-items-center justify-content-center border rounded-2" style="width: 60px; height: 60px; background: #fff; border-color: #e2e8f0 !important;">
                   <img
                     v-if="item.phu_tung?.hinh_anh"
                     :src="getImageUrl(item.phu_tung.hinh_anh)"
@@ -122,7 +119,7 @@
                     :to="`/chi-tiet-phu-tung/${item.phu_tung?.ma_phu_tung}`"
                     @click.stop
                     class="fw-bold d-block text-decoration-none text-truncate hover-red"
-                    style="color: var(--jpm-color-navy-deep, #0A1128); font-size: 14.5px;">
+                    style="color: var(--jpm-color-navy-dark, #0A1128); font-size: 14.5px;">
                     {{ item.phu_tung?.ten_phu_tung }}
                   </router-link>
                   <div class="d-flex align-items-center gap-3 flex-wrap mt-1" style="font-size: 12.5px; color: #64748b;">
@@ -274,14 +271,14 @@ const addSelectedToCart = () => {
 <style scoped>
 .machine-header-card,
 .machine-main-card {
-  box-shadow: 0 4px 20px rgba(10, 17, 40, 0.04);
-  border: 1px solid #eef2f6 !important;
+  box-shadow: 0 4px 16px rgba(10, 17, 40, 0.04) !important;
+  border: 1px solid #e2e8f0 !important;
   border-radius: var(--jpm-radius-card, 12px) !important;
   background-color: #ffffff;
 }
-.page-title {
-  font-family: var(--font-heading, 'Raleway', sans-serif);
-  color: var(--jpm-color-navy-deep, #0A1128);
+.garage-detail-title {
+  font-family: var(--heading-font, 'Raleway', sans-serif);
+  color: var(--jpm-color-navy-dark, #0A1128);
   font-weight: 700;
   letter-spacing: -0.01em;
 }
@@ -295,6 +292,18 @@ const addSelectedToCart = () => {
   text-transform: uppercase;
   border-radius: var(--jpm-radius-badge, 6px);
   border: 1px solid rgba(248, 34, 73, 0.15);
+}
+.btn-outline-secondary {
+  border-color: #cbd5e1 !important;
+  color: #475569 !important;
+  font-weight: 600;
+  border-radius: var(--jpm-radius-control, 8px) !important;
+  transition: all 0.2s ease;
+}
+.btn-outline-secondary:hover {
+  background-color: #f1f5f9 !important;
+  border-color: #94a3b8 !important;
+  color: var(--jpm-color-navy-dark, #0A1128) !important;
 }
 .part-row-item {
   transition: background-color 0.15s ease;

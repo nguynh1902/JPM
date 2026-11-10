@@ -1110,7 +1110,7 @@ const formatDate = (dateStr) => {
 .shopee-tabs-container {
   display: flex;
   background-color: #ffffff;
-  border: 1px solid #eef2f6;
+  border: 1px solid #e2e8f0;
   box-shadow: 0 4px 20px rgba(10, 17, 40, 0.04);
   border-radius: var(--jpm-radius-card, 12px);
   overflow-x: auto;
@@ -1157,7 +1157,7 @@ const formatDate = (dateStr) => {
   justify-content: center;
   margin-top: 12px;
   box-shadow: 0 4px 20px rgba(10, 17, 40, 0.04);
-  border: 1px solid #eef2f6;
+  border: 1px solid #e2e8f0;
   border-radius: var(--jpm-radius-card, 12px);
 }
 
@@ -1180,7 +1180,7 @@ const formatDate = (dateStr) => {
   box-shadow: 0 4px 20px rgba(10, 17, 40, 0.04);
   border-radius: var(--jpm-radius-card, 12px);
   overflow: hidden;
-  border: 1px solid #eef2f6;
+  border: 1px solid #e2e8f0;
 }
 
 /* Head */

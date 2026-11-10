@@ -1,11 +1,8 @@
 <template>
 <div class="flex-grow-1 d-flex flex-column">
             <div class="card border-0 flex-grow-1 garage-main-card">
-              <div class="card-header bg-transparent border-bottom d-flex justify-content-between align-items-center" style="padding: 20px 24px;">
-                <div>
-                  <h5 class="mb-0 garage-heading">Hạm Đội Động Cơ Thủy</h5>
-                  <span class="text-muted" style="font-size: 13.5px;">{{ garage.length }} động cơ đang quản lý trong garage</span>
-                </div>
+              <div class="card-header bg-transparent border-bottom d-flex justify-content-between align-items-center" style="padding: 16px 24px; min-height: 70px; border-bottom: 1px solid #e2e8f0 !important;">
+                <h5 class="mb-0 garage-heading">Danh sách động cơ</h5>
               </div>
               <div class="card-body p-4">
 
@@ -32,7 +29,7 @@
                   </div>
                   <h5 class="mb-2 garage-heading">Garage của bạn đang trống</h5>
                   <p class="text-muted mb-4" style="font-size: 14.5px; max-width: 480px; line-height: 1.6;">
-                    Hãy tra cứu động cơ và sơ đồ phụ tùng trên trang Tra Cứu, sau đó bấm <strong>"Lưu vào Garage"</strong>. Hệ thống sẽ tự động khởi tạo hồ sơ máy tương ứng cho hạm đội của bạn.
+                    Hãy tra cứu động cơ và sơ đồ phụ tùng trên trang Tra Cứu, sau đó bấm <strong>"Lưu vào Garage"</strong>. Hệ thống sẽ tự động khởi tạo hồ sơ máy tương ứng cho garage của bạn.
                   </p>
                   <button class="btn btn-danger px-4 py-2 fw-semibold d-inline-flex align-items-center gap-2" @click="router.push('/tra-cuu')">
                     <i class="bi bi-search"></i>
@@ -279,13 +276,14 @@ const getImageUrl = (path) => {
 
 <style scoped>
 .garage-main-card {
-  box-shadow: 0 4px 20px rgba(10, 17, 40, 0.04);
-  border: 1px solid #eef2f6 !important;
+  box-shadow: 0 4px 16px rgba(10, 17, 40, 0.04) !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: var(--jpm-radius-card, 12px) !important;
   background-color: #ffffff;
 }
 .garage-heading {
-  font-family: var(--font-heading, 'Raleway', sans-serif);
-  color: var(--jpm-color-navy-deep, #0A1128);
+  font-family: var(--heading-font, 'Raleway', sans-serif);
+  color: var(--jpm-color-navy-dark, #0A1128);
   font-weight: 700;
   letter-spacing: -0.01em;
 }

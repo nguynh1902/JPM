@@ -1,12 +1,9 @@
 <template>
 <div class="flex-grow-1 d-flex flex-column">
     <div class="card border-0 flex-grow-1 vt-main-card">
-      <div class="card-header bg-transparent border-bottom d-flex justify-content-between align-items-center" style="padding: 20px 24px;">
-        <div>
-          <h5 class="mb-0 vt-heading">Vật Tư Thường Mua & Định Kỳ</h5>
-          <span class="text-muted" style="font-size: 13.5px;">Quản lý và đặt nhanh các vật tư tiêu hao, phụ tùng định kỳ ({{ items.length }} mục)</span>
-        </div>
-        <router-link to="/san-pham" class="btn btn-danger btn-sm d-inline-flex align-items-center gap-2 px-3 py-2 fw-semibold">
+      <div class="card-header bg-transparent border-bottom d-flex justify-content-between align-items-center" style="padding: 16px 24px; min-height: 70px; border-bottom: 1px solid #e2e8f0 !important;">
+        <h5 class="mb-0 vt-heading">Vật tư thường mua</h5>
+        <router-link to="/san-pham" class="btn btn-blue-primary btn-sm d-inline-flex align-items-center gap-2 px-3 py-2 fw-semibold">
           <i class="bi bi-plus-lg"></i>
           <span>Thêm sản phẩm mới</span>
         </router-link>
@@ -166,13 +163,14 @@ const addToQuote = (sanPham) => {
 
 <style scoped>
 .vt-main-card {
-  box-shadow: 0 4px 20px rgba(10, 17, 40, 0.04);
-  border: 1px solid #eef2f6 !important;
+  box-shadow: 0 4px 16px rgba(10, 17, 40, 0.04) !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: var(--jpm-radius-card, 12px) !important;
   background-color: #ffffff;
 }
 .vt-heading {
-  font-family: var(--font-heading, 'Raleway', sans-serif);
-  color: var(--jpm-color-navy-deep, #0A1128);
+  font-family: var(--heading-font, 'Raleway', sans-serif);
+  color: var(--jpm-color-navy-dark, #0A1128);
   font-weight: 700;
   letter-spacing: -0.01em;
 }
@@ -209,6 +207,20 @@ const addToQuote = (sanPham) => {
   color: var(--jpm-color-red-marine, #F82249);
   font-size: 2rem;
 }
+.btn-blue-primary {
+  background-color: #0d6efd !important;
+  border-color: #0d6efd !important;
+  color: #ffffff !important;
+  border-radius: var(--jpm-radius-control, 8px) !important;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+.btn-blue-primary:hover {
+  background-color: #0b5ed7 !important;
+  border-color: #0a58ca !important;
+  color: #ffffff !important;
+}
+
 .hover-red:hover {
   color: var(--jpm-color-red-marine, #F82249) !important;
 }
