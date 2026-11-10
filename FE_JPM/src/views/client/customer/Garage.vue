@@ -1,21 +1,20 @@
 <template>
 <div class="flex-grow-1 d-flex flex-column">
-            <div class="card border-0 flex-grow-1" style="box-shadow: var(--shadow-sm);">
+            <div class="card border-0 flex-grow-1 garage-main-card">
               <div class="card-header bg-transparent border-bottom d-flex justify-content-between align-items-center" style="padding: 20px 24px;">
                 <div>
-                  <h5 class="mb-0" style="color: var(--heading-color); font-weight: 700;">DANH SÁCH MÁY THỦY</h5>
-                  <span class="text-muted" style="font-size: 13px;">{{ garage.length }} động cơ trong hạm đội</span>
+                  <h5 class="mb-0 garage-heading">Hạm Đội Động Cơ Thủy</h5>
+                  <span class="text-muted" style="font-size: 13.5px;">{{ garage.length }} động cơ đang quản lý trong garage</span>
                 </div>
-                
               </div>
               <div class="card-body p-4">
 
                 <!-- Loading Skeleton -->
                 <div v-if="isLoadingGarage">
-                  <div v-for="i in 2" :key="i" class="p-3 border rounded-2 d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-3" style="background-color: #fff;">
+                  <div v-for="i in 2" :key="i" class="p-4 border rounded-3 d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-3 bg-white">
                     <div class="d-flex align-items-center gap-3">
-                      <div class="placeholder-glow rounded" style="width: 60px; height: 60px;">
-                        <div class="placeholder w-100 h-100 rounded"></div>
+                      <div class="placeholder-glow rounded-3" style="width: 60px; height: 60px;">
+                        <div class="placeholder w-100 h-100 rounded-3"></div>
                       </div>
                       <div class="placeholder-glow w-100">
                         <div class="placeholder col-4 mb-2" style="height: 14px;"></div>
@@ -28,46 +27,49 @@
 
                 <!-- Empty State -->
                 <div class="text-center py-5 d-flex flex-column align-items-center justify-content-center" v-else-if="garage.length === 0" style="min-height: 400px;">
-                  <div class="mb-4 d-flex align-items-center justify-content-center rounded-circle" style="width: 100px; height: 100px; background-color: rgba(248,34,73,0.05);">
-                    <i class="bi bi-tools" style="font-size: 3rem; color: var(--accent-color);"></i>
+                  <div class="empty-icon-wrap mb-4">
+                    <i class="bi bi-tools"></i>
                   </div>
-                  <h5 class="mb-2" style="color: var(--heading-color); font-weight: 700;">Garage của bạn đang trống</h5>
-                  <p class="text-muted mb-4" style="font-size: 14.5px; max-width: 450px;">
-                    Hãy tìm kiếm phụ tùng bạn cần trên trang Tra Cứu, sau đó bấm "Lưu vào Garage". Hệ thống sẽ tự động tạo hồ sơ máy tương ứng cho bạn.
+                  <h5 class="mb-2 garage-heading">Garage của bạn đang trống</h5>
+                  <p class="text-muted mb-4" style="font-size: 14.5px; max-width: 480px; line-height: 1.6;">
+                    Hãy tra cứu động cơ và sơ đồ phụ tùng trên trang Tra Cứu, sau đó bấm <strong>"Lưu vào Garage"</strong>. Hệ thống sẽ tự động khởi tạo hồ sơ máy tương ứng cho hạm đội của bạn.
                   </p>
-                  <button class="btn btn-jpm px-4 py-2 fw-bold text-uppercase shadow-none" style="letter-spacing: 1px;" @click="router.push('/tra-cuu')"><i class="bi bi-search me-2"></i>Đến trang Tra cứu</button>
+                  <button class="btn btn-danger px-4 py-2 fw-semibold d-inline-flex align-items-center gap-2" @click="router.push('/tra-cuu')">
+                    <i class="bi bi-search"></i>
+                    <span>Đến trang Tra cứu sơ đồ</span>
+                  </button>
                 </div>
 
                 <!-- Garage List -->
                 <div class="d-flex flex-column gap-3" v-else>
-                  <div v-for="may in garage" :key="may.id" class="p-3 border rounded-2 d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3" style="background-color: #fff; transition: border-color 0.2s; cursor: pointer;" @mouseenter="$event.currentTarget.style.borderColor='var(--accent-color)'" @mouseleave="$event.currentTarget.style.borderColor='#dee2e6'" @click="router.push(`/garage/${may.id}`)">
+                  <div v-for="may in garage" :key="may.id" class="p-4 border garage-item-card d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3" @click="router.push(`/garage/${may.id}`)">
                     
-                                        <!-- Left: Machine Info -->
+                    <!-- Left: Machine Info -->
                     <div>
                       <!-- Model Name & Brand Badge -->
-                      <h6 class="mb-1 d-flex align-items-center gap-2 flex-wrap" style="font-size: 16px; font-weight: 700; color: #111827;">
+                      <h6 class="mb-1 d-flex align-items-center gap-2 flex-wrap" style="font-size: 16px; font-weight: 700; color: var(--jpm-color-navy-deep, #0A1128);">
                         {{ may.dong_co_model?.ten_model || 'Chưa rõ Model' }}
-                        <span v-if="may.dong_co_model?.thuong_hieu?.name" class="badge bg-pastel-danger text-danger text-uppercase" style="font-size: 9px; padding: 3px 6px; letter-spacing: 0.5px;">{{ may.dong_co_model.thuong_hieu.name }}</span>
+                        <span v-if="may.dong_co_model?.thuong_hieu?.name" class="badge brand-tag-badge">{{ may.dong_co_model.thuong_hieu.name }}</span>
                       </h6>
                       
                       <!-- Specs -->
-                      <div class="d-flex align-items-center gap-4 mt-2 text-muted flex-wrap" style="font-size: 13px;">
-                        <span v-if="may.dong_co_model?.ma_luc"><i class="bi bi-lightning-charge me-1"></i>{{ may.dong_co_model.ma_luc }} HP</span>
-                        <span v-if="may.dong_co_model?.ma_model" class="fst-italic">{{ may.dong_co_model.ma_model }}</span>
-                        <span v-if="may.dong_co_model?.nam_san_xuat || may.dong_co_model?.nam_bat_dau"><i class="bi bi-calendar3 me-1"></i>{{ may.dong_co_model?.nam_san_xuat || may.dong_co_model?.nam_bat_dau || '' }}</span>
+                      <div class="d-flex align-items-center gap-4 mt-2 text-muted flex-wrap" style="font-size: 13.5px;">
+                        <span v-if="may.dong_co_model?.ma_luc"><i class="bi bi-lightning-charge me-1 text-warning"></i>{{ may.dong_co_model.ma_luc }} HP</span>
+                        <span v-if="may.dong_co_model?.ma_model" class="fst-italic text-secondary"><i class="bi bi-upc-scan me-1"></i>{{ may.dong_co_model.ma_model }}</span>
+                        <span v-if="may.dong_co_model?.nam_san_xuat || may.dong_co_model?.nam_bat_dau"><i class="bi bi-calendar3 me-1"></i>Năm: {{ may.dong_co_model?.nam_san_xuat || may.dong_co_model?.nam_bat_dau || '' }}</span>
                       </div>
                     </div>
 
                     <!-- Right: Actions -->
                     <div class="d-flex align-items-center gap-3 pe-2 flex-shrink-0 mt-3 mt-md-0">
                       <!-- Sơ đồ / Tra phụ tùng -->
-                      <button class="btn btn-light btn-sm px-3 rounded-pill d-flex align-items-center gap-2" style="font-size: 12px; font-weight: 600; color: #495057; border: 1px solid #dee2e6;" @click.stop="router.push('/tra-cuu?brand=' + may.dong_co_model?.thuong_hieu_id + '&engineType=' + may.dong_co_model?.loai_dong_co_id + '&model=' + may.dong_co_model_id + '&year=' + (may.dong_co_model?.nam_san_xuat || ''))">
-                        <i class="bi bi-search" style="font-size: 13px;"></i>Tra phụ tùng
+                      <button class="btn btn-outline-secondary btn-sm px-3 d-flex align-items-center gap-2 fw-semibold" @click.stop="router.push('/tra-cuu?brand=' + may.dong_co_model?.thuong_hieu_id + '&engineType=' + may.dong_co_model?.loai_dong_co_id + '&model=' + may.dong_co_model_id + '&year=' + (may.dong_co_model?.nam_san_xuat || ''))">
+                        <i class="bi bi-search"></i>Tra phụ tùng
                       </button>
 
                       <!-- Delete -->
                       <button class="btn p-0 action-btn ms-2" title="Xóa máy khỏi Garage" @click.stop="deleteMay(may.id)" style="border: none; background: transparent;">
-                        <i class="bi bi-trash3 hover-red" style="font-size: 1.25rem; color: #f82249;"></i>
+                        <i class="bi bi-trash3 hover-red" style="font-size: 1.25rem; color: #94a3b8;"></i>
                       </button>
                     </div>
                   </div>
@@ -80,9 +82,9 @@
     <!-- SAVED PARTS MODAL -->
     <div class="modal fade" id="savedPartsModal" tabindex="-1" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
-        <div class="modal-content border-0 shadow-lg">
-          <div class="modal-header border-bottom-0 bg-light">
-            <h5 class="modal-title fw-bold text-dark"><i class="bi bi-tools text-danger me-2"></i>Phụ Tùng Đã Lưu Của Máy Này</h5>
+        <div class="modal-content border-0 shadow-lg" style="border-radius: var(--jpm-radius-card, 12px) !important; overflow: hidden;">
+          <div class="modal-header border-bottom-0 pt-4 pb-2 px-4">
+            <h5 class="modal-title garage-heading mb-0"><i class="bi bi-tools text-danger me-2"></i>Phụ Tùng Đã Lưu Của Động Cơ</h5>
             <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body p-4 bg-light">
@@ -91,25 +93,23 @@
                 <div class="spinner-border text-danger" role="status"></div>
             </div>
             
-            <div v-else-if="!savedParts || savedParts.length === 0" class="text-center py-5 bg-white rounded border">
-                <i class="bi bi-box-seam text-muted" style="font-size: 3rem;"></i>
-                <p class="mt-3 mb-0 text-muted">Máy này chưa có phụ tùng nào được lưu.</p>
+            <div v-else-if="!savedParts || savedParts.length === 0" class="text-center py-5 bg-white rounded-3 border">
+                <i class="bi bi-box-seam text-muted" style="font-size: 3rem; opacity: 0.5;"></i>
+                <p class="mt-3 mb-0 text-muted">Động cơ này chưa có phụ tùng nào được lưu.</p>
             </div>
             
             <div v-else class="row g-3">
                 <div class="col-12" v-for="item in savedParts" :key="item.id">
-                    <div class="card border shadow-sm">
-                        <div class="card-body p-3 d-flex align-items-center">
-                            <img :src="getImageUrl(item.phu_tung?.hinh_anh_chinh) || 'https://placehold.co/100x100'" alt="" class="rounded border" style="width: 80px; height: 80px; object-fit: cover;">
-                            <div class="flex-grow-1">
-                                <h6 class="fw-bold mb-1"><router-link :to="`/chi-tiet-phu-tung/${item.phu_tung?.ma_phu_tung || item.phu_tung?.id}`" class="text-dark text-decoration-none hover-red">{{ item.phu_tung?.ten_phu_tung }}</router-link></h6>
-                                <p class="text-muted small mb-0">Part #: <strong>{{ item.phu_tung?.ma_phu_tung }}</strong> | Số lượng: {{ item.so_luong }}</p>
-                                <p class="text-muted small mb-0" v-if="item.ghi_chu"><i class="bi bi-info-circle me-1"></i>{{ item.ghi_chu }}</p>
-                            </div>
-                            <div class="d-flex flex-column gap-2">
-                                <button class="btn btn-jpm btn-sm fw-bold shadow-sm" @click="addToCart(item.phu_tung, item.so_luong)"><i class="bi bi-cart-plus me-1"></i>Thêm Giỏ</button>
-                                <button class="btn btn-light btn-sm text-danger border" @click="removeSavedPart(item.id)"><i class="bi bi-trash3 me-1"></i>Xóa</button>
-                            </div>
+                    <div class="card border-0 shadow-sm p-3 d-flex flex-row align-items-center gap-3" style="border-radius: var(--jpm-radius-control, 8px) !important;">
+                        <img :src="getImageUrl(item.phu_tung?.hinh_anh_chinh) || 'https://placehold.co/100x100'" alt="" class="rounded border" style="width: 70px; height: 70px; object-fit: cover;">
+                        <div class="flex-grow-1">
+                            <h6 class="fw-bold mb-1"><router-link :to="`/chi-tiet-phu-tung/${item.phu_tung?.ma_phu_tung || item.phu_tung?.id}`" class="text-dark text-decoration-none hover-red">{{ item.phu_tung?.ten_phu_tung }}</router-link></h6>
+                            <p class="text-muted small mb-0">Part #: <strong>{{ item.phu_tung?.ma_phu_tung }}</strong> | Số lượng: {{ item.so_luong }}</p>
+                            <p class="text-muted small mb-0" v-if="item.ghi_chu"><i class="bi bi-info-circle me-1"></i>{{ item.ghi_chu }}</p>
+                        </div>
+                        <div class="d-flex flex-column gap-2">
+                            <button class="btn btn-danger btn-sm fw-semibold shadow-sm" @click="addToCart(item.phu_tung, item.so_luong)"><i class="bi bi-cart-plus me-1"></i>Thêm giỏ</button>
+                            <button class="btn btn-outline-secondary btn-sm" @click="removeSavedPart(item.id)"><i class="bi bi-trash3 me-1"></i>Xóa</button>
                         </div>
                     </div>
                 </div>
@@ -248,7 +248,7 @@ const removeSavedPart = (id) => {
       text: "Bạn sẽ xóa phụ tùng này khỏi máy đang chọn?",
       icon: 'warning',
       showCancelButton: true,
-      confirmButtonColor: '#ef233c',
+      confirmButtonColor: '#f82249',
       cancelButtonColor: '#6c757d',
       confirmButtonText: 'Đồng ý',
       cancelButtonText: 'Hủy',
@@ -278,17 +278,52 @@ const getImageUrl = (path) => {
 </script>
 
 <style scoped>
-.active-sidebar-link {
-  color: var(--accent-color) !important;
-  background-color: rgba(239, 35, 60, 0.04) !important;
-  border-left: 3px solid var(--accent-color) !important;
+.garage-main-card {
+  box-shadow: 0 4px 20px rgba(10, 17, 40, 0.04);
+  border: 1px solid #eef2f6 !important;
+  background-color: #ffffff;
 }
-.list-group-item-action:hover {
-  background-color: rgba(0, 0, 0, 0.02);
-  color: var(--heading-color) !important;
+.garage-heading {
+  font-family: var(--font-heading, 'Raleway', sans-serif);
+  color: var(--jpm-color-navy-deep, #0A1128);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+.garage-item-card {
+  border-radius: var(--jpm-radius-control, 8px) !important;
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0 !important;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+.garage-item-card:hover {
+  border-color: rgba(248, 34, 73, 0.4) !important;
+  box-shadow: 0 4px 12px rgba(10, 17, 40, 0.04);
+}
+.brand-tag-badge {
+  background-color: rgba(248, 34, 73, 0.08);
+  color: var(--jpm-color-red-marine, #F82249);
+  font-weight: 600;
+  font-size: 10px;
+  padding: 3px 8px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  border-radius: var(--jpm-radius-badge, 6px);
+  border: 1px solid rgba(248, 34, 73, 0.15);
+}
+.empty-icon-wrap {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background-color: rgba(248, 34, 73, 0.06);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--jpm-color-red-marine, #F82249);
+  font-size: 2rem;
 }
 .hover-red:hover {
-  color: var(--accent-color) !important;
+  color: var(--jpm-color-red-marine, #F82249) !important;
 }
 </style>
 

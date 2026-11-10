@@ -1,56 +1,62 @@
 <template>
 <div class="flex-grow-1 d-flex flex-column">
-    <div class="card border-0 flex-grow-1" style="box-shadow: var(--shadow-sm);">
+    <div class="card border-0 flex-grow-1 vt-main-card">
       <div class="card-header bg-transparent border-bottom d-flex justify-content-between align-items-center" style="padding: 20px 24px;">
         <div>
-          <h5 class="mb-0" style="color: var(--heading-color); font-weight: 700;">DANH SÁCH LƯU TRỮ</h5>
-          <span class="text-muted" style="font-size: 13px;">Quản lý các sản phẩm bạn thường xuyên mua lại ({{ items.length }} mục)</span>
+          <h5 class="mb-0 vt-heading">Vật Tư Thường Mua & Định Kỳ</h5>
+          <span class="text-muted" style="font-size: 13.5px;">Quản lý và đặt nhanh các vật tư tiêu hao, phụ tùng định kỳ ({{ items.length }} mục)</span>
         </div>
-        <router-link to="/san-pham" class="btn btn-danger rounded-1 text-uppercase border-0" style="height: 38px; padding: 0 16px; font-size: 11px; font-weight: 600; letter-spacing: 1px; display: inline-flex; align-items: center; gap: 6px;">
-          <i class="bi bi-plus-lg"></i>Thêm sản phẩm
+        <router-link to="/san-pham" class="btn btn-danger btn-sm d-inline-flex align-items-center gap-2 px-3 py-2 fw-semibold">
+          <i class="bi bi-plus-lg"></i>
+          <span>Thêm sản phẩm mới</span>
         </router-link>
       </div>
       
       <!-- Loading State -->
       <div class="card-body p-4 text-center" v-if="isLoading">
         <div class="spinner-border text-danger mt-4" role="status"></div>
-        <p class="mt-2 text-muted">Đang tải danh sách...</p>
+        <p class="mt-2 text-muted">Đang tải danh sách vật tư...</p>
       </div>
 
       <div class="card-body p-4" v-else>
         <!-- Empty State -->
-        <div class="text-center py-5" v-if="items.length === 0">
-          <i class="bi bi-bookmark-heart text-muted" style="font-size: 3.5rem; opacity: 0.35;"></i>
-          <h6 class="mt-3 mb-1" style="color: var(--heading-color); font-weight: 700;">Danh sách trống</h6>
-          <p class="text-muted mb-0" style="font-size: 14px;">Bạn chưa lưu sản phẩm nào vào danh sách này.</p>
+        <div class="text-center py-5 d-flex flex-column align-items-center justify-content-center" v-if="items.length === 0" style="min-height: 380px;">
+          <div class="empty-icon-wrap mb-4">
+            <i class="bi bi-bookmark-heart"></i>
+          </div>
+          <h5 class="mb-2 vt-heading">Danh sách vật tư trống</h5>
+          <p class="text-muted mb-4" style="font-size: 14.5px; max-width: 440px; line-height: 1.6;">Bạn chưa lưu sản phẩm nào. Hãy bấm biểu tượng lưu trên trang sản phẩm để theo dõi phụ tùng thường mua.</p>
+          <router-link to="/san-pham" class="btn btn-danger px-4 py-2 fw-semibold d-inline-flex align-items-center gap-2">
+            <i class="bi bi-grid"></i>
+            <span>Khám phá sản phẩm</span>
+          </router-link>
         </div>
 
         <!-- List State -->
         <div class="d-flex flex-column gap-3" v-else>
           <div v-for="item in items" :key="item.id" 
-               class="p-3 border rounded-2 d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3" 
-               style="background-color: #fff; transition: border-color 0.2s; cursor: pointer;" 
-               @mouseenter="$event.currentTarget.style.borderColor='var(--accent-color)'" 
-               @mouseleave="$event.currentTarget.style.borderColor='#dee2e6'"
+               class="p-3 border vt-item-card d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3" 
                @click="router.push(`/chi-tiet-san-pham/${item.san_pham?.slug}`)">
             
             <div class="d-flex align-items-center gap-3">
               <!-- Image -->
-              <div class="d-flex align-items-center justify-content-center border rounded" style="width: 60px; height: 60px; background-color: #fff; flex-shrink: 0;">
-                <img v-if="item.san_pham?.hinh_anh_chinh" :src="getImageUrl(item.san_pham.hinh_anh_chinh)" :alt="item.san_pham.ten_san_pham" style="max-height: 40px; max-width: 50px; object-fit: contain;">
+              <div class="d-flex align-items-center justify-content-center border rounded-2" style="width: 64px; height: 64px; background-color: #fff; flex-shrink: 0;">
+                <img v-if="item.san_pham?.hinh_anh_chinh" :src="getImageUrl(item.san_pham.hinh_anh_chinh)" :alt="item.san_pham.ten_san_pham" style="max-height: 48px; max-width: 54px; object-fit: contain;">
                 <i v-else class="bi bi-image text-muted" style="font-size: 1.5rem;"></i>
               </div>
               
               <!-- Info -->
               <div>
                 <!-- Category -->
-                <div class="mb-1 text-danger fw-bold text-uppercase" style="font-size: 11px; letter-spacing: 0.5px;">
-                  {{ item.san_pham?.danh_muc?.ten_danh_muc || 'CHƯA PHÂN LOẠI' }}
+                <div class="mb-1">
+                  <span class="badge category-tag-badge">
+                    {{ item.san_pham?.danh_muc?.ten_danh_muc || 'CHƯA PHÂN LOẠI' }}
+                  </span>
                 </div>
                 <!-- Mã & Tên sản phẩm -->
-                <h6 class="mb-1 d-flex align-items-center gap-4" style="font-size: 15px; font-weight: 700; margin-top: 4px;">
-                  <span class="text-muted" style="opacity: 0.85;">{{ item.san_pham?.ma_san_pham }}</span>
-                  <span class="hover-red" style="color: #111827; transition: color 0.2s;">
+                <h6 class="mb-1 d-flex align-items-center gap-3 flex-wrap" style="font-size: 15px; font-weight: 700; margin-top: 4px;">
+                  <span class="text-muted" style="opacity: 0.85; font-size: 13.5px;"><i class="bi bi-upc-scan me-1"></i>{{ item.san_pham?.ma_san_pham }}</span>
+                  <span class="hover-red" style="color: var(--jpm-color-navy-deep, #0A1128); transition: color 0.2s;">
                     {{ item.san_pham?.ten_san_pham }}
                   </span>
                 </h6>
@@ -59,14 +65,15 @@
             </div>
 
             <!-- Actions -->
-            <div class="d-flex align-items-center gap-4 pe-3">
-              <!-- Nút Thêm giỏ hàng (An toàn -> Trái) -->
-              <button class="btn p-0 action-btn" title="Thêm giỏ hàng" @click.stop="addToQuote(item.san_pham)" style="border: none; background: transparent;">
-                <i class="bi bi-cart-plus" style="font-size: 1.25rem; color: #2563EB; transition: color 0.2s;" onmouseover="this.style.color='#1d4ed8'" onmouseout="this.style.color='#2563EB'"></i>
+            <div class="d-flex align-items-center gap-3 pe-2 flex-shrink-0">
+              <!-- Nút Thêm giỏ hàng -->
+              <button class="btn btn-outline-secondary btn-sm d-inline-flex align-items-center gap-2 fw-semibold px-3 py-2" title="Thêm giỏ hàng" @click.stop="addToQuote(item.san_pham)">
+                <i class="bi bi-cart-plus text-primary" style="font-size: 1.1rem;"></i>
+                <span>Thêm giỏ</span>
               </button>
-              <!-- Nút Xóa (Nguy hiểm -> Đẩy ra xa nhất bên Phải) -->
-              <button class="btn p-0 action-btn" title="Bỏ lưu" @click.stop="removeItem(item.san_pham_id)" style="border: none; background: transparent;">
-                <i class="bi bi-trash3 hover-red" style="font-size: 1.25rem; color: #f82249;"></i>
+              <!-- Nút Xóa -->
+              <button class="btn p-0 action-btn ms-1" title="Bỏ lưu" @click.stop="removeItem(item.san_pham_id)" style="border: none; background: transparent;">
+                <i class="bi bi-trash3 hover-red" style="font-size: 1.25rem; color: #94a3b8;"></i>
               </button>
             </div>
             
@@ -158,8 +165,52 @@ const addToQuote = (sanPham) => {
 </script>
 
 <style scoped>
+.vt-main-card {
+  box-shadow: 0 4px 20px rgba(10, 17, 40, 0.04);
+  border: 1px solid #eef2f6 !important;
+  background-color: #ffffff;
+}
+.vt-heading {
+  font-family: var(--font-heading, 'Raleway', sans-serif);
+  color: var(--jpm-color-navy-deep, #0A1128);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+.vt-item-card {
+  border-radius: var(--jpm-radius-control, 8px) !important;
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0 !important;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+.vt-item-card:hover {
+  border-color: rgba(248, 34, 73, 0.4) !important;
+  box-shadow: 0 4px 12px rgba(10, 17, 40, 0.04);
+}
+.category-tag-badge {
+  background-color: rgba(248, 34, 73, 0.08);
+  color: var(--jpm-color-red-marine, #F82249);
+  font-weight: 600;
+  font-size: 10px;
+  padding: 3px 8px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  border-radius: var(--jpm-radius-badge, 6px);
+  border: 1px solid rgba(248, 34, 73, 0.15);
+}
+.empty-icon-wrap {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background-color: rgba(248, 34, 73, 0.06);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--jpm-color-red-marine, #F82249);
+  font-size: 2rem;
+}
 .hover-red:hover {
-  color: var(--accent-color) !important;
+  color: var(--jpm-color-red-marine, #F82249) !important;
 }
 </style>
 

@@ -4,7 +4,7 @@
             <!-- THONG TIN CA NHAN -->
             <div class="card border-0 tk-card mb-4">
               <div class="card-header bg-transparent border-bottom tk-card-header">
-                <h5 class="mb-0 tk-heading">THÔNG TIN CHI TIẾT</h5>
+                <h5 class="mb-0 tk-heading">Thông Tin Cá Nhân & Doanh Nghiệp</h5>
               </div>
               <div class="card-body p-4">
                 <form @submit.prevent="saveProfile">
@@ -14,7 +14,7 @@
                       <input type="text" v-model="profileForm.name" :class="['form-control-lg fw-bold', isEditingProfile ? 'form-control' : 'form-control-plaintext']" :readonly="!isEditingProfile" required class="tk-form-input">
                     </div>
                     <div class="col-md-6">
-                      <label class="form-label fw-bold tk-form-label">Tên công ty <span class="fw-normal text-muted text-capitalize">(Nếu B2B)</span></label>
+                      <label class="form-label fw-bold tk-form-label">Tên công ty <span class="fw-normal text-muted">(Nếu B2B)</span></label>
                       <input type="text" v-model="profileForm.ten_cong_ty" :class="['form-control-lg fw-bold', isEditingProfile ? 'form-control' : 'form-control-plaintext']" :placeholder="isEditingProfile ? 'Nhập tên công ty...' : 'Chưa cập nhật'" :readonly="!isEditingProfile" class="tk-form-input">
                     </div>
                     <div class="col-md-6">
@@ -22,13 +22,13 @@
                       <input type="tel" v-model="profileForm.phone" :class="['form-control-lg fw-bold', isEditingProfile ? 'form-control' : 'form-control-plaintext']" :readonly="!isEditingProfile" class="tk-form-input">
                     </div>
                     <div class="col-md-6">
-                      <label class="form-label fw-bold tk-form-label">Email</label>
+                      <label class="form-label fw-bold tk-form-label">Địa chỉ Email</label>
                       <input type="email" v-model="profileForm.email" :class="['form-control-lg fw-bold', isEditingProfile ? 'form-control' : 'form-control-plaintext']" :readonly="!isEditingProfile" required class="tk-form-input">
                     </div>
                     
                     <div class="col-12 mt-4 pt-4 border-top d-flex justify-content-end gap-3">
                       <template v-if="!isEditingProfile">
-                        <button type="button" class="btn btn-outline-secondary px-3 py-2 fw-semibold d-inline-flex align-items-center justify-content-center gap-2" data-bs-toggle="modal" data-bs-target="#changePasswordModal"><i class="bi bi-arrow-counterclockwise"></i>Đổi mật khẩu</button>
+                        <button type="button" class="btn btn-outline-secondary px-3 py-2 fw-semibold d-inline-flex align-items-center justify-content-center gap-2" data-bs-toggle="modal" data-bs-target="#changePasswordModal"><i class="bi bi-shield-lock"></i>Đổi mật khẩu</button>
                         <button type="button" @click="startEditProfile" class="btn btn-danger px-4 py-2 fw-semibold d-inline-flex align-items-center gap-2"><i class="bi bi-pencil"></i>Chỉnh sửa</button>
                       </template>
                       <template v-else>
@@ -47,47 +47,50 @@
             <!-- ĐỊA CHỈ GIAO HÀNG -->
             <div class="card border-0 tk-card">
               <div class="card-header bg-transparent border-bottom tk-card-header d-flex justify-content-between align-items-center">
-                <h5 class="mb-0 tk-heading">ĐỊA CHỈ GIAO HÀNG</h5>
-                <button class="btn btn-primary rounded-1 text-uppercase border-0" style="height: 38px; padding: 0 16px; font-size: 11px; font-weight: 600; letter-spacing: 1px; display: inline-flex; align-items: center; gap: 6px;" @click="openAddAddressModal">
-                  <i class="bi bi-plus-lg"></i>Thêm địa chỉ
+                <h5 class="mb-0 tk-heading">Sổ Địa Chỉ Giao Hàng</h5>
+                <button class="btn btn-danger btn-sm d-inline-flex align-items-center gap-2 px-3 py-2 fw-semibold" @click="openAddAddressModal">
+                  <i class="bi bi-plus-lg"></i>
+                  <span>Thêm địa chỉ mới</span>
                 </button>
               </div>
               <div class="card-body p-4">
 
                 <!-- Empty State -->
                 <div class="text-center py-5" v-if="addresses.length === 0">
-                  <i class="bi bi-geo-alt text-muted" style="font-size: 3rem; opacity: 0.5;"></i>
-                  <h6 class="mt-3 mb-1 tk-heading">Chưa có địa chỉ nào</h6>
-                  <p class="text-muted small mb-0">Vui lòng thêm địa chỉ để nhận báo giá hoặc giao hàng.</p>
+                  <div class="empty-icon-wrap mx-auto mb-3">
+                    <i class="bi bi-geo-alt"></i>
+                  </div>
+                  <h6 class="mb-1 tk-heading">Chưa có địa chỉ nào</h6>
+                  <p class="text-muted small mb-0">Vui lòng thêm địa chỉ để nhận báo giá hoặc giao hàng thuận tiện nhất.</p>
                 </div>
 
                 <!-- List -->
                 <div class="d-flex flex-column gap-3" v-else>
-                  <div v-for="address in addresses" :key="address.id" class="p-4 border rounded-2" :style="address.la_mac_dinh ? 'border-color: var(--accent-color) !important; background-color: rgba(239, 35, 60, 0.02);' : 'background-color: #fff;'">
+                  <div v-for="address in addresses" :key="address.id" class="p-4 border address-item-card" :class="{ 'address-item-default': address.la_mac_dinh }">
                     <div class="d-flex justify-content-between align-items-md-center flex-column flex-md-row gap-3">
                       <div>
-                        <!-- Tên & SDT (Cùng 1 hàng, cách nhau khoảng rộng, icon) -->
-                        <div class="d-flex align-items-center gap-3 mb-2">
-                          <h6 class="mb-0" style="color: #031B4E; font-size: 16px; font-weight: 700;">{{ address.ten_nguoi_nhan }}</h6>
-                          <span style="font-size: 15px; color: #8A94A6; font-weight: 500;">
+                        <!-- Tên & SDT -->
+                        <div class="d-flex align-items-center gap-3 mb-2 flex-wrap">
+                          <h6 class="mb-0 address-recipient-name">{{ address.ten_nguoi_nhan }}</h6>
+                          <span class="address-recipient-phone">
                             <i class="bi bi-telephone me-1" style="opacity: 0.6;"></i>{{ address.so_dien_thoai }}
                           </span>
-                          <span v-if="address.la_mac_dinh" class="badge rounded-pill ms-2" style="background-color: #FFE2E5; color: #F64E60; font-weight: 500; font-size: 12.5px; padding: 5px 12px;">Mặc định</span>
+                          <span v-if="address.la_mac_dinh" class="badge address-default-badge">Mặc định</span>
                         </div>
-                        <p class="mb-0 mt-2" style="font-size: 15px; color: #505F79; font-weight: 400;">{{ address.dia_chi_cu_the }}</p>
+                        <p class="mb-0 mt-2 address-text">{{ address.dia_chi_cu_the }}</p>
                       </div>
                       
                       <!-- Actions -->
-                      <div class="d-flex align-items-center gap-4 pe-2">
-                        <button v-if="!address.la_mac_dinh" @click="setDefault(address.id)" class="btn p-0 text-secondary hover-red" style="font-size: 13px; text-decoration: underline; border: none; background: transparent; transition: color 0.2s;">Đặt mặc định</button>
+                      <div class="d-flex align-items-center gap-3 pe-2">
+                        <button v-if="!address.la_mac_dinh" @click="setDefault(address.id)" class="btn p-0 text-secondary hover-red btn-set-default">Đặt mặc định</button>
                         
                         <!-- Nút Sửa -->
-                        <button class="btn p-0 action-btn" title="Sửa địa chỉ" @click.prevent="openEditAddressModal(address)" style="border: none; background: transparent;">
-                          <i class="bi bi-pencil-square" style="font-size: 1.25rem; color: #16A34A;"></i>
+                        <button class="btn p-0 action-btn" title="Sửa địa chỉ" @click.prevent="openEditAddressModal(address)">
+                          <i class="bi bi-pencil-square text-secondary hover-red" style="font-size: 1.15rem;"></i>
                         </button>
                         <!-- Nút Xóa -->
-                        <button class="btn p-0 action-btn" title="Xóa địa chỉ" @click.prevent="deleteAddress(address.id)" style="border: none; background: transparent;">
-                          <i class="bi bi-trash3" style="font-size: 1.25rem; color: #f82249;"></i>
+                        <button class="btn p-0 action-btn" title="Xóa địa chỉ" @click.prevent="deleteAddress(address.id)">
+                          <i class="bi bi-trash3 hover-red" style="font-size: 1.15rem; color: #94a3b8;"></i>
                         </button>
                       </div>
                     </div>
@@ -103,29 +106,29 @@
     <!-- MODAL: Doi mat khau -->
     <div class="modal fade" id="changePasswordModal" tabindex="-1" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content" style="border-radius: 4px; border: none;">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: var(--jpm-radius-card, 12px) !important; overflow: hidden;">
           <div class="modal-header border-bottom-0 pt-4 pb-2 px-4">
-            <h5 class="modal-title" style="color: var(--heading-color); font-weight: 800; letter-spacing: 0.5px;">ĐỔI MẬT KHẨU</h5>
+            <h5 class="modal-title tk-heading mb-0">Đổi Mật Khẩu</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
           </div>
           <div class="modal-body p-4">
             <form @submit.prevent="changePassword">
               <div class="mb-3">
-                <label class="form-label fw-bold tk-form-label">Mật khẩu hiện tại</label>
+                <label class="form-label tk-form-label">Mật khẩu hiện tại</label>
                 <input type="password" v-model="passwordForm.current_password" class="form-control form-control-lg" required>
                 <div class="text-danger small mt-1" v-if="passwordErrors.current_password">{{ passwordErrors.current_password[0] }}</div>
               </div>
               <div class="mb-3">
-                <label class="form-label fw-bold tk-form-label">Mật khẩu mới</label>
+                <label class="form-label tk-form-label">Mật khẩu mới</label>
                 <input type="password" v-model="passwordForm.new_password" class="form-control form-control-lg" required>
                 <div class="text-danger small mt-1" v-if="passwordErrors.new_password">{{ passwordErrors.new_password[0] }}</div>
               </div>
               <div class="mb-4">
-                <label class="form-label fw-bold tk-form-label">Xác nhận mật khẩu</label>
+                <label class="form-label tk-form-label">Xác nhận mật khẩu</label>
                 <input type="password" v-model="passwordForm.new_password_confirmation" class="form-control form-control-lg" required>
               </div>
               <button type="submit" class="btn btn-danger w-100 justify-content-center py-2 fw-semibold mt-3" :disabled="isChangingPassword">
-                <span v-if="isChangingPassword" class="spinner-border spinner-border-sm"></span>
+                <span v-if="isChangingPassword" class="spinner-border spinner-border-sm me-2"></span>
                 <i class="bi bi-shield-check" v-else></i> Cập nhật mật khẩu
               </button>
             </form>
@@ -137,28 +140,28 @@
     <!-- MODAL: Dia chi -->
     <div class="modal fade" id="addressModal" tabindex="-1" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content" style="border-radius: 4px; border: none;">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: var(--jpm-radius-card, 12px) !important; overflow: hidden;">
           <div class="modal-header border-bottom-0 pt-4 pb-2 px-4">
-            <h5 class="modal-title" style="color: var(--heading-color); font-weight: 800; letter-spacing: 0.5px;">{{ isEditingAddress ? 'SỬA ĐỊA CHỈ' : 'THÊM ĐỊA CHỈ MỚI' }}</h5>
+            <h5 class="modal-title tk-heading mb-0">{{ isEditingAddress ? 'Chỉnh Sửa Địa Chỉ' : 'Thêm Địa Chỉ Mới' }}</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
           </div>
           <div class="modal-body p-4">
             <form @submit.prevent="saveAddress">
               <div class="mb-3">
-                <label class="form-label fw-bold tk-form-label">Họ và tên người nhận</label>
+                <label class="form-label tk-form-label">Họ và tên người nhận</label>
                 <input type="text" v-model="addressForm.ten_nguoi_nhan" class="form-control form-control-lg fw-bold" required>
               </div>
               <div class="mb-3">
-                <label class="form-label fw-bold tk-form-label">Số điện thoại</label>
+                <label class="form-label tk-form-label">Số điện thoại liên hệ</label>
                 <input type="text" v-model="addressForm.so_dien_thoai" class="form-control form-control-lg fw-bold" required>
               </div>
               <div class="mb-4">
-                <label class="form-label fw-bold tk-form-label">Địa chỉ cụ thể</label>
-                <textarea v-model="addressForm.dia_chi_cu_the" class="form-control form-control-lg fw-bold" rows="3" required></textarea>
+                <label class="form-label tk-form-label">Địa chỉ nhận hàng cụ thể</label>
+                <textarea v-model="addressForm.dia_chi_cu_the" class="form-control form-control-lg" rows="3" placeholder="Số nhà, đường, phường/xã, quận/huyện, tỉnh/thành phố..." required></textarea>
               </div>
               <div class="mb-4 form-check">
                 <input type="checkbox" class="form-check-input" id="defaultAddress" v-model="addressForm.la_mac_dinh">
-                <label class="form-check-label fw-bold text-secondary" style="font-size: 13px;" for="defaultAddress">Đặt làm địa chỉ mặc định</label>
+                <label class="form-check-label fw-semibold text-secondary" style="font-size: 13.5px;" for="defaultAddress">Đặt làm địa chỉ mặc định</label>
               </div>
               <button type="submit" class="btn btn-danger w-100 justify-content-center py-2 fw-semibold mt-3" :disabled="isSavingAddress">
                 <span v-if="isSavingAddress" class="spinner-border spinner-border-sm me-2"></span>
@@ -449,62 +452,97 @@ const setDefault = (id) => {
 </script>
 
 <style scoped>
-
 .tk-card {
-  box-shadow: var(--shadow-sm);
-  border-radius: 4px;
+  box-shadow: 0 4px 20px rgba(10, 17, 40, 0.04);
+  border: 1px solid #eef2f6 !important;
+  background-color: #ffffff;
 }
 .tk-card-header {
   padding: 20px 24px;
+  border-bottom: 1px solid #f1f5f9 !important;
 }
 .tk-heading {
-  color: var(--heading-color);
+  font-family: var(--font-heading, 'Raleway', sans-serif);
+  color: var(--jpm-color-navy-deep, #0A1128);
   font-weight: 700;
-}
-.tk-page-title {
-  color: var(--heading-color);
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  font-size: clamp(1.8rem, 3vw, 2.2rem);
-  margin-bottom: 8px;
+  letter-spacing: -0.01em;
 }
 .tk-form-label {
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  color: #7e8299;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #64748b;
+  margin-bottom: 0.375rem;
+  display: block;
 }
 .tk-form-input {
   font-size: 15px;
-  color: var(--heading-color);
+  color: var(--jpm-color-navy-deep, #0A1128);
 }
-.sidebar-menu-item {
-  padding: 12px 24px;
+
+/* Sổ Địa Chỉ Card Styling */
+.address-item-card {
+  border-radius: var(--jpm-radius-control, 8px) !important;
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0 !important;
+  transition: all 0.2s ease;
+}
+.address-item-card:hover {
+  border-color: #cbd5e1 !important;
+}
+.address-item-default {
+  border-color: rgba(248, 34, 73, 0.45) !important;
+  background-color: rgba(248, 34, 73, 0.02) !important;
+}
+.address-recipient-name {
+  color: var(--jpm-color-navy-deep, #0A1128);
+  font-size: 16px;
+  font-weight: 700;
+}
+.address-recipient-phone {
+  font-size: 14.5px;
+  color: #64748b;
   font-weight: 500;
-  transition: color 0.3s;
 }
-.sidebar-menu-item-active {
-  padding: 12px 24px;
+.address-default-badge {
+  background-color: rgba(248, 34, 73, 0.08);
+  color: var(--jpm-color-red-marine, #F82249);
   font-weight: 600;
+  font-size: 0.75rem;
+  padding: 4px 10px;
+  border-radius: var(--jpm-radius-badge, 6px);
+  border: 1px solid rgba(248, 34, 73, 0.15);
+}
+.address-text {
+  font-size: 14.5px;
+  color: #475569;
+  line-height: 1.5;
+}
+.btn-set-default {
+  font-size: 13px;
+  text-decoration: underline;
+  border: none;
+  background: transparent;
+  transition: color 0.2s;
 }
 
-.active-sidebar-link {
-  color: var(--accent-color) !important;
-  background-color: rgba(239, 35, 60, 0.04) !important;
-  border-left: 3px solid var(--accent-color) !important;
-}
-
-.list-group-item-action:hover {
-  background-color: rgba(0,0,0,0.02);
-  color: var(--heading-color) !important;
+/* Empty State Wrap */
+.empty-icon-wrap {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background-color: rgba(248, 34, 73, 0.06);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--jpm-color-red-marine, #F82249);
+  font-size: 2rem;
 }
 
 .hover-red:hover {
-  color: var(--accent-color) !important;
+  color: var(--jpm-color-red-marine, #F82249) !important;
 }
 .form-control-plaintext::placeholder {
-  color: var(--heading-color) !important;
+  color: var(--jpm-color-navy-deep, #0A1128) !important;
   opacity: 0.4 !important;
   font-weight: 500 !important;
 }

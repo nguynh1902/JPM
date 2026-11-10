@@ -1110,9 +1110,9 @@ const formatDate = (dateStr) => {
 .shopee-tabs-container {
   display: flex;
   background-color: #ffffff;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.09);
-  box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.05);
-  border-radius: 2px;
+  border: 1px solid #eef2f6;
+  box-shadow: 0 4px 20px rgba(10, 17, 40, 0.04);
+  border-radius: var(--jpm-radius-card, 12px);
   overflow-x: auto;
   white-space: nowrap;
 }
@@ -1131,13 +1131,13 @@ const formatDate = (dateStr) => {
 }
 
 .shopee-tab-item:hover {
-  color: var(--accent-color, #f82249);
+  color: var(--jpm-color-red-marine, #f82249);
 }
 
 .shopee-tab-item.active {
-  color: var(--accent-color, #f82249);
-  border-bottom: 2px solid var(--accent-color, #f82249);
-  font-weight: 500;
+  color: var(--jpm-color-red-marine, #f82249);
+  border-bottom: 2px solid var(--jpm-color-red-marine, #f82249);
+  font-weight: 600;
 }
 
 .tab-badge {
@@ -1156,8 +1156,9 @@ const formatDate = (dateStr) => {
   align-items: center;
   justify-content: center;
   margin-top: 12px;
-  box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.05);
-  border-radius: 2px;
+  box-shadow: 0 4px 20px rgba(10, 17, 40, 0.04);
+  border: 1px solid #eef2f6;
+  border-radius: var(--jpm-radius-card, 12px);
 }
 
 .empty-clipboard-icon {
@@ -1176,10 +1177,10 @@ const formatDate = (dateStr) => {
 /* ========================================================================= */
 .shopee-order-card {
   background: #ffffff;
-  box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.05);
-  border-radius: 2px;
+  box-shadow: 0 4px 20px rgba(10, 17, 40, 0.04);
+  border-radius: var(--jpm-radius-card, 12px);
   overflow: hidden;
-  border: 1px solid rgba(0, 0, 0, 0.06);
+  border: 1px solid #eef2f6;
 }
 
 /* Head */
@@ -1200,8 +1201,8 @@ const formatDate = (dateStr) => {
 .type-tag {
   font-size: 10px;
   font-weight: 700;
-  padding: 2px 6px;
-  border-radius: 2px;
+  padding: 3px 8px;
+  border-radius: var(--jpm-radius-badge, 6px);
 }
 .quote-tag {
   background-color: #e0f2fe;
@@ -1300,12 +1301,14 @@ const formatDate = (dateStr) => {
   height: 65px;
   background-color: #f8f9fa;
   border: 1px solid #e9ecef;
+  border-radius: var(--jpm-radius-control, 8px);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 24px;
   color: #6c757d;
   flex-shrink: 0;
+  overflow: hidden;
 }
 
 .item-details {
@@ -1438,7 +1441,7 @@ const formatDate = (dateStr) => {
 .btn-shopee {
   padding: 8px 16px;
   font-size: 13.5px;
-  border-radius: 2px;
+  border-radius: var(--jpm-radius-control, 8px);
   text-decoration: none;
   cursor: pointer;
   display: inline-flex;
@@ -1448,9 +1451,9 @@ const formatDate = (dateStr) => {
 }
 
 .btn-shopee-primary {
-  background-color: var(--accent-color, #f82249);
+  background-color: var(--jpm-color-red-marine, #f82249);
   color: #ffffff;
-  border: 1px solid var(--accent-color, #f82249);
+  border: 1px solid var(--jpm-color-red-marine, #f82249);
 }
 .btn-shopee-primary:hover {
   background-color: #d81438;
@@ -1487,7 +1490,7 @@ const formatDate = (dateStr) => {
 .qr-img {
   width: 100%;
   border: 1px solid #e2e8f0;
-  border-radius: 4px;
+  border-radius: var(--jpm-radius-control, 8px);
   padding: 4px;
 }
 .qr-subtext {
@@ -1500,7 +1503,7 @@ const formatDate = (dateStr) => {
   min-width: 260px;
   background-color: #f8fafc;
   padding: 12px 16px;
-  border-radius: 4px;
+  border-radius: var(--jpm-radius-control, 8px);
   border: 1px solid #e2e8f0;
 }
 
@@ -1517,8 +1520,8 @@ const formatDate = (dateStr) => {
   border: 1px solid #cbd5e1;
   background: #ffffff;
   font-size: 11px;
-  padding: 1px 6px;
-  border-radius: 2px;
+  padding: 2px 8px;
+  border-radius: 4px;
   cursor: pointer;
 }
 .btn-copy:hover {
@@ -1531,11 +1534,12 @@ const formatDate = (dateStr) => {
   height: 50px;
   background-color: #f8f9fa;
   border: 1px solid #e9ecef;
-  border-radius: 4px;
+  border-radius: var(--jpm-radius-control, 8px);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  overflow: hidden;
 }
 
 .modal-item-row:hover {

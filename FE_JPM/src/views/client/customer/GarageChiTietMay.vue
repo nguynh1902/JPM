@@ -3,12 +3,12 @@
 
     <!-- Back button + Header -->
     <div class="mb-4">
-      <router-link to="/garage" class="d-inline-flex align-items-center gap-2 text-muted mb-3" style="font-size: 13px; text-decoration: none;">
-        <i class="bi bi-arrow-left"></i> Quay lại Garage
+      <router-link to="/garage" class="d-inline-flex align-items-center gap-2 text-muted mb-3 text-decoration-none hover-red" style="font-size: 13.5px; font-weight: 500;">
+        <i class="bi bi-arrow-left"></i> Quay lại Hạm Đội Garage
       </router-link>
 
       <!-- Skeleton Header -->
-      <div v-if="isLoading" class="p-4 border rounded-2 bg-white">
+      <div v-if="isLoading" class="p-4 border rounded-3 bg-white">
         <div class="placeholder-glow">
           <div class="placeholder col-3 mb-2" style="height: 20px;"></div>
           <div class="placeholder col-2" style="height: 14px;"></div>
@@ -16,28 +16,27 @@
       </div>
 
       <!-- Machine Header Card -->
-      <div v-else-if="garageData" class="p-4 border rounded-2 bg-white d-flex align-items-start justify-content-between flex-column flex-md-row gap-3">
+      <div v-else-if="garageData" class="p-4 border machine-header-card bg-white d-flex align-items-start justify-content-between flex-column flex-md-row gap-3">
         <div>
           <div class="d-flex align-items-center gap-2 flex-wrap mb-1">
-            <h5 class="fw-bold mb-0" style="color: var(--heading-color);">{{ garageData.dong_co_model?.ten_model || 'Chưa rõ Model' }}</h5>
-            <span class="badge rounded-pill fw-semibold text-uppercase" style="background-color: rgba(239,35,60,0.1); color: var(--accent-color); font-size: 10px; letter-spacing: 0.5px;">
+            <h5 class="page-title mb-0">{{ garageData.dong_co_model?.ten_model || 'Chưa rõ Model' }}</h5>
+            <span class="badge brand-tag-badge">
               {{ garageData.dong_co_model?.thuong_hieu?.name }}
             </span>
           </div>
           
-          <div class="d-flex align-items-center gap-3 flex-wrap mt-2" style="font-size: 13px; color: #6c757d;">
-            <span v-if="garageData.dong_co_model?.ma_luc"><i class="bi bi-lightning-charge me-1"></i>{{ garageData.dong_co_model.ma_luc }} HP</span>
-            <span v-if="garageData.dong_co_model?.ma_model" class="text-muted fst-italic">{{ garageData.dong_co_model.ma_model }}</span>
+          <div class="d-flex align-items-center gap-4 flex-wrap mt-2" style="font-size: 13.5px; color: #64748b;">
+            <span v-if="garageData.dong_co_model?.ma_luc"><i class="bi bi-lightning-charge me-1 text-warning"></i>{{ garageData.dong_co_model.ma_luc }} HP</span>
+            <span v-if="garageData.dong_co_model?.ma_model" class="fst-italic"><i class="bi bi-upc-scan me-1"></i>{{ garageData.dong_co_model.ma_model }}</span>
+            <span v-if="garageData.dong_co_model?.nam_san_xuat || garageData.dong_co_model?.nam_bat_dau"><i class="bi bi-calendar3 me-1"></i>Năm: {{ garageData.dong_co_model?.nam_san_xuat || garageData.dong_co_model?.nam_bat_dau || '' }}</span>
           </div>
         </div>
 
         <!-- Header Actions -->
         <div class="d-flex align-items-center gap-2 flex-shrink-0" style="min-height: 38px;">
-          
-          
           <router-link
             :to="`/tra-cuu?brand=${garageData?.dong_co_model?.thuong_hieu_id}&engineType=${garageData?.dong_co_model?.loai_dong_co_id}&model=${garageData?.dong_co_model_id}&year=${garageData?.dong_co_model?.nam_san_xuat || ''}`"
-            class="btn btn-light btn-sm px-3 rounded-pill d-flex align-items-center gap-2" style="font-size: 12px; font-weight: 600; color: #495057; border: 1px solid #dee2e6;">
+            class="btn btn-outline-secondary btn-sm px-3 d-flex align-items-center gap-2 fw-semibold">
             <i class="bi bi-search"></i>Tra phụ tùng
           </router-link>
         </div>
@@ -45,11 +44,11 @@
     </div>
 
     <!-- Content -->
-    <div class="card border-0 flex-grow-1" style="box-shadow: var(--shadow-sm);">
-      <div class="card-header bg-transparent border-bottom d-flex justify-content-between align-items-center" style="padding: 18px 24px;">
+    <div class="card border-0 flex-grow-1 machine-main-card">
+      <div class="card-header bg-transparent border-bottom d-flex justify-content-between align-items-center" style="padding: 20px 24px;">
         <div>
-          <h6 class="mb-0 fw-bold" style="color: var(--heading-color);">PHỤ TÙNG ĐÃ LƯU</h6>
-          <span class="text-muted" style="font-size: 13px;">{{ totalItems }} phụ tùng trong {{ groups.length }} nhóm</span>
+          <h6 class="mb-0 page-title" style="font-size: 1.1rem;">Phụ Tùng Đã Lưu Trong Động Cơ</h6>
+          <span class="text-muted" style="font-size: 13.5px;">{{ totalItems }} phụ tùng trong {{ groups.length }} nhóm phân loại</span>
         </div>
       </div>
 
@@ -61,7 +60,7 @@
               <div class="placeholder col-2" style="height: 16px;"></div>
             </div>
             <div v-for="j in 3" :key="j" class="d-flex align-items-center gap-3 py-3 border-bottom">
-              <div class="placeholder" style="width: 60px; height: 60px; border-radius: 6px;"></div>
+              <div class="placeholder rounded-2" style="width: 60px; height: 60px;"></div>
               <div class="flex-grow-1 placeholder-glow">
                 <div class="placeholder col-4 mb-1" style="height: 14px;"></div>
                 <div class="placeholder col-3" style="height: 12px;"></div>
@@ -71,12 +70,15 @@
         </div>
 
         <!-- Empty State -->
-        <div v-else-if="groups.length === 0" class="text-center py-5">
-          <i class="bi bi-box-seam text-muted" style="font-size: 3.5rem; opacity: 0.35;"></i>
-          <h6 class="mt-3 mb-1" style="color: var(--heading-color); font-weight: 700;">Chưa có phụ tùng nào</h6>
-          <p class="text-muted mb-3" style="font-size: 14px;">Xem sơ đồ phụ tùng và lưu những phụ tùng bạn cần.</p>
-          <router-link :to="`/tra-cuu?brand=${garageData?.dong_co_model?.thuong_hieu_id}&engineType=${garageData?.dong_co_model?.loai_dong_co_id}&model=${garageData?.dong_co_model_id}&year=${garageData?.dong_co_model?.nam_san_xuat || ''}`" class="btn btn-danger rounded-1 text-uppercase" style="font-size: 11px; font-weight: 600; letter-spacing: 1px;">
-            <i class="bi bi-search me-2"></i>Tra cứu phụ tùng
+        <div v-else-if="groups.length === 0" class="text-center py-5 d-flex flex-column align-items-center justify-content-center" style="min-height: 360px;">
+          <div class="empty-icon-wrap mb-4">
+            <i class="bi bi-box-seam"></i>
+          </div>
+          <h5 class="mb-2 page-title">Chưa có phụ tùng nào</h5>
+          <p class="text-muted mb-4" style="font-size: 14.5px; max-width: 440px; line-height: 1.6;">Xem sơ đồ kỹ thuật chi tiết của động cơ và bấm lưu các phụ tùng cần bảo dưỡng định kỳ.</p>
+          <router-link :to="`/tra-cuu?brand=${garageData?.dong_co_model?.thuong_hieu_id}&engineType=${garageData?.dong_co_model?.loai_dong_co_id}&model=${garageData?.dong_co_model_id}&year=${garageData?.dong_co_model?.nam_san_xuat || ''}`" class="btn btn-danger px-4 py-2 fw-semibold d-inline-flex align-items-center gap-2">
+            <i class="bi bi-search"></i>
+            <span>Tra cứu phụ tùng</span>
           </router-link>
         </div>
 
@@ -86,31 +88,26 @@
 
             <!-- Group Header -->
             <div class="d-flex align-items-center gap-2 mb-2">
-              <div style="width: 3px; height: 18px; background: var(--accent-color); border-radius: 2px;"></div>
-              <h6 class="mb-0 fw-bold text-uppercase" style="font-size: 11.5px; letter-spacing: 0.8px; color: var(--heading-color);">
+              <div style="width: 3px; height: 16px; background: var(--jpm-color-red-marine, #F82249); border-radius: 2px;"></div>
+              <h6 class="mb-0 fw-bold" style="font-size: 12.5px; letter-spacing: 0.5px; color: var(--jpm-color-navy-deep, #0A1128);">
                 {{ group.nhom_ten }}
               </h6>
-              <span class="badge rounded-pill" style="background-color: #f1f3f5; color: #6c757d; font-size: 10px;">
+              <span class="badge" style="background-color: #f1f5f9; color: #64748b; font-size: 11px; border-radius: var(--jpm-radius-badge, 6px);">
                 {{ group.items.length }} phụ tùng
               </span>
             </div>
 
             <!-- Parts List in Group -->
-            <div class="border rounded-2 overflow-hidden" style="border-color: #e9ecef !important;">
+            <div class="border rounded-3 overflow-hidden" style="border-color: #e2e8f0 !important;">
               <div
                 v-for="(item, idx) in group.items"
                 :key="item.id"
-                class="d-flex align-items-center gap-3 p-3"
-                :style="idx < group.items.length - 1 ? 'border-bottom: 1px solid #f1f3f5;' : ''"
-                @mouseenter="$event.currentTarget.style.backgroundColor='#fafbfc'"
-                @mouseleave="$event.currentTarget.style.backgroundColor=''"
-                style="cursor: pointer;"
+                class="d-flex align-items-center gap-3 p-3 part-row-item"
+                :style="idx < group.items.length - 1 ? 'border-bottom: 1px solid #f1f5f9;' : ''"
                 @click="router.push('/chi-tiet-phu-tung/' + item.phu_tung?.ma_phu_tung)">
 
-                
-
                 <!-- Part Image -->
-                <div class="flex-shrink-0 d-flex align-items-center justify-content-center border rounded" style="width: 60px; height: 60px; background: #fff;">
+                <div class="flex-shrink-0 d-flex align-items-center justify-content-center border rounded-2" style="width: 60px; height: 60px; background: #fff;">
                   <img
                     v-if="item.phu_tung?.hinh_anh"
                     :src="getImageUrl(item.phu_tung.hinh_anh)"
@@ -124,31 +121,31 @@
                   <router-link
                     :to="`/chi-tiet-phu-tung/${item.phu_tung?.ma_phu_tung}`"
                     @click.stop
-                    class="fw-bold d-block text-decoration-none text-truncate"
-                    style="color: var(--heading-color); font-size: 14px;">
+                    class="fw-bold d-block text-decoration-none text-truncate hover-red"
+                    style="color: var(--jpm-color-navy-deep, #0A1128); font-size: 14.5px;">
                     {{ item.phu_tung?.ten_phu_tung }}
                   </router-link>
-                  <div class="d-flex align-items-center gap-3 flex-wrap mt-1" style="font-size: 12px; color: #6c757d;">
+                  <div class="d-flex align-items-center gap-3 flex-wrap mt-1" style="font-size: 12.5px; color: #64748b;">
                     <span>Part #: <strong class="text-dark">{{ item.phu_tung?.ma_phu_tung }}</strong></span>
                     <span v-if="item.ghi_chu"><i class="bi bi-info-circle me-1"></i>{{ item.ghi_chu }}</span>
                   </div>
-                  <div class="mt-1" style="font-size: 12.5px;">
-                    <span v-if="item.phu_tung?.is_gia_lien_he" class="fw-bold" style="color: var(--accent-color);">Liên hệ</span>
-                    <span v-else class="fw-bold" style="color: var(--accent-color);">
+                  <div class="mt-1" style="font-size: 13px;">
+                    <span v-if="item.phu_tung?.is_gia_lien_he" class="fw-bold" style="color: var(--jpm-color-red-marine, #F82249);">Liên hệ</span>
+                    <span v-else class="fw-bold" style="color: var(--jpm-color-red-marine, #F82249);">
                       {{ formatCurrency(item.phu_tung?.gia_ban) }}
                     </span>
                   </div>
                 </div>
 
-                                <!-- Quantity & Actions -->
-                <div class="d-flex align-items-center gap-4 flex-shrink-0 pe-2">
+                <!-- Quantity & Actions -->
+                <div class="d-flex align-items-center gap-3 flex-shrink-0 pe-2">
                   <!-- Add to cart -->
                   <button class="btn p-0 action-btn" title="Thêm giỏ hàng" @click.stop="addOneToCart(item)" style="border: none; background: transparent;">
-                    <i class="bi bi-cart-plus" style="font-size: 1.25rem; color: #2563EB; transition: color 0.2s;" onmouseover="this.style.color='#1d4ed8'" onmouseout="this.style.color='#2563EB'"></i>
+                    <i class="bi bi-cart-plus" style="font-size: 1.25rem; color: #2563EB;"></i>
                   </button>
                   <!-- Remove -->
                   <button class="btn p-0 action-btn ms-2" title="Xóa khỏi danh sách" @click.stop="removeItem(item.id)" style="border: none; background: transparent;">
-                    <i class="bi bi-trash3 hover-red" style="font-size: 1.25rem; color: #f82249;"></i>
+                    <i class="bi bi-trash3 hover-red" style="font-size: 1.25rem; color: #94a3b8;"></i>
                   </button>
                 </div>
               </div>
@@ -274,10 +271,51 @@ const addSelectedToCart = () => {
 };
 </script>
 
-
-
-
-
-
-
+<style scoped>
+.machine-header-card,
+.machine-main-card {
+  box-shadow: 0 4px 20px rgba(10, 17, 40, 0.04);
+  border: 1px solid #eef2f6 !important;
+  border-radius: var(--jpm-radius-card, 12px) !important;
+  background-color: #ffffff;
+}
+.page-title {
+  font-family: var(--font-heading, 'Raleway', sans-serif);
+  color: var(--jpm-color-navy-deep, #0A1128);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+.brand-tag-badge {
+  background-color: rgba(248, 34, 73, 0.08);
+  color: var(--jpm-color-red-marine, #F82249);
+  font-weight: 600;
+  font-size: 10px;
+  padding: 3px 8px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  border-radius: var(--jpm-radius-badge, 6px);
+  border: 1px solid rgba(248, 34, 73, 0.15);
+}
+.part-row-item {
+  transition: background-color 0.15s ease;
+  cursor: pointer;
+}
+.part-row-item:hover {
+  background-color: #f8fafc;
+}
+.empty-icon-wrap {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background-color: rgba(248, 34, 73, 0.06);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--jpm-color-red-marine, #F82249);
+  font-size: 2rem;
+}
+.hover-red:hover {
+  color: var(--jpm-color-red-marine, #F82249) !important;
+}
+</style>
 

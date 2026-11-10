@@ -1,32 +1,46 @@
 <template>
   <div class="col-lg-3">
-    <div class="card border-0 tk-card overflow-hidden" style="box-shadow: var(--shadow-sm); border-radius: 12px;">
+    <div class="card border-0 account-sidebar-card overflow-hidden">
+      <!-- Profile Header Area -->
       <div class="card-body text-center p-4 border-bottom">
-        <div class="position-relative d-inline-block mb-3" style="width: 140px; height: 140px;">
-          <img :src="userAvatar" alt="Avatar" class="rounded-circle w-100 h-100" style="object-fit: cover; border: 4px solid var(--surface-color); box-shadow: var(--shadow-sm);">
-          <button v-if="showCamera" @click="$emit('change-avatar')" class="btn btn-light position-absolute rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; bottom: 5px; right: 5px; box-shadow: var(--shadow-md); border: 1px solid #eaeaea;" title="Đổi ảnh">
-            <i class="bi bi-camera-fill text-secondary" style="font-size: 18px;"></i>
+        <div class="position-relative d-inline-block mb-3" style="width: 108px; height: 108px;">
+          <img :src="userAvatar" alt="Avatar" class="rounded-circle w-100 h-100 account-avatar-img">
+          <button v-if="showCamera" @click="$emit('change-avatar')" class="btn btn-light position-absolute rounded-circle d-flex align-items-center justify-content-center account-camera-btn" title="Đổi ảnh đại diện">
+            <i class="bi bi-camera-fill" style="font-size: 14px;"></i>
           </button>
         </div>
-        <h4 style="color: var(--heading-color); font-weight: 700; margin-bottom: 5px;">{{ userName }}</h4>
-        <span class="text-muted" style="font-size: 14px; font-weight: 500;"><i class="bi bi-person-badge me-2"></i>Thành viên</span>
+        <h5 class="account-user-name mb-1">{{ userName }}</h5>
+        <div class="mt-2">
+          <span class="badge account-role-badge">
+            <i class="bi bi-shield-check me-1"></i>Thành viên chính thức
+          </span>
+        </div>
       </div>
-      <div class="list-group list-group-flush" style="padding: 10px 0;">
-        <router-link to="/tai-khoan" class="list-group-item list-group-item-action border-0 d-flex align-items-center gap-3 text-secondary sidebar-menu-item" active-class="active-sidebar-link">
-          <i class="bi bi-person-circle fs-5"></i> Hồ sơ cá nhân
+
+      <!-- Modern Floating Pill Navigation -->
+      <div class="account-nav-list p-3">
+        <router-link to="/tai-khoan" class="account-pill-link" active-class="active-pill-link">
+          <i class="bi bi-person-circle fs-5"></i>
+          <span>Hồ sơ cá nhân</span>
         </router-link>
-        <router-link to="/garage" class="list-group-item list-group-item-action border-0 d-flex align-items-center gap-3 text-secondary sidebar-menu-item" active-class="active-sidebar-link">
-          <i class="bi bi-tools fs-5"></i> Garage
+        <router-link to="/garage" class="account-pill-link" active-class="active-pill-link">
+          <i class="bi bi-tools fs-5"></i>
+          <span>Hạm đội Garage</span>
         </router-link>
-        <router-link to="/vat-tu-thuong-mua" class="list-group-item list-group-item-action border-0 d-flex align-items-center gap-3 text-secondary sidebar-menu-item" active-class="active-sidebar-link">
-          <i class="bi bi-bookmark-heart fs-5"></i> Vật tư thường mua
+        <router-link to="/vat-tu-thuong-mua" class="account-pill-link" active-class="active-pill-link">
+          <i class="bi bi-bookmark-heart fs-5"></i>
+          <span>Vật tư thường mua</span>
         </router-link>
-        <router-link to="/lich-su-don-hang" class="list-group-item list-group-item-action border-0 d-flex align-items-center gap-3 text-secondary sidebar-menu-item" active-class="active-sidebar-link">
-          <i class="bi bi-receipt fs-5"></i> Đơn hàng & Báo giá
+        <router-link to="/lich-su-don-hang" class="account-pill-link" active-class="active-pill-link">
+          <i class="bi bi-receipt fs-5"></i>
+          <span>Đơn hàng & Báo giá</span>
         </router-link>
-        <hr class="my-2 mx-3 text-muted">
-        <a href="#" @click.prevent="logout" class="list-group-item list-group-item-action border-0 d-flex align-items-center gap-3 text-danger sidebar-menu-item">
-          <i class="bi bi-box-arrow-right fs-5"></i> Đăng xuất
+
+        <div class="my-2 border-top mx-2" style="border-color: #f1f5f9 !important;"></div>
+
+        <a href="#" @click.prevent="logout" class="account-pill-link account-logout-link">
+          <i class="bi bi-box-arrow-right fs-5"></i>
+          <span>Đăng xuất</span>
         </a>
       </div>
     </div>
@@ -71,11 +85,11 @@ const userName = computed(() => {
 const logout = async () => {
   const result = await Swal.fire({
     title: "Đăng xuất?",
-    text: "Bạn có chắc chắn muốn đăng xuất?",
+    text: "Bạn có chắc chắn muốn đăng xuất khỏi hệ thống JPM?",
     icon: "warning",
     showCancelButton: true,
     confirmButtonColor: "#f82249",
-    cancelButtonColor: "#6c757d",
+    cancelButtonColor: "#64748b",
     confirmButtonText: "Đăng xuất",
     cancelButtonText: "Hủy",
   });
@@ -88,23 +102,109 @@ const logout = async () => {
 </script>
 
 <style scoped>
-.sidebar-menu-item {
-  padding: 12px 24px;
+.account-sidebar-card {
+  border: 1px solid #e2e8f0 !important;
+  border-radius: var(--jpm-radius-card, 12px) !important;
+  box-shadow: 0 4px 16px rgba(10, 17, 40, 0.04) !important;
+  background: #ffffff;
+}
+
+.account-avatar-img {
+  object-fit: cover;
+  border: 3px solid #ffffff;
+  box-shadow: 0 4px 14px rgba(10, 17, 40, 0.08);
+}
+
+.account-camera-btn {
+  width: 32px;
+  height: 32px;
+  bottom: 2px;
+  right: 2px;
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+  transition: all 0.2s ease;
+  color: #475569;
+}
+.account-camera-btn:hover {
+  background: var(--jpm-color-red-marine, #F82249);
+  color: #ffffff;
+  border-color: var(--jpm-color-red-marine, #F82249);
+}
+
+.account-user-name {
+  font-family: var(--heading-font, 'Raleway', sans-serif);
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--jpm-color-navy-deep, #0A1128);
+}
+
+.account-role-badge {
+  background: rgba(2, 132, 199, 0.08);
+  color: #0284c7;
+  border: 1px solid rgba(2, 132, 199, 0.2);
+  border-radius: var(--jpm-radius-badge, 6px);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 10px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.account-nav-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.account-pill-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  border-radius: var(--jpm-radius-control, 8px);
+  font-size: 0.9rem;
   font-weight: 500;
+  color: #475569;
+  text-decoration: none;
   transition: all 0.2s ease;
 }
-.sidebar-menu-item:hover {
-  background-color: #f8f9fa;
-  color: var(--heading-color) !important;
+
+.account-pill-link i {
+  color: #94a3b8;
+  transition: color 0.2s ease;
 }
-.active-sidebar-link {
-  color: var(--heading-color) !important;
-  font-weight: 600;
-  background-color: rgba(248, 34, 73, 0.05);
-  border-left: 3px solid #f82249 !important;
+
+.account-pill-link:hover {
+  background-color: #f1f5f9;
+  color: var(--jpm-color-navy-deep, #0A1128);
+  transform: translateX(2px);
 }
-.active-sidebar-link i {
-  color: #f82249;
+
+.account-pill-link:hover i {
+  color: var(--jpm-color-navy-deep, #0A1128);
+}
+
+.active-pill-link {
+  background-color: rgba(248, 34, 73, 0.08) !important;
+  color: var(--jpm-color-red-marine, #F82249) !important;
+  font-weight: 600 !important;
+}
+
+.active-pill-link i {
+  color: var(--jpm-color-red-marine, #F82249) !important;
+}
+
+.account-logout-link {
+  color: #64748b;
+}
+
+.account-logout-link:hover {
+  background-color: rgba(248, 34, 73, 0.06);
+  color: var(--jpm-color-red-marine, #F82249) !important;
+}
+
+.account-logout-link:hover i {
+  color: var(--jpm-color-red-marine, #F82249) !important;
 }
 </style>
-
