@@ -38,24 +38,47 @@
         <div v-else class="row g-4" data-aos="fade-up" data-aos-delay="100">
           <!-- ================= BÊN TRÁI: LOẠI ĐỘNG CƠ ================= -->
           <div class="col-lg-3">
-            <div class="card catalog-sidebar-card sticky-sidebar">
+            <div class="card catalog-sidebar-card sticky-sidebar shadow-sm">
               <div class="catalog-sidebar-header">
-                <h3 class="catalog-sidebar-title">
+                <h3 class="catalog-sidebar-title mb-0">
                   Loại Động Cơ
                 </h3>
+                <button 
+                  type="button"
+                  class="btn-reset-sidebar-filter" 
+                  :class="{ 'is-hidden': !selectedLoai }"
+                  @click="selectLoai('')"
+                >
+                  Đặt lại
+                </button>
               </div>
               <div class="catalog-sidebar-body">
-                <button
-                  v-for="loai in loaiDongCoList"
-                  :key="loai.value"
-                  type="button"
-                  class="catalog-sidebar-btn"
-                  :class="{ active: selectedLoai === loai.value }"
-                  @click="selectLoai(loai.value)"
-                >
-                  <span class="sidebar-btn-text">{{ loai.label }}</span>
-                  <i class="bi bi-chevron-right sidebar-btn-arrow"></i>
-                </button>
+                <!-- DANH MỤC LOẠI ĐỘNG CƠ -->
+                <div class="catalog-nav-list">
+                  <!-- Nút Tất Cả Động Cơ -->
+                  <button
+                    type="button"
+                    class="catalog-nav-btn"
+                    :class="{ active: !selectedLoai }"
+                    @click="selectLoai('')"
+                  >
+                    <span class="catalog-nav-text">Tất cả động cơ</span>
+                    <i class="bi bi-chevron-right catalog-nav-arrow ms-auto"></i>
+                  </button>
+
+                  <!-- Danh mục loại động cơ từ API -->
+                  <button
+                    v-for="loai in loaiDongCoList"
+                    :key="loai.value"
+                    type="button"
+                    class="catalog-nav-btn"
+                    :class="{ active: selectedLoai === loai.value }"
+                    @click="selectLoai(loai.value)"
+                  >
+                    <span class="catalog-nav-text" :title="loai.label">{{ loai.label }}</span>
+                    <i class="bi bi-chevron-right catalog-nav-arrow ms-auto"></i>
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -280,24 +303,26 @@ const formatStrokeDropdown = (stroke) => {
 };
 
 // 🔹 STATE Lọc dữ liệu 🔹
-const selectedLoai = ref('');
+const selectedLoai = ref(route.query.loai || '');
 const selectedNam  = ref('');
 const selectedHp   = ref('');
 const selectedStroke = ref('');
 const searchCode   = ref('');
 
-// Tự động chọn Loại động cơ đầu tiên nếu danh sách có data và chưa có lựa chọn
-watch(loaiDongCoList, (newList) => {
-  if (newList && newList.length > 0 && !selectedLoai.value) {
-    selectedLoai.value = newList[0].value;
-  }
-}, { immediate: true });
+const hasActiveFilters = computed(() => {
+  return !!(selectedLoai.value || selectedNam.value || selectedHp.value || selectedStroke.value || searchCode.value);
+});
 
 const clearFilters = () => {
   searchCode.value = '';
   selectedNam.value = '';
   selectedHp.value = '';
   selectedStroke.value = '';
+};
+
+const clearAllFilters = () => {
+  selectedLoai.value = '';
+  clearFilters();
 };
 
 const selectLoai = (loai) => {
@@ -313,14 +338,15 @@ watch(brandName, (name) => {
 }, { immediate: true });
 
 const activeLoaiLabel = computed(() => {
-  return loaiDongCoList.value.find(l => l.value === selectedLoai.value)?.label || '';
+  if (!selectedLoai.value) return 'Tất Cả';
+  return loaiDongCoList.value.find(l => l.value === selectedLoai.value)?.label || selectedLoai.value;
 });
 
 // Trích xuất danh sách HP duy nhất từ Models hiện tại (đã lọc theo loại)
 const hpList = computed(() => {
   if (!modelsList.value.length) return [];
   const hps = modelsList.value
-    .filter(m => m.loai === selectedLoai.value && m.hp)
+    .filter(m => (selectedLoai.value ? m.loai === selectedLoai.value : true) && m.hp)
     .map(m => m.hp);
   return [...new Set(hps)].sort((a, b) => b - a);
 });
@@ -345,7 +371,7 @@ const filteredModels = computed(() => {
   if (!modelsList.value) return [];
   
   return modelsList.value.filter(m => {
-    const matchLoai = m.loai === selectedLoai.value;
+    const matchLoai = selectedLoai.value ? m.loai === selectedLoai.value : true;
     const matchNam  = selectedNam.value  ? m.year === Number(selectedNam.value)  : true;
     const matchHp   = selectedHp.value   ? m.hp   === Number(selectedHp.value)   : true;
     const matchStroke = selectedStroke.value ? m.stroke === selectedStroke.value : true;
@@ -386,6 +412,8 @@ const filteredModels = computed(() => {
   background: #ffffff;
   box-shadow: 0 4px 14px rgba(10, 17, 40, 0.03);
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 @media (min-width: 992px) {
@@ -394,76 +422,134 @@ const filteredModels = computed(() => {
     top: 90px;
     z-index: 10;
   }
+  .catalog-sidebar-card {
+    min-height: 260px;
+  }
 }
 
 .catalog-sidebar-header {
   padding: 16px 20px;
+  min-height: 60px;
   border-bottom: 1px solid #f1f5f9;
   background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .catalog-sidebar-title {
-  font-family: var(--heading-font);
+  font-family: var(--heading-font, 'Raleway', sans-serif);
   font-size: 1rem;
   font-weight: 700;
   color: #0A1128;
   margin: 0;
-  display: flex;
-  align-items: center;
+}
+
+.btn-reset-sidebar-filter {
+  background: transparent;
+  border: none;
+  color: #f82249;
+  font-size: 0.82rem;
+  font-weight: 600;
+  padding: 0;
+  cursor: pointer;
+  line-height: 1;
+  transition: opacity 0.2s ease, visibility 0.2s ease, color 0.15s ease;
+}
+
+.btn-reset-sidebar-filter.is-hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.btn-reset-sidebar-filter:hover {
+  color: #d8143a;
+  text-decoration: underline;
 }
 
 .catalog-sidebar-body {
-  padding: 10px;
+  padding: 16px;
   display: flex;
   flex-direction: column;
-  gap: 6px;
 }
 
-.catalog-sidebar-btn {
+.sidebar-section-title {
+  font-family: var(--heading-font, 'Raleway', sans-serif);
+  font-size: 0.8125rem;
+  font-weight: 800;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  color: #0A1128;
+  padding: 0 4px 8px 4px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+/* ── NAVIGATION LIST IN SIDEBAR (Đồng bộ 100% Cửa Hàng SanPham) ── */
+.catalog-nav-list {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding-top: 4px;
+}
+
+.catalog-nav-btn {
   display: flex;
   align-items: center;
   justify-content: space-between;
   width: 100%;
   border: 1px solid transparent;
   background: transparent;
-  padding: 12px 16px;
+  padding: 8px 12px;
   border-radius: 8px;
-  font-family: var(--default-font);
+  font-family: var(--default-font, sans-serif);
   font-weight: 500;
-  font-size: 0.92rem;
-  color: #334155;
+  font-size: 0.88rem;
+  color: #475569;
   transition: all 0.2s ease;
   cursor: pointer;
   text-align: left;
 }
 
-.catalog-sidebar-btn:hover {
-  background: #f8fafc;
+.catalog-nav-btn:hover {
+  background: #f1f5f9;
   color: #0A1128;
-}
-
-.catalog-sidebar-btn.active {
-  background: rgba(248, 34, 73, 0.07);
-  border-color: rgba(248, 34, 73, 0.2);
-  color: var(--accent-color, #f82249);
-  font-weight: 700;
-}
-
-.sidebar-btn-arrow {
-  font-size: 0.75rem;
-  opacity: 0.35;
-  transition: transform 0.2s ease, opacity 0.2s ease;
-}
-
-.catalog-sidebar-btn:hover .sidebar-btn-arrow {
-  opacity: 0.8;
+  font-weight: 600;
   transform: translateX(2px);
 }
 
-.catalog-sidebar-btn.active .sidebar-btn-arrow {
+.catalog-nav-btn.active {
+  background: rgba(248, 34, 73, 0.08);
+  border-color: rgba(248, 34, 73, 0.2);
+  color: #f82249;
+  font-weight: 700;
+}
+
+.catalog-nav-text {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.catalog-nav-arrow {
+  font-size: 0.72rem;
+  opacity: 0;
+  transform: translateX(-4px);
+  transition: all 0.2s ease;
+  color: inherit;
+  flex-shrink: 0;
+}
+
+.catalog-nav-btn:hover .catalog-nav-arrow {
+  opacity: 0.6;
+  transform: translateX(0);
+}
+
+.catalog-nav-btn.active .catalog-nav-arrow {
   opacity: 1;
-  color: var(--accent-color, #f82249);
-  transform: translateX(3px);
+  transform: translateX(0);
+  color: #f82249;
 }
 
 /* ========================================================
@@ -662,14 +748,33 @@ const filteredModels = computed(() => {
 }
 
 .table-row-hover {
-  transition: background-color 0.15s ease;
+  transition: all 0.15s ease;
 }
 
 .table-row-hover:hover td {
-  background-color: #f1f5f9 !important;
+  background-color: #fff1f2 !important;
   --bs-table-accent-bg: transparent !important;
   --bs-table-bg-state: transparent !important;
-  box-shadow: none !important;
+}
+
+.table-row-hover:hover td:first-child {
+  box-shadow: inset 4px 0 0 #f82249 !important;
+}
+
+.table-row-hover:hover .model-name {
+  color: #f82249 !important;
+}
+
+.table-row-hover:hover .btn-view-diagram {
+  background-color: var(--accent-color, #f82249) !important;
+  border-color: var(--accent-color, #f82249) !important;
+  color: #ffffff !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(248, 34, 73, 0.25);
+}
+
+.table-row-hover:hover .btn-view-diagram .arrow-icon {
+  transform: translateX(3px);
 }
 
 .model-name-link {
@@ -678,7 +783,7 @@ const filteredModels = computed(() => {
 }
 
 .model-name-link:hover .model-name {
-  color: #0A1128 !important;
+  color: #f82249 !important;
 }
 
 .model-name {

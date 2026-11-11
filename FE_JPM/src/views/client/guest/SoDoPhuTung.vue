@@ -71,25 +71,29 @@
         
         <!-- CỘT TRÁI: Cụm Chi Tiết -->
         <div class="jpm-split-sidebar dynamic-sidebar mb-4 mb-lg-0 pe-lg-2" :style="{ width: sidebarRatio + '%' }">
-          <div class="card sticky-sidebar diagram-panel-card">
-            <div class="card-header bg-white border-bottom py-3 px-4">
-              <h4 class="mb-0 jpm-card-title">Cụm Chi Tiết</h4>
+          <div class="card sticky-sidebar catalog-sidebar-card shadow-sm" style="height: 660px;">
+            <div class="catalog-sidebar-header">
+              <h3 class="catalog-sidebar-title mb-0">Cụm Chi Tiết</h3>
             </div>
-            <div class="category-list-body p-2 d-flex flex-column gap-1" style="max-height: calc(660px - 58px); overflow-y: auto;">
-              <div v-if="isLoading" class="p-3 text-center text-muted">Đang tải...</div>
-              <div v-else-if="diagramsList.length === 0" class="p-3 text-center text-muted">Chưa có sơ đồ nào.</div>
+            <div class="catalog-sidebar-body">
+              <div class="catalog-nav-list custom-scrollbar" style="max-height: calc(660px - 80px); overflow-y: auto;">
+                <div v-if="isLoading" class="p-3 text-center text-muted">Đang tải...</div>
+                <div v-else-if="diagramsList.length === 0" class="p-3 text-center text-muted">Chưa có sơ đồ nào.</div>
 
-              <button 
-                v-for="diagram in diagramsList" 
-                :key="diagram.id"
-                type="button"
-                class="diagram-sidebar-btn"
-                :class="{ active: activeComponentId === diagram.id }"
-                @click="activeComponentId = diagram.id"
-              >
-                <span class="flex-grow-1 text-truncate">{{ diagram.nhom_phu_tung?.ten_nhom || "N/A" }}</span>
-                <i class="bi bi-chevron-right sidebar-btn-arrow"></i>
-              </button>
+                <button 
+                  v-for="diagram in diagramsList" 
+                  :key="diagram.id"
+                  type="button"
+                  class="catalog-nav-btn"
+                  :class="{ active: activeComponentId === diagram.id }"
+                  @click="activeComponentId = diagram.id"
+                >
+                  <span class="catalog-nav-text" :title="diagram.nhom_phu_tung?.ten_nhom || diagram.ten_so_do">
+                    {{ diagram.nhom_phu_tung?.ten_nhom || diagram.ten_so_do || "N/A" }}
+                  </span>
+                  <i class="bi bi-chevron-right catalog-nav-arrow ms-auto"></i>
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -896,53 +900,114 @@ const startSidebarDrag = () => {
 }
 
 /* ========================================================
-   2. SIDEBAR NAVIGATION: CỤM CHI TIẾT (ĐỒNG BỘ THUONGHIEU.VUE)
+   2. SIDEBAR NAVIGATION: CỤM CHI TIẾT (ĐỒNG BỘ 100% THUONGHIEU.VUE & SANPHAM.VUE)
    ======================================================== */
-.diagram-sidebar-btn {
+.catalog-sidebar-card {
+  border-radius: 12px !important;
+  border: 1px solid #edf2f7 !important;
+  background: #ffffff;
+  box-shadow: 0 4px 14px rgba(10, 17, 40, 0.03);
+  overflow: hidden;
+}
+
+.catalog-sidebar-header {
+  padding: 16px 20px;
+  min-height: 60px;
+  border-bottom: 1px solid #f1f5f9;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.catalog-sidebar-title {
+  font-family: var(--heading-font, 'Raleway', sans-serif);
+  font-size: 1rem;
+  font-weight: 700;
+  color: #0A1128;
+  margin: 0;
+}
+
+.catalog-sidebar-body {
+  padding: 14px;
+}
+
+.sidebar-section-title {
+  font-family: var(--heading-font, 'Raleway', sans-serif);
+  font-size: 0.8125rem;
+  font-weight: 800;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  color: #0A1128;
+  padding: 0 4px 8px 4px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+/* ── NAVIGATION LIST IN SIDEBAR (Đồng bộ 100% Thương Hiệu & Cửa Hàng) ── */
+.catalog-nav-list {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding-top: 4px;
+}
+
+.catalog-nav-btn {
   display: flex;
   align-items: center;
   justify-content: space-between;
   width: 100%;
   border: 1px solid transparent;
   background: transparent;
-  padding: 11px 16px;
-  border-radius: var(--jpm-radius-control, 8px);
-  font-family: var(--default-font, 'Roboto', sans-serif);
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-family: var(--default-font, sans-serif);
   font-weight: 500;
-  font-size: 0.9rem;
-  color: #334155;
+  font-size: 0.88rem;
+  color: #475569;
   transition: all 0.2s ease;
   cursor: pointer;
   text-align: left;
 }
 
-.diagram-sidebar-btn:hover {
-  background: #f8fafc;
+.catalog-nav-btn:hover {
+  background: #f1f5f9;
   color: #0A1128;
-}
-
-.diagram-sidebar-btn.active {
-  background: rgba(248, 34, 73, 0.07);
-  border-color: rgba(248, 34, 73, 0.2);
-  color: var(--accent-color, #f82249);
-  font-weight: 700;
-}
-
-.diagram-sidebar-btn .sidebar-btn-arrow {
-  font-size: 0.75rem;
-  opacity: 0.35;
-  transition: transform 0.2s ease, opacity 0.2s ease;
-}
-
-.diagram-sidebar-btn:hover .sidebar-btn-arrow {
-  opacity: 0.8;
+  font-weight: 600;
   transform: translateX(2px);
 }
 
-.diagram-sidebar-btn.active .sidebar-btn-arrow {
+.catalog-nav-btn.active {
+  background: rgba(248, 34, 73, 0.08);
+  border-color: rgba(248, 34, 73, 0.2);
+  color: #f82249;
+  font-weight: 700;
+}
+
+.catalog-nav-text {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.catalog-nav-arrow {
+  font-size: 0.72rem;
+  opacity: 0;
+  transform: translateX(-4px);
+  transition: all 0.2s ease;
+  color: inherit;
+  flex-shrink: 0;
+}
+
+.catalog-nav-btn:hover .catalog-nav-arrow {
+  opacity: 0.6;
+  transform: translateX(0);
+}
+
+.catalog-nav-btn.active .catalog-nav-arrow {
   opacity: 1;
-  color: var(--accent-color, #f82249);
-  transform: translateX(3px);
+  transform: translateX(0);
+  color: #f82249;
 }
 
 /* ========================================================
@@ -983,14 +1048,29 @@ const startSidebarDrag = () => {
 }
 
 .table-row-hover {
-  transition: background-color 0.15s ease;
+  transition: all 0.15s ease;
 }
 
 .table-row-hover:hover td {
-  background-color: #f1f5f9 !important;
+  background-color: #fff1f2 !important;
   --bs-table-accent-bg: transparent !important;
   --bs-table-bg-state: transparent !important;
-  box-shadow: none !important;
+}
+
+.table-row-hover:hover td:first-child {
+  box-shadow: inset 4px 0 0 #f82249 !important;
+}
+
+.table-row-hover:hover .part-item-link .model-code {
+  color: #f82249 !important;
+}
+
+.table-row-hover:hover .btn-add-part {
+  background-color: var(--accent-color, #f82249) !important;
+  border-color: var(--accent-color, #f82249) !important;
+  color: #ffffff !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(248, 34, 73, 0.2);
 }
 
 .spec-ref-text {
