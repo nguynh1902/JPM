@@ -1,7 +1,7 @@
 <template>
   <div class="interactive-diagram-page main-page">
     <section class="section inner-page-section">
-      <div class="container">
+      <div class="container-fluid px-3 px-lg-4 px-xxl-5">
       
       <!-- PAGE TITLE & BREADCRUMB -->
       <div class="mb-4" data-aos="fade-down">
@@ -75,7 +75,7 @@
             <div class="card-header bg-white border-bottom py-3 px-4">
               <h4 class="mb-0 jpm-card-title">Cụm Chi Tiết</h4>
             </div>
-            <div class="category-list-body p-2 d-flex flex-column gap-1">
+            <div class="category-list-body p-2 d-flex flex-column gap-1" style="max-height: calc(660px - 58px); overflow-y: auto;">
               <div v-if="isLoading" class="p-3 text-center text-muted">Đang tải...</div>
               <div v-else-if="diagramsList.length === 0" class="p-3 text-center text-muted">Chưa có sơ đồ nào.</div>
 
@@ -102,11 +102,11 @@
         <!-- CỘT PHẢI: BẢN VẼ & SẢN PHẨM -->
         <div class="jpm-split-content dynamic-content ps-lg-2" :style="{ width: (100 - sidebarRatio) + '%' }">
           
-          <div class="d-flex w-100 align-items-stretch" id="split-container" style="min-height: 600px;">
+          <div class="d-flex w-100 align-items-stretch" id="split-container" style="min-height: 660px;">
             
             <!-- NỬA TRÁI: BẢN VẼ (Pan + Zoom) -->
             <div :style="{ width: splitRatio + '%' }" class="pe-2">
-              <div class="card sticky-sidebar diagram-panel-card" style="height: 600px;">
+              <div class="card sticky-sidebar diagram-panel-card" style="height: 660px;">
                 <div class="card-header bg-white border-bottom py-3 px-4 d-flex justify-content-between align-items-center" v-if="activeComponentId">
                   <h4 class="mb-0 jpm-card-title text-truncate">Sơ đồ phân rã: <span class="text-danger">{{ activeComponentName }}</span></h4>
                 </div>
@@ -133,7 +133,7 @@
                     >
                       <div class="diagram-stage-container position-relative" :style="{ transform: `translate(${panX}px, ${panY}px) scale(${zoomLevel})`, transformOrigin: 'center center', transition: isPanning ? 'none' : 'transform 0.1s ease' }">
                         <div v-if="activeDiagram?.hinh_anh" class="position-relative d-inline-block">
-                          <img :src="getImageUrl(activeDiagram.hinh_anh)" alt="Sơ đồ phân rã" style="max-width: 100%; max-height: 480px; object-fit: contain; display: block; pointer-events: none;" draggable="false">
+                          <img :src="getImageUrl(activeDiagram.hinh_anh)" alt="Sơ đồ phân rã" style="max-width: 100%; max-height: 540px; object-fit: contain; display: block; pointer-events: none;" draggable="false">
                           <!-- HOTSPOTS OVERLAY LAYER -->
                           <div v-if="hotspotParts.length > 0" class="hotspot-overlay-layer">
                             <div 
@@ -580,7 +580,7 @@ const toggleFullScreen = () => {
 };
 
 // ─── SPLIT RESIZER (Diagram vs Parts) ─────────────────────────────────────────
-const splitRatio = ref(42);
+const splitRatio = ref(45);
 const isDragging = ref(false);
 
 const onDrag = (e) => {
@@ -610,7 +610,7 @@ const startDrag = () => {
 };
 
 // ─── SIDEBAR RESIZER (Sidebar vs Right Content) ────────────────────────────────
-const sidebarRatio = ref(18);
+const sidebarRatio = ref(17);
 const isSidebarDragging = ref(false);
 
 const onSidebarDrag = (e) => {
@@ -619,8 +619,8 @@ const onSidebarDrag = (e) => {
   if (container) {
     const rect = container.getBoundingClientRect();
     let newRatio = ((e.clientX - rect.left) / rect.width) * 100;
-    if (newRatio < 15) newRatio = 15;
-    if (newRatio > 50) newRatio = 50;
+    if (newRatio < 12) newRatio = 12;
+    if (newRatio > 40) newRatio = 40;
     sidebarRatio.value = newRatio;
   }
 };
@@ -852,8 +852,23 @@ const startSidebarDrag = () => {
 @media (min-width: 992px) {
   .sticky-sidebar {
     position: sticky;
-    top: 100px;
+    top: 90px;
+    z-index: 10;
   }
+}
+
+.category-list-body::-webkit-scrollbar {
+  width: 5px;
+}
+.category-list-body::-webkit-scrollbar-track {
+  background: #f8f9fa;
+}
+.category-list-body::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+.category-list-body::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
 }
 
 .fullscreen-mode {
