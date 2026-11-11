@@ -598,21 +598,22 @@ const filteredModels = computed(() => {
 }
 
 .custom-model-table thead th {
-  background-color: #ffffff !important;
-  color: #0A1128 !important;
-  font-family: var(--heading-font, 'Raleway', sans-serif);
-  font-size: 0.8rem;
-  font-weight: 700;
+  background-color: #f8fafc !important;
+  color: #475569 !important;
+  font-family: var(--default-font, 'Roboto', sans-serif);
+  font-size: 0.78rem;
+  font-weight: 600;
   letter-spacing: 0.5px;
   text-transform: uppercase;
-  border-bottom: 2px solid #e2e8f0 !important;
-  padding-top: 14px;
-  padding-bottom: 14px;
+  border-top: 1px solid #edf2f7 !important;
+  border-bottom: 1px solid #e2e8f0 !important;
+  padding-top: 11px;
+  padding-bottom: 11px;
   vertical-align: middle;
 }
 
 .custom-model-table tbody td {
-  padding: 16px 12px;
+  padding: 14px 12px;
   border-bottom: 1px solid #f1f5f9;
   vertical-align: middle;
   background-color: #ffffff;
@@ -662,15 +663,15 @@ const filteredModels = computed(() => {
 
 .model-name-link {
   display: inline-block;
-  transition: color 0.15s ease;
+  text-decoration: none;
 }
 
 .model-name-link:hover .model-name {
-  color: var(--accent-color, #f82249);
+  color: #0A1128 !important;
 }
 
 .model-name {
-  font-family: var(--heading-font, 'Raleway', sans-serif);
+  font-family: var(--default-font, 'Roboto', sans-serif);
   font-weight: 700;
   color: #0A1128;
   font-size: 0.95rem;

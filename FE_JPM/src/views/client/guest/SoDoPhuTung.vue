@@ -119,14 +119,14 @@
                       <span class="fw-bold px-2" style="color: var(--jpm-color-navy-dark, #0a1128); font-size: 0.85rem; min-width: 48px; text-align: center; cursor: pointer;" @click="resetZoom" title="Đặt lại tỷ lệ">{{ Math.round(zoomLevel * 100) }}%</span>
                       <button class="btn btn-sm btn-icon" @click="zoomIn" title="Phóng to"><i class="bi bi-plus-lg"></i></button>
                       <div class="vr mx-1 my-1" style="opacity: 0.1; min-height: 20px;"></div>
-                      <button class="btn btn-sm btn-icon" @click="toggleFullScreen" :title="isFullScreen ? 'Đóng toàn màn hình' : 'Toàn màn hình'" :class="{ 'text-danger': isFullScreen }">
-                        <i class="bi" :class="isFullScreen ? 'bi-fullscreen-exit' : 'bi-arrows-fullscreen'"></i>
+                      <button class="btn btn-sm btn-icon" @click="openModal" title="Phóng to toàn màn hình (Modal)">
+                        <i class="bi bi-arrows-fullscreen"></i>
                       </button>
                     </div>
                     <!-- PAN + ZOOM VIEWPORT (Boats.net style with Interactive Hotspot Pins DEC-02) -->
                     <div 
                       ref="diagramViewport"
-                      :class="{ 'is-panning': isPanning, 'fullscreen-mode': isFullScreen }"
+                      :class="{ 'is-panning': isPanning }"
                       @mousedown="startPan"
                       @wheel.prevent="handleWheel"
                       style="overflow: hidden; cursor: grab; width: 100%; flex: 1; min-height: 320px; display: flex; align-items: center; justify-content: center; background: #f8f9fa; user-select: none;"
@@ -207,7 +207,7 @@
                 </div>
                 <div class="card-body p-0 d-flex flex-column h-100">
                   <div class="table-responsive flex-grow-1 hide-x-scroll">
-                    <table class="table custom-table mb-0 align-middle table-hover table-jpm">
+                    <table class="table custom-table mb-0 align-middle table-jpm">
                       <thead>
                         <tr>
                           <th class="text-center" style="width: 40px; padding-left: 1rem;">
@@ -282,6 +282,128 @@
       </div>
       </div>
     </section>
+
+    <!-- ========================================================
+         MODAL PHÓNG TO SƠ ĐỒ TOÀN MÀN HÌNH (BLUEPRINT LIGHTBOX)
+         ======================================================== -->
+    <Teleport to="body">
+      <div 
+        v-if="isModalOpen" 
+        class="jpm-blueprint-modal-backdrop"
+        @click.self="closeModal"
+      >
+        <div class="jpm-blueprint-modal-container shadow-lg">
+          <!-- MODAL HEADER -->
+          <div class="jpm-blueprint-modal-header">
+            <div class="d-flex align-items-center gap-3">
+              <div class="modal-header-icon">
+                <i class="bi bi-diagram-3-fill text-danger"></i>
+              </div>
+              <div>
+                <h5 class="mb-0 modal-title">
+                  Sơ đồ phân rã: <span class="text-danger">{{ activeComponentName }}</span>
+                </h5>
+                <div class="modal-subtitle">
+                  Model: <strong class="text-dark">{{ modelName }}</strong> • <span>{{ currentParts.length }} Phụ tùng</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- CONTROLS & CLOSE -->
+            <div class="d-flex align-items-center gap-2">
+              <!-- MODAL ZOOM BAR -->
+              <div class="modal-zoom-bar d-flex align-items-center">
+                <button class="btn btn-sm btn-icon" @click="modalZoomOut" title="Thu nhỏ"><i class="bi bi-dash-lg"></i></button>
+                <span class="fw-bold px-2 font-tabular modal-zoom-text" @click="resetModalZoom" title="Đặt lại tỷ lệ">{{ Math.round(modalZoomLevel * 100) }}%</span>
+                <button class="btn btn-sm btn-icon" @click="modalZoomIn" title="Phóng to"><i class="bi bi-plus-lg"></i></button>
+                <div class="vr mx-1 my-1" style="opacity: 0.15; min-height: 18px;"></div>
+                <button class="btn btn-sm btn-reset-zoom" @click="resetModalZoom" title="Đặt lại 100%">
+                  <i class="bi bi-arrow-counterclockwise me-1"></i>Đặt lại
+                </button>
+              </div>
+
+              <!-- CLOSE BUTTON -->
+              <button class="btn btn-modal-close" @click="closeModal" title="Đóng (ESC)">
+                <i class="bi bi-x-lg me-1"></i> Đóng
+              </button>
+            </div>
+          </div>
+
+          <!-- MODAL VIEWPORT -->
+          <div 
+            ref="modalViewport"
+            class="jpm-blueprint-modal-body"
+            :class="{ 'is-panning': modalIsPanning }"
+            @mousedown="startModalPan"
+            @wheel.prevent="handleModalWheel"
+          >
+            <div 
+              class="diagram-stage-container position-relative" 
+              :style="{ 
+                transform: `translate(${modalPanX}px, ${modalPanY}px) scale(${modalZoomLevel})`, 
+                transformOrigin: 'center center', 
+                transition: modalIsPanning ? 'none' : 'transform 0.08s ease' 
+              }"
+            >
+              <div v-if="activeDiagram?.hinh_anh" class="position-relative d-inline-block">
+                <img 
+                  :src="getImageUrl(activeDiagram.hinh_anh)" 
+                  alt="Sơ đồ phân rã" 
+                  class="modal-blueprint-img"
+                  draggable="false"
+                >
+                <!-- HOTSPOTS OVERLAY LAYER -->
+                <div v-if="hotspotParts.length > 0" class="hotspot-overlay-layer">
+                  <div 
+                    v-for="part in hotspotParts" 
+                    :key="part.id"
+                    class="hotspot-pin-anchor"
+                    :style="{ left: `${getHotspotX(part)}%`, top: `${getHotspotY(part)}%` }"
+                  >
+                    <button
+                      type="button"
+                      class="hotspot-pin-btn"
+                      :class="{ 
+                        'pin-active': isPartSelected(part),
+                        'pin-hovered': hoveredPartCode === getPartCode(part)
+                      }"
+                      :title="`Ref #${part.ref_number || ''}: ${part.phu_tung?.ma_phu_tung || ''}`"
+                      @click.stop="selectPartFromPin(part)"
+                      @mouseenter="hoveredPartCode = getPartCode(part)"
+                      @mouseleave="hoveredPartCode = null"
+                    >
+                      <span class="pin-number">{{ part.ref_number || '•' }}</span>
+                      <span v-if="isPartSelected(part)" class="pin-radar-ring"></span>
+                    </button>
+
+                    <!-- MINI TOOLTIP ON HOVER OR ACTIVE -->
+                    <div 
+                      v-if="hoveredPartCode === getPartCode(part) || (isPartSelected(part) && hoveredPartCode === null)" 
+                      class="hotspot-tooltip shadow-sm"
+                    >
+                      <div class="fw-bold d-flex align-items-center gap-1 text-danger">
+                        <span class="badge bg-danger text-white px-1 py-0 me-1" style="font-size: 0.65rem;">#{{ part.ref_number }}</span>
+                        <span>{{ part.phu_tung?.ma_phu_tung }}</span>
+                      </div>
+                      <div class="text-truncate text-white small" style="max-width: 220px;">{{ part.phu_tung?.ten_phu_tung }}</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div v-else class="text-center p-4">
+                <i class="bi bi-image text-muted" style="font-size: 5rem;"></i>
+                <p class="text-muted mt-2">Bản vẽ của {{ activeComponentName }} đang được cập nhật...</p>
+              </div>
+            </div>
+
+            <!-- HINT PILL -->
+            <div class="modal-hint-pill">
+              <i class="bi bi-info-circle me-1"></i> Cuộn chuột để Phóng to/Thu nhỏ • Giữ chuột trái kéo rê (Pan) để xem toàn bộ bản vẽ
+            </div>
+          </div>
+        </div>
+      </div>
+    </Teleport>
   </div>
 </template>
 
@@ -439,6 +561,16 @@ watch([modelName, brandName, diagramResponse], () => {
 onUnmounted(() => {
   const script = document.getElementById('schema-diagram-ld');
   if (script) script.remove();
+  document.body.style.overflow = '';
+  window.removeEventListener('keydown', handleModalKeyDown);
+  document.removeEventListener('mousemove', onModalPan);
+  document.removeEventListener('mouseup', stopModalPan);
+  document.removeEventListener('mousemove', doPan);
+  document.removeEventListener('mouseup', stopPan);
+  document.removeEventListener('mousemove', onDrag);
+  document.removeEventListener('mouseup', stopDrag);
+  document.removeEventListener('mousemove', onSidebarDrag);
+  document.removeEventListener('mouseup', stopSidebarDrag);
 });
 
 const activeDiagram = computed(() => {
@@ -524,7 +656,6 @@ const zoomLevel = ref(1);
 const panX = ref(0);
 const panY = ref(0);
 const isPanning = ref(false);
-const isFullScreen = ref(false);
 const diagramViewport = ref(null);
 
 let _panStartX = 0;
@@ -571,12 +702,96 @@ const handleWheel = (e) => {
   zoomLevel.value = newZoom;
 };
 
-const zoomIn = () => { zoomLevel.value = Math.min(5, zoomLevel.value + 0.2); };
-const zoomOut = () => { zoomLevel.value = Math.max(0.2, zoomLevel.value - 0.2); };
+const zoomIn = () => { zoomLevel.value = Math.min(5, +(zoomLevel.value + 0.2).toFixed(2)); };
+const zoomOut = () => { zoomLevel.value = Math.max(0.2, +(zoomLevel.value - 0.2).toFixed(2)); };
 const resetZoom = () => { zoomLevel.value = 1; panX.value = 0; panY.value = 0; };
-const toggleFullScreen = () => {
-  isFullScreen.value = !isFullScreen.value;
-  if (!isFullScreen.value) resetZoom();
+
+// ─── BLUEPRINT MODAL CONTROLS (FULLSCREEN LIGHTBOX) ──────────────────────────
+const isModalOpen = ref(false);
+const modalZoomLevel = ref(1);
+const modalPanX = ref(0);
+const modalPanY = ref(0);
+const modalIsPanning = ref(false);
+const modalViewport = ref(null);
+let _modalPanStartX = 0;
+let _modalPanStartY = 0;
+let _modalPanOriginX = 0;
+let _modalPanOriginY = 0;
+
+const openModal = () => {
+  isModalOpen.value = true;
+  modalZoomLevel.value = 1;
+  modalPanX.value = 0;
+  modalPanY.value = 0;
+  document.body.style.overflow = 'hidden';
+  window.addEventListener('keydown', handleModalKeyDown);
+};
+
+const closeModal = () => {
+  isModalOpen.value = false;
+  document.body.style.overflow = '';
+  window.removeEventListener('keydown', handleModalKeyDown);
+  document.removeEventListener('mousemove', onModalPan);
+  document.removeEventListener('mouseup', stopModalPan);
+};
+
+const handleModalKeyDown = (e) => {
+  if (e.key === 'Escape' && isModalOpen.value) {
+    closeModal();
+  }
+};
+
+const modalZoomIn = () => {
+  modalZoomLevel.value = Math.min(5, +(modalZoomLevel.value + 0.2).toFixed(2));
+};
+
+const modalZoomOut = () => {
+  modalZoomLevel.value = Math.max(0.2, +(modalZoomLevel.value - 0.2).toFixed(2));
+};
+
+const resetModalZoom = () => {
+  modalZoomLevel.value = 1;
+  modalPanX.value = 0;
+  modalPanY.value = 0;
+};
+
+const handleModalWheel = (e) => {
+  const delta = e.deltaY > 0 ? -0.15 : 0.15;
+  const newZoom = Math.min(5, Math.max(0.2, +(modalZoomLevel.value + delta).toFixed(2)));
+  if (modalViewport.value) {
+    const rect = modalViewport.value.getBoundingClientRect();
+    const mouseX = e.clientX - rect.left - rect.width / 2;
+    const mouseY = e.clientY - rect.top - rect.height / 2;
+    const scale = newZoom / modalZoomLevel.value;
+    modalPanX.value = mouseX + (modalPanX.value - mouseX) * scale;
+    modalPanY.value = mouseY + (modalPanY.value - mouseY) * scale;
+  }
+  modalZoomLevel.value = newZoom;
+};
+
+const startModalPan = (e) => {
+  if (e.button !== 0) return;
+  modalIsPanning.value = true;
+  _modalPanStartX = e.clientX;
+  _modalPanStartY = e.clientY;
+  _modalPanOriginX = modalPanX.value;
+  _modalPanOriginY = modalPanY.value;
+  document.addEventListener('mousemove', onModalPan);
+  document.addEventListener('mouseup', stopModalPan);
+  if (modalViewport.value) modalViewport.value.style.cursor = 'grabbing';
+};
+
+const onModalPan = (e) => {
+  if (!modalIsPanning.value) return;
+  modalPanX.value = _modalPanOriginX + (e.clientX - _modalPanStartX);
+  modalPanY.value = _modalPanOriginY + (e.clientY - _modalPanStartY);
+};
+
+const stopModalPan = () => {
+  modalIsPanning.value = false;
+  document.removeEventListener('mousemove', onModalPan);
+  document.removeEventListener('mouseup', stopModalPan);
+  if (modalViewport.value) modalViewport.value.style.cursor = 'grab';
 };
 
 // ─── SPLIT RESIZER (Diagram vs Parts) ─────────────────────────────────────────
@@ -743,16 +958,17 @@ const startSidebarDrag = () => {
 }
 
 .custom-table thead th {
-  background-color: #ffffff !important;
-  color: #0A1128 !important;
-  font-family: var(--heading-font, 'Raleway', sans-serif);
-  font-size: 0.8rem;
-  font-weight: 700;
+  background-color: #f8fafc !important;
+  color: #475569 !important;
+  font-family: var(--default-font, 'Roboto', sans-serif);
+  font-size: 0.78rem;
+  font-weight: 600;
   letter-spacing: 0.5px;
   text-transform: uppercase;
-  border-bottom: 2px solid #e2e8f0 !important;
-  padding-top: 14px;
-  padding-bottom: 14px;
+  border-top: 1px solid #edf2f7 !important;
+  border-bottom: 1px solid #e2e8f0 !important;
+  padding-top: 11px;
+  padding-bottom: 11px;
   vertical-align: middle;
 }
 
@@ -769,6 +985,9 @@ const startSidebarDrag = () => {
 
 .table-row-hover:hover td {
   background-color: #f8fafc !important;
+  --bs-table-accent-bg: transparent !important;
+  --bs-table-bg-state: transparent !important;
+  box-shadow: none !important;
 }
 
 .spec-ref-text {
@@ -779,18 +998,19 @@ const startSidebarDrag = () => {
 }
 
 .part-item-link {
-  transition: color 0.15s ease;
+  color: inherit;
+  text-decoration: none;
 }
 
 .part-item-link .model-code {
   color: #0A1128;
-  font-family: var(--heading-font, 'Raleway', sans-serif);
-  font-size: 0.95rem;
-  transition: color 0.15s ease;
+  font-family: var(--default-font, 'Roboto', sans-serif);
+  font-size: 0.92rem;
+  font-weight: 700;
 }
 
 .part-item-link:hover .model-code {
-  color: var(--accent-color, #f82249);
+  color: #0A1128 !important;
 }
 
 .part-desc {
@@ -871,17 +1091,171 @@ const startSidebarDrag = () => {
   background: #94a3b8;
 }
 
-.fullscreen-mode {
-  position: fixed !important;
+/* ========================================================
+   4. BLUEPRINT TECHNICAL MODAL / LIGHTBOX (FULLSCREEN)
+   ======================================================== */
+.jpm-blueprint-modal-backdrop {
+  position: fixed;
   top: 0;
   left: 0;
-  width: 100vw !important;
-  height: 100vh !important;
-  z-index: 1050;
-  background-color: #f8f9fa !important;
-  border-radius: 0 !important;
-  border: none !important;
-  margin: 0 !important;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(10, 17, 40, 0.82);
+  backdrop-filter: blur(8px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  animation: modalFadeIn 0.25s ease-out;
+}
+
+@keyframes modalFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.jpm-blueprint-modal-container {
+  width: 96vw;
+  height: 94vh;
+  max-width: 1800px;
+  background: #ffffff;
+  border-radius: var(--jpm-radius-card, 12px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4);
+  animation: modalScaleUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes modalScaleUp {
+  from { transform: scale(0.96); opacity: 0.8; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.jpm-blueprint-modal-header {
+  padding: 14px 24px;
+  background: #ffffff;
+  border-bottom: 1px solid #edf2f7;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+
+.modal-header-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  background: #fff1f2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+}
+
+.modal-title {
+  font-family: var(--heading-font, 'Raleway', sans-serif);
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: #0A1128;
+}
+
+.modal-subtitle {
+  font-size: 0.82rem;
+  color: #64748b;
+}
+
+.modal-zoom-bar {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: var(--jpm-radius-control, 8px);
+  padding: 3px 8px;
+}
+
+.modal-zoom-text {
+  font-size: 0.85rem;
+  color: #0A1128;
+  min-width: 52px;
+  text-align: center;
+  cursor: pointer;
+  user-select: none;
+}
+
+.btn-reset-zoom {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #64748b;
+  border: none;
+  background: transparent;
+  padding: 3px 8px;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.btn-reset-zoom:hover {
+  background: #e2e8f0;
+  color: #0A1128;
+}
+
+.btn-modal-close {
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  color: #334155;
+  font-weight: 600;
+  font-size: 0.85rem;
+  padding: 8px 16px;
+  border-radius: var(--jpm-radius-control, 8px);
+  transition: all 0.2s;
+}
+
+.btn-modal-close:hover {
+  background: #f82249;
+  border-color: #f82249;
+  color: #ffffff;
+}
+
+.jpm-blueprint-modal-body {
+  flex: 1;
+  background: #f8f9fa;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: grab;
+  user-select: none;
+}
+
+.jpm-blueprint-modal-body.is-panning {
+  cursor: grabbing;
+}
+
+.modal-blueprint-img {
+  max-width: 88vw;
+  max-height: 80vh;
+  object-fit: contain;
+  display: block;
+  pointer-events: none;
+  user-select: none;
+  filter: drop-shadow(0 6px 16px rgba(0, 0, 0, 0.06));
+}
+
+.modal-hint-pill {
+  position: absolute;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(10, 17, 40, 0.85);
+  backdrop-filter: blur(6px);
+  color: #ffffff;
+  font-size: 0.78rem;
+  padding: 6px 16px;
+  border-radius: 30px;
+  pointer-events: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  letter-spacing: 0.2px;
 }
 
 .resizer {
@@ -1045,7 +1419,10 @@ const startSidebarDrag = () => {
   font-size: 11px;
 }
 
-.table-hover-highlight {
+.table-hover-highlight td {
   background-color: rgba(248, 34, 73, 0.05) !important;
+  --bs-table-accent-bg: transparent !important;
+  --bs-table-bg-state: transparent !important;
+  box-shadow: none !important;
 }
 </style>

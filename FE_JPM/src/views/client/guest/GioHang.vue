@@ -722,16 +722,17 @@ export default {
 }
 
 .custom-cart-table thead th {
-  background-color: #ffffff !important; /* Đồng bộ nền trắng của Card chuẩn Trang Chủ, loại bỏ màu xám đục */
-  color: #0A1128 !important; /* Xanh Navy đậm đặc trưng thương hiệu JPM Marine */
-  font-family: var(--heading-font, 'Raleway', sans-serif);
-  font-size: 0.8rem;
-  font-weight: 700;
+  background-color: #f8fafc !important;
+  color: #475569 !important;
+  font-family: var(--default-font, 'Roboto', sans-serif);
+  font-size: 0.78rem;
+  font-weight: 600;
   letter-spacing: 0.5px;
   text-transform: uppercase;
-  border-bottom: 2px solid #e2e8f0 !important;
-  padding-top: 14px;
-  padding-bottom: 14px;
+  border-top: 1px solid #edf2f7 !important;
+  border-bottom: 1px solid #e2e8f0 !important;
+  padding-top: 11px;
+  padding-bottom: 11px;
   vertical-align: middle;
 }
 
