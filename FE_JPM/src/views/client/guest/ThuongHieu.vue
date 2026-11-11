@@ -178,11 +178,11 @@
                     <thead>
                       <tr>
                         <th class="th-stt text-center">STT</th>
-                        <th class="th-model text-start">MODEL ĐỘNG CƠ</th>
-                        <th class="th-hp text-center">MÃ LỰC</th>
-                        <th class="th-stroke text-center">LOẠI THÌ</th>
-                        <th class="th-year text-center">NĂM SX</th>
-                        <th class="th-action text-center">THAO TÁC</th>
+                        <th class="th-model text-start">Model Động Cơ</th>
+                        <th class="th-hp text-center">Mã Lực</th>
+                        <th class="th-stroke text-center">Loại Thì</th>
+                        <th class="th-year text-center">Năm SX</th>
+                        <th class="th-action text-center">Thao Tác</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -233,7 +233,7 @@
                             title="Xem sơ đồ phụ tùng rã máy"
                           >
                             <span>Sơ Đồ</span>
-                            <i class="bi bi-arrow-right ms-1 arrow-icon"></i>
+                            <i class="bi bi-arrow-right arrow-icon"></i>
                           </router-link>
                         </td>
                       </tr>
@@ -489,8 +489,9 @@ const filteredModels = computed(() => {
 .catalog-nav-list {
   display: flex;
   flex-direction: column;
-  gap: 3px;
-  padding-top: 4px;
+  gap: 4px;
+  padding: 4px 6px 4px 0;
+  overflow-x: hidden !important;
 }
 
 .catalog-nav-btn {
@@ -506,7 +507,7 @@ const filteredModels = computed(() => {
   font-weight: 500;
   font-size: 0.88rem;
   color: #475569;
-  transition: all 0.2s ease;
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
   cursor: pointer;
   text-align: left;
 }
@@ -515,7 +516,7 @@ const filteredModels = computed(() => {
   background: #f1f5f9;
   color: #0A1128;
   font-weight: 600;
-  transform: translateX(2px);
+  transform: translateX(4px);
 }
 
 .catalog-nav-btn.active {
@@ -523,6 +524,12 @@ const filteredModels = computed(() => {
   border-color: rgba(248, 34, 73, 0.2);
   color: #f82249;
   font-weight: 700;
+}
+
+.catalog-nav-btn.active:hover {
+  background: rgba(248, 34, 73, 0.12);
+  color: #f82249;
+  transform: translateX(4px);
 }
 
 .catalog-nav-text {
@@ -684,17 +691,17 @@ const filteredModels = computed(() => {
 }
 
 .custom-model-table thead th {
-  background-color: #f8fafc !important;
-  color: #475569 !important;
-  font-family: var(--default-font, 'Roboto', sans-serif);
-  font-size: 0.78rem;
-  font-weight: 600;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
+  background-color: #ffffff !important;
+  color: #0A1128 !important;
+  font-family: var(--heading-font, 'Raleway', sans-serif);
+  font-size: 0.88rem;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  text-transform: none;
   border-top: 1px solid #edf2f7 !important;
-  border-bottom: 1px solid #e2e8f0 !important;
-  padding-top: 11px;
-  padding-bottom: 11px;
+  border-bottom: 2px solid #e2e8f0 !important;
+  padding-top: 13px;
+  padding-bottom: 13px;
   vertical-align: middle;
 }
 
@@ -805,12 +812,15 @@ const filteredModels = computed(() => {
   white-space: nowrap;
 }
 
-/* Nút Thao Tác Sơ Đồ: Outline Red chuẩn Giỏ Hàng */
+/* Nút Thao Tác Sơ Đồ: Chuẩn hóa kích thước đồng bộ 100% với nút Thao Tác bên Sơ Đồ Phụ Tùng */
 .btn-view-diagram {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 6px 16px;
+  gap: 6px;
+  height: 32px;
+  min-width: 88px;
+  padding: 0 14px;
   font-size: 0.84rem;
   font-weight: 600;
   border-radius: 8px;
@@ -819,6 +829,7 @@ const filteredModels = computed(() => {
   border: 1px solid var(--accent-color, #f82249);
   text-decoration: none;
   white-space: nowrap;
+  line-height: 1;
   transition: all 0.2s ease;
 }
 
@@ -831,7 +842,7 @@ const filteredModels = computed(() => {
   border-color: var(--accent-color, #f82249);
   color: #ffffff;
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(248, 34, 73, 0.25);
+  box-shadow: 0 4px 10px rgba(248, 34, 73, 0.22);
 }
 
 .btn-view-diagram:hover .arrow-icon {

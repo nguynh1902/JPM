@@ -734,8 +734,9 @@ const scrollToProducts = () => {
 .catalog-nav-list {
   display: flex;
   flex-direction: column;
-  gap: 3px;
-  padding-top: 4px;
+  gap: 4px;
+  padding: 4px 6px 4px 0;
+  overflow-x: hidden !important;
 }
 
 .catalog-nav-btn {
@@ -751,7 +752,7 @@ const scrollToProducts = () => {
   font-weight: 500;
   font-size: 0.88rem;
   color: #475569; /* Slate trung tính, mềm mại hơn so với tiêu đề Navy */
-  transition: all 0.2s ease;
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
   cursor: pointer;
   text-align: left;
 }
@@ -760,7 +761,7 @@ const scrollToProducts = () => {
   background: #f1f5f9;
   color: #0A1128;
   font-weight: 600;
-  transform: translateX(2px);
+  transform: translateX(4px);
 }
 
 .catalog-nav-btn.active {
@@ -768,6 +769,12 @@ const scrollToProducts = () => {
   border-color: rgba(248, 34, 73, 0.2);
   color: #f82249;
   font-weight: 700;
+}
+
+.catalog-nav-btn.active:hover {
+  background: rgba(248, 34, 73, 0.12);
+  color: #f82249;
+  transform: translateX(4px);
 }
 
 .catalog-nav-text {

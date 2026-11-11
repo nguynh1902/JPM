@@ -76,7 +76,7 @@
               <h3 class="catalog-sidebar-title mb-0">Cụm Chi Tiết</h3>
             </div>
             <div class="catalog-sidebar-body">
-              <div class="catalog-nav-list custom-scrollbar" style="max-height: calc(660px - 80px); overflow-y: auto;">
+              <div class="catalog-nav-list custom-scrollbar" style="max-height: calc(660px - 80px); overflow-y: auto; overflow-x: hidden;">
                 <div v-if="isLoading" class="p-3 text-center text-muted">Đang tải...</div>
                 <div v-else-if="diagramsList.length === 0" class="p-3 text-center text-muted">Chưa có sơ đồ nào.</div>
 
@@ -217,11 +217,11 @@
                           <th class="text-center" style="width: 40px; padding-left: 1rem;">
                             <input class="form-check-input custom-checkbox" type="checkbox" v-model="selectAll">
                           </th>
-                          <th class="text-center th-ref" style="width: 60px;">REF</th>
-                          <th class="text-start th-part">MÃ & TÊN PHỤ TÙNG</th>
-                          <th class="text-center th-qty" style="width: 90px;">SỐ LƯỢNG</th>
-                          <th class="text-center th-price" style="width: 130px;">GIÁ BÁN</th>
-                          <th class="text-center th-action" style="width: 110px;">THAO TÁC</th>
+                          <th class="text-center th-ref" style="width: 60px;">Ref</th>
+                          <th class="text-start th-part">Mã & Tên Phụ Tùng</th>
+                          <th class="text-center th-qty" style="width: 90px;">Số Lượng</th>
+                          <th class="text-center th-price" style="width: 130px;">Giá Bán</th>
+                          <th class="text-center th-action" style="width: 120px;">Thao Tác</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -262,9 +262,10 @@
                               {{ new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(part.phu_tung?.gia_ban || 0) }}
                             </span>
                           </td>
-                          <td class="text-center">
+                          <td class="text-center th-action">
                             <button @click.stop="addToCart(part)" class="btn btn-add-part" title="Thêm vào giỏ">
-                              <i class="bi bi-cart-plus me-1"></i> Thêm
+                              <i class="bi bi-cart-plus"></i>
+                              <span>Thêm</span>
                             </button>
                           </td>
                         </tr>
@@ -947,8 +948,9 @@ const startSidebarDrag = () => {
 .catalog-nav-list {
   display: flex;
   flex-direction: column;
-  gap: 3px;
-  padding-top: 4px;
+  gap: 4px;
+  padding: 4px 6px 4px 0;
+  overflow-x: hidden !important;
 }
 
 .catalog-nav-btn {
@@ -964,7 +966,7 @@ const startSidebarDrag = () => {
   font-weight: 500;
   font-size: 0.88rem;
   color: #475569;
-  transition: all 0.2s ease;
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
   cursor: pointer;
   text-align: left;
 }
@@ -973,7 +975,7 @@ const startSidebarDrag = () => {
   background: #f1f5f9;
   color: #0A1128;
   font-weight: 600;
-  transform: translateX(2px);
+  transform: translateX(4px);
 }
 
 .catalog-nav-btn.active {
@@ -981,6 +983,12 @@ const startSidebarDrag = () => {
   border-color: rgba(248, 34, 73, 0.2);
   color: #f82249;
   font-weight: 700;
+}
+
+.catalog-nav-btn.active:hover {
+  background: rgba(248, 34, 73, 0.12);
+  color: #f82249;
+  transform: translateX(4px);
 }
 
 .catalog-nav-text {
@@ -1018,17 +1026,17 @@ const startSidebarDrag = () => {
 }
 
 .custom-table thead th {
-  background-color: #f8fafc !important;
-  color: #475569 !important;
-  font-family: var(--default-font, 'Roboto', sans-serif);
-  font-size: 0.78rem;
-  font-weight: 600;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
+  background-color: #ffffff !important;
+  color: #0A1128 !important;
+  font-family: var(--heading-font, 'Raleway', sans-serif);
+  font-size: 0.88rem;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  text-transform: none;
   border-top: 1px solid #edf2f7 !important;
-  border-bottom: 1px solid #e2e8f0 !important;
-  padding-top: 11px;
-  padding-bottom: 11px;
+  border-bottom: 2px solid #e2e8f0 !important;
+  padding-top: 13px;
+  padding-bottom: 13px;
   vertical-align: middle;
 }
 
@@ -1116,16 +1124,24 @@ const startSidebarDrag = () => {
   font-variant-numeric: tabular-nums;
 }
 
+/* Nút Thêm Vào Giỏ: Chuẩn hóa kích thước đồng bộ 100% với nút Sơ Đồ bên Thương Hiệu */
 .btn-add-part {
-  padding: 5px 14px;
-  font-size: 0.82rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 32px;
+  min-width: 88px;
+  padding: 0 14px;
+  font-size: 0.84rem;
   font-weight: 600;
-  border-radius: var(--jpm-radius-control, 8px);
+  border-radius: 8px;
   color: var(--accent-color, #f82249);
   background-color: #ffffff;
   border: 1px solid var(--accent-color, #f82249);
-  transition: all 0.2s ease;
   white-space: nowrap;
+  line-height: 1;
+  transition: all 0.2s ease;
 }
 
 .btn-add-part:hover {
@@ -1133,7 +1149,7 @@ const startSidebarDrag = () => {
   border-color: var(--accent-color, #f82249);
   color: #ffffff;
   transform: translateY(-1px);
-  box-shadow: 0 4px 10px rgba(248, 34, 73, 0.2);
+  box-shadow: 0 4px 10px rgba(248, 34, 73, 0.22);
 }
 
 .price-text {
@@ -1484,5 +1500,21 @@ const startSidebarDrag = () => {
   --bs-table-accent-bg: transparent !important;
   --bs-table-bg-state: transparent !important;
   box-shadow: none !important;
+}
+
+/* Custom Slim Scrollbar cho danh sách Cụm Chi Tiết */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 5px;
+  height: 0;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
 }
 </style>
