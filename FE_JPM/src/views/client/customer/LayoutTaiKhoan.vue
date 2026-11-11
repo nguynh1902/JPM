@@ -1,5 +1,5 @@
 <template>
-  <main class="account-portal-layout flex-grow-1" style="background-color: #f8fafc; min-height: 100vh; padding-top: 110px; padding-bottom: 60px;">
+  <div class="account-portal-layout flex-grow-1 inner-page-section" style="background-color: #f8fafc; min-height: 100vh; padding-bottom: 60px;">
     <section class="py-0" style="background: transparent;">
       <div class="container">
         
@@ -30,7 +30,7 @@
 
     <!-- Global Preloader cho toàn khu vực -->
     <div id="preloader" v-if="isPageLoading"></div>
-  </main>
+  </div>
 </template>
 
 <script setup>

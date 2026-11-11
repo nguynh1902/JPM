@@ -1,10 +1,10 @@
 <template>
-  <main class="cart-page-bg main-page">
+  <div class="cart-page-bg main-page">
     
     <!-- ========================================================
          HEADER SECTION (Khôi phục nguyên bản 2 hôm trước)
          ======================================================== -->
-    <section id="cart" class="section pb-5" style="padding-top: 110px;">
+    <section id="cart" class="section pb-5 inner-page-section">
       <div class="container">
         
         <!-- Header -->
@@ -313,7 +313,7 @@
       </div>
     </Teleport>
 
-  </main>
+  </div>
 </template>
 
 <script>

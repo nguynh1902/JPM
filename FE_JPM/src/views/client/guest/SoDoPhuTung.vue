@@ -1,6 +1,6 @@
 <template>
-  <main class="interactive-diagram-page main-page">
-    <section class="section" style="padding-top: 110px;">
+  <div class="interactive-diagram-page main-page">
+    <section class="section inner-page-section">
       <div class="container">
       
       <!-- PAGE TITLE & BREADCRUMB -->
@@ -58,7 +58,7 @@
             <p class="text-muted mb-4" style="max-width: 600px; margin: 0 auto; font-size: 1.05rem; line-height: 1.6;">
               Model <strong class="text-danger">{{ modelName }}</strong> hiện tại chưa có dữ liệu sơ đồ phân rã phụ tùng nào. Vui lòng quay lại sau hoặc liên hệ với bộ phận kỹ thuật của JPM Marine để được hỗ trợ tra cứu trực tiếp.
             </p>
-            <router-link to="/san-pham" class="btn btn-jpm px-4 py-2 rounded shadow-sm fw-bold text-uppercase mt-2">
+            <router-link to="/san-pham" class="btn btn-danger px-4 py-2 fw-bold text-uppercase mt-2 btn-back-shop">
               <i class="bi bi-cart-dash me-2"></i> Trở về Cửa Hàng
             </router-link>
           </div>
@@ -71,23 +71,24 @@
         
         <!-- CỘT TRÁI: Cụm Chi Tiết -->
         <div class="jpm-split-sidebar dynamic-sidebar mb-4 mb-lg-0 pe-lg-2" :style="{ width: sidebarRatio + '%' }">
-          <div class="card sticky-sidebar border-0 shadow-sm" style="border-radius: 16px; overflow: hidden;">
+          <div class="card sticky-sidebar diagram-panel-card">
             <div class="card-header bg-white border-bottom py-3 px-4">
               <h4 class="mb-0 jpm-card-title">Cụm Chi Tiết</h4>
             </div>
-            <div class="list-group list-group-flush category-list">
+            <div class="category-list-body p-2 d-flex flex-column gap-1">
               <div v-if="isLoading" class="p-3 text-center text-muted">Đang tải...</div>
               <div v-else-if="diagramsList.length === 0" class="p-3 text-center text-muted">Chưa có sơ đồ nào.</div>
 
               <button 
                 v-for="diagram in diagramsList" 
                 :key="diagram.id"
-                class="list-group-item list-group-item-action text-start py-3 px-4 d-flex align-items-center"
+                type="button"
+                class="diagram-sidebar-btn"
                 :class="{ active: activeComponentId === diagram.id }"
                 @click="activeComponentId = diagram.id"
               >
-                <span class="flex-grow-1">{{ diagram.nhom_phu_tung?.ten_nhom || "N/A" }}</span>
-                <i class="bi bi-chevron-right chevron-icon"></i>
+                <span class="flex-grow-1 text-truncate">{{ diagram.nhom_phu_tung?.ten_nhom || "N/A" }}</span>
+                <i class="bi bi-chevron-right sidebar-btn-arrow"></i>
               </button>
             </div>
           </div>
@@ -105,7 +106,7 @@
             
             <!-- NỬA TRÁI: BẢN VẼ (Pan + Zoom) -->
             <div :style="{ width: splitRatio + '%' }" class="pe-2">
-              <div class="card sticky-sidebar border-0 shadow-sm" style="border-radius: 16px; overflow: hidden; height: 600px;">
+              <div class="card sticky-sidebar diagram-panel-card" style="height: 600px;">
                 <div class="card-header bg-white border-bottom py-3 px-4 d-flex justify-content-between align-items-center" v-if="activeComponentId">
                   <h4 class="mb-0 jpm-card-title text-truncate">Sơ đồ phân rã: <span class="text-danger">{{ activeComponentName }}</span></h4>
                 </div>
@@ -115,14 +116,14 @@
                     <!-- Floating Toolbar -->
                     <div class="position-absolute shadow-sm d-flex align-items-center" style="top: 0; right: 0; z-index: 1060; background: white; border-radius: 0 0 0 6px; border-bottom: 1px solid #e2e8f0; border-left: 1px solid #e2e8f0; padding: 4px 6px;">
                       <button class="btn btn-sm btn-icon" @click="zoomOut" title="Thu nhỏ"><i class="bi bi-dash-lg"></i></button>
-                      <span class="fw-bold px-2" style="color: #0e1b4d; font-size: 0.85rem; min-width: 48px; text-align: center; cursor: pointer;" @click="resetZoom" title="Đặt lại tỷ lệ">{{ Math.round(zoomLevel * 100) }}%</span>
+                      <span class="fw-bold px-2" style="color: var(--jpm-color-navy-dark, #0a1128); font-size: 0.85rem; min-width: 48px; text-align: center; cursor: pointer;" @click="resetZoom" title="Đặt lại tỷ lệ">{{ Math.round(zoomLevel * 100) }}%</span>
                       <button class="btn btn-sm btn-icon" @click="zoomIn" title="Phóng to"><i class="bi bi-plus-lg"></i></button>
                       <div class="vr mx-1 my-1" style="opacity: 0.1; min-height: 20px;"></div>
                       <button class="btn btn-sm btn-icon" @click="toggleFullScreen" :title="isFullScreen ? 'Đóng toàn màn hình' : 'Toàn màn hình'" :class="{ 'text-danger': isFullScreen }">
                         <i class="bi" :class="isFullScreen ? 'bi-fullscreen-exit' : 'bi-arrows-fullscreen'"></i>
                       </button>
                     </div>
-                    <!-- PAN + ZOOM VIEWPORT (Boats.net style) -->
+                    <!-- PAN + ZOOM VIEWPORT (Boats.net style with Interactive Hotspot Pins DEC-02) -->
                     <div 
                       ref="diagramViewport"
                       :class="{ 'is-panning': isPanning, 'fullscreen-mode': isFullScreen }"
@@ -130,8 +131,47 @@
                       @wheel.prevent="handleWheel"
                       style="overflow: hidden; cursor: grab; width: 100%; flex: 1; min-height: 320px; display: flex; align-items: center; justify-content: center; background: #f8f9fa; user-select: none;"
                     >
-                      <div :style="{ transform: `translate(${panX}px, ${panY}px) scale(${zoomLevel})`, transformOrigin: 'center center', transition: isPanning ? 'none' : 'transform 0.1s ease' }">
-                        <img v-if="activeDiagram?.hinh_anh" :src="getImageUrl(activeDiagram.hinh_anh)" alt="Sơ đồ phân rã" style="max-width: 100%; max-height: 400px; object-fit: contain; display: block; pointer-events: none;" draggable="false">
+                      <div class="diagram-stage-container position-relative" :style="{ transform: `translate(${panX}px, ${panY}px) scale(${zoomLevel})`, transformOrigin: 'center center', transition: isPanning ? 'none' : 'transform 0.1s ease' }">
+                        <div v-if="activeDiagram?.hinh_anh" class="position-relative d-inline-block">
+                          <img :src="getImageUrl(activeDiagram.hinh_anh)" alt="Sơ đồ phân rã" style="max-width: 100%; max-height: 480px; object-fit: contain; display: block; pointer-events: none;" draggable="false">
+                          <!-- HOTSPOTS OVERLAY LAYER -->
+                          <div v-if="hotspotParts.length > 0" class="hotspot-overlay-layer">
+                            <div 
+                              v-for="part in hotspotParts" 
+                              :key="part.id"
+                              class="hotspot-pin-anchor"
+                              :style="{ left: `${getHotspotX(part)}%`, top: `${getHotspotY(part)}%` }"
+                            >
+                              <button
+                                type="button"
+                                class="hotspot-pin-btn"
+                                :class="{ 
+                                  'pin-active': isPartSelected(part),
+                                  'pin-hovered': hoveredPartCode === getPartCode(part)
+                                }"
+                                :title="`Ref #${part.ref_number || ''}: ${part.phu_tung?.ma_phu_tung || ''}`"
+                                @click.stop="selectPartFromPin(part)"
+                                @mouseenter="hoveredPartCode = getPartCode(part)"
+                                @mouseleave="hoveredPartCode = null"
+                              >
+                                <span class="pin-number">{{ part.ref_number || '•' }}</span>
+                                <span v-if="isPartSelected(part)" class="pin-radar-ring"></span>
+                              </button>
+
+                              <!-- MINI TOOLTIP ON HOVER OR ACTIVE -->
+                              <div 
+                                v-if="hoveredPartCode === getPartCode(part) || (isPartSelected(part) && hoveredPartCode === null)" 
+                                class="hotspot-tooltip shadow-sm"
+                              >
+                                <div class="fw-bold d-flex align-items-center gap-1 text-danger">
+                                  <span class="badge bg-danger text-white px-1 py-0 me-1" style="font-size: 0.65rem;">#{{ part.ref_number }}</span>
+                                  <span>{{ part.phu_tung?.ma_phu_tung }}</span>
+                                </div>
+                                <div class="text-truncate text-white small" style="max-width: 180px;">{{ part.phu_tung?.ten_phu_tung }}</div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
                         <div v-else class="text-center p-4">
                           <i class="bi bi-image text-muted" style="font-size: 5rem;"></i>
                           <p class="text-muted mt-2">Bản vẽ của {{ activeComponentName }} đang được cập nhật...</p>
@@ -155,29 +195,29 @@
 
             <!-- NỬA PHẢI: BẢNG SẢN PHẨM -->
             <div :style="{ width: (100 - splitRatio) + '%' }" class="ps-2 d-flex flex-column">
-              <div class="card flex-grow-1 border-0 shadow-sm" style="border-radius: 16px; overflow: hidden;" v-if="activeComponentId">
-                <div class="card-header bg-white py-3 px-4 border-bottom d-flex flex-wrap justify-content-between align-items-center gap-2">
+              <div class="card flex-grow-1 diagram-panel-card" v-if="activeComponentId">
+                <div class="card-header bg-white py-3 px-4 border-bottom d-flex flex-wrap justify-content-between align-items-center gap-2" style="min-height: 60px;">
                   <h4 class="mb-0 jpm-card-title text-truncate" style="max-width: 100%;">Danh sách Phụ Tùng</h4>
                   <div class="d-flex align-items-center gap-2 ms-auto">
-                    <span class="badge rounded-pill px-3 py-2 text-nowrap" style="background-color: #f1f3f7; color: #0e1b4d; font-weight: 700;">{{ currentParts.length }} Phụ Tùng</span>
-                    <button @click="addAllSelectedToCart" v-if="selectedParts.length > 0" class="btn btn-outline-jpm btn-sm rounded px-3 py-1 fw-bold text-nowrap d-inline-flex align-items-center justify-content-center shadow-none" style="transition: all 0.3s ease;" title="Thêm tất cả đã chọn vào giỏ">
+                    <span class="badge-item-count">{{ currentParts.length }} Phụ Tùng</span>
+                    <button @click="addAllSelectedToCart" v-if="selectedParts.length > 0" class="btn btn-outline-danger btn-sm px-3 py-1 fw-bold text-nowrap d-inline-flex align-items-center justify-content-center btn-rounded-control" title="Thêm tất cả đã chọn vào giỏ">
                       <i class="bi bi-cart-plus me-1"></i> Thêm ({{ selectedParts.length }})
                     </button>
                   </div>
                 </div>
-                <div class="card-body p-0 d-flex flex-column h-100" style="">
+                <div class="card-body p-0 d-flex flex-column h-100">
                   <div class="table-responsive flex-grow-1 hide-x-scroll">
                     <table class="table custom-table mb-0 align-middle table-hover table-jpm">
-                      <thead style="background-color: #f8f9fa; position: sticky; top: 0; z-index: 2;">
+                      <thead>
                         <tr>
-                          <th class="text-center border-bottom-0" style="width: 40px; padding-left: 1rem; color: #a1acb8; background-color: #f8f9fa;">
+                          <th class="text-center" style="width: 40px; padding-left: 1rem;">
                             <input class="form-check-input custom-checkbox" type="checkbox" v-model="selectAll">
                           </th>
-                          <th class="text-center text-uppercase border-bottom-0" style="width: 50px; color: #a1acb8; font-size: 0.75rem; letter-spacing: 0.5px; background-color: #f8f9fa;">Ref</th>
-                          <th class="text-uppercase border-bottom-0" style="color: #a1acb8; font-size: 0.75rem; letter-spacing: 0.5px; background-color: #f8f9fa;">Mã & Tên</th>
-                          <th class="text-center text-uppercase border-bottom-0" style="width: 100px; color: #a1acb8; font-size: 0.75rem; letter-spacing: 0.5px; background-color: #f8f9fa;">Số lượng</th>
-                          <th class="text-center text-uppercase border-bottom-0" style="width: 120px; color: #a1acb8; font-size: 0.75rem; letter-spacing: 0.5px; background-color: #f8f9fa;">Giá bán</th>
-                          <th class="text-center text-uppercase border-bottom-0" style="color: #a1acb8; font-size: 0.75rem; letter-spacing: 0.5px; background-color: #f8f9fa;">Thao tác</th>
+                          <th class="text-center th-ref" style="width: 60px;">REF</th>
+                          <th class="text-start th-part">MÃ & TÊN PHỤ TÙNG</th>
+                          <th class="text-center th-qty" style="width: 90px;">SỐ LƯỢNG</th>
+                          <th class="text-center th-price" style="width: 130px;">GIÁ BÁN</th>
+                          <th class="text-center th-action" style="width: 110px;">THAO TÁC</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -188,38 +228,43 @@
                           v-for="part in currentParts" 
                           :key="part.id" 
                           class="table-row-hover" 
-                          :class="{ 'highlighted-part-row': targetPartCode && part.phu_tung?.ma_phu_tung?.toUpperCase() === targetPartCode }"
-                          :data-part-code="part.phu_tung?.ma_phu_tung?.toUpperCase()"
-                          style="transition: all 0.2s ease;"
+                          :class="{ 
+                            'highlighted-part-row': isPartSelected(part),
+                            'table-hover-highlight': hoveredPartCode === getPartCode(part)
+                          }"
+                          :data-part-code="getPartCode(part)"
+                          @mouseenter="hoveredPartCode = getPartCode(part)"
+                          @mouseleave="hoveredPartCode = null"
+                          @click="selectPartFromRow(part)"
                         >
                           <td class="text-center" style="padding-left: 1rem;">
                             <input class="form-check-input custom-checkbox" type="checkbox" :value="part.id" v-model="selectedParts">
                           </td>
                           <td class="text-center">
-                            <span class="fw-bold text-secondary" style="font-size: 0.95rem;">{{ part.ref_number }}</span>
+                            <span class="spec-ref-text">{{ part.ref_number || '•' }}</span>
                           </td>
-                          <td>
-                            <router-link :to="`/chi-tiet-phu-tung/${part.phu_tung?.ma_phu_tung}${diagramResponse?.data?.model?.id ? '?from_model_id=' + diagramResponse.data.model.id : ''}`" class="text-decoration-none d-block">
+                          <td class="text-start">
+                            <router-link :to="`/chi-tiet-phu-tung/${part.phu_tung?.ma_phu_tung}${diagramResponse?.data?.model?.id ? '?from_model_id=' + diagramResponse.data.model.id : ''}`" class="part-item-link text-decoration-none d-block">
                               <div class="d-flex align-items-center gap-2">
-                                <span class="fw-bold model-code" style="color: var(--heading-color);">{{ part.phu_tung?.ma_phu_tung }}</span>
-                                <span v-if="targetPartCode && part.phu_tung?.ma_phu_tung?.toUpperCase() === targetPartCode" class="badge bg-danger text-white rounded-pill px-2 py-1" style="font-size: 0.7rem;">
+                                <span class="fw-bold model-code">{{ part.phu_tung?.ma_phu_tung }}</span>
+                                <span v-if="isPartSelected(part)" class="badge-viewing">
                                   <i class="bi bi-geo-alt-fill me-1"></i>Đang xem
                                 </span>
                               </div>
-                              <div class="text-muted small fw-medium">{{ part.phu_tung?.ten_phu_tung }}</div>
+                              <div class="part-desc text-muted fw-medium">{{ part.phu_tung?.ten_phu_tung }}</div>
                             </router-link>
                           </td>
                           <td class="text-center">
-                            <span class="fw-semibold text-secondary" style="font-size: 0.95rem;">{{ part.qty || 1 }}</span>
+                            <span class="spec-qty-text">{{ part.qty || 1 }}</span>
                           </td>
                           <td class="text-center">
-                            <span v-if="part.phu_tung?.is_gia_lien_he" class="text-danger fw-bold" style="font-size: 0.95rem;">Liên hệ</span>
-                            <span v-else class="fw-bold text-nowrap text-danger" style="font-size: 0.95rem;">
+                            <span v-if="part.phu_tung?.is_gia_lien_he" class="text-danger fw-bold" style="font-size: 0.92rem;">Liên hệ</span>
+                            <span v-else class="fw-bold text-nowrap text-danger font-tabular" style="font-size: 0.92rem;">
                               {{ new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(part.phu_tung?.gia_ban || 0) }}
                             </span>
                           </td>
                           <td class="text-center">
-                            <button @click="addToCart(part)" class="btn btn-outline-danger btn-sm rounded px-3 py-1 fw-bold text-nowrap d-inline-flex align-items-center justify-content-center shadow-none" title="Thêm vào giỏ" style="transition: all 0.3s ease;">
+                            <button @click.stop="addToCart(part)" class="btn btn-add-part" title="Thêm vào giỏ">
                               <i class="bi bi-cart-plus me-1"></i> Thêm
                             </button>
                           </td>
@@ -237,7 +282,7 @@
       </div>
       </div>
     </section>
-  </main>
+  </div>
 </template>
 
 <script setup>
@@ -423,6 +468,57 @@ const selectAll = computed({
   }
 });
 
+// ─── HOTSPOT PINS & REACTIVE BRIDGE (DEC-02) ──────────────────────────────────
+const selectedPinPartCode = ref('');
+const hoveredPartCode = ref(null);
+
+watch(targetPartCode, (code) => {
+  if (code) {
+    selectedPinPartCode.value = code;
+  }
+}, { immediate: true });
+
+const getPartCode = (part) => {
+  return part?.phu_tung?.ma_phu_tung ? part.phu_tung.ma_phu_tung.toUpperCase() : '';
+};
+
+const getHotspotX = (part) => {
+  if (part.x !== null && part.x !== undefined && part.x !== '') return parseFloat(part.x);
+  if (part.vi_tri_x !== null && part.vi_tri_x !== undefined && part.vi_tri_x !== '') return parseFloat(part.vi_tri_x);
+  return null;
+};
+
+const getHotspotY = (part) => {
+  if (part.y !== null && part.y !== undefined && part.y !== '') return parseFloat(part.y);
+  if (part.vi_tri_y !== null && part.vi_tri_y !== undefined && part.vi_tri_y !== '') return parseFloat(part.vi_tri_y);
+  return null;
+};
+
+const hotspotParts = computed(() => {
+  return currentParts.value.filter(part => getHotspotX(part) !== null && getHotspotY(part) !== null);
+});
+
+const isPartSelected = (part) => {
+  const code = getPartCode(part);
+  if (!code) return false;
+  if (selectedPinPartCode.value && selectedPinPartCode.value === code) return true;
+  if (targetPartCode.value && targetPartCode.value === code) return true;
+  return false;
+};
+
+const selectPartFromPin = (part) => {
+  const code = getPartCode(part);
+  if (!code) return;
+  selectedPinPartCode.value = code;
+  scrollToHighlightedRow(code);
+};
+
+const selectPartFromRow = (part) => {
+  const code = getPartCode(part);
+  if (!code) return;
+  selectedPinPartCode.value = code;
+};
+
 // ─── PAN + ZOOM (Boats.net style) ─────────────────────────────────────────────
 const zoomLevel = ref(1);
 const panX = ref(0);
@@ -550,6 +646,204 @@ const startSidebarDrag = () => {
   padding-bottom: 50px;
 }
 
+/* ========================================================
+   1. UNIFIED CARD PANELS (DEC-01 STANDARD)
+   ======================================================== */
+.diagram-panel-card {
+  border-radius: var(--jpm-radius-card, 12px) !important;
+  border: 1px solid #edf2f7 !important;
+  background: #ffffff;
+  box-shadow: 0 4px 14px rgba(10, 17, 40, 0.03);
+  overflow: hidden;
+}
+
+.jpm-card-title {
+  font-family: var(--heading-font, 'Raleway', sans-serif);
+  font-weight: 700;
+  font-size: 1rem;
+  color: #0A1128;
+}
+
+.badge-item-count {
+  background: #fff1f2;
+  color: #e11d48;
+  border: 1px solid #fecdd3;
+  font-size: 11.5px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: var(--jpm-radius-badge, 6px);
+  display: inline-flex;
+  align-items: center;
+  letter-spacing: 0.3px;
+}
+
+.btn-rounded-control {
+  border-radius: var(--jpm-radius-control, 8px) !important;
+}
+
+.btn-back-shop {
+  border-radius: var(--jpm-radius-control, 8px);
+}
+
+/* ========================================================
+   2. SIDEBAR NAVIGATION: CỤM CHI TIẾT (ĐỒNG BỘ THUONGHIEU.VUE)
+   ======================================================== */
+.diagram-sidebar-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  border: 1px solid transparent;
+  background: transparent;
+  padding: 11px 16px;
+  border-radius: var(--jpm-radius-control, 8px);
+  font-family: var(--default-font, 'Roboto', sans-serif);
+  font-weight: 500;
+  font-size: 0.9rem;
+  color: #334155;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  text-align: left;
+}
+
+.diagram-sidebar-btn:hover {
+  background: #f8fafc;
+  color: #0A1128;
+}
+
+.diagram-sidebar-btn.active {
+  background: rgba(248, 34, 73, 0.07);
+  border-color: rgba(248, 34, 73, 0.2);
+  color: var(--accent-color, #f82249);
+  font-weight: 700;
+}
+
+.diagram-sidebar-btn .sidebar-btn-arrow {
+  font-size: 0.75rem;
+  opacity: 0.35;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.diagram-sidebar-btn:hover .sidebar-btn-arrow {
+  opacity: 0.8;
+  transform: translateX(2px);
+}
+
+.diagram-sidebar-btn.active .sidebar-btn-arrow {
+  opacity: 1;
+  color: var(--accent-color, #f82249);
+  transform: translateX(3px);
+}
+
+/* ========================================================
+   3. DATA TABLE PHỤ TÙNG (ĐỒNG BỘ 100% BẢNG MODEL & GIỎ HÀNG)
+   ======================================================== */
+.custom-table {
+  width: 100%;
+}
+
+.custom-table thead th {
+  background-color: #ffffff !important;
+  color: #0A1128 !important;
+  font-family: var(--heading-font, 'Raleway', sans-serif);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  border-bottom: 2px solid #e2e8f0 !important;
+  padding-top: 14px;
+  padding-bottom: 14px;
+  vertical-align: middle;
+}
+
+.custom-table tbody td {
+  padding: 14px 10px;
+  border-bottom: 1px solid #f1f5f9;
+  vertical-align: middle;
+  background-color: #ffffff;
+}
+
+.table-row-hover {
+  transition: background-color 0.15s ease;
+}
+
+.table-row-hover:hover td {
+  background-color: #f8fafc !important;
+}
+
+.spec-ref-text {
+  color: #0A1128;
+  font-weight: 700;
+  font-size: 0.92rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.part-item-link {
+  transition: color 0.15s ease;
+}
+
+.part-item-link .model-code {
+  color: #0A1128;
+  font-family: var(--heading-font, 'Raleway', sans-serif);
+  font-size: 0.95rem;
+  transition: color 0.15s ease;
+}
+
+.part-item-link:hover .model-code {
+  color: var(--accent-color, #f82249);
+}
+
+.part-desc {
+  color: #64748b;
+  font-size: 0.835rem;
+  line-height: 1.45;
+  white-space: normal;
+  word-break: break-word;
+  margin-top: 3px;
+}
+
+.badge-viewing {
+  background: var(--accent-color, #f82249);
+  color: #ffffff;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: var(--jpm-radius-badge, 6px);
+  display: inline-flex;
+  align-items: center;
+}
+
+.spec-qty-text {
+  color: #0A1128;
+  font-weight: 600;
+  font-size: 0.92rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.font-tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+.btn-add-part {
+  padding: 5px 14px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  border-radius: var(--jpm-radius-control, 8px);
+  color: var(--accent-color, #f82249);
+  background-color: #ffffff;
+  border: 1px solid var(--accent-color, #f82249);
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.btn-add-part:hover {
+  background-color: var(--accent-color, #f82249);
+  border-color: var(--accent-color, #f82249);
+  color: #ffffff;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(248, 34, 73, 0.2);
+}
+
 .price-text {
   color: var(--accent-color);
   font-size: 0.95rem;
@@ -587,12 +881,12 @@ const startSidebarDrag = () => {
 }
 .resizer-handle {
   width: 4px;
-    margin-top: 270px;
-    position: sticky;
-    top: 100px;
+  margin-top: 270px;
+  position: sticky;
+  top: 100px;
   height: 60px;
   background-color: #dee2e6;
-  border-radius: 4px;
+  border-radius: var(--jpm-radius-badge, 6px);
   transition: all 0.2s ease;
 }
 .resizer:hover .resizer-handle,
@@ -646,18 +940,97 @@ const startSidebarDrag = () => {
     width: 100% !important;
   }
 }
+
+/* HOTSPOTS INTERACTIVE LAYER (DEC-02) */
+.hotspot-overlay-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.hotspot-pin-anchor {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  pointer-events: auto;
+  z-index: 5;
+}
+
+.hotspot-pin-btn {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--jpm-color-navy-dark, #0A1128);
+  color: #ffffff;
+  border: 1.5px solid #ffffff;
+  box-shadow: 0 2px 6px rgba(10, 17, 40, 0.45);
+  font-family: 'Roboto Mono', monospace;
+  font-size: 11px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  outline: none;
+}
+
+.hotspot-pin-btn:hover,
+.hotspot-pin-btn.pin-hovered {
+  background: var(--jpm-color-red-marine, #F82249);
+  transform: scale(1.2);
+  z-index: 10;
+  box-shadow: 0 4px 10px rgba(248, 34, 73, 0.4);
+}
+
+.hotspot-pin-btn.pin-active {
+  background: var(--jpm-color-red-marine, #F82249);
+  color: #ffffff;
+  border-color: #ffffff;
+  transform: scale(1.3);
+  z-index: 15;
+  box-shadow: 0 0 0 3px rgba(248, 34, 73, 0.4);
+}
+
+.pin-radar-ring {
+  position: absolute;
+  top: -4px;
+  left: -4px;
+  right: -4px;
+  bottom: -4px;
+  border-radius: 50%;
+  border: 2px solid var(--jpm-color-red-marine, #F82249);
+  animation: radar-ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;
+  pointer-events: none;
+}
+
+@keyframes radar-ping {
+  0% { transform: scale(1); opacity: 0.9; }
+  75%, 100% { transform: scale(2.2); opacity: 0; }
+}
+
+.hotspot-tooltip {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-6px);
+  background: rgba(10, 17, 40, 0.92);
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+  padding: 4px 8px;
+  border-radius: 6px;
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 20;
+  font-size: 11px;
+}
+
+.table-hover-highlight {
+  background-color: rgba(248, 34, 73, 0.05) !important;
+}
 </style>
-
-
-
-
-
-
-
-
-
-
-
-
-
-

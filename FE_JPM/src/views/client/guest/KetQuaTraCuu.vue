@@ -1,6 +1,6 @@
 <template>
-  <main class="tra-cuu-results-page main-page" style="position: relative; z-index: 10; min-height: 130vh;">
-    <section class="section pb-5" style="padding-top: 110px;">
+  <div class="tra-cuu-results-page main-page" style="position: relative; z-index: 10; min-height: 130vh;">
+    <section class="section pb-5 inner-page-section">
       <div class="container">
 
         <!-- PAGE TITLE -->
@@ -353,7 +353,7 @@
         </div>
       </div>
     </section>
-  </main>
+  </div>
 </template>
 
 <script>

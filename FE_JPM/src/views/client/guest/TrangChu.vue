@@ -299,7 +299,7 @@
           <div class="col-lg-5">
             <!-- Skeleton -->
             <div v-if="!videoArticle" class="d-flex flex-column h-100">
-              <div class="skeleton-box skeleton-box-full mb-3" style="aspect-ratio: 16/10; border-radius: 12px !important;"></div>
+              <div class="skeleton-box skeleton-box-full mb-3"></div>
               <div class="px-1">
                 <div class="skeleton-line mb-2 w-50"></div>
                 <div class="skeleton-line mb-2 w-100"></div>
@@ -425,7 +425,7 @@
       aria-hidden="true"
     >
       <div class="modal-dialog modal-dialog-centered modal-lg">
-        <div class="modal-content bg-dark border-0 shadow-lg overflow-hidden text-white" style="border-radius: var(--jpm-radius-modal, 12px) !important;">
+        <div class="modal-content bg-dark border-0 shadow-lg overflow-hidden text-white video-modal-content">
           <div class="modal-header border-0 pb-0 pt-3 px-3 d-flex justify-content-between align-items-center">
             <h6 class="modal-title fw-semibold text-truncate pe-3" id="homeNewsVideoModalLabel">
               <i class="bi bi-play-circle-fill text-danger me-2"></i>{{ activeVideoItem?.title }}
@@ -439,7 +439,7 @@
             ></button>
           </div>
           <div class="modal-body p-2 p-md-3">
-            <div class="ratio ratio-16x9 overflow-hidden bg-black shadow" style="border-radius: var(--jpm-radius-control, 8px);">
+            <div class="ratio ratio-16x9 overflow-hidden bg-black shadow video-ratio-box">
               <iframe
                 v-if="activeVideoItem && activeVideoEmbedUrl"
                 :src="activeVideoEmbedUrl"
@@ -689,9 +689,6 @@ export default {
       this.searchKeyword = keyword;
       this.searchParts();
     },
-    goToCategory(cat) {
-      this.$router.push('/danh-sach-phu-tung');
-    },
     addToCart(prod) {
       this.cartStore.addItem(prod, 1);
       this.$toast.success("Thêm sản phẩm thành công");
@@ -801,6 +798,20 @@ export default {
   border-radius: 12px !important;
   width: 175px;
   aspect-ratio: 4/3;
+}
+
+.skeleton-box-full {
+  border-radius: var(--jpm-radius-card, 12px) !important;
+  aspect-ratio: 16/10;
+  width: 100%;
+}
+
+.video-modal-content {
+  border-radius: var(--jpm-radius-modal, 12px) !important;
+}
+
+.video-ratio-box {
+  border-radius: var(--jpm-radius-control, 8px);
 }
 
 @media (max-width: 576px) {

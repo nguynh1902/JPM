@@ -1,6 +1,6 @@
 <template>
-  <main class="main-page">
-    <section class="section" style="padding-top: 110px;">
+  <div class="main-page">
+    <section class="section inner-page-section">
       <div class="container">
         
         <!-- SKELETON LOADING -->
@@ -357,7 +357,7 @@
           </div>
         </div>
       </section>
-  </main>
+  </div>
 
     <!-- GARAGE MODAL -->
     <div class="modal fade" id="addToGarageModal" tabindex="-1" aria-hidden="true">

@@ -400,30 +400,30 @@
 
           <div class="action-buttons">
             <!-- Nút xem sản phẩm (Mở Modal) -->
-            <button type="button" class="btn-shopee btn-shopee-outline" @click="openProductModal(order)">
+            <button type="button" class="btn btn-outline-secondary btn-order-action" @click="openProductModal(order)">
               <i class="bi bi-list-ul me-1"></i> Xem Sản Phẩm ({{ getItemProducts(order).length }})
             </button>
 
             <!-- Nếu có token báo giá: Cho phép mở xem trang Báo giá chi tiết -->
-            <router-link v-if="order.token" :to="'/bao-gia/' + order.token" class="btn-shopee btn-shopee-outline">
+            <router-link v-if="order.token" :to="'/bao-gia/' + order.token" class="btn btn-outline-secondary btn-order-action">
               <i class="bi bi-receipt me-1"></i> Bảng Báo Giá Chi Tiết
             </router-link>
 
             <!-- Bước 1: Liên hệ hỗ trợ -->
             <template v-if="getStage(order) === 1">
-              <a :href="'https://zalo.me/0123456789?text=' + encodeURIComponent('Chào JPM, tôi muốn hỏi về đơn hàng mã #' + order.code)" target="_blank" class="btn-shopee btn-shopee-primary">
+              <a :href="'https://zalo.me/0123456789?text=' + encodeURIComponent('Chào JPM, tôi muốn hỏi về đơn hàng mã #' + order.code)" target="_blank" class="btn btn-danger btn-order-action">
                 <i class="bi bi-chat-dots me-1"></i> Chat Kỹ Thuật
               </a>
             </template>
 
             <!-- Bước 2: Từ chối hoặc Quét QR Cọc -->
             <template v-else-if="getStage(order) === 2">
-              <button type="button" class="btn-shopee btn-shopee-outline text-danger" @click="handleRejectQuote(order)">
+              <button type="button" class="btn btn-outline-danger btn-order-action" @click="handleRejectQuote(order)">
                 Từ chối
               </button>
               <button 
                 type="button" 
-                class="btn-shopee btn-shopee-primary fw-bold"
+                class="btn btn-danger btn-order-action fw-bold"
                 @click="toggleVietQR(order)"
               >
                 <i class="bi bi-qr-scan me-1"></i> {{ activeQrOrderCode === order.code ? 'Đóng Mã QR' : `Quét QR Cọc (${formatPrice(getDepositRequired(order))}₫)` }}
@@ -432,21 +432,21 @@
 
             <!-- Bước 3: Đang xử lý / gom hàng -->
             <template v-else-if="getStage(order) === 3">
-              <a :href="'https://zalo.me/0123456789?text=' + encodeURIComponent('Hỏi tiến độ chuẩn bị gom hàng cho đơn #' + order.code)" target="_blank" class="btn-shopee btn-shopee-outline">
+              <a :href="'https://zalo.me/0123456789?text=' + encodeURIComponent('Hỏi tiến độ chuẩn bị gom hàng cho đơn #' + order.code)" target="_blank" class="btn btn-outline-secondary btn-order-action">
                 <i class="bi bi-box-seam me-1"></i> Tiến Độ Chuẩn Bị
               </a>
             </template>
 
             <!-- Bước 4: Đang giao -->
             <template v-else-if="getStage(order) === 4">
-              <a :href="'https://zalo.me/0123456789?text=' + encodeURIComponent('Hỏi tiến độ vận chuyển chành xe cho đơn #' + order.code)" target="_blank" class="btn-shopee btn-shopee-primary">
+              <a :href="'https://zalo.me/0123456789?text=' + encodeURIComponent('Hỏi tiến độ vận chuyển chành xe cho đơn #' + order.code)" target="_blank" class="btn btn-danger btn-order-action">
                 <i class="bi bi-truck me-1"></i> Tiến Độ Vận Chuyển
               </a>
             </template>
 
             <!-- Bước 5: Hoàn thành -->
             <template v-else-if="getStage(order) === 5">
-              <router-link to="/san-pham" class="btn-shopee btn-shopee-primary">
+              <router-link to="/san-pham" class="btn btn-danger btn-order-action">
                 Mua Lại
               </router-link>
             </template>
@@ -1438,36 +1438,15 @@ const formatDate = (dateStr) => {
   flex-wrap: wrap;
 }
 
-.btn-shopee {
+.btn-order-action {
   padding: 8px 16px;
   font-size: 13.5px;
+  font-weight: 600;
   border-radius: var(--jpm-radius-control, 8px);
-  text-decoration: none;
-  cursor: pointer;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.2s;
-}
-
-.btn-shopee-primary {
-  background-color: var(--jpm-color-red-marine, #f82249);
-  color: #ffffff;
-  border: 1px solid var(--jpm-color-red-marine, #f82249);
-}
-.btn-shopee-primary:hover {
-  background-color: #d81438;
-  color: #ffffff;
-}
-
-.btn-shopee-outline {
-  background-color: #ffffff;
-  color: #555555;
-  border: 1px solid rgba(0, 0, 0, 0.15);
-}
-.btn-shopee-outline:hover {
-  background-color: #f8f8f8;
-  color: #222222;
+  transition: all 0.2s ease;
 }
 
 /* QR Deposit Box */

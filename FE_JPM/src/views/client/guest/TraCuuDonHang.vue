@@ -1,5 +1,5 @@
 <template>
-  <main class="main-content min-vh-100 d-flex flex-column align-items-center bg-light" style="padding-top: 100px;">
+  <div class="main-content min-vh-100 d-flex flex-column align-items-center bg-light inner-page-section">
     <div class="container py-5">
       <div class="row justify-content-center">
         <div class="col-md-8 col-lg-6">
@@ -51,12 +51,12 @@
               <div class="row mb-4">
                 <div class="col-sm-6 mb-3 mb-sm-0">
                   <p class="text-muted small text-uppercase fw-bold mb-1">Khách Hàng</p>
-                  <p class="mb-0 fw-medium"><i class="bx bx-user me-2 text-primary"></i>{{ result.data.khach_hang_ten }}</p>
-                  <p class="mb-0 text-muted"><i class="bx bx-phone me-2 text-primary"></i>{{ result.data.khach_hang_sdt }}</p>
+                  <p class="mb-0 fw-medium"><i class="bi bi-person me-2 text-primary"></i>{{ result.data.khach_hang_ten }}</p>
+                  <p class="mb-0 text-muted"><i class="bi bi-telephone me-2 text-primary"></i>{{ result.data.khach_hang_sdt }}</p>
                 </div>
                 <div class="col-sm-6">
                   <p class="text-muted small text-uppercase fw-bold mb-1">Địa Chỉ Giao Hàng</p>
-                  <p class="mb-0 fw-medium"><i class="bx bx-map me-2 text-primary"></i>{{ result.data.dia_chi_text || result.data.dia_chi_giao_hang || 'Chưa cung cấp' }}</p>
+                  <p class="mb-0 fw-medium"><i class="bi bi-geo-alt me-2 text-primary"></i>{{ result.data.dia_chi_text || result.data.dia_chi_giao_hang || 'Chưa cung cấp' }}</p>
                 </div>
               </div>
 
@@ -115,10 +115,10 @@
                         <span class="fw-bold text-primary">{{ formatCurrency(result.data.tien_coc_yeu_cau) }}</span>
                         <div class="small mt-1">
                           <span v-if="(result.data.da_thu || 0) >= result.data.tien_coc_yeu_cau" class="badge bg-success-subtle text-success border border-success-subtle">
-                            <i class='bx bx-check-circle me-1'></i>Đã thanh toán cọc
+                            <i class='bi bi-check-circle me-1'></i>Đã thanh toán cọc
                           </span>
                           <span v-else class="badge bg-danger-subtle text-danger border border-danger-subtle">
-                            <i class='bx bx-time me-1'></i>Chưa thanh toán cọc
+                            <i class='bi bi-clock me-1'></i>Chưa thanh toán cọc
                           </span>
                         </div>
                       </td>
@@ -135,7 +135,7 @@
 
               <!-- Shipping Information for Orders -->
               <div v-if="result.type === 'order' && result.data.ma_van_don" class="alert alert-info d-flex align-items-center gap-3 p-3 rounded-4 shadow-sm mb-4">
-                <i class="bx bxs-truck fs-1 text-primary"></i>
+                <i class="bi bi-truck fs-1 text-primary"></i>
                 <div class="flex-grow-1">
                   <strong class="d-block text-dark">Vận Chuyển: {{ result.data.ten_don_vi_van_chuyen || 'Đang vận chuyển' }}</strong>
                   <span class="text-muted small">Mã vận đơn: <strong class="text-primary font-monospace fs-6">{{ result.data.ma_van_don }}</strong></span>
@@ -148,8 +148,8 @@
               <!-- Payment Section for Unpaid Orders -->
               <div v-if="result.type === 'order' && result.data.trang_thai_thanh_toan === 0 && result.data.trang_thai !== 3 && result.data.trang_thai !== 4" class="bg-light p-4 rounded-4 text-center mt-4 border border-primary border-opacity-25">
                 <div class="d-flex align-items-center justify-content-center gap-2 mb-2">
-                  <span class="badge bg-primary px-3 py-2 rounded-pill"><i class='bx bx-qr-scan me-1'></i> VIETQR NAPAS247</span>
-                  <span class="badge bg-info-subtle text-info px-3 py-2 rounded-pill"><i class='bx bx-shield-quarter me-1'></i> MIỄN PHÍ TRỰC TIẾP</span>
+                  <span class="badge bg-primary px-3 py-2 rounded-pill"><i class='bi bi-qr-code-scan me-1'></i> VIETQR NAPAS247</span>
+                  <span class="badge bg-info-subtle text-info px-3 py-2 rounded-pill"><i class='bi bi-shield-check me-1'></i> MIỄN PHÍ TRỰC TIẾP</span>
                 </div>
                 <h5 class="fw-bold text-dark mb-2">Quét Mã QR Đặt Cọc Chuyển Khoản</h5>
                 <p class="text-muted small mb-3">Mở App Ngân hàng quét mã bên dưới để chuyển khoản tiền cọc trực tiếp vào tài khoản JPM Marine.</p>
@@ -161,7 +161,7 @@
                     </div>
                     <div class="mt-3">
                       <a :href="'https://zalo.me/0123456789?text=' + encodeURIComponent('Tôi vừa chuyển cọc cho đơn ' + (result.data.ma_don_hang || result.data.ma_yeu_cau))" target="_blank" class="btn btn-sm btn-primary px-3 shadow-sm">
-                        <i class="bx bxl-telegram me-1"></i> Mở Zalo Gửi Biên Lai Cọc
+                        <i class="bi bi-send me-1"></i> Mở Zalo Gửi Biên Lai Cọc
                       </a>
                     </div>
                   </div>
@@ -177,7 +177,7 @@
                         <div class="d-flex align-items-center gap-2">
                           <span class="fw-bold text-primary fs-6">{{ vietQrData.account_no }}</span>
                           <button type="button" class="btn btn-sm btn-outline-secondary py-0 px-2" @click="copyText(vietQrData.account_no, 'Đã copy số tài khoản')">
-                            <i class='bx bx-copy'></i>
+                            <i class='bi bi-clipboard'></i>
                           </button>
                         </div>
                       </div>
@@ -194,7 +194,7 @@
                         <div class="d-flex align-items-center gap-2">
                           <span class="fw-bold text-dark bg-light px-2 py-1 rounded border">{{ vietQrData.transfer_content }}</span>
                           <button type="button" class="btn btn-sm btn-outline-primary py-0 px-2" @click="copyText(vietQrData.transfer_content, 'Đã copy nội dung chuyển khoản')">
-                            <i class='bx bx-copy'></i>
+                            <i class='bi bi-clipboard'></i>
                           </button>
                         </div>
                       </div>
@@ -215,20 +215,20 @@
               <!-- 1. Báo Giá Đã Sẵn Sàng (Trạng thái = 1) -->
               <div v-if="result.type === 'quote' && result.data.trang_thai === 1" class="bg-light p-4 rounded-4 text-center mt-4 border border-info border-opacity-50">
                 <div class="d-flex align-items-center justify-content-center gap-2 mb-2">
-                  <span class="badge bg-info text-white px-3 py-2 rounded-pill"><i class='bx bx-check-shield me-1'></i> ĐÃ CÓ BẢNG BÁO GIÁ</span>
-                  <span class="badge bg-warning text-dark px-3 py-2 rounded-pill"><i class='bx bx-time me-1'></i> HIỆU LỰC 72 GIỜ</span>
+                  <span class="badge bg-info text-white px-3 py-2 rounded-pill"><i class='bi bi-shield-check me-1'></i> ĐÃ CÓ BẢNG BÁO GIÁ</span>
+                  <span class="badge bg-warning text-dark px-3 py-2 rounded-pill"><i class='bi bi-clock me-1'></i> HIỆU LỰC 72 GIỜ</span>
                 </div>
                 <h5 class="fw-bold text-dark mb-2">Báo Giá & Tiền Cọc Đã Được Phê Duyệt</h5>
                 <p class="text-muted small mb-3">Admin đã kiểm tra phụ tùng, tính cước vận chuyển và xác định tiền cọc. Quý khách vui lòng kiểm tra bảng báo giá và xác nhận chốt đơn.</p>
                 <router-link v-if="result.data.token || result.data.token_xac_nhan" :to="'/bao-gia/' + (result.data.token || result.data.token_xac_nhan)" class="btn btn-primary rounded-pill px-4 py-2 fw-bold shadow-sm">
-                  <i class="bx bx-file-blank me-1"></i> Xem Chi Tiết Báo Giá & Quét Mã Cọc
+                  <i class="bi bi-file-earmark-text me-1"></i> Xem Chi Tiết Báo Giá & Quét Mã Cọc
                 </router-link>
               </div>
 
               <!-- 2. Đang Chờ Báo Giá (Trạng thái = 0) -->
               <div v-else-if="result.type === 'quote' && result.data.trang_thai === 0" class="bg-light p-4 rounded-4 text-center mt-4 border border-warning border-opacity-50">
                 <div class="d-flex align-items-center justify-content-center gap-2 mb-2">
-                  <span class="badge bg-warning text-dark px-3 py-2 rounded-pill"><i class='bx bx-hourglass me-1'></i> ĐANG XỬ LÝ</span>
+                  <span class="badge bg-warning text-dark px-3 py-2 rounded-pill"><i class='bi bi-hourglass-split me-1'></i> ĐANG XỬ LÝ</span>
                 </div>
                 <h5 class="fw-bold text-dark mb-2">Bộ Phận Kỹ Thuật Đang Xử Lý Đơn</h5>
                 <p class="text-muted small mb-0">Hệ thống đang kiểm tra tồn kho tại Nhật/Việt Nam, tính trọng lượng và liên hệ chành xe liên tỉnh để cung cấp chi phí chính xác nhất cho quý khách.</p>
@@ -237,7 +237,7 @@
               <!-- 3. Đã Chuyển Thành Đơn Hàng (Trạng thái = 2) -->
               <div v-else-if="result.type === 'quote' && result.data.trang_thai === 2" class="bg-light p-4 rounded-4 text-center mt-4 border border-success border-opacity-50">
                 <div class="d-flex align-items-center justify-content-center gap-2 mb-2">
-                  <span class="badge bg-success text-white px-3 py-2 rounded-pill"><i class='bx bx-check-circle me-1'></i> ĐÃ XÁC NHẬN</span>
+                  <span class="badge bg-success text-white px-3 py-2 rounded-pill"><i class='bi bi-check-circle me-1'></i> ĐÃ XÁC NHẬN</span>
                 </div>
                 <h5 class="fw-bold text-dark mb-2">Yêu Cầu Đã Được Xác Nhận & Đang Tiến Hành Giao Hàng</h5>
                 <p class="text-muted small mb-0">Yêu cầu báo giá này đã được chấp thuận và chuyển sang quy trình xuất kho / vận chuyển.</p>
@@ -246,7 +246,7 @@
               <!-- 4. Đã Hủy Hoặc Quá Hạn (Trạng thái = 3) -->
               <div v-else-if="result.type === 'quote' && result.data.trang_thai === 3" class="bg-light p-4 rounded-4 text-center mt-4 border border-danger border-opacity-50">
                 <div class="d-flex align-items-center justify-content-center gap-2 mb-2">
-                  <span class="badge bg-danger text-white px-3 py-2 rounded-pill"><i class='bx bx-x-circle me-1'></i> ĐÃ HỦY / HẾT HẠN</span>
+                  <span class="badge bg-danger text-white px-3 py-2 rounded-pill"><i class='bi bi-x-circle me-1'></i> ĐÃ HỦY / HẾT HẠN</span>
                 </div>
                 <h5 class="fw-bold text-dark mb-2">Yêu Cầu Báo Giá Đã Đóng</h5>
                 <p class="text-muted small mb-0">Yêu cầu báo giá này đã bị hủy hoặc quá thời hạn 72 giờ theo quy định tỷ giá phụ tùng máy thủy.</p>
@@ -256,7 +256,7 @@
               <div class="text-center mt-5">
                 <p class="text-muted small mb-2">Cần hỗ trợ thêm về giao dịch này?</p>
                 <a href="https://zalo.me/0123456789" target="_blank" class="btn btn-outline-primary rounded-pill px-4">
-                  <i class="bx bx-chat me-1"></i> Liên hệ Zalo CSKH
+                  <i class="bi bi-chat-text me-1"></i> Liên hệ Zalo CSKH
                 </a>
               </div>
 
@@ -266,7 +266,7 @@
       </div>
 
     </div>
-  </main>
+  </div>
 </template>
 
 <script>

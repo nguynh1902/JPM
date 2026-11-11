@@ -3,7 +3,7 @@
 
     <NavbarClient />
 
-    <main class="main d-flex flex-column">
+    <main class="main d-flex flex-column" :class="{ 'main-inner-page': $route.path !== '/' }">
       <router-view />
     </main>
   <!-- Floating Contact Action Buttons -->

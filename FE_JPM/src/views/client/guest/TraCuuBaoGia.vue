@@ -1,5 +1,5 @@
 <template>
-  <main class="tra-cuu-page bg-light py-5">
+  <div class="tra-cuu-page bg-light py-5 inner-page-section">
     <div class="container" v-if="loading">
       <div class="text-center py-5">
         <div class="spinner-border text-primary" role="status"></div>
@@ -9,7 +9,7 @@
     
     <div class="container" v-else-if="error">
       <div class="alert alert-danger text-center">
-        <h4><i class="bx bx-error-circle"></i> Lỗi</h4>
+        <h4><i class="bi bi-exclamation-circle"></i> Lỗi</h4>
         <p>{{ error }}</p>
         <router-link to="/" class="btn btn-primary mt-3">Về Trang Chủ</router-link>
       </div>
@@ -29,11 +29,11 @@
               <div class="row mb-4">
                 <div class="col-md-6 mb-3 mb-md-0">
                   <h6 class="fw-bold text-uppercase text-secondary mb-3" style="font-size: 0.8rem;">Thông tin Khách Hàng</h6>
-                  <p class="mb-1 fw-bold text-dark"><i class="bx bx-user me-2 text-primary"></i>{{ quote.khach_hang_ten }}</p>
-                  <p class="mb-1 text-muted"><i class="bx bx-phone me-2"></i>{{ quote.khach_hang_sdt }}</p>
-                  <p class="mb-1 text-muted" v-if="quote.dia_chi_giao_hang"><i class="bx bx-map me-2 text-primary"></i>{{ quote.dia_chi_giao_hang }}</p>
-                  <p class="mb-1 text-muted fst-italic" v-else><i class="bx bx-map me-2 text-muted"></i>Chưa cập nhật địa chỉ giao hàng</p>
-                  <p class="mb-0 text-muted"><i class="bx bx-calendar me-2"></i>{{ new Date(quote.created_at).toLocaleDateString('vi-VN') }}</p>
+                  <p class="mb-1 fw-bold text-dark"><i class="bi bi-person me-2 text-primary"></i>{{ quote.khach_hang_ten }}</p>
+                  <p class="mb-1 text-muted"><i class="bi bi-telephone me-2"></i>{{ quote.khach_hang_sdt }}</p>
+                  <p class="mb-1 text-muted" v-if="quote.dia_chi_giao_hang"><i class="bi bi-geo-alt me-2 text-primary"></i>{{ quote.dia_chi_giao_hang }}</p>
+                  <p class="mb-1 text-muted fst-italic" v-else><i class="bi bi-geo-alt me-2 text-muted"></i>Chưa cập nhật địa chỉ giao hàng</p>
+                  <p class="mb-0 text-muted"><i class="bi bi-calendar3 me-2"></i>{{ new Date(quote.created_at).toLocaleDateString('vi-VN') }}</p>
                 </div>
                 <div class="col-md-6 text-md-end">
                   <h6 class="fw-bold text-uppercase text-secondary mb-3" style="font-size: 0.8rem;">Trạng Thái</h6>
@@ -47,7 +47,7 @@
               <!-- Banner Hiệu Lực Báo Giá -->
               <div v-if="quote.trang_thai === 1 && !quote.is_expired" class="alert alert-warning border-warning d-flex align-items-center justify-content-between p-3 mb-4 rounded-3 shadow-sm">
                 <div class="d-flex align-items-center gap-3">
-                  <i class="bx bx-time-five fs-2 text-warning"></i>
+                  <i class="bi bi-clock-history fs-2 text-warning"></i>
                   <div>
                     <strong class="d-block text-dark">Báo Giá Có Hiệu Lực Trong 72 Giờ</strong>
                     <span class="text-muted small">Cam kết giữ đơn giá phụ tùng theo tỷ giá JPY hiện tại đến {{ formatDateTime(quote.expires_at) }}.</span>
@@ -55,7 +55,7 @@
                 </div>
                 <div class="text-end" v-if="remainingSeconds > 0">
                   <span class="badge bg-danger fs-6 px-3 py-2 shadow-sm">
-                    <i class="bx bx-stopwatch me-1"></i> Còn {{ formattedRemainingTime }}
+                    <i class="bi bi-stopwatch me-1"></i> Còn {{ formattedRemainingTime }}
                   </span>
                 </div>
               </div>
@@ -63,14 +63,14 @@
               <!-- Banner Hết Hạn Báo Giá -->
               <div v-else-if="quote.trang_thai === 3 || quote.is_expired" class="alert alert-danger border-danger p-3 mb-4 rounded-3 shadow-sm">
                 <div class="d-flex align-items-start gap-3">
-                  <i class="bx bx-error-circle fs-2 text-danger mt-1"></i>
+                  <i class="bi bi-exclamation-triangle fs-2 text-danger mt-1"></i>
                   <div class="flex-grow-1">
                     <strong class="d-block text-dark fs-6 mb-1">Báo Giá Này Đã Quá Hạn Hiệu Lực (72 Giờ)</strong>
                     <p class="text-muted small mb-2">
                       Do tỷ giá Yên Nhật và cước vận chuyển quốc tế biến động theo từng đợt, mức giá này đã hết hiệu lực bảo lưu. Quý khách vui lòng bấm nút bên dưới để nhân viên JPM cập nhật bảng giá mới nhất.
                     </p>
                     <button class="btn btn-primary fw-bold px-4 py-2 shadow-sm" @click="handleAction('re_quote')" :disabled="isSubmitting">
-                      <i class="bx bx-refresh me-1"></i> Yêu Cầu Báo Giá Lại
+                      <i class="bi bi-arrow-repeat me-1"></i> Yêu Cầu Báo Giá Lại
                     </button>
                   </div>
                 </div>
@@ -79,7 +79,7 @@
               <!-- Banner Đang Chờ Báo Giá -->
               <div v-else-if="quote.trang_thai === 0" class="alert alert-info border-info p-3 mb-4 rounded-3 shadow-sm">
                 <div class="d-flex align-items-center gap-3">
-                  <i class="bx bx-loader-alt bx-spin fs-2 text-primary"></i>
+                  <i class="bi bi-arrow-repeat fs-2 text-primary"></i>
                   <div>
                     <strong class="d-block text-dark">Đang Kiểm Tra & Tính Toán Giá Từ Nhật</strong>
                     <span class="text-muted small">Kỹ thuật viên JPM đang đối soát thông số động cơ và liên hệ hãng tại Nhật. Báo giá sẽ được gửi qua Zalo và cập nhật tại trang này ngay khi hoàn tất.</span>
@@ -139,10 +139,10 @@
                         <span class="fw-bold text-primary fs-6">{{ formatCurrency(quote.tien_coc_yeu_cau) }}</span>
                         <div class="small mt-1">
                           <span v-if="quote.trang_thai === 2" class="badge bg-success-subtle text-success border border-success-subtle">
-                            <i class="bx bx-check-circle me-1"></i>Đã nhận tiền cọc
+                            <i class="bi bi-check-circle me-1"></i>Đã nhận tiền cọc
                           </span>
                           <span v-else class="badge bg-danger-subtle text-danger border border-danger-subtle">
-                            <i class="bx bx-time me-1"></i>Chưa thanh toán cọc
+                            <i class="bi bi-clock me-1"></i>Chưa thanh toán cọc
                           </span>
                         </div>
                       </td>
@@ -159,15 +159,15 @@
               
               <!-- Ghi chú Admin (nếu có) -->
               <div v-if="quote.ghi_chu_zalo" class="alert alert-info mb-4">
-                <strong><i class="bx bx-message-dots me-1"></i> Ghi chú từ JPM:</strong>
+                <strong><i class="bi bi-chat-dots me-1"></i> Ghi chú từ JPM:</strong>
                 <p class="mb-0 mt-1" style="white-space: pre-wrap;">{{ quote.ghi_chu_zalo }}</p>
               </div>
 
               <!-- VietQR Đặt Cọc Báo Giá (Chuẩn Napas247 - Miễn phí 100%) -->
               <div v-if="(quote.trang_thai === 1 || quote.trang_thai === 2) && quote.tien_coc_yeu_cau > 0 && !quote.is_expired" class="card bg-light border-primary border-opacity-25 p-4 mb-4 text-center rounded-4 shadow-sm">
                 <div class="d-flex align-items-center justify-content-center gap-2 mb-2">
-                  <span class="badge bg-primary px-3 py-2 rounded-pill"><i class='bx bx-qr-scan me-1'></i> VIETQR ĐẶT CỌC GIỮ HÀNG</span>
-                  <span class="badge bg-info-subtle text-info px-3 py-2 rounded-pill"><i class='bx bx-check-shield me-1'></i> NAPAS 24/7 TRỰC TIẾP</span>
+                  <span class="badge bg-primary px-3 py-2 rounded-pill"><i class='bi bi-qr-code-scan me-1'></i> VIETQR ĐẶT CỌC GIỮ HÀNG</span>
+                  <span class="badge bg-info-subtle text-info px-3 py-2 rounded-pill"><i class='bi bi-shield-check me-1'></i> NAPAS 24/7 TRỰC TIẾP</span>
                 </div>
                 <h5 class="fw-bold text-dark mb-1">Quét QR Đặt Cọc - Lên Đơn Đặt Hàng Nhật</h5>
                 <p class="text-muted small mb-3">Mở App Ngân hàng quét mã bên dưới để chuyển khoản tiền cọc <strong>{{ formatCurrency(quote.tien_coc_yeu_cau) }}</strong> trực tiếp vào tài khoản JPM Marine.</p>
@@ -179,7 +179,7 @@
                     </div>
                     <div class="mt-3">
                       <button type="button" class="btn btn-sm btn-primary px-3 shadow-sm" @click="openZaloReceipt">
-                        <i class="bx bxl-telegram me-1"></i> Mở Zalo Gửi Biên Lai Cọc
+                        <i class="bi bi-send me-1"></i> Mở Zalo Gửi Biên Lai Cọc
                       </button>
                     </div>
                   </div>
@@ -194,7 +194,7 @@
                         <div class="d-flex align-items-center gap-1">
                           <span class="fw-bold text-primary">{{ vietQrData.account_no }}</span>
                           <button type="button" class="btn btn-sm btn-outline-secondary py-0 px-1" @click="copyText(vietQrData.account_no, 'Đã copy STK')">
-                            <i class='bx bx-copy'></i>
+                            <i class='bi bi-clipboard'></i>
                           </button>
                         </div>
                       </div>
@@ -211,12 +211,12 @@
                         <div class="d-flex align-items-center gap-1">
                           <span class="fw-bold text-dark bg-light px-2 py-0 rounded border">{{ vietQrData.transfer_content }}</span>
                           <button type="button" class="btn btn-sm btn-outline-primary py-0 px-1" @click="copyText(vietQrData.transfer_content, 'Đã copy nội dung')">
-                            <i class='bx bx-copy'></i>
+                            <i class='bi bi-clipboard'></i>
                           </button>
                         </div>
                       </div>
                       <div class="mt-3 p-2 bg-light rounded text-muted small" style="line-height: 1.45;">
-                        <i class="bx bx-info-circle text-primary me-1"></i> <em>Sau khi Quý khách chuyển cọc, Kỹ thuật viên JPM sẽ kiểm tra thông báo ngân hàng và bấm xác nhận để tiến hành gom đơn đặt hàng Nhật Bản. Quý khách có thể bấm nút trên để gửi biên lai qua Zalo xử lý nhanh nhất.</em>
+                        <i class="bi bi-info-circle text-primary me-1"></i> <em>Sau khi Quý khách chuyển cọc, Kỹ thuật viên JPM sẽ kiểm tra thông báo ngân hàng và bấm xác nhận để tiến hành gom đơn đặt hàng Nhật Bản. Quý khách có thể bấm nút trên để gửi biên lai qua Zalo xử lý nhanh nhất.</em>
                       </div>
                     </div>
                   </div>
@@ -226,19 +226,19 @@
               <!-- Hành động -->
               <div v-if="quote.trang_thai === 1 && !quote.is_expired" class="d-flex flex-column flex-md-row gap-3 justify-content-center border-top pt-4">
                 <button class="btn btn-outline-danger px-4 py-2" @click="handleAction('reject')" :disabled="isSubmitting">
-                  <i class="bx bx-x-circle me-1"></i> Từ chối giá
+                  <i class="bi bi-x-circle me-1"></i> Từ chối giá
                 </button>
                 <button class="btn btn-success px-5 py-2 fw-bold" @click="handleAction('accept')" :disabled="isSubmitting">
-                  <i class="bx bx-check-circle me-1"></i> Đồng Ý Chốt Đơn
+                  <i class="bi bi-check-circle me-1"></i> Đồng Ý Chốt Đơn
                 </button>
               </div>
               
               <!-- Message sau khi chốt -->
               <div v-else-if="quote.trang_thai === 2" class="text-center border-top pt-4">
-                <h5 class="text-success fw-bold"><i class="bx bx-check-circle me-2"></i>Cảm ơn Quý khách đã chốt đơn!</h5>
+                <h5 class="text-success fw-bold"><i class="bi bi-check-circle me-2"></i>Cảm ơn Quý khách đã chốt đơn!</h5>
                 <p class="text-muted">Đơn hàng của Quý khách đang được JPM xử lý và tiến hành gom đơn nhập hàng từ Nhật Bản.</p>
                 <a href="https://zalo.me/0123456789" target="_blank" class="btn btn-primary mt-2">
-                  <i class="bx bx-chat me-1"></i> Chat Zalo Hỗ Trợ Kỹ Thuật
+                  <i class="bi bi-chat-text me-1"></i> Chat Zalo Hỗ Trợ Kỹ Thuật
                 </a>
               </div>
 
@@ -247,10 +247,10 @@
                 <p class="text-muted mb-3">Quý khách cần cập nhật giá mới hoặc đàm phán số lượng lớn cho công trình/tàu cá?</p>
                 <div class="d-flex justify-content-center gap-2">
                   <button class="btn btn-primary px-4 py-2 fw-bold" @click="handleAction('re_quote')" :disabled="isSubmitting">
-                    <i class="bx bx-refresh me-1"></i> Yêu Cầu Báo Giá Lại
+                    <i class="bi bi-arrow-repeat me-1"></i> Yêu Cầu Báo Giá Lại
                   </button>
                   <a href="https://zalo.me/0123456789" target="_blank" class="btn btn-outline-primary px-4 py-2">
-                    <i class="bx bx-chat me-1"></i> Liên Hệ Kỹ Thuật
+                    <i class="bi bi-chat-text me-1"></i> Liên Hệ Kỹ Thuật
                   </a>
                 </div>
               </div>
@@ -260,7 +260,7 @@
         </div>
       </div>
     </div>
-  </main>
+  </div>
 </template>
 
 <script>

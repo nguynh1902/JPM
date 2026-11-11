@@ -1,6 +1,6 @@
 <template>
-  <main class="main-page">
-    <section class="section" style="padding-top: 110px;">
+  <div class="main-page">
+    <section class="section inner-page-section">
       <div class="container">
         
         <!-- SKELETON LOADING -->
@@ -203,55 +203,7 @@
           </div>
           <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-4 g-4">
             <div class="col" v-for="part in relatedProducts.slice(0, 4)" :key="part.id">
-              <!-- PRODUCT CARD (100% ĐỒNG BỘ TRANG CHỦ & CỬA HÀNG) -->
-              <div class="card h-100 product-card position-relative">
-                <div class="card-img-wrapper position-relative overflow-hidden bg-light d-flex align-items-center justify-content-center">
-                  <img
-                    :src="getImageUrl(part.hinh_anh_chinh)"
-                    class="card-img-top w-100 transition-transform card-img-product"
-                    style="aspect-ratio: 4/3; object-fit: cover;"
-                    :alt="part.ten_san_pham"
-                    @error="$event.target.src='https://placehold.co/400x300/f8f9fa/a1acb8?text=JPM+Marine'"
-                  >
-                </div>
-                <div class="card-body text-start p-3 d-flex flex-column bg-white">
-                  <!-- 1. Danh mục sản phẩm -->
-                  <div class="product-category mb-1 text-truncate" :title="part.danh_muc ? part.danh_muc.ten_danh_muc : 'OEM'">
-                    {{ part.danh_muc ? part.danh_muc.ten_danh_muc : 'OEM' }}
-                  </div>
-
-                  <!-- 2. Tên sản phẩm -->
-                  <h5 class="card-title mb-1">
-                    <router-link :to="`/chi-tiet-san-pham/${part.slug}`" class="text-decoration-none stretched-link">
-                      {{ part.ten_san_pham }}
-                    </router-link>
-                  </h5>
-
-                  <!-- 3. Mã sản phẩm SKU (Chuẩn kỹ thuật & hàng hải) -->
-                  <div class="product-sku mb-3">
-                    <template v-if="part.ma_san_pham">
-                      <span class="sku-label">Mã:</span> <span class="sku-code">{{ part.ma_san_pham }}</span>
-                    </template>
-                    <template v-else>&nbsp;</template>
-                  </div>
-
-                  <!-- 4. Chân card: Giá bán & Nút giỏ hàng (Cùng hàng, cân đối chuẩn Trang Chủ) -->
-                  <div class="mt-auto d-flex align-items-center justify-content-between pt-1">
-                    <div>
-                      <span v-if="part.is_gia_lien_he || !part.gia_ban" class="text-danger fw-bold price-value">Liên hệ</span>
-                      <span v-else class="text-danger fw-bold price-value">{{ formatPrice(part.gia_ban) }} đ</span>
-                    </div>
-                    <button
-                      class="btn btn-cart-action position-relative z-2"
-                      :title="!part.is_gia_lien_he && part.so_luong_ton !== undefined && part.so_luong_ton <= 0 ? 'Hết hàng' : (part.is_gia_lien_he ? 'Yêu cầu báo giá' : 'Thêm vào giỏ')"
-                      :disabled="!part.is_gia_lien_he && part.so_luong_ton !== undefined && part.so_luong_ton <= 0"
-                      @click.prevent="addToCart(part, true)"
-                    >
-                      <i :class="part.is_gia_lien_he ? 'bi bi-chat-dots' : 'bi bi-cart2'"></i>
-                    </button>
-                  </div>
-                </div>
-              </div>
+              <ProductCard :product="part" />
             </div>
           </div>
         </div>
@@ -304,7 +256,7 @@
         </div>
         </div>
       </section>
-  </main>
+  </div>
 </template>
 
 <script setup>
@@ -314,6 +266,7 @@ import { useQuery, useMutation } from '@tanstack/vue-query';
 import axiosClient from '../../../api/axiosClient';
 import { createToaster } from '@meforma/vue-toaster';
 import { useCartStore } from '../../../stores/cartStore';
+import ProductCard from '../../../components/client/ProductCard.vue';
 import GLightbox from 'glightbox';
 import 'glightbox/dist/css/glightbox.min.css';
 

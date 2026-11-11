@@ -1,9 +1,9 @@
 <template>
-  <main class="brand-catalog-page main-page">
+  <div class="brand-catalog-page main-page">
     <!-- ========================================================
          MAIN CATALOG AREA (ĐỒNG BỘ 100% VỚI GIỎ HÀNG)
          ======================================================== -->
-    <section class="catalog-content-section pb-5" style="padding-top: 110px;">
+    <section class="catalog-content-section pb-5 inner-page-section">
       <div class="container">
 
         <!-- Header chuẩn Giỏ Hàng -->
@@ -54,7 +54,7 @@
                   @click="selectLoai(loai.value)"
                 >
                   <span class="sidebar-btn-text">{{ loai.label }}</span>
-                  <span class="sidebar-btn-badge">{{ getLoaiCount(loai.value) }}</span>
+                  <i class="bi bi-chevron-right sidebar-btn-arrow"></i>
                 </button>
               </div>
             </div>
@@ -172,28 +172,36 @@
                             </div>
                             <h6 class="fw-bold text-dark mb-1">Không tìm thấy model phù hợp</h6>
                             <p class="text-muted small mb-3">Vui lòng điều chỉnh hoặc xóa bớt tiêu chí lọc</p>
-                            <button class="btn btn-outline-danger btn-sm px-3 py-1 btn-rounded-8" @click="clearFilters">
+                            <button class="btn btn-outline-danger btn-sm px-3 py-1" @click="clearFilters">
                               <i class="bi bi-arrow-counterclockwise me-1"></i> Xóa tất cả bộ lọc
                             </button>
                           </div>
                         </td>
                       </tr>
 
-                      <!-- Dòng dữ liệu Model (padding 16px, hover nhẹ #fbfcfe, viền mảnh chuẩn Giỏ Hàng) -->
+                      <!-- Dòng dữ liệu Model (padding 16px, hover nhẹ #f8fafc, viền mảnh chuẩn Giỏ Hàng) -->
                       <tr v-for="(model, index) in filteredModels" :key="model.id" class="table-row-hover">
                         <td class="th-stt text-center text-muted fw-medium">{{ index + 1 }}</td>
                         <td class="th-model text-start">
-                          <div class="model-name">{{ model.name }}</div>
+                          <router-link
+                            :to="`/thuong-hieu/${brandRoute}/${model.loai}/${model.year}/${model.code}/so-do`"
+                            class="model-name-link text-decoration-none"
+                            title="Xem sơ đồ phụ tùng rã máy"
+                          >
+                            <span class="model-name">{{ model.name }}</span>
+                          </router-link>
                         </td>
                         <td class="th-hp text-center">
-                          <span v-if="model.hp" class="hp-badge">{{ model.hp }} HP</span>
+                          <span v-if="model.hp" class="spec-text">{{ model.hp }} HP</span>
                           <span v-else class="text-muted">-</span>
                         </td>
                         <td class="th-stroke text-center">
-                          <span class="stroke-badge">{{ model.stroke ? formatStrokeText(model.stroke) : '-' }}</span>
+                          <span v-if="model.stroke" class="spec-text">{{ formatStrokeText(model.stroke) }}</span>
+                          <span v-else class="text-muted">-</span>
                         </td>
-                        <td class="th-year text-center text-secondary fw-semibold" style="font-size: 0.9rem;">
-                          {{ model.year || '-' }}
+                        <td class="th-year text-center">
+                          <span v-if="model.year" class="spec-text">{{ model.year }}</span>
+                          <span v-else class="text-muted">-</span>
                         </td>
                         <td class="th-action text-center">
                           <router-link
@@ -215,11 +223,11 @@
         </div> <!-- END ROW -->
       </div> <!-- END CONTAINER -->
     </section>
-  </main>
+  </div>
 </template>
 
 <script setup>
-import { computed, ref, onMounted, onUnmounted, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { useQuery } from '@tanstack/vue-query';
 import axiosClient from '../../../api/axiosClient';
@@ -252,11 +260,6 @@ const brandLogo = computed(() => {
   return `${baseUrl}/storage/${p.replace(/^\//, '')}`;
 });
 
-// Tính số lượng model theo loại
-const getLoaiCount = (loaiValue) => {
-  if (!modelsList.value) return 0;
-  return modelsList.value.filter(m => m.loai === loaiValue).length;
-};
 
 // Định dạng Loại thì
 const formatStroke = (stroke) => {
@@ -302,40 +305,12 @@ const selectLoai = (loai) => {
   clearFilters();
 };
 
-const openDropdown = ref(null);
-const toggleDropdown = (type) => {
-  openDropdown.value = openDropdown.value === type ? null : type;
-};
-
-const selectNam = (val) => {
-  selectedNam.value = String(val);
-  openDropdown.value = null;
-};
-const selectHp = (val) => {
-  selectedHp.value = String(val);
-  openDropdown.value = null;
-};
-const selectStroke = (val) => {
-  selectedStroke.value = String(val);
-  openDropdown.value = null;
-};
-
-// Đóng dropdown khi click ra ngoài
-const handleClickOutside = (event) => {
-  if (!openDropdown.value) return;
-  if (!event.target.closest('.custom-select-wrapper')) {
-    openDropdown.value = null;
+// Tiêu đề trang động (SEO & User Experience)
+watch(brandName, (name) => {
+  if (name) {
+    document.title = `Tra Cứu Phụ Tùng ${name} | Sơ Đồ Máy Thủy JPM Marine`;
   }
-};
-
-onMounted(() => {
-  document.addEventListener('click', handleClickOutside);
-});
-
-onUnmounted(() => {
-  document.removeEventListener('click', handleClickOutside);
-  openDropdown.value = null;
-});
+}, { immediate: true });
 
 const activeLoaiLabel = computed(() => {
   return loaiDongCoList.value.find(l => l.value === selectedLoai.value)?.label || '';
@@ -451,7 +426,7 @@ const filteredModels = computed(() => {
   width: 100%;
   border: 1px solid transparent;
   background: transparent;
-  padding: 10px 14px;
+  padding: 12px 16px;
   border-radius: 8px;
   font-family: var(--default-font);
   font-weight: 500;
@@ -474,19 +449,21 @@ const filteredModels = computed(() => {
   font-weight: 700;
 }
 
-.sidebar-btn-badge {
+.sidebar-btn-arrow {
   font-size: 0.75rem;
-  font-weight: 600;
-  padding: 2px 8px;
-  border-radius: 999px;
-  background: #f1f5f9;
-  color: #64748b;
-  transition: all 0.2s ease;
+  opacity: 0.35;
+  transition: transform 0.2s ease, opacity 0.2s ease;
 }
 
-.catalog-sidebar-btn.active .sidebar-btn-badge {
-  background: var(--accent-color, #f82249);
-  color: #ffffff;
+.catalog-sidebar-btn:hover .sidebar-btn-arrow {
+  opacity: 0.8;
+  transform: translateX(2px);
+}
+
+.catalog-sidebar-btn.active .sidebar-btn-arrow {
+  opacity: 1;
+  color: var(--accent-color, #f82249);
+  transform: translateX(3px);
 }
 
 /* ========================================================
@@ -514,7 +491,7 @@ const filteredModels = computed(() => {
   font-size: 11.5px;
   font-weight: 700;
   padding: 4px 10px;
-  border-radius: 4px;
+  border-radius: var(--jpm-radius-badge, 6px);
   display: inline-flex;
   align-items: center;
   letter-spacing: 0.3px;
@@ -604,114 +581,6 @@ const filteredModels = computed(() => {
   flex-grow: 1;
 }
 
-/* Custom Select Controls */
-.custom-select-wrapper {
-  position: relative;
-  width: 100%;
-}
-
-.custom-select-wrapper.z-active {
-  z-index: 1050;
-}
-
-.custom-select-box {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 14px;
-  height: 44px;
-  border-radius: 8px;
-  border: 1px solid #e2e8f0;
-  background: #ffffff;
-  box-shadow: none;
-  cursor: pointer;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
-  font-size: 0.86rem;
-  font-weight: 400;
-  color: #64748b;
-  font-family: var(--default-font);
-  user-select: none;
-}
-
-.custom-select-box:hover {
-  border-color: #cbd5e1;
-}
-
-.custom-select-box.is-focused {
-  border-width: 1px !important;
-  border-color: var(--accent-color, #f82249) !important;
-  box-shadow: 0 0 0 3px rgba(248, 34, 73, 0.12) !important;
-  outline: 0 !important;
-}
-
-.custom-select-box.has-value {
-  color: #0A1128;
-  font-weight: 600;
-}
-
-.select-arrow {
-  transition: transform 0.2s ease;
-  font-size: 11px;
-  color: #94a3b8;
-  margin-left: 6px;
-  flex-shrink: 0;
-}
-
-.select-arrow.rotated,
-.custom-select-box.is-focused .select-arrow {
-  transform: rotate(180deg);
-  color: var(--accent-color, #f82249);
-}
-
-.custom-dropdown-list {
-  position: absolute;
-  min-width: 100%;
-  width: max-content;
-  max-width: 260px;
-  top: calc(100% + 4px);
-  list-style: none;
-  margin: 0;
-  padding: 6px;
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  box-shadow: 0 12px 30px rgba(10, 17, 40, 0.12);
-  z-index: 1055;
-  max-height: 250px;
-  overflow-y: auto;
-}
-
-.custom-dropdown-list.align-right {
-  right: 0;
-  left: auto;
-}
-
-.custom-dropdown-list li {
-  padding: 8px 12px;
-  font-size: 0.85rem;
-  color: #334155;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: all 0.15s ease;
-  white-space: nowrap;
-}
-
-.custom-dropdown-list li:hover {
-  background: #f1f5f9;
-  color: #0A1128;
-}
-
-.custom-dropdown-list li.active {
-  background: rgba(248, 34, 73, 0.08);
-  color: var(--accent-color, #f82249);
-  font-weight: 700;
-}
-
-.custom-dropdown-list li.active:hover {
-  background: rgba(248, 34, 73, 0.14);
-  color: var(--accent-color, #f82249);
-}
-
 .btn-reset-filter {
   height: 44px;
   padding: 0 16px;
@@ -772,6 +641,8 @@ const filteredModels = computed(() => {
 .th-year {
   width: 110px;
   white-space: nowrap !important;
+  font-size: 0.9rem;
+  font-variant-numeric: tabular-nums;
 }
 
 .th-action {
@@ -786,7 +657,16 @@ const filteredModels = computed(() => {
 }
 
 .table-row-hover:hover td {
-  background-color: #fbfcfe !important;
+  background-color: #f8fafc !important;
+}
+
+.model-name-link {
+  display: inline-block;
+  transition: color 0.15s ease;
+}
+
+.model-name-link:hover .model-name {
+  color: var(--accent-color, #f82249);
 }
 
 .model-name {
@@ -795,28 +675,17 @@ const filteredModels = computed(() => {
   color: #0A1128;
   font-size: 0.95rem;
   line-height: 1.4;
+  transition: color 0.15s ease;
 }
 
-.hp-badge {
+/* Thông số kỹ thuật (Mã lực, Loại thì, Năm SX): Màu đen Deep Navy sắc nét, đồng bộ chuẩn kỹ thuật */
+.spec-text {
   display: inline-block;
-  padding: 3px 8px;
-  background-color: #eff6ff;
-  color: #1d4ed8;
-  font-weight: 700;
-  font-size: 0.82rem;
-  border-radius: 4px;
-  border: 1px solid #dbeafe;
-}
-
-.stroke-badge {
-  display: inline-block;
-  padding: 3px 8px;
-  background-color: #f8fafc;
-  color: #334155;
+  color: #0A1128;
   font-weight: 600;
-  font-size: 0.82rem;
-  border-radius: 4px;
-  border: 1px solid #e2e8f0;
+  font-size: 0.92rem;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
 }
 
 /* Nút Thao Tác Sơ Đồ: Outline Red chuẩn Giỏ Hàng */

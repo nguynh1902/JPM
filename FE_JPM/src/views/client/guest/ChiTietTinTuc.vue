@@ -1,5 +1,5 @@
 <template>
-  <main class="jpm-news-detail main-page" style="padding-top: 110px;">
+  <div class="jpm-news-detail main-page inner-page-section">
     
     <!-- SKELETON LOADING -->
     <div v-if="isFetching" class="container py-4" style="max-width: 1120px;">
@@ -337,7 +337,7 @@
       </div>
     </article>
 
-  </main>
+  </div>
 </template>
 
 <script>

@@ -1,8 +1,8 @@
 <template>
-  <main class="support-page pb-5">
+  <div class="support-page pb-5">
 
     <!-- Header chuẩn Giỏ Hàng -->
-    <section class="section pb-2" style="padding-top: 110px;">
+    <section class="section pb-2 inner-page-section">
       <div class="container">
         <div class="row mb-3">
           <div class="col-12" data-aos="fade-down">
@@ -236,7 +236,7 @@
       </section>
 
     </div>
-  </main>
+  </div>
 </template>
 
 <script>

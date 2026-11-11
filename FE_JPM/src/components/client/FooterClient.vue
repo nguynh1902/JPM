@@ -44,9 +44,9 @@
           <div class="col-lg-2 col-md-6 footer-links mb-0">
             <h5 class="footer-heading mb-4">Về chúng tôi</h5>
             <ul class="list-unstyled">
-              <li class="mb-3 p-0"><router-link to="/gioi-thieu" class="footer-link">Giới thiệu JPM Marine</router-link></li>
+              <li class="mb-3 p-0"><router-link to="/ho-tro" class="footer-link">Giới thiệu JPM Marine</router-link></li>
               <li class="mb-3 p-0"><router-link to="/tin-tuc" class="footer-link">Tin tức & Sự kiện</router-link></li>
-              <li class="mb-3 p-0"><router-link to="/he-thong-dai-ly" class="footer-link">Hệ thống đại lý</router-link></li>
+              <li class="mb-3 p-0"><router-link to="/ho-tro" class="footer-link">Hệ thống đại lý</router-link></li>
               <li class="mb-0 p-0"><router-link to="/ho-tro" class="footer-link">Trung tâm hỗ trợ</router-link></li>
             </ul>
           </div>
@@ -55,9 +55,9 @@
           <div class="col-lg-3 col-md-6 footer-links mb-0">
             <h5 class="footer-heading mb-4">Sản phẩm chính</h5>
             <ul class="list-unstyled">
-              <li class="mb-3 p-0"><router-link to="/danh-sach-phu-tung" class="footer-link">Phụ tùng động cơ ngoài</router-link></li>
-              <li class="mb-3 p-0"><router-link to="/danh-sach-phu-tung" class="footer-link">Phụ tùng động cơ trong</router-link></li>
-              <li class="mb-3 p-0"><router-link to="/danh-sach-phu-tung" class="footer-link">Hệ thống lái & Truyền động</router-link></li>
+              <li class="mb-3 p-0"><router-link to="/tra-cuu" class="footer-link">Phụ tùng động cơ ngoài</router-link></li>
+              <li class="mb-3 p-0"><router-link to="/tra-cuu" class="footer-link">Phụ tùng động cơ trong</router-link></li>
+              <li class="mb-3 p-0"><router-link to="/tra-cuu" class="footer-link">Hệ thống lái & Truyền động</router-link></li>
               <li class="mb-0 p-0"><router-link to="/san-pham" class="footer-link">Dầu nhớt & Bảo dưỡng</router-link></li>
             </ul>
           </div>

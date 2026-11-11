@@ -1,7 +1,7 @@
 <template>
-  <main class="shop-catalog-page main-page">
+  <div class="shop-catalog-page main-page">
 
-    <section id="products-section" class="section pb-5" style="padding-top: 110px;">
+    <section id="products-section" class="section pb-5 inner-page-section">
       <div class="container">
 
         <!-- Header chuẩn Giỏ Hàng -->
@@ -244,7 +244,7 @@
         </div>
       </div>
     </section>
-  </main>
+  </div>
 </template>
 
 <script setup>
