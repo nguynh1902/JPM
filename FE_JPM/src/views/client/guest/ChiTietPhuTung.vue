@@ -32,23 +32,37 @@
               </p>
             </div>
 
-            <!-- Modern Breadcrumb -->
-            <nav aria-label="breadcrumb" class="custom-breadcrumb pt-2">
-              <ol class="breadcrumb mb-0 align-items-center">
-                <li class="breadcrumb-item">
-                  <router-link to="/" class="text-decoration-none text-muted d-flex align-items-center">
-                    <i class="bi bi-house-door-fill me-1"></i> Trang chủ
-                  </router-link>
-                </li>
-                <li class="breadcrumb-item"><span class="text-muted">Danh mục</span></li>
-                  <li class="breadcrumb-item" v-if="phuTung.thuong_hieu">
-                    <span class="text-muted text-uppercase">{{ phuTung.thuong_hieu.name }}</span>
+            <!-- Modern Breadcrumb & Back to Diagram -->
+            <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 pt-2">
+              <nav aria-label="breadcrumb" class="custom-breadcrumb">
+                <ol class="breadcrumb mb-0 align-items-center">
+                  <li class="breadcrumb-item">
+                    <router-link to="/" class="text-decoration-none text-muted d-flex align-items-center">
+                      <i class="bi bi-house-door-fill me-1"></i> Trang chủ
+                    </router-link>
                   </li>
-                <li class="breadcrumb-item active fw-bold" style="color: var(--heading-color);" aria-current="page">
-                  {{ phuTung.nhom_phu_tung ? phuTung.nhom_phu_tung.ten_nhom : 'Phụ tùng' }}
-                </li>
-              </ol>
-            </nav>
+                  <li class="breadcrumb-item"><span class="text-muted">Danh mục</span></li>
+                  <li class="breadcrumb-item" v-if="phuTung.thuong_hieu">
+                    <router-link v-if="phuTung.thuong_hieu?.code" :to="`/thuong-hieu/${phuTung.thuong_hieu.code.toLowerCase()}`" class="text-decoration-none text-muted text-uppercase">
+                      {{ phuTung.thuong_hieu.name }}
+                    </router-link>
+                    <span v-else class="text-muted text-uppercase">{{ phuTung.thuong_hieu.name }}</span>
+                  </li>
+                  <li class="breadcrumb-item active fw-bold" style="color: var(--heading-color);" aria-current="page">
+                    {{ phuTung.nhom_phu_tung ? phuTung.nhom_phu_tung.ten_nhom : 'Phụ tùng' }}
+                  </li>
+                </ol>
+              </nav>
+
+              <button 
+                v-if="fromModelId" 
+                @click="goBack" 
+                class="btn btn-sm btn-outline-secondary d-inline-flex align-items-center gap-1 btn-rounded-control"
+                title="Quay lại sơ đồ động cơ"
+              >
+                <i class="bi bi-arrow-left"></i> Quay lại sơ đồ
+              </button>
+            </div>
           </div>
 
           <div class="row g-4 mb-5">
@@ -59,10 +73,10 @@
                 
                 <!-- Main Image Card -->
                 <div class="main-image position-relative border rounded bg-white shadow-sm overflow-hidden" style="width: 100%; height: 350px;">
-                  <button class="btn btn-sm btn-light position-absolute border shadow-sm" style="top: 15px; left: 15px; z-index: 10;" title="Chia sẻ">
+                  <button class="btn btn-sm btn-light position-absolute border shadow-sm" style="top: 15px; left: 15px; z-index: 10;" title="Chia sẻ liên kết" @click="handleShare">
                     <i class="bi bi-share"></i>
                   </button>
-                  <img v-if="currentImage" :src="getImageUrl(currentImage)" alt="Product Image" class="w-100 h-100" style="object-fit: cover; cursor: pointer;" @click="openLightbox">
+                  <img v-if="currentImage" :src="getImageUrl(currentImage)" alt="Product Image" class="w-100 h-100" style="object-fit: contain; background: #ffffff; cursor: pointer;" @click="openLightbox">
                   <div v-else class="w-100 h-100 d-flex align-items-center justify-content-center bg-light">
                      <i class="bi bi-image text-muted" style="font-size: 4rem;"></i>
                   </div>
@@ -78,7 +92,7 @@
                     @click="currentImage = img"
                     style="width: 75px; height: 75px;"
                   >
-                    <img :src="getImageUrl(img)" class="w-100 h-100" style="object-fit: cover;">
+                    <img :src="getImageUrl(img)" class="w-100 h-100" style="object-fit: contain; background: #ffffff;">
                   </div>
                 </div>
               </div>
@@ -157,8 +171,8 @@
                     <div class="d-flex gap-3">
                       <div class="quantity-selector d-flex align-items-center bg-light border rounded" style="width: 140px;">
                         <button class="btn btn-sm bg-transparent border-0 px-3 h-100 shadow-none text-dark" @click="qty > 1 ? qty-- : null" :disabled="qty <= 1"><i class="bi bi-dash fs-5"></i></button>
-                        <input type="number" v-model.number="qty" class="form-control border-0 bg-transparent text-center fw-bold h-100 px-0 shadow-none" min="1" :max="phuTung.so_luong_ton || 999" @change="qty = Math.min(Math.max(1, qty), phuTung.so_luong_ton || 999)">
-                        <button class="btn btn-sm bg-transparent border-0 px-3 h-100 shadow-none text-dark" @click="qty < (phuTung.so_luong_ton || 999) ? qty++ : null" :disabled="qty >= (phuTung.so_luong_ton || 999)"><i class="bi bi-plus fs-5"></i></button>
+                        <input type="number" v-model.number="qty" class="form-control border-0 bg-transparent text-center fw-bold h-100 px-0 shadow-none" min="1" :max="maxStock" @change="qty = Math.min(Math.max(1, qty), maxStock)">
+                        <button class="btn btn-sm bg-transparent border-0 px-3 h-100 shadow-none text-dark" @click="qty < maxStock ? qty++ : null" :disabled="qty >= maxStock"><i class="bi bi-plus fs-5"></i></button>
                       </div>
                       <button class="btn btn-jpm flex-grow-1 fs-6 fw-bold text-uppercase shadow-none" @click="addToCart(phuTung)">
                         Thêm Vào Giỏ
@@ -225,7 +239,7 @@
                                   <span class="mx-2 text-muted">—</span>
                                   <span class="text-primary fw-medium" style="font-size: 0.9rem;">
                                     <template v-for="(year, yIdx) in model.years" :key="yIdx">
-                                      <a href="#" class="text-primary text-decoration-none hover-underline">{{ year }}</a><span v-if="yIdx < model.years.length - 1">, </span>
+                                      <span class="badge bg-light text-dark border me-1">{{ year }}</span>
                                     </template>
                                   </span>
                                </div>
@@ -270,40 +284,13 @@
             <h4 class="fw-bold text-uppercase mb-0" style="color: var(--heading-color);">
               Những Sản Phẩm Khác
             </h4>
-            <router-link to="/danh-sach-phu-tung" class="text-decoration-none text-danger fw-bold d-flex align-items-center gap-1 hover-underline" style="font-size: 0.95rem;">
+            <router-link to="/san-pham" class="text-decoration-none text-danger fw-bold d-flex align-items-center gap-1 hover-underline" style="font-size: 0.95rem;">
               Xem tất cả <i class="bi bi-arrow-right"></i>
             </router-link>
           </div>
-                    <div class="row g-4">
-            <div class="col-6 col-md-4 col-lg-3" v-for="part in relatedParts.slice(0, 8)" :key="part.id">
-                            <div class="card h-100 premium-product-card group-hover position-relative">
-                  <div class="card-img-wrapper overflow-hidden img-zoom-hover">
-                    <img
-                      :src="part.hinh_anh ? getImageUrl(part.hinh_anh) : 'https://images.unsplash.com/photo-1559523161-0fc0d8b38a7a?auto=format&fit=crop&q=80&w=400'"
-                      class="card-img-top w-100 transition-transform"
-                      style="aspect-ratio: 4/3; object-fit: cover;"
-                      :alt="part.ten_phu_tung"
-                      @error="$event.target.src='https://placehold.co/300x200/f8f9fa/a1acb8?text=JPM+Marine'"
-                    >
-                    <div class="position-absolute" style="top: 10px; right: 10px; z-index: 10;">
-                      <button class="btn btn-cart-action shadow-sm" title="Thêm vào giỏ" @click.prevent="addToCart(part, true)">
-                        <i class="bi bi-cart2"></i>
-                      </button>
-                    </div>
-                  </div>
-                  <div class="card-body text-start p-3 d-flex flex-column bg-white">
-                    <div class="d-flex justify-content-between align-items-start mb-2">
-                      <span class="text-muted fw-bold text-uppercase" style="letter-spacing: 0.5px; font-size: 0.75rem;">{{ part.nhom_phu_tung ? part.nhom_phu_tung.ten_nhom : part.ma_phu_tung }}</span>
-                    </div>
-                    <h5 class="card-title mb-3" style="font-size: 0.95rem; line-height: 1.5; font-weight: 500; color: #1e293b;">
-                      <router-link :to="`/chi-tiet-phu-tung/${part.ma_phu_tung}`" class="text-decoration-none stretched-link" style="color: inherit;">{{ part.ten_phu_tung }}</router-link>
-                    </h5>
-                    <div class="mt-auto d-flex align-items-center contact-action" style="padding-top: 0.25rem; justify-content: flex-end;">
-                      <span v-if="part.is_gia_lien_he || !part.gia_ban" class="text-danger fw-bold" style="font-size: 1.1rem;">Liên hệ</span>
-                      <span v-else class="text-danger fw-bold" style="font-size: 1.1rem;">{{ formatPrice(part.gia_ban) }} đ</span>
-                    </div>
-                  </div>
-                </div>
+          <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-4">
+            <div class="col" v-for="part in relatedParts.slice(0, 8)" :key="part.id">
+              <ProductCard :product="part" />
             </div>
           </div>
         </div>
@@ -314,9 +301,9 @@
             <h4 class="fw-bold text-uppercase mb-0" style="color: var(--heading-color);">
               Câu Hỏi Thường Gặp
             </h4>
-            <a href="#" class="text-decoration-none text-danger fw-bold d-flex align-items-center gap-1 hover-underline" style="font-size: 0.95rem;">
+            <router-link to="/ho-tro" class="text-decoration-none text-danger fw-bold d-flex align-items-center gap-1 hover-underline" style="font-size: 0.95rem;">
               Xem tất cả <i class="bi bi-arrow-right"></i>
-            </a>
+            </router-link>
           </div>
           
           
@@ -330,7 +317,7 @@
                     </div>
                     <div class="ms-3 flex-grow-1">
                       <h6 class="fw-bold mb-2" style="font-size: 1.05rem; line-height: 1.4;">
-                        <a href="#" class="text-dark text-decoration-none stretched-link transition-color" onmouseover="this.style.color='#f82249'" onmouseout="this.style.color=''">{{ faq.question }}</a>
+                        <router-link to="/ho-tro" class="text-dark text-decoration-none stretched-link faq-link-title">{{ faq.question }}</router-link>
                       </h6>
                       <div class="text-danger fw-bold text-uppercase mt-2" style="letter-spacing: 0.5px; font-size: 0.8rem;">Xem chi tiết <i class="bi bi-arrow-right ms-1"></i></div>
                     </div>
@@ -346,7 +333,7 @@
                     </div>
                     <div class="ms-3 flex-grow-1">
                       <h6 class="fw-bold mb-2" style="font-size: 1.05rem; line-height: 1.4;">
-                        <a href="#" class="text-dark text-decoration-none stretched-link transition-color" onmouseover="this.style.color='#f82249'" onmouseout="this.style.color=''">{{ faq.question }}</a>
+                        <router-link to="/ho-tro" class="text-dark text-decoration-none stretched-link faq-link-title">{{ faq.question }}</router-link>
                       </h6>
                       <div class="text-danger fw-bold text-uppercase mt-2" style="letter-spacing: 0.5px; font-size: 0.8rem;">Xem chi tiết <i class="bi bi-arrow-right ms-1"></i></div>
                     </div>
@@ -430,9 +417,9 @@ import { ref, computed, watch, onMounted, onUnmounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/vue-query';
 import axiosClient from '../../../api/axiosClient';
-import Swal from 'sweetalert2';
 import { createToaster } from '@meforma/vue-toaster';
 import { useCartStore } from '../../../stores/cartStore';
+import ProductCard from '../../../components/client/ProductCard.vue';
 import GLightbox from 'glightbox';
 import 'glightbox/dist/css/glightbox.min.css';
 
@@ -446,6 +433,27 @@ const partCode = computed(() => route.params.code);
 const qty = ref(1);
 const currentImage = ref(null);
 const images = ref([]);
+
+const goBack = () => {
+  if (window.history.length > 1) {
+    router.back();
+  } else {
+    router.push('/');
+  }
+};
+
+const handleShare = async () => {
+  try {
+    if (navigator.clipboard) {
+      await navigator.clipboard.writeText(window.location.href);
+      toaster.success("Đã sao chép liên kết phụ tùng!");
+    } else {
+      toaster.info("Liên kết: " + window.location.href);
+    }
+  } catch (e) {
+    toaster.info("Liên kết: " + window.location.href);
+  }
+};
 
 const openLightbox = () => {
   if (images.value.length === 0) return;
@@ -466,6 +474,10 @@ const { data, isLoading, isError } = useQuery({
 });
 
 const phuTung = computed(() => data.value?.data?.phu_tung || null);
+const maxStock = computed(() => {
+  const stock = phuTung.value?.so_luong_ton;
+  return (stock !== null && stock !== undefined && stock > 0) ? stock : 999;
+});
 const relatedParts = computed(() => data.value?.data?.related_parts || []);
 
   const { data: faqsData } = useQuery({
@@ -813,23 +825,8 @@ watch(compatibleModels, (models) => {
 .thumb-item:hover { opacity: 0.8; }
 .active-thumb { opacity: 1 !important; border-color: var(--accent-color) !important; }
 
-.btn-wishlist { color: var(--heading-color); border-color: #ddd; transition: 0.3s; }
-.btn-wishlist:hover { color: var(--accent-color); border-color: var(--accent-color); background: rgba(248,34,73,0.05); }
-
 /* Typography Helpers */
-.letter-spacing-1 { letter-spacing: 1px; }
 .hover-underline:hover { text-decoration: underline !important; }
-
-/* Related Parts Sidebar */
-.sticky-sidebar { position: sticky; top: 110px; }
-.custom-scrollbar::-webkit-scrollbar { width: 4px; }
-.custom-scrollbar::-webkit-scrollbar-track { background: #f1f1f1; }
-.custom-scrollbar::-webkit-scrollbar-thumb { background: #ccc; border-radius: 4px; }
-.custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #aaa; }
-
-.part-link { transition: 0.2s; }
-.part-link:hover .model-code { color: var(--accent-color); }
-.border-danger { border-color: var(--accent-color) !important; }
 
 /* Tabs Customization */
 .custom-tabs { border-bottom: 1px solid #ddd; }
@@ -837,9 +834,13 @@ watch(compatibleModels, (models) => {
 .custom-tabs .nav-link:hover { color: var(--accent-color); }
 .custom-tabs .nav-link.active { color: var(--accent-color); border-bottom: 3px solid var(--accent-color); background: transparent; }
 
-/* Help Box */
-.help-box { transition: 0.3s; }
-.help-box:hover { transform: translateY(-3px); box-shadow: 0 8px 15px rgba(0,0,0,0.1); }
+/* FAQ Links */
+.faq-link-title {
+  transition: color 0.2s ease;
+}
+.faq-link-title:hover {
+  color: var(--accent-color, #f82249) !important;
+}
 </style>
 
 

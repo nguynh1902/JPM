@@ -3163,7 +3163,7 @@ a.footer-contact-value:hover {
   margin-bottom: 0.25rem !important;
 }
 
-/* Kiểu chữ: Mã sản phẩm (SKU) đặt ngay dưới tên sản phẩm dạng text kỹ thuật rõ nét */
+/* Kiểu chữ: Mã sản phẩm (SKU) đặt ngay dưới tên sản phẩm - Mã phụ tùng màu xanh Primary Bootstrap #0d6efd */
 .product-sku {
   font-family: var(--default-font) !important;
   font-size: 0.8125rem !important; /* ~13px */
@@ -3173,15 +3173,16 @@ a.footer-contact-value:hover {
 }
 
 .product-sku .sku-label {
-  color: #8392a5 !important;
+  color: #64748b !important;
   font-size: 0.75rem !important;
   text-transform: uppercase;
   letter-spacing: 0.3px;
+  font-weight: 500 !important;
 }
 
 .product-sku .sku-code {
-  font-weight: 600 !important;
-  color: #1e293b !important;
+  font-weight: 700 !important;
+  color: #0d6efd !important;
   letter-spacing: 0.2px !important;
 }
 

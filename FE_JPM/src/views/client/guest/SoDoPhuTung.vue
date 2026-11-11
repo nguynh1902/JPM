@@ -129,7 +129,7 @@
                       :class="{ 'is-panning': isPanning }"
                       @mousedown="startPan"
                       @wheel.prevent="handleWheel"
-                      style="overflow: hidden; cursor: grab; width: 100%; flex: 1; min-height: 320px; display: flex; align-items: center; justify-content: center; background: #f8f9fa; user-select: none;"
+                      style="overflow: hidden; cursor: grab; width: 100%; flex: 1; min-height: 320px; display: flex; align-items: center; justify-content: center; background: #ffffff; user-select: none;"
                     >
                       <div class="diagram-stage-container position-relative" :style="{ transform: `translate(${panX}px, ${panY}px) scale(${zoomLevel})`, transformOrigin: 'center center', transition: isPanning ? 'none' : 'transform 0.1s ease' }">
                         <div v-if="activeDiagram?.hinh_anh" class="position-relative d-inline-block">
@@ -229,13 +229,11 @@
                           :key="part.id" 
                           class="table-row-hover" 
                           :class="{ 
-                            'highlighted-part-row': isPartSelected(part),
                             'table-hover-highlight': hoveredPartCode === getPartCode(part)
                           }"
                           :data-part-code="getPartCode(part)"
                           @mouseenter="hoveredPartCode = getPartCode(part)"
                           @mouseleave="hoveredPartCode = null"
-                          @click="selectPartFromRow(part)"
                         >
                           <td class="text-center" style="padding-left: 1rem;">
                             <input class="form-check-input custom-checkbox" type="checkbox" :value="part.id" v-model="selectedParts">
@@ -247,9 +245,6 @@
                             <router-link :to="`/chi-tiet-phu-tung/${part.phu_tung?.ma_phu_tung}${diagramResponse?.data?.model?.id ? '?from_model_id=' + diagramResponse.data.model.id : ''}`" class="part-item-link text-decoration-none d-block">
                               <div class="d-flex align-items-center gap-2">
                                 <span class="fw-bold model-code">{{ part.phu_tung?.ma_phu_tung }}</span>
-                                <span v-if="isPartSelected(part)" class="badge-viewing">
-                                  <i class="bi bi-geo-alt-fill me-1"></i>Đang xem
-                                </span>
                               </div>
                               <div class="part-desc text-muted fw-medium">{{ part.phu_tung?.ten_phu_tung }}</div>
                             </router-link>
@@ -974,9 +969,17 @@ const startSidebarDrag = () => {
 
 .custom-table tbody td {
   padding: 14px 10px;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid #edf2f7;
   vertical-align: middle;
+  transition: background-color 0.15s ease;
+}
+
+.custom-table tbody tr:nth-child(odd) td {
   background-color: #ffffff;
+}
+
+.custom-table tbody tr:nth-child(even) td {
+  background-color: #f8fafc;
 }
 
 .table-row-hover {
@@ -984,7 +987,7 @@ const startSidebarDrag = () => {
 }
 
 .table-row-hover:hover td {
-  background-color: #f8fafc !important;
+  background-color: #f1f5f9 !important;
   --bs-table-accent-bg: transparent !important;
   --bs-table-bg-state: transparent !important;
   box-shadow: none !important;
@@ -1020,17 +1023,6 @@ const startSidebarDrag = () => {
   white-space: normal;
   word-break: break-word;
   margin-top: 3px;
-}
-
-.badge-viewing {
-  background: var(--accent-color, #f82249);
-  color: #ffffff;
-  font-size: 0.7rem;
-  font-weight: 600;
-  padding: 2px 7px;
-  border-radius: var(--jpm-radius-badge, 6px);
-  display: inline-flex;
-  align-items: center;
 }
 
 .spec-qty-text {
@@ -1218,7 +1210,7 @@ const startSidebarDrag = () => {
 
 .jpm-blueprint-modal-body {
   flex: 1;
-  background: #f8f9fa;
+  background: #ffffff;
   position: relative;
   overflow: hidden;
   display: flex;
@@ -1239,7 +1231,7 @@ const startSidebarDrag = () => {
   display: block;
   pointer-events: none;
   user-select: none;
-  filter: drop-shadow(0 6px 16px rgba(0, 0, 0, 0.06));
+  filter: none;
 }
 
 .modal-hint-pill {
@@ -1310,18 +1302,6 @@ const startSidebarDrag = () => {
 .btn-icon:hover {
   background: #f1f3f7;
   color: var(--accent-color);
-}
-
-.highlighted-part-row {
-  background-color: #fff4e5 !important;
-  border-left: 4px solid #f82249 !important;
-  box-shadow: inset 0 0 10px rgba(248, 34, 73, 0.12);
-  animation: pulse-part-bg 2s infinite alternate ease-in-out;
-}
-
-@keyframes pulse-part-bg {
-  0% { background-color: #fff4e5; }
-  100% { background-color: #ffe8cc; }
 }
 
 @media (max-width: 991px) {

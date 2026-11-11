@@ -62,7 +62,7 @@ describe('ProductCard.vue', () => {
     expect(wrapper.emitted('add-to-cart')[0][0]).toEqual(product);
   });
 
-  it('renders a quote-required product with balanced quote button', async () => {
+  it('renders a quote-required product with standard cart button', async () => {
     const product = {
       id: 202,
       ma_phu_tung: 'OEM-YAM-999',
@@ -87,9 +87,12 @@ describe('ProductCard.vue', () => {
     expect(wrapper.text()).toContain('OEM-YAM-999');
     expect(wrapper.text()).toContain('Liên hệ');
 
-    const button = wrapper.find('.btn-quote-action');
+    const button = wrapper.find('.btn-cart-action');
     expect(button.exists()).toBe(true);
-    expect(button.attributes('title')).toContain('Yêu cầu báo giá cho Hộp Số Động Cơ Yamaha V8');
-    expect(button.find('.bi-file-earmark-text').exists()).toBe(true);
+    expect(button.attributes('title')).toContain('Thêm Hộp Số Động Cơ Yamaha V8 vào giỏ hàng');
+    expect(button.find('.bi-cart2').exists()).toBe(true);
+
+    await button.trigger('click');
+    expect(wrapper.emitted('add-to-cart')).toBeTruthy();
   });
 });

@@ -614,9 +614,17 @@ const filteredModels = computed(() => {
 
 .custom-model-table tbody td {
   padding: 14px 12px;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid #edf2f7;
   vertical-align: middle;
+  transition: background-color 0.15s ease;
+}
+
+.custom-model-table tbody tr:nth-child(odd) td {
   background-color: #ffffff;
+}
+
+.custom-model-table tbody tr:nth-child(even) td {
+  background-color: #f8fafc;
 }
 
 .th-stt {
@@ -658,7 +666,10 @@ const filteredModels = computed(() => {
 }
 
 .table-row-hover:hover td {
-  background-color: #f8fafc !important;
+  background-color: #f1f5f9 !important;
+  --bs-table-accent-bg: transparent !important;
+  --bs-table-bg-state: transparent !important;
+  box-shadow: none !important;
 }
 
 .model-name-link {

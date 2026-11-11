@@ -67,7 +67,7 @@
       <div v-if="showSku" class="product-sku mb-3">
         <template v-if="productSku">
           <span class="sku-label text-muted">Mã:</span>
-          <span class="sku-code fw-semibold text-dark">{{ productSku }}</span>
+          <span class="sku-code">{{ productSku }}</span>
         </template>
         <template v-else>&nbsp;</template>
       </div>
@@ -78,7 +78,6 @@
         <div class="price-container text-truncate">
           <template v-if="isQuoteRequired">
             <span class="text-danger fw-bold price-value price-quote">Liên hệ</span>
-            <small class="d-block text-muted" style="font-size: 0.72rem; line-height: 1;">(Báo giá theo máy)</small>
           </template>
           <template v-else>
             <span class="text-danger fw-bold price-value">{{ formattedPrice }}</span>
@@ -88,30 +87,16 @@
           </template>
         </div>
 
-        <!-- Khối nút thao tác bên phải (Được căn bằng kích thước và đối xứng tuyệt đối) -->
+        <!-- Khối nút thao tác bên phải: Nút giỏ hàng chuẩn như Trang Chủ -->
         <div v-if="showAction" class="action-container flex-shrink-0" style="position: relative; z-index: 2;">
-          <!-- Trường hợp 1: Sản phẩm có giá -> Nút thêm vào giỏ hàng -->
           <button
-            v-if="!isQuoteRequired"
             type="button"
             class="btn btn-cart-action"
-            :title="'Thêm ' + productName + ' vào giỏ hàng'"
+            :title="isOutOfStock ? 'Sản phẩm tạm hết hàng' : 'Thêm ' + productName + ' vào giỏ hàng'"
             :disabled="isOutOfStock"
             @click.stop.prevent="handleAddToCart"
           >
             <i class="bi bi-cart2"></i>
-          </button>
-
-          <!-- Trường hợp 2: Sản phẩm cần báo giá -> Nút yêu cầu báo giá kỹ thuật -->
-          <button
-            v-else
-            type="button"
-            class="btn btn-quote-action"
-            :title="'Yêu cầu báo giá cho ' + productName"
-            @click.stop.prevent="handleRequestQuote"
-          >
-            <i class="bi bi-file-earmark-text"></i>
-            <span>Báo giá</span>
           </button>
         </div>
       </div>
@@ -172,6 +157,8 @@ const productSku = computed(() => {
 });
 
 const brandLabel = computed(() => {
+  if (props.product?.nhom_phu_tung?.ten_nhom) return props.product.nhom_phu_tung.ten_nhom;
+  if (props.product?.nhom_phu_tung && typeof props.product.nhom_phu_tung === 'string') return props.product.nhom_phu_tung;
   if (props.product?.thuong_hieu?.name) return props.product.thuong_hieu.name;
   if (props.product?.thuong_hieu_name) return props.product.thuong_hieu_name;
   if (props.product?.danh_muc?.ten_danh_muc) return props.product.danh_muc.ten_danh_muc;
@@ -187,9 +174,12 @@ const isQuoteRequired = computed(() => {
 
 const isOutOfStock = computed(() => {
   if (!props.product) return false;
-  if (props.product.trang_thai === 'het_hang') return true;
-  if (props.product.ton_kho !== undefined && props.product.ton_kho <= 0) return true;
-  if (props.product.so_luong_ton !== undefined && props.product.so_luong_ton <= 0) return true;
+  if (props.product.trang_thai === 'het_hang' || props.product.trang_thai === 0) return true;
+  if (props.product.is_out_of_stock) return true;
+  // Chỉ tính hết hàng cho sản phẩm thương mại có tồn kho cụ thể và không phải hàng liên hệ báo giá
+  if (!isQuoteRequired.value && props.product.ton_kho !== undefined && props.product.ton_kho !== null && props.product.ton_kho <= 0) {
+    return true;
+  }
   return false;
 });
 
@@ -213,8 +203,8 @@ const displayImageUrl = computed(() => {
 
 const detailUrl = computed(() => {
   if (props.detailRoute) return props.detailRoute;
-  if (props.product?.slug) return `/chi-tiet-san-pham/${props.product.slug}`;
   if (props.product?.ma_phu_tung) return `/chi-tiet-phu-tung/${props.product.ma_phu_tung}`;
+  if (props.product?.slug) return `/chi-tiet-san-pham/${props.product.slug}`;
   if (props.product?.id) return `/chi-tiet-san-pham/${props.product.id}`;
   return '/san-pham';
 });
@@ -313,6 +303,8 @@ function handleRequestQuote() {
 
 .sku-code {
   font-family: var(--jpm-font-mono, 'Roboto Mono', monospace);
+  color: #0d6efd !important;
+  font-weight: 700;
 }
 
 .price-value {
