@@ -22,32 +22,43 @@
         <template v-else>
           <!-- HEADER & BREADCRUMB -->
           <div class="mb-4" data-aos="fade-down">
-            <!-- Title -->
+            <!-- Title chuẩn hóa đồng bộ với các trang khác -->
             <div class="page-title-box mb-2">
-              <h2 class="jpm-page-title" style="font-size: 1.6rem; line-height: 1.3;">
-                {{ sanPham.ten_san_pham }} | {{ sanPham.ma_san_pham }}
+              <h2 class="jpm-page-title">
+                Chi Tiết <span style="color: var(--jpm-color-red-marine, #F82249);">Sản Phẩm</span>
               </h2>
-              <p class="text-muted mb-2 fw-medium" style="font-size: 1.1rem;">
-                SKU #: <span class="text-dark fw-bold">{{ sanPham.ma_san_pham }}</span>
+              <p class="text-muted mb-0">
+                Thông tin chi tiết, thông số kỹ thuật và báo giá vật tư hàng hải chính hãng.
               </p>
             </div>
 
-            <!-- Modern Breadcrumb -->
-            <nav aria-label="breadcrumb" class="custom-breadcrumb pt-2">
-              <ol class="breadcrumb mb-0 align-items-center">
-                <li class="breadcrumb-item">
-                  <router-link to="/" class="text-decoration-none text-muted d-flex align-items-center">
-                    <i class="bi bi-house-door-fill me-1"></i> Trang chủ
-                  </router-link>
-                </li>
-                <li class="breadcrumb-item">
-                  <router-link to="/san-pham" class="text-decoration-none text-muted">Cửa hàng</router-link>
-                </li>
-                <li class="breadcrumb-item active fw-bold" style="color: var(--heading-color);" aria-current="page">
-                  {{ sanPham.danh_muc ? sanPham.danh_muc.ten_danh_muc : 'Sản phẩm' }}
-                </li>
-              </ol>
-            </nav>
+            <!-- Modern Breadcrumb & Back to Shop -->
+            <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 pt-2">
+              <nav aria-label="breadcrumb" class="custom-breadcrumb">
+                <ol class="breadcrumb mb-0 align-items-center">
+                  <li class="breadcrumb-item">
+                    <router-link to="/" class="text-decoration-none text-muted d-flex align-items-center">
+                      <i class="bi bi-house-door-fill me-1"></i> Trang chủ
+                    </router-link>
+                  </li>
+                  <li class="breadcrumb-item">
+                    <router-link to="/san-pham" class="text-decoration-none text-muted">Cửa hàng</router-link>
+                  </li>
+                  <li class="breadcrumb-item active fw-bold" style="color: var(--heading-color);" aria-current="page">
+                    {{ sanPham.danh_muc ? sanPham.danh_muc.ten_danh_muc : 'Sản phẩm' }}
+                  </li>
+                </ol>
+              </nav>
+
+              <router-link 
+                to="/san-pham" 
+                class="btn-back-diagram"
+                title="Quay lại cửa hàng"
+              >
+                <i class="bi bi-arrow-left"></i>
+                <span>Quay lại cửa hàng</span>
+              </router-link>
+            </div>
           </div>
 
           <div class="row g-4 mb-3">
@@ -154,13 +165,25 @@
             <div class="col-lg-7 d-flex flex-column" data-aos="fade-up">
               <div class="product-info flex-grow-1 pe-lg-3">
                 
-                <div class="pricing-block mb-3">
-                  <div class="d-flex flex-wrap align-items-center gap-3">
-                    <span v-if="sanPham.is_gia_lien_he || !sanPham.gia_ban" class="product-price-val text-danger">Liên hệ nhận báo giá</span>
-                    <span v-else class="product-price-val text-danger">{{ formatPrice(sanPham.gia_ban) }} ₫</span>
-                    <span :class="sanPham.so_luong_ton > 0 ? 'badge-stock-in' : 'badge-stock-out'">
-                      <i :class="sanPham.so_luong_ton > 0 ? 'bi bi-check-circle-fill me-1' : 'bi bi-dash-circle-fill me-1'"></i>{{ sanPham.so_luong_ton > 0 ? 'Còn hàng' : 'Tạm hết' }}
-                    </span>
+                <!-- PRODUCT HEADER & PRICING BLOCK (Chuyển tên SP & SKU từ header vào đây) -->
+                <div class="product-info-top mb-3">
+                  <div class="product-title-block mb-3">
+                    <h1 class="product-main-title">
+                      {{ sanPham.ten_san_pham }}
+                    </h1>
+                    <div class="product-sku-info text-muted">
+                      SKU #: <span class="fw-bold text-dark font-monospace">{{ sanPham.ma_san_pham }}</span>
+                    </div>
+                  </div>
+
+                  <div class="pricing-block">
+                    <div class="d-flex flex-wrap align-items-center gap-3">
+                      <span v-if="sanPham.is_gia_lien_he || !sanPham.gia_ban" class="product-price-val text-danger">Liên hệ nhận báo giá</span>
+                      <span v-else class="product-price-val text-danger">{{ formatPrice(sanPham.gia_ban) }} ₫</span>
+                      <span :class="sanPham.so_luong_ton > 0 ? 'badge-stock-in' : 'badge-stock-out'">
+                        <i :class="sanPham.so_luong_ton > 0 ? 'bi bi-check-circle-fill me-1' : 'bi bi-dash-circle-fill me-1'"></i>{{ sanPham.so_luong_ton > 0 ? 'Còn hàng' : 'Tạm hết' }}
+                      </span>
+                    </div>
                   </div>
                 </div>
 
@@ -291,14 +314,14 @@
         <!-- SẢN PHẨM CÙNG DANH MỤC -->
         <div class="mb-5" data-aos="fade-up" v-if="relatedProducts && relatedProducts.length > 0">
           <div class="d-flex align-items-center justify-content-between mb-4 border-bottom pb-2">
-            <h4 class="fw-bold mb-0 text-capitalize section-catalog-title">
+            <h4 class="fw-bold text-uppercase mb-0" style="color: var(--heading-color);">
               Những Sản Phẩm Khác
             </h4>
             <router-link :to="sanPham?.danh_muc ? { path: '/san-pham', query: { danh_muc: sanPham.danh_muc.slug } } : '/san-pham'" class="text-decoration-none text-danger fw-bold d-flex align-items-center gap-1 hover-underline" style="font-size: 0.95rem;">
               Xem tất cả <i class="bi bi-arrow-right"></i>
             </router-link>
           </div>
-          <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-4 g-4">
+          <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-4">
             <div class="col" v-for="part in relatedProducts.slice(0, 4)" :key="part.id">
               <ProductCard :product="part" />
             </div>
@@ -640,20 +663,60 @@ onMounted(() => {
 .breadcrumb a { color: var(--accent-color); text-decoration: none; font-weight: 500; transition: 0.2s; }
 .breadcrumb a:hover { text-decoration: underline; }
 
+/* Back to Shop (Minimalist Slate Text Navigation) */
+.btn-back-diagram {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  color: #64748b;
+  border: none;
+  padding: 0;
+  font-size: 0.88rem;
+  font-weight: 500;
+  box-shadow: none;
+  cursor: pointer;
+  text-decoration: none;
+  transition: color 0.2s ease, opacity 0.15s ease;
+}
+
+.btn-back-diagram i {
+  color: inherit;
+  font-size: 1rem;
+  line-height: 1;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-back-diagram:hover {
+  background: transparent;
+  color: #0A1128;
+  box-shadow: none;
+  transform: none;
+  text-decoration: none;
+}
+
+.btn-back-diagram:hover i {
+  transform: translateX(-3px);
+}
+
+.btn-back-diagram:active {
+  opacity: 0.7;
+  transform: none;
+}
+
 /* ── FULL-BLEED LUXURY PRODUCT GALLERY (OPTION 2) ── */
 .main-image-canvas {
   position: relative;
   width: 100%;
   height: 385px;
   background: #f8fafc;
-  border: 1px solid rgba(0, 0, 0, 0.06);
+  border: 1px solid #e2e8f0;
   border-radius: 14px;
   overflow: hidden;
-  box-shadow: 0 8px 24px rgba(10, 17, 40, 0.06);
+  box-shadow: none;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: box-shadow 0.3s ease;
 }
 
 @media (max-width: 768px) {
@@ -663,7 +726,7 @@ onMounted(() => {
 }
 
 .main-image-canvas:hover {
-  box-shadow: 0 12px 32px rgba(10, 17, 40, 0.1);
+  box-shadow: none;
 }
 
 .gallery-floating-actions {
@@ -858,7 +921,7 @@ onMounted(() => {
   border-radius: 7px;
   background: #ffffff;
   border: 1.5px solid #e2e8f0;
-  box-shadow: 0 2px 6px rgba(10, 17, 40, 0.05);
+  box-shadow: none;
   overflow: hidden;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -877,7 +940,7 @@ onMounted(() => {
   opacity: 1 !important;
   border-color: var(--accent-color, #f82249) !important;
   border-width: 2px !important;
-  box-shadow: 0 3px 10px rgba(248, 34, 73, 0.22) !important;
+  box-shadow: none !important;
   transform: translateY(-1px);
 }
 
@@ -925,15 +988,49 @@ onMounted(() => {
     min-height: 448px;
     justify-content: space-between;
   }
-  .product-info > .pricing-block,
+  .product-info > .product-info-top,
   .product-info > .spec-checklist,
   .product-info > .product-meta-row {
     margin-bottom: 0 !important;
   }
 }
 
-.product-price-val {
+.product-title-block {
+  margin-bottom: 12px;
+}
+
+.product-main-title {
   font-family: var(--heading-font, 'Raleway', sans-serif);
+  font-size: 1.45rem;
+  font-weight: 700;
+  color: var(--heading-color, #0A1128);
+  line-height: 1.35;
+  margin-bottom: 6px;
+  letter-spacing: -0.01em;
+  white-space: normal;
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+
+@media (max-width: 768px) {
+  .product-main-title {
+    font-size: 1.25rem;
+  }
+}
+
+.product-sku-info {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #64748b;
+}
+
+.product-sku-info .font-monospace {
+  letter-spacing: 0.02em;
+}
+
+.product-price-val {
+  font-family: var(--default-font, 'Roboto', sans-serif);
+  font-variant-numeric: lining-nums;
   font-size: 1.85rem;
   font-weight: 700;
   line-height: 1.2;
