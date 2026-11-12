@@ -40,20 +40,8 @@
           </template>
         </span>
 
-        <!-- Cụm Icon bên phải: Nút xóa [x] & Mũi tên [v] -->
-        <div class="select-actions d-flex align-items-center gap-1 ms-2">
-          <!-- Nút xóa nhanh nếu clearable -->
-          <button
-            v-if="clearable && hasSelectedValue && !disabled && !loading"
-            type="button"
-            class="btn-clear-select border-0 bg-transparent p-0 text-muted"
-            title="Xóa lựa chọn"
-            @click.stop="handleClear"
-          >
-            <i class="bi bi-x-circle-fill"></i>
-          </button>
-
-          <!-- Mũi tên xoay -->
+        <!-- Icon bên phải: Mũi tên [v] -->
+        <div class="select-actions d-flex align-items-center ms-2">
           <i
             class="bi bi-chevron-down select-arrow"
             :class="{ 'rotated': isOpen }"
@@ -130,7 +118,6 @@
                 <small v-if="opt.subtitle" class="option-subtitle d-block text-muted">{{ opt.subtitle }}</small>
               </div>
               <span v-if="opt.badge" class="badge bg-light text-dark jpm-badge-sm">{{ opt.badge }}</span>
-              <i v-if="isOptionSelected(opt)" class="bi bi-check2 text-danger ms-2 flex-shrink-0"></i>
             </li>
           </ul>
         </div>
@@ -437,16 +424,6 @@ watch(() => props.options, () => {
   color: var(--jpm-color-red-marine, #F82249);
 }
 
-.btn-clear-select {
-  font-size: 0.8rem;
-  cursor: pointer;
-  transition: color 0.15s ease;
-}
-
-.btn-clear-select:hover {
-  color: var(--jpm-color-red-marine, #F82249) !important;
-}
-
 /* Panel Menu Dropdown */
 .custom-dropdown-panel {
   position: absolute;
@@ -479,7 +456,7 @@ watch(() => props.options, () => {
   background: transparent !important;
   margin: 0 !important;
   padding: 4px 0 !important;
-  max-height: 240px !important;
+  max-height: 280px !important;
   overflow-y: auto !important;
   overflow-x: hidden !important;
   display: block !important;
@@ -491,20 +468,26 @@ watch(() => props.options, () => {
   font-size: 0.875rem;
   color: var(--jpm-neutral-800, #1E293B);
   cursor: pointer;
-  transition: background-color 0.15s ease;
+  transition: background-color 0.15s ease, color 0.15s ease;
   line-height: 1.35;
 }
 
 .dropdown-item-option:hover,
 .dropdown-item-option.highlighted {
-  background-color: var(--jpm-neutral-50, #F8FAFC);
-  color: var(--jpm-color-red-marine, #F82249);
+  background-color: var(--jpm-neutral-100, #F1F5F9);
+  color: var(--jpm-neutral-900, #0F172A);
 }
 
 .dropdown-item-option.active {
   background-color: #fef2f4;
   color: var(--jpm-color-red-marine, #F82249);
   font-weight: 600;
+}
+
+.dropdown-item-option.active:hover,
+.dropdown-item-option.active.highlighted {
+  background-color: #fee2e6;
+  color: var(--jpm-color-red-marine, #F82249);
 }
 
 .dropdown-item-option.disabled {

@@ -773,11 +773,11 @@ const filteredModels = computed(() => {
 }
 
 .table-row-hover:hover .btn-view-diagram {
-  background-color: #ffffff !important;
+  background-color: var(--accent-color, #f82249) !important;
   border-color: var(--accent-color, #f82249) !important;
-  color: var(--accent-color, #f82249) !important;
+  color: #ffffff !important;
   transform: translateY(-1px);
-  box-shadow: 0 2px 8px rgba(248, 34, 73, 0.15);
+  box-shadow: 0 4px 12px rgba(248, 34, 73, 0.25);
 }
 
 .table-row-hover:hover .btn-view-diagram .arrow-icon {

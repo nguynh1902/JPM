@@ -18,7 +18,7 @@ class ThuongHieuSeeder extends Seeder
             ['id' => 2, 'code' => 'HON', 'name' => 'HONDA', 'img' => 'honda_marine_thuonghieu.png'],
             ['id' => 5, 'code' => 'SUZ', 'name' => 'SUZUKI', 'img' => 'suzuki_marine_thuonghieu.png'],
             ['id' => 7, 'code' => 'MER', 'name' => 'MERCURY', 'img' => 'mecury_thuonghieu.png'],
-            ['id' => 8, 'code' => 'JET', 'name' => 'JETKI', 'img' => 'jetki_thuonghieu.png'],
+            ['id' => 8, 'code' => 'JET', 'name' => 'JET SKI', 'img' => 'jetki_thuonghieu.png'],
             ['id' => 9, 'code' => 'TOH', 'name' => 'TOHATSU', 'img' => 'tohatsu_thuonghieu.png'],
             ['id' => 10, 'code' => 'SEA', 'name' => 'SEADOO', 'img' => 'seadoo_thuonghieu.png'],
             ['id' => 11, 'code' => 'YAN', 'name' => 'YANMAR', 'img' => 'yanmar_thuonghieu.png'],
