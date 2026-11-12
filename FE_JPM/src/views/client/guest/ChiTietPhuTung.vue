@@ -176,8 +176,9 @@
                     <h1 class="product-main-title">
                       {{ phuTung.ten_phu_tung }}
                     </h1>
-                    <div class="product-sku-info text-muted">
-                      Part #: <span class="fw-bold text-dark font-monospace">{{ phuTung.ma_phu_tung }}</span>
+                    <div class="product-sku-info">
+                      <span class="sku-label">Mã:</span>
+                      <span class="sku-code font-monospace">{{ phuTung.ma_phu_tung }}</span>
                     </div>
                   </div>
 
@@ -1351,12 +1352,21 @@ watch(compatibleModels, (models) => {
   .product-info {
     height: 100%;
     min-height: 448px;
-    justify-content: space-between;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
   }
-  .product-info > .product-info-top,
-  .product-info > .spec-checklist,
+  .product-info > .product-info-top {
+    margin-bottom: 20px !important;
+  }
+  .product-info > .spec-checklist {
+    margin-bottom: 20px !important;
+  }
   .product-info > .product-meta-row {
-    margin-bottom: 0 !important;
+    margin-bottom: 24px !important;
+  }
+  .product-info > .purchase-container {
+    margin-top: auto;
   }
 }
 
@@ -1384,13 +1394,23 @@ watch(compatibleModels, (models) => {
 }
 
 .product-sku-info {
-  font-size: 0.95rem;
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.product-sku-info .sku-label {
+  font-size: 0.92rem;
   font-weight: 500;
   color: #64748b;
 }
 
-.product-sku-info .font-monospace {
-  letter-spacing: 0.02em;
+.product-sku-info .sku-code {
+  color: #0d6efd !important;
+  font-size: 1.15rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.03em;
 }
 
 .product-price-val {

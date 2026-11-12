@@ -171,8 +171,9 @@
                     <h1 class="product-main-title">
                       {{ sanPham.ten_san_pham }}
                     </h1>
-                    <div class="product-sku-info text-muted">
-                      SKU #: <span class="fw-bold text-dark font-monospace">{{ sanPham.ma_san_pham }}</span>
+                    <div class="product-sku-info">
+                      <span class="sku-label">Mã:</span>
+                      <span class="sku-code font-monospace">{{ sanPham.ma_san_pham }}</span>
                     </div>
                   </div>
 
@@ -180,9 +181,6 @@
                     <div class="d-flex flex-wrap align-items-center gap-3">
                       <span v-if="sanPham.is_gia_lien_he || !sanPham.gia_ban" class="product-price-val text-danger">Liên hệ nhận báo giá</span>
                       <span v-else class="product-price-val text-danger">{{ formatPrice(sanPham.gia_ban) }} ₫</span>
-                      <span :class="sanPham.so_luong_ton > 0 ? 'badge-stock-in' : 'badge-stock-out'">
-                        <i :class="sanPham.so_luong_ton > 0 ? 'bi bi-check-circle-fill me-1' : 'bi bi-dash-circle-fill me-1'"></i>{{ sanPham.so_luong_ton > 0 ? 'Còn hàng' : 'Tạm hết' }}
-                      </span>
                     </div>
                   </div>
                 </div>
@@ -986,12 +984,21 @@ onMounted(() => {
   .product-info {
     height: 100%;
     min-height: 448px;
-    justify-content: space-between;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
   }
-  .product-info > .product-info-top,
-  .product-info > .spec-checklist,
+  .product-info > .product-info-top {
+    margin-bottom: 20px !important;
+  }
+  .product-info > .spec-checklist {
+    margin-bottom: 20px !important;
+  }
   .product-info > .product-meta-row {
-    margin-bottom: 0 !important;
+    margin-bottom: 24px !important;
+  }
+  .product-info > .purchase-container {
+    margin-top: auto;
   }
 }
 
@@ -1019,13 +1026,23 @@ onMounted(() => {
 }
 
 .product-sku-info {
-  font-size: 0.95rem;
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.product-sku-info .sku-label {
+  font-size: 0.92rem;
   font-weight: 500;
   color: #64748b;
 }
 
-.product-sku-info .font-monospace {
-  letter-spacing: 0.02em;
+.product-sku-info .sku-code {
+  color: #0d6efd !important;
+  font-size: 1.15rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.03em;
 }
 
 .product-price-val {
@@ -1035,30 +1052,6 @@ onMounted(() => {
   font-weight: 700;
   line-height: 1.2;
   letter-spacing: -0.02em;
-}
-
-.badge-stock-in {
-  display: inline-flex;
-  align-items: center;
-  background: #ecfdf5;
-  color: #047857;
-  border: 1px solid #a7f3d0;
-  font-size: 0.8rem;
-  font-weight: 600;
-  padding: 4px 10px;
-  border-radius: 6px;
-}
-
-.badge-stock-out {
-  display: inline-flex;
-  align-items: center;
-  background: #fef2f2;
-  color: #b91c1c;
-  border: 1px solid #fecaca;
-  font-size: 0.8rem;
-  font-weight: 600;
-  padding: 4px 10px;
-  border-radius: 6px;
 }
 
 .spec-checklist {
