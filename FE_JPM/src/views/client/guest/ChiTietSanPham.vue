@@ -1,6 +1,6 @@
 <template>
   <div class="main-page">
-    <section class="section inner-page-section">
+    <section class="section inner-page-section product-detail-section bg-white">
       <div class="container">
         
         <!-- SKELETON LOADING -->
@@ -286,7 +286,7 @@
     </section>
 
     <!-- RELATED PRODUCTS & FAQ -->
-    <section class="section light-background py-5 border-top">
+    <section class="section related-products-section py-5 border-top">
       <div class="container">
         <!-- SẢN PHẨM CÙNG DANH MỤC -->
         <div class="mb-5" data-aos="fade-up" v-if="relatedProducts && relatedProducts.length > 0">
@@ -624,6 +624,16 @@ onMounted(() => {
 </script>
 
 <style scoped>
+/* ── EDITORIAL LUXURY TWO-TONE SECTION ARCHITECTURE (MATCHING HOME PAGE) ── */
+.product-detail-section {
+  background-color: #ffffff !important;
+}
+
+.related-products-section {
+  background-color: #f8fafc !important;
+  border-top: 1px solid #e2e8f0 !important;
+}
+
 .cursor-pointer { cursor: pointer; }
 
 /* Breadcrumb */
@@ -634,7 +644,7 @@ onMounted(() => {
 .main-image-canvas {
   position: relative;
   width: 100%;
-  height: 285px;
+  height: 385px;
   background: #f8fafc;
   border: 1px solid rgba(0, 0, 0, 0.06);
   border-radius: 14px;
@@ -644,6 +654,12 @@ onMounted(() => {
   align-items: center;
   justify-content: center;
   transition: box-shadow 0.3s ease;
+}
+
+@media (max-width: 768px) {
+  .main-image-canvas {
+    height: 320px;
+  }
 }
 
 .main-image-canvas:hover {
@@ -906,7 +922,7 @@ onMounted(() => {
 @media (min-width: 992px) {
   .product-info {
     height: 100%;
-    min-height: 348px;
+    min-height: 448px;
     justify-content: space-between;
   }
   .product-info > .pricing-block,

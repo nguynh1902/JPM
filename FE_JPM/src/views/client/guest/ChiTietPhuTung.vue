@@ -1,6 +1,6 @@
 <template>
   <div class="main-page">
-    <section class="section inner-page-section">
+    <section class="section inner-page-section product-detail-section bg-white">
       <div class="container">
         
         <!-- SKELETON LOADING -->
@@ -373,7 +373,7 @@
     </section>
 
     <!-- NEW SECTIONS -->
-    <section class="section light-background py-5 border-top">
+    <section class="section related-products-section py-5 border-top">
       <div class="container">
         <!-- PHỤ TÙNG LIÊN QUAN -->
         <div class="mb-5" data-aos="fade-up" v-if="relatedParts && relatedParts.length > 0">
@@ -979,13 +979,23 @@ watch(compatibleModels, (models) => {
 </script>
 
 <style scoped>
+/* ── EDITORIAL LUXURY TWO-TONE SECTION ARCHITECTURE (MATCHING HOME PAGE) ── */
+.product-detail-section {
+  background-color: #ffffff !important;
+}
+
+.related-products-section {
+  background-color: #f8fafc !important;
+  border-top: 1px solid #e2e8f0 !important;
+}
+
 .cursor-pointer { cursor: pointer; }
 
 /* Breadcrumb */
 .breadcrumb a { color: var(--accent-color); text-decoration: none; font-weight: 500; transition: 0.2s; }
 .breadcrumb a:hover { text-decoration: underline; }
 
-/* Back to Diagram (Option 2: Inline Text Link) */
+/* Back to Diagram (Minimalist Slate Text Navigation) */
 .btn-back-diagram {
   display: inline-flex;
   align-items: center;
@@ -999,22 +1009,22 @@ watch(compatibleModels, (models) => {
   box-shadow: none;
   cursor: pointer;
   text-decoration: none;
-  transition: color 0.2s ease;
+  transition: color 0.2s ease, opacity 0.15s ease;
 }
 
 .btn-back-diagram i {
-  color: #0d6efd;
+  color: inherit;
   font-size: 1rem;
   line-height: 1;
-  transition: transform 0.2s ease;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .btn-back-diagram:hover {
   background: transparent;
-  color: #0d6efd;
+  color: #0A1128;
   box-shadow: none;
   transform: none;
-  text-decoration: underline;
+  text-decoration: none;
 }
 
 .btn-back-diagram:hover i {
@@ -1022,6 +1032,7 @@ watch(compatibleModels, (models) => {
 }
 
 .btn-back-diagram:active {
+  opacity: 0.7;
   transform: none;
 }
 
@@ -1029,7 +1040,7 @@ watch(compatibleModels, (models) => {
 .main-image-canvas {
   position: relative;
   width: 100%;
-  height: 285px;
+  height: 385px;
   background: #f8fafc;
   border: 1px solid rgba(0, 0, 0, 0.06);
   border-radius: 14px;
@@ -1039,6 +1050,12 @@ watch(compatibleModels, (models) => {
   align-items: center;
   justify-content: center;
   transition: box-shadow 0.3s ease;
+}
+
+@media (max-width: 768px) {
+  .main-image-canvas {
+    height: 320px;
+  }
 }
 
 .main-image-canvas:hover {
@@ -1322,7 +1339,7 @@ watch(compatibleModels, (models) => {
 @media (min-width: 992px) {
   .product-info {
     height: 100%;
-    min-height: 348px;
+    min-height: 448px;
     justify-content: space-between;
   }
   .product-info > .pricing-block,
