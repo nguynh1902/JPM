@@ -43,11 +43,11 @@
                         <th class="text-center th-check">
                           <input class="form-check-input custom-checkbox" type="checkbox" v-model="selectAll" title="Chọn tất cả">
                         </th>
-                        <th class="text-center th-thumb">ẢNH</th>
-                        <th class="text-start">MÃ & TÊN PHỤ TÙNG</th>
-                        <th class="text-center th-price">ĐƠN GIÁ</th>
-                        <th class="text-center th-qty">SỐ LƯỢNG</th>
-                        <th class="text-center th-action">XÓA</th>
+                        <th class="text-center th-thumb">Ảnh</th>
+                        <th class="text-start">Mã & Tên Phụ Tùng</th>
+                        <th class="text-center th-price">Đơn Giá</th>
+                        <th class="text-center th-qty">Số Lượng</th>
+                        <th class="text-center th-action">Thao Tác</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -185,7 +185,7 @@
 
                     <!-- Trạng thái 2: CHƯA CÓ ĐỊA CHỈ (Gọn gàng, tối giản, không hiệu ứng rườm rà) -->
                     <div v-else class="no-address-box p-3 text-center">
-                      <i class="bi bi-geo-alt fs-3 mb-1 d-block" style="color: var(--jpm-color-red-marine, #F82249);"></i>
+                      <i class="bi bi-geo-alt fs-4 mb-1 d-block text-secondary"></i>
                       <p class="text-muted small mb-2">Bạn chưa có địa chỉ nào trong Sổ địa chỉ.</p>
                       <button type="button" class="btn btn-outline-danger btn-sm btn-rounded-8" data-bs-toggle="modal" data-bs-target="#addressModal" @click.prevent="openAddAddress">
                         <i class="bi bi-plus-lg me-1"></i> Thêm địa chỉ ngay
@@ -699,9 +699,9 @@ export default {
 }
 
 .badge-item-count {
-  background: rgba(248, 34, 73, 0.08);
-  color: var(--jpm-color-red-marine, #F82249);
-  border: 1px solid rgba(248, 34, 73, 0.2);
+  background: #f1f5f9;
+  color: #475569;
+  border: 1px solid #e2e8f0;
   font-size: 11.5px;
   font-weight: 700;
   padding: 4px 10px;
@@ -716,31 +716,39 @@ export default {
   border-radius: var(--jpm-radius-control, 8px) !important;
 }
 
-/* ===== TABLE STYLING ===== */
+/* ===== TABLE STYLING (ĐỒNG BỘ 100% VỚI SƠ ĐỒ PHỤ TÙNG & THƯƠNG HIỆU) ===== */
 .custom-cart-table {
   width: 100%;
 }
 
 .custom-cart-table thead th {
-  background-color: #f8fafc !important;
-  color: #475569 !important;
-  font-family: var(--default-font, 'Roboto', sans-serif);
-  font-size: 0.78rem;
-  font-weight: 600;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
+  background-color: #ffffff !important;
+  color: #0A1128 !important;
+  font-family: var(--heading-font, 'Raleway', sans-serif);
+  font-size: 0.88rem;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  text-transform: none;
   border-top: 1px solid #edf2f7 !important;
-  border-bottom: 1px solid #e2e8f0 !important;
-  padding-top: 11px;
-  padding-bottom: 11px;
+  border-bottom: 2px solid #e2e8f0 !important;
+  padding-top: 13px;
+  padding-bottom: 13px;
   vertical-align: middle;
 }
 
 .custom-cart-table tbody td {
-  padding: 16px;
-  border-bottom: 1px solid #f1f5f9;
+  padding: 14px 12px;
+  border-bottom: 1px solid #edf2f7;
   vertical-align: middle;
+  transition: background-color 0.15s ease;
+}
+
+.custom-cart-table tbody tr:nth-child(odd) td {
   background-color: #ffffff;
+}
+
+.custom-cart-table tbody tr:nth-child(even) td {
+  background-color: #f8fafc;
 }
 
 /* Căn lề trái thẳng trục hoàn hảo với padding px-4 (24px) của Card Header */
@@ -776,11 +784,12 @@ export default {
 }
 
 .table-row-hover {
-  transition: background-color 0.15s ease;
+  transition: all 0.15s ease;
 }
 
-.table-row-hover:hover {
-  background-color: #fbfcfe;
+.table-row-hover:hover td {
+  background-color: #f1f5f9 !important;
+  --bs-table-accent-bg: transparent !important;
 }
 
 .custom-checkbox {
@@ -840,34 +849,36 @@ export default {
   color: var(--jpm-color-red-marine, #F82249);
   font-weight: 700;
   font-size: 0.95rem;
+  font-family: var(--default-font, 'Roboto', sans-serif);
+  font-variant-numeric: lining-nums;
   white-space: nowrap;
 }
 
 .part-price-quote {
   color: var(--jpm-color-red-marine, #F82249);
   font-weight: 700;
-  font-size: 0.85rem;
-  background: rgba(248, 34, 73, 0.08);
-  padding: 3px 10px;
-  border-radius: var(--jpm-radius-badge, 6px);
+  font-size: 0.9rem;
+  font-family: var(--default-font, 'Roboto', sans-serif);
+  background: transparent;
+  padding: 0;
   white-space: nowrap;
 }
 
-/* Quantity Selector: 36px height, 8px radius */
+/* Quantity Selector: 32px height, 8px radius */
 .qty-selector {
   background: #ffffff;
-  border: 1px solid #d1d5db;
+  border: 1px solid #e2e8f0;
   border-radius: var(--jpm-radius-control, 8px);
   overflow: hidden;
-  height: 36px;
-  width: 110px;
+  height: 32px;
+  width: 104px;
 }
 
 .qty-btn {
   background: #f8fafc;
   border: none;
-  color: #334155;
-  width: 34px;
+  color: #475569;
+  width: 32px;
   height: 100%;
   font-weight: bold;
   display: flex;
@@ -878,12 +889,12 @@ export default {
 }
 
 .qty-btn:hover {
-  background-color: #edf2f7;
+  background-color: #e2e8f0;
   color: #0A1128;
 }
 
 .qty-input {
-  width: 42px;
+  width: 40px;
   height: 100%;
   border: none;
   text-align: center;
@@ -891,33 +902,34 @@ export default {
   color: #0A1128;
   background: transparent;
   font-size: 0.9rem;
+  font-family: var(--default-font, 'Roboto', sans-serif);
+  font-variant-numeric: lining-nums;
 }
 
 .qty-input:focus {
   outline: none;
 }
 
+/* Nút xóa: Luôn đỏ outline chuẩn, không hiệu ứng chuyển màu rườm rà */
 .btn-delete-item {
-  width: 34px;
-  height: 34px;
-  border-radius: var(--jpm-radius-control, 8px); /* Bo góc 8px chuẩn nút Trang Chủ */
-  border: 1px solid var(--jpm-color-red-marine, #F82249); /* Viền màu đỏ chuẩn JPM Marine */
-  background-color: #ffffff; /* Nền outline trắng sạch sẽ */
-  color: var(--jpm-color-red-marine, #F82249); /* Icon thùng rác màu đỏ chuẩn */
+  width: 32px;
+  height: 32px;
+  border-radius: var(--jpm-radius-control, 8px);
+  border: 1px solid var(--jpm-color-red-marine, #F82249);
+  background-color: #ffffff;
+  color: var(--jpm-color-red-marine, #F82249);
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.9rem;
-  transition: all 0.2s ease;
+  font-size: 0.95rem;
   cursor: pointer;
+  transition: all 0.15s ease;
 }
 
 .btn-delete-item:hover {
   background-color: var(--jpm-color-red-marine, #F82249);
   color: #ffffff;
   border-color: var(--jpm-color-red-marine, #F82249);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 10px rgba(248, 34, 73, 0.25);
 }
 
 /* ===== REASSURANCE / WORKFLOW TRUST BOX ===== */
@@ -968,18 +980,18 @@ export default {
 .b2b-notice-box {
   display: flex;
   align-items: flex-start;
-  gap: 8px;
-  background: #f0fdf4;
-  border: 1px solid #bbf7d0;
-  color: #166534;
-  font-size: 0.78rem;
-  line-height: 1.45;
-  padding: 10px 12px;
+  gap: 10px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  color: #475569;
+  font-size: 0.8rem;
+  line-height: 1.5;
+  padding: 10px 14px;
   border-radius: 8px;
 }
 
 .b2b-notice-box i {
-  color: #16a34a !important;
+  color: #0284c7 !important;
   font-size: 1rem;
 }
 
@@ -1035,7 +1047,7 @@ export default {
 
 .no-address-box {
   background: #f8fafc;
-  border: 1px dashed #cbd5e1;
+  border: 1px solid #e2e8f0;
   border-radius: var(--jpm-radius-control, 8px);
 }
 
