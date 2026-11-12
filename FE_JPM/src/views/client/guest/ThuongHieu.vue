@@ -160,7 +160,7 @@
                   <div v-if="searchCode || selectedNam || selectedHp || selectedStroke" class="col-auto">
                     <button
                       type="button"
-                      class="btn btn-outline-danger btn-reset-filter d-inline-flex align-items-center gap-1 text-nowrap"
+                      class="btn btn-outline-secondary btn-reset-filter d-inline-flex align-items-center gap-1 text-nowrap"
                       @click="clearFilters"
                       title="Xóa tất cả bộ lọc"
                     >
@@ -195,7 +195,7 @@
                             </div>
                             <h6 class="fw-bold text-dark mb-1">Không tìm thấy model phù hợp</h6>
                             <p class="text-muted small mb-3">Vui lòng điều chỉnh hoặc xóa bớt tiêu chí lọc</p>
-                            <button class="btn btn-outline-danger btn-sm px-3 py-1" @click="clearFilters">
+                            <button class="btn btn-outline-primary btn-sm px-3 py-1" @click="clearFilters">
                               <i class="bi bi-arrow-counterclockwise me-1"></i> Xóa tất cả bộ lọc
                             </button>
                           </div>
@@ -448,7 +448,7 @@ const filteredModels = computed(() => {
 .btn-reset-sidebar-filter {
   background: transparent;
   border: none;
-  color: #f82249;
+  color: #64748b;
   font-size: 0.82rem;
   font-weight: 600;
   padding: 0;
@@ -464,7 +464,7 @@ const filteredModels = computed(() => {
 }
 
 .btn-reset-sidebar-filter:hover {
-  color: #d8143a;
+  color: var(--accent-color, #f82249);
   text-decoration: underline;
 }
 
@@ -578,11 +578,11 @@ const filteredModels = computed(() => {
 }
 
 .badge-item-count {
-  background: #fff1f2;
-  color: #e11d48;
-  border: 1px solid #fecdd3;
+  background: #f1f5f9;
+  color: #475569;
+  border: 1px solid #e2e8f0;
   font-size: 11.5px;
-  font-weight: 700;
+  font-weight: 600;
   padding: 4px 10px;
   border-radius: var(--jpm-radius-badge, 6px);
   display: inline-flex;
@@ -608,8 +608,8 @@ const filteredModels = computed(() => {
 
 .search-input-box:focus-within {
   border-width: 1px !important;
-  border-color: var(--accent-color, #f82249) !important;
-  box-shadow: 0 0 0 3px rgba(248, 34, 73, 0.12) !important;
+  border-color: #94a3b8 !important;
+  box-shadow: 0 0 0 3px rgba(10, 17, 40, 0.06) !important;
   outline: 0 !important;
 }
 
@@ -626,7 +626,7 @@ const filteredModels = computed(() => {
 }
 
 .search-input-box:focus-within .search-input-icon {
-  color: var(--accent-color, #f82249);
+  color: #0A1128;
 }
 
 .search-input-field {
@@ -759,25 +759,25 @@ const filteredModels = computed(() => {
 }
 
 .table-row-hover:hover td {
-  background-color: #fff1f2 !important;
+  background-color: #f1f5f9 !important;
   --bs-table-accent-bg: transparent !important;
   --bs-table-bg-state: transparent !important;
 }
 
 .table-row-hover:hover td:first-child {
-  box-shadow: inset 4px 0 0 #f82249 !important;
+  box-shadow: none !important;
 }
 
 .table-row-hover:hover .model-name {
-  color: #f82249 !important;
+  color: #0A1128 !important;
 }
 
 .table-row-hover:hover .btn-view-diagram {
-  background-color: var(--accent-color, #f82249) !important;
+  background-color: #ffffff !important;
   border-color: var(--accent-color, #f82249) !important;
-  color: #ffffff !important;
+  color: var(--accent-color, #f82249) !important;
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(248, 34, 73, 0.25);
+  box-shadow: 0 2px 8px rgba(248, 34, 73, 0.15);
 }
 
 .table-row-hover:hover .btn-view-diagram .arrow-icon {
@@ -790,7 +790,7 @@ const filteredModels = computed(() => {
 }
 
 .model-name-link:hover .model-name {
-  color: #f82249 !important;
+  color: #0A1128 !important;
 }
 
 .model-name {
@@ -812,7 +812,7 @@ const filteredModels = computed(() => {
   white-space: nowrap;
 }
 
-/* Nút Thao Tác Sơ Đồ: Chuẩn hóa kích thước đồng bộ 100% với nút Thao Tác bên Sơ Đồ Phụ Tùng */
+/* Nút Thao Tác Sơ Đồ: Đồng bộ 100% với nút Thao Tác bên Sơ Đồ Phụ Tùng */
 .btn-view-diagram {
   display: inline-flex;
   align-items: center;

@@ -50,87 +50,184 @@
             </nav>
           </div>
 
-          <div class="row g-4 mb-5">
+          <div class="row g-4 mb-3">
             
             <!-- LEFT: IMAGE GALLERY (col-lg-5) -->
             <div class="col-lg-5" data-aos="fade-right">
-              <div class="product-gallery position-relative mb-3 text-center">
+              <div class="product-gallery">
                 
-                <!-- Main Image Card -->
-                <div class="main-image position-relative border rounded bg-white shadow-sm overflow-hidden" style="width: 100%; height: 350px;">
-                  <button class="btn btn-sm btn-light position-absolute border shadow-sm" style="top: 15px; left: 15px; z-index: 10;" title="Chia sẻ">
-                    <i class="bi bi-share"></i>
+                <!-- Main Image Card (Luxury Marine Canvas) -->
+                <div class="main-image-canvas">
+                  <!-- Floating Glass Actions -->
+                  <div class="gallery-floating-actions">
+                    <button 
+                      class="btn-gallery-action" 
+                      title="Chia sẻ liên kết" 
+                      @click="handleShare"
+                    >
+                      <i class="bi bi-share"></i>
+                    </button>
+                    <button 
+                      class="btn-gallery-action" 
+                      title="Phóng to hình ảnh" 
+                      @click="openLightbox"
+                    >
+                      <i class="bi bi-arrows-fullscreen"></i>
+                    </button>
+                  </div>
+
+                  <!-- Prev / Next Controls (khi có > 1 ảnh) -->
+                  <button 
+                    v-if="images && images.length > 1" 
+                    class="btn-canvas-nav btn-canvas-prev" 
+                    @click.stop="prevImage" 
+                    title="Ảnh trước"
+                  >
+                    <i class="bi bi-chevron-left"></i>
                   </button>
-                  <img v-if="currentImage" :src="getImageUrl(currentImage)" alt="Product Image" class="w-100 h-100" style="object-fit: cover; cursor: pointer;" @click="openLightbox">
-                  <div v-else class="w-100 h-100 d-flex align-items-center justify-content-center bg-light">
-                     <i class="bi bi-image text-muted" style="font-size: 4rem;"></i>
+                  <button 
+                    v-if="images && images.length > 1" 
+                    class="btn-canvas-nav btn-canvas-next" 
+                    @click.stop="nextImage" 
+                    title="Ảnh sau"
+                  >
+                    <i class="bi bi-chevron-right"></i>
+                  </button>
+
+                  <!-- Image Canvas Wrapper -->
+                  <div class="canvas-image-wrapper" @click="openLightbox" title="Nhấp để phóng to ảnh">
+                    <img 
+                      v-if="currentImage" 
+                      :src="getImageUrl(currentImage)" 
+                      alt="Hình ảnh sản phẩm" 
+                      class="canvas-img"
+                    >
+                    <div v-else class="canvas-placeholder">
+                      <i class="bi bi-image text-muted fs-1 mb-2"></i>
+                      <span class="text-muted small">Chưa có hình ảnh</span>
+                    </div>
+                  </div>
+
+                  <!-- Counter Badge -->
+                  <div v-if="images && images.length > 1" class="gallery-counter-badge">
+                    {{ images.indexOf(currentImage) + 1 }} / {{ images.length }}
                   </div>
                 </div>
 
-                <!-- Thumbnails List -->
-                <div class="thumbnail-list d-flex justify-content-center gap-3 mt-3" v-if="images.length > 1">
-                  <div 
-                    v-for="(img, idx) in images" 
-                    :key="idx" 
-                    class="thumb-item rounded cursor-pointer overflow-hidden shadow-sm bg-white"
-                    :class="{'active-thumb': currentImage === img}"
-                    @click="currentImage = img"
-                    style="width: 75px; height: 75px;"
+                <!-- Thumbnails List (Luôn hiển thị ảnh đại diện và thư viện ảnh) -->
+                <div class="thumbnails-slider-wrapper position-relative mt-2" v-if="images && images.length > 0">
+                  <button 
+                    v-if="images.length > 5" 
+                    class="btn-thumb-nav btn-thumb-prev" 
+                    @click="scrollThumbnails('left')"
+                    title="Cuộn ảnh trước"
                   >
-                    <img :src="getImageUrl(img)" class="w-100 h-100" style="object-fit: cover;">
+                    <i class="bi bi-chevron-left"></i>
+                  </button>
+
+                  <div class="thumbnail-filmstrip d-flex justify-content-start gap-2" ref="thumbStripRef">
+                    <div 
+                      v-for="(img, idx) in images" 
+                      :key="idx" 
+                      class="thumb-film-item"
+                      :class="{'active-thumb': currentImage === img}"
+                      @click="selectImage(img)"
+                      title="Xem ảnh này"
+                    >
+                      <img :src="getImageUrl(img)" class="thumb-img" alt="Thumbnail">
+                    </div>
                   </div>
+
+                  <button 
+                    v-if="images.length > 5" 
+                    class="btn-thumb-nav btn-thumb-next" 
+                    @click="scrollThumbnails('right')"
+                    title="Cuộn ảnh sau"
+                  >
+                    <i class="bi bi-chevron-right"></i>
+                  </button>
                 </div>
               </div>
             </div>
 
             <!-- MIDDLE: PRODUCT INFO (col-lg-7) -->
-            <div class="col-lg-7" data-aos="fade-up">
-              <div class="product-info pe-lg-3">
+            <div class="col-lg-7 d-flex flex-column" data-aos="fade-up">
+              <div class="product-info flex-grow-1 pe-lg-3">
                 
-                <div class="pricing-block mb-4">
-                  <div class="d-flex align-items-end gap-3 mb-1">
-                    <span v-if="sanPham.is_gia_lien_he || !sanPham.gia_ban" class="fs-3 fw-bold text-danger">Liên hệ nhận báo giá</span>
-                    <span v-else class="fs-3 fw-bold text-danger">{{ formatPrice(sanPham.gia_ban) }} đ</span>
+                <div class="pricing-block mb-3">
+                  <div class="d-flex flex-wrap align-items-center gap-3">
+                    <span v-if="sanPham.is_gia_lien_he || !sanPham.gia_ban" class="product-price-val text-danger">Liên hệ nhận báo giá</span>
+                    <span v-else class="product-price-val text-danger">{{ formatPrice(sanPham.gia_ban) }} ₫</span>
+                    <span :class="sanPham.so_luong_ton > 0 ? 'badge-stock-in' : 'badge-stock-out'">
+                      <i :class="sanPham.so_luong_ton > 0 ? 'bi bi-check-circle-fill me-1' : 'bi bi-dash-circle-fill me-1'"></i>{{ sanPham.so_luong_ton > 0 ? 'Còn hàng' : 'Tạm hết' }}
+                    </span>
                   </div>
                 </div>
 
-                
-
-                <ul class="list-unstyled mb-4 text-muted lh-lg">
-                  <li><i class="bi bi-check-circle-fill text-danger me-2"></i> Cam kết hàng chính hãng 100%.</li>
-                  <li><i class="bi bi-check-circle-fill text-danger me-2"></i> Đổi trả dễ dàng nếu có lỗi do NSX.</li>
-                  <li><i class="bi bi-check-circle-fill text-danger me-2"></i> Đạt tiêu chuẩn an toàn hàng hải.</li>
-                  <li><i class="bi bi-check-circle-fill text-danger me-2"></i> Phân phối ủy quyền bởi JPM Marine.</li>
-                </ul>
-
-                <a href="#product-tabs" class="text-danger fw-bold text-decoration-none d-inline-block mb-4 hover-underline" @click.prevent="scrollToTabs">Xem bài viết mô tả chi tiết <i class="bi bi-arrow-right"></i></a>
-
-                <div class="meta-info mb-4">
-                  <div class="mb-1"><span class="fw-bold text-dark">TRẠNG THÁI:</span> <span :class="sanPham.so_luong_ton > 0 ? 'text-success' : 'text-danger'" class="fw-bold">{{ sanPham.so_luong_ton > 0 ? 'Còn hàng' : 'Tạm hết' }}</span></div>
-                  <div><span class="text-muted"><i class="bi bi-headset text-danger me-1"></i> Hỗ trợ tư vấn mua sắm chuyên sâu</span></div>
+                <!-- SPEC CHECKLIST -->
+                <div class="spec-checklist mb-3">
+                  <div class="spec-check-item">
+                    <i class="bi bi-check2 check-icon"></i>
+                    <span>Sản phẩm chính hãng 100%, bảo hành theo tiêu chuẩn nhà sản xuất</span>
+                  </div>
+                  <div class="spec-check-item">
+                    <i class="bi bi-check2 check-icon"></i>
+                    <span>Đạt tiêu chuẩn an toàn hàng hải, độ bền cao trong môi trường biển</span>
+                  </div>
+                  <div class="spec-check-item">
+                    <i class="bi bi-check2 check-icon"></i>
+                    <span>Đổi trả linh hoạt nếu phát sinh lỗi từ nhà sản xuất</span>
+                  </div>
                 </div>
 
-                <div class="purchase-container" style="max-width: 550px;">
-                  <div class="action-block mb-4 pt-4 border-top">
-                    <div class="d-flex gap-3">
-                      <div class="quantity-selector d-flex align-items-center bg-light border rounded" style="width: 140px;">
-                        <button class="btn btn-sm bg-transparent border-0 px-3 h-100 shadow-none text-dark" @click="qty > 1 ? qty-- : null" :disabled="qty <= 1"><i class="bi bi-dash fs-5"></i></button>
-                        <input type="number" v-model.number="qty" class="form-control border-0 bg-transparent text-center fw-bold h-100 px-0 shadow-none" min="1" :max="sanPham.so_luong_ton || 999" @change="qty = Math.min(Math.max(1, qty), sanPham.so_luong_ton || 999)">
-                        <button class="btn btn-sm bg-transparent border-0 px-3 h-100 shadow-none text-dark" @click="qty < (sanPham.so_luong_ton || 999) ? qty++ : null" :disabled="qty >= (sanPham.so_luong_ton || 999)"><i class="bi bi-plus fs-5"></i></button>
+                <!-- META INFO & SPECS LINK -->
+                <div class="product-meta-row mb-3 text-muted small">
+                  <div v-if="sanPham.danh_muc" class="mb-2">
+                    <span>Danh mục: </span>
+                    <strong class="text-dark">{{ sanPham.danh_muc.ten_danh_muc }}</strong>
+                  </div>
+                  <div>
+                    <a href="#product-tabs" class="link-view-specs d-inline-flex align-items-center gap-1" @click.prevent="scrollToTabs">
+                      <span>Xem bài viết mô tả chi tiết</span>
+                      <i class="bi bi-arrow-right"></i>
+                    </a>
+                  </div>
+                </div>
+
+                <!-- PURCHASE CONTAINER -->
+                <div class="purchase-container" style="max-width: 540px;">
+                  <div class="action-block pt-3 border-top">
+                    <div class="d-flex align-items-center gap-3">
+                      <!-- 44px Quantity Stepper -->
+                      <div class="product-qty-stepper">
+                        <button class="qty-btn" @click="qty > 1 ? qty-- : null" :disabled="qty <= 1" title="Giảm số lượng">
+                          <i class="bi bi-dash"></i>
+                        </button>
+                        <input 
+                          type="number" 
+                          v-model.number="qty" 
+                          class="qty-input" 
+                          min="1" 
+                          :max="sanPham.so_luong_ton || 999" 
+                          @change="qty = Math.min(Math.max(1, qty), sanPham.so_luong_ton || 999)"
+                        >
+                        <button class="qty-btn" @click="qty < (sanPham.so_luong_ton || 999) ? qty++ : null" :disabled="qty >= (sanPham.so_luong_ton || 999)" title="Tăng số lượng">
+                          <i class="bi bi-plus"></i>
+                        </button>
                       </div>
-                      <button class="btn btn-jpm flex-grow-1 fs-6 fw-bold text-uppercase shadow-none" @click="addToCart(sanPham)">
-                        Thêm Vào Giỏ
+
+                      <!-- Add to Cart -->
+                      <button class="btn btn-product-cart flex-grow-1" @click="addToCart(sanPham)">
+                        <i class="bi bi-cart2 me-1"></i>
+                        <span>Thêm vào giỏ</span>
                       </button>
-                      <button class="btn btn-outline-jpm rounded shadow-none fw-bold d-flex align-items-center justify-content-center gap-1 text-uppercase" style="width: 140px; font-size: 0.85rem;" title="Lưu vật tư thường mua" @click="saveToWishlist">
-                        <i class="bi bi-bookmark-heart"></i> Lưu Vật Tư
+
+                      <!-- Save Wishlist Button -->
+                      <button class="btn btn-product-garage" title="Lưu vật tư thường mua" @click="saveToWishlist">
+                        <i class="bi bi-bookmark-heart me-1"></i>
+                        <span>Lưu vật tư</span>
                       </button>
                     </div>
-                  </div>
-
-                  <div class="trust-badges d-flex align-items-center justify-content-between text-dark small fw-bold mt-3">
-                    <div class="d-flex align-items-center gap-2"><i class="bi bi-award text-danger fs-5"></i> Chính Hãng OEM</div>
-                    <div class="d-flex align-items-center gap-2"><i class="bi bi-shield-check text-danger fs-5"></i> Đổi Trả Linh Hoạt</div>
-                    <div class="d-flex align-items-center gap-2"><i class="bi bi-gear-wide-connected text-danger fs-5"></i> Hỗ Trợ 24/7</div>
                   </div>
                 </div>
               </div>
@@ -142,7 +239,7 @@
           <!-- TABS SECTION -->
           <div class="row mb-5" id="product-tabs" data-aos="fade-up">
              <div class="col-lg-12">
-                <div class="product-tabs pt-4 border-top">
+                <div class="product-tabs pt-3 border-top">
                   <ul class="nav nav-tabs custom-tabs mb-4" id="myTab" role="tablist">
                     <li class="nav-item" role="presentation">
                       <button class="nav-link active fw-bold text-uppercase" id="desc-tab" data-bs-toggle="tab" data-bs-target="#desc" type="button" role="tab">MÔ TẢ CHI TIẾT</button>
@@ -210,44 +307,72 @@
         
         <!-- CÂU HỎI THƯỜNG GẶP -->
         <div class="mb-5" data-aos="fade-up">
-          <div class="d-flex align-items-center justify-content-between mb-4 border-bottom pb-2">
+          <div class="mb-4 border-bottom pb-2">
             <h4 class="fw-bold text-uppercase mb-0" style="color: var(--heading-color);">
               Câu Hỏi Thường Gặp
             </h4>
-            <router-link to="/ho-tro#faq-section" class="text-decoration-none text-danger fw-bold d-flex align-items-center gap-1 hover-underline" style="font-size: 0.95rem;">
-              Xem tất cả <i class="bi bi-arrow-right"></i>
-            </router-link>
           </div>
           
           <div class="row g-4" v-if="faqs.length > 0">
             <!-- Cột trái -->
             <div class="col-lg-6">
-              <div class="faq-list-container d-flex flex-column">
-                <div v-for="faq in faqs.slice(0, Math.ceil(faqs.length / 2))" :key="faq.id" class="faq-list-item d-flex pb-4 border-bottom position-relative mb-4 h-100">
-                  <div class="flex-shrink-0 mt-0">
-                    <i class="bi bi-question-circle-fill text-danger fs-4"></i>
-                  </div>
-                  <div class="ms-3 flex-grow-1">
-                    <h6 class="fw-bold mb-2" style="font-size: 1.05rem; line-height: 1.4;">
-                      <a href="#" class="text-dark text-decoration-none stretched-link transition-color" onmouseover="this.style.color='#f82249'" onmouseout="this.style.color=''">{{ faq.question }}</a>
-                    </h6>
-                    <div class="text-danger fw-bold text-uppercase mt-2" style="letter-spacing: 0.5px; font-size: 0.8rem;">Xem chi tiết <i class="bi bi-arrow-right ms-1"></i></div>
+              <div class="accordion accordion-flush client-faq-accordion" id="faqAccordionLeft">
+                <div 
+                  v-for="(faq, idx) in faqs.slice(0, Math.ceil(faqs.length / 2))" 
+                  :key="faq.id" 
+                  class="accordion-item bg-transparent border-0 border-bottom"
+                >
+                  <h6 class="accordion-header" :id="'faqHeadL' + idx">
+                    <button 
+                      class="accordion-button collapsed bg-transparent shadow-none px-0 py-3 fw-bold" 
+                      type="button" 
+                      data-bs-toggle="collapse" 
+                      :data-bs-target="'#faqCollapseL' + idx" 
+                      aria-expanded="false" 
+                      :aria-controls="'faqCollapseL' + idx"
+                    >
+                      {{ faq.question }}
+                    </button>
+                  </h6>
+                  <div 
+                    :id="'faqCollapseL' + idx" 
+                    class="accordion-collapse collapse" 
+                    :aria-labelledby="'faqHeadL' + idx" 
+                    data-bs-parent="#faqAccordionLeft"
+                  >
+                    <div class="accordion-body px-0 pt-0 pb-3 text-muted faq-answer-content" v-html="faq.answer"></div>
                   </div>
                 </div>
               </div>
             </div>
+
             <!-- Cột phải -->
             <div class="col-lg-6">
-              <div class="faq-list-container d-flex flex-column">
-                <div v-for="faq in faqs.slice(Math.ceil(faqs.length / 2))" :key="faq.id" class="faq-list-item d-flex pb-4 border-bottom position-relative mb-4 h-100">
-                  <div class="flex-shrink-0 mt-0">
-                    <i class="bi bi-question-circle-fill text-danger fs-4"></i>
-                  </div>
-                  <div class="ms-3 flex-grow-1">
-                    <h6 class="fw-bold mb-2" style="font-size: 1.05rem; line-height: 1.4;">
-                      <a href="#" class="text-dark text-decoration-none stretched-link transition-color" onmouseover="this.style.color='#f82249'" onmouseout="this.style.color=''">{{ faq.question }}</a>
-                    </h6>
-                    <div class="text-danger fw-bold text-uppercase mt-2" style="letter-spacing: 0.5px; font-size: 0.8rem;">Xem chi tiết <i class="bi bi-arrow-right ms-1"></i></div>
+              <div class="accordion accordion-flush client-faq-accordion" id="faqAccordionRight">
+                <div 
+                  v-for="(faq, idx) in faqs.slice(Math.ceil(faqs.length / 2))" 
+                  :key="faq.id" 
+                  class="accordion-item bg-transparent border-0 border-bottom"
+                >
+                  <h6 class="accordion-header" :id="'faqHeadR' + idx">
+                    <button 
+                      class="accordion-button collapsed bg-transparent shadow-none px-0 py-3 fw-bold" 
+                      type="button" 
+                      data-bs-toggle="collapse" 
+                      :data-bs-target="'#faqCollapseR' + idx" 
+                      aria-expanded="false" 
+                      :aria-controls="'faqCollapseR' + idx"
+                    >
+                      {{ faq.question }}
+                    </button>
+                  </h6>
+                  <div 
+                    :id="'faqCollapseR' + idx" 
+                    class="accordion-collapse collapse" 
+                    :aria-labelledby="'faqHeadR' + idx" 
+                    data-bs-parent="#faqAccordionRight"
+                  >
+                    <div class="accordion-body px-0 pt-0 pb-3 text-muted faq-answer-content" v-html="faq.answer"></div>
                   </div>
                 </div>
               </div>
@@ -260,7 +385,7 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted, onUnmounted } from 'vue';
+import { ref, computed, watch, onMounted, onUnmounted, nextTick } from 'vue';
 import { useRoute } from 'vue-router';
 import { useQuery, useMutation } from '@tanstack/vue-query';
 import axiosClient from '../../../api/axiosClient';
@@ -279,6 +404,47 @@ const productSlug = computed(() => route.params.slug);
 const qty = ref(1);
 const currentImage = ref(null);
 const images = ref([]);
+const thumbStripRef = ref(null);
+
+const scrollToActiveThumb = () => {
+  nextTick(() => {
+    if (!thumbStripRef.value) return;
+    const activeEl = thumbStripRef.value.querySelector('.active-thumb');
+    if (activeEl) {
+      activeEl.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+    }
+  });
+};
+
+const selectImage = (img) => {
+  currentImage.value = img;
+  scrollToActiveThumb();
+};
+
+const prevImage = () => {
+  if (!images.value || images.value.length <= 1) return;
+  const idx = images.value.indexOf(currentImage.value);
+  const newIdx = (idx - 1 + images.value.length) % images.value.length;
+  currentImage.value = images.value[newIdx];
+  scrollToActiveThumb();
+};
+
+const nextImage = () => {
+  if (!images.value || images.value.length <= 1) return;
+  const idx = images.value.indexOf(currentImage.value);
+  const newIdx = (idx + 1) % images.value.length;
+  currentImage.value = images.value[newIdx];
+  scrollToActiveThumb();
+};
+
+const scrollThumbnails = (direction) => {
+  if (!thumbStripRef.value) return;
+  const scrollAmount = 180;
+  thumbStripRef.value.scrollBy({
+    left: direction === 'left' ? -scrollAmount : scrollAmount,
+    behavior: 'smooth'
+  });
+};
 
 const openLightbox = () => {
   if (images.value.length === 0) return;
@@ -289,6 +455,19 @@ const openLightbox = () => {
   const lightbox = GLightbox({ elements, touchNavigation: true, loop: true });
   const startIndex = images.value.indexOf(currentImage.value);
   lightbox.openAt(startIndex > -1 ? startIndex : 0);
+};
+
+const handleShare = async () => {
+  try {
+    if (navigator.clipboard) {
+      await navigator.clipboard.writeText(window.location.href);
+      toaster.success("Đã sao chép liên kết sản phẩm!");
+    } else {
+      toaster.info("Liên kết: " + window.location.href);
+    }
+  } catch (e) {
+    toaster.info("Liên kết: " + window.location.href);
+  }
 };
 
 // Fetch Product Details
@@ -451,10 +630,247 @@ onMounted(() => {
 .breadcrumb a { color: var(--accent-color); text-decoration: none; font-weight: 500; transition: 0.2s; }
 .breadcrumb a:hover { text-decoration: underline; }
 
-/* Product Gallery */
-.thumb-item { transition: 0.2s; opacity: 0.5; border: 2px solid transparent; }
-.thumb-item:hover { opacity: 0.8; }
-.active-thumb { opacity: 1 !important; border-color: var(--accent-color) !important; }
+/* ── FULL-BLEED LUXURY PRODUCT GALLERY (OPTION 2) ── */
+.main-image-canvas {
+  position: relative;
+  width: 100%;
+  height: 285px;
+  background: #f8fafc;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(10, 17, 40, 0.06);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: box-shadow 0.3s ease;
+}
+
+.main-image-canvas:hover {
+  box-shadow: 0 12px 32px rgba(10, 17, 40, 0.1);
+}
+
+.gallery-floating-actions {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  right: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.btn-gallery-action {
+  pointer-events: auto;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #334155;
+  font-size: 0.92rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  transition: all 0.2s ease;
+  cursor: pointer;
+  padding: 0;
+}
+
+.btn-gallery-action:hover {
+  background: #ffffff;
+  color: #0f172a;
+  transform: scale(1.06);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+.canvas-image-wrapper {
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: zoom-in;
+  overflow: hidden;
+}
+
+.canvas-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.4s ease;
+}
+
+.canvas-image-wrapper:hover .canvas-img {
+  transform: scale(1.04);
+}
+
+.canvas-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+  background: #f1f5f9;
+}
+
+/* Canvas Prev/Next Navigation */
+.btn-canvas-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #334155;
+  font-size: 0.92rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  transition: all 0.2s ease;
+  cursor: pointer;
+  z-index: 10;
+  opacity: 0;
+  padding: 0;
+}
+
+.main-image-canvas:hover .btn-canvas-nav {
+  opacity: 1;
+}
+
+.btn-canvas-prev {
+  left: 10px;
+}
+
+.btn-canvas-next {
+  right: 10px;
+}
+
+.btn-canvas-nav:hover {
+  background: #ffffff;
+  color: #0f172a;
+  transform: translateY(-50%) scale(1.08);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+/* Gallery Counter Badge */
+.gallery-counter-badge {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  background: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: #ffffff;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 10px;
+  letter-spacing: 0.05em;
+  z-index: 9;
+  pointer-events: none;
+}
+
+/* Thumbnail Filmstrip with Navigation */
+.thumbnails-slider-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.btn-thumb-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  color: #334155;
+  font-size: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 11;
+  padding: 0;
+  transition: all 0.2s ease;
+}
+
+.btn-thumb-prev {
+  left: -8px;
+}
+
+.btn-thumb-next {
+  right: -8px;
+}
+
+.btn-thumb-nav:hover {
+  background: #ffffff;
+  color: #0f172a;
+  transform: translateY(-50%) scale(1.08);
+}
+
+/* Thumbnail Filmstrip */
+.thumbnail-filmstrip {
+  padding: 2px 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.thumbnail-filmstrip::-webkit-scrollbar {
+  display: none;
+}
+
+.thumb-film-item {
+  width: 52px;
+  height: 52px;
+  border-radius: 7px;
+  background: #ffffff;
+  border: 1.5px solid #e2e8f0;
+  box-shadow: 0 2px 6px rgba(10, 17, 40, 0.05);
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  padding: 0;
+  opacity: 0.7;
+  flex-shrink: 0;
+}
+
+.thumb-film-item:hover {
+  opacity: 1;
+  border-color: #cbd5e1;
+  transform: translateY(-1px);
+}
+
+.thumb-film-item.active-thumb {
+  opacity: 1 !important;
+  border-color: var(--accent-color, #f82249) !important;
+  border-width: 2px !important;
+  box-shadow: 0 3px 10px rgba(248, 34, 73, 0.22) !important;
+  transform: translateY(-1px);
+}
+
+.thumb-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
 
 /* Typography Helpers */
 .hover-underline:hover { text-decoration: underline !important; }
@@ -479,6 +895,271 @@ onMounted(() => {
   font-family: var(--heading-font, 'Raleway', sans-serif);
   font-size: 1.25rem;
   letter-spacing: -0.2px;
+}
+
+/* ── PRODUCT PURCHASING PANEL MINIMALIST UPGRADE ── */
+.product-info {
+  display: flex;
+  flex-direction: column;
+}
+
+@media (min-width: 992px) {
+  .product-info {
+    height: 100%;
+    min-height: 348px;
+    justify-content: space-between;
+  }
+  .product-info > .pricing-block,
+  .product-info > .spec-checklist,
+  .product-info > .product-meta-row {
+    margin-bottom: 0 !important;
+  }
+}
+
+.product-price-val {
+  font-family: var(--heading-font, 'Raleway', sans-serif);
+  font-size: 1.85rem;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+.badge-stock-in {
+  display: inline-flex;
+  align-items: center;
+  background: #ecfdf5;
+  color: #047857;
+  border: 1px solid #a7f3d0;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 6px;
+}
+
+.badge-stock-out {
+  display: inline-flex;
+  align-items: center;
+  background: #fef2f2;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 6px;
+}
+
+.spec-checklist {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.spec-check-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.92rem;
+  color: #475569;
+  line-height: 1.45;
+}
+
+.spec-check-item .check-icon {
+  color: #0d9488;
+  font-size: 1.15rem;
+  font-weight: 700;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.product-meta-row {
+  font-size: 0.92rem;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.link-view-specs {
+  color: #059669;
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.link-view-specs:hover {
+  color: #047857;
+  text-decoration: underline;
+}
+
+.link-view-specs i {
+  transition: transform 0.15s ease;
+}
+
+.link-view-specs:hover i {
+  transform: translateX(3px);
+}
+
+/* Stepper 44px */
+.product-qty-stepper {
+  display: flex;
+  align-items: center;
+  height: 44px;
+  width: 130px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  flex-shrink: 0;
+}
+
+.product-qty-stepper:focus-within {
+  border-color: #cbd5e1;
+  box-shadow: 0 0 0 3px rgba(10, 17, 40, 0.05);
+}
+
+.qty-btn {
+  background: transparent;
+  border: none;
+  width: 36px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #475569;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+  padding: 0;
+}
+
+.qty-btn:hover:not(:disabled) {
+  background-color: #f8fafc;
+  color: #0A1128;
+}
+
+.qty-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.qty-input {
+  border: none;
+  background: transparent;
+  width: calc(100% - 72px);
+  height: 100%;
+  text-align: center;
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: #0A1128;
+  outline: none;
+  padding: 0;
+  -moz-appearance: textfield;
+}
+
+.qty-input::-webkit-outer-spin-button,
+.qty-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Add to cart 44px */
+.btn-product-cart {
+  height: 44px;
+  background-color: var(--accent-color, #f82249);
+  color: #ffffff !important;
+  border: 1px solid var(--accent-color, #f82249);
+  border-radius: 8px;
+  font-size: 0.92rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 20px;
+  box-shadow: none;
+  transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
+}
+
+.btn-product-cart:hover {
+  background-color: #e0163c;
+  border-color: #e0163c;
+  color: #ffffff !important;
+  transform: translateY(-1px);
+}
+
+.btn-product-cart:active {
+  transform: translateY(0);
+}
+
+/* Secondary Wishlist Button 44px */
+.btn-product-garage {
+  height: 44px;
+  min-width: 120px;
+  background-color: #ffffff;
+  color: #1e293b;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 0 16px;
+  box-shadow: none;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.btn-product-garage:hover {
+  background-color: #eff6ff;
+  border-color: #bfdbfe;
+  color: #0d6efd;
+  transform: translateY(-1px);
+}
+
+.btn-product-garage:active {
+  background-color: #dbeafe;
+  border-color: #93c5fd;
+  color: #0b5ed7;
+  transform: translateY(0);
+}
+
+/* ── CLIENT FAQ ACCORDION (NATIVE CLIENT STYLE) ── */
+.client-faq-accordion .accordion-item {
+  border-bottom: 1px solid #e2e8f0 !important;
+}
+
+.client-faq-accordion .accordion-button {
+  color: var(--heading-color, #0A1128);
+  font-size: 0.98rem;
+  line-height: 1.5;
+  transition: color 0.2s ease;
+}
+
+.client-faq-accordion .accordion-button:hover {
+  color: var(--accent-color, #f82249);
+}
+
+.client-faq-accordion .accordion-button:not(.collapsed) {
+  color: var(--accent-color, #f82249);
+  background-color: transparent !important;
+  box-shadow: none !important;
+}
+
+.client-faq-accordion .accordion-button::after {
+  background-size: 13px;
+  transition: transform 0.25s ease, filter 0.25s ease;
+}
+
+.client-faq-accordion .accordion-button:not(.collapsed)::after {
+  filter: invert(24%) sepia(85%) saturate(3000%) hue-rotate(335deg);
+}
+
+.client-faq-accordion .faq-answer-content {
+  font-size: 0.92rem;
+  line-height: 1.7;
+  color: #475569;
 }
 </style>
 

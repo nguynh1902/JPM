@@ -880,11 +880,11 @@ const startSidebarDrag = () => {
 }
 
 .badge-item-count {
-  background: #fff1f2;
-  color: #e11d48;
-  border: 1px solid #fecdd3;
+  background: #f1f5f9;
+  color: #475569;
+  border: 1px solid #e2e8f0;
   font-size: 11.5px;
-  font-weight: 700;
+  font-weight: 600;
   padding: 4px 10px;
   border-radius: var(--jpm-radius-badge, 6px);
   display: inline-flex;
@@ -1060,25 +1060,25 @@ const startSidebarDrag = () => {
 }
 
 .table-row-hover:hover td {
-  background-color: #fff1f2 !important;
+  background-color: #f1f5f9 !important;
   --bs-table-accent-bg: transparent !important;
   --bs-table-bg-state: transparent !important;
 }
 
 .table-row-hover:hover td:first-child {
-  box-shadow: inset 4px 0 0 #f82249 !important;
+  box-shadow: none !important;
 }
 
 .table-row-hover:hover .part-item-link .model-code {
-  color: #f82249 !important;
+  color: #0A1128 !important;
 }
 
 .table-row-hover:hover .btn-add-part {
-  background-color: var(--accent-color, #f82249) !important;
+  background-color: #ffffff !important;
   border-color: var(--accent-color, #f82249) !important;
-  color: #ffffff !important;
+  color: var(--accent-color, #f82249) !important;
   transform: translateY(-1px);
-  box-shadow: 0 4px 10px rgba(248, 34, 73, 0.2);
+  box-shadow: 0 2px 8px rgba(248, 34, 73, 0.15);
 }
 
 .spec-ref-text {
@@ -1496,7 +1496,7 @@ const startSidebarDrag = () => {
 }
 
 .table-hover-highlight td {
-  background-color: rgba(248, 34, 73, 0.05) !important;
+  background-color: #f1f5f9 !important;
   --bs-table-accent-bg: transparent !important;
   --bs-table-bg-state: transparent !important;
   box-shadow: none !important;
