@@ -1,12 +1,12 @@
 <template>
   <div class="news-wireframe-page bg-white">
 
-    <!-- Header chuẩn Giỏ Hàng -->
+    <!-- Header chuẩn Giỏ Hàng & JPM Kit -->
     <section class="section pb-2 inner-page-section">
       <div class="container">
         <div class="row mb-3">
           <div class="col-12" data-aos="fade-down">
-            <h2 class="jpm-page-title">Tin Tức <span class="text-danger">&amp; Cẩm Nang</span></h2>
+            <h2 class="jpm-page-title">Tin Tức <span style="color: var(--jpm-color-red-marine, #F82249);">&amp; Cẩm Nang</span></h2>
             <p class="text-muted">Tổng hợp những kiến thức chuyên sâu về vận hành tàu thuyền, cẩm nang bảo dưỡng động cơ thủy và xu hướng công nghệ hàng hải.</p>
           </div>
         </div>
@@ -14,58 +14,62 @@
     </section>
 
     <!-- ════════════════════════════════════════════════════════════════
-         SECTION 2: TOP DESTINATIONS EQUIVALENT ("Tiêu Điểm Chuyên Mục")
-         Tabs Row + Outline Pill Button + 4 Portrait Cards
+         SECTION: TIÊU ĐIỂM CHUYÊN MỤC
+         Tabs Row + Action Tools + 4 Landscape 16:10 Cards
     ════════════════════════════════════════════════════════════════ -->
     <section id="top-destinations" class="pb-5">
       <div class="container">
         <!-- Section Title -->
         <h2 class="section-editorial-title mb-3">Tiêu Điểm Chuyên Mục</h2>
 
-        <!-- Tabs Bar + Right Action Pill -->
-        <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4 pb-1">
-          <nav class="wireframe-tabs d-flex align-items-center gap-1 overflow-auto">
-            <button
-              v-for="tab in tabs"
-              :key="tab"
-              type="button"
-              class="wireframe-tab-btn"
-              :class="{ active: activeTab === tab }"
-              @click="selectTab(tab)"
-            >
-              {{ tab }}
-            </button>
-          </nav>
-
-          <div class="d-flex align-items-center gap-2">
-            <!-- Quick Search Input (Chuẩn Hóa .news-search-box 8px) -->
-            <div class="news-search-box">
-              <i class="bi bi-search search-input-icon"></i>
-              <input
-                type="text"
-                v-model.trim="searchQuery"
-                class="search-input-field"
-                placeholder="Tìm kiếm bài viết..."
-              />
+        <!-- Tabs Bar + Right Action Tools (Bố cục chống vỡ dòng) -->
+        <div class="news-nav-bar mb-4 pb-2 border-bottom">
+          <div class="d-flex flex-column flex-lg-row align-items-lg-center justify-content-between gap-3">
+            <!-- Tabs Row (Cuộn ngang trượt mượt mà) -->
+            <nav class="wireframe-tabs d-flex align-items-center gap-1 overflow-x-auto text-nowrap pb-1 pb-lg-0">
               <button
-                v-if="searchQuery"
+                v-for="tab in tabs"
+                :key="tab"
                 type="button"
-                class="btn-clear-search"
-                @click="searchQuery = ''"
-                title="Xóa tìm kiếm"
+                class="wireframe-tab-btn"
+                :class="{ active: activeTab === tab }"
+                @click="selectTab(tab)"
               >
-                <i class="bi bi-x-circle-fill"></i>
+                {{ tab }}
+              </button>
+            </nav>
+
+            <!-- Cụm Tìm Kiếm & Nút Khám Phá -->
+            <div class="d-flex align-items-center gap-2 flex-shrink-0 ms-lg-auto">
+              <!-- Quick Search Input -->
+              <div class="news-search-box">
+                <i class="bi bi-search search-input-icon"></i>
+                <input
+                  type="text"
+                  v-model.trim="searchQuery"
+                  class="search-input-field"
+                  placeholder="Tìm kiếm bài viết..."
+                />
+                <button
+                  v-if="searchQuery"
+                  type="button"
+                  class="btn-clear-search"
+                  @click="searchQuery = ''"
+                  title="Xóa tìm kiếm"
+                >
+                  <i class="bi bi-x"></i>
+                </button>
+              </div>
+
+              <button
+                v-if="topCategoryArticles.length > 4"
+                type="button"
+                class="btn btn-outline-action"
+                @click="showAllTopCategory = !showAllTopCategory"
+              >
+                {{ showAllTopCategory ? 'Thu gọn danh sách' : 'Khám phá tất cả' }}
               </button>
             </div>
-
-            <button
-              v-if="topCategoryArticles.length > 4"
-              type="button"
-              class="btn btn-outline-action"
-              @click="showAllTopCategory = !showAllTopCategory"
-            >
-              {{ showAllTopCategory ? 'Thu gọn danh sách' : 'Khám phá tất cả chuyên mục' }}
-            </button>
           </div>
         </div>
 
@@ -76,17 +80,28 @@
           <button type="button" class="btn btn-outline-action" @click="resetFilters">Xem tất cả bài viết</button>
         </div>
 
-        <!-- 4 Tall Portrait Cards Grid -->
+        <!-- 4 Landscape Cards Grid (Tỉ lệ 16:10, Danh mục xám trên tiêu đề & Ngày đăng có icon) -->
         <div v-else class="row row-cols-1 row-cols-sm-2 row-cols-lg-4 g-4">
           <div class="col" v-for="item in displayedTopCategoryArticles" :key="item.id">
             <router-link :to="`/tin-tuc/${item.id}`" class="text-decoration-none d-block group-hover h-100">
-              <div class="portrait-card-img position-relative rounded-3 overflow-hidden mb-3 bg-light shadow-xs">
+              <div class="portrait-card-img position-relative overflow-hidden mb-2 bg-light shadow-xs">
                 <img :src="getImageUrl(item.img)" :alt="item.title" class="w-100 h-100 object-fit-cover transition-transform" @error="onImgError" />
+                <div v-if="item.hasVideo" class="play-badge-floating" title="Có video bài viết">
+                  <i class="bi bi-play-fill"></i>
+                </div>
               </div>
-              <h5 class="fw-bold text-dark mb-1 text-truncate-2 hero-title-hover" style="font-size: 0.98rem; line-height: 1.4;">
+              <!-- Danh mục: Thanh chữ màu xám trên tên bài viết chuẩn card sản phẩm -->
+              <div class="news-category-label mb-1 text-truncate" :title="item.cat">
+                {{ item.cat }}
+              </div>
+              <h5 class="fw-bold mb-2 text-truncate-2 hero-title-hover" style="font-size: 0.98rem; line-height: 1.45; color: var(--jpm-color-navy-dark, #0A1128);">
                 {{ item.title }}
               </h5>
-              <span class="text-muted d-block" style="font-size: 0.82rem;">{{ item.cat }}</span>
+              <div class="text-muted d-flex align-items-center gap-2" style="font-size: 0.78rem;">
+                <span class="d-inline-flex align-items-center gap-1"><i class="bi bi-calendar3"></i>{{ item.dateFormatted }}</span>
+                <span>•</span>
+                <span class="d-inline-flex align-items-center gap-1"><i class="bi bi-clock"></i>{{ item.read }}</span>
+              </div>
             </router-link>
           </div>
         </div>
@@ -94,62 +109,136 @@
     </section>
 
     <!-- ════════════════════════════════════════════════════════════════
-         SECTION 3: LATEST STORIES EQUIVALENT ("Bài Viết Mới Nhất")
+         SECTION: BÀI VIẾT MỚI NHẤT (2 HÀNG X 2 CỘT = 4 CARD LỚN)
+         Bố cục 2 Card Lớn (Ảnh trên, Chữ dưới) chuẩn phong cách Editorial
+    ════════════════════════════════════════════════════════════════ -->
+    <section class="py-4 py-md-5" v-if="latestGridArticles.length > 0">
+      <div class="container">
+        <!-- Section Header -->
+        <div class="d-flex align-items-center justify-content-between mb-4">
+          <div>
+            <h2 class="section-editorial-title m-0">Bài Viết Mới Nhất</h2>
+            <p class="text-muted small mb-0 mt-1">Cập nhật tin tức, xu hướng công nghệ hàng hải và kiến thức vận hành mới nhất</p>
+          </div>
+        </div>
+
+        <!-- 4 Large Cards Grid (2 Hàng x 2 Cột = 4 Card Lớn) -->
+        <div class="row g-4 g-lg-5">
+          <div
+            v-for="item in latestGridArticles"
+            :key="item.id"
+            class="col-12 col-md-6"
+          >
+            <article class="middle-feature-card group-hover h-100 d-flex flex-column">
+              <!-- 1. Ảnh lớn phía trên (16:9, bo góc tròn, zoom mượt mà) -->
+              <router-link
+                :to="`/tin-tuc/${item.id}`"
+                class="d-block overflow-hidden rounded-3 position-relative middle-card-img-wrap mb-3 shadow-xs"
+              >
+                <img
+                  :src="getImageUrl(item.img)"
+                  :alt="item.title"
+                  class="w-100 h-100 object-fit-cover transition-transform"
+                  @error="onImgError"
+                />
+                <div
+                  v-if="item.hasVideo"
+                  class="position-absolute top-50 start-50 translate-middle rounded-circle d-flex align-items-center justify-content-center play-circle-btn shadow"
+                  @click.stop.prevent="openVideoModal(item)"
+                  title="Kích xem video"
+                >
+                  <i class="bi bi-play-fill fs-3 ms-1"></i>
+                </div>
+              </router-link>
+
+              <!-- 2. Danh mục chữ xám in hoa chuẩn ProductCard -->
+              <div class="news-category-label mb-2 text-truncate" :title="item.cat">
+                {{ item.cat }}
+              </div>
+
+              <!-- 3. Tiêu đề đậm lớn Deep Navy #0A1128 -->
+              <h3 class="fw-bold mb-2 hero-title-hover middle-card-title">
+                <router-link :to="`/tin-tuc/${item.id}`" class="text-decoration-none">
+                  {{ item.title }}
+                </router-link>
+              </h3>
+
+              <!-- 4. Tóm tắt nội dung bài viết (Đưa lên trước ngày tháng) -->
+              <p class="middle-card-excerpt mb-2 text-secondary text-truncate-2">
+                {{ item.excerpt || 'Tổng hợp kiến thức kỹ thuật hàng hải, cẩm nang bảo dưỡng và thông tin phụ tùng động cơ thủy chính hãng từ JPM Marine.' }}
+              </p>
+
+              <!-- 5. Hàng ngày tháng & thời lượng đọc kèm icon (Đưa xuống dưới nội dung) -->
+              <div class="text-muted d-flex align-items-center gap-2 mt-auto" style="font-size: 0.82rem;">
+                <span class="d-inline-flex align-items-center gap-1">
+                  <i class="bi bi-calendar3"></i> {{ item.dateFormatted }}
+                </span>
+                <span>•</span>
+                <span class="d-inline-flex align-items-center gap-1">
+                  <i class="bi bi-clock"></i> {{ item.read }}
+                </span>
+              </div>
+            </article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════════════════════
+         SECTION: BÀI VIẾT KHÁC
          1 Large Story Left + 3 Compact Horizontal Stories Right
     ════════════════════════════════════════════════════════════════ -->
-    <section class="py-5" v-if="latestMainStory">
+    <section class="py-5 mb-5" v-if="otherMainStory">
       <div class="container">
         <!-- Header Row -->
         <div class="d-flex align-items-center justify-content-between mb-4">
-          <h2 class="section-editorial-title m-0">Bài Viết Mới Nhất</h2>
-          <button
-            v-if="moreLatestStories.length > 0"
-            type="button"
-            class="btn btn-outline-action"
-            @click="showMoreLatest = !showMoreLatest"
-          >
-            {{ showMoreLatest ? 'Thu gọn bài viết' : 'Xem thêm bài viết' }}
-          </button>
+          <div>
+            <h2 class="section-editorial-title m-0">Bài Viết Khác</h2>
+            <p class="text-muted small mb-0 mt-1">Khám phá thêm các cẩm nang kỹ thuật và kinh nghiệm thực tế từ chuyên gia JPM Marine</p>
+          </div>
         </div>
 
-        <div class="row g-4 gx-lg-5 align-items-start">
+        <div class="row g-4 gx-lg-5 align-items-stretch">
           <!-- Left: 1 Large Featured Story -->
-          <div class="col-lg-6">
-            <router-link :to="`/tin-tuc/${latestMainStory.id}`" class="text-decoration-none d-block group-hover">
+          <div class="col-lg-6 d-flex flex-column">
+            <router-link :to="`/tin-tuc/${otherMainStory.id}`" class="text-decoration-none d-block group-hover h-100 d-flex flex-column">
               <div class="latest-main-img position-relative rounded-3 overflow-hidden mb-3 bg-light shadow-xs">
-                <img :src="getImageUrl(latestMainStory.img)" :alt="latestMainStory.title" class="w-100 h-100 object-fit-cover transition-transform" @error="onImgError" />
+                <img :src="getImageUrl(otherMainStory.img)" :alt="otherMainStory.title" class="w-100 h-100 object-fit-cover transition-transform" @error="onImgError" />
                 <div
-                  v-if="latestMainStory.hasVideo"
+                  v-if="otherMainStory.hasVideo"
                   class="position-absolute top-50 start-50 translate-middle rounded-circle d-flex align-items-center justify-content-center play-circle-btn shadow"
-                  @click.stop.prevent="openVideoModal(latestMainStory)"
+                  @click.stop.prevent="openVideoModal(otherMainStory)"
                   title="Kích để xem video"
                 >
                   <i class="bi bi-play-fill fs-4 ms-1"></i>
                 </div>
               </div>
-              <div class="text-danger fw-semibold mb-1" style="font-size: 0.8rem;">
-                {{ latestMainStory.cat }}
+              <div class="news-category-label mb-1 text-truncate" :title="otherMainStory.cat">
+                {{ otherMainStory.cat }}
               </div>
               <h3 class="fw-bold mb-2 hero-title-hover" style="font-size: 1.35rem; line-height: 1.35; color: var(--jpm-color-navy-dark, #0A1128);">
-                {{ latestMainStory.title }}
+                {{ otherMainStory.title }}
               </h3>
-              <div class="text-muted mb-2" style="font-size: 0.78rem;">
-                {{ latestMainStory.dateFormatted }} &nbsp;•&nbsp; {{ latestMainStory.read }}
-              </div>
-              <p class="text-secondary mb-0 text-truncate-2" style="font-size: 0.92rem; line-height: 1.6;">
-                {{ latestMainStory.excerpt }}
+              <p class="text-secondary mb-2 text-truncate-2" style="font-size: 0.92rem; line-height: 1.6;">
+                {{ otherMainStory.excerpt }}
               </p>
+              <div class="text-muted d-flex align-items-center gap-2 mt-auto" style="font-size: 0.78rem;">
+                <span class="d-inline-flex align-items-center gap-1"><i class="bi bi-calendar3"></i>{{ otherMainStory.dateFormatted }}</span>
+                <span>•</span>
+                <span class="d-inline-flex align-items-center gap-1"><i class="bi bi-clock"></i>{{ otherMainStory.read }}</span>
+              </div>
             </router-link>
           </div>
 
-          <!-- Right: 3 Stacked Horizontal Cards -->
-          <div class="col-lg-6 d-flex flex-column gap-3">
+          <!-- Right: 3 Stacked Horizontal Cards (Bự ra & Cân xứng chiều cao) -->
+          <div class="col-lg-6 d-flex flex-column justify-content-between h-100 gap-3 gap-lg-4">
             <router-link
-              v-for="story in latestSideStories"
+              v-for="story in otherSideStories"
               :key="story.id"
               :to="`/tin-tuc/${story.id}`"
-              class="d-flex gap-3 align-items-center text-decoration-none group-hover"
+              class="d-flex gap-3 gap-md-4 align-items-center text-decoration-none group-hover other-side-item"
             >
+              <!-- Thumbnail bự ra (16:10, bo góc tròn đẹp) -->
               <div class="latest-side-thumb position-relative rounded-3 overflow-hidden flex-shrink-0 bg-light shadow-xs">
                 <img :src="getImageUrl(story.img)" :alt="story.title" class="w-100 h-100 object-fit-cover transition-transform" @error="onImgError" />
                 <div
@@ -158,159 +247,28 @@
                   @click.stop.prevent="openVideoModal(story)"
                   title="Kích xem video"
                 >
-                  <i class="bi bi-play-fill"></i>
+                  <i class="bi bi-play-fill fs-5"></i>
                 </div>
               </div>
+
+              <!-- Nội dung bài viết to rõ & có trích đoạn mô tả -->
               <div class="flex-grow-1 min-w-0">
-                <div class="text-danger fw-semibold mb-1" style="font-size: 0.76rem;">
+                <div class="news-category-label mb-1 text-truncate" :title="story.cat">
                   {{ story.cat }}
                 </div>
-                <h5 class="fw-bold mb-2 text-truncate-2 hero-title-hover" style="font-size: 1rem; line-height: 1.4; color: var(--jpm-color-navy-dark, #0A1128);">
+                <h5 class="fw-bold mb-1 text-truncate-2 hero-title-hover other-side-title">
                   {{ story.title }}
                 </h5>
-                <div class="text-muted" style="font-size: 0.76rem;">
-                  {{ story.dateFormatted }} &nbsp;•&nbsp; {{ story.read }}
+                <p class="text-secondary mb-2 text-truncate-2 other-side-excerpt">
+                  {{ story.excerpt || 'Tổng hợp kiến thức kỹ thuật hàng hải, cẩm nang bảo dưỡng và thông tin phụ tùng từ JPM Marine.' }}
+                </p>
+                <div class="text-muted d-flex align-items-center gap-2" style="font-size: 0.78rem;">
+                  <span class="d-inline-flex align-items-center gap-1"><i class="bi bi-calendar3"></i>{{ story.dateFormatted }}</span>
+                  <span>•</span>
+                  <span class="d-inline-flex align-items-center gap-1"><i class="bi bi-clock"></i>{{ story.read }}</span>
                 </div>
               </div>
             </router-link>
-          </div>
-        </div>
-
-        <!-- Expandable More Latest Stories Grid -->
-        <div v-if="showMoreLatest && moreLatestStories.length > 0" class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4 mt-3 pt-4 border-top">
-          <div class="col" v-for="extra in moreLatestStories" :key="extra.id">
-            <router-link :to="`/tin-tuc/${extra.id}`" class="text-decoration-none d-block group-hover h-100">
-              <div class="rounded-3 overflow-hidden mb-3 bg-light position-relative" style="aspect-ratio: 16/10;">
-                <img :src="getImageUrl(extra.img)" :alt="extra.title" class="w-100 h-100 object-fit-cover transition-transform" @error="onImgError" />
-                <div
-                  v-if="extra.hasVideo"
-                  class="position-absolute top-50 start-50 translate-middle rounded-circle d-flex align-items-center justify-content-center play-circle-btn shadow"
-                  @click.stop.prevent="openVideoModal(extra)"
-                  title="Kích để xem video"
-                >
-                  <i class="bi bi-play-fill fs-4 ms-1"></i>
-                </div>
-              </div>
-              <div class="text-danger fw-semibold mb-1" style="font-size: 0.75rem;">{{ extra.cat }}</div>
-              <h6 class="fw-bold mb-1 text-truncate-2 hero-title-hover" style="font-size: 0.95rem; line-height: 1.4; color: var(--jpm-color-navy-dark, #0A1128);">{{ extra.title }}</h6>
-              <div class="text-muted" style="font-size: 0.75rem;">{{ extra.dateFormatted }} • {{ extra.read }}</div>
-            </router-link>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ════════════════════════════════════════════════════════════════
-         SECTION 4: TREKKER'S HIGHLIGHTS EQUIVALENT ("Góc Chuyên Gia Kỹ Thuật")
-         Left Author Story + Middle Portrait Card + Right Video Card & Button
-    ════════════════════════════════════════════════════════════════ -->
-    <section class="py-5" v-if="highlightMain">
-      <div class="container">
-        <h2 class="section-editorial-title mb-4">Góc Chuyên Gia Kỹ Thuật</h2>
-
-        <div class="row g-4 gx-lg-5 align-items-center">
-          <!-- Column 1 (Left): Author Profile + Stars + Story Quote -->
-          <div class="col-lg-4 text-start">
-            <div class="d-flex align-items-center gap-3 mb-3">
-              <div class="author-circle-avatar rounded-circle d-flex align-items-center justify-content-center fw-bold text-white flex-shrink-0">
-                {{ highlightMain.avLetter }}
-              </div>
-              <div>
-                <h6 class="fw-bold mb-0" style="font-size: 0.98rem; color: var(--jpm-color-navy-dark, #0A1128);">{{ highlightMain.author }}</h6>
-                <small class="text-muted" style="font-size: 0.8rem;">Chuyên gia Kỹ thuật JPM Marine</small>
-              </div>
-            </div>
-
-            <!-- 5 Stars Rating -->
-            <div class="d-flex align-items-center gap-1 text-warning mb-2" style="font-size: 0.88rem;">
-              <i class="bi bi-star-fill" v-for="s in 5" :key="s"></i>
-            </div>
-
-            <router-link :to="`/tin-tuc/${highlightMain.id}`" class="text-decoration-none">
-              <h4 class="fw-bold mb-3 hero-title-hover" style="font-size: 1.12rem; line-height: 1.4; color: var(--jpm-color-navy-dark, #0A1128);">
-                {{ highlightMain.title }}
-              </h4>
-            </router-link>
-
-            <p class="text-secondary mb-0" style="font-size: 0.9rem; line-height: 1.7; text-align: justify;">
-              {{ highlightMain.excerpt }} Quy trình kiểm tra định kỳ đúng tiêu chuẩn nhà sản xuất luôn là chìa khóa vàng giúp động cơ thủy vận hành bền bỉ, tiết kiệm nhiên liệu và an toàn tuyệt đối trên mọi hải trình dài ngày.
-            </p>
-          </div>
-
-          <!-- Column 2 (Middle): Tall Portrait Image Card -->
-          <div class="col-lg-4 col-md-6">
-            <router-link :to="`/tin-tuc/${highlightMain.id}`" class="d-block position-relative rounded-3 overflow-hidden shadow-xs group-hover highlight-middle-card">
-              <img :src="getImageUrl(highlightMain.img)" :alt="highlightMain.title" class="w-100 h-100 object-fit-cover transition-transform" @error="onImgError" />
-              <!-- Pagination Dots Indicator (Wireframe Aesthetic) -->
-              <div class="position-absolute bottom-0 start-50 translate-middle-x mb-3 d-flex gap-1">
-                <span class="dot-indicator active"></span>
-                <span class="dot-indicator"></span>
-                <span class="dot-indicator"></span>
-                <span class="dot-indicator"></span>
-              </div>
-            </router-link>
-          </div>
-
-          <!-- Column 3 (Right): Video Feature Card + Caption + Outline Pill Button -->
-          <div class="col-lg-4 col-md-6 d-flex flex-column justify-content-between h-100" v-if="highlightVideo">
-            <div>
-              <router-link :to="`/tin-tuc/${highlightVideo.id}`" class="d-block text-decoration-none group-hover">
-                <div class="position-relative rounded-3 overflow-hidden mb-3 bg-light shadow-xs highlight-video-card">
-                  <img :src="getImageUrl(highlightVideo.img)" :alt="highlightVideo.title" class="w-100 h-100 object-fit-cover transition-transform" @error="onImgError" />
-                  <div
-                    class="position-absolute top-50 start-50 translate-middle rounded-circle d-flex align-items-center justify-content-center play-circle-btn shadow"
-                    @click.stop.prevent="openVideoModal(highlightVideo)"
-                    title="Kích để xem video"
-                  >
-                    <i class="bi bi-play-fill fs-4 ms-1"></i>
-                  </div>
-                </div>
-                <h5 class="fw-bold mb-1 text-truncate-2 hero-title-hover" style="font-size: 0.98rem; line-height: 1.4; color: var(--jpm-color-navy-dark, #0A1128);">
-                  {{ highlightVideo.title }}
-                </h5>
-                <span class="text-danger d-block mb-4" style="font-size: 0.8rem;">{{ highlightVideo.cat }}</span>
-              </router-link>
-            </div>
-
-            <div class="text-end mt-2">
-              <button type="button" class="btn btn-outline-action" @click="selectTabAndScroll('Bảo Dưỡng Động Cơ')">
-                Xem thêm tiêu điểm
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ════════════════════════════════════════════════════════════════
-         SECTION 5: NEWSLETTER BANNER (OCEAN GRADIENT)
-    ════════════════════════════════════════════════════════════════ -->
-    <section class="newsletter-banner-section mt-4 mb-5 shadow-sm">
-      <div class="container py-5">
-        <div class="row justify-content-center text-center py-3">
-          <div class="col-lg-7 col-md-9">
-            <h2 class="newsletter-heading text-white fw-bold mb-4">
-              Nhận Cẩm Nang Bảo Dưỡng &<br />
-              Tin Tức Hàng Hải Mới Nhất Qua Email
-            </h2>
-
-            <form @submit.prevent="handleSubscribe" class="d-flex flex-column flex-sm-row justify-content-center align-items-center gap-2 mx-auto mb-3" style="max-width: 480px;">
-              <input
-                type="email"
-                v-model.trim="newsletterEmail"
-                required
-                class="form-control px-3 py-2 border-0 shadow-sm news-subscribe-input"
-                placeholder="Nhập địa chỉ email của bạn..."
-              />
-              <button type="submit" class="btn btn-news-subscribe px-4 flex-shrink-0">
-                Đăng ký
-              </button>
-            </form>
-
-            <p class="text-white-50 mb-0" style="font-size: 0.78rem;">
-              Đăng ký ngay để nhận cẩm nang kỹ thuật và ưu đãi phụ tùng mới nhất. Xem thêm
-              <router-link to="/ho-tro" class="text-white text-decoration-underline">Chính sách bảo mật</router-link>.
-            </p>
           </div>
         </div>
       </div>
@@ -394,7 +352,6 @@ export default {
     const searchQuery = ref(route.query.search ? String(route.query.search) : '');
     const showAllTopCategory = ref(false);
     const showMoreLatest = ref(false);
-    const newsletterEmail = ref('');
 
     // Video modal state
     const activeVideoModalItem = ref(null);
@@ -532,10 +489,7 @@ export default {
       return raw.map(mapArticle);
     });
 
-    // 1. Section 1: Hero Collage (Top 3 articles)
-    const collageCards = computed(() => allNews.value.slice(0, 3));
-
-    // 2. Section 2: Top Category Articles (Filtered by activeTab & searchQuery)
+    // 1. Tiêu Điểm Chuyên Mục (Filtered by activeTab & searchQuery)
     const topCategoryArticles = computed(() => {
       return allNews.value.filter((art) => {
         const matchTab = activeTab.value === 'Tất cả' || art.cat === activeTab.value;
@@ -552,32 +506,32 @@ export default {
       if (showAllTopCategory.value || searchQuery.value !== '') {
         return topCategoryArticles.value;
       }
-      // Khi ở "Tất cả", lấy từ vị trí số 3 để không lặp lại 3 ảnh ở Hero Collage
-      if (activeTab.value === 'Tất cả' && topCategoryArticles.value.length >= 7) {
-        return topCategoryArticles.value.slice(3, 7);
-      }
       return topCategoryArticles.value.slice(0, 4);
     });
 
-    // 3. Section 3: Latest Stories (1 Main Left + 3 Side Right + Expandable More)
-    const latestPool = computed(() => {
-      return allNews.value.length > 7 ? allNews.value.slice(7) : allNews.value;
+    // 2. Bài Viết Mới Nhất (2 Hàng x 2 Cột = 4 Card Lớn)
+    const latestGridArticles = computed(() => {
+      if (allNews.value.length >= 8) {
+        return allNews.value.slice(4, 8);
+      }
+      if (allNews.value.length > 4) {
+        return allNews.value.slice(4);
+      }
+      return allNews.value.slice(0, 4);
     });
-    const latestMainStory = computed(() => latestPool.value[0] || allNews.value[0] || null);
-    const latestSideStories = computed(() => latestPool.value.slice(1, 4));
-    const moreLatestStories = computed(() => latestPool.value.slice(4));
 
-    // 4. Section 4: Trekker's Highlights Equivalent ("Góc Chuyên Gia Kỹ Thuật")
-    const techPool = computed(() => {
-      const techCats = ['Bảo Dưỡng Động Cơ', 'Kiến thức Tàu Thuyền', 'Công Nghệ Hàng Hải'];
-      const filtered = allNews.value.filter(a => techCats.includes(a.cat));
-      return filtered.length >= 2 ? filtered : allNews.value;
+    // 3. Bài Viết Khác (1 Main Left + 3 Side Right)
+    const otherArticlesPool = computed(() => {
+      if (allNews.value.length > 8) {
+        return allNews.value.slice(8);
+      }
+      if (allNews.value.length > 4) {
+        return allNews.value.slice(4);
+      }
+      return allNews.value;
     });
-    const highlightMain = computed(() => techPool.value[0] || null);
-    const highlightVideo = computed(() => {
-      const videoStory = techPool.value.find(a => a.hasVideo) || allNews.value.find(a => a.hasVideo);
-      return videoStory || techPool.value[1] || techPool.value[0] || null;
-    });
+    const otherMainStory = computed(() => otherArticlesPool.value[0] || allNews.value[0] || null);
+    const otherSideStories = computed(() => otherArticlesPool.value.slice(1, 4));
 
     // === Actions ===
     const selectTab = (tab) => {
@@ -589,30 +543,11 @@ export default {
       router.replace({ path: '/tin-tuc', query });
     };
 
-    const selectTabAndScroll = (tab) => {
-      selectTab(tab);
-      showAllTopCategory.value = true;
-      scrollToSection('top-destinations');
-    };
-
     const resetFilters = () => {
       activeTab.value = 'Tất cả';
       searchQuery.value = '';
       showAllTopCategory.value = false;
       router.replace({ path: '/tin-tuc', query: {} });
-    };
-
-    const scrollToSection = (id) => {
-      const el = document.getElementById(id);
-      if (el) {
-        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
-    };
-
-    const handleSubscribe = () => {
-      if (!newsletterEmail.value) return;
-      toaster.success(`Đăng ký nhận bản tin thành công cho ${newsletterEmail.value}!`);
-      newsletterEmail.value = '';
     };
 
     const onImgError = (e) => {
@@ -627,7 +562,6 @@ export default {
       searchQuery,
       showAllTopCategory,
       showMoreLatest,
-      newsletterEmail,
       activeVideoModalItem,
       activeVideoEmbedUrl,
       openVideoModal,
@@ -635,19 +569,13 @@ export default {
       getImageUrl,
       isFetching,
       allNews,
-      collageCards,
       topCategoryArticles,
       displayedTopCategoryArticles,
-      latestMainStory,
-      latestSideStories,
-      moreLatestStories,
-      highlightMain,
-      highlightVideo,
+      latestGridArticles,
+      otherMainStory,
+      otherSideStories,
       selectTab,
-      selectTabAndScroll,
       resetFilters,
-      scrollToSection,
-      handleSubscribe,
       onImgError,
     };
   },
@@ -657,6 +585,12 @@ export default {
 <style scoped>
 .news-wireframe-page {
   min-height: 100vh;
+  background-color: #ffffff !important;
+}
+
+.news-wireframe-page section,
+.news-wireframe-page .section {
+  background-color: #ffffff !important;
 }
 
 /* ── PAGE TITLE (MATCHING GIO HANG) ── */
@@ -665,26 +599,6 @@ export default {
   font-weight: 800;
   color: #0A1128;
   letter-spacing: -0.5px;
-}
-
-.collage-card {
-  background-color: #e5e7eb;
-}
-.collage-card--tall {
-  height: 360px;
-}
-.collage-card--stacked {
-  height: 215px;
-}
-
-.collage-card-overlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to top, rgba(14, 27, 77, 0.82) 0%, rgba(14, 27, 77, 0.2) 55%, transparent 100%);
-  transition: background 0.3s ease;
-}
-.collage-card:hover .collage-card-overlay {
-  background: linear-gradient(to top, rgba(248, 34, 73, 0.85) 0%, rgba(14, 27, 77, 0.25) 60%, transparent 100%);
 }
 
 /* ── TYPOGRAPHY & BUTTONS (DESIGN SYSTEM 2026) ── */
@@ -699,7 +613,7 @@ export default {
 /* ── SEARCH INPUT IN TABS (MATCHING SAN PHAM / HO TRO) ── */
 .news-search-box {
   width: 220px;
-  height: 36px;
+  height: 38px;
   border-radius: var(--jpm-radius-control, 8px);
   border: 1px solid #e2e8f0;
   background: #ffffff;
@@ -710,7 +624,7 @@ export default {
 }
 
 .news-search-box:focus-within {
-  border-color: #f82249 !important;
+  border-color: var(--jpm-color-red-marine, #f82249) !important;
   box-shadow: 0 0 0 3px rgba(248, 34, 73, 0.12) !important;
 }
 
@@ -723,7 +637,7 @@ export default {
 }
 
 .news-search-box:focus-within .search-input-icon {
-  color: #f82249;
+  color: var(--jpm-color-red-marine, #f82249);
 }
 
 .news-search-box .search-input-field {
@@ -732,8 +646,9 @@ export default {
   background: transparent !important;
   outline: none !important;
   box-shadow: none !important;
-  font-size: 0.82rem;
-  color: #0A1128;
+  font-size: 0.84rem;
+  font-family: var(--default-font, 'Roboto', sans-serif);
+  color: var(--jpm-color-navy-dark, #0A1128);
   padding: 0;
   height: 100%;
 }
@@ -751,11 +666,12 @@ export default {
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  font-size: 1rem;
   transition: color 0.15s ease;
 }
 
 .btn-clear-search:hover {
-  color: #f82249;
+  color: var(--jpm-color-red-marine, #f82249);
 }
 
 /* ── ACTION BUTTONS (DEC-01: 8PX BORDER RADIUS) ── */
@@ -764,7 +680,7 @@ export default {
   color: #334155;
   border: 1px solid #cbd5e1;
   border-radius: var(--jpm-radius-control, 8px);
-  height: 36px;
+  height: 38px;
   padding: 0 16px;
   font-size: 0.84rem;
   font-weight: 600;
@@ -782,7 +698,11 @@ export default {
   transform: translateY(-1px);
 }
 
-/* ── SECTION 2: TABS & PORTRAIT CARDS ── */
+/* ── SECTION 2: TABS & CARDS ── */
+.news-nav-bar {
+  border-color: #E2E8F0 !important;
+}
+
 .wireframe-tabs {
   scrollbar-width: none;
 }
@@ -793,13 +713,14 @@ export default {
   background: none;
   border: none;
   border-bottom: 2px solid transparent;
-  padding: 6px 14px;
+  padding: 8px 14px;
   font-size: 0.88rem;
   font-weight: 600;
   color: #64748b;
   white-space: nowrap;
   cursor: pointer;
   transition: all 0.2s ease;
+  margin-bottom: -9px; /* Canh sát vào đường kẻ border-bottom */
 }
 .wireframe-tab-btn:hover {
   color: var(--jpm-color-navy-dark, #0A1128);
@@ -811,34 +732,109 @@ export default {
 }
 
 .portrait-card-img {
-  aspect-ratio: 3 / 4;
+  aspect-ratio: 16 / 10;
+  border-radius: var(--jpm-radius-card, 12px);
 }
 
-/* ── SECTION 3: LATEST STORIES ── */
+/* ── DANH MỤC DẠNG THANH CHỮ ĐỎ MARINE NỔI BẬT ── */
+.news-category-label {
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  color: var(--jpm-color-red-marine, #F82249);
+  line-height: 1.3;
+}
+
+.play-badge-floating {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: rgba(10, 17, 40, 0.78);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  z-index: 2;
+  transition: background-color 0.25s ease;
+}
+
+.group-hover:hover .play-badge-floating {
+  background: var(--jpm-color-red-marine, #f82249);
+}
+
+/* ── SECTION: MIDDLE SPOTLIGHT CARDS (2 LỚN Ở KHOẢNG GIỮA) ── */
+.middle-feature-card {
+  transition: transform 0.25s ease;
+}
+
+.middle-card-img-wrap {
+  aspect-ratio: 16 / 9;
+  max-height: 340px;
+  background-color: #f1f5f9;
+  border-radius: var(--jpm-radius-card, 12px);
+}
+
+.middle-card-title {
+  font-family: var(--heading-font, 'Raleway', sans-serif);
+  font-size: clamp(1.15rem, 1.8vw, 1.35rem);
+  font-weight: 700;
+  line-height: 1.4;
+  color: var(--jpm-color-navy-dark, #0A1128);
+}
+
+.middle-card-title a {
+  color: var(--jpm-color-navy-dark, #0A1128) !important;
+  transition: opacity 0.2s ease;
+}
+
+.middle-card-title a:hover,
+.middle-feature-card:hover .middle-card-title a {
+  color: var(--jpm-color-navy-dark, #0A1128) !important;
+  opacity: 0.85;
+}
+
+.middle-card-excerpt {
+  font-size: 0.92rem;
+  line-height: 1.6;
+  color: #64748b;
+}
+
+/* ── SECTION 3: LATEST STORIES / OTHER STORIES ── */
 .latest-main-img {
   aspect-ratio: 16 / 10;
 }
 .latest-side-thumb {
-  width: 135px;
-  height: 112px;
+  width: 200px;
+  height: 126px;
+  border-radius: var(--jpm-radius-card, 12px);
+  background-color: #f1f5f9;
 }
 
-/* ── SECTION 4: TREKKER'S HIGHLIGHTS EQUIVALENT ── */
-.author-circle-avatar {
-  width: 48px;
-  height: 48px;
-  background-color: var(--jpm-color-navy-dark, #0A1128);
-  font-size: 1.1rem;
+.other-side-item {
+  transition: transform 0.2s ease;
 }
 
-.highlight-middle-card {
-  aspect-ratio: 3 / 4;
-  max-height: 400px;
-  width: 100%;
+.other-side-item:hover {
+  transform: translateX(4px);
 }
 
-.highlight-video-card {
-  aspect-ratio: 4 / 3;
+.other-side-title {
+  font-family: var(--heading-font, 'Raleway', sans-serif);
+  font-size: clamp(1rem, 1.25vw, 1.15rem);
+  font-weight: 700;
+  line-height: 1.4;
+  color: var(--jpm-color-navy-dark, #0A1128);
+}
+
+.other-side-excerpt {
+  font-size: 0.86rem;
+  line-height: 1.5;
+  color: #64748b;
 }
 
 .play-circle-btn {
@@ -868,60 +864,12 @@ export default {
   transform: translate(-50%, -50%) scale(1.15);
 }
 
-.dot-indicator {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background-color: rgba(255, 255, 255, 0.55);
-}
-.dot-indicator.active {
-  width: 18px;
-  border-radius: 10px;
-  background-color: #ffffff;
-}
-
-/* ── SECTION 5: NEWSLETTER BANNER (OCEAN GRADIENT) ── */
-.newsletter-banner-section {
-  background: linear-gradient(135deg, #0A1128 0%, #101E42 55%, #182855 100%);
-  border-radius: var(--jpm-radius-card, 12px);
-}
-.newsletter-heading {
-  font-size: clamp(1.6rem, 2.8vw, 2.25rem);
-  line-height: 1.3;
-  letter-spacing: -0.5px;
-}
-
-.news-subscribe-input {
-  height: 44px;
-  border-radius: var(--jpm-radius-control, 8px) !important;
-  font-size: 0.9rem;
-}
-
-.news-subscribe-input:focus {
-  box-shadow: 0 0 0 3px rgba(248, 34, 73, 0.25) !important;
-  border-color: #f82249 !important;
-}
-
-.btn-news-subscribe {
-  background-color: var(--jpm-color-red-marine, #f82249);
-  color: #ffffff;
-  font-weight: 600;
-  font-size: 0.88rem;
-  height: 44px;
-  border-radius: var(--jpm-radius-control, 8px);
-  border: none;
-  box-shadow: 0 4px 12px rgba(248, 34, 73, 0.25);
-  transition: all 0.25s ease;
-}
-
-.btn-news-subscribe:hover {
-  background-color: #d91639;
-  color: #ffffff;
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(248, 34, 73, 0.35);
-}
-
 /* ── SHARED HOVER & TRUNCATION ── */
+a.group-hover,
+a.group-hover:hover {
+  color: inherit !important;
+  text-decoration: none !important;
+}
 .transition-transform {
   transition: transform 0.45s ease;
 }
@@ -929,11 +877,15 @@ export default {
   transform: scale(1.05);
 }
 .hero-title-hover {
-  transition: color 0.2s ease;
+  color: var(--jpm-color-navy-dark, #0A1128) !important;
+  transition: opacity 0.2s ease;
 }
 .group-hover:hover .hero-title-hover,
-.hero-title-hover:hover {
-  color: #f82249 !important;
+.hero-title-hover:hover,
+a.group-hover:hover .hero-title-hover,
+a:hover .hero-title-hover {
+  color: var(--jpm-color-navy-dark, #0A1128) !important;
+  opacity: 0.88;
 }
 .text-truncate-2 {
   display: -webkit-box;
@@ -943,15 +895,9 @@ export default {
 }
 
 @media (max-width: 767px) {
-  .collage-card--tall {
-    height: 250px;
-  }
-  .collage-card--stacked {
-    height: 150px;
-  }
   .latest-side-thumb {
-    width: 105px;
-    height: 90px;
+    width: 115px;
+    height: 74px;
   }
 }
 </style>

@@ -704,9 +704,9 @@ export default {
    ============================================================== */
 .news-category {
   font-family: var(--heading-font, 'Raleway', sans-serif);
-  color: #f82249; /* Đỏ Marine Red thương hiệu JPM */
+  color: var(--jpm-neutral-500, #64748B); /* Đồng bộ xám thanh lịch Product Category */
   font-weight: 700;
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   letter-spacing: 0.6px;
   text-transform: uppercase;
   line-height: 1.2;

@@ -294,16 +294,14 @@
                   >
                 </router-link>
 
-                <!-- Category -->
-                <div class="mb-1">
-                  <span class="related-category text-secondary">
-                    {{ rel.category }}
-                  </span>
+                <!-- Category: Thanh chữ xám chuẩn card sản phẩm -->
+                <div class="news-category-label mb-1 text-truncate" :title="rel.category">
+                  {{ rel.category }}
                 </div>
 
                 <!-- Title -->
                 <h3 class="related-title fw-bold mb-2">
-                  <router-link :to="`/tin-tuc/${rel.id}`" class="text-dark text-decoration-none hover-text-danger">
+                  <router-link :to="`/tin-tuc/${rel.id}`" class="text-decoration-none hover-title-navy">
                     {{ rel.title }}
                   </router-link>
                 </h3>
@@ -325,8 +323,8 @@
                     {{ rel.author || 'Kỹ sư JPM' }}
                   </span>
                   <span class="text-muted opacity-50" style="font-size: 0.75rem;">|</span>
-                  <span class="text-muted" style="font-size: 0.75rem;">
-                    {{ formatDate(rel.created_at) }}
+                  <span class="text-muted d-inline-flex align-items-center gap-1" style="font-size: 0.75rem;">
+                    <i class="bi bi-calendar3"></i> {{ formatDate(rel.created_at) }}
                   </span>
                 </div>
               </article>
@@ -818,9 +816,13 @@ export default {
   border-radius: var(--jpm-radius-card, 12px);
 }
 
-.related-category {
+.news-category-label {
   font-size: 0.74rem;
-  font-weight: 600;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  color: var(--jpm-color-red-marine, #F82249);
+  line-height: 1.3;
 }
 
 .related-title {
@@ -850,11 +852,15 @@ export default {
   transform: scale(1.05);
 }
 
+.hover-title-navy,
 .hover-text-danger {
-  transition: color 0.2s ease;
+  color: var(--jpm-color-navy-dark, #0A1128) !important;
+  transition: opacity 0.2s ease;
 }
+.hover-title-navy:hover,
 .hover-text-danger:hover {
-  color: #f82249 !important;
+  color: var(--jpm-color-navy-dark, #0A1128) !important;
+  opacity: 0.85;
 }
 
 /* ── SKELETON ── */
