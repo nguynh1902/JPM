@@ -214,7 +214,7 @@
             </div>
           </div>
           <div class="col-lg-8">
-            <div v-if="filteredFaqs.length > 0" class="accordion accordion-flush" id="faqAccordion">
+            <div v-if="filteredFaqs.length > 0" class="accordion accordion-flush custom-faq-accordion" id="faqAccordion">
               <div class="accordion-item bg-transparent border-0 border-bottom mb-2" v-for="(faq, index) in filteredFaqs" :key="index" style="border-color: #dee2e6 !important;">
                 <h2 class="accordion-header" :id="'heading' + index">
                   <button class="accordion-button collapsed bg-transparent shadow-none px-0 py-4 fw-bold" type="button" data-bs-toggle="collapse" :data-bs-target="'#collapse' + index" aria-expanded="false" :aria-controls="'collapse' + index" style="color: var(--jpm-color-navy-dark, #0A1128); font-size: 1.15rem;">
@@ -551,6 +551,9 @@ textarea.contact-field-input {
 .btn-clear-search:hover {
   color: #f82249;
 }
+
+/* ── FAQ ACCORDION BRAND TWEAKS ── */
+.custom-faq-accordion .accordion-button:not(.collapsed) {
+  color: var(--jpm-color-red-marine, #F82249) !important;
+}
 </style>
-
-
