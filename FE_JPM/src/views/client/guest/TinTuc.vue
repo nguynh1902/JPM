@@ -19,51 +19,37 @@
     ════════════════════════════════════════════════════════════════ -->
     <section id="top-destinations" class="pb-5">
       <div class="container">
-        <!-- Header Toolbar: Tiêu Đề bên trái + Cụm Tìm Kiếm & Nút bên phải (Cùng chiều cao 40px) -->
+        <!-- Header Toolbar: Tiêu Đề bên trái + Ô Tìm Kiếm bên phải (Chuẩn 40px, 8px radius) -->
         <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3 mb-3">
           <div>
             <h2 class="section-editorial-title m-0">Tiêu Điểm Chuyên Mục</h2>
             <p class="text-muted small mb-0 mt-1">Lọc bài viết theo danh mục kỹ thuật và công nghệ hàng hải</p>
           </div>
 
-          <!-- Cụm Tìm Kiếm & Nút Khám Phá chuẩn JPM Design System (40px đồng bộ, 8px radius) -->
-          <div class="d-flex align-items-center gap-2 flex-shrink-0">
-            <!-- Quick Search Input (Chuẩn hóa search-input-box 40px) -->
-            <div class="news-search-box">
-              <i class="bi bi-search search-input-icon"></i>
-              <input
-                type="text"
-                v-model.trim="searchQuery"
-                class="search-input-field"
-                placeholder="Tìm kiếm bài viết..."
-              />
-              <button
-                v-if="searchQuery"
-                type="button"
-                class="btn-clear-search"
-                @click="searchQuery = ''"
-                title="Xóa tìm kiếm"
-              >
-                <i class="bi bi-x-circle-fill"></i>
-              </button>
-            </div>
-
-            <!-- Nút Khám Phá Chuẩn 40px -->
+          <!-- Quick Search Input (Chuẩn hóa search-input-box 40px) -->
+          <div class="news-search-box flex-shrink-0">
+            <i class="bi bi-search search-input-icon"></i>
+            <input
+              type="text"
+              v-model.trim="searchQuery"
+              class="search-input-field"
+              placeholder="Tìm kiếm bài viết..."
+            />
             <button
-              v-if="topCategoryArticles.length > 4"
+              v-if="searchQuery"
               type="button"
-              class="btn btn-outline-action"
-              @click="showAllTopCategory = !showAllTopCategory"
+              class="btn-clear-search"
+              @click="searchQuery = ''"
+              title="Xóa tìm kiếm"
             >
-              <i class="bi me-1" :class="showAllTopCategory ? 'bi-chevron-up' : 'bi-grid'"></i>
-              <span>{{ showAllTopCategory ? 'Thu gọn' : 'Xem tất cả' }}</span>
+              <i class="bi bi-x-circle-fill"></i>
             </button>
           </div>
         </div>
 
-        <!-- Dòng Tabs Danh Mục Độc Lập Tràn Ngang (Hỗ trợ vô số danh mục mà không bao giờ bị đụng độ) -->
-        <div class="news-tabs-wrapper mb-4 border-bottom">
-          <nav class="wireframe-tabs d-flex align-items-center gap-1 overflow-x-auto text-nowrap scrollbar-hidden">
+        <!-- Dòng Tabs Danh Mục & Link Xem Thêm Chuẩn JPM Cửa Hàng (border-bottom pb-2) -->
+        <div class="news-tabs-wrapper mb-4 border-bottom d-flex align-items-center justify-content-between">
+          <nav class="wireframe-tabs d-flex align-items-center gap-1 overflow-x-auto text-nowrap scrollbar-hidden flex-grow-1">
             <button
               v-for="tab in tabs"
               :key="tab"
@@ -75,6 +61,18 @@
               {{ tab }}
             </button>
           </nav>
+
+          <!-- Link Xem thêm chuẩn SanPham.vue ngay trên viền border-bottom -->
+          <button
+            v-if="topCategoryArticles.length > 4 && !searchQuery"
+            type="button"
+            class="btn btn-link text-danger fw-bold text-decoration-none d-flex align-items-center gap-1 p-0 shadow-none hover-underline flex-shrink-0 ms-3 pb-2"
+            style="color: var(--jpm-color-red-marine, #F82249) !important; font-size: 0.92rem;"
+            @click="showAllTopCategory = !showAllTopCategory"
+          >
+            {{ showAllTopCategory ? 'Thu gọn' : 'Xem thêm' }}
+            <i class="bi" :class="showAllTopCategory ? 'bi-arrow-up' : 'bi-arrow-right'"></i>
+          </button>
         </div>
 
         <!-- Empty State if search/tab has no results -->
@@ -745,6 +743,14 @@ export default {
   color: var(--jpm-color-red-marine, #f82249);
   font-weight: 700;
   border-bottom-color: var(--jpm-color-red-marine, #f82249);
+}
+
+.hover-underline {
+  transition: opacity 0.2s ease;
+}
+.hover-underline:hover {
+  text-decoration: underline !important;
+  opacity: 0.85;
 }
 
 .portrait-card-img {

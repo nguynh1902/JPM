@@ -131,25 +131,50 @@
                   </div>
                 </div>
 
-                <!-- 4. NHÓM PHỤ TÙNG -->
-                <div class="sidebar-section">
+                <!-- 4. NHÓM PHỤ TÙNG (ĐỒNG BỘ 100% CỬA HÀNG SANPHAM.VUE, KHÔNG CUỘN) -->
+                <div class="sidebar-category-section">
                   <div class="sidebar-section-title mb-2">Nhóm Phụ Tùng</div>
-                  <div class="filter-part-groups custom-scrollbar mt-2" v-if="partGroups && partGroups.length > 0">
-                    <div 
+
+                  <!-- Khi chưa chọn thông số động cơ bên trên -->
+                  <div v-if="!hasEngineSelected" class="text-muted mt-1 small fst-italic">
+                    Vui lòng chọn thông số động cơ ở trên để tải danh sách nhóm phụ tùng.
+                  </div>
+
+                  <!-- Đang tải danh sách nhóm -->
+                  <div v-else-if="isFetchingPartGroups" class="text-center py-3">
+                    <div class="spinner-border spinner-border-sm text-danger"></div>
+                  </div>
+
+                  <!-- Danh sách nhóm phụ tùng (Không giới hạn chiều cao, không cuộn) -->
+                  <div v-else-if="partGroups && partGroups.length > 0" class="catalog-nav-list">
+                    <!-- Nút Tất Cả Nhóm Phụ Tùng -->
+                    <button
+                      type="button"
+                      class="catalog-nav-btn"
+                      :class="{ active: !filters.nhom_phu_tung_id }"
+                      @click="toggleCategory('')"
+                    >
+                      <span class="catalog-nav-text">Tất cả nhóm phụ tùng</span>
+                      <i class="bi bi-chevron-right catalog-nav-arrow ms-auto"></i>
+                    </button>
+
+                    <!-- Từng nhóm phụ tùng lấy từ API -->
+                    <button 
                       v-for="cat in partGroups" 
                       :key="cat.id"
-                      class="filter-checkbox-item"
+                      type="button"
+                      class="catalog-nav-btn"
                       :class="{ active: filters.nhom_phu_tung_id === cat.id }"
                       @click="toggleCategory(cat.id)"
                     >
-                      <span class="custom-chk-box">
-                        <i class="bi bi-check" v-if="filters.nhom_phu_tung_id === cat.id"></i>
-                      </span>
-                      <span class="filter-checkbox-label text-truncate">{{ cat.ten_nhom }}</span>
-                    </div>
+                      <span class="catalog-nav-text" :title="cat.ten_nhom">{{ cat.ten_nhom }}</span>
+                      <i class="bi bi-chevron-right catalog-nav-arrow ms-auto"></i>
+                    </button>
                   </div>
-                  <div v-else class="text-muted mt-2 small fst-italic">
-                    Vui lòng chọn Hãng, Loại, Năm và Model để tải danh sách nhóm phụ tùng.
+
+                  <!-- Đã chọn thông số nhưng không tìm thấy nhóm nào -->
+                  <div v-else class="text-muted mt-1 small fst-italic">
+                    Không có nhóm phụ tùng nào cho thông số này.
                   </div>
                 </div>
 
@@ -419,11 +444,15 @@ export default {
       staleTime: 1000 * 60 * 30
     });
 
-    const { data: partGroups } = useQuery({
+    const hasEngineSelected = computed(() => {
+      return !!(filters.thuong_hieu_id || filters.loai_dong_co_id || filters.dong_co_model_id || filters.nam_sx);
+    });
+
+    const { data: partGroups, isFetching: isFetchingPartGroups } = useQuery({
       queryKey: computed(() => ['public-part-groups', filters.thuong_hieu_id, filters.loai_dong_co_id, filters.dong_co_model_id, filters.nam_sx]),
       queryFn: () => axiosClient.get('/public/nhom-phu-tung', { params: { thuong_hieu_id: filters.thuong_hieu_id, loai_dong_co_id: filters.loai_dong_co_id, dong_co_model_id: filters.dong_co_model_id, nam_sx: filters.nam_sx } }).then(res => res.data?.data || res.data || res),
       staleTime: 1000 * 60 * 5,
-      enabled: computed(() => !!filters.thuong_hieu_id)
+      enabled: hasEngineSelected
     });
 
     const { data: engineTypes } = useQuery({
@@ -583,7 +612,12 @@ export default {
     };
 
     const toggleCategory = (id) => {
-      filters.nhom_phu_tung_id = filters.nhom_phu_tung_id === id ? '' : id;
+      if (!id || filters.nhom_phu_tung_id === id) {
+        filters.nhom_phu_tung_id = '';
+      } else {
+        filters.nhom_phu_tung_id = id;
+      }
+      filters.page = 1;
     };
 
     const removeFilter = (type) => {
@@ -706,7 +740,8 @@ export default {
       sortBy, sortLabel, selectSort, cartStore,
       goToDiagram, prefetchDiagram,
       resetFilters, changePage, openDropdown, toggleDropdown, selectOption,
-      brandLabel, engineTypeLabel, modelLabel, yearLabel, years, activeFilters, removeFilter, toggleCategory, isFilterEmpty
+      brandLabel, engineTypeLabel, modelLabel, yearLabel, years, activeFilters, removeFilter, toggleCategory, isFilterEmpty,
+      hasEngineSelected, isFetchingPartGroups
     };
   },
   methods: {
@@ -1002,62 +1037,78 @@ export default {
   font-weight: 700;
 }
 
-/* ── NHÓM PHỤ TÙNG CHECKBOX ── */
-.filter-part-groups {
-  max-height: 260px;
-  overflow-y: auto;
+/* ── NAVIGATION LIST IN SIDEBAR (ĐỒNG BỘ 100% CỬA HÀNG SANPHAM.VUE) ── */
+.catalog-nav-list {
   display: flex;
   flex-direction: column;
   gap: 4px;
+  padding: 4px 6px 4px 0;
+  overflow-x: hidden !important;
 }
 
-.filter-checkbox-item {
+.catalog-nav-btn {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 6px 8px;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: all 0.15s ease;
-}
-
-.filter-checkbox-item:hover {
-  background: #f1f5f9;
-}
-
-.filter-checkbox-item.active {
-  background: rgba(248, 34, 73, 0.06);
-}
-
-.custom-chk-box {
-  width: 18px;
-  height: 18px;
-  border-radius: 4px;
-  border: 1px solid #cbd5e1;
-  background: #ffffff;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  color: #ffffff;
-  font-size: 14px;
-  transition: all 0.2s ease;
-}
-
-.filter-checkbox-item.active .custom-chk-box {
-  background: #f82249;
-  border-color: #f82249;
-}
-
-.filter-checkbox-label {
-  font-size: 0.85rem;
-  color: #475569;
+  justify-content: space-between;
+  width: 100%;
+  border: 1px solid transparent;
+  background: transparent;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-family: var(--default-font, sans-serif);
   font-weight: 500;
+  font-size: 0.88rem;
+  color: #475569;
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+  text-align: left;
 }
 
-.filter-checkbox-item.active .filter-checkbox-label {
+.catalog-nav-btn:hover {
+  background: #f1f5f9;
   color: #0A1128;
   font-weight: 600;
+  transform: translateX(4px);
+}
+
+.catalog-nav-btn.active {
+  background: rgba(248, 34, 73, 0.08);
+  border-color: rgba(248, 34, 73, 0.2);
+  color: #f82249;
+  font-weight: 700;
+}
+
+.catalog-nav-btn.active:hover {
+  background: rgba(248, 34, 73, 0.12);
+  color: #f82249;
+  transform: translateX(4px);
+}
+
+.catalog-nav-text {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.catalog-nav-arrow {
+  font-size: 0.72rem;
+  opacity: 0;
+  transform: translateX(-4px);
+  transition: all 0.2s ease;
+  color: inherit;
+  flex-shrink: 0;
+}
+
+.catalog-nav-btn:hover .catalog-nav-arrow {
+  opacity: 0.6;
+  transform: translateX(0);
+}
+
+.catalog-nav-btn.active .catalog-nav-arrow {
+  opacity: 1;
+  transform: translateX(0);
+  color: #f82249;
 }
 
 /* ── TABS CHUYỂN ĐỔI (PHỤ TÙNG / SƠ ĐỒ) ── */
