@@ -15,62 +15,66 @@
 
     <!-- ════════════════════════════════════════════════════════════════
          SECTION: TIÊU ĐIỂM CHUYÊN MỤC
-         Tabs Row + Action Tools + 4 Landscape 16:10 Cards
+         Toolbar (Title + Search & Action) + Dedicated Tabs Row + 4 Landscape Cards
     ════════════════════════════════════════════════════════════════ -->
     <section id="top-destinations" class="pb-5">
       <div class="container">
-        <!-- Section Title -->
-        <h2 class="section-editorial-title mb-3">Tiêu Điểm Chuyên Mục</h2>
+        <!-- Header Toolbar: Tiêu Đề bên trái + Cụm Tìm Kiếm & Nút bên phải (Cùng chiều cao 40px) -->
+        <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3 mb-3">
+          <div>
+            <h2 class="section-editorial-title m-0">Tiêu Điểm Chuyên Mục</h2>
+            <p class="text-muted small mb-0 mt-1">Lọc bài viết theo danh mục kỹ thuật và công nghệ hàng hải</p>
+          </div>
 
-        <!-- Tabs Bar + Right Action Tools (Bố cục chống vỡ dòng) -->
-        <div class="news-nav-bar mb-4 pb-2 border-bottom">
-          <div class="d-flex flex-column flex-lg-row align-items-lg-center justify-content-between gap-3">
-            <!-- Tabs Row (Cuộn ngang trượt mượt mà) -->
-            <nav class="wireframe-tabs d-flex align-items-center gap-1 overflow-x-auto text-nowrap pb-1 pb-lg-0">
+          <!-- Cụm Tìm Kiếm & Nút Khám Phá chuẩn JPM Design System (40px đồng bộ, 8px radius) -->
+          <div class="d-flex align-items-center gap-2 flex-shrink-0">
+            <!-- Quick Search Input (Chuẩn hóa search-input-box 40px) -->
+            <div class="news-search-box">
+              <i class="bi bi-search search-input-icon"></i>
+              <input
+                type="text"
+                v-model.trim="searchQuery"
+                class="search-input-field"
+                placeholder="Tìm kiếm bài viết..."
+              />
               <button
-                v-for="tab in tabs"
-                :key="tab"
+                v-if="searchQuery"
                 type="button"
-                class="wireframe-tab-btn"
-                :class="{ active: activeTab === tab }"
-                @click="selectTab(tab)"
+                class="btn-clear-search"
+                @click="searchQuery = ''"
+                title="Xóa tìm kiếm"
               >
-                {{ tab }}
-              </button>
-            </nav>
-
-            <!-- Cụm Tìm Kiếm & Nút Khám Phá -->
-            <div class="d-flex align-items-center gap-2 flex-shrink-0 ms-lg-auto">
-              <!-- Quick Search Input -->
-              <div class="news-search-box">
-                <i class="bi bi-search search-input-icon"></i>
-                <input
-                  type="text"
-                  v-model.trim="searchQuery"
-                  class="search-input-field"
-                  placeholder="Tìm kiếm bài viết..."
-                />
-                <button
-                  v-if="searchQuery"
-                  type="button"
-                  class="btn-clear-search"
-                  @click="searchQuery = ''"
-                  title="Xóa tìm kiếm"
-                >
-                  <i class="bi bi-x"></i>
-                </button>
-              </div>
-
-              <button
-                v-if="topCategoryArticles.length > 4"
-                type="button"
-                class="btn btn-outline-action"
-                @click="showAllTopCategory = !showAllTopCategory"
-              >
-                {{ showAllTopCategory ? 'Thu gọn danh sách' : 'Khám phá tất cả' }}
+                <i class="bi bi-x-circle-fill"></i>
               </button>
             </div>
+
+            <!-- Nút Khám Phá Chuẩn 40px -->
+            <button
+              v-if="topCategoryArticles.length > 4"
+              type="button"
+              class="btn btn-outline-action"
+              @click="showAllTopCategory = !showAllTopCategory"
+            >
+              <i class="bi me-1" :class="showAllTopCategory ? 'bi-chevron-up' : 'bi-grid'"></i>
+              <span>{{ showAllTopCategory ? 'Thu gọn' : 'Xem tất cả' }}</span>
+            </button>
           </div>
+        </div>
+
+        <!-- Dòng Tabs Danh Mục Độc Lập Tràn Ngang (Hỗ trợ vô số danh mục mà không bao giờ bị đụng độ) -->
+        <div class="news-tabs-wrapper mb-4 border-bottom">
+          <nav class="wireframe-tabs d-flex align-items-center gap-1 overflow-x-auto text-nowrap scrollbar-hidden">
+            <button
+              v-for="tab in tabs"
+              :key="tab"
+              type="button"
+              class="wireframe-tab-btn"
+              :class="{ active: activeTab === tab }"
+              @click="selectTab(tab)"
+            >
+              {{ tab }}
+            </button>
+          </nav>
         </div>
 
         <!-- Empty State if search/tab has no results -->
@@ -151,12 +155,12 @@
                 </div>
               </router-link>
 
-              <!-- 2. Danh mục chữ xám in hoa chuẩn ProductCard -->
-              <div class="news-category-label mb-2 text-truncate" :title="item.cat">
+              <!-- 2. Danh mục chữ đỏ in hoa -->
+              <div class="news-category-label mb-1 text-truncate" :title="item.cat">
                 {{ item.cat }}
               </div>
 
-              <!-- 3. Tiêu đề đậm lớn Deep Navy #0A1128 -->
+              <!-- 3. Tiêu đề đậm lớn Deep Navy #0A1128 (Tối đa 2 dòng kèm dấu ...) -->
               <h3 class="fw-bold mb-2 hero-title-hover middle-card-title">
                 <router-link :to="`/tin-tuc/${item.id}`" class="text-decoration-none">
                   {{ item.title }}
@@ -169,7 +173,7 @@
               </p>
 
               <!-- 5. Hàng ngày tháng & thời lượng đọc kèm icon (Đưa xuống dưới nội dung) -->
-              <div class="text-muted d-flex align-items-center gap-2 mt-auto" style="font-size: 0.82rem;">
+              <div class="text-muted d-flex align-items-center gap-2 mt-1" style="font-size: 0.82rem;">
                 <span class="d-inline-flex align-items-center gap-1">
                   <i class="bi bi-calendar3"></i> {{ item.dateFormatted }}
                 </span>
@@ -222,7 +226,7 @@
               <p class="text-secondary mb-2 text-truncate-2" style="font-size: 0.92rem; line-height: 1.6;">
                 {{ otherMainStory.excerpt }}
               </p>
-              <div class="text-muted d-flex align-items-center gap-2 mt-auto" style="font-size: 0.78rem;">
+              <div class="text-muted d-flex align-items-center gap-2 mt-1" style="font-size: 0.78rem;">
                 <span class="d-inline-flex align-items-center gap-1"><i class="bi bi-calendar3"></i>{{ otherMainStory.dateFormatted }}</span>
                 <span>•</span>
                 <span class="d-inline-flex align-items-center gap-1"><i class="bi bi-clock"></i>{{ otherMainStory.read }}</span>
@@ -610,17 +614,21 @@ export default {
   letter-spacing: normal;
 }
 
-/* ── SEARCH INPUT IN TABS (MATCHING SAN PHAM / HO TRO) ── */
+/* ── SEARCH INPUT IN TABS (CHUẨN HÓA THEO JPM DESIGN SYSTEM 2026: 40PX, 8PX RADIUS) ── */
 .news-search-box {
-  width: 220px;
-  height: 38px;
+  width: 240px;
+  height: 40px;
   border-radius: var(--jpm-radius-control, 8px);
   border: 1px solid #e2e8f0;
   background: #ffffff;
-  padding: 0 10px;
+  padding: 0 12px;
   display: flex;
   align-items: center;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.news-search-box:hover {
+  border-color: #cbd5e1;
 }
 
 .news-search-box:focus-within {
@@ -629,9 +637,9 @@ export default {
 }
 
 .news-search-box .search-input-icon {
-  font-size: 0.85rem;
+  font-size: 0.9rem;
   color: #94a3b8;
-  margin-right: 6px;
+  margin-right: 8px;
   flex-shrink: 0;
   transition: color 0.15s ease;
 }
@@ -646,7 +654,7 @@ export default {
   background: transparent !important;
   outline: none !important;
   box-shadow: none !important;
-  font-size: 0.84rem;
+  font-size: 0.86rem;
   font-family: var(--default-font, 'Roboto', sans-serif);
   color: var(--jpm-color-navy-dark, #0A1128);
   padding: 0;
@@ -666,7 +674,7 @@ export default {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  font-size: 1rem;
+  font-size: 0.95rem;
   transition: color 0.15s ease;
 }
 
@@ -674,15 +682,15 @@ export default {
   color: var(--jpm-color-red-marine, #f82249);
 }
 
-/* ── ACTION BUTTONS (DEC-01: 8PX BORDER RADIUS) ── */
+/* ── ACTION BUTTONS (CHUẨN HÓA 40PX, 8PX RADIUS) ── */
 .btn-outline-action {
   background-color: #ffffff;
   color: #334155;
   border: 1px solid #cbd5e1;
   border-radius: var(--jpm-radius-control, 8px);
-  height: 38px;
+  height: 40px;
   padding: 0 16px;
-  font-size: 0.84rem;
+  font-size: 0.85rem;
   font-weight: 600;
   white-space: nowrap;
   display: inline-flex;
@@ -698,9 +706,17 @@ export default {
   transform: translateY(-1px);
 }
 
-/* ── SECTION 2: TABS & CARDS ── */
-.news-nav-bar {
+/* ── SECTION 2: TABS & CARDS (HỖ TRỢ NHIỀU DANH MỤC TRÀN NGANG) ── */
+.news-tabs-wrapper {
   border-color: #E2E8F0 !important;
+}
+
+.scrollbar-hidden {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.scrollbar-hidden::-webkit-scrollbar {
+  display: none;
 }
 
 .wireframe-tabs {
@@ -713,14 +729,14 @@ export default {
   background: none;
   border: none;
   border-bottom: 2px solid transparent;
-  padding: 8px 14px;
-  font-size: 0.88rem;
+  padding: 8px 16px;
+  font-size: 0.9rem;
   font-weight: 600;
   color: #64748b;
   white-space: nowrap;
   cursor: pointer;
   transition: all 0.2s ease;
-  margin-bottom: -9px; /* Canh sát vào đường kẻ border-bottom */
+  margin-bottom: -1px; /* Canh sát vào đường kẻ border-bottom */
 }
 .wireframe-tab-btn:hover {
   color: var(--jpm-color-navy-dark, #0A1128);
@@ -783,8 +799,12 @@ export default {
   font-family: var(--heading-font, 'Raleway', sans-serif);
   font-size: clamp(1.15rem, 1.8vw, 1.35rem);
   font-weight: 700;
-  line-height: 1.4;
+  line-height: 1.35;
   color: var(--jpm-color-navy-dark, #0A1128);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .middle-card-title a {
@@ -800,8 +820,12 @@ export default {
 
 .middle-card-excerpt {
   font-size: 0.92rem;
-  line-height: 1.6;
+  line-height: 1.55;
   color: #64748b;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 /* ── SECTION 3: LATEST STORIES / OTHER STORIES ── */
@@ -827,14 +851,22 @@ export default {
   font-family: var(--heading-font, 'Raleway', sans-serif);
   font-size: clamp(1rem, 1.25vw, 1.15rem);
   font-weight: 700;
-  line-height: 1.4;
+  line-height: 1.35;
   color: var(--jpm-color-navy-dark, #0A1128);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .other-side-excerpt {
   font-size: 0.86rem;
   line-height: 1.5;
   color: #64748b;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .play-circle-btn {
