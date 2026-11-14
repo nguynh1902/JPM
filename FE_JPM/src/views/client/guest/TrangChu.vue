@@ -334,7 +334,7 @@
 
               <!-- Nội dung thông tin bài viết -->
               <div class="d-flex flex-column flex-grow-1 px-1 position-relative">
-                <!-- 1. Danh mục: Xám xanh dịu #8392a5 đồng bộ Product Category bên trên -->
+                <!-- 1. Danh mục: Đỏ Red Marine #F82249 đồng bộ chuẩn Tin Tức -->
                 <div class="news-category mb-1 text-truncate">
                   {{ videoArticle.category || videoArticle.type || videoArticle.loai || 'CẨM NANG HÀNG HẢI' }}
                 </div>
@@ -384,7 +384,7 @@
                   >
                 </div>
                 <div class="ms-3 flex-grow-1 d-flex flex-column align-self-stretch">
-                  <!-- 1. Danh mục: Xám xanh dịu #8392a5 đồng bộ Product Category -->
+                  <!-- 1. Danh mục: Đỏ Red Marine #F82249 đồng bộ chuẩn Tin Tức -->
                   <div class="news-category mb-1 text-truncate">
                     {{ item.category || item.type || item.loai || 'TIN TỨC' }}
                   </div>
@@ -704,12 +704,12 @@ export default {
    ============================================================== */
 .news-category {
   font-family: var(--heading-font, 'Raleway', sans-serif);
-  color: var(--jpm-neutral-500, #64748B); /* Đồng bộ xám thanh lịch Product Category */
+  color: var(--jpm-color-red-marine, #F82249); /* Chuẩn Đỏ Red Marine đồng bộ Tin Tức & Chi Tiết Tin Tức */
   font-weight: 700;
-  font-size: 0.72rem;
+  font-size: 0.74rem;
   letter-spacing: 0.6px;
   text-transform: uppercase;
-  line-height: 1.2;
+  line-height: 1.3;
 }
 
 .news-hero-title {

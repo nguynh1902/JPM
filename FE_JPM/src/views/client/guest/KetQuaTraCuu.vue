@@ -185,45 +185,29 @@
           <!-- BÊN PHẢI: KẾT QUẢ TRA CỨU -->
           <div class="jpm-split-content pl-lg-4">
 
-            <!-- 1. Trạng thái rỗng khi chưa chọn lọc: Empty Guide State -->
-            <div class="text-center py-5" v-if="isFilterEmpty">
-              <div class="empty-state-card py-5 px-3">
-                <div class="empty-icon-circle mx-auto mb-4">
-                  <i class="bi bi-search text-danger" style="font-size: 2rem;"></i>
-                </div>
-                <h4 class="fw-bold mb-2 text-navy" style="color: #0A1128;">Bắt Đầu Tra Cứu Phụ Tùng</h4>
-                <p class="text-muted mx-auto mb-0" style="max-width: 520px; font-size: 0.95rem; line-height: 1.6;">
-                  Hãy lựa chọn các thông số động cơ ở bộ lọc bên trái (Thương hiệu, Loại máy, Năm, Model) hoặc trực tiếp nhập mã SKU phụ tùng để xem sơ đồ bản vẽ và linh kiện chính hãng.
-                </p>
+            <!-- THANH ĐIỀU KHIỂN CHUẨN SANPHAM.VUE (KHÔNG DÙNG CARD TRẮNG NỔI RỜI RẠC) -->
+            <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 pb-3 border-bottom gap-2">
+              <!-- TABS CHUYỂN ĐỔI CHUẨN 2026 -->
+              <div class="d-flex align-items-center gap-2">
+                <button 
+                  type="button"
+                  class="tab-pill-btn"
+                  :class="{ active: activeTab === 'products' }"
+                  @click="activeTab = 'products'"
+                >
+                  <span>Phụ tùng chi tiết</span>
+                  <span class="tab-pill-badge">{{ searchResult?.total ?? products.length }}</span>
+                </button>
+                <button 
+                  type="button"
+                  class="tab-pill-btn"
+                  :class="{ active: activeTab === 'diagrams' }"
+                  @click="activeTab = 'diagrams'"
+                >
+                  <span>Sơ đồ bản vẽ máy</span>
+                  <span class="tab-pill-badge">{{ searchDiagrams?.total ?? diagramsList.length }}</span>
+                </button>
               </div>
-            </div>
-
-            <!-- 2. Khi đã chọn bộ lọc: Hiển thị Thanh điều khiển & Danh sách -->
-            <div v-else>
-
-              <!-- THANH ĐIỀU KHIỂN CHUẨN SANPHAM.VUE (KHÔNG DÙNG CARD TRẮNG NỔI RỜI RẠC) -->
-              <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 pb-3 border-bottom gap-2">
-                <!-- TABS CHUYỂN ĐỔI CHUẨN 2026 -->
-                <div class="d-flex align-items-center gap-2" v-if="products.length > 0 || diagramsList.length > 0 || isFetchingGlobal">
-                  <button 
-                    type="button"
-                    class="tab-pill-btn"
-                    :class="{ active: activeTab === 'products' }"
-                    @click="activeTab = 'products'"
-                  >
-                    <span>Phụ tùng chi tiết</span>
-                    <span class="tab-pill-badge">{{ searchResult?.total || products.length }}</span>
-                  </button>
-                  <button 
-                    type="button"
-                    class="tab-pill-btn"
-                    :class="{ active: activeTab === 'diagrams' }"
-                    @click="activeTab = 'diagrams'"
-                  >
-                    <span>Sơ đồ bản vẽ máy</span>
-                    <span class="tab-pill-badge">{{ searchDiagrams?.total || diagramsList.length }}</span>
-                  </button>
-                </div>
 
                 <!-- DROPDOWN SẮP XẾP CHUẨN LUXURY -->
                 <div class="d-flex align-items-center gap-2 ms-auto">
@@ -358,7 +342,7 @@
               </div>
 
               <!-- Footer Phân Trang -->
-              <div class="d-flex justify-content-between align-items-center mt-4 pt-4 border-top" v-if="((activeTab === 'products' && filters.nhom_phu_tung_id) || activeTab === 'diagrams') && (activeTab === 'products' ? products.length : diagramsList.length) > 0">
+              <div class="d-flex justify-content-between align-items-center mt-4 pt-4 border-top" v-if="(activeTab === 'products' ? products.length : diagramsList.length) > 0">
                 <span class="text-muted small">Hiển thị {{ activeTab === 'products' ? products.length : diagramsList.length }} của {{ pagination.total }} {{ activeTab === 'products' ? 'phụ tùng' : 'sơ đồ' }}</span>
                 <ul class="pagination custom-pagination-rounded mb-0" v-if="pagination.last_page > 1">
                   <li class="page-item" :class="{ disabled: pagination.current_page === 1 }">
@@ -373,7 +357,6 @@
                 </ul>
               </div>
 
-            </div>
           </div>
         </div>
       </div>
@@ -480,16 +463,14 @@ export default {
     const { data: searchDiagrams, isFetching: isFetchingDiagrams } = useQuery({
       queryKey: computed(() => ['tra-cuu-so-do', { ...filters }]),
       queryFn: () => axiosClient.get('/public/tra-cuu-so-do', { params: filters }).then(res => res.data || res),
-      keepPreviousData: true,
-      enabled: computed(() => !isFilterEmpty.value)
+      keepPreviousData: true
     });
 
     // Parts Search Query (danh sách chi tiết phụ tùng)
     const { data: searchResult, isFetching } = useQuery({
       queryKey: computed(() => ['tra-cuu', { ...filters }]),
       queryFn: () => axiosClient.get('/public/tra-cuu', { params: { ...filters, per_page: filters.nhom_phu_tung_id ? 12 : 60 } }).then(res => res.data || res),
-      keepPreviousData: true,
-      enabled: computed(() => !isFilterEmpty.value)
+      keepPreviousData: true
     });
 
     const sortBy = ref('newest');
@@ -500,7 +481,9 @@ export default {
     });
 
     const filteredProducts = computed(() => {
-      const list = [...(searchResult.value?.data || [])];
+      const list = Array.isArray(searchResult.value?.data)
+        ? [...searchResult.value.data]
+        : (Array.isArray(searchResult.value) ? [...searchResult.value] : []);
       if (sortBy.value === 'price_asc') {
         return list.sort((a, b) => Number(a.gia_ban || 0) - Number(b.gia_ban || 0));
       }
@@ -510,7 +493,11 @@ export default {
       return list;
     });
     const products = filteredProducts;
-    const diagramsList = computed(() => searchDiagrams.value?.data || []);
+    const diagramsList = computed(() => {
+      if (Array.isArray(searchDiagrams.value?.data)) return searchDiagrams.value.data;
+      if (Array.isArray(searchDiagrams.value)) return searchDiagrams.value;
+      return [];
+    });
     const isFetchingGlobal = computed(() => isFetching.value || isFetchingDiagrams.value);
 
     // Nhóm sản phẩm theo Nhóm Phụ Tùng (chuẩn Luxury Minimalism đồng bộ Cửa Hàng)
