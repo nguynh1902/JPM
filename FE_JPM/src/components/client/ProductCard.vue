@@ -284,8 +284,9 @@ function handleRequestQuote() {
   transition: color 0.15s ease;
 }
 
-.product-card:hover .card-title a {
-  color: var(--jpm-color-red-marine, #F82249);
+.product-card:hover .card-title a,
+.product-card .card-title a:hover {
+  color: var(--jpm-color-navy-dark, #0A1128) !important;
 }
 
 .product-sku {

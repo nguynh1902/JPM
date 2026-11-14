@@ -2579,7 +2579,9 @@ section,
   transform: scale(1.08);
 }
 .product-card:hover .card-title a,
-.premium-product-card:hover .card-title a {
+.product-card:hover .card-title span,
+.premium-product-card:hover .card-title a,
+.premium-product-card:hover .card-title span {
   color: var(--heading-color, #0A1128) !important;
 }
 .card-hover:hover {
@@ -3214,7 +3216,9 @@ a.footer-contact-value:hover {
   transition: color 0.25s ease;
 }
 .product-card:hover .card-title a,
-.premium-product-card:hover .card-title a {
+.product-card:hover .card-title span,
+.premium-product-card:hover .card-title a,
+.premium-product-card:hover .card-title span {
   color: var(--heading-color, #0A1128) !important;
 }
 

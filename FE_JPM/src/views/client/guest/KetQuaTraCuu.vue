@@ -186,31 +186,9 @@
           <div class="jpm-split-content pl-lg-4">
 
             <!-- THANH ĐIỀU KHIỂN CHUẨN SANPHAM.VUE (KHÔNG DÙNG CARD TRẮNG NỔI RỜI RẠC) -->
-            <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 pb-3 border-bottom gap-2">
-              <!-- TABS CHUYỂN ĐỔI CHUẨN 2026 -->
-              <div class="d-flex align-items-center gap-2">
-                <button 
-                  type="button"
-                  class="tab-pill-btn"
-                  :class="{ active: activeTab === 'products' }"
-                  @click="activeTab = 'products'"
-                >
-                  <span>Phụ tùng chi tiết</span>
-                  <span class="tab-pill-badge">{{ searchResult?.total ?? products.length }}</span>
-                </button>
-                <button 
-                  type="button"
-                  class="tab-pill-btn"
-                  :class="{ active: activeTab === 'diagrams' }"
-                  @click="activeTab = 'diagrams'"
-                >
-                  <span>Sơ đồ bản vẽ máy</span>
-                  <span class="tab-pill-badge">{{ searchDiagrams?.total ?? diagramsList.length }}</span>
-                </button>
-              </div>
-
-                <!-- DROPDOWN SẮP XẾP CHUẨN LUXURY -->
-                <div class="d-flex align-items-center gap-2 ms-auto">
+            <div class="d-flex flex-wrap justify-content-end align-items-center mb-3 pb-3 border-bottom gap-2">
+              <!-- DROPDOWN SẮP XẾP CHUẨN LUXURY -->
+              <div class="d-flex align-items-center gap-2 ms-auto">
                   <span class="text-muted small fw-medium text-nowrap d-none d-sm-inline">Sắp xếp:</span>
                   <div class="custom-select-wrapper" :class="{ 'z-active': openDropdown === 'sort' }" style="width: 165px;">
                     <div class="custom-select-box shop-sort-box" :class="{ 'is-focused': openDropdown === 'sort' }" @click="toggleDropdown('sort')">
@@ -251,27 +229,62 @@
               <div v-else-if="activeTab === 'diagrams'">
                 <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4" v-if="diagramsList.length > 0">
                   <div class="col" v-for="diag in diagramsList" :key="diag.id">
-                    <div class="card h-100 premium-product-card group-hover" @click="goToDiagram(diag)" @mouseenter="prefetchDiagram(diag)" style="cursor: pointer;">
-                      <div class="card-img-wrapper overflow-hidden img-zoom-hover">
+                    <div 
+                      class="card h-100 product-card jpm-card position-relative" 
+                      @click="goToDiagram(diag)" 
+                      @mouseenter="prefetchDiagram(diag)" 
+                      style="cursor: pointer;"
+                    >
+                      <!-- 1. Ảnh sơ đồ -->
+                      <div class="card-img-wrapper position-relative overflow-hidden bg-light d-flex align-items-center justify-content-center">
                         <img 
-                          :src="diag.hinh_anh ? diag.hinh_anh : 'https://placehold.co/400x400/f8f9fa/a1acb8?text=No+Image'" 
-                          class="card-img-top w-100 transition-transform" 
+                          :src="getDiagramImage(diag.hinh_anh)" 
+                          class="card-img-top w-100 transition-transform card-img-product" 
                           style="aspect-ratio: 4/3; object-fit: cover;" 
                           :alt="diag.ten_so_do"
+                          @error="$event.target.src = 'https://placehold.co/400x300/f8f9fa/a1acb8?text=JPM+Marine'"
+                          loading="lazy"
                         >
                       </div>
+
+                      <!-- 2. Thân Card thông tin -->
                       <div class="card-body text-start p-3 d-flex flex-column bg-white">
-                        <div class="d-flex justify-content-between align-items-start mb-2">
-                          <span class="text-muted fw-bold text-uppercase" style="letter-spacing: 0.5px; font-size: 0.75rem;">SƠ ĐỒ PHỤ TÙNG</span>
+                        <!-- Tầng 1: Nhóm Phụ Tùng / Danh mục -->
+                        <div class="product-category mb-1 text-truncate" :title="diag.nhom_phu_tung?.ten_nhom || 'SƠ ĐỒ PHỤ TÙNG'">
+                          {{ diag.nhom_phu_tung?.ten_nhom || 'SƠ ĐỒ PHỤ TÙNG' }}
                         </div>
-                        <h5 class="card-title mb-3 text-uppercase" style="font-size: 0.95rem; line-height: 1.5; font-weight: 500; color: #1e293b;">
-                          {{ diag.nhom_phu_tung ? diag.nhom_phu_tung.ten_nhom : diag.ten_so_do }}
+
+                        <!-- Tầng 2: Tên cụm sơ đồ -->
+                        <h5 class="card-title mb-1">
+                          <span class="stretched-link text-truncate-2">
+                            {{ diag.ten_so_do }}
+                          </span>
                         </h5>
-                        <p class="text-muted mb-2" style="font-size: 0.8rem;" v-if="diag.model">MODEL: {{ diag.model.ten_model }}</p>
-                        <div class="mt-auto">
-                          <hr class="my-2 opacity-25">
-                          <div class="d-flex justify-content-end align-items-center">
-                            <span class="text-danger fw-bold" style="font-size: 0.9rem;">Xem sơ đồ <i class="bi bi-arrow-right"></i></span>
+
+                        <!-- Tầng 3: Model tương thích -->
+                        <div class="product-sku mb-3">
+                          <template v-if="diag.model">
+                            <span class="sku-label text-muted">MODEL:</span>
+                            <span class="sku-code">{{ diag.model.ten_model || diag.model.ma_model }}</span>
+                          </template>
+                          <template v-else>&nbsp;</template>
+                        </div>
+
+                        <!-- Tầng 4: Chân Card - Nút Xem Sơ Đồ đồng bộ 100% với ProductCard -->
+                        <div class="mt-auto d-flex align-items-center justify-content-between pt-1 gap-2">
+                          <div class="price-container text-truncate">
+                            <span class="text-danger fw-bold price-value" style="font-size: 0.95rem;">Xem sơ đồ</span>
+                          </div>
+
+                          <div class="action-container flex-shrink-0" style="position: relative; z-index: 2;">
+                            <button
+                              type="button"
+                              class="btn btn-cart-action"
+                              title="Xem sơ đồ chi tiết"
+                              @click.stop="goToDiagram(diag)"
+                            >
+                              <i class="bi bi-arrow-right"></i>
+                            </button>
                           </div>
                         </div>
                       </div>
@@ -710,6 +723,17 @@ export default {
       }
     };
 
+    const getDiagramImage = (raw) => {
+      if (!raw) return 'https://placehold.co/400x300/f8f9fa/a1acb8?text=JPM+Marine';
+      if (raw.startsWith('blob:') || raw.startsWith('http') || raw.startsWith('data:')) return raw;
+      const clean = raw.startsWith('/') ? raw.slice(1) : raw;
+      const backendBase = (import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000/api').replace(/\/api\/?$/, '');
+      if (clean.startsWith('storage/') || clean.startsWith('uploads/')) {
+        return `${backendBase}/${clean}`;
+      }
+      return `${backendBase}/storage/${clean}`;
+    };
+
     onMounted(() => {
       document.addEventListener('click', handleClickOutside);
     });
@@ -725,7 +749,7 @@ export default {
       groupedProducts, selectPartGroup,
       activeTab, searchResult, searchDiagrams,
       sortBy, sortLabel, selectSort, cartStore,
-      goToDiagram, prefetchDiagram,
+      goToDiagram, prefetchDiagram, getDiagramImage,
       resetFilters, changePage, openDropdown, toggleDropdown, selectOption,
       brandLabel, engineTypeLabel, modelLabel, yearLabel, years, activeFilters, removeFilter, toggleCategory, isFilterEmpty,
       hasEngineSelected, isFetchingPartGroups
@@ -1232,14 +1256,17 @@ export default {
   margin-bottom: 0.25rem;
 }
 
-.product-card .card-title a {
+.product-card .card-title a,
+.product-card .card-title span {
   color: #0A1128;
   text-decoration: none;
-  transition: color 0.15s ease;
 }
 
-.product-card:hover .card-title a {
-  color: #f82249;
+.product-card:hover .card-title a,
+.product-card:hover .card-title span,
+.product-card .card-title a:hover,
+.product-card .card-title span:hover {
+  color: #0A1128 !important;
 }
 
 .product-sku {
@@ -1258,8 +1285,8 @@ export default {
 
 .sku-code {
   font-family: var(--default-font, sans-serif);
-  color: #1e293b;
-  font-weight: 600;
+  color: #0d6efd;
+  font-weight: 700;
   letter-spacing: 0.2px;
 }
 
@@ -1267,6 +1294,14 @@ export default {
   font-family: var(--heading-font, 'Raleway', sans-serif);
   font-size: 1.15rem;
   font-weight: 800;
+}
+
+.jpm-badge {
+  border-radius: var(--jpm-radius-badge, 6px);
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 3px 7px;
+  z-index: 2;
 }
 
 .btn-cart-action {
