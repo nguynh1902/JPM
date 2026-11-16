@@ -351,7 +351,8 @@ export default {
         queryClient.invalidateQueries({ queryKey: ["tin-tuc"] });
         queryClient.invalidateQueries({ queryKey: ["client-tin-tuc"] });
         queryClient.invalidateQueries({ queryKey: ["client-tin-tuc-categories"] });
-        queryClient.invalidateQueries({ queryKey: ["public-news-detail-v2"] });
+        queryClient.invalidateQueries({ queryKey: ["public-news-detail"] });
+        queryClient.invalidateQueries({ queryKey: ["public-latest-news"] });
       }
     });
 

@@ -19,32 +19,10 @@
     ════════════════════════════════════════════════════════════════ -->
     <section id="top-destinations" class="pb-5">
       <div class="container">
-        <!-- Header Toolbar: Tiêu Đề bên trái + Ô Tìm Kiếm bên phải (Chuẩn 40px, 8px radius) -->
-        <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3 mb-3">
-          <div>
-            <h2 class="section-editorial-title m-0">Tiêu Điểm Chuyên Mục</h2>
-            <p class="text-muted small mb-0 mt-1">Lọc bài viết theo danh mục kỹ thuật và công nghệ hàng hải</p>
-          </div>
-
-          <!-- Quick Search Input (Chuẩn hóa search-input-box 40px) -->
-          <div class="news-search-box flex-shrink-0">
-            <i class="bi bi-search search-input-icon"></i>
-            <input
-              type="text"
-              v-model.trim="searchQuery"
-              class="search-input-field"
-              placeholder="Tìm kiếm bài viết..."
-            />
-            <button
-              v-if="searchQuery"
-              type="button"
-              class="btn-clear-search"
-              @click="searchQuery = ''"
-              title="Xóa tìm kiếm"
-            >
-              <i class="bi bi-x-circle-fill"></i>
-            </button>
-          </div>
+        <!-- Header Toolbar: Tiêu Đề -->
+        <div class="mb-3">
+          <h2 class="section-editorial-title m-0">Tiêu Điểm Chuyên Mục</h2>
+          <p class="text-muted small mb-0 mt-1">Lọc bài viết theo danh mục kỹ thuật và công nghệ hàng hải</p>
         </div>
 
         <!-- Dòng Tabs Danh Mục & Link Xem Thêm Chuẩn JPM Cửa Hàng (border-bottom pb-2) -->
@@ -64,7 +42,7 @@
 
           <!-- Link Xem thêm chuẩn SanPham.vue ngay trên viền border-bottom -->
           <button
-            v-if="topCategoryArticles.length > 4 && !searchQuery"
+            v-if="topCategoryArticles.length > 4"
             type="button"
             class="btn btn-link text-danger fw-bold text-decoration-none d-flex align-items-center gap-1 p-0 shadow-none hover-underline flex-shrink-0 ms-3 pb-2"
             style="color: var(--jpm-color-red-marine, #F82249) !important; font-size: 0.92rem;"
@@ -418,9 +396,15 @@ export default {
 
     const getImageUrl = (path) => {
       if (!path) return FALLBACK_IMG;
-      if (typeof path === 'string' && path.startsWith('http')) return path;
-      const baseUrl = import.meta.env.VITE_STORAGE_BASE_URL || 'http://localhost:8000/storage';
-      return `${baseUrl.replace(/\/$/, '')}/${String(path).replace(/^\//, '')}`;
+      if (typeof path === 'string' && (path.startsWith('http') || path.startsWith('blob:') || path.startsWith('data:'))) {
+        return path;
+      }
+      const clean = String(path).replace(/^\//, '');
+      const backendBase = (import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000/api').replace(/\/api\/?$/, '');
+      if (clean.startsWith('storage/') || clean.startsWith('uploads/')) {
+        return `${backendBase}/${clean}`;
+      }
+      return `${backendBase}/storage/${clean}`;
     };
 
     // === Fetch Categories ===
@@ -601,73 +585,7 @@ export default {
   letter-spacing: normal;
 }
 
-/* ── SEARCH INPUT IN TABS (CHUẨN HÓA THEO JPM DESIGN SYSTEM 2026: 40PX, 8PX RADIUS) ── */
-.news-search-box {
-  width: 240px;
-  height: 40px;
-  border-radius: var(--jpm-radius-control, 8px);
-  border: 1px solid #e2e8f0;
-  background: #ffffff;
-  padding: 0 12px;
-  display: flex;
-  align-items: center;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
-}
 
-.news-search-box:hover {
-  border-color: #cbd5e1;
-}
-
-.news-search-box:focus-within {
-  border-color: var(--jpm-color-red-marine, #f82249) !important;
-  box-shadow: 0 0 0 3px rgba(248, 34, 73, 0.12) !important;
-}
-
-.news-search-box .search-input-icon {
-  font-size: 0.9rem;
-  color: #94a3b8;
-  margin-right: 8px;
-  flex-shrink: 0;
-  transition: color 0.15s ease;
-}
-
-.news-search-box:focus-within .search-input-icon {
-  color: var(--jpm-color-red-marine, #f82249);
-}
-
-.news-search-box .search-input-field {
-  flex: 1;
-  border: none !important;
-  background: transparent !important;
-  outline: none !important;
-  box-shadow: none !important;
-  font-size: 0.86rem;
-  font-family: var(--default-font, 'Roboto', sans-serif);
-  color: var(--jpm-color-navy-dark, #0A1128);
-  padding: 0;
-  height: 100%;
-}
-
-.news-search-box .search-input-field::placeholder {
-  color: #94a3b8;
-}
-
-.btn-clear-search {
-  background: transparent;
-  border: none;
-  color: #94a3b8;
-  padding: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  font-size: 0.95rem;
-  transition: color 0.15s ease;
-}
-
-.btn-clear-search:hover {
-  color: var(--jpm-color-red-marine, #f82249);
-}
 
 /* ── ACTION BUTTONS (CHUẨN HÓA 40PX, 8PX RADIUS) ── */
 .btn-outline-action {

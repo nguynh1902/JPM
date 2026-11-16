@@ -94,14 +94,126 @@
           </div>
         </header>
 
-        <!-- 3. HERO FEATURED IMAGE -->
-        <div class="article-hero-img rounded-3 overflow-hidden mb-5">
-          <img
-            :src="getImageUrl(article.thumbnail) || fallback"
-            :alt="article.title"
-            class="w-100 h-100 object-fit-cover"
-            @error="$event.target.src = fallback"
-          >
+        <!-- 3. HERO FEATURED IMAGE (HỖ TRỢ CAROUSEL ĐA ẢNH & LIGHTBOX PHÓNG TO) -->
+        <div class="article-hero-wrapper mb-5">
+          <div class="article-hero-img rounded-3 overflow-hidden position-relative shadow-sm">
+            <!-- Main Active Image -->
+            <img
+              :src="getImageUrl(allHeroImages[currentHeroIndex]) || fallback"
+              :alt="article.title"
+              class="w-100 h-100 object-fit-cover transition-opacity hero-img-active cursor-pointer"
+              data-bs-toggle="modal"
+              data-bs-target="#heroLightboxModal"
+              @error="$event.target.src = fallback"
+            >
+
+            <!-- Carousel Navigation Buttons (Chỉ xuất hiện khi bài viết có từ 2 ảnh trở lên) -->
+            <template v-if="allHeroImages.length > 1">
+              <button
+                type="button"
+                class="hero-nav-btn hero-nav-prev"
+                @click.stop="prevHeroImage"
+                title="Ảnh trước"
+                aria-label="Previous image"
+              >
+                <i class="bi bi-chevron-left"></i>
+              </button>
+              <button
+                type="button"
+                class="hero-nav-btn hero-nav-next"
+                @click.stop="nextHeroImage"
+                title="Ảnh tiếp theo"
+                aria-label="Next image"
+              >
+                <i class="bi bi-chevron-right"></i>
+              </button>
+
+              <!-- Huy hiệu số đếm ảnh (Góc dưới bên phải) -->
+              <div class="hero-counter-badge position-absolute bottom-0 end-0 m-3 px-3 py-1 rounded-pill d-flex align-items-center gap-1">
+                <i class="bi bi-camera"></i>
+                <span>{{ currentHeroIndex + 1 }} / {{ allHeroImages.length }} ảnh</span>
+              </div>
+
+              <!-- Dải chấm chỉ số (Dots) -->
+              <div class="hero-dots position-absolute bottom-0 start-50 translate-middle-x mb-3 d-flex gap-2">
+                <button
+                  v-for="(img, idx) in allHeroImages"
+                  :key="idx"
+                  type="button"
+                  class="hero-dot-btn"
+                  :class="{ active: currentHeroIndex === idx }"
+                  @click.stop="setHeroImage(idx)"
+                  :title="`Xem ảnh ${idx + 1}`"
+                ></button>
+              </div>
+            </template>
+
+            <!-- Nút bấm phóng to góc trên bên phải -->
+            <button
+              type="button"
+              class="hero-zoom-btn position-absolute top-0 end-0 m-3 rounded-circle d-flex align-items-center justify-content-center"
+              data-bs-toggle="modal"
+              data-bs-target="#heroLightboxModal"
+              title="Phóng to ảnh"
+            >
+              <i class="bi bi-arrows-fullscreen"></i>
+            </button>
+          </div>
+
+          <!-- Dải thumbnail nhỏ bên dưới nếu có từ 2 ảnh trở lên -->
+          <div v-if="allHeroImages.length > 1" class="hero-thumbs-row mt-2 d-flex gap-2 overflow-x-auto pb-1 scrollbar-hidden">
+            <div
+              v-for="(img, idx) in allHeroImages"
+              :key="idx"
+              class="hero-thumb-item rounded-2 overflow-hidden flex-shrink-0 cursor-pointer"
+              :class="{ active: currentHeroIndex === idx }"
+              @click="setHeroImage(idx)"
+            >
+              <img :src="getImageUrl(img) || fallback" class="w-100 h-100 object-fit-cover" @error="$event.target.src = fallback">
+            </div>
+          </div>
+
+          <!-- Modal Lightbox toàn màn hình cho Hero Image -->
+          <div class="modal fade" id="heroLightboxModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-xl modal-dialog-centered">
+              <div class="modal-content bg-transparent border-0">
+                <div class="modal-header border-0 pb-0 justify-content-between align-items-center">
+                  <span class="text-white small fw-medium" v-if="allHeroImages.length > 1">
+                    Ảnh {{ currentHeroIndex + 1 }} / {{ allHeroImages.length }}
+                  </span>
+                  <span v-else></span>
+                  <button type="button" class="btn-close btn-close-white shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center position-relative py-3">
+                  <img
+                    :src="getImageUrl(allHeroImages[currentHeroIndex]) || fallback"
+                    class="img-fluid rounded-3 shadow-lg"
+                    style="max-height: 85vh; object-fit: contain;"
+                    @error="$event.target.src = fallback"
+                  >
+                  <!-- Nút Next / Prev trong Modal -->
+                  <template v-if="allHeroImages.length > 1">
+                    <button
+                      type="button"
+                      class="lightbox-nav-btn lightbox-nav-prev"
+                      @click.stop="prevHeroImage"
+                      title="Ảnh trước"
+                    >
+                      <i class="bi bi-chevron-left fs-3"></i>
+                    </button>
+                    <button
+                      type="button"
+                      class="lightbox-nav-btn lightbox-nav-next"
+                      @click.stop="nextHeroImage"
+                      title="Ảnh tiếp theo"
+                    >
+                      <i class="bi bi-chevron-right fs-3"></i>
+                    </button>
+                  </template>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
         <!-- 4. TWO-COLUMN BODY: LEFT ARTICLE CONTENT + RIGHT SIDEBAR -->
@@ -185,8 +297,8 @@
           <aside class="col-lg-4">
             <div class="sidebar-sticky">
               
-              <!-- Table of Contents -->
-              <div class="toc-widget mb-4 pb-2">
+              <!-- Table of Contents (Chỉ hiện khi bài viết có các thẻ đề mục H2/H3) -->
+              <div class="toc-widget mb-4 pb-2" v-if="tocItems && tocItems.length > 0">
                 <div class="sidebar-label fw-bold mb-3" style="color: var(--jpm-color-navy-dark, #0A1128);">
                   Mục lục bài viết
                 </div>
@@ -271,11 +383,20 @@
 
         </div>
 
-        <!-- 5. RELATED BLOGS SECTION -->
+        <!-- 5. RELATED BLOGS SECTION (CHUẨN HÓA ĐỒNG BỘ 100% THEO THẺ CỬA HÀNG & JPM DESIGN SYSTEM) -->
         <div v-if="relatedArticles && relatedArticles.length > 0" class="related-blogs-section mt-5 pt-5 border-top bg-white">
-          <h2 class="fw-bold mb-4" style="font-size: 1.65rem; letter-spacing: -0.4px; color: var(--jpm-color-navy-dark, #0A1128);">
-            Bài viết liên quan
-          </h2>
+          <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-2">
+            <h4 class="fw-bold mb-0 text-capitalize" style="color: var(--heading-color, #0A1128); font-size: 1.25rem; font-family: var(--heading-font, 'Raleway', sans-serif);">
+              Bài viết liên quan
+            </h4>
+            <router-link
+              to="/tin-tuc"
+              class="btn btn-link text-danger fw-bold text-decoration-none d-flex align-items-center gap-1 p-0 shadow-none hover-underline"
+              style="color: var(--jpm-color-red-marine, #F82249) !important; font-size: 0.92rem;"
+            >
+              Xem tất cả <i class="bi bi-arrow-right"></i>
+            </router-link>
+          </div>
 
           <div class="row g-4">
             <div
@@ -283,49 +404,40 @@
               v-for="rel in relatedArticles"
               :key="rel.id"
             >
-              <article class="related-blog-card h-100 d-flex flex-column">
-                <!-- Thumbnail -->
-                <router-link :to="`/tin-tuc/${rel.id}`" class="related-thumb-wrap d-block overflow-hidden rounded-3 mb-3">
-                  <img
-                    :src="getImageUrl(rel.thumbnail) || fallback"
-                    :alt="rel.title"
-                    class="w-100 h-100 object-fit-cover hover-zoom"
-                    @error="$event.target.src = fallback"
-                  >
-                </router-link>
-
-                <!-- Category: Thanh chữ xám chuẩn card sản phẩm -->
-                <div class="news-category-label mb-1 text-truncate" :title="rel.category">
-                  {{ rel.category }}
+              <article class="card h-100 related-blog-card product-card jpm-card position-relative overflow-hidden">
+                <!-- 1. Ảnh tràn mép trên (Edge-to-edge), không padding bao quanh -->
+                <div class="card-img-wrapper position-relative overflow-hidden bg-light d-flex align-items-center justify-content-center">
+                  <router-link :to="`/tin-tuc/${rel.id}`" class="d-block w-100 h-100">
+                    <img
+                      :src="getImageUrl(rel.thumbnail) || fallback"
+                      :alt="rel.title"
+                      class="card-img-top w-100 transition-transform card-img-product"
+                      style="aspect-ratio: 16 / 10; object-fit: cover;"
+                      @error="$event.target.src = fallback"
+                      loading="lazy"
+                    >
+                  </router-link>
                 </div>
 
-                <!-- Title -->
-                <h3 class="related-title fw-bold mb-2">
-                  <router-link :to="`/tin-tuc/${rel.id}`" class="text-decoration-none hover-title-navy">
-                    {{ rel.title }}
-                  </router-link>
-                </h3>
+                <!-- 2. Thân card (padding p-3) -->
+                <div class="card-body text-start p-3 d-flex flex-column bg-white">
+                  <!-- Tầng 1: Chuyên mục chữ xám chuẩn card sản phẩm & sơ đồ JPM -->
+                  <div class="product-category mb-1 text-truncate" :title="rel.category">
+                    {{ rel.category }}
+                  </div>
 
-                <!-- Excerpt -->
-                <p class="related-excerpt text-secondary mb-3 flex-grow-1">
-                  {{ rel.summary || 'Tìm hiểu quy trình kỹ thuật và kinh nghiệm bảo dưỡng thiết bị hàng hải chuyên sâu từ đội ngũ kỹ sư JPM Marine.' }}
-                </p>
+                  <!-- Tầng 2: Tiêu đề bài viết - Font Raleway, màu Deep Navy #0A1128 -->
+                  <h5 class="card-title mb-2">
+                    <router-link :to="`/tin-tuc/${rel.id}`" class="text-decoration-none stretched-link text-truncate-2">
+                      {{ rel.title }}
+                    </router-link>
+                  </h5>
 
-                <!-- Author & Date Footer -->
-                <div class="related-meta d-flex align-items-center gap-2 pt-2 mt-auto">
-                  <img
-                    :src="getAuthorAvatar(rel.author)"
-                    :alt="rel.author || 'Chuyên gia JPM'"
-                    class="rounded-circle object-fit-cover"
-                    style="width: 24px; height: 24px;"
-                  >
-                  <span class="fw-medium text-dark text-truncate" style="font-size: 0.76rem; max-width: 110px;">
-                    {{ rel.author || 'Kỹ sư JPM' }}
-                  </span>
-                  <span class="text-muted opacity-50" style="font-size: 0.75rem;">|</span>
-                  <span class="text-muted d-inline-flex align-items-center gap-1" style="font-size: 0.75rem;">
-                    <i class="bi bi-calendar3"></i> {{ formatDate(rel.created_at) }}
-                  </span>
+                  <!-- Tầng 3: Ngày đăng kèm icon lịch sạch sẽ -->
+                  <div class="mt-auto pt-2 text-muted d-flex align-items-center gap-1" style="font-size: 0.78rem;">
+                    <i class="bi bi-calendar3"></i>
+                    <span>{{ formatDate(rel.created_at) }}</span>
+                  </div>
                 </div>
               </article>
             </div>
@@ -423,15 +535,18 @@ export default {
     const route = useRoute();
     const articleId = computed(() => route.params.id);
     const activeTocId = ref('');
+    const currentHeroIndex = ref(0);
 
     const { data: fetchResult, isFetching, error, refetch } = useQuery({
-      queryKey: ['public-news-detail-v3', articleId],
+      queryKey: ['public-news-detail', articleId],
       queryFn: () => axiosClient.get(`/public/tin-tuc/${articleId.value}`),
-      staleTime: 1000 * 60 * 5,
+      staleTime: 0,
+      refetchOnWindowFocus: true,
     });
 
     watch(articleId, () => {
       activeTocId.value = '';
+      currentHeroIndex.value = 0;
       window.scrollTo({ top: 0, behavior: 'smooth' });
       refetch();
     });
@@ -448,19 +563,12 @@ export default {
         ''
       );
 
-      // Nếu nội dung bài viết trong DB chưa có thẻ h2/h3 (chỉ có 1 đoạn ngắn từ seeder),
-      // tự động bổ sung bố cục bài viết chuyên sâu để khớp với giao diện mẫu
-      if (!/<h[23]\b/i.test(raw)) {
+      // Chỉ bổ sung nội dung mẫu nếu bài viết trong DB hoàn toàn rỗng
+      if (!raw || raw.trim().length === 0) {
         raw = buildStructuredArticleHtml(article.value, raw);
       }
 
       const toc = [];
-      // Thêm mục mở đầu vào đầu Table of Contents giống ảnh thiết kế
-      toc.push({
-        id: 'toc-intro',
-        text: 'Mở đầu: Khoảng cách giữa thực tế & tiêu chuẩn kỹ thuật',
-      });
-
       let secIdx = 1;
       const htmlWithIds = raw.replace(/<(h[23])([^>]*)>([\s\S]*?)<\/\1>/gi, (match, tag, attrs, inner) => {
         const plainText = inner.replace(/<[^>]+>/g, '').trim();
@@ -475,7 +583,7 @@ export default {
       });
 
       return {
-        html: `<div id="toc-intro"></div>${htmlWithIds}`,
+        html: htmlWithIds,
         toc,
       };
     });
@@ -525,6 +633,36 @@ export default {
       }
     });
 
+    // Gom tất cả ảnh (Ảnh chính Thumbnail + Thư viện Gallery) vào chung danh sách để phục vụ Slider
+    const allHeroImages = computed(() => {
+      const list = [];
+      if (article.value?.thumbnail) {
+        list.push(article.value.thumbnail);
+      }
+      if (galleryImages.value && galleryImages.value.length > 0) {
+        galleryImages.value.forEach((img) => {
+          if (img && !list.includes(img)) {
+            list.push(img);
+          }
+        });
+      }
+      return list.length > 0 ? list : [FALLBACK];
+    });
+
+    const prevHeroImage = () => {
+      if (allHeroImages.value.length <= 1) return;
+      currentHeroIndex.value = (currentHeroIndex.value - 1 + allHeroImages.value.length) % allHeroImages.value.length;
+    };
+
+    const nextHeroImage = () => {
+      if (allHeroImages.value.length <= 1) return;
+      currentHeroIndex.value = (currentHeroIndex.value + 1) % allHeroImages.value.length;
+    };
+
+    const setHeroImage = (idx) => {
+      currentHeroIndex.value = idx;
+    };
+
     const formatDate = (d) => {
       if (!d) return '';
       const date = new Date(d);
@@ -550,9 +688,15 @@ export default {
 
     const getImageUrl = (path) => {
       if (!path) return FALLBACK;
-      if (typeof path === 'string' && path.startsWith('http')) return path;
-      const baseUrl = import.meta.env.VITE_STORAGE_BASE_URL || 'http://localhost:8000/storage';
-      return `${baseUrl.replace(/\/$/, '')}/${String(path).replace(/^\//, '')}`;
+      if (typeof path === 'string' && (path.startsWith('http') || path.startsWith('blob:') || path.startsWith('data:'))) {
+        return path;
+      }
+      const clean = String(path).replace(/^\//, '');
+      const backendBase = (import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000/api').replace(/\/api\/?$/, '');
+      if (clean.startsWith('storage/') || clean.startsWith('uploads/')) {
+        return `${backendBase}/${clean}`;
+      }
+      return `${backendBase}/storage/${clean}`;
     };
 
     return {
@@ -565,6 +709,11 @@ export default {
       getAuthorAvatar,
       getAuthorRole,
       galleryImages,
+      allHeroImages,
+      currentHeroIndex,
+      prevHeroImage,
+      nextHeroImage,
+      setHeroImage,
       getYoutubeEmbedUrl,
       getImageUrl,
       isFetching,
@@ -629,7 +778,7 @@ export default {
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
 }
 
-/* ── HERO IMAGE ── */
+/* ── HERO IMAGE & SMART SLIDER ── */
 .article-hero-img {
   aspect-ratio: 16 / 8.5;
   background-color: #e5e7eb;
@@ -639,6 +788,153 @@ export default {
   .article-hero-img {
     aspect-ratio: 16 / 10;
   }
+}
+
+.hero-img-active {
+  transition: opacity 0.25s ease;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.hero-nav-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(4px);
+  color: var(--jpm-color-navy-dark, #0A1128);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.15rem;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.16);
+  opacity: 0;
+  transition: all 0.25s ease;
+  z-index: 5;
+}
+
+.article-hero-img:hover .hero-nav-btn {
+  opacity: 1;
+}
+
+.hero-nav-btn:hover {
+  background: #ffffff;
+  color: var(--jpm-color-red-marine, #F82249);
+  transform: translateY(-50%) scale(1.08);
+}
+
+.hero-nav-prev {
+  left: 16px;
+}
+
+.hero-nav-next {
+  right: 16px;
+}
+
+.hero-counter-badge {
+  background: rgba(10, 17, 40, 0.78);
+  backdrop-filter: blur(6px);
+  color: #ffffff;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  z-index: 5;
+}
+
+.hero-dots {
+  z-index: 5;
+}
+
+.hero-dot-btn {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.5);
+  transition: all 0.2s ease;
+  padding: 0;
+}
+
+.hero-dot-btn.active {
+  background: #ffffff;
+  transform: scale(1.3);
+  box-shadow: 0 0 6px rgba(255, 255, 255, 0.8);
+}
+
+.hero-zoom-btn {
+  width: 36px;
+  height: 36px;
+  border: none;
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(4px);
+  color: var(--jpm-color-navy-dark, #0A1128);
+  font-size: 0.85rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  opacity: 0;
+  transition: all 0.2s ease;
+  z-index: 5;
+}
+
+.article-hero-img:hover .hero-zoom-btn {
+  opacity: 1;
+}
+
+.hero-zoom-btn:hover {
+  background: #ffffff;
+  color: var(--jpm-color-red-marine, #F82249);
+}
+
+.hero-thumb-item {
+  width: 80px;
+  height: 52px;
+  border: 2px solid transparent;
+  opacity: 0.65;
+  transition: all 0.2s ease;
+}
+
+.hero-thumb-item:hover {
+  opacity: 0.9;
+}
+
+.hero-thumb-item.active {
+  border-color: var(--jpm-color-red-marine, #F82249);
+  opacity: 1;
+  box-shadow: 0 2px 8px rgba(248, 34, 73, 0.2);
+}
+
+.lightbox-nav-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.lightbox-nav-btn:hover {
+  background: rgba(255, 255, 255, 0.45);
+  transform: translateY(-50%) scale(1.05);
+}
+
+.lightbox-nav-prev {
+  left: 12px;
+}
+
+.lightbox-nav-next {
+  right: 12px;
 }
 
 /* ── ARTICLE BODY TYPOGRAPHY ── */
@@ -791,56 +1087,65 @@ export default {
   border-radius: var(--jpm-radius-card, 12px);
 }
 
-/* ── RELATED BLOGS SECTION ── */
+/* ── RELATED BLOGS SECTION (CHUẨN HÓA ĐỒNG BỘ THẺ CỬA HÀNG PRODUCT CARD) ── */
 .related-blogs-section {
   background-color: #ffffff !important;
 }
 
 .related-blog-card {
-  padding: 16px;
-  border-radius: var(--jpm-radius-card, 12px);
-  background-color: #ffffff;
-  border: 1px solid #e2e8f0;
-  transition: all 0.25s ease;
+  border-radius: var(--jpm-radius-card, 12px) !important;
+  background-color: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  box-shadow: var(--jpm-shadow-sm, 0 1px 3px rgba(10, 17, 40, 0.05)) !important;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s ease !important;
+  padding: 0 !important;
 }
 
 .related-blog-card:hover {
-  border-color: #cbd5e1;
-  box-shadow: 0 10px 28px rgba(10, 17, 40, 0.08);
-  transform: translateY(-3px);
+  transform: translateY(-4px) !important;
+  box-shadow: var(--jpm-shadow-md, 0 4px 12px -2px rgba(10, 17, 40, 0.08)) !important;
+  border-color: var(--jpm-neutral-300, #CBD5E1) !important;
 }
 
-.related-thumb-wrap {
-  aspect-ratio: 16 / 10;
-  background-color: #f1f5f9;
-  border-radius: var(--jpm-radius-card, 12px);
+.related-blog-card .card-img-wrapper {
+  background-color: var(--jpm-neutral-50, #F8FAFC);
+  border-top-left-radius: var(--jpm-radius-card, 12px);
+  border-top-right-radius: var(--jpm-radius-card, 12px);
 }
 
-.news-category-label {
-  font-size: 0.74rem;
+.related-blog-card .card-img-product {
+  transition: transform 0.35s ease;
+}
+
+.related-blog-card:hover .card-img-product {
+  transform: scale(1.04);
+}
+
+.related-blog-card .product-category {
+  font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 0.6px;
   text-transform: uppercase;
-  color: var(--jpm-color-red-marine, #F82249);
+  color: var(--jpm-neutral-500, #64748B);
   line-height: 1.3;
 }
 
-.related-title {
-  font-size: 1rem;
-  line-height: 1.4;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+.related-blog-card .card-title {
+  font-family: var(--heading-font, 'Raleway', sans-serif);
+  font-size: 0.96rem;
+  font-weight: 700;
+  line-height: 1.45;
+  height: 2.9em;
+  margin-bottom: 0.25rem;
 }
 
-.related-excerpt {
-  font-size: 0.82rem;
-  line-height: 1.55;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+.related-blog-card .card-title a {
+  color: var(--jpm-color-navy-dark, #0A1128);
+  transition: color 0.15s ease;
+}
+
+.related-blog-card:hover .card-title a {
+  color: var(--jpm-color-navy-dark, #0A1128) !important;
 }
 
 /* ── HOVER UTILITIES ── */
