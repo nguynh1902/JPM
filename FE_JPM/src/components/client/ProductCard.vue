@@ -276,6 +276,7 @@ function handleRequestQuote() {
   font-size: 0.95rem;
   font-weight: 700;
   line-height: 1.4;
+  height: 2.8em;
   margin-bottom: 0.25rem;
 }
 
@@ -324,6 +325,8 @@ function handleRequestQuote() {
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  text-overflow: ellipsis;
+  word-break: break-word;
 }
 
 .jpm-badge {

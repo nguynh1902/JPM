@@ -104,10 +104,9 @@
               <h5 class="fw-bold mb-2 text-truncate-2 hero-title-hover" style="font-size: 0.98rem; line-height: 1.45; color: var(--jpm-color-navy-dark, #0A1128);">
                 {{ item.title }}
               </h5>
-              <div class="text-muted d-flex align-items-center gap-2" style="font-size: 0.78rem;">
-                <span class="d-inline-flex align-items-center gap-1"><i class="bi bi-calendar3"></i>{{ item.dateFormatted }}</span>
-                <span>•</span>
-                <span class="d-inline-flex align-items-center gap-1"><i class="bi bi-clock"></i>{{ item.read }}</span>
+              <div class="text-muted d-flex align-items-center gap-1" style="font-size: 0.78rem;">
+                <i class="bi bi-calendar3"></i>
+                <span>{{ item.dateFormatted }}</span>
               </div>
             </router-link>
           </div>
@@ -175,15 +174,10 @@
                 {{ item.excerpt || 'Tổng hợp kiến thức kỹ thuật hàng hải, cẩm nang bảo dưỡng và thông tin phụ tùng động cơ thủy chính hãng từ JPM Marine.' }}
               </p>
 
-              <!-- 5. Hàng ngày tháng & thời lượng đọc kèm icon (Đưa xuống dưới nội dung) -->
-              <div class="text-muted d-flex align-items-center gap-2 mt-1" style="font-size: 0.82rem;">
-                <span class="d-inline-flex align-items-center gap-1">
-                  <i class="bi bi-calendar3"></i> {{ item.dateFormatted }}
-                </span>
-                <span>•</span>
-                <span class="d-inline-flex align-items-center gap-1">
-                  <i class="bi bi-clock"></i> {{ item.read }}
-                </span>
+              <!-- 5. Hàng ngày tháng -->
+              <div class="text-muted d-flex align-items-center gap-1 mt-1" style="font-size: 0.82rem;">
+                <i class="bi bi-calendar3"></i>
+                <span>{{ item.dateFormatted }}</span>
               </div>
             </article>
           </div>
@@ -229,10 +223,9 @@
               <p class="text-secondary mb-2 text-truncate-2" style="font-size: 0.92rem; line-height: 1.6;">
                 {{ otherMainStory.excerpt }}
               </p>
-              <div class="text-muted d-flex align-items-center gap-2 mt-1" style="font-size: 0.78rem;">
-                <span class="d-inline-flex align-items-center gap-1"><i class="bi bi-calendar3"></i>{{ otherMainStory.dateFormatted }}</span>
-                <span>•</span>
-                <span class="d-inline-flex align-items-center gap-1"><i class="bi bi-clock"></i>{{ otherMainStory.read }}</span>
+              <div class="text-muted d-flex align-items-center gap-1 mt-1" style="font-size: 0.78rem;">
+                <i class="bi bi-calendar3"></i>
+                <span>{{ otherMainStory.dateFormatted }}</span>
               </div>
             </router-link>
           </div>
@@ -269,10 +262,9 @@
                 <p class="text-secondary mb-2 text-truncate-2 other-side-excerpt">
                   {{ story.excerpt || 'Tổng hợp kiến thức kỹ thuật hàng hải, cẩm nang bảo dưỡng và thông tin phụ tùng từ JPM Marine.' }}
                 </p>
-                <div class="text-muted d-flex align-items-center gap-2" style="font-size: 0.78rem;">
-                  <span class="d-inline-flex align-items-center gap-1"><i class="bi bi-calendar3"></i>{{ story.dateFormatted }}</span>
-                  <span>•</span>
-                  <span class="d-inline-flex align-items-center gap-1"><i class="bi bi-clock"></i>{{ story.read }}</span>
+                <div class="text-muted d-flex align-items-center gap-1" style="font-size: 0.78rem;">
+                  <i class="bi bi-calendar3"></i>
+                  <span>{{ story.dateFormatted }}</span>
                 </div>
               </div>
             </router-link>
@@ -463,13 +455,6 @@ export default {
       return `${d.getDate().toString().padStart(2, '0')} Th${(d.getMonth() + 1).toString().padStart(2, '0')}, ${d.getFullYear()}`;
     };
 
-    const estimateReadTime = (art) => {
-      const text = `${art.title || ''} ${art.summary || ''}`.trim();
-      const words = text ? text.split(/\s+/).length : 0;
-      const mins = Math.max(2, Math.min(8, Math.ceil(words / 12)));
-      return `${mins} phút đọc`;
-    };
-
     const mapArticle = (art) => {
       const ytUrl = art.youtube_url && !String(art.youtube_url).includes('dQw4w9WgXcQ') ? art.youtube_url : null;
       const ytId = extractYoutubeId(ytUrl);
@@ -481,7 +466,6 @@ export default {
         cat: art.category || 'Tin tức',
         dateFormatted: formatDateShort(art.created_at),
         excerpt: art.summary || '',
-        read: estimateReadTime(art),
         views: Number(art.views || 0).toLocaleString('vi-VN'),
         avLetter: (art.author || 'J').charAt(0).toUpperCase(),
         author: art.author || 'Admin JPM',

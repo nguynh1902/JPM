@@ -55,15 +55,15 @@
 
               <div class="catalog-sidebar-body custom-scrollbar">
 
-                <!-- 2. TÌM KIẾM THEO SKU -->
+                <!-- 2. TÌM KIẾM ĐA NĂNG (MÃ PHỤ TÙNG, MODEL, TÊN ĐỒ) -->
                 <div class="sidebar-section mb-4">
-                  <div class="sidebar-section-title mb-2">Tìm Theo Mã SKU</div>
+                  <div class="sidebar-section-title mb-2">Tìm Kiếm Phụ Tùng & Model</div>
                   <div class="search-input-box">
                     <i class="bi bi-search search-input-icon"></i>
                     <input 
                       type="text" 
                       class="search-input-field" 
-                      placeholder="VD: 31105-PR7-A01..." 
+                      placeholder="Mã SKU, mã model, tên đồ..." 
                       v-model="localKeyword"
                     >
                     <button 
@@ -71,10 +71,13 @@
                       type="button" 
                       class="btn-clear-search" 
                       @click="localKeyword = ''"
-                      title="Xóa"
+                      title="Xóa tìm kiếm"
                     >
                       <i class="bi bi-x-circle-fill"></i>
                     </button>
+                  </div>
+                  <div class="form-text text-muted mt-1 small" style="font-size: 0.73rem; line-height: 1.35;">
+                    Tìm theo mã phụ tùng, mã model (vd: F250, 300HP) hoặc tên linh kiện.
                   </div>
                 </div>
 
@@ -185,24 +188,12 @@
           <!-- BÊN PHẢI: KẾT QUẢ TRA CỨU -->
           <div class="jpm-split-content pl-lg-4">
 
-            <!-- THANH ĐIỀU KHIỂN CHUẨN SANPHAM.VUE (KHÔNG DÙNG CARD TRẮNG NỔI RỜI RẠC) -->
-            <div class="d-flex flex-wrap justify-content-end align-items-center mb-3 pb-3 border-bottom gap-2">
-              <!-- DROPDOWN SẮP XẾP CHUẨN LUXURY -->
-              <div class="d-flex align-items-center gap-2 ms-auto">
-                  <span class="text-muted small fw-medium text-nowrap d-none d-sm-inline">Sắp xếp:</span>
-                  <div class="custom-select-wrapper" :class="{ 'z-active': openDropdown === 'sort' }" style="width: 165px;">
-                    <div class="custom-select-box shop-sort-box" :class="{ 'is-focused': openDropdown === 'sort' }" @click="toggleDropdown('sort')">
-                      <span class="text-truncate">{{ sortLabel }}</span>
-                      <i class="bi bi-chevron-down select-arrow" :class="{ 'rotated': openDropdown === 'sort' }"></i>
-                    </div>
-                    <ul class="custom-dropdown-list align-right" v-show="openDropdown === 'sort'">
-                      <li @click="selectSort('newest')" :class="{ active: sortBy === 'newest' }">Mới nhất</li>
-                      <li @click="selectSort('price_asc')" :class="{ active: sortBy === 'price_asc' }">Giá thấp đến cao</li>
-                      <li @click="selectSort('price_desc')" :class="{ active: sortBy === 'price_desc' }">Giá cao đến thấp</li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
+            <!-- THANH TIÊU ĐỀ KẾT QUẢ TRA CỨU SƠ ĐỒ KỸ THUẬT EPC (ĐỒNG BỘ 100% CỬA HÀNG) -->
+            <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-2">
+              <h4 class="fw-bold mb-0 text-capitalize" style="color: var(--heading-color, #0A1128); font-size: 1.25rem; font-family: var(--heading-font, 'Raleway', sans-serif);">
+                {{ activeTab === 'diagrams' ? 'Sơ Đồ Nhóm Phụ Tùng' : 'Danh Sách Phụ Tùng' }}
+              </h4>
+            </div>
 
               <!-- DÒNG ACTIVE FILTERS TINH GỌN (KHÔNG BỌC CARD NỔI) -->
               <div class="d-flex flex-wrap align-items-center gap-2 mb-4" v-if="activeFilters.length > 0">
@@ -255,7 +246,7 @@
                         </div>
 
                         <!-- Tầng 2: Chữ đen là Tên nhóm phụ tùng -->
-                        <h5 class="card-title mb-1">
+                        <h5 class="diagram-card-title mb-1">
                           <span class="stretched-link text-truncate-2" :title="getDiagramGroupName(diag)">
                             {{ getDiagramGroupName(diag) }}
                           </span>
@@ -272,22 +263,12 @@
                           <template v-else>&nbsp;</template>
                         </div>
 
-                        <!-- Tầng 4: Chân Card - Nút Xem Sơ Đồ đồng bộ 100% với ProductCard -->
-                        <div class="mt-auto d-flex align-items-center justify-content-between pt-1 gap-2">
-                          <div class="price-container text-truncate">
-                            <span class="text-danger fw-bold price-value" style="font-size: 0.95rem;">Xem sơ đồ</span>
-                          </div>
-
-                          <div class="action-container flex-shrink-0" style="position: relative; z-index: 2;">
-                            <button
-                              type="button"
-                              class="btn btn-cart-action"
-                              title="Xem sơ đồ chi tiết"
-                              @click.stop="goToDiagram(diag)"
-                            >
-                              <i class="bi bi-arrow-right"></i>
-                            </button>
-                          </div>
+                        <!-- Tầng 4: Chân Card - Chữ Xem sơ đồ căn phải, bỏ button -->
+                        <div class="mt-auto pt-2 d-flex justify-content-end align-items-center">
+                          <span class="diagram-action-link">
+                            <span>Xem sơ đồ</span>
+                            <i class="bi bi-arrow-right"></i>
+                          </span>
                         </div>
                       </div>
                     </div>
@@ -560,20 +541,9 @@ export default {
       }
     });
 
-    // 2. Khi tìm kiếm theo mã SKU lẻ -> Chuyển sang xem phụ tùng chi tiết ('products')
-    watch([() => filters.keyword, localKeyword], ([newKw, newLocal]) => {
-      const kw = (newKw || newLocal || '').trim();
-      if (kw) {
-        activeTab.value = 'products';
-      }
-    });
-
-    // 3. Phản ứng theo dữ liệu sơ đồ / phụ tùng từ API
+    // 2. Ưu tiên hàng đầu hiển thị sơ đồ nhóm phụ tùng khi có dữ liệu
     watch([products, diagramsList], ([newProds, newDiags]) => {
-      const hasKw = Boolean((filters.keyword || localKeyword.value || '').trim());
-      if (hasKw) {
-        activeTab.value = 'products';
-      } else if (newDiags.length > 0) {
+      if (newDiags.length > 0) {
         activeTab.value = 'diagrams';
       } else if (newDiags.length === 0 && newProds.length > 0) {
         activeTab.value = 'products';
@@ -597,6 +567,9 @@ export default {
 
     const activeFilters = computed(() => {
       const active = [];
+      if (filters.keyword) {
+        active.push({ type: 'keyword', label: `Tìm: "${filters.keyword}"`, value: filters.keyword });
+      }
       if (filters.thuong_hieu_id && brands.value) {
         const b = brands.value.find(x => x.id === filters.thuong_hieu_id);
         if (b) active.push({ type: 'brand', label: b.name, value: filters.thuong_hieu_id });
@@ -659,7 +632,8 @@ export default {
     };
 
     const removeFilter = (type) => {
-      if (type === 'brand') { filters.thuong_hieu_id = ''; filters.loai_dong_co_id = ''; filters.dong_co_model_id = ''; filters.nam_sx = ''; }
+      if (type === 'keyword') { filters.keyword = ''; localKeyword.value = ''; }
+      else if (type === 'brand') { filters.thuong_hieu_id = ''; filters.loai_dong_co_id = ''; filters.dong_co_model_id = ''; filters.nam_sx = ''; }
       else if (type === 'engineType') { filters.loai_dong_co_id = ''; filters.dong_co_model_id = ''; }
       else if (type === 'model') filters.dong_co_model_id = '';
       else if (type === 'year') filters.nam_sx = '';
@@ -1055,6 +1029,35 @@ export default {
   color: #f82249;
 }
 
+/* Tab switcher pills for EPC results */
+.btn-tab-pill {
+  font-family: var(--heading-font, 'Raleway', sans-serif);
+  font-weight: 700;
+  font-size: 0.88rem;
+  padding: 6px 16px;
+  border-radius: 20px;
+  border: 1px solid #e2e8f0;
+  background: #f8fafc;
+  color: #64748b;
+  display: inline-flex;
+  align-items: center;
+  transition: all 0.2s ease;
+  box-shadow: none;
+}
+
+.btn-tab-pill:hover {
+  background: #f1f5f9;
+  color: #0A1128;
+  border-color: #cbd5e1;
+}
+
+.btn-tab-pill.active {
+  background: #0A1128;
+  color: #ffffff;
+  border-color: #0A1128;
+  box-shadow: 0 2px 8px rgba(10, 17, 40, 0.12);
+}
+
 /* Sidebar Dropdown: Hiển thị dạng in-flow để đẩy các mục dưới và đẩy Card xuống một cách tự nhiên */
 .jpm-split-sidebar .custom-dropdown-list {
   position: relative;
@@ -1311,9 +1314,9 @@ export default {
 .product-category {
   font-size: 0.72rem;
   font-weight: 700;
-  letter-spacing: 0.8px;
+  letter-spacing: 0.6px;
   text-transform: uppercase;
-  color: #94a3b8;
+  color: #64748B;
 }
 
 .product-card .card-title {
@@ -1321,6 +1324,7 @@ export default {
   font-size: 0.95rem;
   font-weight: 700;
   line-height: 1.4;
+  height: 2.8em;
   margin-bottom: 0.25rem;
 }
 
@@ -1337,6 +1341,53 @@ export default {
   color: #0A1128 !important;
 }
 
+/* ── DIAGRAM CARD TYPOGRAPHY & ACTION (ĐỒNG BỘ 100% PRODUCT CARD) ── */
+.diagram-card-title {
+  font-family: var(--heading-font, 'Raleway', sans-serif);
+  font-size: 0.95rem;
+  font-weight: 700;
+  line-height: 1.4;
+  height: 2.8em;
+  margin-bottom: 0.25rem;
+  color: #0A1128;
+}
+
+.diagram-card-title a,
+.diagram-card-title span {
+  color: #0A1128 !important;
+  text-decoration: none;
+}
+
+.product-card:hover .diagram-card-title a,
+.product-card:hover .diagram-card-title span {
+  color: #0A1128 !important;
+}
+
+.diagram-action-link {
+  font-family: var(--default-font, 'Roboto', sans-serif);
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--jpm-color-red-marine, #F82249) !important;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+
+.diagram-action-link i {
+  font-size: 0.95rem;
+  line-height: 1;
+  transition: transform 0.2s ease;
+}
+
+.product-card:hover .diagram-action-link {
+  color: #d8143a !important;
+}
+
+.product-card:hover .diagram-action-link i {
+  transform: translateX(4px);
+}
+
 .product-sku {
   font-size: 0.78rem;
   color: #64748b;
@@ -1344,7 +1395,7 @@ export default {
 }
 
 .sku-label {
-  color: #8392a5;
+  color: #64748B;
   font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.3px;
@@ -1352,8 +1403,8 @@ export default {
 }
 
 .sku-code {
-  font-family: var(--default-font, sans-serif);
-  color: #0d6efd;
+  font-family: var(--jpm-font-mono, 'Roboto Mono', monospace);
+  color: #0d6efd !important;
   font-weight: 700;
   letter-spacing: 0.2px;
 }
@@ -1399,6 +1450,8 @@ export default {
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  text-overflow: ellipsis;
+  word-break: break-word;
 }
 
 /* ── EMPTY STATES ── */
