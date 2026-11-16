@@ -88,8 +88,13 @@
             <router-link :to="`/tin-tuc/${item.id}`" class="text-decoration-none d-block group-hover h-100">
               <div class="portrait-card-img position-relative overflow-hidden mb-2 bg-light shadow-xs">
                 <img :src="getImageUrl(item.img)" :alt="item.title" class="w-100 h-100 object-fit-cover transition-transform" @error="onImgError" />
-                <div v-if="item.hasVideo" class="play-badge-floating" title="Có video bài viết">
-                  <i class="bi bi-play-fill"></i>
+                <div
+                  v-if="item.hasVideo"
+                  class="position-absolute top-50 start-50 translate-middle rounded-circle d-flex align-items-center justify-content-center play-circle-btn shadow"
+                  @click.stop.prevent="openVideoModal(item)"
+                  title="Bấm để xem video"
+                >
+                  <i class="bi bi-play-fill fs-4 ms-1"></i>
                 </div>
               </div>
               <!-- Danh mục: Thanh chữ màu xám trên tên bài viết chuẩn card sản phẩm -->
@@ -768,27 +773,6 @@ export default {
   line-height: 1.3;
 }
 
-.play-badge-floating {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  width: 26px;
-  height: 26px;
-  border-radius: 50%;
-  background: rgba(10, 17, 40, 0.78);
-  color: #ffffff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.75rem;
-  z-index: 2;
-  transition: background-color 0.25s ease;
-}
-
-.group-hover:hover .play-badge-floating {
-  background: var(--jpm-color-red-marine, #f82249);
-}
-
 /* ── SECTION: MIDDLE SPOTLIGHT CARDS (2 LỚN Ở KHOẢNG GIỮA) ── */
 .middle-feature-card {
   transition: transform 0.25s ease;
@@ -876,30 +860,38 @@ export default {
 }
 
 .play-circle-btn {
-  width: 48px;
-  height: 48px;
-  background-color: rgba(10, 17, 40, 0.78);
+  width: 50px;
+  height: 50px;
+  background-color: rgba(10, 17, 40, 0.65);
+  border: 2px solid rgba(255, 255, 255, 0.85);
   color: #ffffff;
-  transition: all 0.25s ease;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  backdrop-filter: blur(4px);
   z-index: 2;
 }
 .group-hover:hover .play-circle-btn {
-  background-color: #f82249;
-  transform: translate(-50%, -50%) scale(1.1);
+  background-color: var(--jpm-color-red-marine, #f82249);
+  border-color: #ffffff;
+  transform: translate(-50%, -50%) scale(1.12);
+  box-shadow: 0 10px 25px rgba(248, 34, 73, 0.45) !important;
 }
 
 .play-circle-btn-sm {
-  width: 32px;
-  height: 32px;
-  background-color: rgba(10, 17, 40, 0.85);
+  width: 36px;
+  height: 36px;
+  background-color: rgba(10, 17, 40, 0.7);
+  border: 1.5px solid rgba(255, 255, 255, 0.85);
   color: #ffffff;
-  font-size: 0.9rem;
-  transition: all 0.25s ease;
+  font-size: 0.95rem;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  backdrop-filter: blur(4px);
   z-index: 2;
 }
 .group-hover:hover .play-circle-btn-sm {
-  background-color: #f82249;
+  background-color: var(--jpm-color-red-marine, #f82249);
+  border-color: #ffffff;
   transform: translate(-50%, -50%) scale(1.15);
+  box-shadow: 0 8px 20px rgba(248, 34, 73, 0.45) !important;
 }
 
 /* ── SHARED HOVER & TRUNCATION ── */

@@ -217,23 +217,30 @@
 
         </div>
 
-        <!-- TRƯỜNG HỢP 2: GIỎ HÀNG TRỐNG (EMPTY STATE CHUẨN TRANG CHỦ: CARD 12PX) -->
-        <div class="empty-cart-card card p-5 text-center" v-else data-aos="fade-up">
-          <div class="empty-icon-wrap mx-auto mb-3">
-            <i class="bi bi-cart-x"></i>
+        <!-- Empty Cart (Chuẩn Client JPM Design System) -->
+        <div class="empty-cart-container text-center py-5" v-else data-aos="fade-up">
+          <div class="empty-cart-illustration mb-3">
+            <img 
+              src="https://cdn-icons-png.flaticon.com/512/11329/11329060.png" 
+              alt="Giỏ hàng trống" 
+              class="empty-cart-img"
+              @error="$event.target.style.display='none'; $event.target.nextElementSibling.style.display='inline-flex'"
+            >
+            <div class="empty-icon-fallback" style="display: none; align-items: center; justify-content: center;">
+              <i class="bi bi-cart-x" style="font-size: 6.5rem; color: var(--jpm-neutral-400, #94A3B8);"></i>
+            </div>
           </div>
-          <h3 class="fw-bold text-dark mb-2">Giỏ Hàng Báo Giá Đang Trống</h3>
-          <p class="text-muted mb-4 fs-6" style="max-width: 480px; margin: 0 auto;">
-            Bạn chưa thêm linh kiện hoặc phụ tùng nào vào giỏ hàng. Hãy tìm kiếm phụ tùng qua sơ đồ rã máy hoặc catalog thương hiệu.
+          <h3 class="empty-cart-title mb-2">Giỏ hàng của bạn đang trống</h3>
+          <p class="empty-cart-desc mx-auto mb-4">
+            Hãy tìm kiếm phụ tùng bạn cần và thêm vào giỏ hàng nhé!
           </p>
-          <div class="d-flex flex-wrap justify-content-center gap-3">
-            <router-link to="/san-pham" class="btn btn-danger px-4 py-2 fw-semibold text-decoration-none btn-rounded-8">
-              Khám Phá Cửa Hàng Phụ Tùng
-            </router-link>
-            <router-link to="/thuong-hieu/yamaha" class="btn btn-outline-secondary px-4 py-2 text-decoration-none btn-rounded-8">
-              Tra Cứu Theo Thương Hiệu
-            </router-link>
-          </div>
+          <router-link 
+            to="/san-pham" 
+            class="btn btn-empty-cart-action text-decoration-none"
+          >
+            <span>Khám phá phụ tùng máy thủy</span>
+            <i class="bi bi-arrow-right"></i>
+          </router-link>
         </div>
 
       </div>
@@ -1100,24 +1107,79 @@ export default {
   color: #64748b;
 }
 
-/* ===== EMPTY CART STATE ===== */
-.empty-cart-card {
-  border-radius: var(--jpm-radius-card, 12px) !important;
-  border: 1px solid #e2e8f0 !important;
-  background: #ffffff;
-  box-shadow: 0 4px 20px rgba(10, 17, 40, 0.04);
+/* ===== EMPTY CART STATE CHUẨN CLIENT JPM ===== */
+.empty-cart-container {
+  padding: 3.5rem 1rem 5rem;
 }
 
-.empty-icon-wrap {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  background: rgba(248, 34, 73, 0.08);
-  color: var(--jpm-color-red-marine, #F82249);
+.empty-cart-illustration {
   display: flex;
-  align-items: center;
   justify-content: center;
-  font-size: 2.5rem;
+  align-items: center;
+}
+
+.empty-cart-img {
+  width: 175px;
+  max-width: 100%;
+  height: auto;
+  object-fit: contain;
+  opacity: 0.92;
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease;
+}
+
+.empty-cart-container:hover .empty-cart-img {
+  transform: translateY(-4px) scale(1.03);
+  opacity: 1;
+}
+
+.empty-cart-title {
+  font-family: var(--heading-font, 'Raleway', sans-serif);
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--heading-color, #0A1128);
+  letter-spacing: -0.3px;
+  line-height: 1.35;
+}
+
+.empty-cart-desc {
+  font-family: var(--default-font, 'Roboto', sans-serif);
+  font-size: 0.95rem;
+  color: var(--jpm-neutral-500, #64748B);
+  max-width: 460px;
+  line-height: 1.6;
+}
+
+.btn-empty-cart-action {
+  font-family: var(--default-font, 'Roboto', sans-serif);
+  font-size: 0.95rem;
+  font-weight: 600;
+  padding: 12px 28px;
+  border-radius: var(--jpm-radius-control, 8px) !important;
+  background-color: var(--jpm-color-red-marine, #F82249) !important;
+  border: 1px solid var(--jpm-color-red-marine, #F82249) !important;
+  color: #ffffff !important;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 14px rgba(248, 34, 73, 0.25) !important;
+}
+
+.btn-empty-cart-action:hover {
+  background-color: var(--jpm-color-red-hover, #D9163A) !important;
+  border-color: var(--jpm-color-red-hover, #D9163A) !important;
+  color: #ffffff !important;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(248, 34, 73, 0.35) !important;
+}
+
+.btn-empty-cart-action i {
+  transition: transform 0.2s ease;
+  font-size: 1.05rem;
+}
+
+.btn-empty-cart-action:hover i {
+  transform: translateX(4px);
 }
 
 /* ===== ADDRESS MODAL ===== */

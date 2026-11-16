@@ -249,28 +249,25 @@
 
                       <!-- 2. Thân Card thông tin -->
                       <div class="card-body text-start p-3 d-flex flex-column bg-white">
-                        <!-- Tầng 1: Nhóm Phụ Tùng / Danh mục -->
-                        <div class="product-category mb-1 text-truncate" :title="diag.nhom_phu_tung?.ten_nhom || 'SƠ ĐỒ PHỤ TÙNG'">
-                          {{ diag.nhom_phu_tung?.ten_nhom || 'SƠ ĐỒ PHỤ TÙNG' }}
-                        </div>
-
-                        <!-- Tầng 2: Tên cụm sơ đồ -->
-                        <h5 class="card-title mb-1">
-                          <span class="stretched-link text-truncate-2">
-                            {{ diag.ten_so_do }}
+                        <!-- Tầng 1: Tên Nhóm Phụ Tùng (Tiêu đề to, rõ nét chuẩn Client) -->
+                        <h5 class="card-title mb-2">
+                          <span class="stretched-link text-truncate-2" :title="getDiagramGroupName(diag)">
+                            {{ getDiagramGroupName(diag) }}
                           </span>
                         </h5>
 
-                        <!-- Tầng 3: Model tương thích -->
+                        <!-- Tầng 2: Model Động cơ tương thích -->
                         <div class="product-sku mb-3">
                           <template v-if="diag.model">
                             <span class="sku-label text-muted">MODEL:</span>
-                            <span class="sku-code">{{ diag.model.ten_model || diag.model.ma_model }}</span>
+                            <span class="sku-code text-truncate" :title="diag.model.ten_model || diag.model.ma_model">
+                              {{ diag.model.ten_model || diag.model.ma_model }}
+                            </span>
                           </template>
                           <template v-else>&nbsp;</template>
                         </div>
 
-                        <!-- Tầng 4: Chân Card - Nút Xem Sơ Đồ đồng bộ 100% với ProductCard -->
+                        <!-- Tầng 3: Chân Card - Nút Xem Sơ Đồ đồng bộ 100% với ProductCard -->
                         <div class="mt-auto d-flex align-items-center justify-content-between pt-1 gap-2">
                           <div class="price-container text-truncate">
                             <span class="text-danger fw-bold price-value" style="font-size: 0.95rem;">Xem sơ đồ</span>
@@ -723,6 +720,21 @@ export default {
       }
     };
 
+    const getDiagramGroupName = (diag) => {
+      if (!diag) return '';
+      if (diag.nhom_phu_tung?.ten_nhom) {
+        return diag.nhom_phu_tung.ten_nhom;
+      }
+      if (diag.ten_so_do) {
+        const parts = diag.ten_so_do.split('-');
+        if (parts.length > 1) {
+          return parts.slice(1).join('-').trim();
+        }
+        return diag.ten_so_do;
+      }
+      return 'Sơ đồ nhóm phụ tùng';
+    };
+
     const getDiagramImage = (raw) => {
       if (!raw) return 'https://placehold.co/400x300/f8f9fa/a1acb8?text=JPM+Marine';
       if (raw.startsWith('blob:') || raw.startsWith('http') || raw.startsWith('data:')) return raw;
@@ -749,7 +761,7 @@ export default {
       groupedProducts, selectPartGroup,
       activeTab, searchResult, searchDiagrams,
       sortBy, sortLabel, selectSort, cartStore,
-      goToDiagram, prefetchDiagram, getDiagramImage,
+      goToDiagram, prefetchDiagram, getDiagramImage, getDiagramGroupName,
       resetFilters, changePage, openDropdown, toggleDropdown, selectOption,
       brandLabel, engineTypeLabel, modelLabel, yearLabel, years, activeFilters, removeFilter, toggleCategory, isFilterEmpty,
       hasEngineSelected, isFetchingPartGroups

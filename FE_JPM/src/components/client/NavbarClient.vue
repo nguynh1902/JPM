@@ -81,13 +81,8 @@
         <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
       </nav>
 
-      <!-- Vùng 3 (Phải): Cụm tiện ích Tra cứu đơn / Giỏ hàng / Tài khoản -->
+      <!-- Vùng 3 (Phải): Cụm tiện ích Giỏ hàng / Tài khoản -->
       <div class="header-actions">
-        <!-- Tra cứu đơn hàng -->
-        <router-link to="/tra-cuu-don-hang" class="header-icon-btn" title="Tra cứu đơn hàng">
-          <i class="bi bi-box-seam fs-5" style="line-height: 1"></i>
-        </router-link>
-
         <!-- Giỏ hàng -->
         <router-link to="/gio-hang" class="header-icon-btn" title="Giỏ hàng">
           <span class="position-relative d-inline-block">
