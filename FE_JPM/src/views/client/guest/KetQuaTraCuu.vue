@@ -249,14 +249,19 @@
 
                       <!-- 2. Thân Card thông tin -->
                       <div class="card-body text-start p-3 d-flex flex-column bg-white">
-                        <!-- Tầng 1: Tên Nhóm Phụ Tùng (Tiêu đề to, rõ nét chuẩn Client) -->
-                        <h5 class="card-title mb-2">
+                        <!-- Tầng 1: Chữ xám bên trên là Thương hiệu -->
+                        <div class="product-category mb-1 text-truncate" :title="getDiagramBrandName(diag)">
+                          {{ getDiagramBrandName(diag) }}
+                        </div>
+
+                        <!-- Tầng 2: Chữ đen là Tên nhóm phụ tùng -->
+                        <h5 class="card-title mb-1">
                           <span class="stretched-link text-truncate-2" :title="getDiagramGroupName(diag)">
                             {{ getDiagramGroupName(diag) }}
                           </span>
                         </h5>
 
-                        <!-- Tầng 2: Model Động cơ tương thích -->
+                        <!-- Tầng 3: Dưới là Model -->
                         <div class="product-sku mb-3">
                           <template v-if="diag.model">
                             <span class="sku-label text-muted">MODEL:</span>
@@ -267,7 +272,7 @@
                           <template v-else>&nbsp;</template>
                         </div>
 
-                        <!-- Tầng 3: Chân Card - Nút Xem Sơ Đồ đồng bộ 100% với ProductCard -->
+                        <!-- Tầng 4: Chân Card - Nút Xem Sơ Đồ đồng bộ 100% với ProductCard -->
                         <div class="mt-auto d-flex align-items-center justify-content-between pt-1 gap-2">
                           <div class="price-container text-truncate">
                             <span class="text-danger fw-bold price-value" style="font-size: 0.95rem;">Xem sơ đồ</span>
@@ -294,8 +299,8 @@
                   <div class="empty-icon-circle mx-auto mb-3">
                     <i class="bi bi-diagram-3 text-muted" style="font-size: 2rem;"></i>
                   </div>
-                  <h5 class="fw-bold mb-2 text-navy" style="color: #0A1128;">Chưa có sơ đồ phụ tùng cho tìm kiếm này</h5>
-                  <p class="text-muted mb-0">Bạn có thể bấm sang tab "Phụ tùng chi tiết" để xem các linh kiện tương thích.</p>
+                  <h5 class="fw-bold mb-2 text-navy" style="color: #0A1128;">Chưa có sơ đồ nhóm phụ tùng cho model này</h5>
+                  <p class="text-muted mb-0">Hệ thống đang tiếp tục cập nhật bản vẽ kỹ thuật phân rã cho dòng động cơ này.</p>
                 </div>
               </div>
 
@@ -311,10 +316,10 @@
                       <button 
                         type="button" 
                         class="btn btn-link text-danger fw-bold text-decoration-none d-flex align-items-center gap-1 p-0 shadow-none hover-underline"
-                        v-if="group.id !== 'other' && !filters.nhom_phu_tung_id"
+                        v-if="group.id !== 'other'"
                         @click="selectPartGroup(group.id)"
                       >
-                        Xem thêm <i class="bi bi-arrow-right"></i>
+                        Xem sơ đồ <i class="bi bi-arrow-right"></i>
                       </button>
                     </div>
 
@@ -533,21 +538,47 @@ export default {
       return Array.from(groupsMap.values());
     });
 
-    const selectPartGroup = (id) => {
-      filters.nhom_phu_tung_id = id;
-      filters.page = 1;
+    const handleGroupClick = (groupId) => {
+      const targetDiag = diagramsList.value.find(d => d.nhom_phu_tung_id === groupId);
+      if (targetDiag) {
+        goToDiagram(targetDiag);
+      } else {
+        filters.nhom_phu_tung_id = groupId;
+        filters.page = 1;
+      }
     };
 
-    const activeTab = ref('products');
+    const selectPartGroup = handleGroupClick;
 
-    // Tự động chuyển tab thông minh nếu tab hiện tại trống mà tab kia có kết quả
-    watch([products, diagramsList], ([newProds, newDiags]) => {
-      if (newProds.length > 0 && newDiags.length === 0) {
-        activeTab.value = 'products';
-      } else if (newDiags.length > 0 && newProds.length === 0) {
+    const activeTab = ref('diagrams');
+
+    // 1. Khi chọn Model động cơ -> Mặc định mở lưới Card Nhóm Phụ Tùng ('diagrams')
+    watch(() => filters.dong_co_model_id, (newModelId) => {
+      if (newModelId) {
         activeTab.value = 'diagrams';
+        filters.nhom_phu_tung_id = '';
       }
     });
+
+    // 2. Khi tìm kiếm theo mã SKU lẻ -> Chuyển sang xem phụ tùng chi tiết ('products')
+    watch([() => filters.keyword, localKeyword], ([newKw, newLocal]) => {
+      const kw = (newKw || newLocal || '').trim();
+      if (kw) {
+        activeTab.value = 'products';
+      }
+    });
+
+    // 3. Phản ứng theo dữ liệu sơ đồ / phụ tùng từ API
+    watch([products, diagramsList], ([newProds, newDiags]) => {
+      const hasKw = Boolean((filters.keyword || localKeyword.value || '').trim());
+      if (hasKw) {
+        activeTab.value = 'products';
+      } else if (newDiags.length > 0) {
+        activeTab.value = 'diagrams';
+      } else if (newDiags.length === 0 && newProds.length > 0) {
+        activeTab.value = 'products';
+      }
+    }, { immediate: true });
 
     const pagination = computed(() => {
       if (activeTab.value === 'products') {
@@ -611,10 +642,20 @@ export default {
     const toggleCategory = (id) => {
       if (!id || filters.nhom_phu_tung_id === id) {
         filters.nhom_phu_tung_id = '';
+        activeTab.value = 'diagrams';
+        filters.page = 1;
+        return;
+      }
+
+      // Phương án 1: Bấm vào một nhóm phụ tùng cụ thể -> Dẫn thẳng sang trang Sơ đồ rã máy của nhóm đó
+      const targetDiag = diagramsList.value.find(d => d.nhom_phu_tung_id === id);
+      if (targetDiag) {
+        goToDiagram(targetDiag);
       } else {
         filters.nhom_phu_tung_id = id;
+        filters.page = 1;
+        activeTab.value = 'products';
       }
-      filters.page = 1;
     };
 
     const removeFilter = (type) => {
@@ -720,6 +761,21 @@ export default {
       }
     };
 
+    const getDiagramBrandName = (diag) => {
+      if (diag?.model?.thuong_hieu?.name) {
+        return diag.model.thuong_hieu.name;
+      }
+      if (diag?.model?.thuong_hieu_id) {
+        const b = brands.value?.find(x => x.id === diag.model.thuong_hieu_id);
+        if (b) return b.name;
+      }
+      if (filters.thuong_hieu_id) {
+        const b = brands.value?.find(x => x.id === filters.thuong_hieu_id);
+        if (b) return b.name;
+      }
+      return 'MERCURY';
+    };
+
     const getDiagramGroupName = (diag) => {
       if (!diag) return '';
       if (diag.nhom_phu_tung?.ten_nhom) {
@@ -761,7 +817,7 @@ export default {
       groupedProducts, selectPartGroup,
       activeTab, searchResult, searchDiagrams,
       sortBy, sortLabel, selectSort, cartStore,
-      goToDiagram, prefetchDiagram, getDiagramImage, getDiagramGroupName,
+      goToDiagram, prefetchDiagram, getDiagramImage, getDiagramGroupName, getDiagramBrandName,
       resetFilters, changePage, openDropdown, toggleDropdown, selectOption,
       brandLabel, engineTypeLabel, modelLabel, yearLabel, years, activeFilters, removeFilter, toggleCategory, isFilterEmpty,
       hasEngineSelected, isFetchingPartGroups
