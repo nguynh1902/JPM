@@ -86,117 +86,170 @@
               </div>
             </div>
 
-            <div class="text-secondary d-flex align-items-center gap-3" style="font-size: 0.85rem;">
+            <div class="text-secondary d-flex align-items-center gap-3 flex-wrap" style="font-size: 0.85rem;">
               <span>{{ formatDate(article.created_at) }}</span>
               <span class="text-muted opacity-50">•</span>
               <span><i class="bi bi-eye me-1"></i>{{ Number(article.views || 0).toLocaleString('vi-VN') }} lượt xem</span>
+              <template v-if="hasVideo">
+                <span class="text-muted opacity-50">•</span>
+                <button
+                  type="button"
+                  class="btn btn-sm btn-outline-danger d-inline-flex align-items-center gap-1 rounded-pill py-0 px-2 fw-semibold"
+                  style="font-size: 0.78rem; height: 26px;"
+                  @click="selectVideoMedia"
+                  title="Chuyển sang xem video thực tế bài viết"
+                >
+                  <i class="bi bi-play-circle-fill"></i> Video thực tế
+                </button>
+              </template>
             </div>
           </div>
         </header>
 
-        <!-- 3. HERO FEATURED IMAGE (HỖ TRỢ CAROUSEL ĐA ẢNH & LIGHTBOX PHÓNG TO) -->
+        <!-- 3. HERO MEDIA HUB (HỢP NHẤT VIDEO THỰC TẾ & SLIDER ĐA ẢNH CHI TIẾT) -->
         <div class="article-hero-wrapper mb-5">
-          <div class="article-hero-img rounded-3 overflow-hidden position-relative shadow-sm">
-            <!-- Main Active Image -->
-            <img
-              :src="getImageUrl(allHeroImages[currentHeroIndex]) || fallback"
-              :alt="article.title"
-              class="w-100 h-100 object-fit-cover transition-opacity hero-img-active cursor-pointer"
-              data-bs-toggle="modal"
-              data-bs-target="#heroLightboxModal"
-              @error="$event.target.src = fallback"
+          <div class="article-hero-img rounded-3 overflow-hidden position-relative shadow-sm bg-black">
+            
+            <!-- A. HIỂN THỊ VIDEO THỰC TẾ (NẰM TRỰC TIẾP TRONG KHUNG HERO KHI ĐANG CHỌN VIDEO) -->
+            <div
+              v-if="currentMedia.type === 'video'"
+              class="w-100 h-100 position-relative d-flex align-items-center justify-content-center bg-black"
             >
+              <iframe
+                :src="currentMedia.embedUrl"
+                :title="currentMedia.title"
+                class="w-100 h-100 border-0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowfullscreen
+              ></iframe>
+            </div>
 
-            <!-- Carousel Navigation Buttons (Chỉ xuất hiện khi bài viết có từ 2 ảnh trở lên) -->
-            <template v-if="allHeroImages.length > 1">
+            <!-- B. HIỂN THỊ ẢNH CHI TIẾT (SẠCH SẼ 100%, KHÔNG CÓ NÚT VIDEO NÀO ĐÈ LÊN MẶT ẢNH) -->
+            <div
+              v-else
+              class="w-100 h-100 position-relative"
+            >
+              <img
+                :src="getImageUrl(currentMedia.url) || fallback"
+                :alt="article.title"
+                class="w-100 h-100 object-fit-cover transition-opacity hero-img-active cursor-pointer"
+                data-bs-toggle="modal"
+                data-bs-target="#heroLightboxModal"
+                @error="$event.target.src = fallback"
+              >
+
+              <!-- Nút bấm phóng to ảnh Lightbox ở góc trên bên phải (chỉ hiện khi xem ảnh) -->
+              <button
+                type="button"
+                class="hero-zoom-btn position-absolute top-0 end-0 m-3 rounded-circle d-flex align-items-center justify-content-center"
+                data-bs-toggle="modal"
+                data-bs-target="#heroLightboxModal"
+                title="Phóng to ảnh"
+                aria-label="Phóng to ảnh"
+              >
+                <i class="bi bi-arrows-fullscreen"></i>
+              </button>
+            </div>
+
+            <!-- Carousel Navigation Buttons (Xuất hiện khi bài viết có từ 2 media trở lên) -->
+            <template v-if="heroMediaList.length > 1">
               <button
                 type="button"
                 class="hero-nav-btn hero-nav-prev"
-                @click.stop="prevHeroImage"
-                title="Ảnh trước"
-                aria-label="Previous image"
+                @click.stop="prevHeroMedia"
+                title="Lùi lại"
+                aria-label="Previous media"
               >
                 <i class="bi bi-chevron-left"></i>
               </button>
               <button
                 type="button"
                 class="hero-nav-btn hero-nav-next"
-                @click.stop="nextHeroImage"
-                title="Ảnh tiếp theo"
-                aria-label="Next image"
+                @click.stop="nextHeroMedia"
+                title="Kế tiếp"
+                aria-label="Next media"
               >
                 <i class="bi bi-chevron-right"></i>
               </button>
 
-              <!-- Huy hiệu số đếm ảnh (Góc dưới bên phải) -->
-              <div class="hero-counter-badge position-absolute bottom-0 end-0 m-3 px-3 py-1 rounded-pill d-flex align-items-center gap-1">
-                <i class="bi bi-camera"></i>
-                <span>{{ currentHeroIndex + 1 }} / {{ allHeroImages.length }} ảnh</span>
+              <!-- Huy hiệu số đếm & ngữ cảnh media (Góc dưới bên phải) -->
+              <div class="hero-counter-badge position-absolute bottom-0 end-0 m-3 px-3 py-1 rounded-pill d-flex align-items-center gap-1 shadow-sm">
+                <template v-if="currentMedia.type === 'video'">
+                  <i class="bi bi-play-circle-fill text-danger"></i>
+                  <span>Video thực tế (1 / {{ heroMediaList.length }})</span>
+                </template>
+                <template v-else>
+                  <i class="bi bi-camera"></i>
+                  <span>Ảnh {{ currentHeroIndex + 1 }} / {{ heroMediaList.length }}</span>
+                </template>
               </div>
 
               <!-- Dải chấm chỉ số (Dots) -->
               <div class="hero-dots position-absolute bottom-0 start-50 translate-middle-x mb-3 d-flex gap-2">
                 <button
-                  v-for="(img, idx) in allHeroImages"
+                  v-for="(item, idx) in heroMediaList"
                   :key="idx"
                   type="button"
                   class="hero-dot-btn"
-                  :class="{ active: currentHeroIndex === idx }"
-                  @click.stop="setHeroImage(idx)"
-                  :title="`Xem ảnh ${idx + 1}`"
+                  :class="{ active: currentHeroIndex === idx, 'is-video-dot': item.type === 'video' }"
+                  @click.stop="setHeroMedia(idx)"
+                  :title="item.type === 'video' ? 'Xem Video thực tế' : `Xem ảnh ${idx + 1}`"
                 ></button>
               </div>
             </template>
-
-            <!-- Nút bấm phóng to góc trên bên phải -->
-            <button
-              type="button"
-              class="hero-zoom-btn position-absolute top-0 end-0 m-3 rounded-circle d-flex align-items-center justify-content-center"
-              data-bs-toggle="modal"
-              data-bs-target="#heroLightboxModal"
-              title="Phóng to ảnh"
-            >
-              <i class="bi bi-arrows-fullscreen"></i>
-            </button>
           </div>
 
-          <!-- Dải thumbnail nhỏ bên dưới nếu có từ 2 ảnh trở lên -->
-          <div v-if="allHeroImages.length > 1" class="hero-thumbs-row mt-2 d-flex gap-2 overflow-x-auto pb-1 scrollbar-hidden">
+          <!-- Dải thumbnail nhỏ bên dưới nếu có từ 2 media trở lên -->
+          <div v-if="heroMediaList.length > 1" class="hero-thumbs-row mt-2 d-flex gap-2 overflow-x-auto pb-1 scrollbar-hidden">
             <div
-              v-for="(img, idx) in allHeroImages"
+              v-for="(item, idx) in heroMediaList"
               :key="idx"
-              class="hero-thumb-item rounded-2 overflow-hidden flex-shrink-0 cursor-pointer"
-              :class="{ active: currentHeroIndex === idx }"
-              @click="setHeroImage(idx)"
+              class="hero-thumb-item rounded-2 overflow-hidden flex-shrink-0 cursor-pointer position-relative"
+              :class="{ active: currentHeroIndex === idx, 'is-video-thumb': item.type === 'video' }"
+              @click="setHeroMedia(idx)"
             >
-              <img :src="getImageUrl(img) || fallback" class="w-100 h-100 object-fit-cover" @error="$event.target.src = fallback">
+              <!-- 1. Thumbnail của Video: có icon Play đỏ và chữ VIDEO nổi bật -->
+              <template v-if="item.type === 'video'">
+                <img :src="getImageUrl(item.thumbnail) || fallback" class="w-100 h-100 object-fit-cover" @error="$event.target.src = fallback">
+                <div class="thumb-video-overlay">
+                  <div class="thumb-video-play-btn rounded-circle d-flex align-items-center justify-content-center">
+                    <i class="bi bi-play-fill"></i>
+                  </div>
+                  <span class="thumb-video-text mt-1">VIDEO</span>
+                </div>
+              </template>
+
+              <!-- 2. Thumbnail của Ảnh chi tiết -->
+              <template v-else>
+                <img :src="getImageUrl(item.url) || fallback" class="w-100 h-100 object-fit-cover" @error="$event.target.src = fallback">
+              </template>
             </div>
           </div>
 
-          <!-- Modal Lightbox toàn màn hình cho Hero Image -->
+          <!-- Modal Lightbox toàn màn hình cho Ảnh tĩnh -->
           <div class="modal fade" id="heroLightboxModal" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-xl modal-dialog-centered">
               <div class="modal-content bg-transparent border-0">
                 <div class="modal-header border-0 pb-0 justify-content-between align-items-center">
-                  <span class="text-white small fw-medium" v-if="allHeroImages.length > 1">
-                    Ảnh {{ currentHeroIndex + 1 }} / {{ allHeroImages.length }}
+                  <span class="text-white small fw-medium" v-if="heroOnlyImages.length > 1">
+                    Ảnh {{ currentImageOnlyIndex + 1 }} / {{ heroOnlyImages.length }}
                   </span>
                   <span v-else></span>
                   <button type="button" class="btn-close btn-close-white shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body text-center position-relative py-3">
                   <img
-                    :src="getImageUrl(allHeroImages[currentHeroIndex]) || fallback"
+                    :src="getImageUrl(currentMedia.type === 'image' ? currentMedia.url : (heroOnlyImages[0]?.url || fallback)) || fallback"
                     class="img-fluid rounded-3 shadow-lg"
                     style="max-height: 85vh; object-fit: contain;"
                     @error="$event.target.src = fallback"
                   >
-                  <!-- Nút Next / Prev trong Modal -->
-                  <template v-if="allHeroImages.length > 1">
+                  <!-- Nút Next / Prev trong Modal phóng to ảnh -->
+                  <template v-if="heroOnlyImages.length > 1">
                     <button
                       type="button"
                       class="lightbox-nav-btn lightbox-nav-prev"
-                      @click.stop="prevHeroImage"
+                      @click.stop="prevImageOnly"
                       title="Ảnh trước"
                     >
                       <i class="bi bi-chevron-left fs-3"></i>
@@ -204,7 +257,7 @@
                     <button
                       type="button"
                       class="lightbox-nav-btn lightbox-nav-next"
-                      @click.stop="nextHeroImage"
+                      @click.stop="nextImageOnly"
                       title="Ảnh tiếp theo"
                     >
                       <i class="bi bi-chevron-right fs-3"></i>
@@ -226,18 +279,7 @@
               v-html="processedHtmlContent"
             ></div>
 
-            <!-- YouTube Video (nếu bài viết có đính kèm video) -->
-            <div v-if="article.youtube_url && getYoutubeEmbedUrl(article.youtube_url)" class="mt-5 rounded-3 overflow-hidden shadow-sm">
-              <iframe
-                width="100%"
-                height="420"
-                :src="getYoutubeEmbedUrl(article.youtube_url)"
-                title="YouTube video player"
-                frameborder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowfullscreen
-              ></iframe>
-            </div>
+
 
             <!-- Thư viện ảnh phụ (Gallery Lightbox) -->
             <div v-if="galleryImages && galleryImages.length > 0" class="mt-5 pt-3 border-top">
@@ -421,8 +463,12 @@
 
                 <!-- 2. Thân card (padding p-3) -->
                 <div class="card-body text-start p-3 d-flex flex-column bg-white">
-                  <!-- Tầng 1: Chuyên mục chữ xám chuẩn card sản phẩm & sơ đồ JPM -->
-                  <div class="product-category mb-1 text-truncate" :title="rel.category">
+                  <!-- Tầng 1: Chuyên mục chữ đỏ Marine (#F82249) chuẩn bài viết Tin tức JPM -->
+                  <div
+                    class="news-category-label mb-1 text-truncate"
+                    :title="rel.category"
+                    style="color: var(--jpm-color-red-marine, #F82249) !important; font-size: 0.74rem; font-weight: 700; letter-spacing: 0.6px; text-transform: uppercase;"
+                  >
                     {{ rel.category }}
                   </div>
 
@@ -451,7 +497,7 @@
 </template>
 
 <script>
-import { ref, computed, watch } from 'vue';
+import { ref, computed, watch, onMounted, onUnmounted } from 'vue';
 import { useRoute } from 'vue-router';
 import { useQuery } from '@tanstack/vue-query';
 import axiosClient from '../../../api/axiosClient';
@@ -617,11 +663,15 @@ export default {
       return 'Chuyên gia Phân tích Kỹ thuật JPM';
     };
 
-    const getYoutubeEmbedUrl = (url) => {
+    const extractYoutubeId = (url) => {
       if (!url) return null;
-      const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([^&]{11})/);
-      return match ? 'https://www.youtube.com/embed/' + match[1] : null;
+      const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([\w-]{11})/);
+      return match ? match[1] : null;
     };
+
+    const hasVideo = computed(() => {
+      return Boolean(extractYoutubeId(article.value?.youtube_url));
+    });
 
     const galleryImages = computed(() => {
       if (!article.value || !article.value.gallery) return [];
@@ -633,34 +683,117 @@ export default {
       }
     });
 
-    // Gom tất cả ảnh (Ảnh chính Thumbnail + Thư viện Gallery) vào chung danh sách để phục vụ Slider
-    const allHeroImages = computed(() => {
+    // Dải Media thống nhất: Video (nếu có) là item đầu tiên, tiếp theo là Ảnh đại diện và các ảnh phụ
+    const heroMediaList = computed(() => {
       const list = [];
-      if (article.value?.thumbnail) {
-        list.push(article.value.thumbnail);
+      const yId = extractYoutubeId(article.value?.youtube_url);
+      
+      // 1. Video YouTube thực tế
+      if (yId) {
+        list.push({
+          type: 'video',
+          id: 'media-video',
+          title: 'Video thực tế bài viết',
+          youtubeId: yId,
+          embedUrl: `https://www.youtube-nocookie.com/embed/${yId}?rel=0`,
+          thumbnail: article.value?.thumbnail || FALLBACK,
+        });
       }
+
+      // 2. Ảnh đại diện chính
+      if (article.value?.thumbnail) {
+        list.push({
+          type: 'image',
+          id: 'media-thumb',
+          title: article.value?.title || 'Ảnh đại diện',
+          url: article.value.thumbnail,
+        });
+      }
+
+      // 3. Các ảnh phụ trong gallery
       if (galleryImages.value && galleryImages.value.length > 0) {
-        galleryImages.value.forEach((img) => {
-          if (img && !list.includes(img)) {
-            list.push(img);
+        galleryImages.value.forEach((img, idx) => {
+          if (img && img !== article.value?.thumbnail) {
+            list.push({
+              type: 'image',
+              id: `media-gallery-${idx}`,
+              title: `Ảnh chi tiết ${idx + 1}`,
+              url: img,
+            });
           }
         });
       }
-      return list.length > 0 ? list : [FALLBACK];
+
+      if (list.length === 0) {
+        list.push({
+          type: 'image',
+          id: 'media-fallback',
+          title: 'Hình ảnh',
+          url: FALLBACK,
+        });
+      }
+
+      return list;
     });
 
-    const prevHeroImage = () => {
-      if (allHeroImages.value.length <= 1) return;
-      currentHeroIndex.value = (currentHeroIndex.value - 1 + allHeroImages.value.length) % allHeroImages.value.length;
+    const currentMedia = computed(() => {
+      if (currentHeroIndex.value >= heroMediaList.value.length) {
+        return heroMediaList.value[0] || { type: 'image', url: FALLBACK };
+      }
+      return heroMediaList.value[currentHeroIndex.value] || { type: 'image', url: FALLBACK };
+    });
+
+    // Danh sách chỉ gồm ảnh tĩnh để phục vụ Modal Lightbox zoom toàn màn hình
+    const heroOnlyImages = computed(() => {
+      return heroMediaList.value.filter(m => m.type === 'image');
+    });
+
+    const currentImageOnlyIndex = computed(() => {
+      const cur = currentMedia.value;
+      if (!cur || cur.type !== 'image') return 0;
+      const idx = heroOnlyImages.value.findIndex(m => m.id === cur.id);
+      return idx !== -1 ? idx : 0;
+    });
+
+    const prevHeroMedia = () => {
+      if (heroMediaList.value.length <= 1) return;
+      currentHeroIndex.value = (currentHeroIndex.value - 1 + heroMediaList.value.length) % heroMediaList.value.length;
     };
 
-    const nextHeroImage = () => {
-      if (allHeroImages.value.length <= 1) return;
-      currentHeroIndex.value = (currentHeroIndex.value + 1) % allHeroImages.value.length;
+    const nextHeroMedia = () => {
+      if (heroMediaList.value.length <= 1) return;
+      currentHeroIndex.value = (currentHeroIndex.value + 1) % heroMediaList.value.length;
     };
 
-    const setHeroImage = (idx) => {
+    const setHeroMedia = (idx) => {
       currentHeroIndex.value = idx;
+    };
+
+    const prevImageOnly = () => {
+      if (heroOnlyImages.value.length <= 1) return;
+      const nextIdx = (currentImageOnlyIndex.value - 1 + heroOnlyImages.value.length) % heroOnlyImages.value.length;
+      const targetMedia = heroOnlyImages.value[nextIdx];
+      const targetHeroIdx = heroMediaList.value.findIndex(m => m.id === targetMedia.id);
+      if (targetHeroIdx !== -1) currentHeroIndex.value = targetHeroIdx;
+    };
+
+    const nextImageOnly = () => {
+      if (heroOnlyImages.value.length <= 1) return;
+      const nextIdx = (currentImageOnlyIndex.value + 1) % heroOnlyImages.value.length;
+      const targetMedia = heroOnlyImages.value[nextIdx];
+      const targetHeroIdx = heroMediaList.value.findIndex(m => m.id === targetMedia.id);
+      if (targetHeroIdx !== -1) currentHeroIndex.value = targetHeroIdx;
+    };
+
+    const selectVideoMedia = () => {
+      const vIdx = heroMediaList.value.findIndex(m => m.type === 'video');
+      if (vIdx !== -1) {
+        currentHeroIndex.value = vIdx;
+      }
+      const el = document.querySelector('.article-hero-wrapper');
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
     };
 
     const formatDate = (d) => {
@@ -709,12 +842,18 @@ export default {
       getAuthorAvatar,
       getAuthorRole,
       galleryImages,
-      allHeroImages,
+      heroMediaList,
+      currentMedia,
+      heroOnlyImages,
+      currentImageOnlyIndex,
       currentHeroIndex,
-      prevHeroImage,
-      nextHeroImage,
-      setHeroImage,
-      getYoutubeEmbedUrl,
+      prevHeroMedia,
+      nextHeroMedia,
+      setHeroMedia,
+      prevImageOnly,
+      nextImageOnly,
+      selectVideoMedia,
+      hasVideo,
       getImageUrl,
       isFetching,
       error,
@@ -780,9 +919,9 @@ export default {
 
 /* ── HERO IMAGE & SMART SLIDER ── */
 .article-hero-img {
-  aspect-ratio: 16 / 8.5;
-  background-color: #e5e7eb;
-  box-shadow: 0 8px 28px rgba(15, 23, 42, 0.06);
+  aspect-ratio: 16 / 9;
+  background-color: #0A1128;
+  box-shadow: 0 8px 28px rgba(15, 23, 42, 0.08);
 }
 @media (max-width: 768px) {
   .article-hero-img {
@@ -813,10 +952,10 @@ export default {
   align-items: center;
   justify-content: center;
   font-size: 1.15rem;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.16);
-  opacity: 0;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
+  opacity: 0.88;
   transition: all 0.25s ease;
-  z-index: 5;
+  z-index: 10;
 }
 
 .article-hero-img:hover .hero-nav-btn {
@@ -838,17 +977,17 @@ export default {
 }
 
 .hero-counter-badge {
-  background: rgba(10, 17, 40, 0.78);
+  background: rgba(10, 17, 40, 0.82);
   backdrop-filter: blur(6px);
   color: #ffffff;
   font-size: 0.78rem;
   font-weight: 600;
   letter-spacing: 0.3px;
-  z-index: 5;
+  z-index: 10;
 }
 
 .hero-dots {
-  z-index: 5;
+  z-index: 10;
 }
 
 .hero-dot-btn {
@@ -867,6 +1006,16 @@ export default {
   box-shadow: 0 0 6px rgba(255, 255, 255, 0.8);
 }
 
+.hero-dot-btn.is-video-dot {
+  background: rgba(248, 34, 73, 0.65);
+}
+
+.hero-dot-btn.is-video-dot.active {
+  background: var(--jpm-color-red-marine, #F82249);
+  transform: scale(1.35);
+  box-shadow: 0 0 6px rgba(248, 34, 73, 0.9);
+}
+
 .hero-zoom-btn {
   width: 36px;
   height: 36px;
@@ -878,7 +1027,7 @@ export default {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
   opacity: 0;
   transition: all 0.2s ease;
-  z-index: 5;
+  z-index: 10;
 }
 
 .article-hero-img:hover .hero-zoom-btn {
@@ -894,18 +1043,55 @@ export default {
   width: 80px;
   height: 52px;
   border: 2px solid transparent;
-  opacity: 0.65;
+  opacity: 0.7;
   transition: all 0.2s ease;
 }
 
 .hero-thumb-item:hover {
-  opacity: 0.9;
+  opacity: 0.95;
 }
 
 .hero-thumb-item.active {
   border-color: var(--jpm-color-red-marine, #F82249);
   opacity: 1;
-  box-shadow: 0 2px 8px rgba(248, 34, 73, 0.2);
+  box-shadow: 0 2px 8px rgba(248, 34, 73, 0.25);
+}
+
+.thumb-video-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(10, 17, 40, 0.48);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s ease;
+}
+
+.hero-thumb-item:hover .thumb-video-overlay,
+.hero-thumb-item.active .thumb-video-overlay {
+  background: rgba(10, 17, 40, 0.25);
+}
+
+.thumb-video-play-btn {
+  width: 22px;
+  height: 22px;
+  background: var(--jpm-color-red-marine, #F82249);
+  color: #ffffff;
+  font-size: 0.8rem;
+  padding-left: 2px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+}
+
+.thumb-video-text {
+  font-size: 0.62rem;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: 0.5px;
+  line-height: 1;
 }
 
 .lightbox-nav-btn {
@@ -1121,12 +1307,13 @@ export default {
   transform: scale(1.04);
 }
 
+.related-blog-card .news-category-label,
 .related-blog-card .product-category {
-  font-size: 0.72rem;
+  font-size: 0.74rem;
   font-weight: 700;
   letter-spacing: 0.6px;
   text-transform: uppercase;
-  color: var(--jpm-neutral-500, #64748B);
+  color: var(--jpm-color-red-marine, #F82249) !important;
   line-height: 1.3;
 }
 
