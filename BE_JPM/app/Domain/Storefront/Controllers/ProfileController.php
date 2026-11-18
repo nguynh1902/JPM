@@ -294,4 +294,60 @@ class ProfileController extends Controller
             'message' => $id ? 'Đã đánh dấu thông báo là đã đọc.' : 'Đã đánh dấu đã đọc tất cả thông báo.'
         ]);
     }
+
+    public function uploadAvatar(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'avatar' => 'required|image|mimes:jpeg,png,jpg,webp|max:3072',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        $user = $request->user();
+
+        if ($request->hasFile('avatar')) {
+            $file = $request->file('avatar');
+            $filename = 'avatar_' . $user->id . '_' . time() . '.' . $file->getClientOriginalExtension();
+            $path = $file->storeAs('avatars', $filename, 'public');
+
+            $user->avatar = '/storage/' . $path;
+            $user->save();
+
+            return response()->json([
+                'message' => 'Cập nhật ảnh đại diện thành công.',
+                'avatar'  => $user->avatar,
+                'user'    => $user->load('khachHang')
+            ]);
+        }
+
+        return response()->json(['message' => 'Không tìm thấy file ảnh.'], 400);
+    }
+
+    public function getStats(Request $request)
+    {
+        $user = $request->user();
+        $garageCount = 0;
+        $orderCount = 0;
+        $quoteCount = 0;
+
+        try {
+            $garageCount = $user->garages()->count();
+        } catch (\Exception $e) {}
+
+        try {
+            $quoteCount = $user->yeuCauBaoGias()->count();
+        } catch (\Exception $e) {}
+
+        try {
+            $orderCount = $user->donHangs()->count();
+        } catch (\Exception $e) {}
+
+        return response()->json([
+            'garage_count' => $garageCount,
+            'order_count'  => $orderCount,
+            'quote_count'  => $quoteCount,
+        ]);
+    }
 }

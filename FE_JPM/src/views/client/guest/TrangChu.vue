@@ -621,7 +621,7 @@ export default {
     const formatDate = (dateStr) => {
       if (!dateStr) return '';
       const d = new Date(dateStr);
-      return d.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' });
+      return `${d.getDate().toString().padStart(2, '0')} Th${(d.getMonth() + 1).toString().padStart(2, '0')}, ${d.getFullYear()}`;
     };
 
     return {

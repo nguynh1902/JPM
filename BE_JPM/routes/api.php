@@ -80,6 +80,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('/profile', [\App\Domain\Storefront\Controllers\ProfileController::class, 'updateProfile']);
         Route::put('/profile/password', [\App\Domain\Storefront\Controllers\ProfileController::class, 'changePassword']);
         Route::put('/profile/email', [\App\Domain\Storefront\Controllers\ProfileController::class, 'changeEmail']);
+        Route::post('/profile/avatar', [\App\Domain\Storefront\Controllers\ProfileController::class, 'uploadAvatar']);
+        Route::get('/profile/stats', [\App\Domain\Storefront\Controllers\ProfileController::class, 'getStats']);
         Route::get('/vat-tu-luu-tru', [\App\Domain\Storefront\Controllers\VatTuLuuTruController::class, 'index']);
         Route::post('/vat-tu-luu-tru', [\App\Domain\Storefront\Controllers\VatTuLuuTruController::class, 'store']);
         Route::delete('/vat-tu-luu-tru/{san_pham_id}', [\App\Domain\Storefront\Controllers\VatTuLuuTruController::class, 'destroy']);

@@ -339,7 +339,14 @@
 
               <!-- Footer Phân Trang -->
               <div class="d-flex justify-content-between align-items-center mt-4 pt-4 border-top" v-if="(activeTab === 'products' ? products.length : diagramsList.length) > 0">
-                <span class="text-muted small">Hiển thị {{ activeTab === 'products' ? products.length : diagramsList.length }} của {{ pagination.total }} {{ activeTab === 'products' ? 'phụ tùng' : 'sơ đồ' }}</span>
+                <span class="text-muted small">
+                  <template v-if="pagination.last_page <= 1">
+                    Hiển thị tất cả <strong class="text-dark">{{ pagination.total }}</strong> {{ activeTab === 'products' ? 'phụ tùng' : 'sơ đồ' }}
+                  </template>
+                  <template v-else>
+                    Hiển thị <strong class="text-dark">{{ pagination.from }} - {{ pagination.to }}</strong> trên <strong class="text-dark">{{ pagination.total }}</strong> {{ activeTab === 'products' ? 'phụ tùng' : 'sơ đồ' }}
+                  </template>
+                </span>
                 <ul class="pagination custom-pagination-rounded mb-0" v-if="pagination.last_page > 1">
                   <li class="page-item" :class="{ disabled: pagination.current_page === 1 }">
                     <a class="page-link" href="#" @click.prevent="changePage(pagination.current_page - 1)"><i class="bi bi-chevron-left"></i></a>
@@ -552,16 +559,30 @@ export default {
 
     const pagination = computed(() => {
       if (activeTab.value === 'products') {
+        const total = searchResult.value?.total ?? (products.value?.length || 0);
+        const perPage = searchResult.value?.per_page || 12;
+        const curPage = searchResult.value?.current_page || 1;
+        const from = searchResult.value?.from ?? (products.value?.length > 0 ? (curPage - 1) * perPage + 1 : 0);
+        const to = searchResult.value?.to ?? Math.min(from + (products.value?.length || 0) - 1, total);
         return {
-          current_page: searchResult.value?.current_page || 1,
+          current_page: curPage,
           last_page: searchResult.value?.last_page || 1,
-          total: searchResult.value?.total || 0,
+          total,
+          from,
+          to,
         };
       }
+      const total = searchDiagrams.value?.total ?? (diagramsList.value?.length || 0);
+      const perPage = searchDiagrams.value?.per_page || 12;
+      const curPage = searchDiagrams.value?.current_page || 1;
+      const from = searchDiagrams.value?.from ?? (diagramsList.value?.length > 0 ? (curPage - 1) * perPage + 1 : 0);
+      const to = searchDiagrams.value?.to ?? Math.min(from + (diagramsList.value?.length || 0) - 1, total);
       return {
-        current_page: searchDiagrams.value?.current_page || 1,
+        current_page: curPage,
         last_page: searchDiagrams.value?.last_page || 1,
-        total: searchDiagrams.value?.total || 0,
+        total,
+        from,
+        to,
       };
     });
 
