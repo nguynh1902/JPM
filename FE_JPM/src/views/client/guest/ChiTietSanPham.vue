@@ -1183,27 +1183,29 @@ onMounted(() => {
   gap: 8px;
   padding: 0 20px;
   box-shadow: none;
-  transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
 .btn-product-cart:hover {
-  background-color: #e0163c;
-  border-color: #e0163c;
+  background-color: #e0163c !important;
+  border-color: #e0163c !important;
   color: #ffffff !important;
-  transform: translateY(-1px);
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 16px rgba(248, 34, 73, 0.3) !important;
 }
 
 .btn-product-cart:active {
-  transform: translateY(0);
+  transform: translateY(0) !important;
+  box-shadow: none !important;
 }
 
-/* Secondary Wishlist Button 44px (Chuẩn Outline Blue #0d6efd) */
+/* Secondary Wishlist Button 44px (Chuẩn Outline Blue #0d6efd Nổi 3D) */
 .btn-product-garage {
   height: 44px;
   min-width: 120px;
   background-color: #ffffff;
-  color: #0d6efd;
-  border: 1px solid #0d6efd;
+  color: #0d6efd !important;
+  border: 1.5px solid #0d6efd !important;
   border-radius: 8px;
   font-size: 0.88rem;
   font-weight: 600;
@@ -1213,23 +1215,29 @@ onMounted(() => {
   gap: 6px;
   padding: 0 16px;
   box-shadow: none;
-  transition: all 0.2s ease;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
   flex-shrink: 0;
 }
 
 .btn-product-garage:hover {
-  background-color: #0d6efd;
-  border-color: #0d6efd;
-  color: #ffffff;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(13, 110, 253, 0.22);
+  background-color: #0d6efd !important;
+  border-color: #0d6efd !important;
+  color: #ffffff !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 16px rgba(13, 110, 253, 0.3) !important;
+}
+
+.btn-product-garage:hover i,
+.btn-product-garage:hover span {
+  color: #ffffff !important;
 }
 
 .btn-product-garage:active {
-  background-color: #0b5ed7;
-  border-color: #0a58ca;
-  color: #ffffff;
-  transform: translateY(0);
+  background-color: #0b5ed7 !important;
+  border-color: #0a58ca !important;
+  color: #ffffff !important;
+  transform: translateY(0) !important;
+  box-shadow: none !important;
 }
 
 /* ── CLIENT FAQ ACCORDION (NATIVE CLIENT STYLE) ── */
