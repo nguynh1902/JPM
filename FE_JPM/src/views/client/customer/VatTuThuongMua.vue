@@ -1,6 +1,6 @@
 <template>
-<div>
-    <div class="card border-0 jpm-card">
+  <div class="h-100 d-flex flex-column flex-grow-1">
+    <div class="card border-0 jpm-card h-100 d-flex flex-column flex-grow-1">
       <div class="card-header jpm-card-header">
         <h5 class="jpm-card-title">Vật tư thường mua</h5>
         <router-link to="/san-pham" class="btn btn-blue-primary btn-action-header">
@@ -10,16 +10,16 @@
       </div>
       
       <!-- Loading State -->
-      <div class="card-body px-4 py-3 text-center" v-if="isLoading">
+      <div class="card-body px-4 py-3 text-center d-flex flex-column justify-content-center flex-grow-1" v-if="isLoading">
         <div class="spinner-border text-danger mt-4" role="status"></div>
         <p class="mt-2 text-muted">Đang tải danh sách vật tư...</p>
       </div>
 
-      <div class="card-body px-4 py-3" v-else>
+      <div class="card-body px-4 py-3 d-flex flex-column flex-grow-1" v-else>
         <!-- Empty State -->
-        <div class="text-center py-4 d-flex flex-column align-items-center justify-content-center" v-if="items.length === 0" style="min-height: 280px;">
-          <div class="empty-icon-wrap mb-4">
-            <i class="bi bi-bookmark-heart"></i>
+        <div class="text-center py-4 d-flex flex-column align-items-center justify-content-center flex-grow-1 my-auto" v-if="items.length === 0" style="min-height: 320px;">
+          <div class="empty-icon-wrap mb-3">
+            <i class="bi bi-box-seam"></i>
           </div>
           <h5 class="mb-2 vt-heading">Danh sách vật tư trống</h5>
           <p class="text-muted mb-4" style="font-size: 14.5px; max-width: 440px; line-height: 1.6;">Bạn chưa lưu sản phẩm nào. Hãy bấm biểu tượng lưu trên trang sản phẩm để theo dõi phụ tùng thường mua.</p>

@@ -1,41 +1,41 @@
 <template>
-<div>
-            <div class="card border-0 jpm-card">
-              <div class="card-header jpm-card-header">
-                <h5 class="jpm-card-title">Danh sách động cơ</h5>
+  <div class="h-100 d-flex flex-column flex-grow-1">
+    <div class="card border-0 jpm-card h-100 d-flex flex-column flex-grow-1">
+      <div class="card-header jpm-card-header">
+        <h5 class="jpm-card-title">Danh sách động cơ</h5>
+      </div>
+      <div class="card-body px-4 py-3 d-flex flex-column flex-grow-1">
+
+        <!-- Loading Skeleton -->
+        <div v-if="isLoadingGarage">
+          <div v-for="i in 2" :key="i" class="p-3 border rounded-3 d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-2 bg-white">
+            <div class="d-flex align-items-center gap-3">
+              <div class="placeholder-glow rounded-3" style="width: 48px; height: 48px;">
+                <div class="placeholder w-100 h-100 rounded-3"></div>
               </div>
-              <div class="card-body px-4 py-3">
+              <div class="placeholder-glow w-100">
+                <div class="placeholder col-4 mb-2" style="height: 14px;"></div>
+                <br>
+                <div class="placeholder col-8" style="height: 18px;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
 
-                <!-- Loading Skeleton -->
-                <div v-if="isLoadingGarage">
-                  <div v-for="i in 2" :key="i" class="p-3 border rounded-3 d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-2 bg-white">
-                    <div class="d-flex align-items-center gap-3">
-                      <div class="placeholder-glow rounded-3" style="width: 48px; height: 48px;">
-                        <div class="placeholder w-100 h-100 rounded-3"></div>
-                      </div>
-                      <div class="placeholder-glow w-100">
-                        <div class="placeholder col-4 mb-2" style="height: 14px;"></div>
-                        <br>
-                        <div class="placeholder col-8" style="height: 18px;"></div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Empty State -->
-                <div class="text-center py-4 d-flex flex-column align-items-center justify-content-center" v-else-if="garage.length === 0" style="min-height: 300px;">
-                  <div class="empty-icon-wrap mb-3">
-                    <i class="bi bi-tools"></i>
-                  </div>
-                  <h5 class="mb-2 garage-heading">Garage của bạn đang trống</h5>
-                  <p class="text-muted mb-4" style="font-size: 14.5px; max-width: 480px; line-height: 1.6;">
-                    Hãy tra cứu động cơ và sơ đồ phụ tùng trên trang Tra Cứu, sau đó bấm <strong>"Lưu vào Garage"</strong>. Hệ thống sẽ tự động khởi tạo hồ sơ máy tương ứng cho garage của bạn.
-                  </p>
-                  <button class="btn btn-danger px-4 py-2 fw-semibold d-inline-flex align-items-center gap-2" @click="router.push('/tra-cuu')">
-                    <i class="bi bi-search"></i>
-                    <span>Đến trang Tra cứu sơ đồ</span>
-                  </button>
-                </div>
+        <!-- Empty State -->
+        <div class="text-center py-4 d-flex flex-column align-items-center justify-content-center flex-grow-1 my-auto" v-else-if="garage.length === 0" style="min-height: 320px;">
+          <div class="empty-icon-wrap mb-3">
+            <i class="bi bi-tools"></i>
+          </div>
+          <h5 class="mb-2 garage-heading">Garage của bạn đang trống</h5>
+          <p class="text-muted mb-4" style="font-size: 14.5px; max-width: 480px; line-height: 1.6;">
+            Hãy tra cứu động cơ và sơ đồ phụ tùng trên trang Tra Cứu, sau đó bấm <strong>"Lưu vào Garage"</strong>. Hệ thống sẽ tự động khởi tạo hồ sơ máy tương ứng cho garage của bạn.
+          </p>
+          <button class="btn btn-danger px-4 py-2 fw-semibold d-inline-flex align-items-center gap-2" @click="router.push('/tra-cuu')">
+            <i class="bi bi-search"></i>
+            <span>Đến trang Tra cứu sơ đồ</span>
+          </button>
+        </div>
 
                 <!-- Garage List -->
                 <div class="d-flex flex-column gap-2" v-else>
@@ -73,44 +73,44 @@
 
               </div>
             </div>
-    </div>
 
-    <!-- SAVED PARTS MODAL -->
-    <div class="modal fade" id="savedPartsModal" tabindex="-1" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
-        <div class="modal-content border-0 shadow-lg" style="border-radius: var(--jpm-radius-card, 12px) !important; overflow: hidden;">
-          <div class="modal-header border-bottom-0 pt-4 pb-2 px-4">
-            <h5 class="modal-title garage-heading mb-0"><i class="bi bi-tools text-danger me-2"></i>Phụ Tùng Đã Lưu Của Động Cơ</h5>
-            <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body p-4 bg-light">
-            
-            <div v-if="isLoadingSavedParts" class="text-center py-5">
-                <div class="spinner-border text-danger" role="status"></div>
+      <!-- SAVED PARTS MODAL -->
+      <div class="modal fade" id="savedPartsModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
+          <div class="modal-content border-0 shadow-lg" style="border-radius: var(--jpm-radius-card, 12px) !important; overflow: hidden;">
+            <div class="modal-header border-bottom-0 pt-4 pb-2 px-4">
+              <h5 class="modal-title garage-heading mb-0"><i class="bi bi-tools text-danger me-2"></i>Phụ Tùng Đã Lưu Của Động Cơ</h5>
+              <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            
-            <div v-else-if="!savedParts || savedParts.length === 0" class="text-center py-5 bg-white rounded-3 border">
-                <i class="bi bi-box-seam text-muted" style="font-size: 3rem; opacity: 0.5;"></i>
-                <p class="mt-3 mb-0 text-muted">Động cơ này chưa có phụ tùng nào được lưu.</p>
+            <div class="modal-body p-4 bg-light">
+              
+              <div v-if="isLoadingSavedParts" class="text-center py-5">
+                  <div class="spinner-border text-danger" role="status"></div>
+              </div>
+              
+              <div v-else-if="!savedParts || savedParts.length === 0" class="text-center py-5 bg-white rounded-3 border">
+                  <i class="bi bi-box-seam text-muted" style="font-size: 3rem; opacity: 0.5;"></i>
+                  <p class="mt-3 mb-0 text-muted">Động cơ này chưa có phụ tùng nào được lưu.</p>
+              </div>
+              
+              <div v-else class="row g-3">
+                  <div class="col-12" v-for="item in savedParts" :key="item.id">
+                      <div class="card border-0 shadow-sm p-3 d-flex flex-row align-items-center gap-3" style="border-radius: var(--jpm-radius-control, 8px) !important;">
+                          <img :src="getImageUrl(item.phu_tung?.hinh_anh_chinh) || 'https://placehold.co/100x100'" alt="" class="rounded border" style="width: 70px; height: 70px; object-fit: cover;">
+                          <div class="flex-grow-1">
+                              <h6 class="fw-bold mb-1"><router-link :to="`/chi-tiet-phu-tung/${item.phu_tung?.ma_phu_tung || item.phu_tung?.id}`" class="text-dark text-decoration-none hover-red">{{ item.phu_tung?.ten_phu_tung }}</router-link></h6>
+                              <p class="text-muted small mb-0">Part #: <strong>{{ item.phu_tung?.ma_phu_tung }}</strong> | Số lượng: {{ item.so_luong }}</p>
+                              <p class="text-muted small mb-0" v-if="item.ghi_chu"><i class="bi bi-info-circle me-1"></i>{{ item.ghi_chu }}</p>
+                          </div>
+                          <div class="d-flex flex-column gap-2">
+                              <button class="btn btn-danger btn-sm fw-semibold shadow-sm" @click="addToCart(item.phu_tung, item.so_luong)"><i class="bi bi-cart-plus me-1"></i>Thêm giỏ</button>
+                              <button class="btn btn-outline-secondary btn-sm" @click="removeSavedPart(item.id)"><i class="bi bi-trash3 me-1"></i>Xóa</button>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+              
             </div>
-            
-            <div v-else class="row g-3">
-                <div class="col-12" v-for="item in savedParts" :key="item.id">
-                    <div class="card border-0 shadow-sm p-3 d-flex flex-row align-items-center gap-3" style="border-radius: var(--jpm-radius-control, 8px) !important;">
-                        <img :src="getImageUrl(item.phu_tung?.hinh_anh_chinh) || 'https://placehold.co/100x100'" alt="" class="rounded border" style="width: 70px; height: 70px; object-fit: cover;">
-                        <div class="flex-grow-1">
-                            <h6 class="fw-bold mb-1"><router-link :to="`/chi-tiet-phu-tung/${item.phu_tung?.ma_phu_tung || item.phu_tung?.id}`" class="text-dark text-decoration-none hover-red">{{ item.phu_tung?.ten_phu_tung }}</router-link></h6>
-                            <p class="text-muted small mb-0">Part #: <strong>{{ item.phu_tung?.ma_phu_tung }}</strong> | Số lượng: {{ item.so_luong }}</p>
-                            <p class="text-muted small mb-0" v-if="item.ghi_chu"><i class="bi bi-info-circle me-1"></i>{{ item.ghi_chu }}</p>
-                        </div>
-                        <div class="d-flex flex-column gap-2">
-                            <button class="btn btn-danger btn-sm fw-semibold shadow-sm" @click="addToCart(item.phu_tung, item.so_luong)"><i class="bi bi-cart-plus me-1"></i>Thêm giỏ</button>
-                            <button class="btn btn-outline-secondary btn-sm" @click="removeSavedPart(item.id)"><i class="bi bi-trash3 me-1"></i>Xóa</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
           </div>
         </div>
       </div>
@@ -319,6 +319,7 @@ const getImageUrl = (path) => {
   color: var(--jpm-color-red-marine, #F82249);
   font-size: 2rem;
 }
+
 .hover-red:hover {
   color: var(--jpm-color-red-marine, #F82249) !important;
 }

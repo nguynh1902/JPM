@@ -467,7 +467,6 @@
                   <div
                     class="news-category-label mb-1 text-truncate"
                     :title="rel.category"
-                    style="color: var(--jpm-color-red-marine, #F82249) !important; font-size: 0.74rem; font-weight: 700; letter-spacing: 0.6px; text-transform: uppercase;"
                   >
                     {{ rel.category }}
                   </div>
@@ -480,7 +479,7 @@
                   </h5>
 
                   <!-- Tầng 3: Ngày đăng kèm icon lịch sạch sẽ -->
-                  <div class="mt-auto pt-2 text-muted d-flex align-items-center gap-1" style="font-size: 0.78rem;">
+                  <div class="mt-auto pt-2 news-meta">
                     <i class="bi bi-calendar3"></i>
                     <span>{{ formatDate(rel.created_at) }}</span>
                   </div>
@@ -1309,12 +1308,28 @@ export default {
 
 .related-blog-card .news-category-label,
 .related-blog-card .product-category {
+  font-family: var(--heading-font, 'Raleway', sans-serif) !important;
   font-size: 0.74rem;
   font-weight: 700;
   letter-spacing: 0.6px;
   text-transform: uppercase;
   color: var(--jpm-color-red-marine, #F82249) !important;
   line-height: 1.3;
+}
+
+.related-blog-card .news-meta {
+  font-family: var(--default-font, 'Roboto', sans-serif);
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #64748b;
+  line-height: 1.3;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.related-blog-card .news-meta i {
+  color: inherit;
+  font-size: 0.82rem;
 }
 
 .related-blog-card .card-title {

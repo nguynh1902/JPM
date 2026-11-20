@@ -245,7 +245,7 @@
 
                       <!-- Save Wishlist Button -->
                       <button class="btn btn-product-garage" title="Lưu vật tư thường mua" @click="saveToWishlist">
-                        <i class="bi bi-bookmark-heart me-1"></i>
+                        <i class="bi bi-box-seam me-1"></i>
                         <span>Lưu vật tư</span>
                       </button>
                     </div>
@@ -1197,13 +1197,13 @@ onMounted(() => {
   transform: translateY(0);
 }
 
-/* Secondary Wishlist Button 44px */
+/* Secondary Wishlist Button 44px (Chuẩn Outline Blue #0d6efd) */
 .btn-product-garage {
   height: 44px;
   min-width: 120px;
   background-color: #ffffff;
-  color: #1e293b;
-  border: 1px solid #e2e8f0;
+  color: #0d6efd;
+  border: 1px solid #0d6efd;
   border-radius: 8px;
   font-size: 0.88rem;
   font-weight: 600;
@@ -1218,16 +1218,17 @@ onMounted(() => {
 }
 
 .btn-product-garage:hover {
-  background-color: #eff6ff;
-  border-color: #bfdbfe;
-  color: #0d6efd;
+  background-color: #0d6efd;
+  border-color: #0d6efd;
+  color: #ffffff;
   transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(13, 110, 253, 0.22);
 }
 
 .btn-product-garage:active {
-  background-color: #dbeafe;
-  border-color: #93c5fd;
-  color: #0b5ed7;
+  background-color: #0b5ed7;
+  border-color: #0a58ca;
+  color: #ffffff;
   transform: translateY(0);
 }
 

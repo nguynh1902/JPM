@@ -74,25 +74,19 @@
       </div>
     </div>
 
-    <!-- Empty State (Giống hệt ảnh Shopee) -->
-    <div class="shopee-empty-state" v-else-if="displayedOrders.length === 0">
-      <div class="empty-icon-box">
-        <svg class="empty-clipboard-icon" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="50" cy="50" r="46" fill="#F4F8FA"/>
-          <circle cx="28" cy="30" r="4" fill="#E8B86D" opacity="0.6"/>
-          <circle cx="74" cy="48" r="3" fill="#E8B86D" opacity="0.6"/>
-          <circle cx="34" cy="22" r="5" fill="#88D4D0" opacity="0.5"/>
-          <rect x="30" y="24" width="40" height="52" rx="4" fill="#FFFFFF" stroke="#CCD5DD" stroke-width="2"/>
-          <rect x="42" y="20" width="16" height="7" rx="3" fill="#5EAAAC"/>
-          <line x1="38" y1="36" x2="62" y2="36" stroke="#E1E6EB" stroke-width="2.5" stroke-linecap="round"/>
-          <line x1="38" y1="44" x2="58" y2="44" stroke="#E1E6EB" stroke-width="2.5" stroke-linecap="round"/>
-          <line x1="38" y1="52" x2="62" y2="52" stroke="#E1E6EB" stroke-width="2.5" stroke-linecap="round"/>
-          <line x1="38" y1="60" x2="52" y2="60" stroke="#E1E6EB" stroke-width="2.5" stroke-linecap="round"/>
-          <path d="M60 68 L68 56 L72 60 L64 72 Z" fill="#4B9DA0"/>
-          <path d="M58 70 L60 68 L64 72 L60 74 Z" fill="#E59866"/>
-        </svg>
+    <!-- Empty State -->
+    <div class="shopee-empty-state text-center py-5" v-else-if="displayedOrders.length === 0">
+      <div class="empty-icon-wrap mb-3">
+        <i class="bi bi-receipt"></i>
       </div>
-      <p class="empty-text">Chưa có đơn hàng</p>
+      <h5 class="mb-2 order-empty-heading">Chưa có đơn hàng &amp; báo giá</h5>
+      <p class="text-muted mb-4" style="font-size: 14.5px; max-width: 440px; line-height: 1.6;">
+        Bạn chưa có đơn đặt hàng hoặc yêu cầu báo giá nào trong mục này.
+      </p>
+      <router-link to="/san-pham" class="btn btn-danger px-4 py-2 fw-semibold d-inline-flex align-items-center gap-2">
+        <i class="bi bi-cart3"></i>
+        <span>Khám phá sản phẩm</span>
+      </router-link>
     </div>
 
     <!-- DANH SÁCH THẺ ĐƠN HÀNG -->
@@ -1146,11 +1140,11 @@ const formatDate = (dateStr) => {
 }
 
 /* ========================================================================= */
-/* EMPTY STATE (GIỐNG HỆT ẢNH CHỤP SHOPEE) */
+/* EMPTY STATE */
 /* ========================================================================= */
 .shopee-empty-state {
   background-color: #ffffff;
-  min-height: 480px;
+  min-height: 400px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1161,15 +1155,23 @@ const formatDate = (dateStr) => {
   border-radius: var(--jpm-radius-card, 12px);
 }
 
-.empty-clipboard-icon {
-  width: 120px;
-  height: 120px;
+.empty-icon-wrap {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background-color: rgba(248, 34, 73, 0.06);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--jpm-color-red-marine, #F82249);
+  font-size: 2rem;
 }
 
-.empty-text {
-  margin-top: 18px;
-  font-size: 15px;
-  color: rgba(0, 0, 0, 0.65);
+.order-empty-heading {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--jpm-color-navy-deep, #0A1128);
+  font-family: var(--jpm-font-heading, inherit);
 }
 
 /* ========================================================================= */

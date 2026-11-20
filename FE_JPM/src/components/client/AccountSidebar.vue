@@ -24,7 +24,7 @@
           <span>Garage của tôi</span>
         </router-link>
         <router-link to="/vat-tu-thuong-mua" class="account-pill-link" active-class="active-pill-link">
-          <i class="bi bi-bookmark-heart fs-5"></i>
+          <i class="bi bi-box-seam fs-5"></i>
           <span>Vật tư thường mua</span>
         </router-link>
         <router-link to="/lich-su-don-hang" class="account-pill-link" active-class="active-pill-link">

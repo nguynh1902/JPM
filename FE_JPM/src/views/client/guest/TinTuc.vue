@@ -6,23 +6,111 @@
       <div class="container">
         <div class="row mb-3">
           <div class="col-12" data-aos="fade-down">
-            <h2 class="jpm-page-title">Tin Tức <span style="color: var(--jpm-color-red-marine, #F82249);">&amp; Cẩm Nang</span></h2>
-            <p class="text-muted">Tổng hợp những kiến thức chuyên sâu về vận hành tàu thuyền, cẩm nang bảo dưỡng động cơ thủy và xu hướng công nghệ hàng hải.</p>
+            <h2 class="jpm-page-title">Tin Tức <span class="text-danger">&amp; Cẩm Nang</span></h2>
+            <p class="text-muted jpm-page-subtitle">Tổng hợp những kiến thức chuyên sâu về vận hành tàu thuyền, cẩm nang bảo dưỡng động cơ thủy và xu hướng công nghệ hàng hải.</p>
           </div>
         </div>
       </div>
     </section>
 
     <!-- ════════════════════════════════════════════════════════════════
-         SECTION: TIÊU ĐIỂM CHUYÊN MỤC
-         Toolbar (Title + Search & Action) + Dedicated Tabs Row + 4 Landscape Cards
+         SECTION 1 (ĐỈNH TRANG - HERO MAGAZINE): TIÊU ĐIỂM & BÀI VIẾT MỚI NHẤT
+         1 Large Story Left + 3 Compact Horizontal Stories Right
     ════════════════════════════════════════════════════════════════ -->
-    <section id="top-destinations" class="pb-5">
+    <section class="pb-4 pb-md-5" v-if="featuredMainStory">
+      <div class="container">
+        <!-- Header Row -->
+        <div class="d-flex align-items-center justify-content-between mb-4">
+          <div>
+            <h2 class="section-editorial-title m-0">Tiêu Điểm &amp; Bài Viết Mới Nhất</h2>
+            <p class="section-editorial-subtitle mt-1 mb-0">Cập nhật tin tức, xu hướng công nghệ hàng hải và kiến thức vận hành mới nhất</p>
+          </div>
+        </div>
+
+        <div class="row g-4 gx-lg-5 align-items-stretch">
+          <!-- Left: 1 Large Featured Story -->
+          <div class="col-lg-6 d-flex flex-column">
+            <router-link :to="`/tin-tuc/${featuredMainStory.id}`" class="text-decoration-none d-block group-hover h-100 d-flex flex-column">
+              <div class="latest-main-img position-relative rounded-3 overflow-hidden mb-3 bg-light shadow-xs">
+                <img :src="getImageUrl(featuredMainStory.img)" :alt="featuredMainStory.title" class="w-100 h-100 object-fit-cover transition-transform" @error="onImgError" />
+                <div
+                  v-if="featuredMainStory.hasVideo"
+                  class="position-absolute top-50 start-50 translate-middle rounded-circle d-flex align-items-center justify-content-center play-circle-btn shadow"
+                  @click.stop.prevent="openVideoModal(featuredMainStory)"
+                  title="Kích để xem video"
+                >
+                  <i class="bi bi-play-fill fs-4 ms-1"></i>
+                </div>
+              </div>
+              <div class="news-category-label mb-1 text-truncate" :title="featuredMainStory.cat">
+                {{ featuredMainStory.cat }}
+              </div>
+              <h3 class="fw-bold mb-2 hero-title-hover hero-main-title">
+                {{ featuredMainStory.title }}
+              </h3>
+              <p class="text-secondary mb-2 text-truncate-2 hero-main-excerpt">
+                {{ featuredMainStory.excerpt }}
+              </p>
+              <div class="news-meta mt-1">
+                <i class="bi bi-calendar3"></i>
+                <span>{{ featuredMainStory.dateFormatted }}</span>
+              </div>
+            </router-link>
+          </div>
+
+          <!-- Right: 3 Stacked Horizontal Cards (Bự ra & Cân xứng chiều cao) -->
+          <div class="col-lg-6 d-flex flex-column justify-content-between h-100 gap-3 gap-lg-4" v-if="featuredSideStories && featuredSideStories.length > 0">
+            <router-link
+              v-for="story in featuredSideStories"
+              :key="story.id"
+              :to="`/tin-tuc/${story.id}`"
+              class="d-flex gap-3 gap-md-4 align-items-center text-decoration-none group-hover other-side-item"
+            >
+              <!-- Thumbnail bự ra (16:10, bo góc tròn đẹp) -->
+              <div class="latest-side-thumb position-relative rounded-3 overflow-hidden flex-shrink-0 bg-light shadow-xs">
+                <img :src="getImageUrl(story.img)" :alt="story.title" class="w-100 h-100 object-fit-cover transition-transform" @error="onImgError" />
+                <div
+                  v-if="story.hasVideo"
+                  class="position-absolute top-50 start-50 translate-middle rounded-circle d-flex align-items-center justify-content-center play-circle-btn-sm shadow"
+                  @click.stop.prevent="openVideoModal(story)"
+                  title="Kích xem video"
+                >
+                  <i class="bi bi-play-fill fs-5"></i>
+                </div>
+              </div>
+
+              <!-- Nội dung bài viết to rõ & có trích đoạn mô tả -->
+              <div class="flex-grow-1 min-w-0">
+                <div class="news-category-label mb-1 text-truncate" :title="story.cat">
+                  {{ story.cat }}
+                </div>
+                <h5 class="fw-bold mb-1 text-truncate-2 hero-title-hover other-side-title">
+                  {{ story.title }}
+                </h5>
+                <p class="text-secondary mb-2 text-truncate-2 other-side-excerpt">
+                  {{ story.excerpt || 'Tổng hợp kiến thức kỹ thuật hàng hải, cẩm nang bảo dưỡng và thông tin phụ tùng từ JPM Marine.' }}
+                </p>
+                <div class="news-meta">
+                  <i class="bi bi-calendar3"></i>
+                  <span>{{ story.dateFormatted }}</span>
+                </div>
+              </div>
+            </router-link>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════════════════════
+         SECTION 2 (Ở GIỮA): KHÁM PHÁ THEO CHUYÊN MỤC
+         Toolbar (Title) + Dedicated Tabs Row + 4 Landscape Cards
+    ════════════════════════════════════════════════════════════════ -->
+    <section id="top-destinations" class="py-4 py-md-5 border-top">
       <div class="container">
         <!-- Header Toolbar: Tiêu Đề -->
         <div class="mb-3">
-          <h2 class="section-editorial-title m-0">Tiêu Điểm Chuyên Mục</h2>
-          <p class="text-muted small mb-0 mt-1">Lọc bài viết theo danh mục kỹ thuật và công nghệ hàng hải</p>
+          <h2 class="section-editorial-title m-0">Khám Phá Theo Chuyên Mục</h2>
+          <p class="section-editorial-subtitle mt-1 mb-0">Lọc bài viết theo danh mục kỹ thuật và công nghệ hàng hải</p>
         </div>
 
         <!-- Dòng Tabs Danh Mục & Link Xem Thêm Chuẩn JPM Cửa Hàng (border-bottom pb-2) -->
@@ -44,8 +132,7 @@
           <button
             v-if="topCategoryArticles.length > 4"
             type="button"
-            class="btn btn-link text-danger fw-bold text-decoration-none d-flex align-items-center gap-1 p-0 shadow-none hover-underline flex-shrink-0 ms-3 pb-2"
-            style="color: var(--jpm-color-red-marine, #F82249) !important; font-size: 0.92rem;"
+            class="btn btn-link text-danger fw-bold text-decoration-none d-flex align-items-center gap-1 p-0 shadow-none section-more-btn flex-shrink-0 ms-3 pb-2"
             @click="showAllTopCategory = !showAllTopCategory"
           >
             {{ showAllTopCategory ? 'Thu gọn' : 'Xem thêm' }}
@@ -60,7 +147,7 @@
           <button type="button" class="btn btn-outline-action" @click="resetFilters">Xem tất cả bài viết</button>
         </div>
 
-        <!-- 4 Landscape Cards Grid (Tỉ lệ 16:10, Danh mục xám trên tiêu đề & Ngày đăng có icon) -->
+        <!-- 4 Landscape Cards Grid (Tỉ lệ 16:10, Danh mục đỏ trên tiêu đề & Ngày đăng có icon) -->
         <div v-else class="row row-cols-1 row-cols-sm-2 row-cols-lg-4 g-4">
           <div class="col" v-for="item in displayedTopCategoryArticles" :key="item.id">
             <router-link :to="`/tin-tuc/${item.id}`" class="text-decoration-none d-block group-hover h-100">
@@ -75,14 +162,13 @@
                   <i class="bi bi-play-fill fs-4 ms-1"></i>
                 </div>
               </div>
-              <!-- Danh mục: Thanh chữ màu xám trên tên bài viết chuẩn card sản phẩm -->
               <div class="news-category-label mb-1 text-truncate" :title="item.cat">
                 {{ item.cat }}
               </div>
-              <h5 class="fw-bold mb-2 text-truncate-2 hero-title-hover" style="font-size: 0.98rem; line-height: 1.45; color: var(--jpm-color-navy-dark, #0A1128);">
+              <h5 class="fw-bold mb-2 text-truncate-2 hero-title-hover landscape-card-title">
                 {{ item.title }}
               </h5>
-              <div class="text-muted d-flex align-items-center gap-1" style="font-size: 0.78rem;">
+              <div class="news-meta">
                 <i class="bi bi-calendar3"></i>
                 <span>{{ item.dateFormatted }}</span>
               </div>
@@ -93,23 +179,32 @@
     </section>
 
     <!-- ════════════════════════════════════════════════════════════════
-         SECTION: BÀI VIẾT MỚI NHẤT (2 HÀNG X 2 CỘT = 4 CARD LỚN)
+         SECTION 3 (ĐÁY TRANG): CẨM NANG & KINH NGHIỆM KỸ THUẬT
          Bố cục 2 Card Lớn (Ảnh trên, Chữ dưới) chuẩn phong cách Editorial
     ════════════════════════════════════════════════════════════════ -->
-    <section class="py-4 py-md-5" v-if="latestGridArticles.length > 0">
+    <section class="py-4 py-md-5 mb-5 border-top" v-if="displayedGuideArticles.length > 0">
       <div class="container">
         <!-- Section Header -->
         <div class="d-flex align-items-center justify-content-between mb-4">
           <div>
-            <h2 class="section-editorial-title m-0">Bài Viết Mới Nhất</h2>
-            <p class="text-muted small mb-0 mt-1">Cập nhật tin tức, xu hướng công nghệ hàng hải và kiến thức vận hành mới nhất</p>
+            <h2 class="section-editorial-title m-0">Cẩm Nang &amp; Kinh Nghiệm Kỹ Thuật</h2>
+            <p class="section-editorial-subtitle mt-1 mb-0">Hướng dẫn thực tế về bảo trì, phụ tùng thay thế và giải pháp vận hành tàu thuyền bền bỉ</p>
           </div>
+          <button
+            v-if="guideArticles.length > 4"
+            type="button"
+            class="btn btn-link text-danger fw-bold text-decoration-none d-flex align-items-center gap-1 p-0 shadow-none section-more-btn flex-shrink-0 ms-3"
+            @click="showMoreGuide = !showMoreGuide"
+          >
+            {{ showMoreGuide ? 'Thu gọn' : 'Xem thêm' }}
+            <i class="bi" :class="showMoreGuide ? 'bi-arrow-up' : 'bi-arrow-right'"></i>
+          </button>
         </div>
 
         <!-- 4 Large Cards Grid (2 Hàng x 2 Cột = 4 Card Lớn) -->
         <div class="row g-4 g-lg-5">
           <div
-            v-for="item in latestGridArticles"
+            v-for="item in displayedGuideArticles"
             :key="item.id"
             class="col-12 col-md-6"
           >
@@ -153,99 +248,11 @@
               </p>
 
               <!-- 5. Hàng ngày tháng -->
-              <div class="text-muted d-flex align-items-center gap-1 mt-1" style="font-size: 0.82rem;">
+              <div class="news-meta mt-1">
                 <i class="bi bi-calendar3"></i>
                 <span>{{ item.dateFormatted }}</span>
               </div>
             </article>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ════════════════════════════════════════════════════════════════
-         SECTION: BÀI VIẾT KHÁC
-         1 Large Story Left + 3 Compact Horizontal Stories Right
-    ════════════════════════════════════════════════════════════════ -->
-    <section class="py-5 mb-5" v-if="otherMainStory">
-      <div class="container">
-        <!-- Header Row -->
-        <div class="d-flex align-items-center justify-content-between mb-4">
-          <div>
-            <h2 class="section-editorial-title m-0">Bài Viết Khác</h2>
-            <p class="text-muted small mb-0 mt-1">Khám phá thêm các cẩm nang kỹ thuật và kinh nghiệm thực tế từ chuyên gia JPM Marine</p>
-          </div>
-        </div>
-
-        <div class="row g-4 gx-lg-5 align-items-stretch">
-          <!-- Left: 1 Large Featured Story -->
-          <div class="col-lg-6 d-flex flex-column">
-            <router-link :to="`/tin-tuc/${otherMainStory.id}`" class="text-decoration-none d-block group-hover h-100 d-flex flex-column">
-              <div class="latest-main-img position-relative rounded-3 overflow-hidden mb-3 bg-light shadow-xs">
-                <img :src="getImageUrl(otherMainStory.img)" :alt="otherMainStory.title" class="w-100 h-100 object-fit-cover transition-transform" @error="onImgError" />
-                <div
-                  v-if="otherMainStory.hasVideo"
-                  class="position-absolute top-50 start-50 translate-middle rounded-circle d-flex align-items-center justify-content-center play-circle-btn shadow"
-                  @click.stop.prevent="openVideoModal(otherMainStory)"
-                  title="Kích để xem video"
-                >
-                  <i class="bi bi-play-fill fs-4 ms-1"></i>
-                </div>
-              </div>
-              <div class="news-category-label mb-1 text-truncate" :title="otherMainStory.cat">
-                {{ otherMainStory.cat }}
-              </div>
-              <h3 class="fw-bold mb-2 hero-title-hover" style="font-size: 1.35rem; line-height: 1.35; color: var(--jpm-color-navy-dark, #0A1128);">
-                {{ otherMainStory.title }}
-              </h3>
-              <p class="text-secondary mb-2 text-truncate-2" style="font-size: 0.92rem; line-height: 1.6;">
-                {{ otherMainStory.excerpt }}
-              </p>
-              <div class="text-muted d-flex align-items-center gap-1 mt-1" style="font-size: 0.78rem;">
-                <i class="bi bi-calendar3"></i>
-                <span>{{ otherMainStory.dateFormatted }}</span>
-              </div>
-            </router-link>
-          </div>
-
-          <!-- Right: 3 Stacked Horizontal Cards (Bự ra & Cân xứng chiều cao) -->
-          <div class="col-lg-6 d-flex flex-column justify-content-between h-100 gap-3 gap-lg-4">
-            <router-link
-              v-for="story in otherSideStories"
-              :key="story.id"
-              :to="`/tin-tuc/${story.id}`"
-              class="d-flex gap-3 gap-md-4 align-items-center text-decoration-none group-hover other-side-item"
-            >
-              <!-- Thumbnail bự ra (16:10, bo góc tròn đẹp) -->
-              <div class="latest-side-thumb position-relative rounded-3 overflow-hidden flex-shrink-0 bg-light shadow-xs">
-                <img :src="getImageUrl(story.img)" :alt="story.title" class="w-100 h-100 object-fit-cover transition-transform" @error="onImgError" />
-                <div
-                  v-if="story.hasVideo"
-                  class="position-absolute top-50 start-50 translate-middle rounded-circle d-flex align-items-center justify-content-center play-circle-btn-sm shadow"
-                  @click.stop.prevent="openVideoModal(story)"
-                  title="Kích xem video"
-                >
-                  <i class="bi bi-play-fill fs-5"></i>
-                </div>
-              </div>
-
-              <!-- Nội dung bài viết to rõ & có trích đoạn mô tả -->
-              <div class="flex-grow-1 min-w-0">
-                <div class="news-category-label mb-1 text-truncate" :title="story.cat">
-                  {{ story.cat }}
-                </div>
-                <h5 class="fw-bold mb-1 text-truncate-2 hero-title-hover other-side-title">
-                  {{ story.title }}
-                </h5>
-                <p class="text-secondary mb-2 text-truncate-2 other-side-excerpt">
-                  {{ story.excerpt || 'Tổng hợp kiến thức kỹ thuật hàng hải, cẩm nang bảo dưỡng và thông tin phụ tùng từ JPM Marine.' }}
-                </p>
-                <div class="text-muted d-flex align-items-center gap-1" style="font-size: 0.78rem;">
-                  <i class="bi bi-calendar3"></i>
-                  <span>{{ story.dateFormatted }}</span>
-                </div>
-              </div>
-            </router-link>
           </div>
         </div>
       </div>
@@ -464,7 +471,11 @@ export default {
       return raw.map(mapArticle);
     });
 
-    // 1. Tiêu Điểm Chuyên Mục (Filtered by activeTab & searchQuery)
+    // 1. TẦNG 1: Tiêu Điểm & Bài Viết Mới Nhất (1 Lớn Trái + 3 Ngang Phải)
+    const featuredMainStory = computed(() => allNews.value[0] || null);
+    const featuredSideStories = computed(() => allNews.value.slice(1, 4));
+
+    // 2. TẦNG 2: Khám Phá Theo Chuyên Mục (Filtered by activeTab & searchQuery)
     const topCategoryArticles = computed(() => {
       return allNews.value.filter((art) => {
         const matchTab = activeTab.value === 'Tất cả' || art.cat === activeTab.value;
@@ -484,29 +495,19 @@ export default {
       return topCategoryArticles.value.slice(0, 4);
     });
 
-    // 2. Bài Viết Mới Nhất (2 Hàng x 2 Cột = 4 Card Lớn)
-    const latestGridArticles = computed(() => {
-      if (allNews.value.length >= 8) {
-        return allNews.value.slice(4, 8);
-      }
+    // 3. TẦNG 3: Cẩm Nang & Kinh Nghiệm Kỹ Thuật (Lưới Card Lớn phía dưới)
+    // Lấy các bài viết từ index 4 trở đi để không trùng lặp với Hero tầng 1
+    const showMoreGuide = ref(false);
+    const guideArticles = computed(() => {
       if (allNews.value.length > 4) {
         return allNews.value.slice(4);
       }
-      return allNews.value.slice(0, 4);
+      return [];
     });
-
-    // 3. Bài Viết Khác (1 Main Left + 3 Side Right)
-    const otherArticlesPool = computed(() => {
-      if (allNews.value.length > 8) {
-        return allNews.value.slice(8);
-      }
-      if (allNews.value.length > 4) {
-        return allNews.value.slice(4);
-      }
-      return allNews.value;
+    const displayedGuideArticles = computed(() => {
+      if (showMoreGuide.value) return guideArticles.value;
+      return guideArticles.value.slice(0, 4);
     });
-    const otherMainStory = computed(() => otherArticlesPool.value[0] || allNews.value[0] || null);
-    const otherSideStories = computed(() => otherArticlesPool.value.slice(1, 4));
 
     // === Actions ===
     const selectTab = (tab) => {
@@ -537,6 +538,7 @@ export default {
       searchQuery,
       showAllTopCategory,
       showMoreLatest,
+      showMoreGuide,
       activeVideoModalItem,
       activeVideoEmbedUrl,
       openVideoModal,
@@ -544,11 +546,12 @@ export default {
       getImageUrl,
       isFetching,
       allNews,
+      featuredMainStory,
+      featuredSideStories,
       topCategoryArticles,
       displayedTopCategoryArticles,
-      latestGridArticles,
-      otherMainStory,
-      otherSideStories,
+      guideArticles,
+      displayedGuideArticles,
       selectTab,
       resetFilters,
       onImgError,
@@ -568,24 +571,41 @@ export default {
   background-color: #ffffff !important;
 }
 
-/* ── PAGE TITLE (MATCHING GIO HANG) ── */
+/* ── PAGE TITLE & SUBTITLE (ĐỒNG BỘ 100% CỬA HÀNG & TRA CỨU) ── */
 .jpm-page-title {
   font-family: var(--heading-font, 'Raleway', sans-serif);
+  font-size: 28px !important;
   font-weight: 800;
-  color: #0A1128;
+  color: var(--heading-color, #0A1128) !important;
   letter-spacing: -0.5px;
+  line-height: 1.25;
+}
+.jpm-page-subtitle,
+.inner-page-section p.text-muted {
+  font-family: var(--default-font, 'Roboto', sans-serif);
+  font-size: 0.95rem;
+  font-weight: 400;
+  color: #64748b !important;
+  line-height: 1.6;
 }
 
-/* ── TYPOGRAPHY & BUTTONS (DESIGN SYSTEM 2026) ── */
+/* ── TYPOGRAPHY & BUTTONS (DESIGN SYSTEM 2026 - ĐỒNG BỘ TRANG CHỦ) ── */
 .section-editorial-title {
   font-family: var(--heading-font, 'Raleway', sans-serif);
-  font-size: clamp(1.4rem, 2.2vw, 1.75rem);
+  font-size: 28px;
   font-weight: 700;
-  color: var(--jpm-color-navy-dark, #0A1128);
-  letter-spacing: normal;
+  line-height: 1.28;
+  letter-spacing: -0.3px;
+  color: var(--heading-color, #0A1128);
 }
 
-
+.section-editorial-subtitle {
+  font-family: var(--default-font, 'Roboto', sans-serif);
+  font-size: 0.95rem;
+  font-weight: 400;
+  line-height: 1.6;
+  color: #64748b;
+}
 
 /* ── ACTION BUTTONS (CHUẨN HÓA 40PX, 8PX RADIUS) ── */
 .btn-outline-action {
@@ -631,11 +651,12 @@ export default {
   display: none;
 }
 .wireframe-tab-btn {
+  font-family: var(--heading-font, 'Raleway', sans-serif);
   background: none;
   border: none;
   border-bottom: 2px solid transparent;
   padding: 8px 16px;
-  font-size: 0.9rem;
+  font-size: 0.92rem;
   font-weight: 600;
   color: #64748b;
   white-space: nowrap;
@@ -644,7 +665,7 @@ export default {
   margin-bottom: -1px; /* Canh sát vào đường kẻ border-bottom */
 }
 .wireframe-tab-btn:hover {
-  color: var(--jpm-color-navy-dark, #0A1128);
+  color: var(--heading-color, #0A1128);
 }
 .wireframe-tab-btn.active {
   color: var(--jpm-color-red-marine, #f82249);
@@ -652,10 +673,15 @@ export default {
   border-bottom-color: var(--jpm-color-red-marine, #f82249);
 }
 
-.hover-underline {
+.section-more-btn {
+  font-family: var(--heading-font, 'Raleway', sans-serif);
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--jpm-color-red-marine, #F82249) !important;
+  text-decoration: none;
   transition: opacity 0.2s ease;
 }
-.hover-underline:hover {
+.section-more-btn:hover {
   text-decoration: underline !important;
   opacity: 0.85;
 }
@@ -665,17 +691,47 @@ export default {
   border-radius: var(--jpm-radius-card, 12px);
 }
 
-/* ── DANH MỤC DẠNG THANH CHỮ ĐỎ MARINE NỔI BẬT ── */
+/* ── DANH MỤC DẠNG THANH CHỮ ĐỎ MARINE NỔI BẬT (CHUẨN RALWAY UPPERCASE) ── */
 .news-category-label {
+  font-family: var(--heading-font, 'Raleway', sans-serif) !important;
   font-size: 0.74rem;
   font-weight: 700;
   letter-spacing: 0.6px;
   text-transform: uppercase;
-  color: var(--jpm-color-red-marine, #F82249);
+  color: var(--jpm-color-red-marine, #F82249) !important;
   line-height: 1.3;
 }
 
-/* ── SECTION: MIDDLE SPOTLIGHT CARDS (2 LỚN Ở KHOẢNG GIỮA) ── */
+/* ── TIÊU ĐỀ & TÓM TẮT BÀI VIẾT (ARTICLE TITLES & EXCERPTS) ── */
+.hero-main-title {
+  font-family: var(--heading-font, 'Raleway', sans-serif);
+  font-size: 1.35rem;
+  font-weight: 700;
+  line-height: 1.35;
+  letter-spacing: -0.2px;
+  color: var(--heading-color, #0A1128);
+}
+.hero-main-excerpt {
+  font-family: var(--default-font, 'Roboto', sans-serif);
+  font-size: 0.92rem;
+  line-height: 1.6;
+  color: #64748b;
+}
+
+.landscape-card-title {
+  font-family: var(--heading-font, 'Raleway', sans-serif);
+  font-size: 0.96rem;
+  font-weight: 700;
+  line-height: 1.45;
+  color: var(--heading-color, #0A1128);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  height: 2.9em;
+}
+
+/* ── SECTION: MIDDLE SPOTLIGHT CARDS (CẨM NANG & KINH NGHIỆM) ── */
 .middle-feature-card {
   transition: transform 0.25s ease;
 }
@@ -689,10 +745,11 @@ export default {
 
 .middle-card-title {
   font-family: var(--heading-font, 'Raleway', sans-serif);
-  font-size: clamp(1.15rem, 1.8vw, 1.35rem);
+  font-size: 1.25rem;
   font-weight: 700;
   line-height: 1.35;
-  color: var(--jpm-color-navy-dark, #0A1128);
+  letter-spacing: -0.2px;
+  color: var(--heading-color, #0A1128);
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
@@ -700,18 +757,19 @@ export default {
 }
 
 .middle-card-title a {
-  color: var(--jpm-color-navy-dark, #0A1128) !important;
+  color: var(--heading-color, #0A1128) !important;
   transition: opacity 0.2s ease;
 }
 
 .middle-card-title a:hover,
 .middle-feature-card:hover .middle-card-title a {
-  color: var(--jpm-color-navy-dark, #0A1128) !important;
+  color: var(--heading-color, #0A1128) !important;
   opacity: 0.85;
 }
 
 .middle-card-excerpt {
-  font-size: 0.92rem;
+  font-family: var(--default-font, 'Roboto', sans-serif);
+  font-size: 0.9rem;
   line-height: 1.55;
   color: #64748b;
   display: -webkit-box;
@@ -720,7 +778,7 @@ export default {
   overflow: hidden;
 }
 
-/* ── SECTION 3: LATEST STORIES / OTHER STORIES ── */
+/* ── SECTION 1: LATEST STORIES / OTHER STORIES ── */
 .latest-main-img {
   aspect-ratio: 16 / 10;
 }
@@ -741,10 +799,10 @@ export default {
 
 .other-side-title {
   font-family: var(--heading-font, 'Raleway', sans-serif);
-  font-size: clamp(1rem, 1.25vw, 1.15rem);
+  font-size: 1.05rem;
   font-weight: 700;
-  line-height: 1.35;
-  color: var(--jpm-color-navy-dark, #0A1128);
+  line-height: 1.38;
+  color: var(--heading-color, #0A1128);
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
@@ -752,6 +810,7 @@ export default {
 }
 
 .other-side-excerpt {
+  font-family: var(--default-font, 'Roboto', sans-serif);
   font-size: 0.86rem;
   line-height: 1.5;
   color: #64748b;
@@ -759,6 +818,22 @@ export default {
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+
+/* ── NGÀY ĐĂNG & META CHUẨN ĐỒNG BỘ TOÀN HỆ THỐNG ── */
+.news-meta {
+  font-family: var(--default-font, 'Roboto', sans-serif);
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #64748b;
+  line-height: 1.3;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.news-meta i {
+  color: inherit;
+  font-size: 0.82rem;
 }
 
 .play-circle-btn {
@@ -809,14 +884,14 @@ a.group-hover:hover {
   transform: scale(1.05);
 }
 .hero-title-hover {
-  color: var(--jpm-color-navy-dark, #0A1128) !important;
+  color: var(--heading-color, #0A1128) !important;
   transition: opacity 0.2s ease;
 }
 .group-hover:hover .hero-title-hover,
 .hero-title-hover:hover,
 a.group-hover:hover .hero-title-hover,
 a:hover .hero-title-hover {
-  color: var(--jpm-color-navy-dark, #0A1128) !important;
+  color: var(--heading-color, #0A1128) !important;
   opacity: 0.88;
 }
 .text-truncate-2 {
@@ -827,6 +902,15 @@ a:hover .hero-title-hover {
 }
 
 @media (max-width: 767px) {
+  .jpm-page-title {
+    font-size: 24px !important;
+  }
+  .section-editorial-title {
+    font-size: 24px;
+  }
+  .section-editorial-subtitle {
+    font-size: 0.9rem;
+  }
   .latest-side-thumb {
     width: 115px;
     height: 74px;

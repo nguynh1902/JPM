@@ -9,7 +9,7 @@
             <h2 class="jpm-page-title">
               {{ titleParts.main }} <span class="text-danger">{{ titleParts.accent }}</span>
             </h2>
-            <p class="text-muted mb-0">
+            <p class="text-muted jpm-page-subtitle mb-0">
               {{ titleParts.desc }}
             </p>
           </div>
@@ -22,7 +22,7 @@
           <!-- MAIN CONTENT -->
           <div class="col-lg-9 d-flex flex-column">
             <!-- Tự động inject component con (TaiKhoan, Garage...) vào đây, không tải lại trang! -->
-            <router-view />
+            <router-view class="h-100 flex-grow-1 d-flex flex-column" />
           </div>
         </div>
       </div>
@@ -87,5 +87,20 @@ const triggerFileInput = () => {};
 </script>
 
 <style scoped>
-/* jpm-page-title kế thừa từ main.css */
+/* jpm-page-title & jpm-page-subtitle đồng bộ 100% Cửa Hàng, Tra Cứu, Tin Tức */
+.jpm-page-title {
+  font-family: var(--heading-font, 'Raleway', sans-serif);
+  font-size: 28px !important;
+  font-weight: 800;
+  color: var(--heading-color, #0A1128) !important;
+  letter-spacing: -0.5px;
+  line-height: 1.25;
+}
+.jpm-page-subtitle {
+  font-family: var(--default-font, 'Roboto', sans-serif);
+  font-size: 0.95rem;
+  font-weight: 400;
+  color: #64748b !important;
+  line-height: 1.6;
+}
 </style>
