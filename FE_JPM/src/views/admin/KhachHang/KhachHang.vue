@@ -323,7 +323,7 @@
                         type="file"
                         id="avatar"
                         class="form-control mb-2"
-                        accept="image/*"
+                        accept="image/*,.jpg,.jpeg,.png,.webp,.gif,.svg,.bmp,.avif,.heic,.heif,.tiff,.tif,.ico,.jfif"
                         @change="handleAvatarUpload"
                       />
                       <div

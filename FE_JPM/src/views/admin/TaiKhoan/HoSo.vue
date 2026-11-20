@@ -45,7 +45,7 @@
                         id="upload"
                         class="account-file-input"
                         hidden
-                        accept="image/*"
+                        accept="image/*,.jpg,.jpeg,.png,.webp,.gif,.svg,.bmp,.avif,.heic,.heif,.tiff,.tif,.ico,.jfif"
                         @change="handleAvatarUpload"
                       />
                     </label>

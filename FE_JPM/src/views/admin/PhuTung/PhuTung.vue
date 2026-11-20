@@ -371,7 +371,7 @@
                         type="file"
                         id="hinh_anh_file"
                         class="form-control mb-2"
-                        accept="image/*"
+                        accept="image/*,.jpg,.jpeg,.png,.webp,.gif,.svg,.bmp,.avif,.heic,.heif,.tiff,.tif,.ico,.jfif"
                         @change="handleMainImageUpload"
                       />
                       <div
@@ -412,7 +412,7 @@
                             <i class="bx bx-upload"></i> Chọn nhiều ảnh
                           </label>
                         </div>
-                        <input type="file" id="thu_vien_anh" class="d-none" accept="image/*" multiple @change="handleGalleryUpload" />
+                        <input type="file" id="thu_vien_anh" class="d-none" accept="image/*,.jpg,.jpeg,.png,.webp,.gif,.svg,.bmp,.avif,.heic,.heif,.tiff,.tif,.ico,.jfif" multiple @change="handleGalleryUpload" />
                           
                           <!-- Existing Gallery -->
                           <div v-if="formData.thu_vien_anh && formData.thu_vien_anh.length > 0" class="mb-2">

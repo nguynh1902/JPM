@@ -556,8 +556,8 @@
                     <!-- KHU VỰC BIÊN LAI CHUYỂN TIỀN (1 ROW 2 PHẦN - Chỉ hiển thị khi ĐÃ BÁO GIÁ status >= 1, ẩn khi CHỜ BÁO GIÁ) -->
                     <div class="mt-3 pt-2 border-top mb-3" v-if="selectedQuote && selectedQuote.status >= 1">
                       <!-- Input file ẩn để kích hoạt khi bấm nút hoặc bấm ô ảnh -->
-                      <input type="file" ref="quoteReceiptSlot1" class="d-none" accept="image/*" @change="onFileSelected($event, 'quote', 1)">
-                      <input type="file" ref="quoteReceiptSlot2" class="d-none" accept="image/*" @change="onFileSelected($event, 'quote', 2)">
+                      <input type="file" ref="quoteReceiptSlot1" class="d-none" accept="image/*,.jpg,.jpeg,.png,.webp,.gif,.svg,.bmp,.avif,.heic,.heif,.tiff,.tif,.ico,.jfif" @change="onFileSelected($event, 'quote', 1)">
+                      <input type="file" ref="quoteReceiptSlot2" class="d-none" accept="image/*,.jpg,.jpeg,.png,.webp,.gif,.svg,.bmp,.avif,.heic,.heif,.tiff,.tif,.ico,.jfif" @change="onFileSelected($event, 'quote', 2)">
 
                       <div class="mb-2">
                         <label class="form-label fw-bold text-dark mb-0 text-uppercase" style="font-size: 0.75rem;">
@@ -993,8 +993,8 @@
                   <!-- KHU VỰC BIÊN LAI CHUYỂN TIỀN (1 ROW 2 PHẦN) -->
                   <div class="mt-3 pt-2 border-top mb-3">
                     <!-- Input file ẩn để kích hoạt khi bấm nút hoặc bấm ô ảnh -->
-                    <input type="file" ref="orderReceiptSlot1" class="d-none" accept="image/*" @change="onFileSelected($event, 'order', 1)">
-                    <input type="file" ref="orderReceiptSlot2" class="d-none" accept="image/*" @change="onFileSelected($event, 'order', 2)">
+                    <input type="file" ref="orderReceiptSlot1" class="d-none" accept="image/*,.jpg,.jpeg,.png,.webp,.gif,.svg,.bmp,.avif,.heic,.heif,.tiff,.tif,.ico,.jfif" @change="onFileSelected($event, 'order', 1)">
+                    <input type="file" ref="orderReceiptSlot2" class="d-none" accept="image/*,.jpg,.jpeg,.png,.webp,.gif,.svg,.bmp,.avif,.heic,.heif,.tiff,.tif,.ico,.jfif" @change="onFileSelected($event, 'order', 2)">
 
                     <div class="mb-2">
                       <label class="form-label fw-bold text-dark mb-0 text-uppercase" style="font-size: 0.75rem;">
@@ -1708,8 +1708,8 @@
 
                     <!-- KHU VỰC BIÊN LAI CHUYỂN TIỀN (1 ROW 2 PHẦN) -->
                     <div class="mt-3 pt-2 border-top mb-3">
-                      <input type="file" ref="createReceiptSlot1" class="d-none" accept="image/*" @change="handleUploadCreateReceipt($event, 'anh_chuyen_khoan')">
-                      <input type="file" ref="createReceiptSlot2" class="d-none" accept="image/*" @change="handleUploadCreateReceipt($event, 'anh_chuyen_khoan_2')">
+                      <input type="file" ref="createReceiptSlot1" class="d-none" accept="image/*,.jpg,.jpeg,.png,.webp,.gif,.svg,.bmp,.avif,.heic,.heif,.tiff,.tif,.ico,.jfif" @change="handleUploadCreateReceipt($event, 'anh_chuyen_khoan')">
+                      <input type="file" ref="createReceiptSlot2" class="d-none" accept="image/*,.jpg,.jpeg,.png,.webp,.gif,.svg,.bmp,.avif,.heic,.heif,.tiff,.tif,.ico,.jfif" @change="handleUploadCreateReceipt($event, 'anh_chuyen_khoan_2')">
 
                       <div class="mb-2">
                         <label class="form-label fw-bold text-dark mb-0 text-uppercase" style="font-size: 0.75rem;">

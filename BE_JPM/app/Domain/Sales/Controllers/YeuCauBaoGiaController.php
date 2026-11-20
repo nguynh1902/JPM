@@ -932,7 +932,7 @@ class YeuCauBaoGiaController extends Controller
 
             if ($request->hasFile('file')) {
                 $request->validate([
-                    'file' => 'required|image|mimes:jpeg,png,jpg,webp,gif|max:10240'
+                    'file' => 'required|file|mimes:jpeg,png,jpg,gif,svg,webp,bmp,avif,heic,heif,tiff,tif,ico,jfif,eps,raw,cr2,nef,psd,ai|max:20480'
                 ]);
                 $file = $request->file('file');
                 $filename = 'receipt_' . date('Ymd_His') . '_' . Str::random(8) . '.' . $file->getClientOriginalExtension();

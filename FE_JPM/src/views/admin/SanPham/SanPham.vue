@@ -167,7 +167,7 @@
                 <div class="row">
                   <div class="col-md-12 mb-3">
                     <label class="form-label fw-medium text-dark">Hình Ảnh Chính</label>
-                    <input type="file" id="hinh_anh_chinh" class="form-control mb-2" accept="image/*" @change="handleMainImageUpload">
+                    <input type="file" id="hinh_anh_chinh" class="form-control mb-2" accept="image/*,.jpg,.jpeg,.png,.webp,.gif,.svg,.bmp,.avif,.heic,.heif,.tiff,.tif,.ico,.jfif" @change="handleMainImageUpload">
                     <div class="d-flex justify-content-center align-items-center border rounded bg-light mb-3 position-relative" style="height: 180px;">
                       <img v-if="mainImagePreview || formData.hinh_anh_chinh" :src="mainImagePreview || getImageUrl(formData.hinh_anh_chinh)" style="max-height: 160px; max-width: 100%; object-fit: contain;" @error="$event.target.style.display='none'; $event.target.nextElementSibling.style.display='inline-block'">
                       <button v-if="mainImagePreview || formData.hinh_anh_chinh" type="button" class="btn btn-icon btn-sm bg-white text-danger position-absolute top-0 end-0 m-2 rounded-circle shadow-sm border" @click="removeMainImage" style="width: 28px; height: 28px; padding: 0;" title="Xóa ảnh chính"><i class="bx bx-trash"></i></button>
@@ -180,7 +180,7 @@
                             <i class="bx bx-upload"></i> Chọn nhiều ảnh
                           </label>
                         </div>
-                        <input type="file" id="thu_vien_anh" class="d-none" accept="image/*" multiple @change="handleGalleryUpload" />
+                        <input type="file" id="thu_vien_anh" class="d-none" accept="image/*,.jpg,.jpeg,.png,.webp,.gif,.svg,.bmp,.avif,.heic,.heif,.tiff,.tif,.ico,.jfif" multiple @change="handleGalleryUpload" />
                         
                         <!-- Existing Gallery -->
                         <div v-if="formData.thu_vien_anh && formData.thu_vien_anh.length > 0" class="mb-2">

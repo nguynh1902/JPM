@@ -221,7 +221,7 @@
                           type="file"
                           id="avatar"
                           class="form-control mb-2"
-                          accept="image/*"
+                          accept="image/*,.jpg,.jpeg,.png,.webp,.gif,.svg,.bmp,.avif,.heic,.heif,.tiff,.tif,.ico,.jfif"
                           @change="handleAvatarUpload"
                         />
                         <div class="d-flex justify-content-center align-items-center border rounded bg-light mb-3 position-relative" style="height: 180px;">

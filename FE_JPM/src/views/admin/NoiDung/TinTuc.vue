@@ -218,7 +218,7 @@
                   <input
                     type="file"
                     class="form-control mb-2"
-                    accept="image/*"
+                    accept="image/*,.jpg,.jpeg,.png,.webp,.gif,.svg,.bmp,.avif,.heic,.heif,.tiff,.tif,.ico,.jfif"
                     @change="handleThumbnailUpload"
                   />
                   <div class="d-flex justify-content-center align-items-center border rounded bg-light mt-2 position-relative" style="height: 180px;">
@@ -236,7 +236,7 @@
                             <i class="bx bx-upload"></i> Chọn nhiều ảnh
                           </label>
                         </div>
-                        <input type="file" id="gallery_upload" class="d-none" accept="image/*" multiple @change="handleGalleryUpload" />
+                        <input type="file" id="gallery_upload" class="d-none" accept="image/*,.jpg,.jpeg,.png,.webp,.gif,.svg,.bmp,.avif,.heic,.heif,.tiff,.tif,.ico,.jfif" multiple @change="handleGalleryUpload" />
                   
                   <!-- Existing Gallery -->
                   <div v-if="formData.gallery && formData.gallery.length > 0" class="mb-2">

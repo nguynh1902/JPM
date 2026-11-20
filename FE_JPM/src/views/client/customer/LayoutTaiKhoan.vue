@@ -36,7 +36,7 @@
       type="file" 
       ref="avatarFileInput" 
       class="d-none" 
-      accept="image/jpeg,image/png,image/webp,image/jpg" 
+      accept="image/*,.jpg,.jpeg,.png,.webp,.gif,.svg,.bmp,.avif,.heic,.heif,.tiff,.tif,.ico,.jfif" 
       @change="handleAvatarFileChange" 
     />
   </div>

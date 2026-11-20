@@ -30,8 +30,40 @@ export function formatBytes(bytes, decimals = 1) {
  */
 export function compressImage(file, options = {}) {
   return new Promise((resolve, reject) => {
-    if (!file || !file.type || !file.type.startsWith('image/')) {
+    if (!file) {
+      return reject(new Error('Vui lòng chọn một file hợp lệ.'));
+    }
+
+    // Kiểm tra định dạng ảnh bằng cả MIME type lẫn đuôi mở rộng của file
+    const isImageMime = file.type && file.type.startsWith('image/');
+    const isImageExt = file.name && /\.(jpe?g|png|webp|gif|svg|bmp|avif|heic|heif|tiff?|ico|jfif|raw|cr2|nef|eps|psd|ai)$/i.test(file.name);
+
+    if (!isImageMime && !isImageExt) {
       return reject(new Error('File được chọn không phải là hình ảnh hợp lệ.'));
+    }
+
+    // Helper: Graceful fallback giữ nguyên file gốc nếu trình duyệt không hỗ trợ giải mã trực tiếp (VD: .heic, .tiff, raw...)
+    const fallbackOriginal = () => {
+      let previewUrl = '';
+      try {
+        previewUrl = URL.createObjectURL(file);
+      } catch (_) {}
+      resolve({
+        file,
+        previewUrl,
+        originalSize: file.size,
+        compressedSize: file.size,
+        savedPercent: 0,
+        width: 0,
+        height: 0,
+        isFallback: true
+      });
+    };
+
+    // Định dạng SVG là đồ họa vector không suy hao: Giữ nguyên file gốc để giữ độ sắc nét vô cực
+    const isSvg = (file.type && file.type.includes('svg')) || (file.name && /\.svg$/i.test(file.name));
+    if (isSvg) {
+      return fallbackOriginal();
     }
 
     // Default configuration
@@ -43,12 +75,12 @@ export function compressImage(file, options = {}) {
 
     const reader = new FileReader();
 
-    reader.onerror = () => reject(new Error('Không thể đọc file ảnh.'));
+    reader.onerror = fallbackOriginal;
 
     reader.onload = (e) => {
       const img = new Image();
 
-      img.onerror = () => reject(new Error('Trình duyệt không thể xử lý ảnh này.'));
+      img.onerror = fallbackOriginal;
 
       img.onload = () => {
         try {
@@ -117,7 +149,7 @@ export function compressImage(file, options = {}) {
                 canvas.toBlob(
                   (fallbackBlob) => {
                     if (!fallbackBlob) {
-                      return reject(new Error('Lỗi chuyển đổi dữ liệu ảnh.'));
+                      return fallbackOriginal();
                     }
                     finishExport(fallbackBlob, 'jpeg');
                   },
@@ -162,7 +194,7 @@ export function compressImage(file, options = {}) {
             });
           }
         } catch (err) {
-          reject(err);
+          fallbackOriginal();
         }
       };
 

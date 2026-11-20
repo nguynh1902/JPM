@@ -33,7 +33,7 @@
                   type="file"
                   id="logo"
                   class="form-control mb-2"
-                  accept="image/*"
+                  accept="image/*,.jpg,.jpeg,.png,.webp,.gif,.svg,.bmp,.avif,.heic,.heif,.tiff,.tif,.ico,.jfif"
                   @change="handleLogoUpload"
                 />
                 <div class="d-flex justify-content-center align-items-center border rounded bg-light mt-2 position-relative" style="height: 180px;">

@@ -23,7 +23,7 @@ class UpdateThuongHieuRequest extends FormRequest
                 'max:255',
                 Rule::unique('thuong_hieus', 'name')->ignore($brandId)
             ],
-            'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp,bmp|max:5120',
+            'logo' => 'nullable|file|mimes:jpeg,png,jpg,gif,svg,webp,bmp,avif,heic,heif,tiff,tif,ico,jfif,eps,raw,cr2,nef,psd,ai|max:20480',
             'status' => 'required|boolean',
         ];
     }

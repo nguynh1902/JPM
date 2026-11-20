@@ -23,8 +23,8 @@ class StorePhuTungRequest extends FormRequest
             'thong_so_ky_thuat'      => 'nullable|string',
             'video_url'              => 'nullable|string|url|max:500',
             'hinh_anh'               => 'nullable|string',
-            'hinh_anh_file'          => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp,bmp|max:5120',
-            'thu_vien_anh_files.*'   => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp,bmp|max:5120',
+            'hinh_anh_file'          => 'nullable|file|mimes:jpeg,png,jpg,gif,svg,webp,bmp,avif,heic,heif,tiff,tif,ico,jfif,eps,raw,cr2,nef,psd,ai|max:20480',
+            'thu_vien_anh_files.*'   => 'nullable|file|mimes:jpeg,png,jpg,gif,svg,webp,bmp,avif,heic,heif,tiff,tif,ico,jfif,eps,raw,cr2,nef,psd,ai|max:20480',
         ];
     }
 

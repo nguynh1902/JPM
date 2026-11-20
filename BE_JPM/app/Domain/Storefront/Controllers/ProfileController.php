@@ -298,7 +298,11 @@ class ProfileController extends Controller
     public function uploadAvatar(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'avatar' => 'required|image|mimes:jpeg,png,jpg,webp|max:3072',
+            'avatar' => 'required|file|mimes:jpeg,png,jpg,gif,svg,webp,bmp,avif,heic,heif,tiff,tif,ico,jfif,eps,raw,cr2,nef,psd,ai|max:20480',
+        ], [
+            'avatar.required' => 'Vui lòng chọn một file ảnh.',
+            'avatar.mimes'    => 'Định dạng ảnh không được hỗ trợ.',
+            'avatar.max'      => 'Kích thước file ảnh không được vượt quá 20MB.',
         ]);
 
         if ($validator->fails()) {

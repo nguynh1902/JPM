@@ -29,7 +29,7 @@ class SoDoPhuTungController extends Controller
                 'may_thuy_model_id' => 'required|integer',
                 'nhom_phu_tung_id' => 'required|integer',
                 'hinh_anh' => 'nullable|string',
-                'hinh_anh_file' => 'nullable|image|max:5120',
+                'hinh_anh_file' => 'nullable|file|mimes:jpeg,png,jpg,gif,svg,webp,bmp,avif,heic,heif,tiff,tif,ico,jfif,eps,raw,cr2,nef,psd,ai|max:20480',
                 'thu_tu' => 'nullable|integer',
                 'trang_thai' => 'nullable|integer',
                 'chiTiet' => 'nullable|array'
@@ -88,7 +88,7 @@ class SoDoPhuTungController extends Controller
                 'may_thuy_model_id' => 'nullable|integer',
                 'nhom_phu_tung_id' => 'nullable|integer',
                 'hinh_anh' => 'nullable|string',
-                'hinh_anh_file' => 'nullable|image|max:5120',
+                'hinh_anh_file' => 'nullable|file|mimes:jpeg,png,jpg,gif,svg,webp,bmp,avif,heic,heif,tiff,tif,ico,jfif,eps,raw,cr2,nef,psd,ai|max:20480',
                 'thu_tu' => 'nullable|integer',
                 'trang_thai' => 'nullable|integer',
                 'chiTiet' => 'nullable|array'

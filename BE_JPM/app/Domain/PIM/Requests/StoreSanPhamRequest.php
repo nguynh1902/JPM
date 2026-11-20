@@ -25,10 +25,10 @@ class StoreSanPhamRequest extends FormRequest
             'is_gia_lien_he' => 'nullable|boolean',
             'so_luong_ton' => 'nullable|integer|min:0',
             'hinh_anh_chinh' => 'nullable|string',
-            'hinh_anh_chinh_file' => 'nullable|file|image|max:5120',
+            'hinh_anh_chinh_file' => 'nullable|file|mimes:jpeg,png,jpg,gif,svg,webp,bmp,avif,heic,heif,tiff,tif,ico,jfif,eps,raw,cr2,nef,psd,ai|max:20480',
             'thu_vien_anh_kept' => 'nullable|string',
             'thu_vien_anh_files' => 'nullable|array',
-            'thu_vien_anh_files.*' => 'file|image|max:5120',
+            'thu_vien_anh_files.*' => 'nullable|file|mimes:jpeg,png,jpg,gif,svg,webp,bmp,avif,heic,heif,tiff,tif,ico,jfif,eps,raw,cr2,nef,psd,ai|max:20480',
             'trang_thai' => 'required|integer|in:0,1',
         ];
     }
