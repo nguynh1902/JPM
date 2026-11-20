@@ -537,6 +537,7 @@ import { useAuthStore } from "../../../stores/authStore";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/vue-query";
 import Swal from "sweetalert2";
 import { createToaster } from "@meforma/vue-toaster";
+import { compressProductImage, formatBytes } from "../../../utils/imageOptimizer";
 
 export default {
   name: "PhuTung",
@@ -774,17 +775,34 @@ export default {
       const f1 = document.getElementById("hinh_anh_file");
       if (f1) f1.value = "";
     },
-    handleMainImageUpload(event) {
+    async handleMainImageUpload(event) {
       const file = event.target.files[0];
       if (file) {
-        this.mainImageFile = file;
-        this.mainImagePreview = URL.createObjectURL(file);
+        try {
+          const { file: optimizedFile, previewUrl, originalSize, compressedSize, savedPercent } = await compressProductImage(file);
+          this.mainImageFile = optimizedFile;
+          this.mainImagePreview = previewUrl;
+          if (this.toaster && savedPercent > 10) {
+            this.toaster.info(`Đã nén tối ưu ảnh: ${formatBytes(originalSize)} → ${formatBytes(compressedSize)} (giảm ${savedPercent}%)`);
+          }
+        } catch (err) {
+          console.warn('Lỗi nén ảnh, sử dụng ảnh gốc:', err);
+          this.mainImageFile = file;
+          this.mainImagePreview = URL.createObjectURL(file);
+        }
       }
     },
-    handleGalleryUpload(event) {
+    async handleGalleryUpload(event) {
       const files = Array.from(event.target.files);
       if (files && files.length > 0) {
-        this.galleryFiles = [...this.galleryFiles, ...files];
+        for (let i = 0; i < files.length; i++) {
+          try {
+            const { file: optimizedFile } = await compressProductImage(files[i]);
+            this.galleryFiles.push(optimizedFile);
+          } catch (err) {
+            this.galleryFiles.push(files[i]);
+          }
+        }
       }
       event.target.value = "";
     },

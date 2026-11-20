@@ -170,6 +170,7 @@ import vSelect from '@vueform/multiselect';
 import axiosClient from '../../../api/axiosClient';
 import Swal from 'sweetalert2';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/vue-query';
+import { compressImage, formatBytes } from '../../../utils/imageOptimizer';
 
 export default {
   name: "CapNhatLinhKien",
@@ -254,11 +255,26 @@ export default {
       const fileInput = document.getElementById('logo');
       if (fileInput) fileInput.value = '';
     },
-    handleLogoUpload(event) {
+    async handleLogoUpload(event) {
       const file = event.target.files[0];
       if (file) {
-        this.logoFile = file;
-        this.formData.logo_path = URL.createObjectURL(file); 
+        try {
+          const { file: optimizedFile, previewUrl, originalSize, compressedSize, savedPercent } = await compressImage(file, {
+            maxWidth: 600,
+            maxHeight: 600,
+            quality: 0.85,
+            format: 'image/webp'
+          });
+          this.logoFile = optimizedFile;
+          this.formData.logo_path = previewUrl;
+          if (this.toaster && savedPercent > 10) {
+            this.toaster.info(`Đã tối ưu logo: ${formatBytes(originalSize)} → ${formatBytes(compressedSize)} (giảm ${savedPercent}%)`);
+          }
+        } catch (err) {
+          console.warn('Lỗi nén logo linh kiện, dùng ảnh gốc:', err);
+          this.logoFile = file;
+          this.formData.logo_path = URL.createObjectURL(file);
+        }
       } else {
         this.logoFile = null;
       }

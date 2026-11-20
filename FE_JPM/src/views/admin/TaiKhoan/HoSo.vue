@@ -151,6 +151,7 @@ import { useAuthStore } from '../../../stores/authStore';
 import { createToaster } from "@meforma/vue-toaster";
 import Swal from 'sweetalert2';
 import { useMutation } from '@tanstack/vue-query';
+import { compressAvatar, formatBytes } from '../../../utils/imageOptimizer';
 
 const route = useRoute();
 const basePath = computed(() => (route.path.startsWith('/portal') ? '/portal' : (route.path.startsWith('/staff') ? '/staff' : '/admin')));
@@ -212,16 +213,21 @@ const getAvatarUrl = (path) => {
   return `http://localhost:8000${path}`;
 };
 
-const handleAvatarUpload = (event) => {
+const handleAvatarUpload = async (event) => {
   const file = event.target.files[0];
   if (file) {
-    if (file.size > 5 * 1024 * 1024) {
-      toaster.error("Kích thước file vượt quá 5MB");
-      event.target.value = '';
-      return;
+    try {
+      const { file: optimizedFile, previewUrl, originalSize, compressedSize, savedPercent } = await compressAvatar(file);
+      avatarFile.value = optimizedFile;
+      previewAvatar.value = previewUrl;
+      if (savedPercent > 10) {
+        toaster.info(`Đã tối ưu avatar: ${formatBytes(originalSize)} → ${formatBytes(compressedSize)} (giảm ${savedPercent}%)`);
+      }
+    } catch (err) {
+      console.warn('Lỗi nén avatar admin, dùng ảnh gốc:', err);
+      avatarFile.value = file;
+      previewAvatar.value = URL.createObjectURL(file);
     }
-    avatarFile.value = file;
-    previewAvatar.value = URL.createObjectURL(file);
   }
 };
 

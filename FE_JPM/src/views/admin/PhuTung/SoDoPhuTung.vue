@@ -297,6 +297,7 @@ import Swal from 'sweetalert2';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/vue-query';
 import { useAuthStore } from '../../../stores/authStore';
 import { createToaster } from "@meforma/vue-toaster";
+import { compressImage, formatBytes } from '../../../utils/imageOptimizer';
 
 export default {
   name: "SoDoPhuTung",
@@ -505,11 +506,27 @@ export default {
       if (path.startsWith('/client/image/')) return path;
       return `http://localhost:8000/storage/${path.replace(/^\/?storage\//, '')}`;
     },
-    handleImageUpload(event) {
+    async handleImageUpload(event) {
       const file = event.target.files[0];
       if (file) {
-        this.imageFile = file;
-        this.formData.hinh_anh = URL.createObjectURL(file);
+        try {
+          // Nén WebP chất lượng cao (2000px, 88%) dành riêng cho bản vẽ sơ đồ rã máy
+          const { file: optimizedFile, previewUrl, originalSize, compressedSize, savedPercent } = await compressImage(file, {
+            maxWidth: 2000,
+            maxHeight: 2000,
+            quality: 0.88,
+            format: 'image/webp',
+          });
+          this.imageFile = optimizedFile;
+          this.formData.hinh_anh = previewUrl;
+          if (this.toaster && savedPercent > 10) {
+            this.toaster.info(`Đã tối ưu sơ đồ: ${formatBytes(originalSize)} → ${formatBytes(compressedSize)} (giảm ${savedPercent}%)`);
+          }
+        } catch (err) {
+          console.warn('Lỗi nén sơ đồ, dùng ảnh gốc:', err);
+          this.imageFile = file;
+          this.formData.hinh_anh = URL.createObjectURL(file);
+        }
       } else {
         this.imageFile = null;
       }

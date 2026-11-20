@@ -399,6 +399,7 @@ import { useAuthStore } from "../../../stores/authStore";
 import vSelect from "@vueform/multiselect";
 import Swal from "sweetalert2";
 import axiosClient from "../../../api/axiosClient";
+import { compressAvatar, formatBytes } from "../../../utils/imageOptimizer";
 
 export default {
   name: "KhachHang",
@@ -713,16 +714,21 @@ export default {
       const fileInput = document.getElementById('avatar');
       if (fileInput) fileInput.value = '';
     },
-    handleAvatarUpload(event) {
+    async handleAvatarUpload(event) {
       const file = event.target.files[0];
       if (file) {
-        if (file.size > 5 * 1024 * 1024) {
-          if (this.$toast) this.$toast.error("Ảnh quá lớn! Tối đa 5MB.");
-          event.target.value = "";
-          return;
+        try {
+          const { file: optimizedFile, previewUrl, originalSize, compressedSize, savedPercent } = await compressAvatar(file);
+          this.avatarFile = optimizedFile;
+          this.avatarPreview = previewUrl;
+          if (this.$toast && savedPercent > 10) {
+            this.$toast.info(`Đã tối ưu avatar: ${formatBytes(originalSize)} → ${formatBytes(compressedSize)} (giảm ${savedPercent}%)`);
+          }
+        } catch (err) {
+          console.warn('Lỗi nén avatar khách hàng, dùng ảnh gốc:', err);
+          this.avatarFile = file;
+          this.avatarPreview = URL.createObjectURL(file);
         }
-        this.avatarFile = file;
-        this.avatarPreview = URL.createObjectURL(file);
       }
     },
   },

@@ -30,6 +30,15 @@
 
     <!-- Global Preloader cho toàn khu vực -->
     <div id="preloader" v-if="isPageLoading"></div>
+
+    <!-- Hidden file input for Avatar upload -->
+    <input 
+      type="file" 
+      ref="avatarFileInput" 
+      class="d-none" 
+      accept="image/jpeg,image/png,image/webp,image/jpg" 
+      @change="handleAvatarFileChange" 
+    />
   </div>
 </template>
 
@@ -37,10 +46,17 @@
 import { ref, computed, provide } from 'vue';
 import { useRoute } from 'vue-router';
 import AccountSidebar from '../../../components/client/AccountSidebar.vue';
-import { useQuery } from '@tanstack/vue-query';
+import { useQuery, useQueryClient } from '@tanstack/vue-query';
 import axiosClient from '../../../api/axiosClient';
+import { compressAvatar, formatBytes } from '../../../utils/imageOptimizer';
+import { useAuthStore } from '../../../stores/authStore';
+import Swal from 'sweetalert2';
 
 const route = useRoute();
+const authStore = useAuthStore();
+const queryClient = useQueryClient();
+const avatarFileInput = ref(null);
+const isUploadingAvatar = ref(false);
 
 const titleParts = computed(() => {
   if (route.path === '/tai-khoan') return { 
@@ -83,7 +99,62 @@ const { data: profileData } = useQuery({
   staleTime: 5 * 60 * 1000,
 });
 const avatarPreview = ref(null);
-const triggerFileInput = () => {};
+
+const triggerFileInput = () => {
+  if (avatarFileInput.value) {
+    avatarFileInput.value.click();
+  }
+};
+
+const handleAvatarFileChange = async (event) => {
+  const file = event.target.files?.[0];
+  if (!file) return;
+
+  try {
+    isUploadingAvatar.value = true;
+    
+    // Tự động crop vuông 1:1, resize 300x300 và nén WebP ngay trên trình duyệt
+    const { file: compressedFile, previewUrl, originalSize, compressedSize, savedPercent } = await compressAvatar(file);
+    
+    // Preview tức thì
+    avatarPreview.value = previewUrl;
+
+    const formData = new FormData();
+    formData.append('avatar', compressedFile);
+
+    const res = await axiosClient.post('/client/profile/avatar', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+
+    if (res.data?.avatar) {
+      if (authStore.user) {
+        authStore.user.avatar = res.data.avatar;
+      }
+      queryClient.invalidateQueries(['clientProfile']);
+      
+      Swal.fire({
+        icon: 'success',
+        title: 'Đổi ảnh đại diện thành công!',
+        html: `Đã nén tối ưu: <strong>${formatBytes(originalSize)}</strong> &rarr; <strong>${formatBytes(compressedSize)}</strong> (tiết kiệm ${savedPercent}% dung lượng).`,
+        timer: 3500,
+        showConfirmButton: false,
+        toast: true,
+        position: 'top-end'
+      });
+    }
+  } catch (error) {
+    console.error('Lỗi upload avatar:', error);
+    Swal.fire({
+      icon: 'error',
+      title: 'Lỗi tải ảnh',
+      text: error.message || 'Không thể tải ảnh đại diện lúc này.',
+      confirmButtonColor: '#F82249'
+    });
+  } finally {
+    isUploadingAvatar.value = false;
+    if (event.target) event.target.value = '';
+  }
+};
 </script>
 
 <style scoped>

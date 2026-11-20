@@ -284,6 +284,7 @@ import vSelect from '@vueform/multiselect';
 import axiosClient from '../../../api/axiosClient';
 import Swal from 'sweetalert2';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/vue-query';
+import { compressImage, compressImages, formatBytes } from '../../../utils/imageOptimizer';
 
 export default {
   name: "TinTuc",
@@ -423,10 +424,17 @@ export default {
       };
       reader.readAsArrayBuffer(file);
     },
-        handleGalleryUpload(event) {
-      const files = Array.from(event.target.files);
+    async handleGalleryUpload(event) {
+      const files = Array.from(event.target.files || []);
       if (files && files.length > 0) {
-        this.galleryFiles = [...this.galleryFiles, ...files];
+        try {
+          const results = await compressImages(files, { maxWidth: 1200, maxHeight: 1200, quality: 0.82 });
+          const compressedFiles = results.map(r => r.file);
+          this.galleryFiles = [...this.galleryFiles, ...compressedFiles];
+        } catch (err) {
+          console.warn('Lỗi nén ảnh phụ tin tức, dùng ảnh gốc:', err);
+          this.galleryFiles = [...this.galleryFiles, ...files];
+        }
       }
       event.target.value = "";
     },
@@ -497,11 +505,18 @@ export default {
       if (path.startsWith('blob:') || path.startsWith('http')) return path;
       return `http://localhost:8000/${path.replace(/^\/?storage\//, 'storage/')}`;
     },
-    handleThumbnailUpload(event) {
+    async handleThumbnailUpload(event) {
       const file = event.target.files[0];
       if (file) {
-        this.thumbnailFile = file;
-        this.formData.thumbnail = URL.createObjectURL(file);
+        try {
+          const { file: optimizedFile, previewUrl } = await compressImage(file, { maxWidth: 1200, maxHeight: 800, quality: 0.82 });
+          this.thumbnailFile = optimizedFile;
+          this.formData.thumbnail = previewUrl;
+        } catch (err) {
+          console.warn('Lỗi nén ảnh đại diện tin tức, dùng ảnh gốc:', err);
+          this.thumbnailFile = file;
+          this.formData.thumbnail = URL.createObjectURL(file);
+        }
       }
     },
     removeThumbnail() {

@@ -168,6 +168,7 @@ import axiosClient from '../../../api/axiosClient';
 import Swal from 'sweetalert2';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/vue-query';
 import { createToaster } from "@meforma/vue-toaster";
+import { compressImage, formatBytes } from '../../../utils/imageOptimizer';
 
 const toaster = createToaster({ position: "top-right", duration: 3000 });
 const queryClient = useQueryClient();
@@ -223,11 +224,26 @@ const resetForm = () => {
   if (fileInput) fileInput.value = '';
 };
 
-const handleLogoUpload = (event) => {
+const handleLogoUpload = async (event) => {
   const file = event.target.files[0];
   if (file) {
-    logoFile.value = file;
-    formData.value.logo_path = URL.createObjectURL(file); 
+    try {
+      const { file: optimizedFile, previewUrl, originalSize, compressedSize, savedPercent } = await compressImage(file, {
+        maxWidth: 600,
+        maxHeight: 600,
+        quality: 0.85,
+        format: 'image/webp'
+      });
+      logoFile.value = optimizedFile;
+      formData.value.logo_path = previewUrl;
+      if (savedPercent > 10) {
+        toaster.info(`Đã tối ưu logo: ${formatBytes(originalSize)} → ${formatBytes(compressedSize)} (giảm ${savedPercent}%)`);
+      }
+    } catch (err) {
+      console.warn('Lỗi nén logo thương hiệu, dùng ảnh gốc:', err);
+      logoFile.value = file;
+      formData.value.logo_path = URL.createObjectURL(file);
+    }
   } else {
     logoFile.value = null;
   }

@@ -1847,6 +1847,7 @@ import { useQuery, useQueryClient, useMutation } from '@tanstack/vue-query';
 import { useAuthStore } from '../../../stores/authStore';
 import { createToaster } from "@meforma/vue-toaster";
 import Swal from 'sweetalert2';
+import { compressReceipt, formatBytes } from '../../../utils/imageOptimizer';
 
 export default {
   name: "DonHang",
@@ -2409,8 +2410,20 @@ export default {
     async handleUploadCreateReceipt(e, key) {
       const file = e.target.files?.[0];
       if (!file) return;
+
+      let uploadFile = file;
+      try {
+        const { file: optimizedFile, originalSize, compressedSize, savedPercent } = await compressReceipt(file);
+        uploadFile = optimizedFile;
+        if (this.toaster && savedPercent > 10) {
+          this.toaster.info(`Đã tối ưu ảnh biên lai: ${formatBytes(originalSize)} → ${formatBytes(compressedSize)} (giảm ${savedPercent}%)`);
+        }
+      } catch (compErr) {
+        console.warn('Lỗi nén biên lai, dùng file gốc:', compErr);
+      }
+
       const formData = new FormData();
-      formData.append('file', file);
+      formData.append('file', uploadFile);
       try {
         const res = await axiosClient.post('/admin/sales/upload-bien-lai', formData, {
           headers: { 'Content-Type': 'multipart/form-data' }
@@ -3302,8 +3315,19 @@ export default {
       this.uploadingKey = `${type}_${slot}`;
       this.isUploadingReceipt = true;
       try {
+        let uploadFile = file;
+        try {
+          const { file: optimizedFile, originalSize, compressedSize, savedPercent } = await compressReceipt(file);
+          uploadFile = optimizedFile;
+          if (this.toaster && savedPercent > 10) {
+            this.toaster.info(`Đã tối ưu ảnh biên lai: ${formatBytes(originalSize)} → ${formatBytes(compressedSize)} (giảm ${savedPercent}%)`);
+          }
+        } catch (compErr) {
+          console.warn('Lỗi nén biên lai, dùng file gốc:', compErr);
+        }
+
         const formData = new FormData();
-        formData.append('file', file);
+        formData.append('file', uploadFile);
         formData.append('type', type);
         formData.append('id', id);
         formData.append('slot', slot);
