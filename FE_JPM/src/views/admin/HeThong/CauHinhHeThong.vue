@@ -968,20 +968,23 @@ export default {
   position: relative;
   display: flex;
   align-items: center;
-  background-color: #f8fafc;
+  background-color: #ffffff;
 }
 
 .admin-banner-preview-overlay {
   position: absolute;
-  inset: 0;
+  top: 0;
+  bottom: 0;
+  left: -2px;
+  right: 0;
   z-index: 1;
   background: linear-gradient(
     90deg,
     #ffffff 0%,
-    rgba(255, 255, 255, 0.98) 35%,
-    rgba(255, 255, 255, 0.92) 50%,
-    rgba(255, 255, 255, 0.65) 75%,
-    rgba(255, 255, 255, 0.15) 90%,
+    #ffffff 32%,
+    rgba(255, 255, 255, 0.98) 48%,
+    rgba(255, 255, 255, 0.80) 70%,
+    rgba(255, 255, 255, 0.25) 88%,
     transparent 100%
   );
   pointer-events: none;

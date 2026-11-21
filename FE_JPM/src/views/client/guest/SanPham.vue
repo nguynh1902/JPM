@@ -521,29 +521,36 @@ const scrollToProducts = () => {
   min-height: 260px;
   max-height: 320px;
   height: clamp(250px, 20vw, 320px);
-  background-color: #f1f5f9;
+  background-color: #ffffff;
   background-image: url('/client/image/shop_banner.png');
   background-size: cover;
   background-position: center right;
   background-repeat: no-repeat;
   display: flex;
   align-items: center;
+  border-top: none !important;
+  border-left: none !important;
+  border-right: none !important;
   border-bottom: 1px solid #e2e8f0;
-  box-shadow: 0 4px 20px rgba(10, 17, 40, 0.04);
+  box-shadow: none !important;
+  margin-top: -1px;
 }
 
 .store-banner-overlay {
   position: absolute;
-  inset: 0;
+  top: 0;
+  bottom: 0;
+  left: -2px;
+  right: 0;
   z-index: 1;
   background: linear-gradient(
     90deg,
     #ffffff 0%,
-    rgba(255, 255, 255, 0.98) 28%,
-    rgba(255, 255, 255, 0.92) 42%,
-    rgba(255, 255, 255, 0.65) 65%,
-    rgba(255, 255, 255, 0.20) 85%,
-    rgba(255, 255, 255, 0.03) 100%
+    #ffffff 32%,
+    rgba(255, 255, 255, 0.98) 45%,
+    rgba(255, 255, 255, 0.85) 60%,
+    rgba(255, 255, 255, 0.40) 80%,
+    rgba(255, 255, 255, 0.05) 100%
   );
   pointer-events: none;
 }
@@ -642,6 +649,7 @@ const scrollToProducts = () => {
 .shop-catalog-page {
   background-color: #f8fafc;
   min-height: 100vh;
+  overflow-x: hidden;
 }
 
 /* ── PAGE TITLE (MATCHING GIO HANG) ── */

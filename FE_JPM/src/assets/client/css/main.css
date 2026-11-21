@@ -72,8 +72,8 @@
   --jpm-font-body: 'Roboto', sans-serif;
   --jpm-font-mono: 'Roboto Mono', monospace;
 
-  /* 8. Layout Offset */
-  --jpm-header-height: 80px;
+  /* 8. Layout Offset (Khớp chính xác 100% với .header height: 70px) */
+  --jpm-header-height: 70px;
 
   /* ═════════════════════════════════════════════════════════════════
      GLOBAL BRIDGES: Ánh xạ các biến cũ sang Design Tokens 2026
@@ -115,12 +115,12 @@
 
 @media (max-width: 1199.98px) {
   :root {
-    --jpm-header-height: 72px;
+    --jpm-header-height: 70px;
   }
 }
 @media (max-width: 767.98px) {
   :root {
-    --jpm-header-height: 64px;
+    --jpm-header-height: 70px;
   }
 }
 
@@ -4158,16 +4158,16 @@ a.btn-shopee-outline:hover {
    CENTRALIZED INNER PAGE HEADER OFFSET (DEC-LAYOUT-OFFSET)
    ═════════════════════════════════════════════════════════════════ */
 .main-inner-page {
-  padding-top: var(--jpm-header-height, 80px);
+  padding-top: var(--jpm-header-height, 70px);
 }
 @media (max-width: 1199px) {
   .main-inner-page {
-    padding-top: var(--jpm-header-height, 72px);
+    padding-top: var(--jpm-header-height, 70px);
   }
 }
 @media (max-width: 767px) {
   .main-inner-page {
-    padding-top: var(--jpm-header-height, 64px);
+    padding-top: var(--jpm-header-height, 70px);
   }
 }
 
