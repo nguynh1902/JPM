@@ -493,6 +493,9 @@ const storeBannerStyle = computed(() => {
     : getImageUrl(rawPath);
   return {
     backgroundImage: `url("${imgUrl}")`,
+    backgroundSize: 'cover',
+    backgroundPosition: 'center center',
+    backgroundRepeat: 'no-repeat',
   };
 });
 
@@ -515,16 +518,16 @@ const scrollToProducts = () => {
 </script>
 
 <style scoped>
-/* ── STORE HERO BANNER (Dài ngang full màn hình, làm trắng bên trái) ── */
+/* ── STORE HERO BANNER (Dài ngang full màn hình, căn giữa ảnh theo chiều dọc ~250px) ── */
 .store-hero-banner {
   width: 100%;
-  min-height: 260px;
-  max-height: 320px;
-  height: clamp(250px, 20vw, 320px);
+  height: clamp(230px, 18vw, 270px);
+  min-height: 220px;
+  max-height: 270px;
   background-color: #ffffff;
   background-image: url('/client/image/shop_banner.png');
   background-size: cover;
-  background-position: center right;
+  background-position: center center;
   background-repeat: no-repeat;
   display: flex;
   align-items: center;
@@ -546,11 +549,12 @@ const scrollToProducts = () => {
   background: linear-gradient(
     90deg,
     #ffffff 0%,
-    #ffffff 32%,
-    rgba(255, 255, 255, 0.98) 45%,
-    rgba(255, 255, 255, 0.85) 60%,
-    rgba(255, 255, 255, 0.40) 80%,
-    rgba(255, 255, 255, 0.05) 100%
+    #ffffff 24%,
+    rgba(255, 255, 255, 0.95) 34%,
+    rgba(255, 255, 255, 0.65) 44%,
+    rgba(255, 255, 255, 0.18) 54%,
+    transparent 62%,
+    transparent 100%
   );
   pointer-events: none;
 }
@@ -600,7 +604,7 @@ const scrollToProducts = () => {
 
 .store-banner-title {
   font-family: var(--heading-font, 'Raleway', sans-serif);
-  font-size: clamp(1.8rem, 3.2vw, 2.5rem);
+  font-size: clamp(1.6rem, 2.4vw, 2.2rem);
   font-weight: 800;
   color: #0a1128;
   line-height: 1.2;
@@ -608,34 +612,43 @@ const scrollToProducts = () => {
 }
 
 .store-banner-subtitle {
-  font-size: clamp(0.85rem, 1.1vw, 0.98rem);
+  font-size: clamp(0.82rem, 1vw, 0.92rem);
   color: #475569;
-  line-height: 1.6;
-  max-width: 580px;
+  line-height: 1.5;
+  max-width: 540px;
 }
 
 @media (max-width: 991.98px) {
   .store-hero-banner {
-    min-height: 220px;
+    min-height: 200px;
     height: auto;
+    padding: 28px 0;
   }
   .store-banner-overlay {
     background: linear-gradient(
       90deg,
-      rgba(255, 255, 255, 0.98) 0%,
-      rgba(255, 255, 255, 0.94) 55%,
-      rgba(255, 255, 255, 0.70) 80%,
-      rgba(255, 255, 255, 0.40) 100%
+      #ffffff 0%,
+      rgba(255, 255, 255, 0.98) 38%,
+      rgba(255, 255, 255, 0.85) 52%,
+      rgba(255, 255, 255, 0.25) 68%,
+      transparent 80%
     );
   }
 }
 
 @media (max-width: 767.98px) {
   .store-hero-banner {
-    min-height: 190px;
+    min-height: 180px;
+    height: auto;
+    padding: 20px 0;
   }
   .store-banner-overlay {
-    background: rgba(255, 255, 255, 0.92);
+    background: linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.94) 0%,
+      rgba(255, 255, 255, 0.88) 60%,
+      rgba(255, 255, 255, 0.50) 100%
+    );
   }
   .store-banner-subtitle {
     display: -webkit-box;

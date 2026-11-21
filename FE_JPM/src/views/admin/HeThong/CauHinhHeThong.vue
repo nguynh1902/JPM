@@ -166,7 +166,7 @@
               <small class="text-muted">Cài đặt ảnh nền, tiêu đề và mô tả cho banner ngang trang Cửa Hàng Client</small>
             </div>
             <span class="badge bg-label-primary px-3 py-2 rounded">
-              Tỷ lệ chuẩn: 1920 × 320px
+              Chuẩn hiển thị gọn gàng (Chiều cao ~250px - 270px)
             </span>
           </div>
 
@@ -931,8 +931,10 @@ export default {
       return {
         backgroundImage: `url("${imgUrl}")`,
         backgroundSize: 'cover',
-        backgroundPosition: 'center right',
-        minHeight: '170px'
+        backgroundPosition: 'center center',
+        backgroundRepeat: 'no-repeat',
+        height: '180px',
+        maxHeight: '190px'
       };
     });
 
@@ -969,6 +971,9 @@ export default {
   display: flex;
   align-items: center;
   background-color: #ffffff;
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
 }
 
 .admin-banner-preview-overlay {
@@ -981,10 +986,11 @@ export default {
   background: linear-gradient(
     90deg,
     #ffffff 0%,
-    #ffffff 32%,
-    rgba(255, 255, 255, 0.98) 48%,
-    rgba(255, 255, 255, 0.80) 70%,
-    rgba(255, 255, 255, 0.25) 88%,
+    #ffffff 24%,
+    rgba(255, 255, 255, 0.95) 34%,
+    rgba(255, 255, 255, 0.65) 44%,
+    rgba(255, 255, 255, 0.18) 54%,
+    transparent 62%,
     transparent 100%
   );
   pointer-events: none;
