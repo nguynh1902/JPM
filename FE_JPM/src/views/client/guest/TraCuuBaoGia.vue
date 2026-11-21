@@ -423,7 +423,7 @@ export default {
         }
       } else if (actionType === 'reject') {
         confirmMsg = 'Bạn chắc chắn muốn từ chối báo giá này?';
-        confirmBtnColor = '#dc3545';
+        confirmBtnColor = '#F82249';
       } else if (actionType === 're_quote') {
         confirmMsg = 'Gửi yêu cầu đến JPM để cập nhật lại bảng giá phụ tùng mới nhất?';
         confirmBtnText = 'Gửi yêu cầu';

@@ -891,7 +891,7 @@ export default {
   transition: color 0.2s ease;
 }
 .article-category-label:hover {
-  color: #d91639 !important;
+  color: var(--jpm-color-red-hover, #D9163A) !important;
 }
 
 .article-main-title {

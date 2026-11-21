@@ -54,7 +54,7 @@ export const useAuthStore = defineStore("auth", {
       // Admin tối cao luôn có mọi quyền
       if (state.user.roles && state.user.roles.some(r => {
         const cur = String(typeof r === 'string' ? r : (r?.name || '')).toLowerCase().trim();
-        return cur === 'admin' || cur === 'super admin';
+        return cur === 'admin' || cur === 'super admin' || cur === 'quản trị viên';
       })) {
         return true;
       }
@@ -73,7 +73,7 @@ export const useAuthStore = defineStore("auth", {
       // Admin tối cao luôn có mọi quyền
       if (state.user.roles && state.user.roles.some(r => {
         const cur = String(typeof r === 'string' ? r : (r?.name || '')).toLowerCase().trim();
-        return cur === 'admin' || cur === 'super admin';
+        return cur === 'admin' || cur === 'super admin' || cur === 'quản trị viên';
       })) {
         return true;
       }

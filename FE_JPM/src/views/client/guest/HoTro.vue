@@ -473,7 +473,7 @@ textarea.contact-field-input {
 }
 
 .btn-contact-submit:hover:not(:disabled) {
-  background-color: #d91639;
+  background-color: var(--jpm-color-red-hover, #D9163A);
   box-shadow: 0 6px 16px rgba(248, 34, 73, 0.35);
   transform: translateY(-2px);
 }

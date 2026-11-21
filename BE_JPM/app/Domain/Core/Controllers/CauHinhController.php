@@ -91,4 +91,34 @@ class CauHinhController extends Controller
             ], 500);
         }
     }
+
+    /**
+     * API upload ảnh Banner cho Cấu hình hệ thống (Banner cửa hàng, sự kiện...)
+     */
+    public function uploadBanner(Request $request): JsonResponse
+    {
+        $request->validate([
+            'file' => 'required|file|mimes:jpeg,png,jpg,gif,svg,webp,bmp,avif,heic,heif,tiff,tif,ico,jfif|max:20480',
+        ], [
+            'file.required' => 'Vui lòng chọn file ảnh banner.',
+            'file.mimes'    => 'Định dạng ảnh không được hỗ trợ.',
+            'file.max'      => 'Kích thước file ảnh không được vượt quá 20MB.',
+        ]);
+
+        try {
+            $path = $request->file('file')->store('banners', 'public');
+            $url = '/storage/' . $path;
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Tải ảnh banner lên thành công!',
+                'url'     => $url,
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Lỗi khi lưu ảnh banner: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
 }

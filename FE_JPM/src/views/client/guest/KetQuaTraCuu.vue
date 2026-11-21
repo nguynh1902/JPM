@@ -910,7 +910,7 @@ export default {
 }
 
 .btn-reset-sidebar-filter:hover {
-  color: #d8143a;
+  color: var(--jpm-color-red-hover, #D9163A);
   text-decoration: underline;
 }
 
@@ -1300,7 +1300,7 @@ export default {
 }
 
 .btn-clear-all:hover {
-  color: #d8143a;
+  color: var(--jpm-color-red-hover, #D9163A);
 }
 
 /* ── PRODUCT CARD (ĐỒNG BỘ 100% TRANG CHỦ & CỬA HÀNG) ── */
@@ -1402,7 +1402,7 @@ export default {
 }
 
 .product-card:hover .diagram-action-link {
-  color: #d8143a !important;
+  color: var(--accent-color, #F82249) !important;
 }
 
 .product-card:hover .diagram-action-link i {

@@ -137,10 +137,10 @@
                       class="form-control"
                       placeholder="VD: Quản lý Kho"
                       v-model="formData.name"
-                      :disabled="isEditMode && (formData.is_system || formData.name.toLowerCase() === 'admin')"
+                      :disabled="isEditMode && (formData.is_system || (formData.name && formData.name.toLowerCase() === 'admin'))"
                       required
                     />
-                    <small v-if="isEditMode && (formData.is_system || formData.name.toLowerCase() === 'admin')" class="text-primary mt-1 d-block fw-semibold">
+                    <small v-if="isEditMode && (formData.is_system || (formData.name && formData.name.toLowerCase() === 'admin'))" class="text-primary mt-1 d-block fw-semibold">
                       <i class="bx bx-shield-quarter me-1"></i> Vai trò Quản trị viên hệ thống (Super Admin).
                     </small>
                   </div>
@@ -150,7 +150,7 @@
                       v-model="formData.status"
                       :options="statusOptions"
                       :can-clear="false"
-                      :disabled="isEditMode && (formData.is_system || formData.name.toLowerCase() === 'admin')"
+                      :disabled="isEditMode && (formData.is_system || (formData.name && formData.name.toLowerCase() === 'admin'))"
                     />
                   </div>
                 </div>
@@ -170,42 +170,72 @@
               
 
               <!-- Danh sách quyền hạn -->
-              <h6 class="mt-3 fw-bold text-dark text-uppercase fs-6">Thiết lập Quyền Hạn (Permissions)</h6>
-              <div class="border rounded p-3 bg-light" style="max-height: 400px; overflow-y: auto;">
-                
-                <div class="mb-4" v-for="module in permissionModules" :key="module.id">
-                  <div class="d-flex align-items-center mb-2 border-bottom pb-2">
-                    <div class="form-check me-2 mb-0">
+              <div class="d-flex align-items-center justify-content-between mt-3 mb-2 flex-wrap gap-2">
+                <div class="d-flex align-items-center gap-2">
+                  <h6 class="fw-bold text-dark text-uppercase fs-6 mb-0">Thiết lập Quyền Hạn (Permissions)</h6>
+                  <span class="badge bg-label-primary px-2 py-1">
+                    Đã chọn: {{ selectedPermissionsCount }}/{{ totalPermissionsCount }} quyền
+                  </span>
+                </div>
+                <div class="d-flex align-items-center gap-2">
+                  <button 
+                    type="button" 
+                    class="btn btn-sm btn-outline-primary py-1 px-2" 
+                    @click="selectAllPermissions"
+                  >
+                    <i class="bx bx-check-double me-1"></i> Chọn tất cả
+                  </button>
+                  <button 
+                    type="button" 
+                    class="btn btn-sm btn-outline-secondary py-1 px-2" 
+                    @click="deselectAllPermissions"
+                  >
+                    <i class="bx bx-x me-1"></i> Bỏ chọn tất cả
+                  </button>
+                </div>
+              </div>
+
+              <div class="border rounded-3 p-3 bg-light custom-scroll" style="max-height: 480px; overflow-y: auto;">
+                <div class="card border mb-3 shadow-none bg-white rounded-3 overflow-hidden" v-for="module in permissionModules" :key="module.id">
+                  <div class="card-header bg-light py-2 px-3 d-flex align-items-center justify-content-between border-bottom">
+                    <div class="form-check mb-0 d-flex align-items-center">
                       <input 
-                        class="form-check-input" 
+                        class="form-check-input me-2 mt-0" 
                         type="checkbox" 
                         :id="'module_' + module.id" 
                         :checked="isModuleFullyChecked(module)"
                         @change="toggleModule(module, $event.target.checked)"
                       >
+                      <label class="fw-bold text-primary mb-0 user-select-none" :for="'module_' + module.id" style="cursor: pointer;">
+                        {{ module.name }}
+                      </label>
                     </div>
-                    <label class="fw-bold text-primary mb-0" :for="'module_' + module.id" style="cursor: pointer;">
-                      {{ module.name }}
-                    </label>
+                    <span 
+                      class="badge" 
+                      :class="isModuleFullyChecked(module) ? 'bg-success' : (getModuleCheckedCount(module) > 0 ? 'bg-primary' : 'bg-secondary')"
+                    >
+                      {{ getModuleCheckedCount(module) }}/{{ module.permissions ? module.permissions.length : 0 }}
+                    </span>
                   </div>
-                  <div class="row ps-4">
-                    <div class="col-md-3 col-6 mb-2" v-for="perm in module.permissions" :key="perm.id">
-                      <div class="form-check">
-                        <input 
-                          class="form-check-input" 
-                          type="checkbox" 
-                          :value="perm.id" 
-                          :id="'perm_' + perm.id" 
-                          v-model="formData.permissions"
-                        >
-                        <label class="form-check-label text-dark" :for="'perm_' + perm.id" style="cursor: pointer;">
-                          {{ perm.name }}
-                        </label>
+                  <div class="card-body p-3">
+                    <div class="row g-2">
+                      <div class="col-md-3 col-6" v-for="perm in module.permissions" :key="perm.id">
+                        <div class="form-check mb-1">
+                          <input 
+                            class="form-check-input" 
+                            type="checkbox" 
+                            :value="perm.id" 
+                            :id="'perm_' + perm.id" 
+                            v-model="formData.permissions"
+                          >
+                          <label class="form-check-label text-dark small" :for="'perm_' + perm.id" style="cursor: pointer;">
+                            {{ perm.name }}
+                          </label>
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
-
               </div>
 
             </div>
@@ -318,6 +348,12 @@ export default {
     permissionModules() {
       return this.queryData?.modules || [];
     },
+    totalPermissionsCount() {
+      return this.permissionModules.reduce((acc, m) => acc + (m.permissions ? m.permissions.length : 0), 0);
+    },
+    selectedPermissionsCount() {
+      return this.formData.permissions ? this.formData.permissions.length : 0;
+    },
     filteredRoles() {
       return this.roles.filter(r => {
         let match = true;
@@ -345,6 +381,22 @@ export default {
     isModuleFullyChecked(module) {
       if (!this.formData.permissions || !module.permissions || module.permissions.length === 0) return false;
       return module.permissions.every(p => this.formData.permissions.includes(p.id));
+    },
+    getModuleCheckedCount(module) {
+      if (!this.formData.permissions || !module.permissions) return 0;
+      return module.permissions.filter(p => this.formData.permissions.includes(p.id)).length;
+    },
+    selectAllPermissions() {
+      const allIds = [];
+      this.permissionModules.forEach(m => {
+        if (m.permissions) {
+          m.permissions.forEach(p => allIds.push(p.id));
+        }
+      });
+      this.formData.permissions = [...new Set(allIds)];
+    },
+    deselectAllPermissions() {
+      this.formData.permissions = [];
     },
     toggleModule(module, isChecked) {
       if (!this.formData.permissions) this.formData.permissions = [];
@@ -457,6 +509,24 @@ export default {
 </script>
 
 <style scoped>
+.custom-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+.custom-scroll::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+.custom-scroll::-webkit-scrollbar-thumb {
+  background: #c7c7d2;
+  border-radius: 4px;
+}
+.custom-scroll::-webkit-scrollbar-thumb:hover {
+  background: #a0a0b2;
+}
+.card-header {
+  border-top-left-radius: inherit;
+  border-top-right-radius: inherit;
+}
 </style>
 
 

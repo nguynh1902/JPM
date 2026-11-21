@@ -95,7 +95,9 @@ Toàn bộ giao diện Client được xây dựng theo mô hình **3 Tầng Th�
 ### 2.1. Bảng màu thương hiệu (Brand Identity)
 - **Primary Brand Color (`--jpm-color-navy-dark`):** `#0A1128` – Đại diện cho biển sâu Nhật Bản, uy tín kỹ thuật, dùng cho Header, Navbar, Footer, Section Dark, Heading H1/H2. Độ tương phản: 14.8:1 (WCAG AAA).
 - **Secondary Brand Color (`--jpm-color-navy-subtle`):** `#101E42` – Tầng biển nổi, dùng cho Dropdown nền tối, Card tối, Active menu.
-- **Accent / Primary CTA (`--jpm-color-red-marine`):** `#F82249` – Màu đỏ cứu sinh hàng hải & nhiệt huyết công nghệ. Dùng cho nút Thêm vào giỏ, nút Tìm kiếm chính, Hotspot Active pin, Badge Sale.
+- **Accent / Primary CTA (`--jpm-color-red-marine`):** `#F82249` – Màu đỏ cứu sinh hàng hải & nhiệt huyết công nghệ. Dùng cho nút Thêm vào giỏ, nút Tìm kiếm chính, Hotspot Active pin, Badge Sale, Giá sản phẩm, và mọi điểm nhấn màu đỏ.
+  > [!IMPORTANT]
+  > **Quy Chuẩn Màu Đỏ Duy Nhất (Single Brand Red Rule):** Toàn bộ dự án Client chỉ được dùng duy nhất mã màu đỏ `#F82249` (hoặc biến `var(--accent-color, #F82249)` / class `.text-danger`). Tuyệt đối cấm sử dụng các mã đỏ lệch tông như `#e63946`, `#dc3545`, `#e0163c`, `#df1529`. Màu khi hover chuột vào nút đỏ bắt buộc dùng duy nhất `--jpm-color-red-hover` (`#D9163A`).
 - **Accent Hover (`--jpm-color-red-hover`):** `#D9163A` – Đỏ trầm khi hover nút chính.
 - **Technical Action / Info (`--jpm-color-blue-electric`):** `#0284C7` – Xanh công nghệ hàng hải, dùng cho link mã OEM, nút xem sơ đồ rã máy, Breadcrumb active.
 - **Luxury Marine Metallic (`--jpm-color-gold-marine`):** `#D97706` – Ánh đồng chân vịt hàng hải, dùng cho huy hiệu đại lý chính thức và hạng Garage VIP.

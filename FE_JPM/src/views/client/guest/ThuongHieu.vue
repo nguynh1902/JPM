@@ -666,7 +666,7 @@ const filteredModels = computed(() => {
 }
 
 .btn-clear-search:hover {
-  color: #dc2626;
+  color: var(--accent-color, #F82249);
 }
 
 .filter-dropdown-col {

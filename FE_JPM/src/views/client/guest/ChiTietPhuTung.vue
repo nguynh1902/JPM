@@ -1555,8 +1555,8 @@ watch(compatibleModels, (models) => {
 }
 
 .btn-product-cart:hover {
-  background-color: #e0163c !important;
-  border-color: #e0163c !important;
+  background-color: var(--jpm-color-red-hover, #D9163A) !important;
+  border-color: var(--jpm-color-red-hover, #D9163A) !important;
   color: #ffffff !important;
   transform: translateY(-2px) !important;
   box-shadow: 0 6px 16px rgba(248, 34, 73, 0.3) !important;

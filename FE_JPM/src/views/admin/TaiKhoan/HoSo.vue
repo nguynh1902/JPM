@@ -52,9 +52,9 @@
                   </div>
                   
                   <h6 class="fw-bold mb-1 text-dark">{{ profile.name || 'Admin Manager' }}</h6>
-                  <span class="badge bg-label-primary mt-1">{{ authStore.user?.roles?.[0] || (authStore.isAdmin ? 'Quản trị viên' : 'Nhân viên') }}</span>
+                  <span class="badge bg-label-primary mt-1">{{ displayRoleName }}</span>
 
-                  <p v-if="isEditing" class="text-muted mt-3 mb-0" style="font-size: 0.8rem;">Cho phép mọi định dạng ảnh (JPG, PNG, GIF, WEBP, SVG...).<br>Tối đa 5MB</p>
+                  <p v-if="isEditing" class="text-muted mt-3 mb-0" style="font-size: 0.8rem;">Cho phép mọi định dạng ảnh (JPG, PNG, GIF, WEBP, SVG, HEIC...).<br>Tối đa 20MB</p>
                 </div>
               </div>
               
@@ -158,6 +158,18 @@ const basePath = computed(() => (route.path.startsWith('/portal') ? '/portal' : 
 
 const toaster = createToaster({ position: "top-right", duration: 3000 });
 const authStore = useAuthStore();
+
+const displayRoleName = computed(() => {
+  if (!authStore.user || !authStore.user.roles || authStore.user.roles.length === 0) {
+    return authStore.isAdmin ? 'Quản trị viên' : 'Nhân viên';
+  }
+  const rawRole = authStore.user.roles[0];
+  const roleName = typeof rawRole === 'object' && rawRole?.name ? rawRole.name : String(rawRole || '');
+  const rLower = roleName.toLowerCase().trim();
+  if (rLower === 'admin' || rLower === 'super admin' || rLower === 'quản trị viên') return 'Quản Trị Viên';
+  if (rLower === 'staff' || rLower === 'nhân viên' || rLower === 'nhân viên pim') return 'Nhân Viên';
+  return roleName;
+});
 
 const confirmLogout = async () => {
   const result = await Swal.fire({

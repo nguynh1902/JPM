@@ -1,19 +1,47 @@
 <template>
   <div class="shop-catalog-page main-page">
 
-    <section id="products-section" class="section pb-5 inner-page-section">
-      <div class="container">
+    <!-- HERO BANNER CỬA HÀNG DÀI NGANG FULL MÀN HÌNH -->
+    <div class="store-hero-banner position-relative overflow-hidden" :style="storeBannerStyle">
+      <!-- Lớp phủ Gradient làm trắng bên trái mềm mại -->
+      <div class="store-banner-overlay"></div>
 
-        <!-- Header chuẩn Giỏ Hàng -->
-        <div class="row mb-4">
-          <div class="col-12" data-aos="fade-down">
-            <h2 class="jpm-page-title">Cửa Hàng <span class="text-danger">Hàng Hải</span></h2>
-            <p class="text-muted">Khám phá hệ sinh thái phụ tùng động cơ thủy, dầu nhớt và vật tư hàng hải chính hãng từ các thương hiệu dẫn đầu.</p>
+      <!-- Nội dung chữ bên trái -->
+      <div class="container h-100 position-relative z-2">
+        <div class="row h-100 align-items-center">
+          <div class="col-12 col-md-9 col-lg-7 store-banner-content py-4 py-lg-0">
+            <!-- Badge thương hiệu cao cấp -->
+            <div class="d-inline-flex align-items-center gap-2 store-banner-badge mb-2">
+              <span class="badge-dot"></span>
+              <span>JPM MARINE STORE</span>
+              <span class="badge-divider">•</span>
+              <span class="badge-sub">CHÍNH HÃNG NHẬT BẢN</span>
+            </div>
+            
+            <!-- Tiêu đề lớn -->
+            <h1 class="store-banner-title mb-2">
+              <template v-if="settings.store_banner_title">
+                {{ settings.store_banner_title }}
+              </template>
+              <template v-else>
+                Cửa Hàng <span class="text-danger">Phụ Tùng</span>
+              </template>
+            </h1>
+
+            <!-- Dòng chữ nhỏ mô tả bên dưới -->
+            <p class="store-banner-subtitle mb-0">
+              {{ settings.store_banner_subtitle || 'Khám phá hệ sinh thái phụ tùng động cơ thủy, dầu nhớt và vật tư hàng hải chính hãng từ các thương hiệu dẫn đầu.' }}
+            </p>
           </div>
         </div>
+      </div>
+    </div>
+
+    <section id="products-section" class="section pb-5 pt-4">
+      <div class="container">
 
         <!-- MAIN CONTENT: SPLIT LAYOUT -->
-        <div class="jpm-split-layout mt-2" data-aos="fade-up" data-aos-delay="100">
+        <div class="jpm-split-layout mt-1" data-aos="fade-up" data-aos-delay="100">
           
           <!-- SIDEBAR -->
           <div class="jpm-split-sidebar mb-4 mb-lg-0">
@@ -254,12 +282,14 @@ import axiosClient from '../../../api/axiosClient';
 import { useRoute, useRouter } from 'vue-router';
 import { useCartStore } from '../../../stores/cartStore';
 import { createToaster } from '@meforma/vue-toaster';
+import { useSiteSettings } from '../../../composables/useSiteSettings';
 import ProductCard from '../../../components/client/ProductCard.vue';
 
 const route = useRoute();
 const router = useRouter();
 const cartStore = useCartStore();
 const toaster = createToaster({ position: 'top-right', duration: 3000 });
+const { settings } = useSiteSettings();
 
 // Simple debounce function
 function debounce(func, wait) {
@@ -448,10 +478,26 @@ const formatPrice = (price) => {
 };
 
 const getImageUrl = (path) => {
-  if (!path) return 'https://placehold.co/400x300/f8f9fa/a1acb8?text=JPM';
+  if (!path) return '';
   if (path.startsWith('http')) return path;
-  return 'http://localhost:8000' + path; // Fallback
+  if (path.startsWith('/client/') || path.startsWith('/assets/')) return path;
+  const baseUrl = import.meta.env.VITE_API_BASE_URL ? import.meta.env.VITE_API_BASE_URL.replace(/\/api\/?$/, '') : 'http://localhost:8000';
+  const cleanPath = path.startsWith('/') ? path : '/' + path;
+  return `${baseUrl}${cleanPath}`;
 };
+
+const storeBannerStyle = computed(() => {
+  if (settings.value && settings.value.store_banner_image) {
+    const rawPath = settings.value.store_banner_image;
+    const imgUrl = rawPath.startsWith('http') || rawPath.startsWith('/client/') || rawPath.startsWith('/assets/')
+      ? rawPath
+      : getImageUrl(rawPath);
+    return {
+      backgroundImage: `url("${imgUrl}")`,
+    };
+  }
+  return {};
+});
 
 const addToCart = (item) => {
   if (!item.is_gia_lien_he && item.so_luong_ton !== undefined && item.so_luong_ton <= 0) {
@@ -472,6 +518,129 @@ const scrollToProducts = () => {
 </script>
 
 <style scoped>
+/* ── STORE HERO BANNER (Dài ngang full màn hình, làm trắng bên trái) ── */
+.store-hero-banner {
+  width: 100%;
+  min-height: 260px;
+  max-height: 320px;
+  height: clamp(250px, 20vw, 320px);
+  background-color: #f1f5f9;
+  background-image: radial-gradient(circle at 85% 50%, #e2e8f0 0%, #f8fafc 60%, #ffffff 100%);
+  background-size: cover;
+  background-position: center right;
+  background-repeat: no-repeat;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #e2e8f0;
+  box-shadow: 0 4px 20px rgba(10, 17, 40, 0.04);
+}
+
+.store-banner-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(
+    90deg,
+    #ffffff 0%,
+    rgba(255, 255, 255, 0.98) 28%,
+    rgba(255, 255, 255, 0.92) 42%,
+    rgba(255, 255, 255, 0.65) 65%,
+    rgba(255, 255, 255, 0.20) 85%,
+    rgba(255, 255, 255, 0.03) 100%
+  );
+  pointer-events: none;
+}
+
+.store-banner-content {
+  animation: bannerFadeInLeft 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes bannerFadeInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.store-banner-badge {
+  font-family: var(--heading-font, 'Raleway', sans-serif);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--accent-color, #F82249);
+}
+
+.store-banner-badge .badge-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: var(--accent-color, #F82249);
+  display: inline-block;
+  box-shadow: 0 0 8px rgba(248, 34, 73, 0.6);
+}
+
+.store-banner-badge .badge-divider {
+  color: #cbd5e1;
+}
+
+.store-banner-badge .badge-sub {
+  color: #64748b;
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+
+.store-banner-title {
+  font-family: var(--heading-font, 'Raleway', sans-serif);
+  font-size: clamp(1.8rem, 3.2vw, 2.5rem);
+  font-weight: 800;
+  color: #0a1128;
+  line-height: 1.2;
+  letter-spacing: -0.5px;
+}
+
+.store-banner-subtitle {
+  font-size: clamp(0.85rem, 1.1vw, 0.98rem);
+  color: #475569;
+  line-height: 1.6;
+  max-width: 580px;
+}
+
+@media (max-width: 991.98px) {
+  .store-hero-banner {
+    min-height: 220px;
+    height: auto;
+  }
+  .store-banner-overlay {
+    background: linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.98) 0%,
+      rgba(255, 255, 255, 0.94) 55%,
+      rgba(255, 255, 255, 0.70) 80%,
+      rgba(255, 255, 255, 0.40) 100%
+    );
+  }
+}
+
+@media (max-width: 767.98px) {
+  .store-hero-banner {
+    min-height: 190px;
+  }
+  .store-banner-overlay {
+    background: rgba(255, 255, 255, 0.92);
+  }
+  .store-banner-subtitle {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}
+
 /* ── SHOP PAGE LUXURY SLATE BACKGROUND ── */
 .shop-catalog-page {
   background-color: #f8fafc;
@@ -639,7 +808,7 @@ const scrollToProducts = () => {
 }
 
 .btn-reset-sidebar-filter:hover {
-  color: #d8143a;
+  color: var(--jpm-color-red-hover, #D9163A);
   text-decoration: underline;
 }
 
@@ -727,7 +896,7 @@ const scrollToProducts = () => {
 }
 
 .btn-clear-search:hover {
-  color: #dc2626;
+  color: var(--accent-color, #F82249);
 }
 
 /* ── NAVIGATION LIST IN SIDEBAR ── */
@@ -845,8 +1014,8 @@ const scrollToProducts = () => {
 }
 
 .btn-reset-filters:hover {
-  background-color: #e0163d !important;
-  border-color: #e0163d !important;
+  background-color: var(--jpm-color-red-hover, #D9163A) !important;
+  border-color: var(--jpm-color-red-hover, #D9163A) !important;
   box-shadow: 0 4px 12px rgba(248, 34, 73, 0.25) !important;
   transform: translateY(-1px);
 }

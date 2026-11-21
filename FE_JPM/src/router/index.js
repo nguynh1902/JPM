@@ -307,12 +307,6 @@ const routes = [
     component: () => import("../views/admin/HeThong/LichSuHoatDong.vue"),
     meta: { layout: "admin", requiresAuth: true, permission: "Cấu hình chung" },
   },
-  {
-    path: "/portal/thong-bao",
-    name: "PortalThongBao",
-    component: () => import("../views/admin/HeThong/DanhSachThongBao.vue"),
-    meta: { layout: "admin", requiresAuth: true },
-  },
 
   // TÀI KHOẢN
   {
@@ -356,7 +350,7 @@ const routes = [
   { path: "/admin/faq", redirect: "/portal/faq" },
   { path: "/admin/cau-hinh-he-thong", redirect: "/portal/cau-hinh-he-thong" },
   { path: "/admin/lich-su-hoat-dong", redirect: "/portal/lich-su-hoat-dong" },
-  { path: "/admin/thong-bao", redirect: "/portal/thong-bao" },
+  { path: "/admin/thong-bao", redirect: "/portal/dashboard" },
   { path: "/admin/ho-so", redirect: "/portal/ho-so" },
   { path: "/admin/doi-mat-khau", redirect: "/portal/doi-mat-khau" },
 
@@ -385,7 +379,7 @@ const routes = [
   { path: "/admin/noidung/faq", redirect: "/portal/faq" },
   { path: "/admin/caidat/cauhinhhethong", redirect: "/portal/cau-hinh-he-thong" },
   { path: "/admin/lichsu/hoatdong", redirect: "/portal/lich-su-hoat-dong" },
-  { path: "/admin/hethong/thongbao", redirect: "/portal/thong-bao" },
+  { path: "/admin/hethong/thongbao", redirect: "/portal/dashboard" },
   { path: "/admin/taikhoan/hoso", redirect: "/portal/ho-so" },
   { path: "/admin/taikhoan/doimatkhau", redirect: "/portal/doi-mat-khau" },
 
@@ -395,11 +389,22 @@ const routes = [
   { path: "/staff/don-hang", redirect: "/portal/don-hang" },
   { path: "/staff/khach-hang", redirect: "/portal/khach-hang" },
   { path: "/staff/phu-tung", redirect: "/portal/phu-tung" },
+  { path: "/staff/nhom-phu-tung", redirect: "/portal/nhom-phu-tung" },
   { path: "/staff/so-do-phu-tung", redirect: "/portal/so-do-phu-tung" },
+  { path: "/staff/ma-thay-the", redirect: "/portal/ma-thay-the" },
+  { path: "/staff/thuong-hieu", redirect: "/portal/thuong-hieu" },
+  { path: "/staff/loai-dong-co", redirect: "/portal/loai-dong-co" },
   { path: "/staff/dong-co-model", redirect: "/portal/dong-co-model" },
   { path: "/staff/san-pham", redirect: "/portal/san-pham" },
+  { path: "/staff/danh-muc-san-pham", redirect: "/portal/danh-muc-san-pham" },
+  { path: "/staff/danh-sach-kho", redirect: "/portal/danh-sach-kho" },
+  { path: "/staff/kho", redirect: "/portal/danh-sach-kho" },
   { path: "/staff/ton-kho", redirect: "/portal/ton-kho" },
   { path: "/staff/the-kho", redirect: "/portal/the-kho" },
+  { path: "/staff/chuyen-muc", redirect: "/portal/chuyen-muc" },
+  { path: "/staff/tin-tuc", redirect: "/portal/tin-tuc" },
+  { path: "/staff/faq", redirect: "/portal/faq" },
+  { path: "/staff/thong-bao", redirect: "/portal/dashboard" },
   { path: "/staff/ho-so", redirect: "/portal/ho-so" },
   { path: "/staff/doi-mat-khau", redirect: "/portal/doi-mat-khau" },
 ];
@@ -444,8 +449,8 @@ router.beforeEach((to, from, next) => {
       return next("/dang-nhap");
     }
 
-    // Nếu người dùng cố truy cập khu vực Backoffice (/portal/... hoặc /admin/...)
-    if (to.path.startsWith('/portal') || to.path.startsWith('/admin')) {
+    // Nếu người dùng cố truy cập khu vực Backoffice (/portal/... hoặc /admin/... hoặc /staff/...)
+    if (to.path.startsWith('/portal') || to.path.startsWith('/admin') || to.path.startsWith('/staff')) {
       // Khách hàng (Customer) bị chặn không cho vào Backoffice
       if (!authStore.isStaffOrAdmin) {
         Swal.fire({

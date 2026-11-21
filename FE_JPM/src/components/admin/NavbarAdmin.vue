@@ -100,12 +100,6 @@ export default {
           type: "item"
         },
         {
-          title: "Thông Báo Hệ Thống",
-          icon: "bx-bell",
-          path: "/portal/thong-bao",
-          type: "item"
-        },
-        {
           title: "Động Cơ & Phụ Tùng",
           type: "header"
         },
@@ -244,20 +238,19 @@ export default {
     userAvatar() {
       const store = useAuthStore();
       if (store.user && store.user.avatar) {
-        let path = store.user.avatar;
-        if (path.startsWith('http')) return path;
-        return `http://localhost:8000${path}`;
+        return this.getImageUrl(store.user.avatar);
       }
       return `https://ui-avatars.com/api/?name=${encodeURIComponent(this.userName || 'U')}&background=e7e7ff&color=696cff`;
     },
     displayRoleName() {
       const store = useAuthStore();
       if (!store.user || !store.user.roles || store.user.roles.length === 0) return 'Nhân Sự';
-      const role = store.user.roles[0];
-      const rLower = String(role).toLowerCase();
-      if (rLower === 'admin' || rLower === 'super admin') return 'Quản Trị Viên';
-      if (rLower === 'staff') return 'Nhân Viên';
-      return role;
+      const rawRole = store.user.roles[0];
+      const roleName = typeof rawRole === 'object' && rawRole?.name ? rawRole.name : String(rawRole || '');
+      const rLower = roleName.toLowerCase().trim();
+      if (rLower === 'admin' || rLower === 'super admin' || rLower === 'quản trị viên') return 'Quản Trị Viên';
+      if (rLower === 'staff' || rLower === 'nhân viên' || rLower === 'nhân viên pim') return 'Nhân Viên';
+      return roleName || 'Nhân Sự';
     },
     // Thuật toán lọc menu động theo Roles & Permissions
     filteredMenus() {

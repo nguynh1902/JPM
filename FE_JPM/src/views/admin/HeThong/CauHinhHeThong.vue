@@ -148,6 +148,142 @@
         </div>
       </div>
 
+      <!-- BANNER CỬA HÀNG (STORE CATALOG BANNER) -->
+      <div class="col-12">
+        <div class="card mb-4 shadow-sm border">
+          <div class="card-header d-flex flex-wrap justify-content-between align-items-center gap-2 border-bottom py-3">
+            <div>
+              <h5 class="card-title mb-1 fw-bold text-dark">
+                <i class="bx bx-store-alt text-primary me-2"></i>Banner Cửa Hàng (Store Header Banner)
+              </h5>
+              <small class="text-muted">Cài đặt ảnh nền, tiêu đề và mô tả cho banner ngang trang Cửa Hàng Client</small>
+            </div>
+            <span class="badge bg-label-primary px-3 py-2 rounded">
+              Tỷ lệ chuẩn: 1920 × 320px
+            </span>
+          </div>
+
+          <div class="card-body pt-4">
+            <div class="row g-4">
+              <!-- Cột nhập liệu -->
+              <div class="col-lg-6">
+                <!-- Chọn file tải lên hoặc link ảnh -->
+                <div class="mb-3">
+                  <label class="form-label fw-bold text-dark">
+                    Ảnh Nền Banner Cửa Hàng
+                  </label>
+                  
+                  <div class="d-flex align-items-center gap-2 mb-2">
+                    <input 
+                      type="file" 
+                      ref="storeBannerFileInput" 
+                      class="d-none" 
+                      accept="image/*,.jpg,.jpeg,.png,.webp,.gif,.svg,.bmp,.avif,.heic,.heif,.tiff,.tif,.ico,.jfif"
+                      @change="handleStoreBannerUpload"
+                    />
+                    <button 
+                      type="button" 
+                      class="btn btn-outline-primary d-inline-flex align-items-center shadow-none"
+                      @click="$refs.storeBannerFileInput.click()"
+                      :disabled="isUploadingBanner"
+                    >
+                      <span v-if="isUploadingBanner" class="spinner-border spinner-border-sm me-2"></span>
+                      <i v-else class="bx bx-upload me-2"></i>
+                      {{ isUploadingBanner ? 'Đang tải lên...' : 'Tải Ảnh Banner Mới' }}
+                    </button>
+                    <button 
+                      v-if="formData.store_banner_image" 
+                      type="button" 
+                      class="btn btn-outline-danger shadow-none"
+                      @click="formData.store_banner_image = ''"
+                      title="Gỡ ảnh banner"
+                    >
+                      <i class="bx bx-trash"></i>
+                    </button>
+                  </div>
+
+                  <div class="input-group input-group-merge">
+                    <span class="input-group-text"><i class="bx bx-image"></i></span>
+                    <input 
+                      type="text" 
+                      class="form-control" 
+                      placeholder="VD: /storage/banners/banner.png hoặc /client/image/..." 
+                      v-model="formData.store_banner_image"
+                    />
+                  </div>
+                  <div class="form-text text-muted mt-1">
+                    Hỗ trợ mọi định dạng ảnh, tự động nén. Khi chọn ảnh hoặc nhập link, ảnh sẽ hiện ngay bên phải lớp trắng.
+                  </div>
+                </div>
+
+                <!-- Tiêu đề Banner -->
+                <div class="mb-3">
+                  <label class="form-label fw-bold text-dark">Tiêu Đề Banner Cửa Hàng</label>
+                  <div class="input-group input-group-merge">
+                    <span class="input-group-text"><i class="bx bx-heading"></i></span>
+                    <input 
+                      type="text" 
+                      class="form-control" 
+                      placeholder="Cửa Hàng Phụ Tùng" 
+                      v-model="formData.store_banner_title"
+                    />
+                  </div>
+                  <div class="form-text text-muted">Dòng chữ lớn hiển thị tại khu vực làm trắng bên trái banner.</div>
+                </div>
+
+                <!-- Mô tả phụ -->
+                <div class="mb-2">
+                  <label class="form-label fw-bold text-dark">Mô Tả Phụ Dưới Tiêu Đề</label>
+                  <textarea 
+                    class="form-control" 
+                    rows="2"
+                    placeholder="Khám phá hệ sinh thái phụ tùng động cơ thủy, dầu nhớt và vật tư hàng hải chính hãng..."
+                    v-model="formData.store_banner_subtitle"
+                  ></textarea>
+                </div>
+              </div>
+
+              <!-- Cột Live Preview mô phỏng Client thật -->
+              <div class="col-lg-6">
+                <label class="form-label fw-bold text-dark d-flex justify-content-between align-items-center">
+                  <span><i class="bx bx-show text-primary me-1"></i>Xem Trước Hiệu Ứng (Live Preview)</span>
+                  <small class="text-muted">Mô phỏng lớp trắng bên trái + ảnh nền</small>
+                </label>
+                
+                <div class="admin-store-banner-preview rounded-3 overflow-hidden border position-relative shadow-sm" :style="adminBannerPreviewStyle">
+                  <!-- Lớp phủ trắng bên trái -->
+                  <div class="admin-banner-preview-overlay"></div>
+                  
+                  <!-- Nội dung chữ bên trái -->
+                  <div class="position-relative z-2 p-3 p-md-4" style="max-width: 75%;">
+                    <div class="d-inline-flex align-items-center gap-1 mb-1" style="font-size: 0.65rem; font-weight: 700; letter-spacing: 1px; color: #F82249;">
+                      <span style="width: 5px; height: 5px; border-radius: 50%; background: #F82249; display: inline-block;"></span>
+                      JPM MARINE STORE
+                    </div>
+                    <h5 class="fw-bold mb-1 text-dark" style="font-size: 1.15rem; line-height: 1.2;">
+                      {{ formData.store_banner_title || 'Cửa Hàng Phụ Tùng' }}
+                    </h5>
+                    <p class="text-secondary mb-0" style="font-size: 0.75rem; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+                      {{ formData.store_banner_subtitle || 'Khám phá hệ sinh thái phụ tùng động cơ thủy, dầu nhớt và vật tư hàng hải chính hãng từ các thương hiệu dẫn đầu.' }}
+                    </p>
+                  </div>
+
+                  <!-- Trạng thái ảnh -->
+                  <div class="position-absolute bottom-0 end-0 m-2 z-2">
+                    <span v-if="formData.store_banner_image" class="badge bg-success shadow-sm">
+                      <i class="bx bx-check me-1"></i>Đã có ảnh nền
+                    </span>
+                    <span v-else class="badge bg-secondary shadow-sm">
+                      <i class="bx bx-image me-1"></i>Chưa có ảnh (Nền mặc định)
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- THÔNG TIN DOANH NGHIỆP & LIÊN HỆ -->
       <div class="col-12">
         <div class="card mb-4">
@@ -575,6 +711,7 @@ import { ref, reactive, computed, watch, onMounted } from 'vue';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/vue-query';
 import axiosClient from '../../../api/axiosClient';
 import { createToaster } from '@meforma/vue-toaster';
+import { compressImage } from '../../../utils/imageOptimizer';
 
 export default {
   name: "CauHinhHeThong",
@@ -615,6 +752,9 @@ export default {
       homepage_youtube_url: 'https://www.youtube.com/watch?v=5CVzOqvqI38',
       homepage_hero_title: 'JPM MARINE',
       homepage_hero_subtitle: 'PHỤ TÙNG TÀU THUYỀN NHẬT BẢN',
+      store_banner_image: '',
+      store_banner_title: 'Cửa Hàng Phụ Tùng',
+      store_banner_subtitle: 'Khám phá hệ sinh thái phụ tùng động cơ thủy, dầu nhớt và vật tư hàng hải chính hãng từ các thương hiệu dẫn đầu.',
       company_name: 'JPM Marine',
       company_address: '123 Đường Bạch Đằng, Q. Bình Thạnh, TP. Hồ Chí Minh, Việt Nam',
       company_hotline: '0909 123 456',
@@ -743,6 +883,55 @@ export default {
       }
     };
 
+    const isUploadingBanner = ref(false);
+    const storeBannerFileInput = ref(null);
+
+    const handleStoreBannerUpload = async (event) => {
+      const file = event.target.files?.[0];
+      if (!file) return;
+
+      isUploadingBanner.value = true;
+      try {
+        const compressed = await compressImage(file, { maxWidth: 1920, maxHeight: 600, quality: 0.88 });
+        const uploadForm = new FormData();
+        uploadForm.append('file', compressed);
+
+        const res = await axiosClient.post('/admin/cau-hinh/upload-banner', uploadForm, {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        });
+        const payload = res?.data || res;
+        if (payload?.success && payload.url) {
+          formData.store_banner_image = payload.url;
+          toaster.success('Đã tải ảnh banner lên thành công!');
+        }
+      } catch (err) {
+        toaster.error(err.response?.data?.message || 'Lỗi khi tải ảnh banner lên');
+      } finally {
+        isUploadingBanner.value = false;
+        event.target.value = '';
+      }
+    };
+
+    const adminBannerPreviewStyle = computed(() => {
+      if (formData.store_banner_image) {
+        const raw = formData.store_banner_image;
+        const imgUrl = raw.startsWith('http') || raw.startsWith('/client/') || raw.startsWith('/assets/')
+          ? raw
+          : (raw.startsWith('/') ? raw : '/' + raw);
+        return {
+          backgroundImage: `url("${imgUrl}")`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center right',
+          minHeight: '170px'
+        };
+      }
+      return {
+        backgroundColor: '#f1f5f9',
+        backgroundImage: 'radial-gradient(circle at 85% 50%, #e2e8f0 0%, #f8fafc 60%, #ffffff 100%)',
+        minHeight: '170px'
+      };
+    });
+
     onMounted(() => {
       updateYoutubePreview();
     });
@@ -760,8 +949,37 @@ export default {
       handleClearCache,
       bankOptions,
       templateOptions,
-      previewQrUrl
+      previewQrUrl,
+      isUploadingBanner,
+      storeBannerFileInput,
+      handleStoreBannerUpload,
+      adminBannerPreviewStyle
     };
   }
 };
 </script>
+
+<style scoped>
+.admin-store-banner-preview {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background-color: #f8fafc;
+}
+
+.admin-banner-preview-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(
+    90deg,
+    #ffffff 0%,
+    rgba(255, 255, 255, 0.98) 35%,
+    rgba(255, 255, 255, 0.92) 50%,
+    rgba(255, 255, 255, 0.65) 75%,
+    rgba(255, 255, 255, 0.15) 90%,
+    transparent 100%
+  );
+  pointer-events: none;
+}
+</style>

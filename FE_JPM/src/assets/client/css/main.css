@@ -300,7 +300,7 @@ h6 {
 ------------------------------*/
 .php-email-form .error-message {
   display: none;
-  background: #df1529;
+  background: var(--accent-color, #F82249);
   color: #ffffff;
   text-align: left;
   padding: 15px;
@@ -2147,8 +2147,8 @@ section,
   padding: 10px 20px;
 }
 .btn-danger:hover, .btn-jpm:hover {
-  background-color: #e01a3f;
-  border-color: #e01a3f;
+  background-color: var(--jpm-color-red-hover, #D9163A);
+  border-color: var(--jpm-color-red-hover, #D9163A);
   color: #ffffff;
   box-shadow: none;
 }
@@ -2301,7 +2301,7 @@ section,
 .btn-delete-row:hover {
   background-color: #fee2e2 !important;
   border-color: #fca5a5 !important;
-  color: #dc2626 !important;
+  color: var(--accent-color, #F82249) !important;
   transform: translateY(-1px);
 }
 
@@ -3572,7 +3572,7 @@ a.footer-contact-value:hover {
 /* =========================================
    JPM LUXURY FLAT BUTTONS & TAGS SYSTEM (CLIENT UI)
    - Unified 8px radius, Roboto technical typography, zero neon glow
-   - Danger / CTA Red: #f82249 -> #e01a3f
+   - Danger / CTA Red: #f82249 -> #D9163A (hover)
    - Light / Secondary Neutral (Đặt lại, Hủy, Đóng): #f1f5f9 -> #e2e8f0, Slate -> Deep Navy
    - Primary / Dark Brand Navy: #0A1128 -> #16244f
    ========================================= */
@@ -3588,8 +3588,8 @@ a.footer-contact-value:hover {
 .index-page .btn-danger:hover, .index-page .btn-danger:focus, .index-page .btn-danger:active, 
 .index-page .btn-jpm:hover, .index-page .btn-jpm:focus, .index-page .btn-jpm:active,
 .index-page .btn-getstarted:hover, .index-page .btn-getstarted:focus, .index-page .btn-getstarted:active {
-  background-color: #e01a3f !important;
-  border-color: #e01a3f !important;
+  background-color: var(--jpm-color-red-hover, #D9163A) !important;
+  border-color: var(--jpm-color-red-hover, #D9163A) !important;
   color: #ffffff !important;
   box-shadow: none !important;
   transform: none !important;

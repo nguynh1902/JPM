@@ -57,7 +57,7 @@ class VaiTroController extends Controller
                 return ['id' => $p->id, 'name' => $p->name];
             })->keyBy('name');
 
-            // Group permissions into 5 standardized modules
+            // Group permissions into 6 standardized modules matching Backoffice layout
             $permissionModules = [
                 [
                     'id' => 'pim',
@@ -74,7 +74,17 @@ class VaiTroController extends Controller
                     ]
                 ],
                 [
-                    'id' => 'order',
+                    'id' => 'product',
+                    'name' => 'Cửa Hàng & Sản Phẩm',
+                    'permissions' => [
+                        $allPermissions->get('Xem Sản phẩm'),
+                        $allPermissions->get('Thêm Sản phẩm'),
+                        $allPermissions->get('Sửa Sản phẩm'),
+                        $allPermissions->get('Xóa Sản phẩm'),
+                    ]
+                ],
+                [
+                    'id' => 'sales',
                     'name' => 'Bán Hàng & Khách Hàng',
                     'permissions' => [
                         $allPermissions->get('Xem Đơn hàng'),
@@ -89,22 +99,19 @@ class VaiTroController extends Controller
                 ],
                 [
                     'id' => 'warehouse',
-                    'name' => 'Kho Hàng',
+                    'name' => 'Kho Hàng & Vận Hành',
                     'permissions' => [
                         $allPermissions->get('Xem Tồn kho'),
                         $allPermissions->get('Cập nhật Tồn kho'),
                         $allPermissions->get('Xem Thẻ kho'),
                         $allPermissions->get('Quản lý Danh sách kho'),
+                        $allPermissions->get('Quản lý Đơn nhập PO'),
                     ]
                 ],
                 [
                     'id' => 'cms',
-                    'name' => 'Sản Phẩm & CMS',
+                    'name' => 'Nội Dung & CMS',
                     'permissions' => [
-                        $allPermissions->get('Xem Sản phẩm'),
-                        $allPermissions->get('Thêm Sản phẩm'),
-                        $allPermissions->get('Sửa Sản phẩm'),
-                        $allPermissions->get('Xóa Sản phẩm'),
                         $allPermissions->get('Xem Tin tức & CMS'),
                         $allPermissions->get('Soạn thảo Tin tức & CMS'),
                         $allPermissions->get('Xóa Tin tức & CMS'),
@@ -112,7 +119,7 @@ class VaiTroController extends Controller
                 ],
                 [
                     'id' => 'system',
-                    'name' => 'Hệ Thống & Cài Đặt',
+                    'name' => 'Hệ Thống & Quản Trị',
                     'permissions' => [
                         $allPermissions->get('Quản lý Nhân sự'),
                         $allPermissions->get('Quản lý Vai trò'),

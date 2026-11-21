@@ -64,7 +64,11 @@ Route::prefix('public')->middleware(['throttle:public-api', 'cache.public'])->gr
 Route::prefix('public/vietqr')->group(function () {
     Route::get('/don-hang/{code}', [\App\Domain\Sales\Controllers\PaymentController::class, 'getDonHangQR']);
     Route::get('/bao-gia/{code}', [\App\Domain\Sales\Controllers\PaymentController::class, 'getBaoGiaQR']);
+    Route::get('/check-status/{type}/{code}', [\App\Domain\Sales\Controllers\PaymentController::class, 'checkStatus']);
 });
+
+// Webhook thanh toán đối soát tự động (Ngân hàng / Casso / SePay)
+Route::post('/webhooks/payment/reconciliation', [\App\Domain\Sales\Controllers\PaymentController::class, 'webhookReconciliation']);
 
 // Auth Routes (Protected)
 Route::middleware('auth:sanctum')->group(function () {
@@ -126,6 +130,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::middleware(['role_or_permission:admin|Super Admin|Cấu hình chung|Quản lý Vai trò|Quản lý Nhân sự,sanctum'])->group(function () {
         Route::get('admin/cau-hinh', [\App\Domain\Core\Controllers\CauHinhController::class, 'adminIndex']);
         Route::post('admin/cau-hinh', [\App\Domain\Core\Controllers\CauHinhController::class, 'adminUpdate']);
+        Route::post('admin/cau-hinh/upload-banner', [\App\Domain\Core\Controllers\CauHinhController::class, 'uploadBanner']);
         Route::apiResource('admin/system-logs', SystemLogController::class)->only(['index']);
 
         Route::post('admin/he-thong/clear-cache', function (\Illuminate\Http\Request $request, \App\Domain\MarineCatalog\Services\CatalogCacheService $cacheService) {

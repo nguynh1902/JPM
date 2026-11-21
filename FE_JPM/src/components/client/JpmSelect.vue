@@ -406,7 +406,7 @@ watch(() => props.options, () => {
 }
 
 .custom-select-box.has-error {
-  border-color: #dc3545;
+  border-color: var(--accent-color, #F82249);
 }
 
 .text-placeholder {
