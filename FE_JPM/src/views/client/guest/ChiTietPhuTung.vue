@@ -1559,7 +1559,7 @@ watch(compatibleModels, (models) => {
   border-color: var(--jpm-color-red-hover, #D9163A) !important;
   color: #ffffff !important;
   transform: translateY(-2px) !important;
-  box-shadow: 0 6px 16px rgba(248, 34, 73, 0.3) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12) !important;
 }
 
 .btn-product-cart:active {
@@ -1592,7 +1592,7 @@ watch(compatibleModels, (models) => {
   border-color: #0d6efd !important;
   color: #ffffff !important;
   transform: translateY(-2px) !important;
-  box-shadow: 0 6px 16px rgba(13, 110, 253, 0.3) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12) !important;
 }
 
 .btn-product-garage:hover i,

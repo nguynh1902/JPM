@@ -1086,12 +1086,12 @@ export default {
   font-size: 0.95rem;
   letter-spacing: 0.3px;
   transition: all 0.2s ease;
-  box-shadow: 0 4px 12px rgba(248, 34, 73, 0.25);
+  box-shadow: none;
 }
 
 .btn-jpm-submit:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 6px 18px rgba(248, 34, 73, 0.35);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
 }
 
 .btn-jpm-submit:disabled {
@@ -1162,7 +1162,7 @@ export default {
   align-items: center;
   gap: 8px;
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-  box-shadow: 0 4px 14px rgba(248, 34, 73, 0.25) !important;
+  box-shadow: none;
 }
 
 .btn-empty-cart-action:hover {
@@ -1170,7 +1170,7 @@ export default {
   border-color: var(--jpm-color-red-hover, #D9163A) !important;
   color: #ffffff !important;
   transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(248, 34, 73, 0.35) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12) !important;
 }
 
 .btn-empty-cart-action i {

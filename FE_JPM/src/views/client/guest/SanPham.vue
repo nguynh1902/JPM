@@ -1034,7 +1034,7 @@ const scrollToProducts = () => {
 .btn-reset-filters:hover {
   background-color: var(--jpm-color-red-hover, #D9163A) !important;
   border-color: var(--jpm-color-red-hover, #D9163A) !important;
-  box-shadow: 0 4px 12px rgba(248, 34, 73, 0.25) !important;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12) !important;
   transform: translateY(-1px);
 }
 
@@ -1063,7 +1063,7 @@ const scrollToProducts = () => {
   background-color: #f82249 !important;
   border-color: #f82249 !important;
   color: #ffffff !important;
-  box-shadow: 0 4px 10px rgba(248, 34, 73, 0.25);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
 }
 .page-item.disabled .jpm-pagination-btn,
 .jpm-pagination-btn:disabled {

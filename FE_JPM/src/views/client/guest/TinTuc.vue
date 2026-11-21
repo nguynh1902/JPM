@@ -1,13 +1,8 @@
 <template>
   <div class="news-wireframe-page bg-white">
 
-    <!-- Template Preloader xoay tròn khi đang tải bài viết / cấu hình -->
-    <transition name="preloader-fade">
-      <div id="preloader" v-if="isPageLoading"></div>
-    </transition>
-
     <!-- HERO BANNER TIN TỨC DÀI NGANG FULL MÀN HÌNH -->
-    <div class="store-hero-banner position-relative overflow-hidden mb-4" :class="{ 'banner-no-img': !currentNewsBannerImg }" :style="newsBannerStyle">
+    <div class="store-hero-banner position-relative overflow-hidden" :class="{ 'banner-no-img': !currentNewsBannerImg }" :style="newsBannerStyle">
       <!-- Lớp phủ Gradient làm trắng bên trái mềm mại -->
       <div class="store-banner-overlay"></div>
 
@@ -51,7 +46,7 @@
          SECTION 1 (ĐỈNH TRANG - HERO MAGAZINE): TIÊU ĐIỂM & BÀI VIẾT MỚI NHẤT
          1 Large Story Left + 3 Compact Horizontal Stories Right
     ════════════════════════════════════════════════════════════════ -->
-    <section class="pb-4 pb-md-5" v-if="featuredMainStory">
+    <section class="section pt-4 pb-4 pb-md-5" v-if="featuredMainStory">
       <div class="container">
         <!-- Header Row -->
         <div class="d-flex align-items-center justify-content-between mb-4">
@@ -139,7 +134,7 @@
          SECTION 2 (Ở GIỮA): KHÁM PHÁ THEO CHUYÊN MỤC
          Toolbar (Title) + Dedicated Tabs Row + 4 Landscape Cards
     ════════════════════════════════════════════════════════════════ -->
-    <section id="top-destinations" class="py-4 py-md-5 border-top">
+    <section id="top-destinations" class="py-4 py-md-5" :class="{ 'border-top': featuredMainStory }">
       <div class="container">
         <!-- Header Toolbar: Tiêu Đề -->
         <div class="mb-3">
@@ -366,7 +361,7 @@ export default {
   setup() {
     const route = useRoute();
     const router = useRouter();
-    const { settings, isLoading: isSettingsLoading } = useSiteSettings();
+    const { settings } = useSiteSettings();
 
     const getBannerImageUrl = (path) => {
       if (!path) return '';
@@ -505,8 +500,6 @@ export default {
       staleTime: 1000 * 60 * 5,
     });
 
-    const isPageLoading = computed(() => isFetching.value || isSettingsLoading.value);
-
     // === Helpers ===
     const formatDateShort = (dateString) => {
       if (!dateString) return '';
@@ -616,7 +609,6 @@ export default {
       closeVideoModal,
       getImageUrl,
       isFetching,
-      isPageLoading,
       allNews,
       featuredMainStory,
       featuredSideStories,
@@ -922,7 +914,7 @@ export default {
   background-color: var(--jpm-color-red-marine, #f82249);
   border-color: #ffffff;
   transform: translate(-50%, -50%) scale(1.12);
-  box-shadow: 0 10px 25px rgba(248, 34, 73, 0.45) !important;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25) !important;
 }
 
 .play-circle-btn-sm {
@@ -940,7 +932,7 @@ export default {
   background-color: var(--jpm-color-red-marine, #f82249);
   border-color: #ffffff;
   transform: translate(-50%, -50%) scale(1.15);
-  box-shadow: 0 8px 20px rgba(248, 34, 73, 0.45) !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25) !important;
 }
 
 /* ── SHARED HOVER & TRUNCATION ── */
@@ -987,13 +979,5 @@ a:hover .hero-title-hover {
     width: 115px;
     height: 74px;
   }
-}
-
-/* Preloader Transition */
-.preloader-fade-leave-active {
-  transition: opacity 0.35s ease-out;
-}
-.preloader-fade-leave-to {
-  opacity: 0;
 }
 </style>

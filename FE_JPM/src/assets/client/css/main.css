@@ -1158,7 +1158,7 @@ section,
   border-color: var(--accent-color);
   color: #fff;
   transform: translateY(-2px);
-  box-shadow: 0 6px 18px rgba(248, 34, 73, 0.35);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 @media (max-width: 1199px) {
@@ -2280,7 +2280,7 @@ section,
   border-color: var(--accent-color, #f82249) !important;
   color: #ffffff !important;
   transform: translateY(-1px);
-  box-shadow: 0 3px 8px rgba(248, 34, 73, 0.25) !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1) !important;
 }
 
 .btn-delete-row {
@@ -3821,7 +3821,7 @@ a.footer-contact-value:hover {
   color: #ffffff !important;
   border-color: var(--accent-color, #f82249) !important;
   transform: translateY(-2px);
-  box-shadow: 0 4px 10px rgba(248, 34, 73, 0.25) !important;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12) !important;
 }
 
 .skeleton-box-brand {
@@ -3904,7 +3904,7 @@ a.footer-contact-value:hover {
   color: #ffffff;
   border-color: var(--jpm-color-red-hover, #D9163A);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(248, 34, 73, 0.25);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
 }
 
 /* Badges trạng thái chuẩn JPM */
@@ -4001,7 +4001,7 @@ a.footer-contact-value:hover {
   background-color: var(--jpm-color-red-hover, #D9163A) !important;
   border-color: var(--jpm-color-red-hover, #D9163A) !important;
   color: #ffffff !important;
-  box-shadow: 0 4px 12px rgba(248, 34, 73, 0.25);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
 }
 
 .btn-outline-danger {
@@ -4015,7 +4015,7 @@ a.footer-contact-value:hover {
   border-color: var(--jpm-color-red-marine, #F82249) !important;
   color: #ffffff !important;
   transform: translateY(-2px) !important;
-  box-shadow: 0 6px 16px rgba(248, 34, 73, 0.28) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12) !important;
 }
 .btn-outline-danger:active {
   transform: translateY(0) !important;
@@ -4033,7 +4033,7 @@ a.footer-contact-value:hover {
   border-color: var(--jpm-color-navy-dark, #0A1128) !important;
   color: #ffffff !important;
   transform: translateY(-2px) !important;
-  box-shadow: 0 6px 16px rgba(10, 17, 40, 0.25) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12) !important;
 }
 .btn-outline-primary:active {
   transform: translateY(0) !important;
@@ -4052,7 +4052,7 @@ a.footer-contact-value:hover {
   border-color: #0d6efd !important;
   color: #ffffff !important;
   transform: translateY(-2px) !important;
-  box-shadow: 0 6px 16px rgba(13, 110, 253, 0.28) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12) !important;
 }
 .btn-outline-blue:active {
   transform: translateY(0) !important;
@@ -4137,7 +4137,7 @@ a.btn-shopee-primary:hover {
   background-color: var(--jpm-color-red-hover, #D9163A) !important;
   border-color: var(--jpm-color-red-hover, #D9163A) !important;
   color: #ffffff !important;
-  box-shadow: 0 4px 12px rgba(248, 34, 73, 0.25) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12) !important;
 }
 .btn-shopee-outline,
 button.btn-shopee-outline,

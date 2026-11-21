@@ -1078,7 +1078,7 @@ const startSidebarDrag = () => {
   border-color: var(--accent-color, #f82249) !important;
   color: #ffffff !important;
   transform: translateY(-1px);
-  box-shadow: 0 4px 10px rgba(248, 34, 73, 0.2);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
 }
 
 .spec-ref-text {
@@ -1149,7 +1149,7 @@ const startSidebarDrag = () => {
   border-color: var(--accent-color, #f82249);
   color: #ffffff;
   transform: translateY(-1px);
-  box-shadow: 0 4px 10px rgba(248, 34, 73, 0.22);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
 }
 
 .price-text {

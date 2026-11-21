@@ -2,7 +2,7 @@
   <div class="support-page pb-5">
 
     <!-- HERO BANNER HỖ TRỢ DÀI NGANG FULL MÀN HÌNH -->
-    <div class="store-hero-banner position-relative overflow-hidden mb-4" :class="{ 'banner-no-img': !settings?.support_banner_image }" :style="supportBannerStyle">
+    <div class="store-hero-banner position-relative overflow-hidden" :class="{ 'banner-no-img': !settings?.support_banner_image }" :style="supportBannerStyle">
       <!-- Lớp phủ Gradient làm trắng bên trái mềm mại -->
       <div class="store-banner-overlay"></div>
 
@@ -42,10 +42,10 @@
       </div>
     </div>
 
-    <div class="container pb-4">
+    <div class="container pb-4 pt-4">
       
       <!-- 2. MAIN CONTACT SECTION (2-COLUMN LAYOUT MATCHING REFERENCE) -->
-      <section id="contact" class="contact section mb-5 pb-5 border-bottom">
+      <section id="contact" class="contact section pt-0 mb-5 pb-5 border-bottom">
         <div class="row align-items-start gx-lg-5 gy-5">
           
           <!-- CỘT TRÁI: GIỮ KẾT NỐI + LƯỚI 2x2 THÔNG TIN + MẠNG XÃ HỘI -->
@@ -524,13 +524,13 @@ textarea.contact-field-input {
   font-size: 0.88rem;
   font-weight: 600;
   letter-spacing: 0.3px;
-  box-shadow: 0 4px 12px rgba(248, 34, 73, 0.25);
+  box-shadow: none;
   transition: all 0.25s ease;
 }
 
 .btn-contact-submit:hover:not(:disabled) {
   background-color: var(--jpm-color-red-hover, #D9163A);
-  box-shadow: 0 6px 16px rgba(248, 34, 73, 0.35);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
   transform: translateY(-2px);
 }
 

@@ -1591,7 +1591,7 @@ export default {
 .custom-pagination-rounded .page-item.active .page-link {
   background-color: #f82249;
   color: #ffffff;
-  box-shadow: 0 4px 10px rgba(248, 34, 73, 0.25);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
 }
 
 .custom-pagination-rounded .page-link:hover {
