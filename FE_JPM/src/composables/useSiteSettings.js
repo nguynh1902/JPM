@@ -12,6 +12,15 @@ export const DEFAULT_SETTINGS = {
   store_banner_image: '/client/image/shop_banner.png',
   store_banner_title: 'Cửa Hàng Phụ Tùng',
   store_banner_subtitle: 'Khám phá hệ sinh thái phụ tùng động cơ thủy, dầu nhớt và vật tư hàng hải chính hãng từ các thương hiệu dẫn đầu.',
+  lookup_banner_image: '',
+  lookup_banner_title: 'Tra Cứu Phụ Tùng',
+  lookup_banner_subtitle: 'Lựa chọn chính xác phụ tùng thay thế và sơ đồ rã máy cho động cơ thủy của bạn.',
+  news_banner_image: '/client/image/news_banner.png',
+  news_banner_title: 'Tin Tức & Cẩm Nang',
+  news_banner_subtitle: 'Tổng hợp những kiến thức chuyên sâu về vận hành tàu thuyền, cẩm nang bảo dưỡng động cơ thủy và xu hướng công nghệ hàng hải.',
+  support_banner_image: '',
+  support_banner_title: 'Trung Tâm Hỗ Trợ & Kỹ Thuật',
+  support_banner_subtitle: 'Đồng hành cùng mọi hải trình của bạn. Đội ngũ kỹ sư và chuyên viên JPM Marine luôn sẵn sàng tư vấn tra cứu mã phụ tùng OEM và hỗ trợ 24/7.',
   company_name: 'JPM Marine',
   company_address: '123 Đường Bạch Đằng, Q. Bình Thạnh, TP. Hồ Chí Minh, Việt Nam',
   company_hotline: '0909 123 456',
@@ -50,7 +59,11 @@ export function useSiteSettings() {
         !data.value.homepage_hero_subtitle || data.value.homepage_hero_subtitle === 'PHỤ TÙNG CHÍNH HÃNG'
           ? DEFAULT_SETTINGS.homepage_hero_subtitle
           : data.value.homepage_hero_subtitle,
-      homepage_youtube_id: data.value.homepage_youtube_id || DEFAULT_SETTINGS.homepage_youtube_id
+      homepage_youtube_id: data.value.homepage_youtube_id || DEFAULT_SETTINGS.homepage_youtube_id,
+      store_banner_image: data.value.store_banner_image || DEFAULT_SETTINGS.store_banner_image,
+      news_banner_image: data.value.news_banner_image || DEFAULT_SETTINGS.news_banner_image,
+      lookup_banner_image: data.value.lookup_banner_image || DEFAULT_SETTINGS.lookup_banner_image,
+      support_banner_image: data.value.support_banner_image || DEFAULT_SETTINGS.support_banner_image
     };
   });
 

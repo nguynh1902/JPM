@@ -1,20 +1,54 @@
 <template>
   <div class="tra-cuu-results-page main-page" style="position: relative; z-index: 10; min-height: 130vh;">
+
+    <!-- HERO BANNER TRA CỨU DÀI NGANG FULL MÀN HÌNH -->
+    <div class="store-hero-banner position-relative overflow-hidden" :class="{ 'banner-no-img': !settings?.lookup_banner_image }" :style="lookupBannerStyle">
+      <!-- Lớp phủ Gradient làm trắng bên trái mềm mại -->
+      <div class="store-banner-overlay"></div>
+
+      <!-- Watermark họa tiết kỹ thuật hàng hải tinh tế khi chưa có ảnh -->
+      <div v-if="!settings?.lookup_banner_image" class="banner-placeholder-pattern">
+        <i class="bi bi-compass"></i>
+      </div>
+
+      <!-- Nội dung chữ bên trái -->
+      <div class="container h-100 position-relative z-2">
+        <div class="row h-100 align-items-center">
+          <div class="col-12 col-md-9 col-lg-7 store-banner-content py-4 py-lg-0">
+            <!-- Badge thương hiệu cao cấp -->
+            <div class="d-inline-flex align-items-center gap-2 store-banner-badge mb-2">
+              <span class="badge-dot"></span>
+              <span>JPM MARINE DIAGNOSTICS</span>
+              <span class="badge-divider">•</span>
+              <span class="badge-sub">TRA CỨU & SƠ ĐỒ RÃ MÁY</span>
+            </div>
+            
+            <!-- Tiêu đề lớn -->
+            <h1 class="store-banner-title mb-2">
+              <template v-if="settings?.lookup_banner_title">
+                {{ settings.lookup_banner_title }}
+              </template>
+              <template v-else>
+                Tra Cứu <span class="text-danger">Phụ Tùng</span>
+              </template>
+            </h1>
+
+            <!-- Dòng chữ nhỏ mô tả bên dưới -->
+            <p class="store-banner-subtitle mb-0">
+              {{ settings?.lookup_banner_subtitle || 'Lựa chọn chính xác phụ tùng thay thế và sơ đồ rã máy cho động cơ thủy của bạn.' }}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <section class="section pb-5 inner-page-section">
       <div class="container">
 
-        <!-- PAGE TITLE -->
-        <div class="row mb-4" data-aos="fade-down">
+        <!-- SUB HEADER KHI CÓ BỘ LỌC ĐANG CHỌN -->
+        <div v-if="!isFilterEmpty" class="row mb-4" data-aos="fade-down">
           <div class="col-12">
-            <template v-if="isFilterEmpty">
-              <h2 class="jpm-page-title">
-                Tra Cứu <span class="text-danger">Phụ Tùng</span>
-              </h2>
-              <p class="text-muted">
-                Lựa chọn chính xác phụ tùng thay thế và sơ đồ rã máy cho động cơ thủy của bạn.
-              </p>
-            </template>
-            <template v-else-if="filters.dong_co_model_id && !filters.nhom_phu_tung_id && !filters.keyword">
+            <template v-if="filters.dong_co_model_id && !filters.nhom_phu_tung_id && !filters.keyword">
               <h2 class="jpm-page-title">
                 Sơ Đồ Phụ Tùng <span class="text-danger">Model {{ modelLabel }}</span>
               </h2>
@@ -373,6 +407,7 @@ import { useRoute, useRouter } from 'vue-router';
 import { useQuery, useQueryClient } from '@tanstack/vue-query';
 import axiosClient from '../../../api/axiosClient';
 import { useCartStore } from '../../../stores/cartStore';
+import { useSiteSettings } from '../../../composables/useSiteSettings';
 import ProductCard from '../../../components/client/ProductCard.vue';
 
 export default {
@@ -385,6 +420,29 @@ export default {
     const router = useRouter();
     const queryClient = useQueryClient();
     const cartStore = useCartStore();
+    const { settings } = useSiteSettings();
+
+    const getBannerImageUrl = (path) => {
+      if (!path) return '';
+      if (path.startsWith('http') || path.startsWith('/client/') || path.startsWith('/assets/')) return path;
+      const baseUrl = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api').replace(/\/api\/?$/, '');
+      const cleanPath = path.startsWith('/') ? path : '/' + path;
+      return `${baseUrl}${cleanPath}`;
+    };
+
+    const lookupBannerStyle = computed(() => {
+      const rawPath = settings.value?.lookup_banner_image;
+      if (rawPath) {
+        const imgUrl = getBannerImageUrl(rawPath);
+        return {
+          backgroundImage: `url("${imgUrl}")`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center center',
+          backgroundRepeat: 'no-repeat',
+        };
+      }
+      return {};
+    });
 
     const localKeyword = ref(route.query.keyword || "");
     let searchTimeout = null;
@@ -807,6 +865,8 @@ export default {
     });
 
     return {
+      settings,
+      lookupBannerStyle,
       localKeyword,
       filters, brands, partGroups, engineTypes, engineModels, products, filteredProducts, diagramsList, pagination, isFetchingGlobal,
       groupedProducts, selectPartGroup,

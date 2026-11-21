@@ -1,17 +1,51 @@
 <template>
   <div class="news-wireframe-page bg-white">
 
-    <!-- Header chuẩn Giỏ Hàng & JPM Kit -->
-    <section class="section pb-2 inner-page-section">
-      <div class="container">
-        <div class="row mb-3">
-          <div class="col-12" data-aos="fade-down">
-            <h2 class="jpm-page-title">Tin Tức <span class="text-danger">&amp; Cẩm Nang</span></h2>
-            <p class="text-muted jpm-page-subtitle">Tổng hợp những kiến thức chuyên sâu về vận hành tàu thuyền, cẩm nang bảo dưỡng động cơ thủy và xu hướng công nghệ hàng hải.</p>
+    <!-- Template Preloader xoay tròn khi đang tải bài viết / cấu hình -->
+    <transition name="preloader-fade">
+      <div id="preloader" v-if="isPageLoading"></div>
+    </transition>
+
+    <!-- HERO BANNER TIN TỨC DÀI NGANG FULL MÀN HÌNH -->
+    <div class="store-hero-banner position-relative overflow-hidden mb-4" :class="{ 'banner-no-img': !currentNewsBannerImg }" :style="newsBannerStyle">
+      <!-- Lớp phủ Gradient làm trắng bên trái mềm mại -->
+      <div class="store-banner-overlay"></div>
+
+      <!-- Watermark họa tiết tạp chí/hàng hải tinh tế khi chưa có ảnh -->
+      <div v-if="!currentNewsBannerImg" class="banner-placeholder-pattern">
+        <i class="bi bi-newspaper"></i>
+      </div>
+
+      <!-- Nội dung chữ bên trái -->
+      <div class="container h-100 position-relative z-2">
+        <div class="row h-100 align-items-center">
+          <div class="col-12 col-md-9 col-lg-7 store-banner-content py-4 py-lg-0">
+            <!-- Badge thương hiệu cao cấp -->
+            <div class="d-inline-flex align-items-center gap-2 store-banner-badge mb-2">
+              <span class="badge-dot"></span>
+              <span>JPM MARINE EDITORIAL</span>
+              <span class="badge-divider">•</span>
+              <span class="badge-sub">BẢN TIN & CẨM NANG</span>
+            </div>
+            
+            <!-- Tiêu đề lớn -->
+            <h1 class="store-banner-title mb-2">
+              <template v-if="settings?.news_banner_title">
+                {{ settings.news_banner_title }}
+              </template>
+              <template v-else>
+                Tin Tức <span class="text-danger">&amp; Cẩm Nang</span>
+              </template>
+            </h1>
+
+            <!-- Dòng chữ nhỏ mô tả bên dưới -->
+            <p class="store-banner-subtitle mb-0">
+              {{ settings?.news_banner_subtitle || 'Tổng hợp những kiến thức chuyên sâu về vận hành tàu thuyền, cẩm nang bảo dưỡng động cơ thủy và xu hướng công nghệ hàng hải.' }}
+            </p>
           </div>
         </div>
       </div>
-    </section>
+    </div>
 
     <!-- ════════════════════════════════════════════════════════════════
          SECTION 1 (ĐỈNH TRANG - HERO MAGAZINE): TIÊU ĐIỂM & BÀI VIẾT MỚI NHẤT
@@ -321,6 +355,7 @@ import { ref, computed, watch, onMounted, onUnmounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useQuery } from '@tanstack/vue-query';
 import axiosClient from '../../../api/axiosClient';
+import { useSiteSettings } from '../../../composables/useSiteSettings';
 import { createToaster } from '@meforma/vue-toaster';
 
 const toaster = createToaster({ position: 'top-right', duration: 3000 });
@@ -331,6 +366,37 @@ export default {
   setup() {
     const route = useRoute();
     const router = useRouter();
+    const { settings, isLoading: isSettingsLoading } = useSiteSettings();
+
+    const getBannerImageUrl = (path) => {
+      if (!path) return '';
+      if (typeof path === 'string') {
+        if (path.startsWith('http') || path.startsWith('blob:') || path.startsWith('data:') || path.startsWith('/client/') || path.startsWith('/assets/')) {
+          return path;
+        }
+      }
+      const baseUrl = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api').replace(/\/api\/?$/, '');
+      const clean = path.startsWith('/') ? path : '/' + path;
+      return `${baseUrl}${clean}`;
+    };
+
+    const currentNewsBannerImg = computed(() => {
+      return (settings.value && settings.value.news_banner_image) ? settings.value.news_banner_image : '/client/image/news_banner.png';
+    });
+
+    const newsBannerStyle = computed(() => {
+      const rawPath = currentNewsBannerImg.value;
+      if (rawPath) {
+        const imgUrl = getBannerImageUrl(rawPath);
+        return {
+          backgroundImage: `url("${imgUrl}")`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center center',
+          backgroundRepeat: 'no-repeat',
+        };
+      }
+      return {};
+    });
 
     const activeTab = ref(route.query.category ? String(route.query.category) : 'Tất cả');
     const searchQuery = ref(route.query.search ? String(route.query.search) : '');
@@ -439,6 +505,8 @@ export default {
       staleTime: 1000 * 60 * 5,
     });
 
+    const isPageLoading = computed(() => isFetching.value || isSettingsLoading.value);
+
     // === Helpers ===
     const formatDateShort = (dateString) => {
       if (!dateString) return '';
@@ -533,6 +601,9 @@ export default {
     };
 
     return {
+      settings,
+      newsBannerStyle,
+      currentNewsBannerImg,
       activeTab,
       tabs,
       searchQuery,
@@ -545,6 +616,7 @@ export default {
       closeVideoModal,
       getImageUrl,
       isFetching,
+      isPageLoading,
       allNews,
       featuredMainStory,
       featuredSideStories,
@@ -915,5 +987,13 @@ a:hover .hero-title-hover {
     width: 115px;
     height: 74px;
   }
+}
+
+/* Preloader Transition */
+.preloader-fade-leave-active {
+  transition: opacity 0.35s ease-out;
+}
+.preloader-fade-leave-to {
+  opacity: 0;
 }
 </style>

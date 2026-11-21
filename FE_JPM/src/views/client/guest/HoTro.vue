@@ -1,17 +1,46 @@
 <template>
   <div class="support-page pb-5">
 
-    <!-- Header chuẩn Giỏ Hàng -->
-    <section class="section pb-2 inner-page-section">
-      <div class="container">
-        <div class="row mb-3">
-          <div class="col-12" data-aos="fade-down">
-            <h2 class="jpm-page-title">Trung Tâm <span class="text-danger">Hỗ Trợ &amp; Kỹ Thuật</span></h2>
-            <p class="text-muted">Đồng hành cùng mọi hải trình của bạn. Đội ngũ kỹ sư và chuyên viên JPM Marine luôn sẵn sàng tư vấn tra cứu mã phụ tùng OEM và hỗ trợ 24/7.</p>
+    <!-- HERO BANNER HỖ TRỢ DÀI NGANG FULL MÀN HÌNH -->
+    <div class="store-hero-banner position-relative overflow-hidden mb-4" :class="{ 'banner-no-img': !settings?.support_banner_image }" :style="supportBannerStyle">
+      <!-- Lớp phủ Gradient làm trắng bên trái mềm mại -->
+      <div class="store-banner-overlay"></div>
+
+      <!-- Watermark họa tiết kỹ thuật/chăm sóc khách hàng khi chưa có ảnh -->
+      <div v-if="!settings?.support_banner_image" class="banner-placeholder-pattern">
+        <i class="bi bi-headset"></i>
+      </div>
+
+      <!-- Nội dung chữ bên trái -->
+      <div class="container h-100 position-relative z-2">
+        <div class="row h-100 align-items-center">
+          <div class="col-12 col-md-9 col-lg-7 store-banner-content py-4 py-lg-0">
+            <!-- Badge thương hiệu cao cấp -->
+            <div class="d-inline-flex align-items-center gap-2 store-banner-badge mb-2">
+              <span class="badge-dot"></span>
+              <span>JPM MARINE SUPPORT</span>
+              <span class="badge-divider">•</span>
+              <span class="badge-sub">TƯ VẤN & BẢO HÀNH 24/7</span>
+            </div>
+            
+            <!-- Tiêu đề lớn -->
+            <h1 class="store-banner-title mb-2">
+              <template v-if="settings?.support_banner_title">
+                {{ settings.support_banner_title }}
+              </template>
+              <template v-else>
+                Trung Tâm <span class="text-danger">Hỗ Trợ &amp; Kỹ Thuật</span>
+              </template>
+            </h1>
+
+            <!-- Dòng chữ nhỏ mô tả bên dưới -->
+            <p class="store-banner-subtitle mb-0">
+              {{ settings?.support_banner_subtitle || 'Đồng hành cùng mọi hải trình của bạn. Đội ngũ kỹ sư và chuyên viên JPM Marine luôn sẵn sàng tư vấn tra cứu mã phụ tùng OEM và hỗ trợ 24/7.' }}
+            </p>
           </div>
         </div>
       </div>
-    </section>
+    </div>
 
     <div class="container pb-4">
       
@@ -253,6 +282,32 @@ export default {
     const faqSearchQuery = ref('');
     const { settings } = useSiteSettings();
 
+    const getBannerImageUrl = (path) => {
+      if (!path) return '';
+      if (typeof path === 'string') {
+        if (path.startsWith('http') || path.startsWith('blob:') || path.startsWith('data:') || path.startsWith('/client/') || path.startsWith('/assets/')) {
+          return path;
+        }
+      }
+      const baseUrl = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api').replace(/\/api\/?$/, '');
+      const clean = path.startsWith('/') ? path : '/' + path;
+      return `${baseUrl}${clean}`;
+    };
+
+    const supportBannerStyle = computed(() => {
+      const rawPath = settings.value?.support_banner_image;
+      if (rawPath) {
+        const imgUrl = getBannerImageUrl(rawPath);
+        return {
+          backgroundImage: `url("${imgUrl}")`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center center',
+          backgroundRepeat: 'no-repeat',
+        };
+      }
+      return {};
+    });
+
     // Tự động map địa chỉ từ Cấu Hình Hệ Thống sang Google Maps Embed
     const mapEmbedUrl = computed(() => {
       const address = settings.value?.company_address;
@@ -335,6 +390,7 @@ export default {
 
     return { 
       settings,
+      supportBannerStyle,
       mapEmbedUrl,
       faqs, 
       faqSearchQuery, 
