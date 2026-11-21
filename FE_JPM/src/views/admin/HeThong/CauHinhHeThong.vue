@@ -61,15 +61,12 @@
                     v-model="formData.homepage_youtube_url"
                     @input="updateYoutubePreview"
                   />
-                  <div class="form-text text-muted">
-                    Hệ thống tự động nhận diện Video ID và phát lặp nền tại trang chủ.
-                  </div>
                 </div>
 
                 <!-- Tiêu đề lớn -->
                 <div class="mb-3">
                   <label for="homepage_hero_title" class="form-label fw-medium text-dark">
-                    Tiêu Đề Thương Hiệu
+                    Tiêu Đề Thương Hiệu <span class="text-danger">*</span>
                   </label>
                   <input 
                     type="text" 
@@ -78,13 +75,12 @@
                     placeholder="JPM MARINE" 
                     v-model="formData.homepage_hero_title"
                   />
-                  <div class="form-text text-muted">Dòng chữ tiêu đề chính trên banner trang chủ.</div>
                 </div>
 
                 <!-- Slogan phụ -->
                 <div class="mb-3">
                   <label for="homepage_hero_subtitle" class="form-label fw-medium text-dark">
-                    Slogan Phụ
+                    Slogan Phụ <span class="text-danger">*</span>
                   </label>
                   <input 
                     type="text" 
@@ -93,7 +89,6 @@
                     placeholder="PHỤ TÙNG TÀU THUYỀN NHẬT BẢN" 
                     v-model="formData.homepage_hero_subtitle"
                   />
-                  <div class="form-text text-muted">Dòng chữ mô tả phụ dưới tiêu đề.</div>
                 </div>
               </div>
 
@@ -121,10 +116,6 @@
                     <i class="bx bx-video-off fs-1 mb-2 d-block text-secondary"></i>
                     Vui lòng nhập đường dẫn YouTube hợp lệ để xem trước.
                   </div>
-
-                  <small class="text-muted mt-2 d-block">
-                    Video phát nền tự động toàn màn hình tại trang chủ Client.
-                  </small>
                 </div>
               </div>
             </div>
@@ -140,15 +131,6 @@
           </div>
 
           <div class="card-body pt-4">
-            <!-- Hidden File Input dùng chung -->
-            <input 
-              type="file" 
-              ref="bannerFileInput" 
-              class="d-none" 
-              accept="image/*,.jpg,.jpeg,.png,.webp,.gif,.svg,.bmp,.avif,.heic,.heif,.tiff,.tif,.ico,.jfif"
-              @change="onBannerFileSelected"
-            />
-
             <!-- Danh sách từng trang tinh gọn -->
             <div 
               v-for="(banner, idx) in bannerList" 
@@ -156,53 +138,48 @@
               :class="{ 'border-top pt-3 mt-3': idx > 0 }"
             >
               <label class="form-label fw-medium text-dark mb-2">
-                {{ banner.name }}
+                {{ banner.name }} <span class="text-danger">*</span>
               </label>
 
               <div class="d-flex align-items-center gap-2">
-                <!-- Thumbnail xem trước -->
-                <div v-if="formData[banner.imageKey] || banner.defaultImg" class="flex-shrink-0">
-                  <img 
-                    :src="getPreviewUrl(formData[banner.imageKey] || banner.defaultImg)" 
-                    alt="Preview" 
-                    class="rounded border shadow-xs"
-                    style="width: 58px; height: 38px; object-fit: cover;"
-                    @error="$event.target.style.display = 'none'"
-                    title="Xem trước ảnh banner"
-                  />
-                </div>
-
-                <!-- Input hiển thị đường dẫn ảnh -->
+                <!-- 1. Input chọn tệp độc lập, bo tròn chuẩn form -->
                 <input 
-                  type="text" 
+                  type="file" 
+                  :id="'banner_file_' + banner.key"
                   class="form-control flex-grow-1" 
-                  placeholder="Đường dẫn ảnh banner..." 
-                  v-model="formData[banner.imageKey]"
+                  style="height: 38px;"
+                  accept="image/*,.jpg,.jpeg,.png,.webp,.gif,.svg,.bmp,.avif,.heic,.heif,.tiff,.tif,.ico,.jfif"
+                  @change="handleBannerFileUpload($event, banner.imageKey)"
+                  :disabled="isUploadingBanner && currentUploadKey === banner.imageKey"
                 />
 
-                <!-- Nút Cập Nhật -->
+                <!-- 2. Icon thùng rác xóa ảnh độc lập, vị trí cố định không nhảy bố cục -->
                 <button 
                   type="button" 
-                  class="btn btn-primary text-nowrap px-3"
-                  @click="triggerBannerUpload(banner.imageKey)"
-                  :disabled="isUploadingBanner && currentUploadKey === banner.imageKey"
-                >
-                  <span v-if="isUploadingBanner && currentUploadKey === banner.imageKey" class="spinner-border spinner-border-sm me-1"></span>
-                  <i v-else class="bx bx-upload me-1"></i>
-                  Cập Nhật
-                </button>
-
-                <!-- Nút Xóa -->
-                <button 
-                  v-if="formData[banner.imageKey]" 
-                  type="button" 
-                  class="btn btn-outline-danger text-nowrap px-3"
-                  @click="formData[banner.imageKey] = ''"
+                  class="btn btn-outline-danger d-flex align-items-center justify-content-center flex-shrink-0" 
+                  style="width: 38px; height: 38px; padding: 0;"
+                  @click="clearBannerImage(banner.imageKey, banner.key)"
+                  :disabled="!formData[banner.imageKey] || (isUploadingBanner && currentUploadKey === banner.imageKey)"
                   title="Xóa ảnh tùy chỉnh (quay về mặc định)"
                 >
-                  <i class="bx bx-trash me-1"></i>
-                  Xóa
+                  <span v-if="isUploadingBanner && currentUploadKey === banner.imageKey" class="spinner-border spinner-border-sm"></span>
+                  <i v-else class="bx bx-trash fs-5"></i>
                 </button>
+
+                <!-- 3. Bên phải là khung ảnh xem trước cố định -->
+                <div class="flex-shrink-0">
+                  <div class="border rounded bg-light d-flex align-items-center justify-content-center overflow-hidden" style="width: 140px; height: 38px;">
+                    <img 
+                      v-if="formData[banner.imageKey] || banner.defaultImg"
+                      :src="getPreviewUrl(formData[banner.imageKey] || banner.defaultImg)" 
+                      alt="Preview" 
+                      style="width: 100%; height: 100%; object-fit: cover;"
+                      @error="$event.target.style.display = 'none'"
+                      :title="formData[banner.imageKey] || banner.defaultImg"
+                    />
+                    <span v-else class="text-muted small"><i class="bx bx-image fs-4"></i></span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -230,7 +207,6 @@
                   placeholder="JPM Marine" 
                   v-model="formData.company_name"
                 />
-                <div class="form-text text-muted">Hiển thị tại Header, Footer và các thông báo.</div>
               </div>
 
               <!-- Hotline -->
@@ -245,7 +221,6 @@
                   placeholder="0909 123 456" 
                   v-model="formData.company_hotline"
                 />
-                <div class="form-text text-muted">Tự động gắn liên kết gọi trực tiếp (tel:).</div>
               </div>
 
               <!-- Email -->
@@ -260,13 +235,12 @@
                   placeholder="contact@jpm-marine.vn" 
                   v-model="formData.company_email"
                 />
-                <div class="form-text text-muted">Tự động gắn liên kết gửi thư (mailto:).</div>
               </div>
 
               <!-- Giờ làm việc -->
               <div class="col-md-6 mb-3">
                 <label for="business_hours" class="form-label fw-medium text-dark">
-                  Giờ Mở Cửa
+                  Giờ Mở Cửa <span class="text-danger">*</span>
                 </label>
                 <input 
                   type="text" 
@@ -275,7 +249,6 @@
                   placeholder="Thứ 2 - Thứ 7: 08:00 - 17:30 (Chủ nhật nghỉ)" 
                   v-model="formData.business_hours"
                 />
-                <div class="form-text text-muted">Hiển thị tại Chân trang (Footer) và Trang Hỗ Trợ.</div>
               </div>
 
               <!-- Địa chỉ -->
@@ -290,7 +263,6 @@
                   placeholder="123 Đường Bạch Đằng, Q. Bình Thạnh, TP. Hồ Chí Minh" 
                   v-model="formData.company_address"
                 />
-                <div class="form-text text-muted">Địa chỉ đầy đủ hiển thị ở cột liên hệ Footer.</div>
               </div>
             </div>
           </div>
@@ -301,14 +273,16 @@
       <div class="col-12 mb-4">
         <div class="card">
           <div class="card-header border-bottom">
-            <h5 class="mb-0 fw-bold text-dark">Liên Kết Mạng Xã Hội</h5>
+            <h5 class="mb-0 fw-bold text-dark">Liên Kết Mạng XÃ Hội</h5>
           </div>
 
           <div class="card-body pt-4">
             <div class="row g-3">
               <!-- Facebook -->
               <div class="col-md-6 mb-3">
-                <label for="social_facebook" class="form-label fw-medium text-dark">Facebook Fanpage</label>
+                <label for="social_facebook" class="form-label fw-medium text-dark">
+                  Facebook Fanpage <span class="text-danger">*</span>
+                </label>
                 <input 
                   type="url" 
                   id="social_facebook" 
@@ -320,7 +294,9 @@
 
               <!-- YouTube Channel -->
               <div class="col-md-6 mb-3">
-                <label for="social_youtube" class="form-label fw-medium text-dark">Kênh YouTube</label>
+                <label for="social_youtube" class="form-label fw-medium text-dark">
+                  Kênh YouTube <span class="text-danger">*</span>
+                </label>
                 <input 
                   type="url" 
                   id="social_youtube" 
@@ -332,7 +308,9 @@
 
               <!-- Zalo -->
               <div class="col-md-6 mb-3">
-                <label for="social_zalo" class="form-label fw-medium text-dark">Zalo</label>
+                <label for="social_zalo" class="form-label fw-medium text-dark">
+                  Zalo <span class="text-danger">*</span>
+                </label>
                 <input 
                   type="url" 
                   id="social_zalo" 
@@ -344,7 +322,9 @@
 
               <!-- Instagram -->
               <div class="col-md-6 mb-3">
-                <label for="social_instagram" class="form-label fw-medium text-dark">Instagram</label>
+                <label for="social_instagram" class="form-label fw-medium text-dark">
+                  Instagram <span class="text-danger">*</span>
+                </label>
                 <input 
                   type="url" 
                   id="social_instagram" 
@@ -381,7 +361,6 @@
                     :can-clear="false"
                     placeholder="Tìm hoặc chọn ngân hàng..."
                   />
-                  <div class="form-text text-muted">Chuẩn Napas 24/7 liên ngân hàng.</div>
                 </div>
 
                 <!-- Số Tài Khoản -->
@@ -396,7 +375,6 @@
                     placeholder="VD: 108876543210" 
                     v-model="formData.vietqr_account_no"
                   />
-                  <div class="form-text text-muted">Số tài khoản nhận tiền cọc của khách hàng.</div>
                 </div>
 
                 <!-- Tên Chủ Tài Khoản -->
@@ -411,13 +389,12 @@
                     placeholder="VD: CONG TY PHU TUNG MAY THUY JPM" 
                     v-model="formData.vietqr_account_name"
                   />
-                  <div class="form-text text-muted">In hoa không dấu khớp theo đăng ký tại ngân hàng.</div>
                 </div>
 
                 <!-- Tiền Tố Nội Dung Chuyển Khoản -->
                 <div class="mb-3">
                   <label for="vietqr_prefix" class="form-label fw-medium text-dark">
-                    Tiền Tố Nội Dung Chuyển Khoản
+                    Tiền Tố Nội Dung Chuyển Khoản <span class="text-danger">*</span>
                   </label>
                   <input 
                     type="text" 
@@ -426,15 +403,12 @@
                     placeholder="JPM hoặc COC" 
                     v-model="formData.vietqr_prefix"
                   />
-                  <div class="form-text text-muted">
-                    Nội dung quét chuyển khoản tự động ghép dạng: <strong>[Tiền tố] [Mã đơn]</strong>
-                  </div>
                 </div>
 
                 <!-- Kiểu hiển thị mã QR (Template) -->
                 <div class="mb-3">
                   <label class="form-label fw-medium text-dark">
-                    Mẫu Hiển Thị Khung QR
+                    Mẫu Hiển Thị Khung QR <span class="text-danger">*</span>
                   </label>
                   <v-select 
                     v-model="formData.vietqr_template"
@@ -442,7 +416,6 @@
                     :can-clear="false"
                     placeholder="Chọn kiểu dáng khung QR..."
                   />
-                  <div class="form-text text-muted">Kiểu dáng hiển thị cho khách quét mã thanh toán.</div>
                 </div>
               </div>
 
@@ -829,16 +802,12 @@ export default {
       }
     ];
 
-    const triggerBannerUpload = (key) => {
-      currentUploadKey.value = key;
-      bannerFileInput.value?.click();
-    };
-
-    const handleBannerUpload = async (event, key = 'store_banner_image') => {
+    const handleBannerFileUpload = async (event, key) => {
       const file = event.target.files?.[0];
       if (!file) return;
 
       isUploadingBanner.value = true;
+      currentUploadKey.value = key;
       try {
         const compressed = await compressImage(file, { maxWidth: 1920, maxHeight: 600, quality: 0.88 });
         const uploadForm = new FormData();
@@ -856,13 +825,15 @@ export default {
         toaster.error(err.response?.data?.message || 'Lỗi khi tải ảnh banner lên');
       } finally {
         isUploadingBanner.value = false;
+        currentUploadKey.value = '';
         event.target.value = '';
       }
     };
 
-    const onBannerFileSelected = async (event) => {
-      if (!currentUploadKey.value) return;
-      await handleBannerUpload(event, currentUploadKey.value);
+    const clearBannerImage = (imageKey, bannerKey) => {
+      formData[imageKey] = '';
+      const fileInput = document.getElementById('banner_file_' + bannerKey);
+      if (fileInput) fileInput.value = '';
     };
 
     const getPreviewUrl = (url) => {
@@ -895,12 +866,10 @@ export default {
       previewQrUrl,
       isUploadingBanner,
       currentUploadKey,
-      bannerFileInput,
       bannerList,
-      triggerBannerUpload,
-      onBannerFileSelected,
-      getPreviewUrl,
-      handleBannerUpload
+      handleBannerFileUpload,
+      clearBannerImage,
+      getPreviewUrl
     };
   }
 };
