@@ -1,19 +1,14 @@
 <template>
   <div class="container-xxl flex-grow-1 container-p-y">
-    <!-- Header Page & Action Buttons -->
-    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-2">
-      <div>
-        <h4 class="fw-bold mb-1 text-dark">
-          Cấu Hình Hệ Thống & Thiết Lập Website
-        </h4>
-        <p class="text-muted mb-0" style="font-size: 0.9rem;">
-          Quản lý thông tin chung, video trang chủ và thông tin liên hệ hiển thị tại Client.
-        </p>
-      </div>
+    <!-- Breadcrumb & Top Actions chuẩn Sneat Admin -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h4 class="fw-bold py-3 mb-0">
+        <span class="text-muted fw-light">Hệ Thống /</span> Cấu Hình Hệ Thống
+      </h4>
       <div class="d-flex gap-2">
         <button 
           type="button" 
-          class="btn btn-secondary text-nowrap"
+          class="btn btn-outline-secondary px-4"
           @click="resetToInitial"
           :disabled="isSubmitting"
         >
@@ -21,11 +16,11 @@
         </button>
         <button 
           type="button" 
-          class="btn btn-primary shadow-sm text-nowrap"
+          class="btn btn-primary px-4 shadow-sm"
           @click="saveSettings"
           :disabled="isSubmitting"
         >
-          <span v-if="isSubmitting" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+          <span v-if="isSubmitting" class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
           <i v-else class="bx bx-save me-1"></i>
           {{ isSubmitting ? 'Đang Lưu...' : 'Lưu Thay Đổi' }}
         </button>
@@ -40,22 +35,13 @@
       <p class="text-muted mb-0">Đang tải dữ liệu cấu hình hệ thống...</p>
     </div>
 
-    <!-- 1 PAGE DUY NHẤT VỚI 3 PHẦN NỐI TIẾP NHAU -->
-    <div v-else class="row g-4">
+    <div v-else class="row">
       
-      <!-- BANNER TRANG CHỦ & VIDEO -->
-      <div class="col-12">
-        <div class="card mb-4 shadow-sm border">
-          <div class="card-header d-flex flex-wrap justify-content-between align-items-center gap-2 border-bottom py-3">
-            <div>
-              <h5 class="card-title mb-1 fw-bold text-dark">
-                <i class="bx bx-movie-play text-primary me-2"></i>Banner Trang Chủ & Video
-              </h5>
-              <small class="text-muted">Cài đặt video nền YouTube và slogan tại trang chủ Client</small>
-            </div>
-            <span class="badge bg-label-primary px-3 py-2 rounded">
-              <i class="bx bx-video me-1"></i> Video Nền 100vh
-            </span>
+      <!-- 1. BANNER TRANG CHỦ & VIDEO NỀN -->
+      <div class="col-12 mb-4">
+        <div class="card">
+          <div class="card-header border-bottom">
+            <h5 class="mb-0 fw-bold text-dark">Banner Trang Chủ & Video Nền</h5>
           </div>
 
           <div class="card-body pt-4">
@@ -63,60 +49,51 @@
               <!-- Cột nhập liệu -->
               <div class="col-lg-7">
                 <!-- Đường dẫn YouTube -->
-                <div class="mb-4">
-                  <label for="homepage_youtube_url" class="form-label fw-bold text-dark">
+                <div class="mb-3">
+                  <label for="homepage_youtube_url" class="form-label fw-medium text-dark">
                     Link Carousel Youtube <span class="text-danger">*</span>
                   </label>
-                  <div class="input-group input-group-merge">
-                    <span class="input-group-text"><i class="bx bxl-youtube text-danger"></i></span>
-                    <input 
-                      type="text" 
-                      id="homepage_youtube_url" 
-                      class="form-control" 
-                      placeholder="https://www.youtube.com/watch?v=5CVzOqvqI38" 
-                      v-model="formData.homepage_youtube_url"
-                      @input="updateYoutubePreview"
-                    />
-                  </div>
-                  <div class="form-text text-muted mt-1">
-                    <i class="bx bx-check-circle text-success me-1"></i>Hệ thống tự nhận Video ID và phát lặp nền tự động.
+                  <input 
+                    type="text" 
+                    id="homepage_youtube_url" 
+                    class="form-control" 
+                    placeholder="https://www.youtube.com/watch?v=5CVzOqvqI38" 
+                    v-model="formData.homepage_youtube_url"
+                    @input="updateYoutubePreview"
+                  />
+                  <div class="form-text text-muted">
+                    Hệ thống tự động nhận diện Video ID và phát lặp nền tại trang chủ.
                   </div>
                 </div>
 
                 <!-- Tiêu đề lớn -->
-                <div class="mb-4">
-                  <label for="homepage_hero_title" class="form-label fw-bold text-dark">
+                <div class="mb-3">
+                  <label for="homepage_hero_title" class="form-label fw-medium text-dark">
                     Tiêu Đề Thương Hiệu
                   </label>
-                  <div class="input-group input-group-merge">
-                    <span class="input-group-text"><i class="bx bx-heading"></i></span>
-                    <input 
-                      type="text" 
-                      id="homepage_hero_title" 
-                      class="form-control" 
-                      placeholder="JPM MARINE" 
-                      v-model="formData.homepage_hero_title"
-                    />
-                  </div>
-                  <div class="form-text text-muted">Dòng chữ màu đỏ nổi bật trên banner.</div>
+                  <input 
+                    type="text" 
+                    id="homepage_hero_title" 
+                    class="form-control" 
+                    placeholder="JPM MARINE" 
+                    v-model="formData.homepage_hero_title"
+                  />
+                  <div class="form-text text-muted">Dòng chữ tiêu đề chính trên banner trang chủ.</div>
                 </div>
 
                 <!-- Slogan phụ -->
-                <div class="mb-2">
-                  <label for="homepage_hero_subtitle" class="form-label fw-bold text-dark">
+                <div class="mb-3">
+                  <label for="homepage_hero_subtitle" class="form-label fw-medium text-dark">
                     Slogan Phụ
                   </label>
-                  <div class="input-group input-group-merge">
-                    <span class="input-group-text"><i class="bx bx-text"></i></span>
-                    <input 
-                      type="text" 
-                      id="homepage_hero_subtitle" 
-                      class="form-control" 
-                      placeholder="PHỤ TÙNG TÀU THUYỀN NHẬT BẢN" 
-                      v-model="formData.homepage_hero_subtitle"
-                    />
-                  </div>
-                  <div class="form-text text-muted">Dòng chữ in nghiêng màu trắng dưới tiêu đề.</div>
+                  <input 
+                    type="text" 
+                    id="homepage_hero_subtitle" 
+                    class="form-control" 
+                    placeholder="PHỤ TÙNG TÀU THUYỀN NHẬT BẢN" 
+                    v-model="formData.homepage_hero_subtitle"
+                  />
+                  <div class="form-text text-muted">Dòng chữ mô tả phụ dưới tiêu đề.</div>
                 </div>
               </div>
 
@@ -124,8 +101,8 @@
               <div class="col-lg-5">
                 <div class="border rounded p-3 bg-light text-center h-100 d-flex flex-column justify-content-between">
                   <div class="d-flex justify-content-between align-items-center mb-2">
-                    <span class="fw-bold text-dark" style="font-size: 0.9rem;">
-                      <i class="bx bx-tv text-primary me-1"></i>Xem Trước Video
+                    <span class="fw-medium text-dark small">
+                      <i class="bx bx-tv me-1 text-primary"></i>Xem trước Video
                     </span>
                     <span v-if="previewVideoId" class="badge bg-label-success">Video ID: {{ previewVideoId }}</span>
                     <span v-else class="badge bg-label-danger">Link không hợp lệ</span>
@@ -146,7 +123,7 @@
                   </div>
 
                   <small class="text-muted mt-2 d-block">
-                    <i class="bx bx-info-circle me-1"></i>Video phát nền tự động toàn màn hình tại trang chủ Client.
+                    Video phát nền tự động toàn màn hình tại trang chủ Client.
                   </small>
                 </div>
               </div>
@@ -155,280 +132,164 @@
         </div>
       </div>
 
-      <!-- BANNER CÁC TRANG CLIENT (CỬA HÀNG, TRA CỨU, TIN TỨC, HỖ TRỢ) -->
-      <div class="col-12">
-        <div class="card mb-4 shadow-sm border">
-          <div class="card-header d-flex flex-wrap justify-content-between align-items-center gap-2 border-bottom py-3">
-            <div>
-              <h5 class="card-title mb-1 fw-bold text-dark">
-                <i class="bx bx-image-alt text-primary me-2"></i>Banner Các Trang Client (Cửa Hàng, Tra Cứu, Tin Tức, Hỗ Trợ)
-              </h5>
-              <small class="text-muted">Cài đặt ảnh nền full banner, tiêu đề và mô tả cho 4 trang chính của website</small>
-            </div>
-            <span class="badge bg-label-primary px-3 py-2 rounded">
-              Chuẩn hiển thị gọn gàng (Chiều cao ~250px - 270px)
-            </span>
+      <!-- 2. BANNER CÁC TRANG CLIENT -->
+      <div class="col-12 mb-4">
+        <div class="card">
+          <div class="card-header border-bottom">
+            <h5 class="mb-0 fw-bold text-dark">Banner Các Trang Client</h5>
           </div>
 
           <div class="card-body pt-4">
-            <!-- Navigation Tabs chọn trang cần cấu hình banner -->
-            <ul class="nav nav-pills gap-2 p-2 bg-light rounded-3 mb-4">
-              <li class="nav-item">
-                <button 
-                  type="button" 
-                  class="nav-link fw-semibold d-inline-flex align-items-center"
-                  :class="{ active: activeBannerTab === 'store' }"
-                  @click="activeBannerTab = 'store'"
-                >
-                  <i class="bx bx-store me-1"></i> Trang Cửa Hàng
-                  <span v-if="formData.store_banner_image" class="badge bg-success ms-2 p-1" title="Đã có ảnh"><i class="bx bx-check"></i></span>
-                </button>
-              </li>
-              <li class="nav-item">
-                <button 
-                  type="button" 
-                  class="nav-link fw-semibold d-inline-flex align-items-center"
-                  :class="{ active: activeBannerTab === 'lookup' }"
-                  @click="activeBannerTab = 'lookup'"
-                >
-                  <i class="bx bx-search-alt me-1"></i> Trang Tra Cứu
-                  <span v-if="formData.lookup_banner_image" class="badge bg-success ms-2 p-1" title="Đã có ảnh"><i class="bx bx-check"></i></span>
-                </button>
-              </li>
-              <li class="nav-item">
-                <button 
-                  type="button" 
-                  class="nav-link fw-semibold d-inline-flex align-items-center"
-                  :class="{ active: activeBannerTab === 'news' }"
-                  @click="activeBannerTab = 'news'"
-                >
-                  <i class="bx bx-news me-1"></i> Trang Tin Tức
-                  <span v-if="formData.news_banner_image" class="badge bg-success ms-2 p-1" title="Đã có ảnh"><i class="bx bx-check"></i></span>
-                </button>
-              </li>
-              <li class="nav-item">
-                <button 
-                  type="button" 
-                  class="nav-link fw-semibold d-inline-flex align-items-center"
-                  :class="{ active: activeBannerTab === 'support' }"
-                  @click="activeBannerTab = 'support'"
-                >
-                  <i class="bx bx-support me-1"></i> Trang Hỗ Trợ
-                  <span v-if="formData.support_banner_image" class="badge bg-success ms-2 p-1" title="Đã có ảnh"><i class="bx bx-check"></i></span>
-                </button>
-              </li>
-            </ul>
+            <!-- Hidden File Input dùng chung -->
+            <input 
+              type="file" 
+              ref="bannerFileInput" 
+              class="d-none" 
+              accept="image/*,.jpg,.jpeg,.png,.webp,.gif,.svg,.bmp,.avif,.heic,.heif,.tiff,.tif,.ico,.jfif"
+              @change="onBannerFileSelected"
+            />
 
-            <div class="row g-4">
-              <!-- Cột nhập liệu -->
-              <div class="col-lg-6">
-                <!-- Chọn file tải lên hoặc link ảnh -->
-                <div class="mb-3">
-                  <label class="form-label fw-bold text-dark d-flex justify-content-between">
-                    <span>Ảnh Nền Banner: {{ currentBanner.name }}</span>
-                    <span v-if="!formData[currentBanner.imageKey] && !currentBanner.defaultImg" class="badge bg-label-secondary">Chưa có ảnh (dùng nền mặc định)</span>
-                  </label>
-                  
-                  <div class="d-flex align-items-center gap-2 mb-2">
-                    <input 
-                      type="file" 
-                      ref="bannerFileInput" 
-                      class="d-none" 
-                      accept="image/*,.jpg,.jpeg,.png,.webp,.gif,.svg,.bmp,.avif,.heic,.heif,.tiff,.tif,.ico,.jfif"
-                      @change="handleBannerUpload($event, currentBanner.imageKey)"
-                    />
-                    <button 
-                      type="button" 
-                      class="btn btn-outline-primary d-inline-flex align-items-center shadow-none"
-                      @click="$refs.bannerFileInput.click()"
-                      :disabled="isUploadingBanner"
-                    >
-                      <span v-if="isUploadingBanner" class="spinner-border spinner-border-sm me-2"></span>
-                      <i v-else class="bx bx-upload me-2"></i>
-                      {{ isUploadingBanner ? 'Đang tải lên...' : 'Tải Ảnh Banner Mới' }}
-                    </button>
-                    <button 
-                      v-if="formData[currentBanner.imageKey]" 
-                      type="button" 
-                      class="btn btn-outline-danger shadow-none"
-                      @click="formData[currentBanner.imageKey] = ''"
-                      title="Gỡ ảnh banner"
-                    >
-                      <i class="bx bx-trash"></i>
-                    </button>
-                  </div>
+            <!-- Danh sách từng trang tinh gọn -->
+            <div 
+              v-for="(banner, idx) in bannerList" 
+              :key="banner.key"
+              :class="{ 'border-top pt-3 mt-3': idx > 0 }"
+            >
+              <label class="form-label fw-medium text-dark mb-2">
+                {{ banner.name }}
+              </label>
 
-                  <div class="input-group input-group-merge">
-                    <span class="input-group-text"><i class="bx bx-image"></i></span>
-                    <input 
-                      type="text" 
-                      class="form-control" 
-                      placeholder="VD: /storage/banners/banner.png hoặc /client/image/..." 
-                      v-model="formData[currentBanner.imageKey]"
-                    />
-                  </div>
-                  <div class="form-text text-muted mt-1">
-                    Hỗ trợ mọi định dạng ảnh, tự động bung full banner và căn giữa chiều dọc. Nếu chưa có ảnh, hệ thống hiển thị nền dải mờ sang trọng.
-                  </div>
+              <div class="d-flex align-items-center gap-2">
+                <!-- Thumbnail xem trước -->
+                <div v-if="formData[banner.imageKey] || banner.defaultImg" class="flex-shrink-0">
+                  <img 
+                    :src="getPreviewUrl(formData[banner.imageKey] || banner.defaultImg)" 
+                    alt="Preview" 
+                    class="rounded border shadow-xs"
+                    style="width: 58px; height: 38px; object-fit: cover;"
+                    @error="$event.target.style.display = 'none'"
+                    title="Xem trước ảnh banner"
+                  />
                 </div>
 
-                <!-- Tiêu đề Banner -->
-                <div class="mb-3">
-                  <label class="form-label fw-bold text-dark">Tiêu Đề Banner {{ currentBanner.name }}</label>
-                  <div class="input-group input-group-merge">
-                    <span class="input-group-text"><i class="bx bx-heading"></i></span>
-                    <input 
-                      type="text" 
-                      class="form-control" 
-                      :placeholder="currentBanner.defaultTitle" 
-                      v-model="formData[currentBanner.titleKey]"
-                    />
-                  </div>
-                  <div class="form-text text-muted">Dòng chữ lớn hiển thị tại khu vực làm trắng bên trái banner.</div>
-                </div>
+                <!-- Input hiển thị đường dẫn ảnh -->
+                <input 
+                  type="text" 
+                  class="form-control flex-grow-1" 
+                  placeholder="Đường dẫn ảnh banner..." 
+                  v-model="formData[banner.imageKey]"
+                />
 
-                <!-- Mô tả phụ -->
-                <div class="mb-2">
-                  <label class="form-label fw-bold text-dark">Mô Tả Phụ Dưới Tiêu Đề</label>
-                  <textarea 
-                    class="form-control" 
-                    rows="2"
-                    :placeholder="currentBanner.defaultSubtitle"
-                    v-model="formData[currentBanner.subtitleKey]"
-                  ></textarea>
-                </div>
-              </div>
+                <!-- Nút Cập Nhật -->
+                <button 
+                  type="button" 
+                  class="btn btn-primary text-nowrap px-3"
+                  @click="triggerBannerUpload(banner.imageKey)"
+                  :disabled="isUploadingBanner && currentUploadKey === banner.imageKey"
+                >
+                  <span v-if="isUploadingBanner && currentUploadKey === banner.imageKey" class="spinner-border spinner-border-sm me-1"></span>
+                  <i v-else class="bx bx-upload me-1"></i>
+                  Cập Nhật
+                </button>
 
-              <!-- Cột Live Preview mô phỏng Client thật -->
-              <div class="col-lg-6">
-                <label class="form-label fw-bold text-dark d-flex justify-content-between align-items-center">
-                  <span><i class="bx bx-show text-primary me-1"></i>Xem Trước Hiệu Ứng: {{ currentBanner.name }}</span>
-                  <small class="text-muted">Mô phỏng lớp trắng bên trái + ảnh nền</small>
-                </label>
-                
-                <div class="admin-store-banner-preview rounded-3 overflow-hidden border position-relative shadow-sm" :style="adminBannerPreviewStyle">
-                  <!-- Lớp phủ trắng bên trái -->
-                  <div class="admin-banner-preview-overlay"></div>
-                  
-                  <!-- Watermark placeholder icon khi chưa có ảnh -->
-                  <div v-if="!formData[currentBanner.imageKey] && !currentBanner.defaultImg" class="position-absolute" style="right: 8%; top: 50%; transform: translateY(-50%); font-size: 80px; color: #0A1128; opacity: 0.06; pointer-events: none; z-index: 1;">
-                    <i :class="'bx ' + currentBanner.placeholderIcon"></i>
-                  </div>
-
-                  <!-- Nội dung chữ bên trái -->
-                  <div class="position-relative z-2 p-3 p-md-4" style="max-width: 75%;">
-                    <div class="d-inline-flex align-items-center gap-1 mb-1" style="font-size: 0.65rem; font-weight: 700; letter-spacing: 1px; color: #F82249;">
-                      <span style="width: 5px; height: 5px; border-radius: 50%; background: #F82249; display: inline-block;"></span>
-                      {{ currentBanner.badge }}
-                    </div>
-                    <h5 class="fw-bold mb-1 text-dark" style="font-size: 1.15rem; line-height: 1.2;">
-                      {{ formData[currentBanner.titleKey] || currentBanner.defaultTitle }}
-                    </h5>
-                    <p class="text-secondary mb-0" style="font-size: 0.75rem; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
-                      {{ formData[currentBanner.subtitleKey] || currentBanner.defaultSubtitle }}
-                    </p>
-                  </div>
-                </div>
+                <!-- Nút Xóa -->
+                <button 
+                  v-if="formData[banner.imageKey]" 
+                  type="button" 
+                  class="btn btn-outline-danger text-nowrap px-3"
+                  @click="formData[banner.imageKey] = ''"
+                  title="Xóa ảnh tùy chỉnh (quay về mặc định)"
+                >
+                  <i class="bx bx-trash me-1"></i>
+                  Xóa
+                </button>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- THÔNG TIN DOANH NGHIỆP & LIÊN HỆ -->
-      <div class="col-12">
-        <div class="card mb-4 shadow-sm border">
-          <div class="card-header d-flex flex-wrap justify-content-between align-items-center gap-2 border-bottom py-3">
-            <div>
-              <h5 class="card-title mb-1 fw-bold text-dark">
-                <i class="bx bx-building-house text-primary me-2"></i>Thông Tin Doanh Nghiệp & Liên Hệ
-              </h5>
-              <small class="text-muted">Thông tin công ty, hotline, email và giờ mở cửa trên toàn website Client</small>
-            </div>
-            <span class="badge bg-label-primary px-3 py-2 rounded">
-              <i class="bx bx-info-circle me-1"></i> Thông Tin Chung
-            </span>
+      <!-- 3. THÔNG TIN DOANH NGHIỆP & LIÊN HỆ -->
+      <div class="col-12 mb-4">
+        <div class="card">
+          <div class="card-header border-bottom">
+            <h5 class="mb-0 fw-bold text-dark">Thông Tin Doanh Nghiệp & Liên Hệ</h5>
           </div>
 
           <div class="card-body pt-4">
-            <div class="row g-4">
+            <div class="row g-3">
               <!-- Tên Doanh Nghiệp -->
-              <div class="col-md-6">
-                <label for="company_name" class="form-label fw-bold text-dark">Tên Doanh Nghiệp</label>
-                <div class="input-group input-group-merge">
-                  <span class="input-group-text"><i class="bx bx-building"></i></span>
-                  <input 
-                    type="text" 
-                    id="company_name" 
-                    class="form-control" 
-                    placeholder="JPM Marine" 
-                    v-model="formData.company_name"
-                  />
-                </div>
+              <div class="col-md-6 mb-3">
+                <label for="company_name" class="form-label fw-medium text-dark">
+                  Tên Doanh Nghiệp <span class="text-danger">*</span>
+                </label>
+                <input 
+                  type="text" 
+                  id="company_name" 
+                  class="form-control" 
+                  placeholder="JPM Marine" 
+                  v-model="formData.company_name"
+                />
                 <div class="form-text text-muted">Hiển thị tại Header, Footer và các thông báo.</div>
               </div>
 
               <!-- Hotline -->
-              <div class="col-md-6">
-                <label for="company_hotline" class="form-label fw-bold text-dark">Hotline CSKH</label>
-                <div class="input-group input-group-merge">
-                  <span class="input-group-text"><i class="bx bx-phone-call text-success"></i></span>
-                  <input 
-                    type="text" 
-                    id="company_hotline" 
-                    class="form-control" 
-                    placeholder="0909 123 456" 
-                    v-model="formData.company_hotline"
-                  />
-                </div>
-                <div class="form-text text-muted">Tự động gắn link gọi trực tiếp (tel:).</div>
+              <div class="col-md-6 mb-3">
+                <label for="company_hotline" class="form-label fw-medium text-dark">
+                  Hotline CSKH <span class="text-danger">*</span>
+                </label>
+                <input 
+                  type="text" 
+                  id="company_hotline" 
+                  class="form-control" 
+                  placeholder="0909 123 456" 
+                  v-model="formData.company_hotline"
+                />
+                <div class="form-text text-muted">Tự động gắn liên kết gọi trực tiếp (tel:).</div>
               </div>
 
               <!-- Email -->
-              <div class="col-md-6">
-                <label for="company_email" class="form-label fw-bold text-dark">Email Liên Hệ</label>
-                <div class="input-group input-group-merge">
-                  <span class="input-group-text"><i class="bx bx-envelope text-info"></i></span>
-                  <input 
-                    type="email" 
-                    id="company_email" 
-                    class="form-control" 
-                    placeholder="contact@jpm-marine.vn" 
-                    v-model="formData.company_email"
-                  />
-                </div>
-                <div class="form-text text-muted">Tự động gắn link gửi thư (mailto:).</div>
+              <div class="col-md-6 mb-3">
+                <label for="company_email" class="form-label fw-medium text-dark">
+                  Email Liên Hệ <span class="text-danger">*</span>
+                </label>
+                <input 
+                  type="email" 
+                  id="company_email" 
+                  class="form-control" 
+                  placeholder="contact@jpm-marine.vn" 
+                  v-model="formData.company_email"
+                />
+                <div class="form-text text-muted">Tự động gắn liên kết gửi thư (mailto:).</div>
               </div>
 
               <!-- Giờ làm việc -->
-              <div class="col-md-6">
-                <label for="business_hours" class="form-label fw-bold text-dark">Giờ Mở Cửa</label>
-                <div class="input-group input-group-merge">
-                  <span class="input-group-text"><i class="bx bx-time-five text-warning"></i></span>
-                  <input 
-                    type="text" 
-                    id="business_hours" 
-                    class="form-control" 
-                    placeholder="Thứ 2 - Thứ 7: 08:00 - 17:30 (Chủ nhật nghỉ)" 
-                    v-model="formData.business_hours"
-                  />
-                </div>
+              <div class="col-md-6 mb-3">
+                <label for="business_hours" class="form-label fw-medium text-dark">
+                  Giờ Mở Cửa
+                </label>
+                <input 
+                  type="text" 
+                  id="business_hours" 
+                  class="form-control" 
+                  placeholder="Thứ 2 - Thứ 7: 08:00 - 17:30 (Chủ nhật nghỉ)" 
+                  v-model="formData.business_hours"
+                />
                 <div class="form-text text-muted">Hiển thị tại Chân trang (Footer) và Trang Hỗ Trợ.</div>
               </div>
 
               <!-- Địa chỉ -->
-              <div class="col-12">
-                <label for="company_address" class="form-label fw-bold text-dark">Địa Chỉ Doanh Nghiệp</label>
-                <div class="input-group input-group-merge">
-                  <span class="input-group-text"><i class="bx bx-map-pin text-danger"></i></span>
-                  <input 
-                    type="text" 
-                    id="company_address" 
-                    class="form-control" 
-                    placeholder="123 Đường Bạch Đằng, Q. Bình Thạnh, TP. Hồ Chí Minh" 
-                    v-model="formData.company_address"
-                  />
-                </div>
+              <div class="col-12 mb-3">
+                <label for="company_address" class="form-label fw-medium text-dark">
+                  Địa Chỉ Doanh Nghiệp <span class="text-danger">*</span>
+                </label>
+                <input 
+                  type="text" 
+                  id="company_address" 
+                  class="form-control" 
+                  placeholder="123 Đường Bạch Đằng, Q. Bình Thạnh, TP. Hồ Chí Minh" 
+                  v-model="formData.company_address"
+                />
                 <div class="form-text text-muted">Địa chỉ đầy đủ hiển thị ở cột liên hệ Footer.</div>
               </div>
             </div>
@@ -436,100 +297,72 @@
         </div>
       </div>
 
-      <!-- MẠNG XÃ HỘI -->
-      <div class="col-12">
-        <div class="card mb-4 shadow-sm border">
-          <div class="card-header d-flex flex-wrap justify-content-between align-items-center gap-2 border-bottom py-3">
-            <div>
-              <h5 class="card-title mb-1 fw-bold text-dark">
-                <i class="bx bx-share-alt text-primary me-2"></i>Mạng Xã Hội
-              </h5>
-              <small class="text-muted">Liên kết các kênh mạng xã hội chính thức của doanh nghiệp</small>
-            </div>
-            <span class="badge bg-label-primary px-3 py-2 rounded">
-              <i class="bx bx-globe me-1"></i> Kênh Truyền Thông
-            </span>
+      <!-- 4. MẠNG XÃ HỘI -->
+      <div class="col-12 mb-4">
+        <div class="card">
+          <div class="card-header border-bottom">
+            <h5 class="mb-0 fw-bold text-dark">Liên Kết Mạng Xã Hội</h5>
           </div>
 
           <div class="card-body pt-4">
-            <div class="row g-4">
+            <div class="row g-3">
               <!-- Facebook -->
-              <div class="col-md-6">
-                <label for="social_facebook" class="form-label fw-bold text-dark">Facebook Fanpage</label>
-                <div class="input-group input-group-merge">
-                  <span class="input-group-text"><i class="bx bxl-facebook text-primary"></i></span>
-                  <input 
-                    type="url" 
-                    id="social_facebook" 
-                    class="form-control" 
-                    placeholder="https://facebook.com/..." 
-                    v-model="formData.social_facebook"
-                  />
-                </div>
+              <div class="col-md-6 mb-3">
+                <label for="social_facebook" class="form-label fw-medium text-dark">Facebook Fanpage</label>
+                <input 
+                  type="url" 
+                  id="social_facebook" 
+                  class="form-control" 
+                  placeholder="https://facebook.com/..." 
+                  v-model="formData.social_facebook"
+                />
               </div>
 
               <!-- YouTube Channel -->
-              <div class="col-md-6">
-                <label for="social_youtube" class="form-label fw-bold text-dark">Kênh YouTube</label>
-                <div class="input-group input-group-merge">
-                  <span class="input-group-text"><i class="bx bxl-youtube text-danger"></i></span>
-                  <input 
-                    type="url" 
-                    id="social_youtube" 
-                    class="form-control" 
-                    placeholder="https://youtube.com/@..." 
-                    v-model="formData.social_youtube"
-                  />
-                </div>
+              <div class="col-md-6 mb-3">
+                <label for="social_youtube" class="form-label fw-medium text-dark">Kênh YouTube</label>
+                <input 
+                  type="url" 
+                  id="social_youtube" 
+                  class="form-control" 
+                  placeholder="https://youtube.com/@..." 
+                  v-model="formData.social_youtube"
+                />
               </div>
 
               <!-- Zalo -->
-              <div class="col-md-6">
-                <label for="social_zalo" class="form-label fw-bold text-dark">Zalo</label>
-                <div class="input-group input-group-merge">
-                  <span class="input-group-text"><i class="bx bx-message-rounded-dots text-info"></i></span>
-                  <input 
-                    type="url" 
-                    id="social_zalo" 
-                    class="form-control" 
-                    placeholder="https://zalo.me/..." 
-                    v-model="formData.social_zalo"
-                  />
-                </div>
+              <div class="col-md-6 mb-3">
+                <label for="social_zalo" class="form-label fw-medium text-dark">Zalo</label>
+                <input 
+                  type="url" 
+                  id="social_zalo" 
+                  class="form-control" 
+                  placeholder="https://zalo.me/..." 
+                  v-model="formData.social_zalo"
+                />
               </div>
 
               <!-- Instagram -->
-              <div class="col-md-6">
-                <label for="social_instagram" class="form-label fw-bold text-dark">Instagram</label>
-                <div class="input-group input-group-merge">
-                  <span class="input-group-text"><i class="bx bxl-instagram text-danger"></i></span>
-                  <input 
-                    type="url" 
-                    id="social_instagram" 
-                    class="form-control" 
-                    placeholder="https://instagram.com/..." 
-                    v-model="formData.social_instagram"
-                  />
-                </div>
+              <div class="col-md-6 mb-3">
+                <label for="social_instagram" class="form-label fw-medium text-dark">Instagram</label>
+                <input 
+                  type="url" 
+                  id="social_instagram" 
+                  class="form-control" 
+                  placeholder="https://instagram.com/..." 
+                  v-model="formData.social_instagram"
+                />
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- TÀI KHOẢN NGÂN HÀNG & MÃ VIETQR NHẬN CỌC -->
-      <div class="col-12" style="position: relative; z-index: 5;">
-        <div class="card mb-4 shadow-sm border" style="overflow: visible;">
-          <div class="card-header d-flex flex-wrap justify-content-between align-items-center gap-2 border-bottom py-3">
-            <div>
-              <h5 class="card-title mb-1 fw-bold text-dark">
-                <i class="bx bx-qr-scan text-primary me-2"></i>Tài Khoản Ngân Hàng & Mã VietQR Nhận Cọc
-              </h5>
-              <small class="text-muted">Cấu hình thông tin tài khoản ngân hàng để tự động tạo mã QR chuyển khoản cọc Napas 24/7 gửi cho khách hàng</small>
-            </div>
-            <span class="badge bg-label-success px-3 py-2 rounded">
-              <i class="bx bx-check-shield me-1"></i> Napas 24/7 Miễn Phí
-            </span>
+      <!-- 5. TÀI KHOẢN NGÂN HÀNG & MÃ VIETQR NHẬN CỌC -->
+      <div class="col-12 mb-4" style="position: relative; z-index: 5;">
+        <div class="card" style="overflow: visible;">
+          <div class="card-header border-bottom">
+            <h5 class="mb-0 fw-bold text-dark">Tài Khoản Ngân Hàng & Mã VietQR Nhận Cọc</h5>
           </div>
 
           <div class="card-body pt-4">
@@ -538,7 +371,7 @@
               <div class="col-lg-7">
                 <!-- Chọn Ngân Hàng -->
                 <div class="mb-3">
-                  <label class="form-label fw-bold text-dark">
+                  <label class="form-label fw-medium text-dark">
                     Ngân Hàng Thụ Hưởng <span class="text-danger">*</span>
                   </label>
                   <v-select 
@@ -548,68 +381,59 @@
                     :can-clear="false"
                     placeholder="Tìm hoặc chọn ngân hàng..."
                   />
-                  <small class="text-muted mt-1 d-block">Chuẩn Napas 24/7 liên ngân hàng.</small>
+                  <div class="form-text text-muted">Chuẩn Napas 24/7 liên ngân hàng.</div>
                 </div>
 
                 <!-- Số Tài Khoản -->
                 <div class="mb-3">
-                  <label for="vietqr_account_no" class="form-label fw-bold text-dark">
+                  <label for="vietqr_account_no" class="form-label fw-medium text-dark">
                     Số Tài Khoản Nhận Tiền <span class="text-danger">*</span>
                   </label>
-                  <div class="input-group input-group-merge">
-                    <span class="input-group-text"><i class="bx bx-credit-card text-success"></i></span>
-                    <input 
-                      type="text" 
-                      id="vietqr_account_no" 
-                      class="form-control" 
-                      placeholder="VD: 108876543210" 
-                      v-model="formData.vietqr_account_no"
-                    />
-                  </div>
-                  <small class="text-muted mt-1 d-block">Số tài khoản nhận tiền cọc.</small>
+                  <input 
+                    type="text" 
+                    id="vietqr_account_no" 
+                    class="form-control" 
+                    placeholder="VD: 108876543210" 
+                    v-model="formData.vietqr_account_no"
+                  />
+                  <div class="form-text text-muted">Số tài khoản nhận tiền cọc của khách hàng.</div>
                 </div>
 
                 <!-- Tên Chủ Tài Khoản -->
                 <div class="mb-3">
-                  <label for="vietqr_account_name" class="form-label fw-bold text-dark">
+                  <label for="vietqr_account_name" class="form-label fw-medium text-dark">
                     Tên Chủ Tài Khoản (In hoa không dấu) <span class="text-danger">*</span>
                   </label>
-                  <div class="input-group input-group-merge">
-                    <span class="input-group-text"><i class="bx bx-user text-info"></i></span>
-                    <input 
-                      type="text" 
-                      id="vietqr_account_name" 
-                      class="form-control text-uppercase" 
-                      placeholder="VD: CONG TY PHU TUNG MAY THUY JPM" 
-                      v-model="formData.vietqr_account_name"
-                    />
-                  </div>
-                  <small class="text-muted mt-1 d-block">In hoa không dấu theo ngân hàng.</small>
+                  <input 
+                    type="text" 
+                    id="vietqr_account_name" 
+                    class="form-control text-uppercase" 
+                    placeholder="VD: CONG TY PHU TUNG MAY THUY JPM" 
+                    v-model="formData.vietqr_account_name"
+                  />
+                  <div class="form-text text-muted">In hoa không dấu khớp theo đăng ký tại ngân hàng.</div>
                 </div>
 
                 <!-- Tiền Tố Nội Dung Chuyển Khoản -->
                 <div class="mb-3">
-                  <label for="vietqr_prefix" class="form-label fw-bold text-dark">
+                  <label for="vietqr_prefix" class="form-label fw-medium text-dark">
                     Tiền Tố Nội Dung Chuyển Khoản
                   </label>
-                  <div class="input-group input-group-merge">
-                    <span class="input-group-text"><i class="bx bx-purchase-tag-alt text-warning"></i></span>
-                    <input 
-                      type="text" 
-                      id="vietqr_prefix" 
-                      class="form-control text-uppercase" 
-                      placeholder="JPM hoặc COC" 
-                      v-model="formData.vietqr_prefix"
-                    />
+                  <input 
+                    type="text" 
+                    id="vietqr_prefix" 
+                    class="form-control text-uppercase" 
+                    placeholder="JPM hoặc COC" 
+                    v-model="formData.vietqr_prefix"
+                  />
+                  <div class="form-text text-muted">
+                    Nội dung quét chuyển khoản tự động ghép dạng: <strong>[Tiền tố] [Mã đơn]</strong>
                   </div>
-                  <small class="text-muted mt-1 d-block">
-                    Ghép tự động dạng: <strong>[Tiền tố] [Mã đơn]</strong>
-                  </small>
                 </div>
 
                 <!-- Kiểu hiển thị mã QR (Template) -->
                 <div class="mb-3">
-                  <label class="form-label fw-bold text-dark">
+                  <label class="form-label fw-medium text-dark">
                     Mẫu Hiển Thị Khung QR
                   </label>
                   <v-select 
@@ -618,7 +442,7 @@
                     :can-clear="false"
                     placeholder="Chọn kiểu dáng khung QR..."
                   />
-                  <small class="text-muted mt-1 d-block">Kiểu dáng hiển thị cho khách quét.</small>
+                  <div class="form-text text-muted">Kiểu dáng hiển thị cho khách quét mã thanh toán.</div>
                 </div>
               </div>
 
@@ -627,13 +451,13 @@
                 <div class="border rounded p-3 bg-light text-center h-100 d-flex flex-column align-items-center">
                   <!-- Tiêu đề cột xem trước -->
                   <div class="d-flex justify-content-between align-items-center w-100 mb-3 pb-2 border-bottom">
-                    <span class="fw-bold text-dark" style="font-size: 0.92rem;">
-                      <i class="bx bx-qr-scan text-primary me-1"></i>Xem Trước Mã VietQR Thực Tế
+                    <span class="fw-medium text-dark small">
+                      <i class="bx bx-qr-scan me-1 text-primary"></i>Xem trước Mã VietQR Thực Tế
                     </span>
                     <span class="badge bg-label-primary">{{ formData.vietqr_bank_id || 'ICB' }}</span>
                   </div>
 
-                  <!-- Khung hiển thị ảnh QR tự sinh (To rõ, đặt sát tiêu đề, cân đối trên dưới) -->
+                  <!-- Khung hiển thị ảnh QR tự sinh -->
                   <div class="bg-white p-2 rounded shadow-sm border mb-3 d-inline-block">
                     <img 
                       :src="previewQrUrl" 
@@ -665,7 +489,7 @@
 
                   <!-- Ghi chú quét thử -->
                   <small class="text-muted mt-auto pt-2 d-block text-center" style="font-size: 0.8rem;">
-                    <i class="bx bx-mobile-alt me-1 text-primary"></i>Quét thử bằng App ngân hàng để kiểm tra trước khi Lưu.
+                    Quét thử bằng App ngân hàng để kiểm tra trước khi Lưu.
                   </small>
                 </div>
               </div>
@@ -674,19 +498,11 @@
         </div>
       </div>
 
-      <!-- HIỆU NĂNG & REDIS CACHE -->
-      <div class="col-12" style="position: relative; z-index: 1;">
-        <div class="card mb-4 shadow-sm border">
-          <div class="card-header d-flex flex-wrap justify-content-between align-items-center gap-2 border-bottom py-3">
-            <div>
-              <h5 class="card-title mb-1 fw-bold text-dark">
-                <i class="bx bx-server text-primary me-2"></i>Hiệu Năng & Bộ Nhớ Đệm (Redis Cache)
-              </h5>
-              <small class="text-muted">Tối ưu tốc độ tải danh mục Máy thủy, Động cơ, Sơ đồ phụ tùng và giảm tải máy chủ</small>
-            </div>
-            <span class="badge bg-label-success px-3 py-2 rounded">
-              <i class="bx bx-check-shield me-1"></i> Redis Active (Failover Protected)
-            </span>
+      <!-- 6. HIỆU NĂNG & BỘ NHỚ ĐỆM (CACHE) -->
+      <div class="col-12 mb-4" style="position: relative; z-index: 1;">
+        <div class="card">
+          <div class="card-header border-bottom">
+            <h5 class="mb-0 fw-bold text-dark">Bộ Nhớ Đệm & Hiệu Năng (Cache)</h5>
           </div>
 
           <div class="card-body pt-4">
@@ -696,11 +512,11 @@
                 Kiến trúc bộ nhớ đệm: <span class="text-primary fw-semibold">Failover Cache (Redis &rarr; File Driver &rarr; Memory Array)</span>
               </p>
               <p class="text-muted small mb-0" style="line-height: 1.6;">
-                Hệ thống tự động lưu trữ sẵn toàn bộ danh mục Thương hiệu, Loại động cơ, Model và Nhóm phụ tùng vào bộ nhớ đệm tốc độ cao, giúp giảm tới <strong>95%</strong> áp lực truy vấn lên cơ sở dữ liệu. Khi Quản trị viên thay đổi hoặc cập nhật dữ liệu phụ tùng, hệ thống sẽ tự động làm mới bộ nhớ đệm liên quan.
+                Hệ thống tự động lưu trữ sẵn danh mục Thương hiệu, Loại động cơ, Model và Nhóm phụ tùng vào bộ nhớ đệm tốc độ cao, giúp giảm tới <strong>95%</strong> áp lực truy vấn cơ sở dữ liệu.
               </p>
             </div>
 
-            <!-- Thống kê mục đã cache (khi đã làm ấm) -->
+            <!-- Thống kê mục đã cache -->
             <div v-if="cacheStats" class="mb-4 p-3 bg-light rounded border">
               <div class="d-flex align-items-center mb-2">
                 <i class="bx bx-check-circle text-success fs-5 me-2"></i>
@@ -734,36 +550,57 @@
               </div>
             </div>
 
-            <!-- Thanh công cụ thao tác chuẩn Sneat 1.0.0 (Tách hàng riêng, không đè chữ) -->
+            <!-- Thanh công cụ thao tác chuẩn Sneat Admin -->
             <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 pt-3 border-top">
               <div class="text-muted small">
-                <i class="bx bx-info-circle me-1 text-info"></i>
                 Khuyến nghị bấm <strong>Làm Ấm Cache</strong> sau khi xóa trắng để người dùng tra cứu mượt mà nhất.
               </div>
-              <div class="d-flex flex-wrap gap-2">
+              <div class="d-flex gap-2">
                 <button 
                   type="button" 
-                  class="btn btn-outline-danger px-4 shadow-sm text-nowrap d-inline-flex align-items-center justify-content-center"
-                  style="min-width: 175px;"
+                  class="btn btn-outline-danger px-4 shadow-sm"
                   @click="handleClearCache(false)"
                   :disabled="isClearingCache"
                 >
-                  <i class="bx bx-trash me-2"></i> Xóa Trắng Cache
+                  <i class="bx bx-trash me-1"></i> Xóa Trắng Cache
                 </button>
                 <button 
                   type="button" 
-                  class="btn btn-primary px-4 shadow-sm text-nowrap d-inline-flex align-items-center justify-content-center"
-                  style="min-width: 175px;"
+                  class="btn btn-primary px-4 shadow-sm"
                   @click="handleClearCache(true)"
                   :disabled="isClearingCache"
                 >
-                  <span v-if="isClearingCache" class="spinner-border spinner-border-sm me-2" role="status"></span>
-                  <i v-else class="bx bx-bolt-circle me-2"></i>
+                  <span v-if="isClearingCache" class="spinner-border spinner-border-sm me-1" role="status"></span>
+                  <i v-else class="bx bx-bolt-circle me-1"></i>
                   {{ isClearingCache ? 'Đang làm ấm...' : 'Làm Ấm Cache' }}
                 </button>
               </div>
             </div>
           </div>
+        </div>
+      </div>
+
+      <!-- Nút Lưu / Đặt Lại Ở Cuối Trang -->
+      <div class="col-12">
+        <div class="d-flex justify-content-end gap-2 mb-4">
+          <button 
+            type="button" 
+            class="btn btn-outline-secondary px-4"
+            @click="resetToInitial"
+            :disabled="isSubmitting"
+          >
+            Đặt lại
+          </button>
+          <button 
+            type="button" 
+            class="btn btn-primary px-4 shadow-sm"
+            @click="saveSettings"
+            :disabled="isSubmitting"
+          >
+            <span v-if="isSubmitting" class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+            <i v-else class="bx bx-save me-1"></i>
+            {{ isSubmitting ? 'Đang Lưu...' : 'Lưu Thay Đổi' }}
+          </button>
         </div>
       </div>
 
@@ -958,57 +795,44 @@ export default {
     };
 
     const isUploadingBanner = ref(false);
+    const currentUploadKey = ref('');
     const bannerFileInput = ref(null);
-    const activeBannerTab = ref('store');
 
-    const bannerConfigs = {
-      store: {
-        name: 'Trang Cửa Hàng',
-        badge: 'JPM MARINE STORE',
+    const bannerList = [
+      {
+        key: 'store',
+        name: 'Banner Cửa Hàng',
+        icon: 'bx-store',
         imageKey: 'store_banner_image',
-        titleKey: 'store_banner_title',
-        subtitleKey: 'store_banner_subtitle',
-        defaultImg: '/client/image/shop_banner.png',
-        defaultTitle: 'Cửa Hàng Phụ Tùng',
-        defaultSubtitle: 'Khám phá hệ sinh thái phụ tùng động cơ thủy, dầu nhớt và vật tư hàng hải chính hãng từ các thương hiệu dẫn đầu.',
-        placeholderIcon: 'bx-store'
+        defaultImg: '/client/image/shop_banner.png'
       },
-      lookup: {
-        name: 'Trang Tra Cứu',
-        badge: 'JPM MARINE DIAGNOSTICS',
+      {
+        key: 'lookup',
+        name: 'Banner Tra Cứu',
+        icon: 'bx-search-alt',
         imageKey: 'lookup_banner_image',
-        titleKey: 'lookup_banner_title',
-        subtitleKey: 'lookup_banner_subtitle',
-        defaultImg: '',
-        defaultTitle: 'Tra Cứu Phụ Tùng',
-        defaultSubtitle: 'Lựa chọn chính xác phụ tùng thay thế và sơ đồ rã máy cho động cơ thủy của bạn.',
-        placeholderIcon: 'bx-compass'
+        defaultImg: ''
       },
-      news: {
-        name: 'Trang Tin Tức',
-        badge: 'JPM MARINE EDITORIAL',
+      {
+        key: 'news',
+        name: 'Banner Tin Tức',
+        icon: 'bx-news',
         imageKey: 'news_banner_image',
-        titleKey: 'news_banner_title',
-        subtitleKey: 'news_banner_subtitle',
-        defaultImg: '/client/image/news_banner.png',
-        defaultTitle: 'Tin Tức & Cẩm Nang',
-        defaultSubtitle: 'Tổng hợp những kiến thức chuyên sâu về vận hành tàu thuyền, cẩm nang bảo dưỡng động cơ thủy và xu hướng công nghệ hàng hải.',
-        placeholderIcon: 'bx-news'
+        defaultImg: '/client/image/news_banner.png'
       },
-      support: {
-        name: 'Trang Hỗ Trợ',
-        badge: 'JPM MARINE SUPPORT',
+      {
+        key: 'support',
+        name: 'Banner Hỗ Trợ',
+        icon: 'bx-support',
         imageKey: 'support_banner_image',
-        titleKey: 'support_banner_title',
-        subtitleKey: 'support_banner_subtitle',
-        defaultImg: '',
-        defaultTitle: 'Trung Tâm Hỗ Trợ & Kỹ Thuật',
-        defaultSubtitle: 'Đồng hành cùng mọi hải trình của bạn. Đội ngũ kỹ sư và chuyên viên JPM Marine luôn sẵn sàng tư vấn tra cứu mã phụ tùng OEM và hỗ trợ 24/7.',
-        placeholderIcon: 'bx-headphone'
+        defaultImg: ''
       }
-    };
+    ];
 
-    const currentBanner = computed(() => bannerConfigs[activeBannerTab.value]);
+    const triggerBannerUpload = (key) => {
+      currentUploadKey.value = key;
+      bannerFileInput.value?.click();
+    };
 
     const handleBannerUpload = async (event, key = 'store_banner_image') => {
       const file = event.target.files?.[0];
@@ -1036,28 +860,20 @@ export default {
       }
     };
 
-    const adminBannerPreviewStyle = computed(() => {
-      const cfg = currentBanner.value;
-      const raw = formData[cfg.imageKey] || cfg.defaultImg;
-      if (raw) {
-        const imgUrl = raw.startsWith('http') || raw.startsWith('/client/') || raw.startsWith('/assets/')
-          ? raw
-          : (raw.startsWith('/') ? raw : '/' + raw);
-        return {
-          backgroundImage: `url("${imgUrl}")`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center center',
-          backgroundRepeat: 'no-repeat',
-          height: '180px',
-          maxHeight: '190px'
-        };
+    const onBannerFileSelected = async (event) => {
+      if (!currentUploadKey.value) return;
+      await handleBannerUpload(event, currentUploadKey.value);
+    };
+
+    const getPreviewUrl = (url) => {
+      if (!url) return '';
+      if (url.startsWith('http') || url.startsWith('blob:') || url.startsWith('data:') || url.startsWith('/client/') || url.startsWith('/assets/')) {
+        return url;
       }
-      return {
-        background: 'linear-gradient(135deg, #ffffff 0%, #f8fafc 40%, #eef4f9 75%, #e2eaf4 100%)',
-        height: '180px',
-        maxHeight: '190px'
-      };
-    });
+      const clean = url.startsWith('/') ? url : '/' + url;
+      const baseUrl = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api').replace(/\/api\/?$/, '');
+      return `${baseUrl}${clean}`;
+    };
 
     onMounted(() => {
       updateYoutubePreview();
@@ -1078,44 +894,17 @@ export default {
       templateOptions,
       previewQrUrl,
       isUploadingBanner,
+      currentUploadKey,
       bannerFileInput,
-      activeBannerTab,
-      currentBanner,
-      handleBannerUpload,
-      adminBannerPreviewStyle
+      bannerList,
+      triggerBannerUpload,
+      onBannerFileSelected,
+      getPreviewUrl,
+      handleBannerUpload
     };
   }
 };
 </script>
 
 <style scoped>
-.admin-store-banner-preview {
-  position: relative;
-  display: flex;
-  align-items: center;
-  background-color: #ffffff;
-  background-size: cover;
-  background-position: center center;
-  background-repeat: no-repeat;
-}
-
-.admin-banner-preview-overlay {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: -2px;
-  right: 0;
-  z-index: 1;
-  background: linear-gradient(
-    90deg,
-    #ffffff 0%,
-    #ffffff 24%,
-    rgba(255, 255, 255, 0.95) 34%,
-    rgba(255, 255, 255, 0.65) 44%,
-    rgba(255, 255, 255, 0.18) 54%,
-    transparent 62%,
-    transparent 100%
-  );
-  pointer-events: none;
-}
 </style>
