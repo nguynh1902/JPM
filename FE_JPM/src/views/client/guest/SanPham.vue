@@ -487,16 +487,13 @@ const getImageUrl = (path) => {
 };
 
 const storeBannerStyle = computed(() => {
-  if (settings.value && settings.value.store_banner_image) {
-    const rawPath = settings.value.store_banner_image;
-    const imgUrl = rawPath.startsWith('http') || rawPath.startsWith('/client/') || rawPath.startsWith('/assets/')
-      ? rawPath
-      : getImageUrl(rawPath);
-    return {
-      backgroundImage: `url("${imgUrl}")`,
-    };
-  }
-  return {};
+  const rawPath = (settings.value && settings.value.store_banner_image) ? settings.value.store_banner_image : '/client/image/shop_banner.png';
+  const imgUrl = rawPath.startsWith('http') || rawPath.startsWith('/client/') || rawPath.startsWith('/assets/')
+    ? rawPath
+    : getImageUrl(rawPath);
+  return {
+    backgroundImage: `url("${imgUrl}")`,
+  };
 });
 
 const addToCart = (item) => {
@@ -525,7 +522,7 @@ const scrollToProducts = () => {
   max-height: 320px;
   height: clamp(250px, 20vw, 320px);
   background-color: #f1f5f9;
-  background-image: radial-gradient(circle at 85% 50%, #e2e8f0 0%, #f8fafc 60%, #ffffff 100%);
+  background-image: url('/client/image/shop_banner.png');
   background-size: cover;
   background-position: center right;
   background-repeat: no-repeat;

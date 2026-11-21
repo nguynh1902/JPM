@@ -35,6 +35,27 @@ class CauHinhSeeder extends Seeder
                 'loai_gia_tri'  => 'text',
                 'trang_thai'    => 1,
             ],
+            [
+                'khoa_cau_hinh' => 'store_banner_image',
+                'gia_tri'       => '/client/image/shop_banner.png',
+                'mo_ta'         => 'Đường dẫn ảnh nền banner trang Cửa hàng (Client Store)',
+                'loai_gia_tri'  => 'media',
+                'trang_thai'    => 1,
+            ],
+            [
+                'khoa_cau_hinh' => 'store_banner_title',
+                'gia_tri'       => 'Cửa Hàng Phụ Tùng',
+                'mo_ta'         => 'Tiêu đề banner trang Cửa hàng',
+                'loai_gia_tri'  => 'text',
+                'trang_thai'    => 1,
+            ],
+            [
+                'khoa_cau_hinh' => 'store_banner_subtitle',
+                'gia_tri'       => 'Khám phá hệ sinh thái phụ tùng động cơ thủy, dầu nhớt và vật tư hàng hải chính hãng từ các thương hiệu dẫn đầu.',
+                'mo_ta'         => 'Mô tả phụ banner trang Cửa hàng',
+                'loai_gia_tri'  => 'text',
+                'trang_thai'    => 1,
+            ],
 
             // 2. Thông tin liên hệ & Doanh nghiệp
             [

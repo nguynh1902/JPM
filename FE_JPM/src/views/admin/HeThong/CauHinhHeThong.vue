@@ -45,10 +45,17 @@
       
       <!-- BANNER TRANG CHỦ & VIDEO -->
       <div class="col-12">
-        <div class="card mb-4">
-          <div class="card-header d-flex justify-content-between align-items-center">
-            <h5 class="card-title mb-1 fw-bold text-dark">Banner Trang Chủ & Video</h5>
-            <small class="text-muted">Cài đặt video nền YouTube và slogan tại trang chủ Client</small>
+        <div class="card mb-4 shadow-sm border">
+          <div class="card-header d-flex flex-wrap justify-content-between align-items-center gap-2 border-bottom py-3">
+            <div>
+              <h5 class="card-title mb-1 fw-bold text-dark">
+                <i class="bx bx-movie-play text-primary me-2"></i>Banner Trang Chủ & Video
+              </h5>
+              <small class="text-muted">Cài đặt video nền YouTube và slogan tại trang chủ Client</small>
+            </div>
+            <span class="badge bg-label-primary px-3 py-2 rounded">
+              <i class="bx bx-video me-1"></i> Video Nền 100vh
+            </span>
           </div>
 
           <div class="card-body pt-4">
@@ -267,16 +274,6 @@
                       {{ formData.store_banner_subtitle || 'Khám phá hệ sinh thái phụ tùng động cơ thủy, dầu nhớt và vật tư hàng hải chính hãng từ các thương hiệu dẫn đầu.' }}
                     </p>
                   </div>
-
-                  <!-- Trạng thái ảnh -->
-                  <div class="position-absolute bottom-0 end-0 m-2 z-2">
-                    <span v-if="formData.store_banner_image" class="badge bg-success shadow-sm">
-                      <i class="bx bx-check me-1"></i>Đã có ảnh nền
-                    </span>
-                    <span v-else class="badge bg-secondary shadow-sm">
-                      <i class="bx bx-image me-1"></i>Chưa có ảnh (Nền mặc định)
-                    </span>
-                  </div>
                 </div>
               </div>
             </div>
@@ -286,10 +283,17 @@
 
       <!-- THÔNG TIN DOANH NGHIỆP & LIÊN HỆ -->
       <div class="col-12">
-        <div class="card mb-4">
-          <div class="card-header d-flex justify-content-between align-items-center">
-            <h5 class="card-title mb-1 fw-bold text-dark">Thông Tin Doanh Nghiệp & Liên Hệ</h5>
-            <small class="text-muted">Thông tin công ty, hotline, email và giờ mở cửa trên toàn website Client</small>
+        <div class="card mb-4 shadow-sm border">
+          <div class="card-header d-flex flex-wrap justify-content-between align-items-center gap-2 border-bottom py-3">
+            <div>
+              <h5 class="card-title mb-1 fw-bold text-dark">
+                <i class="bx bx-building-house text-primary me-2"></i>Thông Tin Doanh Nghiệp & Liên Hệ
+              </h5>
+              <small class="text-muted">Thông tin công ty, hotline, email và giờ mở cửa trên toàn website Client</small>
+            </div>
+            <span class="badge bg-label-primary px-3 py-2 rounded">
+              <i class="bx bx-info-circle me-1"></i> Thông Tin Chung
+            </span>
           </div>
 
           <div class="card-body pt-4">
@@ -380,10 +384,17 @@
 
       <!-- MẠNG XÃ HỘI -->
       <div class="col-12">
-        <div class="card mb-4">
-          <div class="card-header d-flex justify-content-between align-items-center">
-            <h5 class="card-title mb-1 fw-bold text-dark">Mạng Xã Hội</h5>
-            <small class="text-muted">Liên kết các kênh mạng xã hội chính thức của doanh nghiệp</small>
+        <div class="card mb-4 shadow-sm border">
+          <div class="card-header d-flex flex-wrap justify-content-between align-items-center gap-2 border-bottom py-3">
+            <div>
+              <h5 class="card-title mb-1 fw-bold text-dark">
+                <i class="bx bx-share-alt text-primary me-2"></i>Mạng Xã Hội
+              </h5>
+              <small class="text-muted">Liên kết các kênh mạng xã hội chính thức của doanh nghiệp</small>
+            </div>
+            <span class="badge bg-label-primary px-3 py-2 rounded">
+              <i class="bx bx-globe me-1"></i> Kênh Truyền Thông
+            </span>
           </div>
 
           <div class="card-body pt-4">
@@ -454,7 +465,7 @@
 
       <!-- TÀI KHOẢN NGÂN HÀNG & MÃ VIETQR NHẬN CỌC -->
       <div class="col-12" style="position: relative; z-index: 5;">
-        <div class="card mb-4" style="overflow: visible;">
+        <div class="card mb-4 shadow-sm border" style="overflow: visible;">
           <div class="card-header d-flex flex-wrap justify-content-between align-items-center gap-2 border-bottom py-3">
             <div>
               <h5 class="card-title mb-1 fw-bold text-dark">
@@ -611,7 +622,7 @@
 
       <!-- HIỆU NĂNG & REDIS CACHE -->
       <div class="col-12" style="position: relative; z-index: 1;">
-        <div class="card mb-4">
+        <div class="card mb-4 shadow-sm border">
           <div class="card-header d-flex flex-wrap justify-content-between align-items-center gap-2 border-bottom py-3">
             <div>
               <h5 class="card-title mb-1 fw-bold text-dark">
@@ -752,7 +763,7 @@ export default {
       homepage_youtube_url: 'https://www.youtube.com/watch?v=5CVzOqvqI38',
       homepage_hero_title: 'JPM MARINE',
       homepage_hero_subtitle: 'PHỤ TÙNG TÀU THUYỀN NHẬT BẢN',
-      store_banner_image: '',
+      store_banner_image: '/client/image/shop_banner.png',
       store_banner_title: 'Cửa Hàng Phụ Tùng',
       store_banner_subtitle: 'Khám phá hệ sinh thái phụ tùng động cơ thủy, dầu nhớt và vật tư hàng hải chính hãng từ các thương hiệu dẫn đầu.',
       company_name: 'JPM Marine',
@@ -913,21 +924,14 @@ export default {
     };
 
     const adminBannerPreviewStyle = computed(() => {
-      if (formData.store_banner_image) {
-        const raw = formData.store_banner_image;
-        const imgUrl = raw.startsWith('http') || raw.startsWith('/client/') || raw.startsWith('/assets/')
-          ? raw
-          : (raw.startsWith('/') ? raw : '/' + raw);
-        return {
-          backgroundImage: `url("${imgUrl}")`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center right',
-          minHeight: '170px'
-        };
-      }
+      const raw = formData.store_banner_image || '/client/image/shop_banner.png';
+      const imgUrl = raw.startsWith('http') || raw.startsWith('/client/') || raw.startsWith('/assets/')
+        ? raw
+        : (raw.startsWith('/') ? raw : '/' + raw);
       return {
-        backgroundColor: '#f1f5f9',
-        backgroundImage: 'radial-gradient(circle at 85% 50%, #e2e8f0 0%, #f8fafc 60%, #ffffff 100%)',
+        backgroundImage: `url("${imgUrl}")`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center right',
         minHeight: '170px'
       };
     });

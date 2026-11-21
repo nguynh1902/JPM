@@ -9,7 +9,7 @@ export const DEFAULT_SETTINGS = {
   homepage_youtube_id: '5CVzOqvqI38',
   homepage_hero_title: 'JPM MARINE',
   homepage_hero_subtitle: 'PHỤ TÙNG TÀU THUYỀN NHẬT BẢN',
-  store_banner_image: '',
+  store_banner_image: '/client/image/shop_banner.png',
   store_banner_title: 'Cửa Hàng Phụ Tùng',
   store_banner_subtitle: 'Khám phá hệ sinh thái phụ tùng động cơ thủy, dầu nhớt và vật tư hàng hải chính hãng từ các thương hiệu dẫn đầu.',
   company_name: 'JPM Marine',
