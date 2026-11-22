@@ -134,7 +134,7 @@
                 <div v-for="cat in groupedCategories" :key="cat.id" class="mb-5">
                   <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-2">
                     <h4 class="fw-bold mb-0 text-capitalize" style="color: var(--heading-color, #0A1128); font-size: 1.25rem; font-family: var(--heading-font, 'Raleway', sans-serif);">{{ cat.ten_danh_muc }}</h4>
-                    <button class="btn btn-link text-danger fw-bold text-decoration-none d-flex align-items-center gap-1 p-0 shadow-none hover-underline" @click="viewCategory(cat.slug)">
+                    <button class="btn btn-link text-danger fw-bold text-decoration-none d-flex align-items-center gap-1 p-0 shadow-none btn-see-more" @click="viewCategory(cat.slug)">
                       Xem thêm <i class="bi bi-arrow-right"></i>
                     </button>
                   </div>
@@ -518,6 +518,23 @@ const scrollToProducts = () => {
 </script>
 
 <style scoped>
+/* Nút Xem thêm chuẩn: Tuyệt đối không gạch chân khi hover, icon mũi tên trượt nhẹ */
+.btn-see-more,
+.btn-see-more:hover,
+.btn-see-more:focus,
+.btn-see-more:active {
+  text-decoration: none !important;
+  color: var(--jpm-color-red-marine, #F82249) !important;
+  box-shadow: none !important;
+}
+
+.btn-see-more i {
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-see-more:hover i {
+  transform: translateX(3px);
+}
 /* ── STORE HERO BANNER (Dài ngang full màn hình, căn giữa ảnh theo chiều dọc ~250px) ── */
 .store-hero-banner {
   width: 100%;

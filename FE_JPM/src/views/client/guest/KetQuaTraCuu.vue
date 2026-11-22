@@ -330,7 +330,7 @@
                       </h4>
                       <button 
                         type="button" 
-                        class="btn btn-link text-danger fw-bold text-decoration-none d-flex align-items-center gap-1 p-0 shadow-none hover-underline"
+                        class="btn btn-link text-danger fw-bold text-decoration-none d-flex align-items-center gap-1 p-0 shadow-none btn-see-more"
                         v-if="group.id !== 'other'"
                         @click="selectPartGroup(group.id)"
                       >
@@ -899,7 +899,24 @@ export default {
 
 <style scoped>
 .hover-underline:hover {
-  text-decoration: underline !important;
+  text-decoration: none !important;
+}
+
+.btn-see-more,
+.btn-see-more:hover,
+.btn-see-more:focus,
+.btn-see-more:active {
+  text-decoration: none !important;
+  color: var(--jpm-color-red-marine, #F82249) !important;
+  box-shadow: none !important;
+}
+
+.btn-see-more i {
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-see-more:hover i {
+  transform: translateX(3px);
 }
 
 /* ── TIÊU ĐỀ TRANG & BỐ CỤC ── */

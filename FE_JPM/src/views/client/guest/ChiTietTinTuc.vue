@@ -433,7 +433,7 @@
             </h4>
             <router-link
               to="/tin-tuc"
-              class="btn btn-link text-danger fw-bold text-decoration-none d-flex align-items-center gap-1 p-0 shadow-none hover-underline"
+              class="btn btn-link text-danger fw-bold text-decoration-none d-flex align-items-center gap-1 p-0 shadow-none btn-see-more"
               style="color: var(--jpm-color-red-marine, #F82249) !important; font-size: 0.92rem;"
             >
               Xem thêm <i class="bi bi-arrow-right"></i>
@@ -866,6 +866,23 @@ export default {
 </script>
 
 <style scoped>
+/* Nút Xem thêm chuẩn: Tuyệt đối không gạch chân khi hover, icon mũi tên trượt nhẹ */
+.btn-see-more,
+.btn-see-more:hover,
+.btn-see-more:focus,
+.btn-see-more:active {
+  text-decoration: none !important;
+  color: var(--jpm-color-red-marine, #F82249) !important;
+  box-shadow: none !important;
+}
+
+.btn-see-more i {
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-see-more:hover i {
+  transform: translateX(3px);
+}
 /* ── PAGE BACKGROUND & BASE ── */
 .jpm-news-detail {
   background-color: #ffffff;

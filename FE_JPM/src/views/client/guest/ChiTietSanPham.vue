@@ -317,7 +317,7 @@
             </h4>
             <router-link
               :to="sanPham?.danh_muc ? { path: '/san-pham', query: { danh_muc: sanPham.danh_muc.slug } } : '/san-pham'"
-              class="btn btn-link text-danger fw-bold text-decoration-none d-flex align-items-center gap-1 p-0 shadow-none hover-underline"
+              class="btn btn-link text-danger fw-bold text-decoration-none d-flex align-items-center gap-1 p-0 shadow-none btn-see-more"
             >
               Xem thêm <i class="bi bi-arrow-right"></i>
             </router-link>
@@ -953,8 +953,26 @@ onMounted(() => {
   display: block;
 }
 
-/* Typography Helpers */
-.hover-underline:hover { text-decoration: underline !important; }
+/* Typography Helpers - Bỏ gạch chân khi hover */
+.hover-underline:hover { text-decoration: none !important; }
+
+/* Nút Xem thêm chuẩn: Tuyệt đối không gạch chân, icon mũi tên trượt nhẹ khi hover */
+.btn-see-more,
+.btn-see-more:hover,
+.btn-see-more:focus,
+.btn-see-more:active {
+  text-decoration: none !important;
+  color: var(--jpm-color-red-marine, #F82249) !important;
+  box-shadow: none !important;
+}
+
+.btn-see-more i {
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-see-more:hover i {
+  transform: translateX(3px);
+}
 
 /* Tabs Customization */
 .custom-tabs { border-bottom: 1px solid #ddd; }
