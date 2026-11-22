@@ -1225,7 +1225,7 @@ const formatDate = (dateStr) => {
   display: inline-flex;
   align-items: center;
   padding: 5px 12px;
-  border-radius: 20px;
+  border-radius: var(--jpm-radius-badge, 6px);
   font-size: 11.5px;
   font-weight: 700;
   letter-spacing: 0.3px;
@@ -1498,7 +1498,7 @@ const formatDate = (dateStr) => {
   background: #ffffff;
   font-size: 11px;
   padding: 2px 8px;
-  border-radius: 4px;
+  border-radius: var(--jpm-radius-badge, 6px);
   cursor: pointer;
 }
 .btn-copy:hover {

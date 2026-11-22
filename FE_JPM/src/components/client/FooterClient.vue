@@ -1,8 +1,75 @@
 <template>
   <!-- ========================================================
-       BANNER QUẢNG BÁ DÍNH LIỀN FOOTER (Tạm thời bỏ qua nội dung chữ)
+       BANNER QUẢNG BÁ DÍNH LIỀN FOOTER: TẠI SAO CHỌN JPM MARINE
+       Nội dung đặt tại khoảng trắng bên trái, không đè lên du thuyền
        ======================================================== -->
-  <section class="home-full-banner"></section>
+  <section class="home-full-banner">
+    <div class="container banner-container">
+      <div class="banner-content">
+        <!-- Nhãn nhỏ phía trên tiêu đề -->
+        <span class="banner-eyebrow">
+          <i class="bi bi-patch-check-fill me-1"></i> Cam kết năng lực & dịch vụ
+        </span>
+
+        <!-- Tiêu đề chiến lược -->
+        <h2 class="home-banner-title mb-2">
+          Tại sao chọn <span class="banner-title-accent">JPM Marine</span>?
+        </h2>
+
+        <!-- Mô tả ngắn gọn -->
+        <p class="home-banner-desc mb-3">
+          Hệ sinh thái tra cứu kỹ thuật & gom đơn phụ tùng máy thủy chuẩn Nhật Bản.
+        </p>
+
+        <!-- Lưới 4 lý do thực chiến (Bố cục 2x2) -->
+        <div class="banner-reasons-grid mb-0">
+          <!-- Lý do 1: OEM Chính hãng -->
+          <div class="reason-item">
+            <div class="reason-icon-wrap">
+              <i class="bi bi-shield-check"></i>
+            </div>
+            <div class="reason-body">
+              <h6 class="reason-title">100% OEM Nhật Bản</h6>
+              <p class="reason-desc">Chuẩn gốc Yamaha, Honda, Suzuki, Tohatsu, Yanmar.</p>
+            </div>
+          </div>
+
+          <!-- Lý do 2: Sơ đồ nổ Microfiche -->
+          <div class="reason-item">
+            <div class="reason-icon-wrap">
+              <i class="bi bi-diagram-3-fill"></i>
+            </div>
+            <div class="reason-body">
+              <h6 class="reason-title">Sơ Đồ Rã Máy Chuẩn Xác</h6>
+              <p class="reason-desc">Bản vẽ kỹ thuật chi tiết từng số Ref, không lo sai mã.</p>
+            </div>
+          </div>
+
+          <!-- Lý do 3: Gom đơn giá gốc -->
+          <div class="reason-item">
+            <div class="reason-icon-wrap">
+              <i class="bi bi-box-seam-fill"></i>
+            </div>
+            <div class="reason-body">
+              <h6 class="reason-title">Gom Đơn Giá Tận Gốc</h6>
+              <p class="reason-desc">Chuỗi Cross-docking từ Nhật, tối ưu chi phí cho xưởng.</p>
+            </div>
+          </div>
+
+          <!-- Lý do 4: Hậu cần bến bãi -->
+          <div class="reason-item">
+            <div class="reason-icon-wrap">
+              <i class="bi bi-truck"></i>
+            </div>
+            <div class="reason-body">
+              <h6 class="reason-title">Giao Tận Bến & Chành Xe</h6>
+              <p class="reason-desc">Hỗ trợ đọc mã qua ảnh tem máy, giao nhanh toàn quốc.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 
   <footer id="footer" class="footer dark-background">
     <div class="footer-top">
@@ -131,5 +198,109 @@ export default {
 <style scoped>
 .hover-danger:hover {
   color: var(--accent-color, #f82249) !important;
+}
+
+/* ========================================================
+   BANNER CUỐI TRANG: Bố cục nội dung trong khoảng trắng bên trái
+   ======================================================== */
+.home-full-banner {
+  align-items: flex-start;
+}
+
+.banner-container {
+  padding-top: clamp(28px, 3.5vw, 56px);
+  padding-bottom: clamp(24px, 3vw, 48px);
+}
+
+/* Khối nội dung chiếm nửa trái để không che du thuyền */
+.banner-content {
+  max-width: 580px;
+}
+
+/* Nhãn nhỏ phía trên tiêu đề */
+.banner-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--heading-font, 'Raleway', sans-serif);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: var(--jpm-color-red-marine, #F82249);
+  margin-bottom: 8px;
+}
+
+/* Chữ nhấn màu đỏ trong tiêu đề */
+.banner-title-accent {
+  color: var(--jpm-color-red-marine, #F82249);
+}
+
+/* Lưới 4 lý do thực chiến (Bố cục 2x2) */
+.banner-reasons-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px 20px;
+}
+
+.reason-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.reason-icon-wrap {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--jpm-radius-control, 8px);
+  background: rgba(248, 34, 73, 0.08);
+  color: var(--jpm-color-red-marine, #F82249);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.reason-body {
+  flex: 1;
+}
+
+.reason-title {
+  font-family: var(--heading-font, 'Raleway', sans-serif);
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--jpm-color-navy-dark, #0A1128);
+  margin-bottom: 2px;
+  line-height: 1.3;
+}
+
+.reason-desc {
+  font-size: 0.78rem;
+  color: #475569;
+  line-height: 1.35;
+  margin-bottom: 0;
+}
+
+/* Tablet & Mobile: thêm nền trắng mờ để chữ luôn đọc rõ khi ảnh bị cắt */
+@media (max-width: 991px) {
+  .banner-container {
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+  .banner-content {
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(8px);
+    padding: 22px;
+    border-radius: var(--jpm-radius-card, 12px);
+    box-shadow: 0 4px 20px rgba(10, 17, 40, 0.08);
+  }
+}
+
+@media (max-width: 576px) {
+  .banner-reasons-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
 }
 </style>

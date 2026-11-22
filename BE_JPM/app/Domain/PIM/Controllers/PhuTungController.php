@@ -9,6 +9,7 @@ use App\Domain\PIM\Resources\AdminPhuTungResource;
 use App\Domain\PIM\Services\PhuTungService;
 use Exception;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class PhuTungController extends Controller
 {
@@ -19,13 +20,31 @@ class PhuTungController extends Controller
         $this->phuTungService = $phuTungService;
     }
 
-    public function index(): JsonResponse
+    public function index(Request $request): JsonResponse
     {
         try {
-            $phuTungs = $this->phuTungService->getAll();
+            $all = $request->boolean('all', false);
+            $perPage = $all ? null : (int) $request->input('per_page', 50);
+            $filters = $request->only(['keyword', 'thuong_hieu_id', 'nhom_phu_tung_id', 'trang_thai']);
+
+            $phuTungs = $this->phuTungService->getAll($filters, $perPage);
+
+            if ($all || !$perPage) {
+                return response()->json([
+                    'success' => true,
+                    'data'    => AdminPhuTungResource::collection($phuTungs),
+                ]);
+            }
+
             return response()->json([
                 'success' => true,
-                'data'    => AdminPhuTungResource::collection($phuTungs),
+                'data'    => AdminPhuTungResource::collection($phuTungs->items()),
+                'meta'    => [
+                    'current_page' => $phuTungs->currentPage(),
+                    'last_page'    => $phuTungs->lastPage(),
+                    'per_page'     => $phuTungs->perPage(),
+                    'total'        => $phuTungs->total(),
+                ],
             ]);
         } catch (Exception $e) {
             return response()->json(['success' => false, 'message' => $e->getMessage()], 500);

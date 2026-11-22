@@ -34,12 +34,30 @@ class SanPhamController extends Controller
         }
     }
 
-    public function index(): JsonResponse
+    public function index(\Illuminate\Http\Request $request): JsonResponse
     {
-        $data = $this->sanPhamService->getAll();
+        $all = $request->boolean('all', false);
+        $perPage = $all ? null : (int) $request->input('per_page', 50);
+        $filters = $request->only(['keyword', 'danh_muc_id']);
+
+        $data = $this->sanPhamService->getAll($filters, $perPage);
+
+        if ($all || !$perPage) {
+            return response()->json([
+                'success' => true,
+                'data' => SanPhamResource::collection($data)
+            ]);
+        }
+
         return response()->json([
             'success' => true,
-            'data' => SanPhamResource::collection($data)
+            'data' => SanPhamResource::collection($data->items()),
+            'meta' => [
+                'current_page' => $data->currentPage(),
+                'last_page' => $data->lastPage(),
+                'per_page' => $data->perPage(),
+                'total' => $data->total(),
+            ]
         ]);
     }
 

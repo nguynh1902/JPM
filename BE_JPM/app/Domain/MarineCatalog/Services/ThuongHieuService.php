@@ -16,9 +16,23 @@ class ThuongHieuService
         Cache::forget('public_thuong_hieu');
     }
 
-    public function getAll()
+    public function getAll(array $filters = [], ?int $perPage = null)
     {
-        return ThuongHieu::orderBy('id', 'desc')->get();
+        $query = ThuongHieu::orderBy('id', 'desc');
+
+        if (!empty($filters['search'])) {
+            $search = trim($filters['search']);
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('code', 'like', "%{$search}%");
+            });
+        }
+
+        if ($perPage) {
+            return $query->paginate($perPage);
+        }
+
+        return $query->get();
     }
 
     public function getById(int $id): ThuongHieu

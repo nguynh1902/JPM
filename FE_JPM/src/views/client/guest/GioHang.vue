@@ -803,7 +803,7 @@ export default {
   width: 17px;
   height: 17px;
   border-color: #cbd5e1;
-  border-radius: 4px;
+  border-radius: var(--jpm-radius-badge, 6px);
   cursor: pointer;
   margin: 0 auto;
   vertical-align: middle;

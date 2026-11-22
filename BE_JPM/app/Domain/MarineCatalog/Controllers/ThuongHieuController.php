@@ -10,6 +10,7 @@ use App\Domain\MarineCatalog\Resources\ThuongHieuResource;
 use App\Domain\MarineCatalog\Services\ThuongHieuService;
 use Exception;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class ThuongHieuController extends Controller
 {
@@ -20,13 +21,31 @@ class ThuongHieuController extends Controller
         $this->thuongHieuService = $thuongHieuService;
     }
 
-    public function index(): JsonResponse
+    public function index(Request $request): JsonResponse
     {
         try {
-            $brands = $this->thuongHieuService->getAll();
+            $all = $request->boolean('all', false);
+            $perPage = $all ? null : (int) $request->input('per_page', 50);
+            $filters = $request->only(['search']);
+
+            $brands = $this->thuongHieuService->getAll($filters, $perPage);
+
+            if ($all || !$perPage) {
+                return response()->json([
+                    'success' => true,
+                    'data' => ThuongHieuResource::collection($brands)
+                ]);
+            }
+
             return response()->json([
                 'success' => true,
-                'data' => ThuongHieuResource::collection($brands)
+                'data' => ThuongHieuResource::collection($brands->items()),
+                'meta' => [
+                    'current_page' => $brands->currentPage(),
+                    'last_page' => $brands->lastPage(),
+                    'per_page' => $brands->perPage(),
+                    'total' => $brands->total(),
+                ]
             ]);
         } catch (Exception $e) {
             return response()->json(['success' => false, 'message' => $e->getMessage()], 500);

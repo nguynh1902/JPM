@@ -1138,7 +1138,7 @@ export default {
   font-weight: 700;
   font-size: 0.88rem;
   padding: 6px 16px;
-  border-radius: 20px;
+  border-radius: var(--jpm-radius-control, 8px);
   border: 1px solid #e2e8f0;
   background: #f8fafc;
   color: #64748b;
@@ -1579,14 +1579,14 @@ export default {
   background: linear-gradient(90deg, #f0f0f0 25%, #e4e4e7 50%, #f0f0f0 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
-  border-radius: 4px;
+  border-radius: var(--jpm-radius-badge, 6px);
 }
 
 .skeleton-line {
   background: linear-gradient(90deg, #f0f0f0 25%, #e4e4e7 50%, #f0f0f0 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
-  border-radius: 4px;
+  border-radius: var(--jpm-radius-badge, 6px);
 }
 
 @keyframes shimmer {
@@ -1635,7 +1635,7 @@ export default {
 }
 .custom-scrollbar::-webkit-scrollbar-thumb {
   background: #cbd5e1;
-  border-radius: 4px;
+  border-radius: var(--jpm-radius-badge, 6px);
 }
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background: #94a3b8;

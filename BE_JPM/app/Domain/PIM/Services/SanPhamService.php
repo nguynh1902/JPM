@@ -7,9 +7,27 @@ use Exception;
 
 class SanPhamService
 {
-    public function getAll()
+    public function getAll(array $filters = [], ?int $perPage = null)
     {
-        return SanPham::with('danhMuc')->orderBy('id', 'desc')->get();
+        $query = SanPham::with('danhMuc')->orderBy('id', 'desc');
+
+        if (!empty($filters['keyword'])) {
+            $kw = trim($filters['keyword']);
+            $query->where(function ($q) use ($kw) {
+                $q->where('ten_san_pham', 'like', "%{$kw}%")
+                  ->orWhere('ma_san_pham', 'like', "%{$kw}%");
+            });
+        }
+
+        if (!empty($filters['danh_muc_id'])) {
+            $query->where('danh_muc_san_pham_id', $filters['danh_muc_id']);
+        }
+
+        if ($perPage) {
+            return $query->paginate($perPage);
+        }
+
+        return $query->get();
     }
 
     public function create(array $data)

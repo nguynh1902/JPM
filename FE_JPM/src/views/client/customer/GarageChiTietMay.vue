@@ -110,7 +110,7 @@
 
             <!-- Group Header (Thanh đỏ + Tên nhóm, bỏ badge số lượng) -->
             <div class="d-flex align-items-center gap-2 mb-3">
-              <div style="width: 4px; height: 18px; background: var(--jpm-color-red-marine, #F82249); border-radius: 2px;"></div>
+              <div style="width: 4px; height: 18px; background: var(--jpm-color-red-marine, #F82249); border-radius: var(--jpm-radius-badge, 6px);"></div>
               <h6 class="mb-0 fw-bold" style="font-size: 15px; color: var(--jpm-color-navy-dark, #0A1128);">
                 {{ group.nhom_ten }}
               </h6>

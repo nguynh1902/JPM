@@ -1173,7 +1173,7 @@ const startSidebarDrag = () => {
 }
 .category-list-body::-webkit-scrollbar-thumb {
   background: #cbd5e1;
-  border-radius: 4px;
+  border-radius: var(--jpm-radius-badge, 6px);
 }
 .category-list-body::-webkit-scrollbar-thumb:hover {
   background: #94a3b8;
@@ -1278,7 +1278,7 @@ const startSidebarDrag = () => {
   border: none;
   background: transparent;
   padding: 3px 8px;
-  border-radius: 4px;
+  border-radius: var(--jpm-radius-badge, 6px);
   transition: all 0.2s;
 }
 
@@ -1512,7 +1512,7 @@ const startSidebarDrag = () => {
 }
 .custom-scrollbar::-webkit-scrollbar-thumb {
   background: #cbd5e1;
-  border-radius: 4px;
+  border-radius: var(--jpm-radius-badge, 6px);
 }
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background: #94a3b8;

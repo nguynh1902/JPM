@@ -11,12 +11,41 @@ use App\Domain\PIM\Models\ChiTietSoDo;
 
 class SoDoPhuTungController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $soDos = SoDoPhuTung::with(['model.thuongHieu', 'model.loaiDongCo', 'nhomPhuTung'])->orderBy('id', 'desc')->get();
+        $all = $request->boolean('all', false);
+        $perPage = $all ? null : (int) $request->input('per_page', 50);
+        $query = SoDoPhuTung::with(['model.thuongHieu', 'model.loaiDongCo', 'nhomPhuTung'])->orderBy('id', 'desc');
+
+        if ($request->filled('search')) {
+            $search = $request->input('search');
+            $query->where('ten_so_do', 'like', "%{$search}%");
+        }
+        if ($request->filled('may_thuy_model_id')) {
+            $query->where('may_thuy_model_id', $request->input('may_thuy_model_id'));
+        }
+        if ($request->filled('nhom_phu_tung_id')) {
+            $query->where('nhom_phu_tung_id', $request->input('nhom_phu_tung_id'));
+        }
+
+        if ($all || !$perPage) {
+            $soDos = $query->get();
+            return response()->json([
+                'success' => true,
+                'data' => $soDos
+            ]);
+        }
+
+        $paginated = $query->paginate($perPage);
         return response()->json([
             'success' => true,
-            'data' => $soDos
+            'data' => $paginated->items(),
+            'meta' => [
+                'current_page' => $paginated->currentPage(),
+                'last_page' => $paginated->lastPage(),
+                'per_page' => $paginated->perPage(),
+                'total' => $paginated->total(),
+            ]
         ]);
     }
 

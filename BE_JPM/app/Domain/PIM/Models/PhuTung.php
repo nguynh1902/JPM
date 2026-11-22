@@ -24,12 +24,16 @@ class PhuTung extends Model
      *
      * @return array<string, mixed>
      */
-        public function toSearchableArray()
+    public function toSearchableArray()
     {
         return [
             'id' => (int) $this->id,
             'ma_phu_tung' => (string) $this->ma_phu_tung,
             'ten_phu_tung' => (string) $this->ten_phu_tung,
+            'thuong_hieu_id' => (int) $this->thuong_hieu_id,
+            'nhom_phu_tung_id' => (int) $this->nhom_phu_tung_id,
+            'trang_thai' => (int) $this->trang_thai,
+            'gia_ban' => (float) $this->gia_ban,
             'mo_ta' => (string) ($this->mo_ta ?? ''),
             'thong_so_ky_thuat' => (string) ($this->thong_so_ky_thuat ?? ''),
         ];

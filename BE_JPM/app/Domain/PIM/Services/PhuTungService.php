@@ -15,9 +15,37 @@ class PhuTungService
         Cache::forget('public_phu_tungs');
     }
 
-    public function getAll()
+    public function getAll(array $filters = [], ?int $perPage = null)
     {
-        return PhuTung::with(['nhomPhuTung', 'thuongHieu'])->orderBy('id', 'desc')->get();
+        $query = PhuTung::with(['nhomPhuTung', 'thuongHieu']);
+
+        if (!empty($filters['keyword'])) {
+            $kw = trim($filters['keyword']);
+            $query->where(function ($q) use ($kw) {
+                $q->where('ma_phu_tung', 'like', "%{$kw}%")
+                  ->orWhere('ten_phu_tung', 'like', "%{$kw}%");
+            });
+        }
+
+        if (!empty($filters['thuong_hieu_id'])) {
+            $query->where('thuong_hieu_id', $filters['thuong_hieu_id']);
+        }
+
+        if (!empty($filters['nhom_phu_tung_id'])) {
+            $query->where('nhom_phu_tung_id', $filters['nhom_phu_tung_id']);
+        }
+
+        if (isset($filters['trang_thai']) && $filters['trang_thai'] !== null && $filters['trang_thai'] !== '') {
+            $query->where('trang_thai', (int) $filters['trang_thai']);
+        }
+
+        $query->orderBy('id', 'desc');
+
+        if ($perPage) {
+            return $query->paginate($perPage);
+        }
+
+        return $query->get();
     }
 
     public function getById($id): PhuTung
