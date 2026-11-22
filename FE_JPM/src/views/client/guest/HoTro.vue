@@ -68,8 +68,8 @@
                 <div class="d-flex align-items-start gap-3">
                   <i class="bi bi-geo-alt contact-grid-icon flex-shrink-0"></i>
                   <div>
-                    <div class="contact-item-line fw-semibold text-dark">Trụ Sở / Showroom</div>
-                    <div class="contact-item-line text-muted">{{ settings.company_address || 'Đang cập nhật địa chỉ' }}</div>
+                    <div class="contact-item-title">Trụ Sở / Showroom</div>
+                    <div class="contact-item-desc">{{ settings.company_address || 'Đang cập nhật địa chỉ' }}</div>
                   </div>
                 </div>
               </div>
@@ -79,9 +79,9 @@
                 <div class="d-flex align-items-start gap-3">
                   <i class="bi bi-telephone contact-grid-icon flex-shrink-0"></i>
                   <div>
-                    <div class="contact-item-line fw-semibold text-dark">Hotline Kỹ Thuật & Mua Hàng</div>
+                    <div class="contact-item-title">Hotline Kỹ Thuật & Mua Hàng</div>
                     <div>
-                      <a :href="'tel:' + (settings.company_hotline || '').replace(/\s+/g, '')" class="contact-item-line text-muted text-decoration-none">
+                      <a :href="'tel:' + (settings.company_hotline || '').replace(/\s+/g, '')" class="contact-item-desc text-decoration-none">
                         {{ settings.company_hotline || 'Đang cập nhật' }}
                       </a>
                     </div>
@@ -94,9 +94,9 @@
                 <div class="d-flex align-items-start gap-3">
                   <i class="bi bi-envelope-open contact-grid-icon flex-shrink-0"></i>
                   <div>
-                    <div class="contact-item-line fw-semibold text-dark">Hòm Thư Hỗ Trợ</div>
+                    <div class="contact-item-title">Hòm Thư Hỗ Trợ</div>
                     <div>
-                      <a :href="'mailto:' + (settings.company_email || 'contact@jpm-marine.vn')" class="contact-item-line text-muted text-decoration-none">
+                      <a :href="'mailto:' + (settings.company_email || 'contact@jpm-marine.vn')" class="contact-item-desc text-decoration-none">
                         {{ settings.company_email || 'contact@jpm-marine.vn' }}
                       </a>
                     </div>
@@ -109,8 +109,8 @@
                 <div class="d-flex align-items-start gap-3">
                   <i class="bi bi-clock contact-grid-icon flex-shrink-0"></i>
                   <div>
-                    <div class="contact-item-line fw-semibold text-dark">Thời Gian Làm Việc</div>
-                    <div class="contact-item-line text-muted">{{ settings.business_hours || '08:00 - 17:30 (Thứ 2 - Thứ 7)' }}</div>
+                    <div class="contact-item-title">Thời Gian Làm Việc</div>
+                    <div class="contact-item-desc">{{ settings.business_hours || '08:00 - 17:30 (Thứ 2 - Thứ 7)' }}</div>
                   </div>
                 </div>
               </div>
@@ -118,7 +118,7 @@
 
             <!-- Follow Us (Đồng bộ Link Mạng Xã Hội từ Cấu Hình) -->
             <div>
-              <div class="text-uppercase fw-bold mb-3" style="font-size: 0.78rem; letter-spacing: 1.5px; color: var(--jpm-color-navy-dark, #0A1128);">
+              <div class="contact-social-label mb-3">
                 Theo Dõi Chúng Tôi
               </div>
               <div class="d-flex align-items-center gap-3">
@@ -187,7 +187,7 @@
                   <button
                     type="submit"
                     :disabled="isSubmitting"
-                    class="btn-contact-submit d-inline-flex align-items-center justify-content-center"
+                    class="btn btn-contact-submit d-inline-flex align-items-center justify-content-center"
                   >
                     <span v-if="isSubmitting" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
                     {{ isSubmitting ? 'ĐANG GỬI...' : 'GỬI LỜI NHẮN' }}
@@ -218,9 +218,12 @@
       <section id="faq-section" class="mb-5">
         <div class="row gx-lg-5">
           <div class="col-lg-4 mb-4 mb-lg-0">
-            <h6 class="text-uppercase fw-bold mb-3 text-danger" style="letter-spacing: 2px;">FAQs</h6>
-            <h2 class="fw-bold mb-4 display-6" style="color: var(--jpm-color-navy-dark, #0A1128);">Câu Hỏi<br>Thường Gặp</h2>
-            <p class="text-muted" style="line-height: 1.8;">Tổng hợp các câu hỏi và giải đáp chi tiết nhất về dịch vụ, sản phẩm và chính sách của JPM.</p>
+            <div class="d-flex align-items-center gap-3 mb-2">
+              <span class="contact-overline-line"></span>
+              <span class="contact-overline-text">FAQS</span>
+            </div>
+            <h2 class="contact-heading mb-3">Câu Hỏi<br>Thường Gặp</h2>
+            <p class="contact-desc text-muted mb-0">Tổng hợp các câu hỏi và giải đáp chi tiết nhất về dịch vụ, sản phẩm và chính sách của JPM.</p>
             
             <!-- Search Bar for FAQs (Chuẩn Hóa theo search-input-box Client 2026) -->
             <div class="search-input-box mt-4">
@@ -243,15 +246,15 @@
             </div>
           </div>
           <div class="col-lg-8">
-            <div v-if="filteredFaqs.length > 0" class="accordion accordion-flush custom-faq-accordion" id="faqAccordion">
-              <div class="accordion-item bg-transparent border-0 border-bottom mb-2" v-for="(faq, index) in filteredFaqs" :key="index" style="border-color: #dee2e6 !important;">
+            <div v-if="filteredFaqs.length > 0" class="accordion accordion-flush client-faq-accordion" id="faqAccordion">
+              <div class="accordion-item bg-transparent border-0 border-bottom mb-2" v-for="(faq, index) in filteredFaqs" :key="index">
                 <h2 class="accordion-header" :id="'heading' + index">
-                  <button class="accordion-button collapsed bg-transparent shadow-none px-0 py-4 fw-bold" type="button" data-bs-toggle="collapse" :data-bs-target="'#collapse' + index" aria-expanded="false" :aria-controls="'collapse' + index" style="color: var(--jpm-color-navy-dark, #0A1128); font-size: 1.15rem;">
+                  <button class="accordion-button collapsed bg-transparent shadow-none px-0 py-4 fw-bold" type="button" data-bs-toggle="collapse" :data-bs-target="'#collapse' + index" aria-expanded="false" :aria-controls="'collapse' + index">
                     {{ faq.question }}
                   </button>
                 </h2>
                 <div :id="'collapse' + index" class="accordion-collapse collapse" :aria-labelledby="'heading' + index" data-bs-parent="#faqAccordion">
-                  <div class="accordion-body px-0 pt-0 pb-4 text-muted" style="line-height: 1.8;" v-html="faq.answer">
+                  <div class="accordion-body px-0 pt-0 pb-4 faq-answer-content" v-html="faq.answer">
                   </div>
                 </div>
               </div>
@@ -425,39 +428,67 @@ export default {
   display: inline-block;
   width: 36px;
   height: 2px;
-  background-color: #f82249;
+  background-color: var(--jpm-color-red-marine, #F82249);
 }
 
 .contact-overline-text {
+  font-family: var(--heading-font, 'Raleway', sans-serif);
   font-size: 0.8rem;
-  font-weight: 600;
-  letter-spacing: 0.5px;
-  color: #f82249;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: var(--jpm-color-red-marine, #F82249);
 }
 
 .contact-heading {
-  font-family: var(--heading-font);
+  font-family: var(--heading-font, 'Raleway', sans-serif);
   font-size: clamp(1.5rem, 2.2vw, 1.85rem);
   font-weight: 700;
   color: var(--jpm-color-navy-dark, #0A1128);
   letter-spacing: normal;
+  line-height: 1.3;
 }
 
 .contact-desc {
+  font-family: var(--default-font, 'Roboto', sans-serif);
   font-size: 0.94rem;
   line-height: 1.75;
+  color: var(--jpm-neutral-500, #64748B);
 }
 
 .contact-grid-icon {
   font-size: 1.55rem;
-  color: #f82249;
+  color: var(--jpm-color-red-marine, #F82249);
   line-height: 1.1;
   margin-top: 2px;
 }
 
-.contact-item-line {
-  font-size: 0.86rem;
+.contact-item-title {
+  font-family: var(--heading-font, 'Raleway', sans-serif);
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--jpm-color-navy-dark, #0A1128);
+  margin-bottom: 2px;
+}
+
+.contact-item-desc {
+  font-family: var(--default-font, 'Roboto', sans-serif);
+  font-size: 0.88rem;
+  color: var(--jpm-neutral-500, #64748B);
   line-height: 1.5;
+  transition: color 0.15s ease;
+}
+
+a.contact-item-desc:hover {
+  color: var(--jpm-color-red-marine, #F82249) !important;
+}
+
+.contact-social-label {
+  font-family: var(--heading-font, 'Raleway', sans-serif);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--jpm-color-navy-dark, #0A1128);
 }
 
 .contact-social-link {
@@ -482,22 +513,27 @@ export default {
 
 /* ── 3. RIGHT COLUMN: YOUR DETAILS FORM ── */
 .contact-form-heading {
-  font-family: var(--heading-font);
-  font-size: clamp(1.4rem, 2vw, 1.7rem);
+  font-family: var(--heading-font, 'Raleway', sans-serif);
+  font-size: clamp(1.5rem, 2.2vw, 1.85rem);
   font-weight: 700;
   color: var(--jpm-color-navy-dark, #0A1128);
   letter-spacing: normal;
+  line-height: 1.3;
 }
 
 .contact-field-label {
   display: block;
-  font-size: 0.85rem;
-  font-weight: 600;
+  font-family: var(--heading-font, 'Raleway', sans-serif);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
   color: var(--jpm-color-navy-dark, #0A1128);
   margin-bottom: 0.45rem;
 }
 
 .contact-field-input {
+  font-family: var(--default-font, 'Roboto', sans-serif);
   background-color: #f8fafc;
   border: 1px solid #e2e8f0;
   border-radius: var(--jpm-radius-control, 8px);
@@ -521,14 +557,15 @@ textarea.contact-field-input {
 }
 
 .btn-contact-submit {
-  background-color: #f82249;
+  font-family: var(--heading-font, 'Raleway', sans-serif);
+  font-weight: 700;
+  font-size: 0.9rem;
+  letter-spacing: 0.5px;
+  background-color: var(--jpm-color-red-marine, #F82249);
   color: #ffffff;
   border: none;
   border-radius: var(--jpm-radius-control, 8px);
   padding: 0.78rem 2.2rem;
-  font-size: 0.88rem;
-  font-weight: 600;
-  letter-spacing: 0.3px;
   box-shadow: none;
   transition: all 0.25s ease;
 }
@@ -613,8 +650,43 @@ textarea.contact-field-input {
   color: #f82249;
 }
 
-/* ── FAQ ACCORDION BRAND TWEAKS ── */
-.custom-faq-accordion .accordion-button:not(.collapsed) {
+/* ── FAQ ACCORDION BRAND TWEAKS (CHUẨN HÓA NATIVE CLIENT STYLE) ── */
+.client-faq-accordion .accordion-item {
+  border-bottom: 1px solid #e2e8f0 !important;
+}
+
+.client-faq-accordion .accordion-button {
+  font-family: var(--heading-font, 'Raleway', sans-serif);
+  color: var(--jpm-color-navy-dark, #0A1128);
+  font-size: 1.05rem;
+  font-weight: 700;
+  line-height: 1.5;
+  transition: color 0.2s ease;
+}
+
+.client-faq-accordion .accordion-button:hover {
+  color: var(--jpm-color-red-marine, #F82249);
+}
+
+.client-faq-accordion .accordion-button:not(.collapsed) {
   color: var(--jpm-color-red-marine, #F82249) !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+}
+
+.client-faq-accordion .accordion-button::after {
+  background-size: 14px;
+  transition: transform 0.25s ease, filter 0.25s ease;
+}
+
+.client-faq-accordion .accordion-button:not(.collapsed)::after {
+  filter: invert(24%) sepia(85%) saturate(3000%) hue-rotate(335deg);
+}
+
+.client-faq-accordion .faq-answer-content {
+  font-family: var(--default-font, 'Roboto', sans-serif);
+  font-size: 0.94rem;
+  line-height: 1.75;
+  color: #475569;
 }
 </style>
