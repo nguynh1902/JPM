@@ -258,34 +258,7 @@
     </section>
 
     <!-- ========================================================
-         KHỐI 4: BANNER QUẢNG BÁ FULL MÀN (home_banner.png nguyên bản)
-         ======================================================== -->
-    <section class="home-full-banner">
-      <div class="container py-4 py-lg-5">
-        <div class="row align-items-center">
-          <div class="col-lg-5 col-md-7">
-            <h2 class="home-banner-title mb-3">
-              Sẵn Sàng Cho Mọi Hải Trình <br />
-              <span class="text-danger">Vững Bền Cùng Sóng Gió</span>
-            </h2>
-            <p class="home-banner-desc mb-4">
-              Cung cấp động cơ và phụ tùng tàu thuyền chính hãng Yamaha, Honda Marine, Suzuki, Yanmar. Đảm bảo an toàn tối đa và tối ưu hiệu suất cho từng chuyến ra khơi.
-            </p>
-            <div class="d-flex flex-wrap gap-3">
-              <router-link to="/san-pham" class="btn btn-danger px-4 py-2 fw-semibold d-inline-flex align-items-center">
-                Khám Phá Cửa Hàng <i class="bi bi-arrow-right ms-2"></i>
-              </router-link>
-              <router-link to="/tra-cuu" class="btn btn-outline-dark px-4 py-2 fw-semibold d-inline-flex align-items-center">
-                <i class="bi bi-search me-2"></i> Tra Cứu Phụ Tùng
-              </router-link>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ========================================================
-         KHỐI 5: TIN TỨC & KINH NGHIỆM (Cẩm nang kỹ thuật hàng hải)
+         KHỐI 4: TIN TỨC & KINH NGHIỆM (Cẩm nang kỹ thuật hàng hải)
          ======================================================== -->
     <section class="news-section section bg-white">
       <div class="container section-title" data-aos="fade-up">
@@ -983,60 +956,6 @@ export default {
 @media (max-width: 991px) {
   .filter-console-card {
     padding: 24px 20px;
-  }
-}
-
-/* ==============================================================
-   Khối 4: Banner Quảng Bá Full Màn (home_banner.png nguyên bản 100%)
-   ============================================================== */
-.home-full-banner {
-  width: 100%;
-  aspect-ratio: 3 / 1;
-  min-height: 420px;
-  background-image: url('/client/image/home_banner.png');
-  background-position: center;
-  background-size: cover;
-  background-repeat: no-repeat;
-  display: flex;
-  align-items: center;
-  position: relative;
-}
-
-.home-banner-title {
-  font-family: var(--heading-font, 'Raleway', sans-serif);
-  font-size: 2.1rem;
-  font-weight: 800;
-  line-height: 1.25;
-  color: var(--heading-color, #0A1128);
-  letter-spacing: -0.4px;
-}
-
-.home-banner-desc {
-  font-family: var(--default-font);
-  font-size: 0.95rem;
-  font-weight: 400;
-  line-height: 1.6;
-  color: #334155;
-  max-width: 480px;
-}
-
-@media (max-width: 991px) {
-  .home-full-banner {
-    min-height: 380px;
-    aspect-ratio: auto;
-    padding: 50px 0;
-  }
-  .home-banner-title {
-    font-size: 1.7rem;
-  }
-}
-
-@media (max-width: 576px) {
-  .home-banner-title {
-    font-size: 1.35rem;
-  }
-  .home-banner-desc {
-    font-size: 0.88rem;
   }
 }
 </style>
