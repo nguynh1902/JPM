@@ -721,24 +721,6 @@ h6 {
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
-.footer .footer-about .logo {
-  line-height: 1;
-  margin-bottom: 16px;
-}
-
-.footer .footer-about .logo img {
-  max-height: 40px;
-  margin-right: 6px;
-}
-
-.footer .footer-about .logo span {
-  color: #ffffff;
-  font-family: var(--heading-font);
-  font-size: 26px;
-  font-weight: 600;
-  letter-spacing: 0.8px;
-  line-height: 1.2;
-}
 
 .footer .footer-about p {
   font-size: 0.9rem;
@@ -2235,6 +2217,62 @@ section,
   font-size: 1.125rem !important; /* 18px */
   line-height: 1.4 !important;
   margin-bottom: 0 !important;
+}
+
+/* ════════════════════════════════════════════════════════════════
+   UNIFIED JPM "XEM THÊM" LINK (Đồng bộ 100% font chữ, màu sắc, hover không gạch chân toàn Client)
+   ════════════════════════════════════════════════════════════════ */
+.jpm-more-link,
+a.jpm-more-link,
+button.jpm-more-link {
+  color: var(--jpm-color-red-marine, #F82249) !important;
+  font-family: var(--heading-font, 'Raleway', sans-serif) !important;
+  font-size: 0.95rem !important;
+  font-weight: 700 !important;
+  text-decoration: none !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  background: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  box-shadow: none !important;
+  outline: none !important;
+  cursor: pointer !important;
+  line-height: 1.4 !important;
+  vertical-align: middle !important;
+  transition: color 0.2s ease, opacity 0.15s ease !important;
+}
+
+.jpm-more-link i,
+a.jpm-more-link i,
+button.jpm-more-link i {
+  font-size: 1rem !important;
+  line-height: 1 !important;
+  color: inherit !important;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.jpm-more-link:hover,
+.jpm-more-link:focus,
+.jpm-more-link:active,
+a.jpm-more-link:hover,
+a.jpm-more-link:focus,
+a.jpm-more-link:active,
+button.jpm-more-link:hover,
+button.jpm-more-link:focus,
+button.jpm-more-link:active {
+  color: var(--jpm-color-red-hover, #D9163A) !important;
+  text-decoration: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+.jpm-more-link:hover i,
+a.jpm-more-link:hover i,
+button.jpm-more-link:hover i {
+  transform: translateX(4px) !important;
 }
 
 /* 6. Unified Row & Header Utility Buttons (Nút thao tác dòng & nút quay lại header) */

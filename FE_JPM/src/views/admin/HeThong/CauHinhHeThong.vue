@@ -630,13 +630,13 @@ export default {
       store_banner_image: '/client/image/shop_banner.png',
       store_banner_title: 'Cửa Hàng Phụ Tùng',
       store_banner_subtitle: 'Khám phá hệ sinh thái phụ tùng động cơ thủy, dầu nhớt và vật tư hàng hải chính hãng từ các thương hiệu dẫn đầu.',
-      lookup_banner_image: '',
+      lookup_banner_image: '/client/image/tracuu_banner.png',
       lookup_banner_title: 'Tra Cứu Phụ Tùng',
       lookup_banner_subtitle: 'Lựa chọn chính xác phụ tùng thay thế và sơ đồ rã máy cho động cơ thủy của bạn.',
       news_banner_image: '/client/image/news_banner.png',
       news_banner_title: 'Tin Tức & Cẩm Nang',
       news_banner_subtitle: 'Tổng hợp những kiến thức chuyên sâu về vận hành tàu thuyền, cẩm nang bảo dưỡng động cơ thủy và xu hướng công nghệ hàng hải.',
-      support_banner_image: '',
+      support_banner_image: '/client/image/hotro_banner.png',
       support_banner_title: 'Trung Tâm Hỗ Trợ & Kỹ Thuật',
       support_banner_subtitle: 'Đồng hành cùng mọi hải trình của bạn. Đội ngũ kỹ sư và chuyên viên JPM Marine luôn sẵn sàng tư vấn tra cứu mã phụ tùng OEM và hỗ trợ 24/7.',
       company_name: 'JPM Marine',
@@ -784,7 +784,7 @@ export default {
         name: 'Banner Tra Cứu',
         icon: 'bx-search-alt',
         imageKey: 'lookup_banner_image',
-        defaultImg: ''
+        defaultImg: '/client/image/tracuu_banner.png'
       },
       {
         key: 'news',
@@ -798,7 +798,7 @@ export default {
         name: 'Banner Hỗ Trợ',
         icon: 'bx-support',
         imageKey: 'support_banner_image',
-        defaultImg: ''
+        defaultImg: '/client/image/hotro_banner.png'
       }
     ];
 

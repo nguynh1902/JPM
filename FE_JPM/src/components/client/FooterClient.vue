@@ -5,9 +5,11 @@
         <div class="row gy-4">
           <!-- Cột 1: Branding & Thông tin chung -->
           <div class="col-lg-4 col-md-6 footer-about pe-lg-5">
-            <router-link to="/" class="logo d-inline-flex align-items-center text-decoration-none">
-              <span class="sitename">{{ settings.company_name || 'JPM Marine' }}</span>
-            </router-link>
+            <h5 class="footer-heading mb-4">
+              <router-link to="/" class="text-white text-decoration-none">
+                {{ settings.company_name || 'JPM Marine' }}
+              </router-link>
+            </h5>
             <p class="footer-about-desc mb-4">
               {{ settings.footer_about_text || 'Nhà phân phối phụ tùng động cơ thủy gắn ngoài hàng đầu tại Việt Nam. Uy tín, chất lượng và đồng hành cùng bạn trên mọi hành trình vươn khơi.' }}
             </p>

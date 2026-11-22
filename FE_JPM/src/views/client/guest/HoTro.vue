@@ -2,12 +2,12 @@
   <div class="support-page pb-5">
 
     <!-- HERO BANNER HỖ TRỢ DÀI NGANG FULL MÀN HÌNH -->
-    <div class="store-hero-banner position-relative overflow-hidden" :class="{ 'banner-no-img': !settings?.support_banner_image }" :style="supportBannerStyle">
+    <div class="store-hero-banner position-relative overflow-hidden" :class="{ 'banner-no-img': !currentSupportBannerImg }" :style="supportBannerStyle">
       <!-- Lớp phủ Gradient làm trắng bên trái mềm mại -->
       <div class="store-banner-overlay"></div>
 
       <!-- Watermark họa tiết kỹ thuật/chăm sóc khách hàng khi chưa có ảnh -->
-      <div v-if="!settings?.support_banner_image" class="banner-placeholder-pattern">
+      <div v-if="!currentSupportBannerImg" class="banner-placeholder-pattern">
         <i class="bi bi-headset"></i>
       </div>
 
@@ -294,8 +294,12 @@ export default {
       return `${baseUrl}${clean}`;
     };
 
+    const currentSupportBannerImg = computed(() => {
+      return (settings.value && settings.value.support_banner_image) ? settings.value.support_banner_image : '/client/image/hotro_banner.png';
+    });
+
     const supportBannerStyle = computed(() => {
-      const rawPath = settings.value?.support_banner_image;
+      const rawPath = currentSupportBannerImg.value;
       if (rawPath) {
         const imgUrl = getBannerImageUrl(rawPath);
         return {
@@ -390,6 +394,7 @@ export default {
 
     return { 
       settings,
+      currentSupportBannerImg,
       supportBannerStyle,
       mapEmbedUrl,
       faqs, 

@@ -134,7 +134,7 @@
                 <div v-for="cat in groupedCategories" :key="cat.id" class="mb-5">
                   <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-2">
                     <h4 class="fw-bold mb-0 text-capitalize" style="color: var(--heading-color, #0A1128); font-size: 1.25rem; font-family: var(--heading-font, 'Raleway', sans-serif);">{{ cat.ten_danh_muc }}</h4>
-                    <button class="btn btn-link text-danger fw-bold text-decoration-none d-flex align-items-center gap-1 p-0 shadow-none btn-see-more" @click="viewCategory(cat.slug)">
+                    <button type="button" class="jpm-more-link" @click="viewCategory(cat.slug)">
                       Xem thêm <i class="bi bi-arrow-right"></i>
                     </button>
                   </div>

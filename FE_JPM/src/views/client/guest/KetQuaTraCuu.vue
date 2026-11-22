@@ -2,12 +2,12 @@
   <div class="tra-cuu-results-page main-page" style="position: relative; z-index: 10; min-height: 130vh;">
 
     <!-- HERO BANNER TRA CỨU DÀI NGANG FULL MÀN HÌNH -->
-    <div class="store-hero-banner position-relative overflow-hidden" :class="{ 'banner-no-img': !settings?.lookup_banner_image }" :style="lookupBannerStyle">
+    <div class="store-hero-banner position-relative overflow-hidden" :class="{ 'banner-no-img': !currentLookupBannerImg }" :style="lookupBannerStyle">
       <!-- Lớp phủ Gradient làm trắng bên trái mềm mại -->
       <div class="store-banner-overlay"></div>
 
       <!-- Watermark họa tiết kỹ thuật hàng hải tinh tế khi chưa có ảnh -->
-      <div v-if="!settings?.lookup_banner_image" class="banner-placeholder-pattern">
+      <div v-if="!currentLookupBannerImg" class="banner-placeholder-pattern">
         <i class="bi bi-compass"></i>
       </div>
 
@@ -330,7 +330,7 @@
                       </h4>
                       <button 
                         type="button" 
-                        class="btn btn-link text-danger fw-bold text-decoration-none d-flex align-items-center gap-1 p-0 shadow-none btn-see-more"
+                        class="jpm-more-link"
                         v-if="group.id !== 'other'"
                         @click="selectPartGroup(group.id)"
                       >
@@ -430,8 +430,12 @@ export default {
       return `${baseUrl}${cleanPath}`;
     };
 
+    const currentLookupBannerImg = computed(() => {
+      return (settings.value && settings.value.lookup_banner_image) ? settings.value.lookup_banner_image : '/client/image/tracuu_banner.png';
+    });
+
     const lookupBannerStyle = computed(() => {
-      const rawPath = settings.value?.lookup_banner_image;
+      const rawPath = currentLookupBannerImg.value;
       if (rawPath) {
         const imgUrl = getBannerImageUrl(rawPath);
         return {
@@ -866,6 +870,7 @@ export default {
 
     return {
       settings,
+      currentLookupBannerImg,
       lookupBannerStyle,
       localKeyword,
       filters, brands, partGroups, engineTypes, engineModels, products, filteredProducts, diagramsList, pagination, isFetchingGlobal,

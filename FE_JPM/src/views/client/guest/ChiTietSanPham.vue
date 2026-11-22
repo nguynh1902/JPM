@@ -317,7 +317,7 @@
             </h4>
             <router-link
               :to="sanPham?.danh_muc ? { path: '/san-pham', query: { danh_muc: sanPham.danh_muc.slug } } : '/san-pham'"
-              class="btn btn-link text-danger fw-bold text-decoration-none d-flex align-items-center gap-1 p-0 shadow-none btn-see-more"
+              class="jpm-more-link"
             >
               Xem thêm <i class="bi bi-arrow-right"></i>
             </router-link>
