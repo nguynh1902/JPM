@@ -436,7 +436,7 @@
               class="btn btn-link text-danger fw-bold text-decoration-none d-flex align-items-center gap-1 p-0 shadow-none hover-underline"
               style="color: var(--jpm-color-red-marine, #F82249) !important; font-size: 0.92rem;"
             >
-              Xem tất cả <i class="bi bi-arrow-right"></i>
+              Xem thêm <i class="bi bi-arrow-right"></i>
             </router-link>
           </div>
 

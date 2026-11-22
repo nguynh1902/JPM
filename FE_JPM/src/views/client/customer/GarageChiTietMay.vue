@@ -20,27 +20,40 @@
             </router-link>
 
             <div class="min-w-0">
-              <!-- Dòng trên: Mã công suất (màu xanh primary #0d6efd) + Tên Model máy -->
-              <div class="d-flex align-items-center gap-2 flex-wrap mb-1">
-                <span class="garage-model-code" v-if="garageData.dong_co_model?.ma_luc">
-                  {{ garageData.dong_co_model.ma_luc }} HP
-                </span>
-                <h5 class="jpm-card-title mb-0" :title="garageData.dong_co_model?.ten_model">
-                  {{ garageData.dong_co_model?.ten_model || 'Chưa rõ Model' }}
-                </h5>
-              </div>
+              <!-- Dòng trên: Tên Model máy (đã bỏ phần thừa bên trên) -->
+              <h5 class="jpm-card-title mb-1" :title="garageData.dong_co_model?.ten_model">
+                {{ garageData.dong_co_model?.ten_model || 'Chưa rõ Model' }}
+              </h5>
 
-              <!-- Dòng dưới: Thông số kỹ thuật căn trái -->
-              <div class="d-flex align-items-center gap-3 flex-wrap text-muted small">
-                <span v-if="garageData.dong_co_model?.thuong_hieu?.name" class="fw-semibold text-secondary">
-                  <i class="bi bi-award me-1 text-primary"></i>{{ garageData.dong_co_model.thuong_hieu.name }}
+              <!-- Dòng dưới: Chữ thương hiệu màu đỏ + HP bên dưới + Năm sản xuất & Thông số -->
+              <div class="d-flex align-items-center gap-2 flex-wrap text-muted small">
+                <!-- Chữ Thương hiệu màu đỏ -->
+                <span v-if="garageData.dong_co_model?.thuong_hieu?.name" class="fw-bold" style="color: var(--jpm-color-red-marine, #F82249); letter-spacing: 0.3px;">
+                  {{ garageData.dong_co_model.thuong_hieu.name }}
                 </span>
-                <span v-if="garageData.dong_co_model?.nam_san_xuat || garageData.dong_co_model?.nam_bat_dau" class="fw-semibold text-secondary">
-                  <i class="bi bi-calendar3 me-1 text-primary"></i>Năm: {{ garageData.dong_co_model?.nam_san_xuat || garageData.dong_co_model?.nam_bat_dau || '' }}
-                </span>
+
+                <!-- Cái HP bên dưới -->
+                <template v-if="garageData.dong_co_model?.ma_luc">
+                  <span style="color: #cbd5e1;">•</span>
+                  <span class="fw-semibold text-secondary">
+                    <i class="bi bi-lightning-charge me-1 text-warning"></i>{{ garageData.dong_co_model.ma_luc }} HP
+                  </span>
+                </template>
+
+                <!-- Năm sản xuất -->
+                <template v-if="garageData.dong_co_model?.nam_san_xuat || garageData.dong_co_model?.nam_bat_dau">
+                  <span style="color: #cbd5e1;">•</span>
+                  <span class="fw-semibold text-secondary">
+                    <i class="bi bi-calendar3 me-1 text-primary"></i>Năm: {{ garageData.dong_co_model?.nam_san_xuat || garageData.dong_co_model?.nam_bat_dau || '' }}
+                  </span>
+                </template>
+
+                <!-- Loại động cơ -->
                 <span v-if="garageData.dong_co_model?.loai_dong_co?.name" class="badge bg-light text-secondary border px-2 py-0.5">
                   {{ garageData.dong_co_model.loai_dong_co.name }}
                 </span>
+
+                <!-- Serial -->
                 <span v-if="garageData.so_serial" class="text-truncate" style="max-width: 200px;">
                   <span style="color: #cbd5e1;" class="me-2">•</span>
                   <i class="bi bi-upc-scan me-1"></i>Serial: {{ garageData.so_serial }}

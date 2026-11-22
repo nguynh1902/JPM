@@ -390,12 +390,15 @@
       <div class="container">
         <!-- PHỤ TÙNG LIÊN QUAN -->
         <div class="mb-5" data-aos="fade-up" v-if="relatedParts && relatedParts.length > 0">
-          <div class="d-flex align-items-center justify-content-between mb-4 border-bottom pb-2">
-            <h4 class="fw-bold text-uppercase mb-0" style="color: var(--heading-color);">
-              Những Sản Phẩm Khác
+          <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-2">
+            <h4 class="fw-bold mb-0 text-capitalize" style="color: var(--heading-color, #0A1128); font-size: 1.25rem; font-family: var(--heading-font, 'Raleway', sans-serif);">
+              Những sản phẩm khác
             </h4>
-            <router-link to="/san-pham" class="text-decoration-none text-danger fw-bold d-flex align-items-center gap-1 hover-underline" style="font-size: 0.95rem;">
-              Xem tất cả <i class="bi bi-arrow-right"></i>
+            <router-link
+              to="/san-pham"
+              class="btn btn-link text-danger fw-bold text-decoration-none d-flex align-items-center gap-1 p-0 shadow-none hover-underline"
+            >
+              Xem thêm <i class="bi bi-arrow-right"></i>
             </router-link>
           </div>
           <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-4">
@@ -1008,17 +1011,17 @@ watch(compatibleModels, (models) => {
 .breadcrumb a { color: var(--accent-color); text-decoration: none; font-weight: 500; transition: 0.2s; }
 .breadcrumb a:hover { text-decoration: underline; }
 
-/* Back to Diagram (Minimalist Slate Text Navigation) */
+/* Back to Diagram (Thống nhất chuẩn: bình thường chữ đen, hover chữ đỏ) */
 .btn-back-diagram {
   display: inline-flex;
   align-items: center;
   gap: 6px;
   background: transparent;
-  color: #64748b;
+  color: var(--jpm-color-navy-dark, #0A1128);
   border: none;
   padding: 0;
   font-size: 0.88rem;
-  font-weight: 500;
+  font-weight: 600;
   box-shadow: none;
   cursor: pointer;
   text-decoration: none;
@@ -1029,23 +1032,24 @@ watch(compatibleModels, (models) => {
   color: inherit;
   font-size: 1rem;
   line-height: 1;
-  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), color 0.2s ease;
 }
 
 .btn-back-diagram:hover {
   background: transparent;
-  color: #0A1128;
+  color: var(--jpm-color-red-marine, #F82249) !important;
   box-shadow: none;
   transform: none;
   text-decoration: none;
 }
 
 .btn-back-diagram:hover i {
+  color: var(--jpm-color-red-marine, #F82249) !important;
   transform: translateX(-3px);
 }
 
 .btn-back-diagram:active {
-  opacity: 0.7;
+  opacity: 0.8;
   transform: none;
 }
 
