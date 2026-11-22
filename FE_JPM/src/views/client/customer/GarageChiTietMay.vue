@@ -117,7 +117,7 @@
                   <router-link
                     :to="`/chi-tiet-phu-tung/${item.phu_tung?.ma_phu_tung}`"
                     @click.stop
-                    class="fw-bold d-block text-decoration-none text-truncate hover-red"
+                    class="fw-bold d-block text-decoration-none text-truncate"
                     style="color: var(--jpm-color-navy-dark, #0A1128); font-size: 14px; line-height: 1.35;">
                     {{ item.phu_tung?.ten_phu_tung }}
                   </router-link>
@@ -301,9 +301,6 @@ const addSelectedToCart = () => {
   justify-content: center;
   color: var(--jpm-color-red-marine, #F82249);
   font-size: 2rem;
-}
-.hover-red:hover {
-  color: var(--jpm-color-red-marine, #F82249) !important;
 }
 </style>
 

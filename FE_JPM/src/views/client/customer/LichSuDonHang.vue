@@ -497,7 +497,7 @@
                     </div>
                   </div>
                   <div>
-                    <div class="fw-bold text-dark hover-red d-flex align-items-center gap-1 product-link" style="font-size: 14.5px;">
+                    <div class="fw-bold text-dark d-flex align-items-center gap-1 product-link" style="font-size: 14.5px;">
                       <span>{{ prod.name }}</span>
                       <i class="bi bi-box-arrow-up-right small text-muted" style="font-size: 11px;"></i>
                     </div>
@@ -1092,10 +1092,6 @@ const formatDate = (dateStr) => {
 
 .cursor-pointer {
   cursor: pointer;
-}
-
-.hover-red:hover {
-  color: var(--accent-color, #f82249) !important;
 }
 
 /* ========================================================================= */

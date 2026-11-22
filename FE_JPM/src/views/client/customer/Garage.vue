@@ -98,7 +98,7 @@
                       <div class="card border-0 shadow-sm p-3 d-flex flex-row align-items-center gap-3" style="border-radius: var(--jpm-radius-control, 8px) !important;">
                           <img :src="getImageUrl(item.phu_tung?.hinh_anh_chinh) || 'https://placehold.co/100x100'" alt="" class="rounded border" style="width: 70px; height: 70px; object-fit: cover;">
                           <div class="flex-grow-1">
-                              <h6 class="fw-bold mb-1"><router-link :to="`/chi-tiet-phu-tung/${item.phu_tung?.ma_phu_tung || item.phu_tung?.id}`" class="text-dark text-decoration-none hover-red">{{ item.phu_tung?.ten_phu_tung }}</router-link></h6>
+                              <h6 class="fw-bold mb-1"><router-link :to="`/chi-tiet-phu-tung/${item.phu_tung?.ma_phu_tung || item.phu_tung?.id}`" class="text-dark text-decoration-none">{{ item.phu_tung?.ten_phu_tung }}</router-link></h6>
                               <p class="text-muted small mb-0">Part #: <strong>{{ item.phu_tung?.ma_phu_tung }}</strong> | Số lượng: {{ item.so_luong }}</p>
                               <p class="text-muted small mb-0" v-if="item.ghi_chu"><i class="bi bi-info-circle me-1"></i>{{ item.ghi_chu }}</p>
                           </div>
@@ -318,10 +318,6 @@ const getImageUrl = (path) => {
   justify-content: center;
   color: var(--jpm-color-red-marine, #F82249);
   font-size: 2rem;
-}
-
-.hover-red:hover {
-  color: var(--jpm-color-red-marine, #F82249) !important;
 }
 </style>
 

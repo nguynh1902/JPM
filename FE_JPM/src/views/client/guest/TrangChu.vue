@@ -339,11 +339,11 @@
                   {{ videoArticle.category || videoArticle.type || videoArticle.loai || 'CẨM NANG HÀNG HẢI' }}
                 </div>
                 <!-- 2. Tiêu đề: Deep Navy #0A1128 sắc nét -->
-                <h5 class="news-hero-title mb-2">
+                <h4 class="fw-bold news-hero-title mb-2">
                   <router-link :to="`/tin-tuc/${videoArticle.slug || videoArticle.id}`" class="stretched-link">
                     {{ videoArticle.title }}
                   </router-link>
-                </h5>
+                </h4>
                 <!-- 3. Mô tả tóm tắt: Cool Slate #64748b trong trẻo -->
                 <p class="news-summary news-summary-lg mb-3 text-truncate-3">{{ videoArticle.summary }}</p>
                 <!-- 4. Ngày đăng: Mảnh nhẹ chuẩn Editorial -->
@@ -389,11 +389,11 @@
                     {{ item.category || item.type || item.loai || 'TIN TỨC' }}
                   </div>
                   <!-- 2. Tiêu đề: Deep Navy #0A1128 -->
-                  <h6 class="news-card-title mb-1 text-truncate-2">
+                  <h5 class="fw-bold news-card-title mb-1 text-truncate-2">
                     <router-link :to="`/tin-tuc/${item.slug || item.id}`" class="stretched-link">
                       {{ item.title }}
                     </router-link>
-                  </h6>
+                  </h5>
                   <!-- 3. Nội dung tóm tắt: Cool Slate #64748b -->
                   <p class="news-summary mb-2 text-truncate-2">
                     {{ item.summary }}
@@ -713,25 +713,27 @@ export default {
 }
 
 .news-hero-title {
-  font-family: var(--heading-font, 'Raleway', sans-serif);
-  font-size: 1.3rem;
+  font-family: var(--heading-font, 'Raleway', sans-serif) !important;
+  font-size: 1.35rem;
   color: var(--heading-color, #0A1128);
-  font-weight: 700;
+  font-weight: 700 !important;
   line-height: 1.35;
   letter-spacing: -0.2px;
 }
 
 .news-card-title {
-  font-family: var(--heading-font, 'Raleway', sans-serif);
-  font-size: 1rem;
+  font-family: var(--heading-font, 'Raleway', sans-serif) !important;
+  font-size: 1.05rem;
   color: var(--heading-color, #0A1128);
-  font-weight: 600;
-  line-height: 1.42;
+  font-weight: 700 !important;
+  line-height: 1.38;
   margin-bottom: 0.25rem;
 }
 
 .news-hero-title a,
 .news-card-title a {
+  font-family: inherit;
+  font-weight: inherit;
   color: var(--heading-color, #0A1128) !important;
   text-decoration: none;
 }

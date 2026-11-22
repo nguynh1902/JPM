@@ -82,7 +82,7 @@
                       
                       <!-- Actions -->
                       <div class="d-flex align-items-center gap-3 pe-2">
-                        <button v-if="!address.la_mac_dinh" @click="setDefault(address.id)" class="btn p-0 text-secondary hover-red btn-set-default">Đặt mặc định</button>
+                        <button v-if="!address.la_mac_dinh" @click="setDefault(address.id)" class="btn p-0 text-secondary btn-set-default">Đặt mặc định</button>
                         
                         <!-- Nút Sửa -->
                         <button class="btn btn-edit-row" title="Sửa địa chỉ" @click.prevent="openEditAddressModal(address)">
@@ -543,9 +543,6 @@ const setDefault = (id) => {
   font-size: 2rem;
 }
 
-.hover-red:hover {
-  color: var(--jpm-color-red-marine, #F82249) !important;
-}
 .form-control-plaintext::placeholder {
   color: var(--jpm-color-navy-deep, #0A1128) !important;
   opacity: 0.4 !important;
