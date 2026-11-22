@@ -1,7 +1,7 @@
 <template>
-  <div>
+  <div class="h-100 d-flex flex-column flex-grow-1">
     <!-- Unified Single Card: Engine Model Header + Saved Parts Body -->
-    <div class="card border-0 jpm-card">
+    <div class="card border-0 jpm-card h-100 d-flex flex-column flex-grow-1">
       <div class="card-header jpm-card-header">
         <!-- Skeleton Header -->
         <div v-if="isLoading" class="placeholder-glow w-100">
@@ -11,7 +11,7 @@
 
         <!-- Integrated Machine Model Header -->
         <div v-else-if="garageData" class="d-flex align-items-center justify-content-between w-100 flex-wrap gap-2">
-          <div class="d-flex align-items-center gap-3 min-width-0">
+          <div class="d-flex align-items-center gap-3 min-w-0">
             <router-link
               to="/garage"
               class="btn-back-header flex-shrink-0"
@@ -19,36 +19,49 @@
               <i class="bi bi-arrow-left"></i>
             </router-link>
 
-            <div class="min-width-0">
-              <div class="d-flex align-items-center gap-2 flex-wrap">
-                <h5 class="jpm-card-title">{{ garageData.dong_co_model?.ten_model || 'Chưa rõ Model' }}</h5>
-                <span v-if="garageData.dong_co_model?.thuong_hieu?.name" class="badge brand-tag-badge">
-                  {{ garageData.dong_co_model.thuong_hieu.name }}
+            <div class="min-w-0">
+              <!-- Dòng trên: Mã công suất (màu xanh primary #0d6efd) + Tên Model máy -->
+              <div class="d-flex align-items-center gap-2 flex-wrap mb-1">
+                <span class="garage-model-code" v-if="garageData.dong_co_model?.ma_luc">
+                  {{ garageData.dong_co_model.ma_luc }} HP
                 </span>
+                <h5 class="jpm-card-title mb-0" :title="garageData.dong_co_model?.ten_model">
+                  {{ garageData.dong_co_model?.ten_model || 'Chưa rõ Model' }}
+                </h5>
               </div>
 
-              <div
-                v-if="garageData.dong_co_model?.ma_luc || garageData.dong_co_model?.nam_san_xuat || garageData.dong_co_model?.nam_bat_dau"
-                class="d-flex align-items-center gap-3 flex-wrap mt-1"
-                style="font-size: 13px; color: #64748b; line-height: 1.3;">
-                <span v-if="garageData.dong_co_model?.ma_luc"><i class="bi bi-lightning-charge me-1 text-warning"></i>{{ garageData.dong_co_model.ma_luc }} HP</span>
-                <span v-if="garageData.dong_co_model?.nam_san_xuat || garageData.dong_co_model?.nam_bat_dau"><i class="bi bi-calendar3 me-1"></i>Năm: {{ garageData.dong_co_model?.nam_san_xuat || garageData.dong_co_model?.nam_bat_dau || '' }}</span>
+              <!-- Dòng dưới: Thông số kỹ thuật căn trái -->
+              <div class="d-flex align-items-center gap-3 flex-wrap text-muted small">
+                <span v-if="garageData.dong_co_model?.thuong_hieu?.name" class="fw-semibold text-secondary">
+                  <i class="bi bi-award me-1 text-primary"></i>{{ garageData.dong_co_model.thuong_hieu.name }}
+                </span>
+                <span v-if="garageData.dong_co_model?.nam_san_xuat || garageData.dong_co_model?.nam_bat_dau" class="fw-semibold text-secondary">
+                  <i class="bi bi-calendar3 me-1 text-primary"></i>Năm: {{ garageData.dong_co_model?.nam_san_xuat || garageData.dong_co_model?.nam_bat_dau || '' }}
+                </span>
+                <span v-if="garageData.dong_co_model?.loai_dong_co?.name" class="badge bg-light text-secondary border px-2 py-0.5">
+                  {{ garageData.dong_co_model.loai_dong_co.name }}
+                </span>
+                <span v-if="garageData.so_serial" class="text-truncate" style="max-width: 200px;">
+                  <span style="color: #cbd5e1;" class="me-2">•</span>
+                  <i class="bi bi-upc-scan me-1"></i>Serial: {{ garageData.so_serial }}
+                </span>
               </div>
             </div>
           </div>
 
-          <!-- Header Actions -->
+          <!-- Header Actions: Nút Tra sơ đồ phụ tùng -->
           <div class="d-flex align-items-center gap-2 flex-shrink-0">
             <router-link
               :to="`/tra-cuu?brand=${garageData?.dong_co_model?.thuong_hieu_id}&engineType=${garageData?.dong_co_model?.loai_dong_co_id}&model=${garageData?.dong_co_model_id}&year=${garageData?.dong_co_model?.nam_san_xuat || ''}`"
-              class="btn btn-outline-secondary btn-action-header">
+              class="btn btn-outline-primary btn-action-header"
+              title="Tra cứu sơ đồ phụ tùng cho động cơ này">
               <i class="bi bi-search"></i>Tra phụ tùng
             </router-link>
           </div>
         </div>
       </div>
 
-      <div class="card-body px-4 py-3">
+      <div class="card-body px-4 py-3 d-flex flex-column flex-grow-1" style="min-height: 480px;">
         <!-- Loading Skeleton -->
         <div v-if="isLoading">
           <div v-for="i in 2" :key="i" class="mb-3">
@@ -66,7 +79,7 @@
         </div>
 
         <!-- Empty State -->
-        <div v-else-if="groups.length === 0" class="text-center py-4 d-flex flex-column align-items-center justify-content-center" style="min-height: 260px;">
+        <div v-else-if="groups.length === 0" class="text-center py-4 d-flex flex-column align-items-center justify-content-center flex-grow-1 my-auto" style="min-height: 320px;">
           <div class="empty-icon-wrap mb-3">
             <i class="bi bi-box-seam"></i>
           </div>
@@ -79,67 +92,86 @@
         </div>
 
         <!-- Grouped Parts -->
-        <div v-else class="d-flex flex-column gap-3">
-          <div v-for="group in groups" :key="group.nhom_id || group.nhom_ten">
+        <div v-else class="d-flex flex-column">
+          <div v-for="group in groups" :key="group.nhom_id || group.nhom_ten" class="mb-4">
 
-            <!-- Group Header -->
-            <div class="d-flex align-items-center gap-2 mb-1">
-              <div style="width: 3px; height: 14px; background: var(--jpm-color-red-marine, #F82249); border-radius: 2px;"></div>
-              <h6 class="mb-0 fw-bold" style="font-size: 13px; color: var(--jpm-color-navy-dark, #0A1128);">
+            <!-- Group Header (Thanh đỏ + Tên nhóm, bỏ badge số lượng) -->
+            <div class="d-flex align-items-center gap-2 mb-3">
+              <div style="width: 4px; height: 18px; background: var(--jpm-color-red-marine, #F82249); border-radius: 2px;"></div>
+              <h6 class="mb-0 fw-bold" style="font-size: 15px; color: var(--jpm-color-navy-dark, #0A1128);">
                 {{ group.nhom_ten }}
               </h6>
-              <span class="badge" style="background-color: #f1f5f9; color: #64748b; font-size: 11px; font-weight: 500; padding: 2px 7px; border-radius: var(--jpm-radius-badge, 6px);">
-                {{ group.items.length }} phụ tùng
-              </span>
             </div>
 
-            <!-- Parts List in Group -->
-            <div class="border rounded-2 overflow-hidden" style="border-color: #e2e8f0 !important;">
+            <!-- Parts List in Group: Danh sách các card phụ tùng tiêu chuẩn -->
+            <div class="d-flex flex-column gap-3">
               <div
-                v-for="(item, idx) in group.items"
+                v-for="item in group.items"
                 :key="item.id"
-                class="d-flex align-items-center gap-3 py-2 px-3 part-row-item"
-                :style="idx < group.items.length - 1 ? 'border-bottom: 1px solid #f1f5f9;' : ''"
-                @click="router.push('/chi-tiet-phu-tung/' + item.phu_tung?.ma_phu_tung)">
+                class="border part-item-card d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3"
+                @click="router.push('/chi-tiet-phu-tung/' + (item.phu_tung?.ma_phu_tung || item.phu_tung?.id))"
+              >
+                <!-- Bên trái: Hình ảnh (58x58px) + Thông tin phụ tùng -->
+                <div class="d-flex align-items-center gap-3 flex-grow-1 min-w-0">
+                  <!-- Khung ảnh 58x58px chuẩn -->
+                  <div class="part-img-wrap rounded-2 border flex-shrink-0 d-flex align-items-center justify-content-center bg-white">
+                    <img
+                      v-if="item.phu_tung?.hinh_anh"
+                      :src="getImageUrl(item.phu_tung.hinh_anh)"
+                      :alt="item.phu_tung.ten_phu_tung"
+                      class="part-product-img"
+                    />
+                    <i v-else class="bi bi-gear text-muted fs-3 opacity-50"></i>
+                  </div>
 
-                <!-- Part Image -->
-                <div class="flex-shrink-0 d-flex align-items-center justify-content-center border rounded-2" style="width: 46px; height: 46px; background: #fff; border-color: #e2e8f0 !important;">
-                  <img
-                    v-if="item.phu_tung?.hinh_anh"
-                    :src="getImageUrl(item.phu_tung.hinh_anh)"
-                    :alt="item.phu_tung.ten_phu_tung"
-                    style="max-width: 38px; max-height: 38px; object-fit: contain;">
-                  <i v-else class="bi bi-gear text-muted" style="font-size: 1.1rem; opacity: 0.4;"></i>
-                </div>
+                  <!-- Thông tin chi tiết: Mã phụ tùng (xanh primary) + Tên phụ tùng, Dòng dưới: Tiền căn trái -->
+                  <div class="flex-grow-1 min-w-0">
+                    <!-- Dòng trên: Mã xong đến Tên phụ tùng (Mã màu xanh primary #0d6efd) -->
+                    <div class="d-flex align-items-center mb-1 min-w-0 flex-wrap" style="column-gap: 8px;">
+                      <span class="part-sku-code">{{ item.phu_tung?.ma_phu_tung }}</span>
+                      <h6 class="fw-bold mb-0 text-truncate part-product-title" :title="item.phu_tung?.ten_phu_tung">
+                        {{ item.phu_tung?.ten_phu_tung }}
+                      </h6>
+                    </div>
 
-                <!-- Part Info (Compact 2-line layout) -->
-                <div class="flex-grow-1 min-width-0">
-                  <router-link
-                    :to="`/chi-tiet-phu-tung/${item.phu_tung?.ma_phu_tung}`"
-                    @click.stop
-                    class="fw-bold d-block text-decoration-none text-truncate"
-                    style="color: var(--jpm-color-navy-dark, #0A1128); font-size: 14px; line-height: 1.35;">
-                    {{ item.phu_tung?.ten_phu_tung }}
-                  </router-link>
-                  <div class="d-flex align-items-center gap-2 flex-wrap mt-1" style="font-size: 12.5px; line-height: 1.2;">
-                    <span class="part-code-badge">{{ item.phu_tung?.ma_phu_tung }}</span>
-                    <span v-if="item.phu_tung?.is_gia_lien_he" class="fw-bold" style="color: var(--jpm-color-red-marine, #F82249); font-size: 13px;">Liên hệ</span>
-                    <span v-else class="fw-bold" style="color: var(--jpm-color-red-marine, #F82249); font-size: 13px;">
-                      {{ formatCurrency(item.phu_tung?.gia_ban) }}
-                    </span>
-                    <template v-if="item.ghi_chu">
-                      <span style="color: #cbd5e1;">•</span>
-                      <span class="text-muted" style="font-size: 12px;"><i class="bi bi-info-circle me-1"></i>{{ item.ghi_chu }}</span>
-                    </template>
+                    <!-- Dòng dưới: Tiền căn sang trái & Ghi chú nếu có -->
+                    <div class="d-flex align-items-center gap-3 flex-wrap">
+                      <div class="part-price-box">
+                        <span v-if="item.phu_tung?.is_gia_lien_he" class="fw-bold text-danger fs-6">Liên hệ</span>
+                        <span v-else-if="item.phu_tung?.gia_ban > 0" class="fw-bold text-danger fs-6">
+                          {{ formatCurrency(item.phu_tung?.gia_ban) }}
+                        </span>
+                        <span v-else class="text-muted small">Đang cập nhật giá</span>
+                      </div>
+
+                      <!-- Ghi chú nếu có -->
+                      <div v-if="item.ghi_chu" class="text-muted small text-truncate" style="max-width: 250px;">
+                        <span style="color: #cbd5e1;" class="me-2">•</span>
+                        <i class="bi bi-stickies me-1"></i>{{ item.ghi_chu }}
+                      </div>
+                    </div>
                   </div>
                 </div>
 
-                <!-- Actions -->
-                <div class="d-flex align-items-center gap-2 flex-shrink-0 pe-1">
-                  <button class="btn btn-cart-row" title="Thêm vào giỏ hàng" @click.stop="addOneToCart(item)">
+                <!-- Bên phải: Hai nút thao tác dạng icon 36x36px đồng bộ 100% -->
+                <div class="d-flex align-items-center gap-2 flex-shrink-0 pe-1 align-self-end align-self-md-center">
+                  <!-- Nút Thêm giỏ: 36x36px outline Primary Blue #0d6efd -->
+                  <button
+                    type="button"
+                    class="btn btn-cart-icon"
+                    title="Thêm vào giỏ hàng"
+                    @click.stop="addOneToCart(item)"
+                  >
                     <i class="bi bi-cart-plus"></i>
                   </button>
-                  <button class="btn btn-delete-row" title="Xóa khỏi danh sách" @click.stop="removeItem(item.id)">
+
+                  <!-- Nút Xóa: 36x36px outline xám hover Đỏ Marine #F82249 -->
+                  <button
+                    type="button"
+                    class="btn btn-delete-icon"
+                    title="Xóa phụ tùng khỏi danh sách"
+                    @click.stop="removeItem(item.id)"
+                  >
                     <i class="bi bi-trash3"></i>
                   </button>
                 </div>
@@ -153,18 +185,7 @@
 </template>
 
 <script setup>
-
-const getImageUrl = (path) => {
-  if (!path) return "";
-  if (path.startsWith("blob:") || path.startsWith("http") || path.startsWith("data:")) return path;
-  const clean = path.startsWith("/") ? path.slice(1) : path;
-  if (clean.startsWith("storage/") || clean.startsWith("uploads/")) {
-    return `http://localhost:8000/${clean}`;
-  }
-  return `http://localhost:8000/storage/${clean}`;
-};
-
-import { ref, computed } from 'vue';
+import { computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/vue-query';
 import axiosClient from '../../../api/axiosClient';
@@ -179,6 +200,16 @@ const queryClient = useQueryClient();
 const toaster = createToaster({ position: 'top-right', duration: 3000 });
 
 const garageId = computed(() => route.params.id);
+
+const getImageUrl = (path) => {
+  if (!path) return "";
+  if (path.startsWith("blob:") || path.startsWith("http") || path.startsWith("data:")) return path;
+  const clean = path.startsWith("/") ? path.slice(1) : path;
+  if (clean.startsWith("storage/") || clean.startsWith("uploads/")) {
+    return `http://localhost:8000/${clean}`;
+  }
+  return `http://localhost:8000/storage/${clean}`;
+};
 
 // ─── FETCH DATA ───────────────────────────────────────────────────────────────
 const { data: chiTietData, isLoading } = useQuery({
@@ -243,26 +274,11 @@ const removeItem = async (id) => {
   }
 };
 
-
-
 // ─── CART ─────────────────────────────────────────────────────────────────────
 const addOneToCart = (item) => {
   if (!item.phu_tung) return;
-  cartStore.addItem(item.phu_tung, item.so_luong);
-  toaster.success(`Đã thêm ${item.so_luong} × ${item.phu_tung.ten_phu_tung} vào giỏ!`);
-};
-
-
-const addSelectedToCart = () => {
-  let count = 0;
-  selectedParts.value.forEach(item => {
-    if (item.phu_tung) {
-      cartStore.addItem(item.phu_tung, item.so_luong);
-      count++;
-    }
-  });
-  toaster.success(`Đã thêm ${count} phụ tùng vào giỏ hàng!`);
-  selectedParts.value = []; // Reset after adding
+  cartStore.addItem(item.phu_tung, item.so_luong || 1);
+  toaster.success(`Đã thêm ${item.phu_tung.ten_phu_tung} vào giỏ!`);
 };
 </script>
 
@@ -273,24 +289,117 @@ const addSelectedToCart = () => {
   font-weight: 700;
   letter-spacing: -0.01em;
 }
-.brand-tag-badge {
-  background-color: #f1f5f9;
-  color: var(--jpm-color-navy-dark, #0A1128);
+
+.garage-model-code {
+  font-family: var(--jpm-font-mono, 'Roboto Mono', monospace);
+  color: #0d6efd !important;
+  font-size: 15px;
   font-weight: 700;
-  font-size: 11px;
-  padding: 2px 7px;
-  letter-spacing: 0.4px;
-  text-transform: uppercase;
-  border-radius: 5px;
-  border: 1px solid #e2e8f0;
+  letter-spacing: 0.3px;
+  flex-shrink: 0;
 }
-.part-row-item {
-  transition: background-color 0.15s ease;
+
+/* Card phụ tùng phẳng, không hiệu ứng nổi, giảm chiều cao đồng bộ 100% với VatTuThuongMua */
+.part-item-card {
+  border-radius: var(--jpm-radius-card, 12px) !important;
+  border: 1px solid var(--jpm-neutral-200, #E2E8F0) !important;
+  box-shadow: none !important;
+  background-color: var(--jpm-neutral-0, #FFFFFF);
+  overflow: hidden;
   cursor: pointer;
+  padding: 10px 16px !important;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
 }
-.part-row-item:hover {
-  background-color: #f8fafc;
+
+.part-item-card:hover {
+  transform: none !important;
+  box-shadow: none !important;
+  border-color: #cbd5e1 !important;
+  background-color: #fafbfc;
 }
+
+.part-img-wrap {
+  width: 58px;
+  height: 58px;
+  min-width: 58px;
+  min-height: 58px;
+  padding: 4px;
+  border-color: var(--jpm-neutral-200, #E2E8F0) !important;
+  overflow: hidden;
+}
+
+.part-product-img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.part-product-title {
+  color: var(--jpm-color-navy-dark, #0A1128);
+  font-size: 15px;
+  line-height: 1.35;
+}
+
+/* Mã phụ tùng: Màu xanh primary #0d6efd đậm, rõ ràng, nằm trước tên */
+.part-sku-code {
+  font-family: var(--jpm-font-mono, 'Roboto Mono', monospace);
+  color: #0d6efd !important;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  flex-shrink: 0;
+}
+
+.part-price-box {
+  /* Căn lề trái */
+}
+
+/* Hai nút thao tác dạng icon 36x36px đồng bộ 100% với VatTuThuongMua */
+.btn-cart-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--jpm-radius-control, 8px);
+  background-color: #ffffff;
+  border: 1.5px solid #0d6efd;
+  color: #0d6efd;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px rgba(13, 110, 253, 0.08);
+}
+
+.btn-cart-icon:hover {
+  background-color: #0d6efd;
+  border-color: #0d6efd;
+  color: #ffffff;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(13, 110, 253, 0.25);
+}
+
+.btn-delete-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--jpm-radius-control, 8px);
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  color: #94a3b8;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  font-size: 1.05rem;
+}
+
+.btn-delete-icon:hover {
+  background-color: var(--jpm-color-red-marine, #F82249);
+  border-color: var(--jpm-color-red-marine, #F82249);
+  color: #ffffff;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(248, 34, 73, 0.25);
+}
+
 .empty-icon-wrap {
   width: 72px;
   height: 72px;
@@ -303,4 +412,3 @@ const addSelectedToCart = () => {
   font-size: 2rem;
 }
 </style>
-
