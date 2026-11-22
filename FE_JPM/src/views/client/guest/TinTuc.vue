@@ -822,13 +822,11 @@ export default {
 
 .middle-card-title a {
   color: var(--heading-color, #0A1128) !important;
-  transition: opacity 0.2s ease;
 }
 
 .middle-card-title a:hover,
 .middle-feature-card:hover .middle-card-title a {
   color: var(--heading-color, #0A1128) !important;
-  opacity: 0.85;
 }
 
 .middle-card-excerpt {
@@ -949,14 +947,12 @@ a.group-hover:hover {
 }
 .hero-title-hover {
   color: var(--heading-color, #0A1128) !important;
-  transition: opacity 0.2s ease;
 }
 .group-hover:hover .hero-title-hover,
 .hero-title-hover:hover,
 a.group-hover:hover .hero-title-hover,
 a:hover .hero-title-hover {
   color: var(--heading-color, #0A1128) !important;
-  opacity: 0.88;
 }
 .text-truncate-2 {
   display: -webkit-box;

@@ -1362,12 +1362,10 @@ export default {
 .hover-title-navy,
 .hover-text-danger {
   color: var(--jpm-color-navy-dark, #0A1128) !important;
-  transition: opacity 0.2s ease;
 }
 .hover-title-navy:hover,
 .hover-text-danger:hover {
   color: var(--jpm-color-navy-dark, #0A1128) !important;
-  opacity: 0.85;
 }
 
 /* ── SKELETON ── */
