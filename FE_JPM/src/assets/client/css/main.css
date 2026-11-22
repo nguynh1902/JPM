@@ -2299,9 +2299,9 @@ section,
   font-size: 1.05rem !important;
 }
 .btn-delete-row:hover {
-  background-color: #fee2e2 !important;
-  border-color: #fca5a5 !important;
-  color: var(--accent-color, #F82249) !important;
+  background-color: var(--accent-color, #F82249) !important;
+  border-color: var(--accent-color, #F82249) !important;
+  color: #ffffff !important;
   transform: translateY(-1px);
 }
 

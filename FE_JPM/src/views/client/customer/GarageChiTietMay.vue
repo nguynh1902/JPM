@@ -274,15 +274,15 @@ const addSelectedToCart = () => {
   letter-spacing: -0.01em;
 }
 .brand-tag-badge {
-  background-color: rgba(248, 34, 73, 0.08);
-  color: var(--jpm-color-red-marine, #F82249);
-  font-weight: 600;
-  font-size: 10px;
-  padding: 3px 8px;
-  letter-spacing: 0.5px;
+  background-color: #f1f5f9;
+  color: var(--jpm-color-navy-dark, #0A1128);
+  font-weight: 700;
+  font-size: 11px;
+  padding: 2px 7px;
+  letter-spacing: 0.4px;
   text-transform: uppercase;
-  border-radius: var(--jpm-radius-badge, 6px);
-  border: 1px solid rgba(248, 34, 73, 0.15);
+  border-radius: 5px;
+  border: 1px solid #e2e8f0;
 }
 .part-row-item {
   transition: background-color 0.15s ease;

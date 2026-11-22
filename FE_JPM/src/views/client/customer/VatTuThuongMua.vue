@@ -31,15 +31,12 @@
         <!-- Grouped by Category: Mỗi danh mục là 1 nhóm, bên trong là các card sản phẩm tiêu chuẩn -->
         <div class="d-flex flex-column" v-else>
           <div v-for="cat in groupedCategories" :key="cat.id" class="mb-4">
-            <!-- Category Group Header: Thanh tiêu đề danh mục -->
+            <!-- Category Group Header: Thanh tiêu đề danh mục (Bỏ số lượng sản phẩm) -->
             <div class="d-flex align-items-center gap-2 mb-3">
               <div style="width: 4px; height: 18px; background: var(--jpm-color-red-marine, #F82249); border-radius: 2px;"></div>
               <h6 class="mb-0 fw-bold" style="font-size: 15px; color: var(--jpm-color-navy-dark, #0A1128);">
                 {{ cat.name }}
               </h6>
-              <span class="badge rounded-pill bg-light text-secondary border px-2.5 py-1 fw-semibold" style="font-size: 11.5px;">
-                {{ cat.items.length }} sản phẩm
-              </span>
             </div>
 
             <!-- Danh sách các card sản phẩm tiêu chuẩn -->
@@ -47,7 +44,7 @@
               <div
                 v-for="item in cat.items"
                 :key="item.id"
-                class="p-3 border vt-product-card d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3"
+                class="border vt-product-card d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3"
                 @click="router.push(`/chi-tiet-san-pham/${item.san_pham?.slug}`)"
               >
                 <!-- Bên trái: Hình ảnh + Thông tin sản phẩm -->
@@ -63,19 +60,19 @@
                     <i v-else class="bi bi-image text-muted fs-2 opacity-50"></i>
                   </div>
 
-                  <!-- Thông tin chi tiết: Tên, Mã, Giá -->
+                  <!-- Thông tin chi tiết: Mã lên trên cùng Tên, Tiền ở dưới qua trái -->
                   <div class="flex-grow-1 min-w-0">
-                    <h6 class="fw-bold mb-2 text-truncate vt-product-title" :title="item.san_pham?.ten_san_pham">
-                      {{ item.san_pham?.ten_san_pham }}
-                    </h6>
-                    <!-- Dòng Mã & Giá: Khoảng cách cố định min-width để mã ngắn/dài đều thẳng hàng -->
-                    <div class="d-flex align-items-center flex-wrap" style="column-gap: 20px; row-gap: 6px;">
-                      <!-- Mã sản phẩm: Bỏ icon, căn min-width cố định -->
-                      <div class="vt-code-box">
-                        <span class="part-code-badge">{{ item.san_pham?.ma_san_pham }}</span>
-                      </div>
+                    <!-- Dòng trên: Mã xong đến Tên sản phẩm (Mã màu xanh primary #0d6efd) -->
+                    <div class="d-flex align-items-center mb-1 min-w-0 flex-wrap" style="column-gap: 8px;">
+                      <span class="vt-sku-code">{{ item.san_pham?.ma_san_pham }}</span>
+                      <h6 class="fw-bold mb-0 text-truncate vt-product-title" :title="item.san_pham?.ten_san_pham">
+                        {{ item.san_pham?.ten_san_pham }}
+                      </h6>
+                    </div>
 
-                      <!-- Giá sản phẩm: Vị trí luôn cố định thẳng hàng -->
+                    <!-- Dòng dưới: Tiền căn sang trái & Ghi chú nếu có -->
+                    <div class="d-flex align-items-center gap-3 flex-wrap">
+                      <!-- Giá sản phẩm: Căn thẳng bên trái -->
                       <div class="vt-price-box">
                         <span v-if="item.san_pham?.is_gia_lien_he" class="fw-bold text-danger fs-6">Liên hệ</span>
                         <span v-else-if="item.san_pham?.gia_ban > 0" class="fw-bold text-danger fs-6">
@@ -249,27 +246,31 @@ const addToQuote = (sanPham) => {
   font-size: 2rem;
 }
 
-/* Card sản phẩm độc lập - Đồng bộ 100% hiệu ứng nổi của Card Sản Phẩm bên Cửa Hàng */
+/* Card sản phẩm phẳng, gọn gàng, giảm chiều cao */
 .vt-product-card {
   border-radius: var(--jpm-radius-card, 12px) !important;
   border: 1px solid var(--jpm-neutral-200, #E2E8F0) !important;
-  box-shadow: var(--jpm-shadow-sm, 0 1px 3px rgba(10, 17, 40, 0.05)) !important;
-  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s ease;
+  box-shadow: none !important;
   background-color: var(--jpm-neutral-0, #FFFFFF);
   overflow: hidden;
   cursor: pointer;
+  padding: 10px 16px !important;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
 }
 
 .vt-product-card:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--jpm-shadow-md, 0 4px 12px -2px rgba(10, 17, 40, 0.08)) !important;
-  border-color: var(--jpm-neutral-300, #CBD5E1) !important;
+  transform: none !important;
+  box-shadow: none !important;
+  border-color: #cbd5e1 !important;
+  background-color: #fafbfc;
 }
 
 .vt-img-wrap {
-  width: 72px;
-  height: 72px;
-  padding: 6px;
+  width: 58px;
+  height: 58px;
+  min-width: 58px;
+  min-height: 58px;
+  padding: 4px;
   border-color: var(--jpm-neutral-200, #E2E8F0) !important;
   overflow: hidden;
 }
@@ -282,61 +283,69 @@ const addToQuote = (sanPham) => {
 
 .vt-product-title {
   color: var(--jpm-color-navy-dark, #0A1128);
-  font-size: 15.5px;
-  line-height: 1.4;
+  font-size: 15px;
+  line-height: 1.35;
 }
 
-/* Cột Mã & Cột Giá cố định chiều rộng tối thiểu để luôn thẳng hàng */
-.vt-code-box {
-  min-width: 110px;
+/* Mã sản phẩm: Màu xanh primary #0d6efd đậm, rõ ràng, nằm trước tên sản phẩm */
+.vt-sku-code {
+  font-family: var(--jpm-font-mono, 'Roboto Mono', monospace);
+  color: #0d6efd !important;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  flex-shrink: 0;
 }
 
 .vt-price-box {
-  min-width: 120px;
+  /* Giá tiền nằm ngay bên trái dưới dòng mã + tên */
 }
 
-/* Hai nút thao tác dạng icon 38x38px đồng bộ 100% */
+/* Hai nút thao tác dạng icon 36x36px đồng bộ 100% - Phương án 1 */
+/* Nút Thêm Giỏ Hàng: Outline màu xanh Primary (#0d6efd) đồng bộ với mã sản phẩm */
 .btn-cart-icon {
-  width: 38px;
-  height: 38px;
+  width: 36px;
+  height: 36px;
   border-radius: var(--jpm-radius-control, 8px);
-  background-color: var(--jpm-color-red-marine, #F82249);
-  border: 1px solid var(--jpm-color-red-marine, #F82249);
-  color: #ffffff;
+  background-color: #ffffff;
+  border: 1.5px solid #0d6efd;
+  color: #0d6efd;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.15rem;
+  font-size: 1.1rem;
   transition: all 0.2s ease;
-  box-shadow: 0 2px 6px rgba(248, 34, 73, 0.2);
+  box-shadow: 0 1px 3px rgba(13, 110, 253, 0.08);
 }
 
 .btn-cart-icon:hover {
-  background-color: #e01a3f;
-  border-color: #e01a3f;
+  background-color: #0d6efd;
+  border-color: #0d6efd;
   color: #ffffff;
   transform: translateY(-1px);
-  box-shadow: 0 4px 10px rgba(248, 34, 73, 0.3);
+  box-shadow: 0 4px 10px rgba(13, 110, 253, 0.25);
 }
 
+/* Nút Xóa: Bình thường xám trung tính tinh tế, khi hover chuyển sang ĐỎ rực rỡ */
 .btn-delete-icon {
-  width: 38px;
-  height: 38px;
+  width: 36px;
+  height: 36px;
   border-radius: var(--jpm-radius-control, 8px);
-  border: 1px solid #e2e8f0;
   background-color: #ffffff;
+  border: 1px solid #e2e8f0;
   color: #94a3b8;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   transition: all 0.2s ease;
-  font-size: 1.1rem;
+  font-size: 1.05rem;
 }
 
 .btn-delete-icon:hover {
-  background-color: #fee2e2;
-  border-color: #fca5a5;
-  color: var(--jpm-color-red-marine, #F82249);
+  background-color: var(--jpm-color-red-marine, #F82249);
+  border-color: var(--jpm-color-red-marine, #F82249);
+  color: #ffffff;
   transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(248, 34, 73, 0.25);
 }
 </style>

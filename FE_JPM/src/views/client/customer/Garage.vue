@@ -38,33 +38,53 @@
         </div>
 
                 <!-- Garage List -->
-                <div class="d-flex flex-column gap-2" v-else>
-                  <div v-for="may in garage" :key="may.id" class="px-3 py-3 border garage-item-card d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3" @click="router.push(`/garage/${may.id}`)">
-                    
+                <div class="d-flex flex-column gap-2.5" v-else>
+                  <div
+                    v-for="may in garage"
+                    :key="may.id"
+                    class="border garage-item-card d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3"
+                    @click="router.push(`/garage/${may.id}`)"
+                  >
                     <!-- Left: Machine Info -->
-                    <div>
+                    <div class="min-w-0 flex-grow-1">
                       <!-- Model Name & Brand Badge -->
-                      <h6 class="mb-0 d-flex align-items-center gap-2 flex-wrap" style="font-size: 15.5px; font-weight: 700; color: var(--jpm-color-navy-dark, #0A1128);">
+                      <h6 class="mb-1 d-flex align-items-center gap-2 flex-wrap" style="font-size: 15px; font-weight: 700; color: var(--jpm-color-navy-dark, #0A1128);">
                         {{ may.dong_co_model?.ten_model || 'Chưa rõ Model' }}
-                        <span v-if="may.dong_co_model?.thuong_hieu?.name" class="badge brand-tag-badge">{{ may.dong_co_model.thuong_hieu.name }}</span>
+                        <span v-if="may.dong_co_model?.thuong_hieu?.name" class="brand-tag-badge">
+                          {{ may.dong_co_model.thuong_hieu.name }}
+                        </span>
                       </h6>
                       
                       <!-- Specs -->
-                      <div class="d-flex align-items-center gap-3 mt-1 text-muted flex-wrap" style="font-size: 13px;">
-                        <span v-if="may.dong_co_model?.ma_luc"><i class="bi bi-lightning-charge me-1 text-warning"></i>{{ may.dong_co_model.ma_luc }} HP</span>
-                        <span v-if="may.dong_co_model?.nam_san_xuat || may.dong_co_model?.nam_bat_dau"><i class="bi bi-calendar3 me-1"></i>Năm: {{ may.dong_co_model?.nam_san_xuat || may.dong_co_model?.nam_bat_dau || '' }}</span>
+                      <div class="d-flex align-items-center gap-3 text-muted flex-wrap" style="font-size: 13px;">
+                        <span v-if="may.dong_co_model?.ma_luc">
+                          <i class="bi bi-lightning-charge me-1 text-warning"></i>{{ may.dong_co_model.ma_luc }} HP
+                        </span>
+                        <span v-if="may.dong_co_model?.nam_san_xuat || may.dong_co_model?.nam_bat_dau">
+                          <i class="bi bi-calendar3 me-1"></i>Năm: {{ may.dong_co_model?.nam_san_xuat || may.dong_co_model?.nam_bat_dau || '' }}
+                        </span>
                       </div>
                     </div>
 
-                    <!-- Right: Actions -->
-                    <div class="d-flex align-items-center gap-2 pe-1 flex-shrink-0 mt-2 mt-md-0">
-                      <!-- Sơ đồ / Tra phụ tùng -->
-                      <button class="btn btn-outline-secondary btn-action-header" @click.stop="router.push('/tra-cuu?brand=' + may.dong_co_model?.thuong_hieu_id + '&engineType=' + may.dong_co_model?.loai_dong_co_id + '&model=' + may.dong_co_model_id + '&year=' + (may.dong_co_model?.nam_san_xuat || ''))">
-                        <i class="bi bi-search"></i>Tra phụ tùng
+                    <!-- Right: Actions - Đồng bộ 2 nút dạng icon 36x36px -->
+                    <div class="d-flex align-items-center gap-2 pe-1 flex-shrink-0 align-self-end align-self-md-center">
+                      <!-- Sơ đồ / Tra phụ tùng: Outline Primary Blue #0d6efd -->
+                      <button
+                        type="button"
+                        class="btn btn-search-icon"
+                        title="Tra cứu sơ đồ phụ tùng cho động cơ này"
+                        @click.stop="router.push('/tra-cuu?brand=' + may.dong_co_model?.thuong_hieu_id + '&engineType=' + may.dong_co_model?.loai_dong_co_id + '&model=' + may.dong_co_model_id + '&year=' + (may.dong_co_model?.nam_san_xuat || ''))"
+                      >
+                        <i class="bi bi-search"></i>
                       </button>
 
-                      <!-- Delete -->
-                      <button class="btn btn-delete-row" title="Xóa máy khỏi Garage" @click.stop="deleteMay(may.id)">
+                      <!-- Delete: Outline xám hover Đỏ Marine #F82249 -->
+                      <button
+                        type="button"
+                        class="btn btn-delete-icon"
+                        title="Xóa máy khỏi Garage"
+                        @click.stop="deleteMay(may.id)"
+                      >
                         <i class="bi bi-trash3"></i>
                       </button>
                     </div>
@@ -286,27 +306,84 @@ const getImageUrl = (path) => {
   font-weight: 700;
   letter-spacing: -0.01em;
 }
+
+/* Card động cơ: Phẳng, không hiệu ứng nổi, giảm chiều cao đồng bộ 100% với VatTuThuongMua */
 .garage-item-card {
-  border-radius: var(--jpm-radius-control, 8px) !important;
-  background-color: #ffffff;
-  border: 1px solid #e2e8f0 !important;
-  transition: all 0.2s ease;
+  border-radius: var(--jpm-radius-card, 12px) !important;
+  background-color: var(--jpm-neutral-0, #FFFFFF);
+  border: 1px solid var(--jpm-neutral-200, #E2E8F0) !important;
+  box-shadow: none !important;
+  padding: 10px 16px !important;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
   cursor: pointer;
 }
+
 .garage-item-card:hover {
-  border-color: rgba(248, 34, 73, 0.4) !important;
-  box-shadow: 0 4px 12px rgba(10, 17, 40, 0.04);
+  transform: none !important;
+  box-shadow: none !important;
+  border-color: #cbd5e1 !important;
+  background-color: #fafbfc;
 }
+
+/* Badge thương hiệu: Trung tính, sang trọng, loại bỏ hoàn toàn màu hồng */
 .brand-tag-badge {
-  background-color: rgba(248, 34, 73, 0.08);
-  color: var(--jpm-color-red-marine, #F82249);
-  font-weight: 600;
-  font-size: 10px;
-  padding: 3px 8px;
-  letter-spacing: 0.5px;
+  background-color: #f1f5f9;
+  color: var(--jpm-color-navy-dark, #0A1128);
+  font-weight: 700;
+  font-size: 11px;
+  padding: 2px 7px;
+  letter-spacing: 0.4px;
   text-transform: uppercase;
-  border-radius: var(--jpm-radius-badge, 6px);
-  border: 1px solid rgba(248, 34, 73, 0.15);
+  border-radius: 5px;
+  border: 1px solid #e2e8f0;
+}
+
+/* Hai nút thao tác dạng icon 36x36px đồng bộ 100% với VatTuThuongMua */
+/* Nút Tra Phụ Tùng: Outline màu xanh Primary (#0d6efd) */
+.btn-search-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--jpm-radius-control, 8px);
+  background-color: #ffffff;
+  border: 1.5px solid #0d6efd;
+  color: #0d6efd;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px rgba(13, 110, 253, 0.08);
+}
+
+.btn-search-icon:hover {
+  background-color: #0d6efd;
+  border-color: #0d6efd;
+  color: #ffffff;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(13, 110, 253, 0.25);
+}
+
+/* Nút Xóa: Bình thường xám trung tính tinh tế, khi hover chuyển sang ĐỎ rực rỡ */
+.btn-delete-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--jpm-radius-control, 8px);
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  color: #94a3b8;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  font-size: 1.05rem;
+}
+
+.btn-delete-icon:hover {
+  background-color: var(--jpm-color-red-marine, #F82249);
+  border-color: var(--jpm-color-red-marine, #F82249);
+  color: #ffffff;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(248, 34, 73, 0.25);
 }
 .empty-icon-wrap {
   width: 72px;
