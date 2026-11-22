@@ -249,27 +249,29 @@ const addToQuote = (sanPham) => {
   font-size: 2rem;
 }
 
-/* Card sản phẩm độc lập tiêu chuẩn, rộng rãi */
+/* Card sản phẩm độc lập - Đồng bộ 100% hiệu ứng nổi của Card Sản Phẩm bên Cửa Hàng */
 .vt-product-card {
   border-radius: var(--jpm-radius-card, 12px) !important;
-  background-color: #ffffff;
-  border: 1px solid #e2e8f0 !important;
-  box-shadow: 0 2px 6px rgba(10, 17, 40, 0.03);
-  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  border: 1px solid var(--jpm-neutral-200, #E2E8F0) !important;
+  box-shadow: var(--jpm-shadow-sm, 0 1px 3px rgba(10, 17, 40, 0.05)) !important;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s ease;
+  background-color: var(--jpm-neutral-0, #FFFFFF);
+  overflow: hidden;
   cursor: pointer;
 }
 
 .vt-product-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(10, 17, 40, 0.06);
-  border-color: #cbd5e1 !important;
+  transform: translateY(-4px);
+  box-shadow: var(--jpm-shadow-md, 0 4px 12px -2px rgba(10, 17, 40, 0.08)) !important;
+  border-color: var(--jpm-neutral-300, #CBD5E1) !important;
 }
 
 .vt-img-wrap {
   width: 72px;
   height: 72px;
   padding: 6px;
-  border-color: #e2e8f0 !important;
+  border-color: var(--jpm-neutral-200, #E2E8F0) !important;
+  overflow: hidden;
 }
 
 .vt-product-img {
