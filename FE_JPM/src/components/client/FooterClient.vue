@@ -1,30 +1,8 @@
 <template>
   <!-- ========================================================
-       BANNER QUẢNG BÁ DÍNH LIỀN FOOTER (home_banner.png nguyên bản)
+       BANNER QUẢNG BÁ DÍNH LIỀN FOOTER (Tạm thời bỏ qua nội dung chữ)
        ======================================================== -->
-  <section class="home-full-banner">
-    <div class="container py-4 py-lg-5">
-      <div class="row align-items-center">
-        <div class="col-lg-5 col-md-7">
-          <h2 class="home-banner-title mb-3">
-            Sẵn Sàng Cho Mọi Hải Trình <br />
-            <span class="text-danger">Vững Bền Cùng Sóng Gió</span>
-          </h2>
-          <p class="home-banner-desc mb-4">
-            Cung cấp động cơ và phụ tùng tàu thuyền chính hãng Yamaha, Honda Marine, Suzuki, Yanmar. Đảm bảo an toàn tối đa và tối ưu hiệu suất cho từng chuyến ra khơi.
-          </p>
-          <div class="d-flex flex-wrap gap-3">
-            <router-link to="/san-pham" class="btn btn-danger px-4 py-2 fw-semibold d-inline-flex align-items-center">
-              Khám Phá Cửa Hàng <i class="bi bi-arrow-right ms-2"></i>
-            </router-link>
-            <router-link to="/tra-cuu" class="btn btn-outline-dark px-4 py-2 fw-semibold d-inline-flex align-items-center">
-              <i class="bi bi-search me-2"></i> Tra Cứu Phụ Tùng
-            </router-link>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
+  <section class="home-full-banner"></section>
 
   <footer id="footer" class="footer dark-background">
     <div class="footer-top">
