@@ -97,7 +97,7 @@
             <i class="bi bi-box-seam"></i>
           </div>
           <h5 class="mb-2 garage-detail-title">Chưa có phụ tùng nào</h5>
-          <p class="text-muted mb-3" style="font-size: 14px; max-width: 420px; line-height: 1.5;">Xem sơ đồ kỹ thuật chi tiết của động cơ và bấm lưu các phụ tùng cần bảo dưỡng định kỳ.</p>
+          <p class="text-muted mb-3" style="font-size: 0.85rem; max-width: 420px; line-height: 1.55;">Xem sơ đồ kỹ thuật chi tiết của động cơ và bấm lưu các phụ tùng cần bảo dưỡng định kỳ.</p>
           <router-link :to="`/tra-cuu?brand=${garageData?.dong_co_model?.thuong_hieu_id}&engineType=${garageData?.dong_co_model?.loai_dong_co_id}&model=${garageData?.dong_co_model_id}&year=${garageData?.dong_co_model?.nam_san_xuat || ''}`" class="btn btn-danger px-4 py-2 fw-semibold d-inline-flex align-items-center gap-2">
             <i class="bi bi-search"></i>
             <span>Tra cứu phụ tùng</span>
@@ -111,7 +111,7 @@
             <!-- Group Header (Thanh đỏ + Tên nhóm, bỏ badge số lượng) -->
             <div class="d-flex align-items-center gap-2 mb-3">
               <div style="width: 4px; height: 18px; background: var(--jpm-color-red-marine, #F82249); border-radius: var(--jpm-radius-badge, 6px);"></div>
-              <h6 class="mb-0 fw-bold" style="font-size: 15px; color: var(--jpm-color-navy-dark, #0A1128);">
+              <h6 class="mb-0 fw-bold" style="font-size: 0.95rem; color: var(--jpm-color-navy-dark, #0A1128);">
                 {{ group.nhom_ten }}
               </h6>
             </div>
@@ -306,7 +306,7 @@ const addOneToCart = (item) => {
 .garage-model-code {
   font-family: var(--jpm-font-mono, 'Roboto Mono', monospace);
   color: #0d6efd !important;
-  font-size: 15px;
+  font-size: 0.85rem;
   font-weight: 700;
   letter-spacing: 0.3px;
   flex-shrink: 0;
@@ -349,7 +349,7 @@ const addOneToCart = (item) => {
 
 .part-product-title {
   color: var(--jpm-color-navy-dark, #0A1128);
-  font-size: 15px;
+  font-size: 0.95rem;
   line-height: 1.35;
 }
 
@@ -357,7 +357,7 @@ const addOneToCart = (item) => {
 .part-sku-code {
   font-family: var(--jpm-font-mono, 'Roboto Mono', monospace);
   color: #0d6efd !important;
-  font-size: 15px;
+  font-size: 0.85rem;
   font-weight: 700;
   letter-spacing: 0.3px;
   flex-shrink: 0;

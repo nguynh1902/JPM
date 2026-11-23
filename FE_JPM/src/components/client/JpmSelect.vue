@@ -53,35 +53,9 @@
       <transition name="dropdown-fade">
         <div
           v-if="isOpen && !disabled"
-          class="custom-dropdown-panel position-absolute w-100 shadow-lg"
+          class="custom-dropdown-panel position-absolute w-100"
           role="listbox"
         >
-          <!-- Ô tìm kiếm nếu danh sách dài hoặc searchable = true -->
-          <div v-if="isSearchVisible" class="dropdown-search-box p-2 border-bottom">
-            <div class="input-group input-group-sm">
-              <span class="input-group-text bg-white border-end-0">
-                <i class="bi bi-search text-muted"></i>
-              </span>
-              <input
-                ref="searchInputRef"
-                type="text"
-                class="form-control form-control-sm border-start-0 ps-0 shadow-none"
-                placeholder="Tìm kiếm..."
-                v-model="searchQuery"
-                @click.stop
-                @keydown.stop="handleSearchKeyDown"
-              />
-              <button
-                v-if="searchQuery"
-                type="button"
-                class="btn btn-outline-secondary border-start-0 bg-white"
-                @click.stop="searchQuery = ''"
-              >
-                <i class="bi bi-x"></i>
-              </button>
-            </div>
-          </div>
-
           <!-- Danh sách Options -->
           <ul class="jpm-select-options custom-dropdown-list list-unstyled mb-0 custom-scrollbar">
             <!-- Mục Tất cả / Bỏ chọn nếu có allOptionLabel -->
@@ -231,8 +205,7 @@ const selectedOptionLabel = computed(() => {
 });
 
 const isSearchVisible = computed(() => {
-  if (props.searchable) return true;
-  return props.options.length > 8; // Tự động bật tìm kiếm khi danh sách có trên 8 mục
+  return props.searchable === true;
 });
 
 const filteredOptions = computed(() => {
@@ -433,7 +406,7 @@ watch(() => props.options, () => {
   background-color: var(--jpm-neutral-0, #FFFFFF);
   border: 1px solid var(--jpm-neutral-200, #E2E8F0);
   border-radius: var(--jpm-radius-control, 8px);
-  box-shadow: var(--jpm-shadow-lg, 0 12px 24px -4px rgba(10, 17, 40, 0.12));
+  box-shadow: none !important;
   overflow: hidden;
   z-index: 1060;
 }
@@ -456,7 +429,7 @@ watch(() => props.options, () => {
   background: transparent !important;
   margin: 0 !important;
   padding: 4px 0 !important;
-  max-height: 280px !important;
+  max-height: 330px !important; /* Hiển thị ~8 mục cân đối, các mục còn lại cuộn mượt */
   overflow-y: auto !important;
   overflow-x: hidden !important;
   display: block !important;

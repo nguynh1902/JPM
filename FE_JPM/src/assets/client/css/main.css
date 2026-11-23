@@ -179,7 +179,7 @@
   }
 
   .section-title h2 {
-    font-size: 1.65rem;
+    font-size: 1.75rem;
   }
 
   .sponsors .client-logo {
@@ -242,6 +242,44 @@ h6 {
   color: var(--heading-color);
   font-family: var(--heading-font);
   font-variant-numeric: lining-nums;
+  letter-spacing: -0.3px;
+  margin-top: 0;
+}
+
+h1 {
+  font-size: 1.55rem;
+  font-weight: 800;
+  line-height: 1.25;
+}
+
+h2 {
+  font-size: 1.35rem;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+h4 {
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+h5 {
+  font-size: 0.95rem;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+h6 {
+  font-size: 0.875rem;
+  font-weight: 700;
+  line-height: 1.35;
 }
 
 /* Pulsating Play Button
@@ -492,7 +530,7 @@ h6 {
   .navmenu a,
   .navmenu a:focus {
     color: var(--nav-color);
-    font-size: 15px;
+    font-size: 0.925rem;
     padding: 0 2px;
     font-family: var(--nav-font);
     font-weight: 600;
@@ -751,7 +789,7 @@ h6 {
 
 .home-banner-title {
   font-family: var(--heading-font, 'Raleway', sans-serif);
-  font-size: 2.1rem;
+  font-size: 1.75rem;
   font-weight: 800;
   line-height: 1.25;
   color: var(--heading-color, #0A1128);
@@ -760,7 +798,7 @@ h6 {
 
 .home-banner-desc {
   font-family: var(--default-font);
-  font-size: 0.95rem;
+  font-size: 0.875rem;
   font-weight: 400;
   line-height: 1.6;
   color: #334155;
@@ -774,16 +812,16 @@ h6 {
     padding: 50px 0;
   }
   .home-banner-title {
-    font-size: 1.7rem;
+    font-size: 1.25rem;
   }
 }
 
 @media (max-width: 576px) {
   .home-banner-title {
-    font-size: 1.35rem;
+    font-size: 1.15rem;
   }
   .home-banner-desc {
-    font-size: 0.88rem;
+    font-size: 0.825rem;
   }
 }
 
@@ -1054,7 +1092,7 @@ section,
   background-color: var(--background-color);
   padding: 60px 0;
   scroll-margin-top: 92px;
-  overflow-x: clip; overflow-y: visible;
+  overflow: visible;
 }
 
 @media (max-width: 1199px) {
@@ -1071,16 +1109,16 @@ section,
 --------------------------------------------------------------*/
 .section-title {
   text-align: center;
-  padding-bottom: 36px;
+  padding-bottom: 28px;
   position: relative;
 }
 
 .section-title h2 {
   font-family: var(--heading-font);
-  font-size: 28px;
+  font-size: 1.75rem;
   font-weight: 700;
   line-height: 1.28;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
   padding-bottom: 0;
   position: relative;
   text-transform: none;
@@ -1100,23 +1138,23 @@ section,
   font-family: var(--default-font);
   margin: 0 auto;
   max-width: 620px;
-  font-size: 0.95rem;
+  font-size: 0.92rem;
   font-weight: 400;
-  line-height: 1.6;
+  line-height: 1.55;
   color: #64748b;
 }
 
 @media (max-width: 767px) {
   .section-title {
-    padding-bottom: 28px;
+    padding-bottom: 24px;
   }
 
   .section-title h2 {
-    font-size: 24px;
+    font-size: 1.2rem;
   }
 
   .section-title p {
-    font-size: 0.9rem;
+    font-size: 0.825rem;
   }
 }
 
@@ -2186,13 +2224,14 @@ section,
    GLOBAL PAGE TITLE STYLES (JPM KIT)
 ========================================== */
 .jpm-page-title {
-  font-family: var(--heading-font);
-  font-size: 28px !important;
-  font-weight: 700 !important;
+  font-family: var(--heading-font) !important;
+  font-size: 1.55rem !important;
+  font-weight: 800 !important;
   color: var(--heading-color) !important;
   text-transform: none !important;
-  letter-spacing: normal !important;
-  margin-bottom: 0.5rem !important;
+  letter-spacing: -0.4px !important;
+  line-height: 1.25 !important;
+  margin-bottom: 0.35rem !important;
 }
 
 /* =========================================
@@ -2296,9 +2335,18 @@ section,
   font-family: var(--heading-font, 'Raleway', sans-serif) !important;
   color: var(--jpm-color-navy-dark, #0A1128) !important;
   font-weight: 700 !important;
-  font-size: 1.125rem !important; /* 18px */
+  font-size: 0.95rem !important;
   line-height: 1.4 !important;
   margin-bottom: 0 !important;
+  letter-spacing: -0.2px !important;
+}
+
+.catalog-sidebar-title {
+  font-family: var(--heading-font, 'Raleway', sans-serif) !important;
+  font-size: 1.1rem !important;
+  font-weight: 700 !important;
+  color: var(--jpm-color-navy-dark, #0A1128) !important;
+  letter-spacing: -0.2px !important;
 }
 
 /* ════════════════════════════════════════════════════════════════
@@ -2863,7 +2911,7 @@ button.jpm-more-link:hover i {
   background: #ffffff;
   border: 1px solid #e2e8f0;
   border-radius: var(--jpm-radius-control, 8px);
-  box-shadow: 0 14px 35px rgba(10, 17, 40, 0.15);
+  box-shadow: none !important;
   z-index: 1060;
   max-height: 320px;
   overflow-y: auto;
@@ -3218,12 +3266,15 @@ a.footer-contact-value:hover {
   .jpm-split-layout {
     flex-direction: row;
     gap: 1rem;
+    align-items: flex-start;
   }
   .jpm-split-sidebar {
     width: calc(25% - 1rem); /* Matches col-lg-3 pe-lg-4 exactly */
     flex-shrink: 0;
-    }
-
+    position: sticky;
+    top: 86px;
+    z-index: 100;
+  }
 }
 
 /* Global Table Row Hover & Action Button */
@@ -3304,12 +3355,14 @@ a.footer-contact-value:hover {
   text-transform: uppercase;
   letter-spacing: 0.3px;
   font-weight: 500 !important;
+  flex-shrink: 0;
 }
 
 .product-sku .sku-code {
   font-weight: 700 !important;
   color: #0d6efd !important;
   letter-spacing: 0.2px !important;
+  min-width: 0;
 }
 
 /* Kiểu chữ: Tên sản phẩm & Thông tin Card (Chuẩn Typography E-Commerce) */
@@ -4403,7 +4456,7 @@ a.btn-shopee-outline:hover {
 
 .store-banner-title {
   font-family: var(--heading-font, 'Raleway', sans-serif);
-  font-size: clamp(1.6rem, 2.4vw, 2.2rem);
+  font-size: clamp(1.65rem, 2.4vw, 2.1rem);
   font-weight: 800;
   color: #0a1128;
   line-height: 1.2;
@@ -4411,7 +4464,7 @@ a.btn-shopee-outline:hover {
 }
 
 .store-banner-subtitle {
-  font-size: clamp(0.82rem, 1vw, 0.92rem);
+  font-size: clamp(0.825rem, 1vw, 0.875rem);
   color: #475569;
   line-height: 1.55;
   max-width: 500px;
@@ -4456,6 +4509,197 @@ a.btn-shopee-outline:hover {
     overflow: hidden;
   }
 }
+
+/* ── GLOBAL BACK NAVIGATION BUTTON & MOBILE BREADCRUMB ── */
+.btn-back-diagram {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: transparent;
+  color: var(--jpm-color-navy-dark, #0A1128);
+  border: 1px solid transparent;
+  padding: 6px 12px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  box-shadow: none;
+  cursor: pointer;
+  text-decoration: none;
+  border-radius: 8px;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  line-height: 1.2;
+}
+
+.btn-back-diagram i {
+  color: inherit;
+  font-size: 1rem;
+  line-height: 1;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), color 0.2s ease;
+}
+
+.btn-back-diagram:hover {
+  background: rgba(248, 34, 73, 0.06);
+  color: var(--jpm-color-red-marine, #F82249) !important;
+  border-color: rgba(248, 34, 73, 0.15);
+  box-shadow: none;
+  text-decoration: none;
+}
+
+.btn-back-diagram:hover i {
+  color: var(--jpm-color-red-marine, #F82249) !important;
+  transform: translateX(-3px);
+}
+
+.btn-back-diagram:active {
+  opacity: 0.85;
+  transform: scale(0.97);
+}
+
+@media (max-width: 767.98px) {
+  .btn-back-diagram {
+    padding: 7px 14px;
+    background: #f8fafc;
+    border-color: #e2e8f0;
+    font-size: 0.84rem;
+    min-height: 38px;
+  }
+  .btn-back-diagram:active {
+    background: #e2e8f0;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .custom-breadcrumb {
+    font-size: 0.82rem;
+  }
+  .custom-breadcrumb .breadcrumb {
+    flex-wrap: wrap;
+    gap: 2px 0;
+  }
+  .custom-breadcrumb .breadcrumb-item {
+    max-width: 140px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+  .custom-breadcrumb .breadcrumb-item.active {
+    max-width: 130px;
+  }
+}
+
+/* ── PROPORTIONAL FLUID SCALING SYSTEM (MOBILE & TABLET) ── */
+@media (max-width: 991.98px) {
+  /* Tablet & iPad Proportional Typography */
+  h1, .h1 {
+    font-size: 1.65rem !important;
+  }
+  h2, .h2, .jpm-page-title {
+    font-size: 1.35rem !important;
+  }
+  h3, .h3, .catalog-sidebar-title {
+    font-size: 1.15rem !important;
+  }
+  h4, .h4, .jpm-card-title {
+    font-size: 1.05rem !important;
+  }
+}
+
+@media (max-width: 767.98px) {
+  /* Mobile Fluid Typography */
+  h1, .h1 {
+    font-size: 1.35rem !important;
+    line-height: 1.3 !important;
+  }
+  h2, .h2, .jpm-page-title {
+    font-size: 1.2rem !important;
+    line-height: 1.35 !important;
+  }
+  h3, .h3, .catalog-sidebar-title {
+    font-size: 1rem !important;
+  }
+  h4, .h4, .jpm-card-title {
+    font-size: 0.95rem !important;
+  }
+  h5, .h5 {
+    font-size: 0.9rem !important;
+  }
+  body, p, .text-muted {
+    font-size: 0.86rem;
+  }
+
+  /* Compact section spacing */
+  .section {
+    padding-top: 1.25rem !important;
+    padding-bottom: 2rem !important;
+  }
+  .inner-page-section {
+    padding-top: 1rem !important;
+    padding-bottom: 2rem !important;
+  }
+
+  /* Compact Container Padding */
+  .container, .container-fluid {
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+  }
+
+  /* Compact Filter Sidebar */
+  .catalog-sidebar-card {
+    border-radius: 10px !important;
+  }
+  .catalog-sidebar-header {
+    padding: 10px 14px !important;
+  }
+  .catalog-sidebar-body {
+    padding: 10px 12px !important;
+  }
+  .catalog-nav-btn {
+    padding: 8px 12px !important;
+    font-size: 0.84rem !important;
+  }
+
+  /* Search Input Field */
+  .search-input-box {
+    padding: 6px 10px !important;
+  }
+  .search-input-field {
+    font-size: 0.82rem !important;
+  }
+
+  /* Badges & Counters */
+  .badge-item-count {
+    font-size: 0.72rem !important;
+    padding: 2px 7px !important;
+  }
+
+  /* Tables in modal & detail */
+  .table-jpm th, .table-jpm td {
+    padding: 8px 6px !important;
+    font-size: 0.82rem !important;
+  }
+}
+
+@media (max-width: 575.98px) {
+  /* Phone Ultra-compact Scaling */
+  .container, .container-fluid {
+    padding-left: 8px !important;
+    padding-right: 8px !important;
+  }
+  
+  h2, .h2, .jpm-page-title {
+    font-size: 1.1rem !important;
+  }
+  
+  .page-title-box p {
+    font-size: 0.8rem !important;
+  }
+
+  /* Small button scaling */
+  .btn-sm {
+    font-size: 0.78rem !important;
+    padding: 4px 10px !important;
+  }
+}
+
 
 
 

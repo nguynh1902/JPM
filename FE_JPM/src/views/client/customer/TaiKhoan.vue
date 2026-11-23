@@ -480,7 +480,7 @@ const setDefault = (id) => {
   display: block;
 }
 .tk-form-input {
-  font-size: 15px;
+  font-size: 0.875rem;
   color: var(--jpm-color-navy-dark, #0A1128);
 }
 
@@ -500,11 +500,11 @@ const setDefault = (id) => {
 }
 .address-recipient-name {
   color: var(--jpm-color-navy-deep, #0A1128);
-  font-size: 16px;
+  font-size: 0.95rem;
   font-weight: 700;
 }
 .address-recipient-phone {
-  font-size: 14.5px;
+  font-size: 0.85rem;
   color: #64748b;
   font-weight: 500;
 }
@@ -512,18 +512,18 @@ const setDefault = (id) => {
   background-color: rgba(248, 34, 73, 0.08);
   color: var(--jpm-color-red-marine, #F82249);
   font-weight: 600;
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   padding: 4px 10px;
   border-radius: var(--jpm-radius-badge, 6px);
   border: 1px solid rgba(248, 34, 73, 0.15);
 }
 .address-text {
-  font-size: 14.5px;
+  font-size: 0.85rem;
   color: #475569;
-  line-height: 1.5;
+  line-height: 1.55;
 }
 .btn-set-default {
-  font-size: 13px;
+  font-size: 0.8rem;
   text-decoration: underline;
   border: none;
   background: transparent;

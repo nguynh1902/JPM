@@ -489,17 +489,17 @@ export default {
 
 .contact-heading {
   font-family: var(--heading-font, 'Raleway', sans-serif);
-  font-size: clamp(1.5rem, 2.2vw, 1.85rem);
+  font-size: clamp(1.25rem, 1.8vw, 1.45rem);
   font-weight: 700;
   color: var(--jpm-color-navy-dark, #0A1128);
-  letter-spacing: normal;
+  letter-spacing: -0.3px;
   line-height: 1.3;
 }
 
 .contact-desc {
   font-family: var(--default-font, 'Roboto', sans-serif);
-  font-size: 0.94rem;
-  line-height: 1.75;
+  font-size: 0.875rem;
+  line-height: 1.6;
   color: var(--jpm-neutral-500, #64748B);
 }
 
@@ -562,10 +562,10 @@ a.contact-item-desc:hover {
 /* ── 3. RIGHT COLUMN: YOUR DETAILS FORM ── */
 .contact-form-heading {
   font-family: var(--heading-font, 'Raleway', sans-serif);
-  font-size: clamp(1.5rem, 2.2vw, 1.85rem);
+  font-size: clamp(1.25rem, 1.8vw, 1.45rem);
   font-weight: 700;
   color: var(--jpm-color-navy-dark, #0A1128);
-  letter-spacing: normal;
+  letter-spacing: -0.3px;
   line-height: 1.3;
 }
 

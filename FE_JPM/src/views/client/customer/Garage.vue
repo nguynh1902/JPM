@@ -28,7 +28,7 @@
             <i class="bi bi-tools"></i>
           </div>
           <h5 class="mb-2 garage-heading">Garage của bạn đang trống</h5>
-          <p class="text-muted mb-4" style="font-size: 14.5px; max-width: 480px; line-height: 1.6;">
+          <p class="text-muted mb-4" style="font-size: 0.85rem; max-width: 480px; line-height: 1.55;">
             Hãy tra cứu động cơ và sơ đồ phụ tùng trên trang Tra Cứu, sau đó bấm <strong>"Lưu vào Garage"</strong>. Hệ thống sẽ tự động khởi tạo hồ sơ máy tương ứng cho garage của bạn.
           </p>
           <button class="btn btn-danger px-4 py-2 fw-semibold d-inline-flex align-items-center gap-2" @click="router.push('/tra-cuu')">
@@ -43,7 +43,7 @@
             <!-- Brand Group Header: Thanh tiêu đề thương hiệu bên ngoài -->
             <div class="d-flex align-items-center gap-2 mb-3">
               <div style="width: 4px; height: 18px; background: var(--jpm-color-red-marine, #F82249); border-radius: var(--jpm-radius-badge, 6px);"></div>
-              <h6 class="mb-0 fw-bold" style="font-size: 15px; color: var(--jpm-color-navy-dark, #0A1128);">
+              <h6 class="mb-0 fw-bold" style="font-size: 0.95rem; color: var(--jpm-color-navy-dark, #0A1128);">
                 {{ brand.name }}
               </h6>
             </div>
@@ -382,7 +382,7 @@ const getImageUrl = (path) => {
 
 .garage-model-title {
   color: var(--jpm-color-navy-dark, #0A1128);
-  font-size: 15px;
+  font-size: 0.95rem;
   line-height: 1.35;
 }
 
@@ -390,7 +390,7 @@ const getImageUrl = (path) => {
 .garage-model-code {
   font-family: var(--jpm-font-mono, 'Roboto Mono', monospace);
   color: #0d6efd !important;
-  font-size: 15px;
+  font-size: 0.85rem;
   font-weight: 700;
   letter-spacing: 0.3px;
   flex-shrink: 0;
@@ -401,7 +401,7 @@ const getImageUrl = (path) => {
   background-color: #f1f5f9;
   color: var(--jpm-color-navy-dark, #0A1128);
   font-weight: 700;
-  font-size: 11px;
+  font-size: 0.72rem;
   padding: 2px 7px;
   letter-spacing: 0.4px;
   text-transform: uppercase;

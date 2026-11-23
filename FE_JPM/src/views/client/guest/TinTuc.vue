@@ -638,25 +638,25 @@ export default {
 /* ── PAGE TITLE & SUBTITLE (ĐỒNG BỘ 100% CỬA HÀNG & TRA CỨU) ── */
 .jpm-page-title {
   font-family: var(--heading-font, 'Raleway', sans-serif);
-  font-size: 28px !important;
+  font-size: 1.55rem !important;
   font-weight: 800;
   color: var(--heading-color, #0A1128) !important;
-  letter-spacing: -0.5px;
+  letter-spacing: -0.4px;
   line-height: 1.25;
 }
 .jpm-page-subtitle,
 .inner-page-section p.text-muted {
   font-family: var(--default-font, 'Roboto', sans-serif);
-  font-size: 0.95rem;
+  font-size: 0.85rem;
   font-weight: 400;
   color: #64748b !important;
-  line-height: 1.6;
+  line-height: 1.55;
 }
 
 /* ── TYPOGRAPHY & BUTTONS (DESIGN SYSTEM 2026 - ĐỒNG BỘ TRANG CHỦ) ── */
 .section-editorial-title {
   font-family: var(--heading-font, 'Raleway', sans-serif);
-  font-size: 28px;
+  font-size: 1.75rem;
   font-weight: 700;
   line-height: 1.28;
   letter-spacing: -0.3px;
@@ -665,9 +665,9 @@ export default {
 
 .section-editorial-subtitle {
   font-family: var(--default-font, 'Roboto', sans-serif);
-  font-size: 0.95rem;
+  font-size: 0.85rem;
   font-weight: 400;
-  line-height: 1.6;
+  line-height: 1.55;
   color: #64748b;
 }
 
@@ -963,13 +963,13 @@ a:hover .hero-title-hover {
 
 @media (max-width: 767px) {
   .jpm-page-title {
-    font-size: 24px !important;
+    font-size: 1.35rem !important;
   }
   .section-editorial-title {
-    font-size: 24px;
+    font-size: 1.2rem;
   }
   .section-editorial-subtitle {
-    font-size: 0.9rem;
+    font-size: 0.8rem;
   }
   .latest-side-thumb {
     width: 115px;

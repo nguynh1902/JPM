@@ -41,7 +41,7 @@ class DanhMucSanPhamController extends Controller
                 ->where('danh_muc_san_pham_id', $cat->id)
                 ->where('trang_thai', 1)
                 ->orderBy('id', 'desc')
-                ->limit(4)
+                ->limit(5)
                 ->get();
             
             if ($products->count() > 0) {

@@ -439,7 +439,7 @@ const filteredModels = computed(() => {
 
 .catalog-sidebar-title {
   font-family: var(--heading-font, 'Raleway', sans-serif);
-  font-size: 1rem;
+  font-size: 1.1rem;
   font-weight: 700;
   color: #0A1128;
   margin: 0;
@@ -573,7 +573,7 @@ const filteredModels = computed(() => {
 .jpm-card-title {
   font-family: var(--heading-font, 'Raleway', sans-serif);
   font-weight: 700;
-  font-size: 1rem;
+  font-size: 0.95rem;
   color: #0A1128;
 }
 
@@ -581,7 +581,7 @@ const filteredModels = computed(() => {
   background: #f1f5f9;
   color: #475569;
   border: 1px solid #e2e8f0;
-  font-size: 11.5px;
+  font-size: 0.75rem;
   font-weight: 600;
   padding: 4px 10px;
   border-radius: var(--jpm-radius-badge, 6px);

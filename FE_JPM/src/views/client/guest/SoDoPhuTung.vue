@@ -14,26 +14,38 @@
           </p>
         </div>
 
-        <nav aria-label="breadcrumb" class="custom-breadcrumb pt-2">
-          <ol class="breadcrumb mb-0 align-items-center">
-            <li class="breadcrumb-item">
-              <router-link to="/" class="text-decoration-none text-muted d-flex align-items-center">
-                <i class="bi bi-house-door-fill me-1"></i> Trang chủ
-              </router-link>
-            </li>
-            <li class="breadcrumb-item">
-              <span class="text-muted">Danh mục</span>
-            </li>
-            <li class="breadcrumb-item">
-              <router-link :to="`/thuong-hieu/${brandRoute}`" class="text-decoration-none text-muted fw-bold">
-                {{ brandName }}
-              </router-link>
-            </li>
-            <li class="breadcrumb-item active fw-bold" style="color: var(--heading-color);" aria-current="page">
-              Sơ đồ {{ modelName }}
-            </li>
-          </ol>
-        </nav>
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 pt-2">
+          <nav aria-label="breadcrumb" class="custom-breadcrumb">
+            <ol class="breadcrumb mb-0 align-items-center">
+              <li class="breadcrumb-item">
+                <router-link to="/" class="text-decoration-none text-muted d-flex align-items-center">
+                  <i class="bi bi-house-door-fill me-1"></i> Trang chủ
+                </router-link>
+              </li>
+              <li class="breadcrumb-item">
+                <span class="text-muted">Danh mục</span>
+              </li>
+              <li class="breadcrumb-item">
+                <router-link :to="`/thuong-hieu/${brandRoute}`" class="text-decoration-none text-muted fw-bold">
+                  {{ brandName }}
+                </router-link>
+              </li>
+              <li class="breadcrumb-item active fw-bold" style="color: var(--heading-color);" aria-current="page">
+                Sơ đồ {{ modelName }}
+              </li>
+            </ol>
+          </nav>
+
+          <button 
+            type="button"
+            @click="goBackTraCuu" 
+            class="btn-back-diagram"
+            title="Quay lại danh sách tra cứu"
+          >
+            <i class="bi bi-arrow-left"></i>
+            <span>Quay lại tra cứu</span>
+          </button>
+        </div>
       </div>
 
       
@@ -109,7 +121,7 @@
           <div class="d-flex w-100 align-items-stretch" id="split-container" style="min-height: 660px;">
             
             <!-- NỬA TRÁI: BẢN VẼ (Pan + Zoom) -->
-            <div :style="{ width: splitRatio + '%' }" class="pe-2">
+            <div :style="{ width: splitRatio + '%' }" class="diagram-pane pe-lg-2">
               <div class="card sticky-sidebar diagram-panel-card" style="height: 660px;">
                 <div class="card-header bg-white border-bottom py-3 px-4 d-flex justify-content-between align-items-center" v-if="activeComponentId">
                   <h4 class="mb-0 jpm-card-title text-truncate">Sơ đồ phân rã: <span class="text-danger">{{ activeComponentName }}</span></h4>
@@ -198,7 +210,7 @@
             </div>
 
             <!-- NỬA PHẢI: BẢNG SẢN PHẨM -->
-            <div :style="{ width: (100 - splitRatio) + '%' }" class="ps-2 d-flex flex-column">
+            <div :style="{ width: (100 - splitRatio) + '%' }" class="parts-pane ps-lg-2 d-flex flex-column">
               <div class="card flex-grow-1 diagram-panel-card" v-if="activeComponentId">
                 <div class="card-header bg-white py-3 px-4 border-bottom d-flex flex-wrap justify-content-between align-items-center gap-2" style="min-height: 60px;">
                   <h4 class="mb-0 jpm-card-title text-truncate" style="max-width: 100%;">Danh sách Phụ Tùng</h4>
@@ -409,13 +421,22 @@
 
 <script setup>
 import { computed, ref, watch, nextTick, onUnmounted } from 'vue';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { useQuery } from '@tanstack/vue-query';
 import axiosClient from '../../../api/axiosClient';
 import { useCartStore } from '../../../stores/cartStore';
 import { createToaster } from '@meforma/vue-toaster';
 
 const route = useRoute();
+const router = useRouter();
+
+const goBackTraCuu = () => {
+  if (window.history.state?.back) {
+    router.back();
+  } else {
+    router.push('/tra-cuu');
+  }
+};
 
 const getImageUrl = (path) => {
   if (!path) return '';
@@ -426,15 +447,20 @@ const getImageUrl = (path) => {
 
 const targetPartCode = computed(() => (route.query.part || '').toString().trim().toUpperCase());
 
-const modelName = computed(() => {
+const modelCode = computed(() => {
   const raw = route.params.model || route.params.modelCode || '';
   try { return decodeURIComponent(raw); } catch { return raw; }
 });
 
 const { data: diagramResponse, isLoading } = useQuery({
-  queryKey: computed(() => ['clientDiagrams', modelName.value]),
-  queryFn: () => axiosClient.get(`/public/so-do-model/${modelName.value}`),
-  enabled: computed(() => !!modelName.value)
+  queryKey: computed(() => ['clientDiagrams', modelCode.value]),
+  queryFn: () => axiosClient.get(`/public/so-do-model/${modelCode.value}`),
+  enabled: computed(() => !!modelCode.value)
+});
+
+// Tên Model ưu tiên lấy tên hiển thị đầy đủ (ten_model) từ dữ liệu model, fallback về ma_model hoặc param route
+const modelName = computed(() => {
+  return diagramResponse.value?.data?.model?.ten_model || diagramResponse.value?.data?.model?.ma_model || modelCode.value;
 });
 
 const brandRoute = computed(() => {
@@ -875,7 +901,7 @@ const startSidebarDrag = () => {
 .jpm-card-title {
   font-family: var(--heading-font, 'Raleway', sans-serif);
   font-weight: 700;
-  font-size: 1rem;
+  font-size: 0.95rem;
   color: #0A1128;
 }
 
@@ -923,7 +949,7 @@ const startSidebarDrag = () => {
 
 .catalog-sidebar-title {
   font-family: var(--heading-font, 'Raleway', sans-serif);
-  font-size: 1rem;
+  font-size: 1.1rem;
   font-weight: 700;
   color: #0A1128;
   margin: 0;
@@ -1400,9 +1426,49 @@ const startSidebarDrag = () => {
   color: var(--accent-color);
 }
 
-@media (max-width: 991px) {
+@media (max-width: 991.98px) {
   .dynamic-sidebar, .dynamic-content {
     width: 100% !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+
+  .dynamic-sidebar .catalog-sidebar-card {
+    height: auto !important;
+    max-height: 250px !important;
+  }
+
+  .dynamic-sidebar .catalog-nav-list {
+    max-height: 190px !important;
+  }
+}
+
+@media (max-width: 767.98px) {
+  #split-container {
+    flex-direction: column !important;
+    min-height: auto !important;
+  }
+
+  .diagram-pane, .parts-pane {
+    width: 100% !important;
+    padding: 0 !important;
+  }
+
+  .diagram-pane .diagram-panel-card {
+    height: 380px !important;
+  }
+
+  .parts-pane {
+    margin-top: 1rem;
+  }
+
+  .parts-pane .diagram-panel-card {
+    height: auto !important;
+    min-height: 480px;
+  }
+
+  #split-container > .resizer {
+    display: none !important;
   }
 }
 

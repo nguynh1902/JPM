@@ -55,13 +55,13 @@
               </nav>
 
               <button 
-                v-if="fromModelId" 
+                type="button"
                 @click="goBack" 
                 class="btn-back-diagram"
-                title="Quay lại sơ đồ động cơ"
+                :title="fromModelId ? 'Quay lại sơ đồ' : 'Quay lại tra cứu'"
               >
                 <i class="bi bi-arrow-left"></i>
-                <span>Quay lại sơ đồ</span>
+                <span>{{ fromModelId ? 'Quay lại sơ đồ' : 'Quay lại tra cứu' }}</span>
               </button>
             </div>
           </div>
@@ -616,10 +616,10 @@ const scrollThumbnails = (direction) => {
 };
 
 const goBack = () => {
-  if (window.history.length > 1) {
+  if (window.history.state?.back) {
     router.back();
   } else {
-    router.push('/');
+    router.push(fromModelId.value ? '/tra-cuu' : '/san-pham');
   }
 };
 

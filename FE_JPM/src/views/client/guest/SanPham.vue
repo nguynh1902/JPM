@@ -41,7 +41,7 @@
       <div class="container">
 
         <!-- MAIN CONTENT: SPLIT LAYOUT -->
-        <div class="jpm-split-layout mt-1" data-aos="fade-up" data-aos-delay="100">
+        <div class="jpm-split-layout mt-1">
           
           <!-- SIDEBAR -->
           <div class="jpm-split-sidebar mb-4 mb-lg-0">
@@ -125,8 +125,8 @@
             
             <!-- GROUPED MODE (Default, no filters) -->
             <div v-if="isGroupedMode">
-              <div v-if="isLoadingGrouped" class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4">
-                <div class="col" v-for="i in 6" :key="i">
+              <div v-if="isLoadingGrouped" class="row row-cols-2 row-cols-md-3 row-cols-xl-4 g-2 g-sm-3">
+                <div class="col" v-for="i in 8" :key="i">
                   <ProductCard :loading="true" />
                 </div>
               </div>
@@ -139,8 +139,8 @@
                     </button>
                   </div>
                   
-                  <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4">
-                    <div class="col" v-for="prod in (cat.products ? cat.products.slice(0, 3) : [])" :key="prod.id">
+                  <div class="row row-cols-2 row-cols-md-3 row-cols-xl-4 g-2 g-sm-3">
+                    <div class="col" v-for="prod in (cat.products ? cat.products.slice(0, 4) : [])" :key="prod.id">
                       <ProductCard :product="prod" @add-to-cart="addToCart" />
                     </div>
                   </div>
@@ -201,14 +201,14 @@
               </div>
               
               <!-- Loading Skeleton -->
-              <div v-if="isLoadingProducts" class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4">
-                <div class="col" v-for="i in 6" :key="i">
+              <div v-if="isLoadingProducts" class="row row-cols-2 row-cols-md-3 row-cols-xl-4 g-2 g-sm-3">
+                <div class="col" v-for="i in 8" :key="i">
                   <ProductCard :loading="true" />
                 </div>
               </div>
 
               <!-- Grid -->
-              <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4" v-else-if="products.length > 0">
+              <div class="row row-cols-2 row-cols-md-3 row-cols-xl-4 g-2 g-sm-3" v-else-if="products.length > 0">
                 <div class="col" v-for="prod in products" :key="prod.id">
                   <ProductCard :product="prod" @add-to-cart="addToCart" />
                 </div>
@@ -371,6 +371,7 @@ const fetchProducts = async () => {
   const params = {
     page: currentPage.value,
     sort: sortBy.value,
+    per_page: 16,
   };
   if (selectedCategories.value.length > 0) params.danh_muc = selectedCategories.value.join(',');
   if (searchKeyword.value) params.keyword = searchKeyword.value;
@@ -621,7 +622,7 @@ const scrollToProducts = () => {
 
 .store-banner-title {
   font-family: var(--heading-font, 'Raleway', sans-serif);
-  font-size: clamp(1.6rem, 2.4vw, 2.2rem);
+  font-size: clamp(1.65rem, 2.4vw, 2.1rem);
   font-weight: 800;
   color: #0a1128;
   line-height: 1.2;
@@ -629,7 +630,7 @@ const scrollToProducts = () => {
 }
 
 .store-banner-subtitle {
-  font-size: clamp(0.82rem, 1vw, 0.92rem);
+  font-size: clamp(0.825rem, 1vw, 0.875rem);
   color: #475569;
   line-height: 1.55;
   max-width: 500px;
@@ -679,7 +680,6 @@ const scrollToProducts = () => {
 .shop-catalog-page {
   background-color: #f8fafc;
   min-height: 100vh;
-  overflow-x: hidden;
 }
 
 /* ── PAGE TITLE (MATCHING GIO HANG) ── */
@@ -756,7 +756,7 @@ const scrollToProducts = () => {
   background: #ffffff;
   border: 1px solid #e2e8f0;
   border-radius: 8px;
-  box-shadow: 0 12px 30px rgba(10, 17, 40, 0.12);
+  box-shadow: none !important;
   z-index: 1055;
 }
 
@@ -793,13 +793,16 @@ const scrollToProducts = () => {
   background: #ffffff;
   box-shadow: 0 4px 14px rgba(10, 17, 40, 0.03);
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100vh - 106px);
 }
 
 @media (min-width: 992px) {
   .sticky-sidebar {
     position: sticky;
-    top: 90px;
-    z-index: 10;
+    top: 86px;
+    z-index: 100;
   }
 }
 
@@ -813,11 +816,12 @@ const scrollToProducts = () => {
   border-bottom: 1px solid #f1f5f9;
   background: #ffffff;
   box-sizing: border-box;
+  flex-shrink: 0;
 }
 
 .catalog-sidebar-title {
   font-family: var(--heading-font, 'Raleway', sans-serif);
-  font-size: 1.15rem;
+  font-size: 1.1rem;
   font-weight: 700;
   color: #0A1128;
   margin: 0;
@@ -849,8 +853,9 @@ const scrollToProducts = () => {
 
 .catalog-sidebar-body {
   padding: 14px;
-  max-height: calc(100vh - 160px);
+  flex: 1 1 auto;
   overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .sidebar-section-title {
@@ -1090,6 +1095,10 @@ const scrollToProducts = () => {
 }
 
 /* ── SLEEK SCROLLBAR ── */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 #f8fafc;
+}
 .custom-scrollbar::-webkit-scrollbar {
   width: 5px;
 }

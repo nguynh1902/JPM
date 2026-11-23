@@ -145,13 +145,13 @@ const logout = async () => {
 
 .account-user-name {
   font-family: var(--heading-font, 'Raleway', sans-serif);
-  font-size: 1.125rem;
+  font-size: 1.05rem;
   font-weight: 700;
   color: var(--jpm-color-navy-dark, #0A1128);
 }
 
 .account-user-role {
-  font-size: 13.5px;
+  font-size: 0.8rem;
   color: #64748b;
   font-weight: 500;
 }
@@ -168,7 +168,7 @@ const logout = async () => {
   gap: 12px;
   padding: 10px 16px;
   border-radius: var(--jpm-radius-control, 8px);
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   font-weight: 500;
   color: #475569;
   text-decoration: none;

@@ -125,7 +125,6 @@
                 value-key="id"
                 label-key="ten_model"
                 :disabled="!selectedBrand"
-                :searchable="true"
               />
             </div>
           </div>
@@ -1063,17 +1062,17 @@ export default {
 
 .reason-title {
   font-family: var(--heading-font, var(--jpm-font-heading, 'Raleway', sans-serif));
-  font-size: 0.95rem;
+  font-size: 0.875rem;
   font-weight: 700;
   color: var(--jpm-color-navy-dark, #0A1128);
   margin-bottom: 4px;
-  line-height: 1.3;
+  line-height: 1.35;
   letter-spacing: -0.2px;
 }
 
 .reason-desc {
   font-family: var(--default-font, var(--jpm-font-body, 'Roboto', sans-serif));
-  font-size: 0.82rem;
+  font-size: 0.8rem;
   color: var(--jpm-neutral-700, #334155);
   line-height: 1.45;
   margin-bottom: 0;

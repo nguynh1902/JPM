@@ -64,10 +64,10 @@
       </h5>
 
       <!-- Tầng 3: Mã sản phẩm / SKU (Chuẩn tra cứu kỹ thuật máy thủy) -->
-      <div v-if="showSku" class="product-sku mb-3">
+      <div v-if="showSku" class="product-sku mb-3 d-flex align-items-center">
         <template v-if="productSku">
-          <span class="sku-label text-muted">Mã:</span>
-          <span class="sku-code">{{ productSku }}</span>
+          <span class="sku-label text-muted flex-shrink-0">Mã:</span>
+          <span class="sku-code text-truncate" :title="productSku">{{ productSku }}</span>
         </template>
         <template v-else>&nbsp;</template>
       </div>
@@ -293,6 +293,7 @@ function handleRequestQuote() {
 .product-sku {
   font-size: 0.78rem;
   line-height: 1.3;
+  min-height: 20px;
 }
 
 .sku-label {
@@ -301,12 +302,14 @@ function handleRequestQuote() {
   text-transform: uppercase;
   letter-spacing: 0.3px;
   margin-right: 4px;
+  flex-shrink: 0;
 }
 
 .sku-code {
   font-family: var(--jpm-font-mono, 'Roboto Mono', monospace);
   color: #0d6efd !important;
   font-weight: 700;
+  min-width: 0;
 }
 
 .price-value {
@@ -339,5 +342,56 @@ function handleRequestQuote() {
 
 .is-out-of-stock {
   opacity: 0.75;
+}
+
+@media (max-width: 575.98px) {
+  .product-card .card-body {
+    padding: 8px 10px !important;
+  }
+
+  .product-category {
+    font-size: 0.65rem;
+    letter-spacing: 0.3px;
+  }
+
+  .product-card .card-title {
+    font-size: 0.82rem;
+    line-height: 1.35;
+    height: 2.7em;
+    margin-bottom: 0.15rem;
+  }
+
+  .product-sku {
+    font-size: 0.7rem;
+    margin-bottom: 0.4rem !important;
+    min-height: 16px;
+  }
+
+  .sku-label {
+    font-size: 0.68rem;
+  }
+
+  .price-value {
+    font-size: 0.88rem;
+  }
+
+  .price-quote {
+    font-size: 0.82rem;
+  }
+
+  .btn-cart-action {
+    width: 30px !important;
+    height: 30px !important;
+  }
+
+  .btn-cart-action i {
+    font-size: 0.88rem !important;
+  }
+
+  .jpm-badge {
+    font-size: 0.65rem;
+    padding: 2px 5px;
+    margin: 4px !important;
+  }
 }
 </style>

@@ -413,3 +413,78 @@ input:focus::-moz-placeholder {
   opacity: 0 !important;
 }
 
+/* ══════════════════════════════════════════════════════════════
+   ADMIN HIGH-DENSITY ERP DATA SCALING
+   - Tối ưu kích thước chữ và khoảng cách riêng biệt cho Admin
+   - Hiển thị nhiều dữ liệu hơn trên một màn hình mà không cần cuộn chuột
+   - Tuyệt đối không ảnh hưởng đến giao diện Client
+   ══════════════════════════════════════════════════════════════ */
+html.light-style {
+  font-size: 87.5% !important; /* 14px gốc thay vì 16px */
+}
+
+/* 1. Tinh chỉnh Bảng Dữ Liệu (Data Table) */
+#admin-layout .table {
+  font-size: 0.835rem;
+}
+
+#admin-layout .table > :not(caption) > * > * {
+  padding: 0.45rem 0.85rem;
+}
+
+#admin-layout .table thead th {
+  font-size: 0.72rem !important;
+  letter-spacing: 0.5px;
+  padding-top: 0.55rem;
+  padding-bottom: 0.55rem;
+  font-weight: 700 !important;
+}
+
+/* 2. Tinh chỉnh Sidebar Menu */
+#admin-layout .menu-inner .menu-link {
+  font-size: 0.84rem;
+  padding-top: 0.42rem;
+  padding-bottom: 0.42rem;
+}
+
+#admin-layout .menu-inner .menu-icon {
+  font-size: 1.15rem;
+}
+
+#admin-layout .menu-header {
+  font-size: 0.68rem;
+  letter-spacing: 0.6px;
+  padding-top: 0.6rem;
+  padding-bottom: 0.3rem;
+}
+
+/* 3. Tinh chỉnh Toolbar lọc & ô nhập liệu */
+#admin-layout .form-control,
+#admin-layout .form-select,
+#admin-layout .multiselect {
+  font-size: 0.835rem;
+  min-height: 36px;
+}
+
+#admin-layout .multiselect-single-label,
+#admin-layout .multiselect-placeholder {
+  font-size: 0.835rem;
+}
+
+#admin-layout .multiselect-option {
+  font-size: 0.835rem !important;
+  padding: 0.35rem 0.75rem !important;
+}
+
+/* 4. Tinh chỉnh Badge & Nút thao tác */
+#admin-layout .badge.badge-custom {
+  font-size: 0.68rem;
+  padding: 0.25rem 0.5rem;
+  letter-spacing: 0.3px;
+}
+
+#admin-layout .action-btn {
+  font-size: 1.05rem;
+  padding: 2px 4px;
+}
+

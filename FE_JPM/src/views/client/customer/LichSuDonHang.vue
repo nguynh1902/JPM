@@ -1112,7 +1112,7 @@ const formatDate = (dateStr) => {
   min-width: 110px;
   text-align: center;
   padding: 16px 8px;
-  font-size: 14px;
+  font-size: 0.875rem;
   color: rgba(0, 0, 0, 0.8);
   cursor: pointer;
   user-select: none;
@@ -1131,7 +1131,7 @@ const formatDate = (dateStr) => {
 }
 
 .tab-badge {
-  font-size: 12px;
+  font-size: 0.75rem;
   opacity: 0.85;
 }
 
@@ -1164,7 +1164,7 @@ const formatDate = (dateStr) => {
 }
 
 .order-empty-heading {
-  font-size: 18px;
+  font-size: 1.1rem;
   font-weight: 700;
   color: var(--jpm-color-navy-deep, #0A1128);
   font-family: var(--jpm-font-heading, inherit);
@@ -1197,7 +1197,7 @@ const formatDate = (dateStr) => {
 }
 
 .type-tag {
-  font-size: 10px;
+  font-size: 0.7rem;
   font-weight: 700;
   padding: 3px 8px;
   border-radius: var(--jpm-radius-badge, 6px);
@@ -1214,11 +1214,11 @@ const formatDate = (dateStr) => {
 .order-id {
   font-weight: 700;
   color: #222;
-  font-size: 14px;
+  font-size: 0.875rem;
 }
 
 .order-date {
-  font-size: 12px;
+  font-size: 0.75rem;
 }
 
 .status-badge-pill {
@@ -1226,7 +1226,7 @@ const formatDate = (dateStr) => {
   align-items: center;
   padding: 5px 12px;
   border-radius: var(--jpm-radius-badge, 6px);
-  font-size: 11.5px;
+  font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 0.3px;
   text-transform: uppercase;
@@ -1277,7 +1277,7 @@ const formatDate = (dateStr) => {
   padding: 10px 20px;
   background-color: #fbfbfb;
   border-bottom: 1px solid rgba(0, 0, 0, 0.06);
-  font-size: 13px;
+  font-size: 0.8rem;
   color: rgba(0, 0, 0, 0.7);
 }
 
@@ -1303,7 +1303,7 @@ const formatDate = (dateStr) => {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 24px;
+  font-size: 1.5rem;
   color: #6c757d;
   flex-shrink: 0;
   overflow: hidden;
@@ -1314,16 +1314,16 @@ const formatDate = (dateStr) => {
 }
 
 .item-name {
-  font-size: 14px;
+  font-size: 0.875rem;
   color: rgba(0, 0, 0, 0.87);
 }
 
 .item-oem {
-  font-size: 12px;
+  font-size: 0.75rem;
 }
 
 .item-qty {
-  font-size: 12px;
+  font-size: 0.75rem;
   color: rgba(0, 0, 0, 0.6);
 }
 
@@ -1332,19 +1332,19 @@ const formatDate = (dateStr) => {
 }
 
 .price-contact {
-  font-size: 14px;
+  font-size: 0.875rem;
   font-weight: 700;
   color: var(--accent-color, #f82249);
 }
 
 .price-num {
-  font-size: 14px;
+  font-size: 0.875rem;
   font-weight: 600;
   color: var(--accent-color, #f82249);
 }
 
 .view-detail-hint {
-  font-size: 11.5px;
+  font-size: 0.72rem;
   color: #888;
   display: flex;
   align-items: center;
@@ -1390,7 +1390,7 @@ const formatDate = (dateStr) => {
 }
 
 .finance-label {
-  font-size: 11px;
+  font-size: 0.72rem;
   font-weight: 700;
   text-transform: uppercase;
   color: #64748b;
@@ -1399,7 +1399,7 @@ const formatDate = (dateStr) => {
 }
 
 .finance-value {
-  font-size: 14px;
+  font-size: 0.875rem;
 }
 
 .finance-remaining-bar {
@@ -1438,7 +1438,7 @@ const formatDate = (dateStr) => {
 
 .btn-order-action {
   padding: 8px 16px;
-  font-size: 13.5px;
+  font-size: 0.85rem;
   font-weight: 600;
   border-radius: var(--jpm-radius-control, 8px);
   display: inline-flex;
@@ -1471,7 +1471,7 @@ const formatDate = (dateStr) => {
   padding: 4px;
 }
 .qr-subtext {
-  font-size: 11px;
+  font-size: 0.72rem;
   margin-top: 4px;
 }
 
@@ -1488,7 +1488,7 @@ const formatDate = (dateStr) => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 13px;
+  font-size: 0.8rem;
   padding: 3px 0;
 }
 
@@ -1496,7 +1496,7 @@ const formatDate = (dateStr) => {
   margin-left: 8px;
   border: 1px solid #cbd5e1;
   background: #ffffff;
-  font-size: 11px;
+  font-size: 0.72rem;
   padding: 2px 8px;
   border-radius: var(--jpm-radius-badge, 6px);
   cursor: pointer;

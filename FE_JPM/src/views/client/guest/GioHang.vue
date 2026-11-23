@@ -9,9 +9,15 @@
         
         <!-- Header -->
         <div class="row mb-4">
-          <div class="col-12" data-aos="fade-down">
-            <h2 class="jpm-page-title">Giỏ Hàng <span style="color: var(--jpm-color-red-marine, #F82249);">Báo Giá</span></h2>
-            <p class="text-muted">Kiểm tra phụ tùng và gửi yêu cầu để nhận mức chiết khấu tốt nhất từ JPM Marine.</p>
+          <div class="col-12 d-flex flex-wrap justify-content-between align-items-end gap-3" data-aos="fade-down">
+            <div>
+              <h2 class="jpm-page-title mb-1">Giỏ Hàng <span style="color: var(--jpm-color-red-marine, #F82249);">Báo Giá</span></h2>
+              <p class="text-muted mb-0">Kiểm tra phụ tùng và gửi yêu cầu để nhận mức chiết khấu tốt nhất từ JPM Marine.</p>
+            </div>
+            <router-link to="/san-pham" class="btn-back-diagram" title="Tiếp tục mua sắm">
+              <i class="bi bi-arrow-left"></i>
+              <span>Tiếp tục mua sắm</span>
+            </router-link>
           </div>
         </div>
         
@@ -683,9 +689,10 @@ export default {
 /* ===== HEADER TITLE (KHÔI PHỤC BẢN GỐC 2 HÔM TRƯỚC) ===== */
 .jpm-page-title {
   font-family: var(--heading-font, 'Raleway', sans-serif);
+  font-size: 1.55rem;
   font-weight: 800;
   color: #0A1128;
-  letter-spacing: -0.5px;
+  letter-spacing: -0.4px;
 }
 
 /* ===== SHARED 12PX CARDS (CHUẨN PRODUCT-CARD VÀ FILTER CONSOLE TRANG CHỦ) ===== */
@@ -699,7 +706,7 @@ export default {
 
 .jpm-card-title {
   font-family: var(--heading-font, 'Raleway', sans-serif);
-  font-size: 1.05rem;
+  font-size: 0.95rem;
   font-weight: 700;
   color: var(--jpm-color-navy-deep, #0A1128);
   letter-spacing: -0.2px;
@@ -709,7 +716,7 @@ export default {
   background: #f1f5f9;
   color: #475569;
   border: 1px solid #e2e8f0;
-  font-size: 11.5px;
+  font-size: 0.75rem;
   font-weight: 700;
   padding: 4px 10px;
   border-radius: var(--jpm-radius-badge, 6px);

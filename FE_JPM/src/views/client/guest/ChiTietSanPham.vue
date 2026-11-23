@@ -50,14 +50,15 @@
                 </ol>
               </nav>
 
-              <router-link 
-                to="/san-pham" 
+              <button 
+                type="button"
+                @click="goBackStore" 
                 class="btn-back-diagram"
                 title="Quay lại cửa hàng"
               >
                 <i class="bi bi-arrow-left"></i>
                 <span>Quay lại cửa hàng</span>
-              </router-link>
+              </button>
             </div>
           </div>
 
@@ -410,7 +411,7 @@
 
 <script setup>
 import { ref, computed, watch, onMounted, onUnmounted, nextTick } from 'vue';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { useQuery, useMutation } from '@tanstack/vue-query';
 import axiosClient from '../../../api/axiosClient';
 import { createToaster } from '@meforma/vue-toaster';
@@ -423,6 +424,15 @@ const cartStore = useCartStore();
 const toaster = createToaster({ position: 'top-right', duration: 3000 });
 
 const route = useRoute();
+const router = useRouter();
+
+const goBackStore = () => {
+  if (window.history.state?.back) {
+    router.back();
+  } else {
+    router.push('/san-pham');
+  }
+};
 const productSlug = computed(() => route.params.slug);
 
 const qty = ref(1);

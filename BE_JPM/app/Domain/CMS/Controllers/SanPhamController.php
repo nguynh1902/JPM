@@ -172,7 +172,8 @@ class SanPhamController extends Controller
         if (request()->has('all')) {
             $data = $query->get();
         } else {
-            $data = $query->paginate(12);
+            $perPage = (int) request()->input('per_page', 16);
+            $data = $query->paginate($perPage);
         }
 
         return response()->json([

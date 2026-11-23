@@ -68,10 +68,10 @@
         </div>
 
         <!-- MAIN SPLIT LAYOUT -->
-        <div class="jpm-split-layout mt-2" data-aos="fade-up" data-aos-delay="100">
+        <div class="jpm-split-layout mt-2">
 
           <!-- BÊN TRÁI: BỘ LỌC SIDEBAR -->
-          <div class="jpm-split-sidebar mb-4 mb-lg-0" style="position: relative; z-index: 1040;">
+          <div class="jpm-split-sidebar mb-4 mb-lg-0">
             <div class="card sticky-sidebar catalog-sidebar-card shadow-sm">
               
               <!-- 1. HEADER BỘ LỌC CHUẨN LUXURY MINIMALISM -->
@@ -244,15 +244,15 @@
               </div>
 
               <!-- LOADING SKELETON -->
-              <div v-if="isFetchingGlobal" class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4">
-                <div class="col" v-for="i in 6" :key="i">
+              <div v-if="isFetchingGlobal" class="row row-cols-2 row-cols-md-3 row-cols-xl-4 g-2 g-sm-3">
+                <div class="col" v-for="i in 8" :key="i">
                   <ProductCard :loading="true" />
                 </div>
               </div>
 
               <!-- TAB 1: SƠ ĐỒ BẢN VẼ -->
               <div v-else-if="activeTab === 'diagrams'">
-                <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4" v-if="diagramsList.length > 0">
+                <div class="row row-cols-2 row-cols-md-3 row-cols-xl-4 g-2 g-sm-3" v-if="diagramsList.length > 0">
                   <div class="col" v-for="diag in diagramsList" :key="diag.id">
                     <div 
                       class="card h-100 product-card jpm-card position-relative" 
@@ -286,10 +286,10 @@
                           </span>
                         </h5>
 
-                        <!-- Tầng 3: Dưới là Model -->
-                        <div class="product-sku mb-3">
+                        <!-- Tầng 3: Dưới là Model (Khóa cứng 1 dòng d-flex, đều tăm tắp) -->
+                        <div class="product-sku mb-3 d-flex align-items-center">
                           <template v-if="diag.model">
-                            <span class="sku-label text-muted">MODEL:</span>
+                            <span class="sku-label text-muted flex-shrink-0">MODEL:</span>
                             <span class="sku-code text-truncate" :title="diag.model.ten_model || diag.model.ma_model">
                               {{ diag.model.ten_model || diag.model.ma_model }}
                             </span>
@@ -338,8 +338,8 @@
                       </button>
                     </div>
 
-                    <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4">
-                      <div class="col" v-for="prod in (filters.nhom_phu_tung_id ? group.items : group.items.slice(0, 3))" :key="prod.id">
+                    <div class="row row-cols-2 row-cols-md-3 row-cols-xl-4 g-2 g-sm-3">
+                      <div class="col" v-for="prod in (filters.nhom_phu_tung_id ? group.items : group.items.slice(0, 4))" :key="prod.id">
                         <ProductCard :product="prod" @add-to-cart="addToCart" />
                       </div>
                     </div>
@@ -927,18 +927,18 @@ export default {
 /* ── TIÊU ĐỀ TRANG & BỐ CỤC ── */
 .jpm-page-title {
   font-family: var(--heading-font, 'Raleway', sans-serif);
-  font-size: 2rem;
+  font-size: 1.55rem;
   font-weight: 800;
   color: #0A1128;
-  letter-spacing: -0.5px;
+  letter-spacing: -0.4px;
   margin-bottom: 0.35rem;
 }
 
 @media (min-width: 992px) {
   .sticky-sidebar {
     position: sticky;
-    top: 90px;
-    z-index: 1040;
+    top: 86px;
+    z-index: 100;
   }
 }
 
@@ -962,11 +962,12 @@ export default {
   background: #ffffff;
   box-sizing: border-box;
   border-radius: 12px 12px 0 0;
+  flex-shrink: 0;
 }
 
 .catalog-sidebar-title {
   font-family: var(--heading-font, 'Raleway', sans-serif);
-  font-size: 1.15rem;
+  font-size: 1.1rem;
   font-weight: 700;
   color: #0A1128;
   margin: 0;
@@ -1195,7 +1196,7 @@ export default {
   background: #ffffff;
   border: 1px solid #e2e8f0;
   border-radius: 8px;
-  box-shadow: 0 12px 30px rgba(10, 17, 40, 0.12);
+  box-shadow: none !important;
   z-index: 1065;
 }
 
@@ -1495,6 +1496,7 @@ export default {
   font-size: 0.78rem;
   color: #64748b;
   line-height: 1.3;
+  min-height: 20px;
 }
 
 .sku-label {
@@ -1503,6 +1505,7 @@ export default {
   text-transform: uppercase;
   letter-spacing: 0.3px;
   margin-right: 4px;
+  flex-shrink: 0;
 }
 
 .sku-code {
@@ -1510,6 +1513,7 @@ export default {
   color: #0d6efd !important;
   font-weight: 700;
   letter-spacing: 0.2px;
+  min-width: 0;
 }
 
 .price-value {
@@ -1546,6 +1550,26 @@ export default {
   border-color: #f82249;
   color: #ffffff;
   transform: scale(1.05);
+}
+
+@media (max-width: 575.98px) {
+  .product-card .card-body {
+    padding: 8px 10px !important;
+  }
+  .diagram-card-title {
+    font-size: 0.82rem !important;
+    line-height: 1.35;
+    height: 2.7em;
+    margin-bottom: 0.15rem;
+  }
+  .product-sku {
+    font-size: 0.7rem !important;
+    margin-bottom: 0.4rem !important;
+    min-height: 16px;
+  }
+  .diagram-action-link {
+    font-size: 0.78rem !important;
+  }
 }
 
 .text-truncate-2 {
@@ -1627,6 +1651,10 @@ export default {
 }
 
 /* Custom Scrollbar */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 #f8fafc;
+}
 .custom-scrollbar::-webkit-scrollbar {
   width: 5px;
 }

@@ -161,17 +161,17 @@ const handleAvatarFileChange = async (event) => {
 /* jpm-page-title & jpm-page-subtitle đồng bộ 100% Cửa Hàng, Tra Cứu, Tin Tức */
 .jpm-page-title {
   font-family: var(--heading-font, 'Raleway', sans-serif);
-  font-size: 28px !important;
+  font-size: 1.55rem !important;
   font-weight: 800;
   color: var(--heading-color, #0A1128) !important;
-  letter-spacing: -0.5px;
+  letter-spacing: -0.4px;
   line-height: 1.25;
 }
 .jpm-page-subtitle {
   font-family: var(--default-font, 'Roboto', sans-serif);
-  font-size: 0.95rem;
+  font-size: 0.85rem;
   font-weight: 400;
   color: #64748b !important;
-  line-height: 1.6;
+  line-height: 1.55;
 }
 </style>
