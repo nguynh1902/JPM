@@ -158,6 +158,35 @@
   scroll-behavior: smooth;
 }
 
+/* ══════════════════════════════════════════════════════════════
+   GLOBAL CLIENT DESKTOP UI SCALING (Tỷ lệ 90% thanh lịch cho Desktop)
+   - Giữ nguyên khung Container 1320px/1140px chuẩn rộng rãi
+   - Tự động co nhỏ 10% toàn bộ chữ, padding, margin, nút bấm
+   - Không ảnh hưởng giao diện điện thoại/máy tính bảng (< 992px)
+   ══════════════════════════════════════════════════════════════ */
+@media (min-width: 992px) {
+  html {
+    font-size: 90%; /* 14.4px thay vì 16px gốc */
+  }
+
+  /* Tinh chỉnh nhịp điệu khoảng cách dọc section để đạt độ nén 90% chuẩn TMĐT */
+  .section {
+    padding: 48px 0;
+  }
+
+  .section-title {
+    padding-bottom: 28px;
+  }
+
+  .section-title h2 {
+    font-size: 1.65rem;
+  }
+
+  .sponsors .client-logo {
+    height: 80px;
+  }
+}
+
 /*--------------------------------------------------------------
 # General Styling & Shared Classes
 --------------------------------------------------------------*/

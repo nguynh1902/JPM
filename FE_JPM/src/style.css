@@ -11,6 +11,13 @@ body,
   min-height: 100%;
 }
 
+/* Global Desktop UI Scaling 90% (chuẩn W3C Root REM Scaling) */
+@media (min-width: 992px) {
+  html {
+    font-size: 90%; /* 14.4px thay vì 16px gốc */
+  }
+}
+
 body {
   overflow-x: hidden;
 }
