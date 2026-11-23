@@ -157,14 +157,14 @@
             </button>
           </nav>
 
-          <!-- Link Xem thêm chuẩn SanPham.vue ngay trên viền border-bottom -->
+          <!-- Link Xem thêm đồng bộ chuẩn JPM Design System -->
           <button
             v-if="topCategoryArticles.length > 4"
             type="button"
-            class="btn btn-link text-danger fw-bold text-decoration-none d-flex align-items-center gap-1 p-0 shadow-none section-more-btn flex-shrink-0 ms-3 pb-2"
+            class="jpm-more-link flex-shrink-0 ms-3 pb-2"
             @click="showAllTopCategory = !showAllTopCategory"
           >
-            {{ showAllTopCategory ? 'Thu gọn' : 'Xem thêm' }}
+            <span>{{ showAllTopCategory ? 'Thu gọn' : 'Xem thêm' }}</span>
             <i class="bi" :class="showAllTopCategory ? 'bi-arrow-up' : 'bi-arrow-right'"></i>
           </button>
         </div>
@@ -219,13 +219,14 @@
             <h2 class="section-editorial-title m-0">Cẩm Nang &amp; Kinh Nghiệm Kỹ Thuật</h2>
             <p class="section-editorial-subtitle mt-1 mb-0">Hướng dẫn thực tế về bảo trì, phụ tùng thay thế và giải pháp vận hành tàu thuyền bền bỉ</p>
           </div>
+          <!-- Link Xem thêm đồng bộ chuẩn JPM Design System -->
           <button
             v-if="guideArticles.length > 4"
             type="button"
-            class="btn btn-link text-danger fw-bold text-decoration-none d-flex align-items-center gap-1 p-0 shadow-none section-more-btn flex-shrink-0 ms-3"
+            class="jpm-more-link flex-shrink-0 ms-3"
             @click="showMoreGuide = !showMoreGuide"
           >
-            {{ showMoreGuide ? 'Thu gọn' : 'Xem thêm' }}
+            <span>{{ showMoreGuide ? 'Thu gọn' : 'Xem thêm' }}</span>
             <i class="bi" :class="showMoreGuide ? 'bi-arrow-up' : 'bi-arrow-right'"></i>
           </button>
         </div>
@@ -735,19 +736,6 @@ export default {
   color: var(--jpm-color-red-marine, #f82249);
   font-weight: 700;
   border-bottom-color: var(--jpm-color-red-marine, #f82249);
-}
-
-.section-more-btn {
-  font-family: var(--heading-font, 'Raleway', sans-serif);
-  font-size: 0.92rem;
-  font-weight: 700;
-  color: var(--jpm-color-red-marine, #F82249) !important;
-  text-decoration: none;
-  transition: opacity 0.2s ease;
-}
-.section-more-btn:hover {
-  text-decoration: underline !important;
-  opacity: 0.85;
 }
 
 .portrait-card-img {

@@ -10,67 +10,63 @@
         </div>
 
         <!-- Integrated Machine Model Header -->
-        <div v-else-if="garageData" class="d-flex align-items-center justify-content-between w-100 flex-wrap gap-2">
-          <div class="d-flex align-items-center gap-3 min-w-0">
-            <router-link
-              to="/garage"
-              class="btn-back-header flex-shrink-0"
-              title="Quay lại Garage của tôi">
-              <i class="bi bi-arrow-left"></i>
-            </router-link>
+        <div v-else-if="garageData" class="d-flex align-items-center justify-content-between w-100 flex-wrap gap-3">
+          <div class="min-w-0">
+            <!-- Dòng trên: Tên Model máy (đã bỏ phần thừa bên trên) -->
+            <h5 class="jpm-card-title mb-1" :title="garageData.dong_co_model?.ten_model">
+              {{ garageData.dong_co_model?.ten_model || 'Chưa rõ Model' }}
+            </h5>
 
-            <div class="min-w-0">
-              <!-- Dòng trên: Tên Model máy (đã bỏ phần thừa bên trên) -->
-              <h5 class="jpm-card-title mb-1" :title="garageData.dong_co_model?.ten_model">
-                {{ garageData.dong_co_model?.ten_model || 'Chưa rõ Model' }}
-              </h5>
+            <!-- Dòng dưới: Thông số tối giản, phân cách thanh lịch bằng vách ngăn | -->
+            <div class="garage-specs-row d-flex align-items-center flex-wrap">
+              <!-- Chữ Thương hiệu màu đỏ -->
+              <span v-if="garageData.dong_co_model?.thuong_hieu?.name" class="fw-bold" style="color: var(--jpm-color-red-marine, #F82249); letter-spacing: 0.3px;">
+                {{ garageData.dong_co_model.thuong_hieu.name }}
+              </span>
 
-              <!-- Dòng dưới: Chữ thương hiệu màu đỏ + HP bên dưới + Năm sản xuất & Thông số -->
-              <div class="d-flex align-items-center gap-2 flex-wrap text-muted small">
-                <!-- Chữ Thương hiệu màu đỏ -->
-                <span v-if="garageData.dong_co_model?.thuong_hieu?.name" class="fw-bold" style="color: var(--jpm-color-red-marine, #F82249); letter-spacing: 0.3px;">
-                  {{ garageData.dong_co_model.thuong_hieu.name }}
+              <!-- Mã lực HP -->
+              <template v-if="garageData.dong_co_model?.ma_luc">
+                <span v-if="garageData.dong_co_model?.thuong_hieu?.name" class="spec-divider">|</span>
+                <span class="spec-item">
+                  {{ garageData.dong_co_model.ma_luc }} HP
                 </span>
+              </template>
 
-                <!-- Cái HP bên dưới -->
-                <template v-if="garageData.dong_co_model?.ma_luc">
-                  <span style="color: #cbd5e1;">•</span>
-                  <span class="fw-semibold text-secondary">
-                    <i class="bi bi-lightning-charge me-1 text-warning"></i>{{ garageData.dong_co_model.ma_luc }} HP
-                  </span>
-                </template>
+              <!-- Năm sản xuất -->
+              <template v-if="garageData.dong_co_model?.nam_san_xuat || garageData.dong_co_model?.nam_bat_dau">
+                <span class="spec-divider">|</span>
+                <span class="spec-item">
+                  Năm {{ garageData.dong_co_model?.nam_san_xuat || garageData.dong_co_model?.nam_bat_dau || '' }}
+                </span>
+              </template>
 
-                <!-- Năm sản xuất -->
-                <template v-if="garageData.dong_co_model?.nam_san_xuat || garageData.dong_co_model?.nam_bat_dau">
-                  <span style="color: #cbd5e1;">•</span>
-                  <span class="fw-semibold text-secondary">
-                    <i class="bi bi-calendar3 me-1 text-primary"></i>Năm: {{ garageData.dong_co_model?.nam_san_xuat || garageData.dong_co_model?.nam_bat_dau || '' }}
-                  </span>
-                </template>
-
-                <!-- Loại động cơ -->
-                <span v-if="garageData.dong_co_model?.loai_dong_co?.name" class="badge bg-light text-secondary border px-2 py-0.5">
+              <!-- Loại động cơ -->
+              <template v-if="garageData.dong_co_model?.loai_dong_co?.name">
+                <span class="spec-divider">|</span>
+                <span class="spec-item">
                   {{ garageData.dong_co_model.loai_dong_co.name }}
                 </span>
+              </template>
 
-                <!-- Serial -->
-                <span v-if="garageData.so_serial" class="text-truncate" style="max-width: 200px;">
-                  <span style="color: #cbd5e1;" class="me-2">•</span>
-                  <i class="bi bi-upc-scan me-1"></i>Serial: {{ garageData.so_serial }}
+              <!-- Serial -->
+              <template v-if="garageData.so_serial">
+                <span class="spec-divider">|</span>
+                <span class="spec-item text-truncate" style="max-width: 220px;" :title="'Số serial: ' + garageData.so_serial">
+                  Số máy: {{ garageData.so_serial }}
                 </span>
-              </div>
+              </template>
             </div>
           </div>
 
-          <!-- Header Actions: Nút Tra sơ đồ phụ tùng -->
-          <div class="d-flex align-items-center gap-2 flex-shrink-0">
-            <router-link
-              :to="`/tra-cuu?brand=${garageData?.dong_co_model?.thuong_hieu_id}&engineType=${garageData?.dong_co_model?.loai_dong_co_id}&model=${garageData?.dong_co_model_id}&year=${garageData?.dong_co_model?.nam_san_xuat || ''}`"
-              class="btn btn-outline-primary btn-action-header"
-              title="Tra cứu sơ đồ phụ tùng cho động cơ này">
-              <i class="bi bi-search"></i>Tra phụ tùng
-            </router-link>
-          </div>
+          <!-- Nút quay lại đồng bộ như các page khác (dạng link text + mũi tên, không đóng khung button) -->
+          <router-link
+            to="/garage"
+            class="btn-back-diagram flex-shrink-0"
+            title="Quay lại danh sách động cơ"
+          >
+            <i class="bi bi-arrow-left"></i>
+            <span>Quay lại danh sách</span>
+          </router-link>
         </div>
       </div>
 
@@ -423,5 +419,62 @@ const addOneToCart = (item) => {
   justify-content: center;
   color: var(--jpm-color-red-marine, #F82249);
   font-size: 2rem;
+}
+
+/* Dòng thông số kỹ thuật tối giản thanh lịch */
+.garage-specs-row {
+  font-size: 0.85rem;
+  color: #64748b;
+  line-height: 1.4;
+}
+
+.spec-item {
+  color: #475569;
+  font-weight: 500;
+}
+
+.spec-divider {
+  color: #cbd5e1;
+  font-size: 0.75rem;
+  margin: 0 8px;
+  user-select: none;
+}
+
+/* Nút quay lại chuẩn hóa đồng bộ với ChiTietSanPham, ChiTietPhuTung, SoDoPhuTung */
+.btn-back-diagram {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  color: var(--jpm-color-navy-dark, #0A1128);
+  border: none;
+  padding: 0;
+  font-size: 0.88rem;
+  font-weight: 600;
+  box-shadow: none;
+  cursor: pointer;
+  text-decoration: none;
+  transition: color 0.2s ease, opacity 0.15s ease;
+  line-height: 1.2;
+}
+
+.btn-back-diagram i {
+  color: inherit;
+  font-size: 1rem;
+  line-height: 1;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), color 0.2s ease;
+}
+
+.btn-back-diagram:hover {
+  background: transparent;
+  color: var(--jpm-color-red-marine, #F82249) !important;
+  box-shadow: none;
+  transform: none;
+  text-decoration: none;
+}
+
+.btn-back-diagram:hover i {
+  color: var(--jpm-color-red-marine, #F82249) !important;
+  transform: translateX(-3px);
 }
 </style>

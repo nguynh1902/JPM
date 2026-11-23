@@ -4514,18 +4514,17 @@ a.btn-shopee-outline:hover {
 .btn-back-diagram {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
-  background: transparent;
+  gap: 6px;
+  background: transparent !important;
   color: var(--jpm-color-navy-dark, #0A1128);
-  border: 1px solid transparent;
-  padding: 6px 12px;
+  border: none !important;
+  padding: 0 !important;
   font-size: 0.88rem;
   font-weight: 600;
-  box-shadow: none;
+  box-shadow: none !important;
   cursor: pointer;
-  text-decoration: none;
-  border-radius: 8px;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  text-decoration: none !important;
+  transition: color 0.2s ease, opacity 0.15s ease;
   line-height: 1.2;
 }
 
@@ -4537,11 +4536,11 @@ a.btn-shopee-outline:hover {
 }
 
 .btn-back-diagram:hover {
-  background: rgba(248, 34, 73, 0.06);
+  background: transparent !important;
   color: var(--jpm-color-red-marine, #F82249) !important;
-  border-color: rgba(248, 34, 73, 0.15);
-  box-shadow: none;
-  text-decoration: none;
+  box-shadow: none !important;
+  transform: none !important;
+  text-decoration: none !important;
 }
 
 .btn-back-diagram:hover i {
@@ -4550,21 +4549,8 @@ a.btn-shopee-outline:hover {
 }
 
 .btn-back-diagram:active {
-  opacity: 0.85;
-  transform: scale(0.97);
-}
-
-@media (max-width: 767.98px) {
-  .btn-back-diagram {
-    padding: 7px 14px;
-    background: #f8fafc;
-    border-color: #e2e8f0;
-    font-size: 0.84rem;
-    min-height: 38px;
-  }
-  .btn-back-diagram:active {
-    background: #e2e8f0;
-  }
+  opacity: 0.8;
+  transform: none !important;
 }
 
 @media (max-width: 575.98px) {

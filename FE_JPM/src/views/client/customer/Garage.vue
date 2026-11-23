@@ -63,37 +63,44 @@
                     {{ may.dong_co_model?.ten_model || 'Chưa rõ Model' }}
                   </h6>
 
-                  <!-- Dòng dưới: HP + Năm & Thông số căn trái -->
-                  <div class="d-flex align-items-center gap-2 text-muted small flex-wrap">
+                  <!-- Dòng dưới: Thông số tối giản, phân cách thanh lịch bằng vách ngăn | -->
+                  <div class="garage-specs-row d-flex align-items-center flex-wrap">
                     <!-- HP -->
-                    <span v-if="may.dong_co_model?.ma_luc" class="fw-semibold text-secondary">
-                      <i class="bi bi-lightning-charge me-1 text-warning"></i>{{ may.dong_co_model.ma_luc }} HP
+                    <span v-if="may.dong_co_model?.ma_luc" class="spec-item">
+                      {{ may.dong_co_model.ma_luc }} HP
                     </span>
 
                     <!-- Năm sản xuất -->
                     <template v-if="may.dong_co_model?.nam_san_xuat || may.dong_co_model?.nam_bat_dau">
-                      <span v-if="may.dong_co_model?.ma_luc" style="color: #cbd5e1;">•</span>
-                      <span class="fw-semibold text-secondary">
-                        <i class="bi bi-calendar3 me-1 text-primary"></i>Năm: {{ may.dong_co_model?.nam_san_xuat || may.dong_co_model?.nam_bat_dau || '' }}
+                      <span v-if="may.dong_co_model?.ma_luc" class="spec-divider">|</span>
+                      <span class="spec-item">
+                        Năm {{ may.dong_co_model?.nam_san_xuat || may.dong_co_model?.nam_bat_dau }}
                       </span>
                     </template>
 
                     <!-- Loại máy -->
-                    <span v-if="may.dong_co_model?.loai_dong_co?.name" class="badge bg-light text-secondary border px-2 py-0.5">
-                      {{ may.dong_co_model.loai_dong_co.name }}
-                    </span>
+                    <template v-if="may.dong_co_model?.loai_dong_co?.name">
+                      <span v-if="may.dong_co_model?.ma_luc || may.dong_co_model?.nam_san_xuat || may.dong_co_model?.nam_bat_dau" class="spec-divider">|</span>
+                      <span class="spec-item">
+                        {{ may.dong_co_model.loai_dong_co.name }}
+                      </span>
+                    </template>
 
                     <!-- Serial -->
-                    <span v-if="may.so_serial" class="text-truncate" style="max-width: 200px;">
-                      <span style="color: #cbd5e1;" class="me-2">•</span>
-                      <i class="bi bi-upc-scan me-1"></i>Serial: {{ may.so_serial }}
-                    </span>
+                    <template v-if="may.so_serial">
+                      <span v-if="may.dong_co_model?.ma_luc || may.dong_co_model?.nam_san_xuat || may.dong_co_model?.nam_bat_dau || may.dong_co_model?.loai_dong_co?.name" class="spec-divider">|</span>
+                      <span class="spec-item text-truncate" style="max-width: 220px;" :title="'Số serial: ' + may.so_serial">
+                        Số máy: {{ may.so_serial }}
+                      </span>
+                    </template>
 
                     <!-- Ghi chú nếu có -->
-                    <span v-if="may.ghi_chu" class="text-truncate" style="max-width: 250px;">
-                      <span style="color: #cbd5e1;" class="me-2">•</span>
-                      <i class="bi bi-stickies me-1"></i>{{ may.ghi_chu }}
-                    </span>
+                    <template v-if="may.ghi_chu">
+                      <span class="spec-divider">|</span>
+                      <span class="spec-item text-truncate text-muted fst-italic" style="max-width: 240px;" :title="may.ghi_chu">
+                        {{ may.ghi_chu }}
+                      </span>
+                    </template>
                   </div>
                 </div>
 
@@ -362,13 +369,13 @@ const getImageUrl = (path) => {
   letter-spacing: -0.01em;
 }
 
-/* Card động cơ: Phẳng, không hiệu ứng nổi, chiều cao gọn gàng vừa vặn */
+/* Card động cơ: Đồng bộ 100% với vt-product-card của VatTuThuongMua */
 .garage-item-card {
   border-radius: var(--jpm-radius-card, 12px) !important;
   background-color: var(--jpm-neutral-0, #FFFFFF);
   border: 1px solid var(--jpm-neutral-200, #E2E8F0) !important;
   box-shadow: none !important;
-  padding: 12px 18px !important;
+  padding: 10px 16px !important;
   transition: border-color 0.2s ease, background-color 0.2s ease;
   cursor: pointer;
 }
@@ -386,31 +393,27 @@ const getImageUrl = (path) => {
   line-height: 1.35;
 }
 
-/* Mã/Công suất động cơ: Màu xanh primary #0d6efd đậm, rõ ràng */
-.garage-model-code {
-  font-family: var(--jpm-font-mono, 'Roboto Mono', monospace);
-  color: #0d6efd !important;
+/* Dòng thông số kỹ thuật tối giản thanh lịch */
+.garage-specs-row {
   font-size: 0.85rem;
-  font-weight: 700;
-  letter-spacing: 0.3px;
-  flex-shrink: 0;
+  color: #64748b;
+  line-height: 1.4;
 }
 
-/* Badge thương hiệu: Trung tính, sang trọng, loại bỏ hoàn toàn màu hồng */
-.brand-tag-badge {
-  background-color: #f1f5f9;
-  color: var(--jpm-color-navy-dark, #0A1128);
-  font-weight: 700;
-  font-size: 0.72rem;
-  padding: 2px 7px;
-  letter-spacing: 0.4px;
-  text-transform: uppercase;
-  border-radius: 5px;
-  border: 1px solid #e2e8f0;
+.spec-item {
+  color: #475569;
+  font-weight: 500;
+}
+
+.spec-divider {
+  color: #cbd5e1;
+  font-size: 0.75rem;
+  margin: 0 8px;
+  user-select: none;
 }
 
 /* Hai nút thao tác dạng icon 36x36px đồng bộ 100% với VatTuThuongMua */
-/* Nút Tra Phụ Tùng: Outline màu xanh Primary (#0d6efd) */
+/* Nút Tra Phụ Tùng: Outline màu xanh Primary (#0d6efd) y hệt btn-cart-icon */
 .btn-search-icon {
   width: 36px;
   height: 36px;
@@ -434,7 +437,7 @@ const getImageUrl = (path) => {
   box-shadow: 0 4px 10px rgba(13, 110, 253, 0.25);
 }
 
-/* Nút Xóa: Bình thường xám trung tính tinh tế, khi hover chuyển sang ĐỎ rực rỡ */
+/* Nút Xóa: Bình thường xám trung tính tinh tế, khi hover chuyển sang ĐỎ rực rỡ y hệt btn-delete-icon */
 .btn-delete-icon {
   width: 36px;
   height: 36px;

@@ -66,33 +66,66 @@
 
                 <!-- List -->
                 <div class="d-flex flex-column gap-3" v-else>
-                  <div v-for="address in addresses" :key="address.id" class="p-4 border address-item-card" :class="{ 'address-item-default': address.la_mac_dinh }">
-                    <div class="d-flex justify-content-between align-items-md-center flex-column flex-md-row gap-3">
-                      <div>
-                        <!-- Tên & SDT -->
-                        <div class="d-flex align-items-center gap-3 mb-2 flex-wrap">
-                          <h6 class="mb-0 address-recipient-name">{{ address.ten_nguoi_nhan }}</h6>
-                          <span class="address-recipient-phone">
-                            <i class="bi bi-telephone me-1" style="opacity: 0.6;"></i>{{ address.so_dien_thoai }}
-                          </span>
-                          <span v-if="address.la_mac_dinh" class="badge address-default-badge">Mặc định</span>
-                        </div>
-                        <p class="mb-0 mt-2 address-text">{{ address.dia_chi_cu_the }}</p>
+                  <div
+                    v-for="address in addresses"
+                    :key="address.id"
+                    class="border address-item-card d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3"
+                    :class="{ 'address-item-default': address.la_mac_dinh }"
+                  >
+                    <!-- Bên trái: Thông tin chi tiết địa chỉ (2 dòng gọn gàng, đồng bộ với Garage / VatTuThuongMua) -->
+                    <div class="flex-grow-1 min-w-0">
+                      <!-- Dòng trên: Tên người nhận + SĐT + Badge Mặc định -->
+                      <div class="d-flex align-items-center gap-2 mb-1 flex-wrap">
+                        <h6 class="fw-bold mb-0 text-truncate address-recipient-name">
+                          {{ address.ten_nguoi_nhan }}
+                        </h6>
+                        <span class="address-divider">|</span>
+                        <span class="address-recipient-phone">
+                          <i class="bi bi-telephone me-1 opacity-75"></i>{{ address.so_dien_thoai }}
+                        </span>
+                        <span v-if="address.la_mac_dinh" class="badge address-default-badge">
+                          Mặc định
+                        </span>
                       </div>
-                      
-                      <!-- Actions -->
-                      <div class="d-flex align-items-center gap-3 pe-2">
-                        <button v-if="!address.la_mac_dinh" @click="setDefault(address.id)" class="btn p-0 text-secondary btn-set-default">Đặt mặc định</button>
-                        
-                        <!-- Nút Sửa -->
-                        <button class="btn btn-edit-row" title="Sửa địa chỉ" @click.prevent="openEditAddressModal(address)">
-                          <i class="bi bi-pencil-square"></i>
-                        </button>
-                        <!-- Nút Xóa -->
-                        <button class="btn btn-delete-row" title="Xóa địa chỉ" @click.prevent="deleteAddress(address.id)">
-                          <i class="bi bi-trash3"></i>
-                        </button>
-                      </div>
+
+                      <!-- Dòng dưới: Địa chỉ cụ thể -->
+                      <p class="mb-0 text-truncate address-text" :title="address.dia_chi_cu_the">
+                        {{ address.dia_chi_cu_the }}
+                      </p>
+                    </div>
+
+                    <!-- Bên phải: Các nút thao tác chuẩn 36px đồng bộ với Garage / VatTuThuongMua -->
+                    <div class="d-flex align-items-center gap-2 flex-shrink-0 pe-1 align-self-end align-self-md-center">
+                      <!-- Nút Đặt mặc định: Cao 36px, bo góc 8px -->
+                      <button
+                        v-if="!address.la_mac_dinh"
+                        type="button"
+                        class="btn btn-set-default"
+                        title="Đặt làm địa chỉ nhận hàng mặc định"
+                        @click="setDefault(address.id)"
+                      >
+                        Đặt mặc định
+                      </button>
+
+                      <!-- Nút Sửa: 36x36px -->
+                      <button
+                        type="button"
+                        class="btn btn-action-icon btn-edit-icon"
+                        title="Sửa địa chỉ"
+                        @click.prevent="openEditAddressModal(address)"
+                      >
+                        <i class="bi bi-pencil"></i>
+                      </button>
+
+                      <!-- Nút Xóa: 36x36px -->
+                      <button
+                        type="button"
+                        class="btn btn-action-icon btn-delete-icon"
+                        title="Xóa địa chỉ"
+                        @click.prevent="deleteAddress(address.id)"
+                      >
+                        <i class="bi bi-trash3"></i>
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -484,50 +517,124 @@ const setDefault = (id) => {
   color: var(--jpm-color-navy-dark, #0A1128);
 }
 
-/* Sổ Địa Chỉ Card Styling */
+.hover-red:hover {
+  color: var(--jpm-color-red-marine, #F82249) !important;
+}
+
+/* Card địa chỉ: Đồng bộ 100% kích thước & bo góc với Garage & VatTuThuongMua */
 .address-item-card {
-  border-radius: var(--jpm-radius-control, 8px) !important;
-  background-color: #ffffff;
-  border: 1px solid #e2e8f0 !important;
-  transition: all 0.2s ease;
+  border-radius: var(--jpm-radius-card, 12px) !important;
+  background-color: var(--jpm-neutral-0, #FFFFFF);
+  border: 1px solid var(--jpm-neutral-200, #E2E8F0) !important;
+  box-shadow: none !important;
+  padding: 10px 16px !important;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
 }
+
 .address-item-card:hover {
+  transform: none !important;
+  box-shadow: none !important;
   border-color: #cbd5e1 !important;
+  background-color: #fafbfc;
 }
+
 .address-item-default {
-  border-color: rgba(248, 34, 73, 0.45) !important;
-  background-color: rgba(248, 34, 73, 0.02) !important;
+  border-color: rgba(248, 34, 73, 0.4) !important;
+  background-color: rgba(248, 34, 73, 0.015) !important;
 }
+
 .address-recipient-name {
-  color: var(--jpm-color-navy-deep, #0A1128);
+  color: var(--jpm-color-navy-dark, #0A1128);
   font-size: 0.95rem;
-  font-weight: 700;
+  line-height: 1.35;
 }
+
+.address-divider {
+  color: #cbd5e1;
+  font-size: 0.75rem;
+  user-select: none;
+}
+
 .address-recipient-phone {
   font-size: 0.85rem;
   color: #64748b;
   font-weight: 500;
 }
+
 .address-default-badge {
-  background-color: rgba(248, 34, 73, 0.08);
+  background-color: #ffe2e5;
   color: var(--jpm-color-red-marine, #F82249);
   font-weight: 600;
   font-size: 0.72rem;
-  padding: 4px 10px;
-  border-radius: var(--jpm-radius-badge, 6px);
-  border: 1px solid rgba(248, 34, 73, 0.15);
+  padding: 2px 8px;
+  border-radius: 4px;
+  letter-spacing: 0.2px;
 }
+
 .address-text {
   font-size: 0.85rem;
   color: #475569;
-  line-height: 1.55;
+  line-height: 1.4;
 }
+
+/* Nút Đặt mặc định: Chiều cao 36px, bo góc 8px đồng bộ với các nút thao tác */
 .btn-set-default {
+  height: 36px;
+  padding: 0 12px;
   font-size: 0.8rem;
-  text-decoration: underline;
-  border: none;
-  background: transparent;
-  transition: color 0.2s;
+  font-weight: 500;
+  border-radius: var(--jpm-radius-control, 8px);
+  border: 1px solid #e2e8f0;
+  background-color: #ffffff;
+  color: #64748b;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.btn-set-default:hover {
+  border-color: var(--jpm-color-navy-dark, #0A1128);
+  color: var(--jpm-color-navy-dark, #0A1128);
+  background-color: #f8fafc;
+}
+
+/* Hai nút Sửa và Xóa: 36x36px đồng bộ 100% với Garage và VatTuThuongMua */
+.btn-action-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--jpm-radius-control, 8px);
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  font-size: 0.95rem;
+}
+
+.btn-edit-icon {
+  color: #475569;
+}
+
+.btn-edit-icon:hover {
+  background-color: #f1f5f9;
+  border-color: #cbd5e1;
+  color: var(--jpm-color-navy-dark, #0A1128);
+  transform: translateY(-1px);
+}
+
+.btn-delete-icon {
+  color: #94a3b8;
+}
+
+.btn-delete-icon:hover {
+  background-color: var(--jpm-color-red-marine, #F82249);
+  border-color: var(--jpm-color-red-marine, #F82249);
+  color: #ffffff;
+  transform: translateY(-1px);
+  box-shadow: 0 3px 8px rgba(248, 34, 73, 0.2);
 }
 
 /* Empty State Wrap */
