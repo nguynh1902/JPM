@@ -631,8 +631,8 @@ const scrollToProducts = () => {
 .store-banner-subtitle {
   font-size: clamp(0.82rem, 1vw, 0.92rem);
   color: #475569;
-  line-height: 1.5;
-  max-width: 540px;
+  line-height: 1.55;
+  max-width: 500px;
 }
 
 @media (max-width: 991.98px) {

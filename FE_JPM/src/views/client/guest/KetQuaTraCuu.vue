@@ -1,5 +1,5 @@
 <template>
-  <div class="tra-cuu-results-page main-page" style="position: relative; z-index: 10; min-height: 130vh;">
+  <div class="tra-cuu-results-page main-page" style="position: relative; z-index: 10;">
 
     <!-- HERO BANNER TRA CỨU DÀI NGANG FULL MÀN HÌNH -->
     <div class="store-hero-banner position-relative overflow-hidden" :class="{ 'banner-no-img': !currentLookupBannerImg }" :style="lookupBannerStyle">
@@ -35,7 +35,7 @@
 
             <!-- Dòng chữ nhỏ mô tả bên dưới -->
             <p class="store-banner-subtitle mb-0">
-              {{ settings?.lookup_banner_subtitle || 'Lựa chọn chính xác phụ tùng thay thế và sơ đồ rã máy cho động cơ thủy của bạn.' }}
+              {{ settings?.lookup_banner_subtitle || 'Tra cứu chính xác phụ tùng thay thế, sơ đồ rã máy chi tiết và mã kỹ thuật tiêu chuẩn cho từng model động cơ thủy của bạn.' }}
             </p>
           </div>
         </div>

@@ -638,7 +638,7 @@ export default {
             `,
             showCancelButton: true,
             confirmButtonText: '<i class="bi bi-chat-dots me-1"></i> Nhắn Zalo Cho JPM',
-            cancelButtonText: token ? 'Xem Trang Đợi Báo Giá' : (this.isAuthenticated ? 'Lịch Sử Đơn Hàng' : 'Theo Dõi Đơn Hàng'),
+            cancelButtonText: token ? 'Xem Trang Đợi Báo Giá' : (this.isAuthenticated ? 'Lịch Sử Đơn Hàng' : 'Về Trang Chủ'),
             confirmButtonColor: '#0068ff',
             cancelButtonColor: '#6c757d'
           }).then((result) => {
@@ -653,7 +653,7 @@ export default {
             } else if (this.isAuthenticated) {
               this.$router.push('/lich-su-don-hang')
             } else {
-              this.$router.push(`/tra-cuu-don-hang?code=${this.pendingOrderId}&phone=${finalPhone}`)
+              this.$router.push('/')
             }
           })
         }

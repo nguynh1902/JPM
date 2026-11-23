@@ -201,7 +201,7 @@
       </section>
 
       <!-- 4. MAP SECTION (TỰ ĐỘNG CHỈ ĐỊNH ĐỊA CHỈ TRÊN BẢN ĐỒ THEO CẤU HÌNH ADMIN) -->
-      <section class="mb-5 pb-5 border-bottom">
+      <section id="map-section" class="mb-5 pb-5 border-bottom">
         <div class="w-100 shadow-sm rounded-3 overflow-hidden border" style="height: 450px; border-radius: var(--jpm-radius-card, 12px);">
           <iframe 
             :src="mapEmbedUrl" 
@@ -272,7 +272,8 @@
 </template>
 
 <script>
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted, watch } from 'vue';
+import { useRoute } from 'vue-router';
 import { useQuery } from '@tanstack/vue-query';
 import axiosClient from '../../../api/axiosClient';
 import { useSiteSettings } from '../../../composables/useSiteSettings';
@@ -281,6 +282,7 @@ import Swal from 'sweetalert2';
 export default {
   name: 'HoTro',
   setup() {
+    const route = useRoute();
     const isSubmitting = ref(false);
     const faqSearchQuery = ref('');
     const { settings } = useSiteSettings();
@@ -352,6 +354,14 @@ export default {
       }
     };
 
+    const scrollToMap = () => {
+      const el = document.getElementById('map-section');
+      if (el) {
+        const y = el.getBoundingClientRect().top + window.scrollY - 85;
+        window.scrollTo({ top: y, behavior: 'smooth' });
+      }
+    };
+
     const scrollToFaq = () => {
       const el = document.getElementById('faq-section');
       if (el) {
@@ -359,6 +369,43 @@ export default {
         window.scrollTo({ top: y, behavior: 'smooth' });
       }
     };
+
+    const applyRouteParams = () => {
+      if (route.query.faq) {
+        const faqType = String(route.query.faq).toLowerCase();
+        if (faqType === 'bao-hanh') {
+          faqSearchQuery.value = 'bảo hành';
+        } else if (faqType === 'van-chuyen') {
+          faqSearchQuery.value = 'vận chuyển';
+        } else if (faqType === 'doi-tra') {
+          faqSearchQuery.value = 'đổi trả';
+        } else if (faqType === 'mua-hang') {
+          faqSearchQuery.value = 'mua hàng';
+        } else {
+          faqSearchQuery.value = String(route.query.faq);
+        }
+        setTimeout(scrollToFaq, 350);
+      } else if (route.query.q) {
+        faqSearchQuery.value = String(route.query.q);
+        setTimeout(scrollToFaq, 350);
+      }
+
+      if (route.hash === '#faq-section') {
+        setTimeout(scrollToFaq, 350);
+      } else if (route.hash === '#contact') {
+        setTimeout(scrollToContact, 350);
+      } else if (route.hash === '#map-section') {
+        setTimeout(scrollToMap, 350);
+      }
+    };
+
+    onMounted(() => {
+      applyRouteParams();
+    });
+
+    watch([() => route.query.faq, () => route.query.q, () => route.hash], () => {
+      applyRouteParams();
+    });
 
     const formData = ref({
       ho_ten: '',
@@ -404,6 +451,7 @@ export default {
       faqSearchQuery, 
       filteredFaqs, 
       scrollToContact,
+      scrollToMap,
       scrollToFaq,
       isSubmitting, 
       formData,
@@ -416,11 +464,11 @@ export default {
 <style scoped>
 .support-page {
   min-height: 100vh;
-  background-color: #ffffff;
+  background-color: var(--jpm-neutral-50, #f8fafc) !important;
 }
 
 .support-page section {
-  background-color: #ffffff !important;
+  background-color: transparent !important;
 }
 
 /* ── 2. LEFT COLUMN: KEEP CLOSE / GET IN TOUCH ── */
@@ -534,7 +582,7 @@ a.contact-item-desc:hover {
 
 .contact-field-input {
   font-family: var(--default-font, 'Roboto', sans-serif);
-  background-color: #f8fafc;
+  background-color: #ffffff;
   border: 1px solid #e2e8f0;
   border-radius: var(--jpm-radius-control, 8px);
   padding: 0.7rem 0.95rem;
@@ -661,26 +709,16 @@ textarea.contact-field-input {
   font-size: 1.05rem;
   font-weight: 700;
   line-height: 1.5;
-  transition: color 0.2s ease;
-}
-
-.client-faq-accordion .accordion-button:hover {
-  color: var(--jpm-color-red-marine, #F82249);
 }
 
 .client-faq-accordion .accordion-button:not(.collapsed) {
-  color: var(--jpm-color-red-marine, #F82249) !important;
+  color: var(--jpm-color-navy-dark, #0A1128) !important;
   background-color: transparent !important;
   box-shadow: none !important;
 }
 
 .client-faq-accordion .accordion-button::after {
   background-size: 14px;
-  transition: transform 0.25s ease, filter 0.25s ease;
-}
-
-.client-faq-accordion .accordion-button:not(.collapsed)::after {
-  filter: invert(24%) sepia(85%) saturate(3000%) hue-rotate(335deg);
 }
 
 .client-faq-accordion .faq-answer-content {

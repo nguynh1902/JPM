@@ -67,8 +67,7 @@ const routes = [
   },
   {
     path: "/tra-cuu-don-hang",
-    component: () => import("../views/client/guest/TraCuuDonHang.vue"),
-    meta: { layout: "client" },
+    redirect: "/ho-tro",
   },
     { path: "/tra-cuu",
     component: () => import("../views/client/guest/KetQuaTraCuu.vue"),

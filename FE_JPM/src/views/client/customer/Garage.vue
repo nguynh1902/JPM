@@ -37,84 +37,89 @@
           </button>
         </div>
 
-        <!-- Garage List: Danh sách động cơ tiêu chuẩn (Bỏ Mercury bên trên tên, đưa HP xuống dòng dưới, chữ Mercury màu đỏ) -->
-        <div class="d-flex flex-column gap-3" v-else>
-          <div
-            v-for="may in garage"
-            :key="may.id"
-            class="border garage-item-card d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3"
-            @click="router.push(`/garage/${may.id}`)"
-          >
-            <!-- Bên trái: Thông tin chi tiết động cơ -->
-            <div class="flex-grow-1 min-w-0">
-              <!-- Dòng trên: Tên Model máy (đã bỏ phần thừa bên trên) -->
-              <h6 class="fw-bold mb-1 text-truncate garage-model-title" :title="may.dong_co_model?.ten_model">
-                {{ may.dong_co_model?.ten_model || 'Chưa rõ Model' }}
+        <!-- Garage List: Nhóm theo Thương hiệu (Mercury, Yamaha, v.v. - Tương tự như Danh mục của Vật tư thường mua) -->
+        <div class="d-flex flex-column" v-else>
+          <div v-for="brand in groupedBrands" :key="brand.id" class="mb-4">
+            <!-- Brand Group Header: Thanh tiêu đề thương hiệu bên ngoài -->
+            <div class="d-flex align-items-center gap-2 mb-3">
+              <div style="width: 4px; height: 18px; background: var(--jpm-color-red-marine, #F82249); border-radius: var(--jpm-radius-badge, 6px);"></div>
+              <h6 class="mb-0 fw-bold" style="font-size: 15px; color: var(--jpm-color-navy-dark, #0A1128);">
+                {{ brand.name }}
               </h6>
-
-              <!-- Dòng dưới: Chữ thương hiệu màu đỏ + HP bên dưới + Năm & Thông số căn trái -->
-              <div class="d-flex align-items-center gap-2 text-muted small flex-wrap">
-                <!-- Chữ Thương hiệu màu đỏ -->
-                <span v-if="may.dong_co_model?.thuong_hieu?.name" class="fw-bold" style="color: var(--jpm-color-red-marine, #F82249); letter-spacing: 0.3px;">
-                  {{ may.dong_co_model.thuong_hieu.name }}
-                </span>
-
-                <!-- Cái HP bên dưới -->
-                <template v-if="may.dong_co_model?.ma_luc">
-                  <span style="color: #cbd5e1;">•</span>
-                  <span class="fw-semibold text-secondary">
-                    <i class="bi bi-lightning-charge me-1 text-warning"></i>{{ may.dong_co_model.ma_luc }} HP
-                  </span>
-                </template>
-
-                <!-- Năm sản xuất -->
-                <template v-if="may.dong_co_model?.nam_san_xuat || may.dong_co_model?.nam_bat_dau">
-                  <span style="color: #cbd5e1;">•</span>
-                  <span class="fw-semibold text-secondary">
-                    <i class="bi bi-calendar3 me-1 text-primary"></i>Năm: {{ may.dong_co_model?.nam_san_xuat || may.dong_co_model?.nam_bat_dau || '' }}
-                  </span>
-                </template>
-
-                <!-- Loại máy -->
-                <span v-if="may.dong_co_model?.loai_dong_co?.name" class="badge bg-light text-secondary border px-2 py-0.5">
-                  {{ may.dong_co_model.loai_dong_co.name }}
-                </span>
-
-                <!-- Serial -->
-                <span v-if="may.so_serial" class="text-truncate" style="max-width: 200px;">
-                  <span style="color: #cbd5e1;" class="me-2">•</span>
-                  <i class="bi bi-upc-scan me-1"></i>Serial: {{ may.so_serial }}
-                </span>
-
-                <!-- Ghi chú nếu có -->
-                <span v-if="may.ghi_chu" class="text-truncate" style="max-width: 250px;">
-                  <span style="color: #cbd5e1;" class="me-2">•</span>
-                  <i class="bi bi-stickies me-1"></i>{{ may.ghi_chu }}
-                </span>
-              </div>
             </div>
 
-            <!-- Bên phải: Hai nút thao tác dạng icon đồng bộ 36x36px -->
-            <div class="d-flex align-items-center gap-2 pe-1 flex-shrink-0 align-self-end align-self-md-center">
-              <!-- Sơ đồ / Tra phụ tùng: Outline Primary Blue #0d6efd -->
-              <button
-                type="button"
-                class="btn btn-search-icon"
-                title="Tra cứu sơ đồ phụ tùng cho động cơ này"
-                @click.stop="router.push('/tra-cuu?brand=' + may.dong_co_model?.thuong_hieu_id + '&engineType=' + may.dong_co_model?.loai_dong_co_id + '&model=' + may.dong_co_model_id + '&year=' + (may.dong_co_model?.nam_san_xuat || ''))"
+            <!-- Danh sách các card động cơ tiêu chuẩn -->
+            <div class="d-flex flex-column gap-3">
+              <div
+                v-for="may in brand.items"
+                :key="may.id"
+                class="border garage-item-card d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3"
+                @click="router.push(`/garage/${may.id}`)"
               >
-                <i class="bi bi-search"></i>
-              </button>
+                <!-- Bên trái: Thông tin chi tiết động cơ -->
+                <div class="flex-grow-1 min-w-0">
+                  <!-- Dòng trên: Tên Model máy -->
+                  <h6 class="fw-bold mb-1 text-truncate garage-model-title" :title="may.dong_co_model?.ten_model">
+                    {{ may.dong_co_model?.ten_model || 'Chưa rõ Model' }}
+                  </h6>
 
-              <!-- Delete: Outline xám hover Đỏ Marine #F82249 -->
-              <button
-                type="button"
-                class="btn btn-delete-icon"
-                title="Xóa máy khỏi Garage"
-                @click.stop="deleteMay(may.id)"
-              >
-                <i class="bi bi-trash3"></i>
-              </button>
+                  <!-- Dòng dưới: HP + Năm & Thông số căn trái -->
+                  <div class="d-flex align-items-center gap-2 text-muted small flex-wrap">
+                    <!-- HP -->
+                    <span v-if="may.dong_co_model?.ma_luc" class="fw-semibold text-secondary">
+                      <i class="bi bi-lightning-charge me-1 text-warning"></i>{{ may.dong_co_model.ma_luc }} HP
+                    </span>
+
+                    <!-- Năm sản xuất -->
+                    <template v-if="may.dong_co_model?.nam_san_xuat || may.dong_co_model?.nam_bat_dau">
+                      <span v-if="may.dong_co_model?.ma_luc" style="color: #cbd5e1;">•</span>
+                      <span class="fw-semibold text-secondary">
+                        <i class="bi bi-calendar3 me-1 text-primary"></i>Năm: {{ may.dong_co_model?.nam_san_xuat || may.dong_co_model?.nam_bat_dau || '' }}
+                      </span>
+                    </template>
+
+                    <!-- Loại máy -->
+                    <span v-if="may.dong_co_model?.loai_dong_co?.name" class="badge bg-light text-secondary border px-2 py-0.5">
+                      {{ may.dong_co_model.loai_dong_co.name }}
+                    </span>
+
+                    <!-- Serial -->
+                    <span v-if="may.so_serial" class="text-truncate" style="max-width: 200px;">
+                      <span style="color: #cbd5e1;" class="me-2">•</span>
+                      <i class="bi bi-upc-scan me-1"></i>Serial: {{ may.so_serial }}
+                    </span>
+
+                    <!-- Ghi chú nếu có -->
+                    <span v-if="may.ghi_chu" class="text-truncate" style="max-width: 250px;">
+                      <span style="color: #cbd5e1;" class="me-2">•</span>
+                      <i class="bi bi-stickies me-1"></i>{{ may.ghi_chu }}
+                    </span>
+                  </div>
+                </div>
+
+                <!-- Bên phải: Hai nút thao tác dạng icon đồng bộ 36x36px -->
+                <div class="d-flex align-items-center gap-2 pe-1 flex-shrink-0 align-self-end align-self-md-center">
+                  <!-- Sơ đồ / Tra phụ tùng: Outline Primary Blue #0d6efd -->
+                  <button
+                    type="button"
+                    class="btn btn-search-icon"
+                    title="Tra cứu sơ đồ phụ tùng cho động cơ này"
+                    @click.stop="router.push('/tra-cuu?brand=' + may.dong_co_model?.thuong_hieu_id + '&engineType=' + may.dong_co_model?.loai_dong_co_id + '&model=' + may.dong_co_model_id + '&year=' + (may.dong_co_model?.nam_san_xuat || ''))"
+                  >
+                    <i class="bi bi-search"></i>
+                  </button>
+
+                  <!-- Delete: Outline xám hover Đỏ Marine #F82249 -->
+                  <button
+                    type="button"
+                    class="btn btn-delete-icon"
+                    title="Xóa máy khỏi Garage"
+                    @click.stop="deleteMay(may.id)"
+                  >
+                    <i class="bi bi-trash3"></i>
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>

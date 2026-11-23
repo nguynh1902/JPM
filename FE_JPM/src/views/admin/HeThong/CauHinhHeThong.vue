@@ -632,7 +632,7 @@ export default {
       store_banner_subtitle: 'Khám phá hệ sinh thái phụ tùng động cơ thủy, dầu nhớt và vật tư hàng hải chính hãng từ các thương hiệu dẫn đầu.',
       lookup_banner_image: '/client/image/tracuu_banner.png',
       lookup_banner_title: 'Tra Cứu Phụ Tùng',
-      lookup_banner_subtitle: 'Lựa chọn chính xác phụ tùng thay thế và sơ đồ rã máy cho động cơ thủy của bạn.',
+      lookup_banner_subtitle: 'Tra cứu chính xác phụ tùng thay thế, sơ đồ rã máy chi tiết và mã kỹ thuật tiêu chuẩn cho từng model động cơ thủy của bạn.',
       news_banner_image: '/client/image/news_banner.png',
       news_banner_title: 'Tin Tức & Cẩm Nang',
       news_banner_subtitle: 'Tổng hợp những kiến thức chuyên sâu về vận hành tàu thuyền, cẩm nang bảo dưỡng động cơ thủy và xu hướng công nghệ hàng hải.',

@@ -211,7 +211,7 @@
          SECTION 3 (ĐÁY TRANG): CẨM NANG & KINH NGHIỆM KỸ THUẬT
          Bố cục 2 Card Lớn (Ảnh trên, Chữ dưới) chuẩn phong cách Editorial
     ════════════════════════════════════════════════════════════════ -->
-    <section class="py-4 py-md-5 mb-5 border-top" v-if="displayedGuideArticles.length > 0">
+    <section class="py-4 py-md-4 mb-0 border-top" v-if="displayedGuideArticles.length > 0">
       <div class="container">
         <!-- Section Header -->
         <div class="d-flex align-items-center justify-content-between mb-4">
@@ -627,12 +627,12 @@ export default {
 <style scoped>
 .news-wireframe-page {
   min-height: 100vh;
-  background-color: #ffffff !important;
+  background-color: var(--jpm-neutral-50, #f8fafc) !important;
 }
 
 .news-wireframe-page section,
 .news-wireframe-page .section {
-  background-color: #ffffff !important;
+  background-color: transparent !important;
 }
 
 /* ── PAGE TITLE & SUBTITLE (ĐỒNG BỘ 100% CỬA HÀNG & TRA CỨU) ── */

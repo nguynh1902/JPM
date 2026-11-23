@@ -709,14 +709,14 @@ h6 {
 --------------------------------------------------------------*/
 .home-full-banner {
   width: 100%;
-  aspect-ratio: 3 / 1;
-  min-height: 420px;
+  aspect-ratio: 3.2 / 1;
+  min-height: 380px;
   background-image: url('/client/image/home_banner.png');
-  background-position: center;
+  background-position: center top;
   background-size: cover;
   background-repeat: no-repeat;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   position: relative;
 }
 
@@ -4350,6 +4350,7 @@ a.btn-shopee-outline:hover {
   letter-spacing: 1.5px;
   text-transform: uppercase;
   color: var(--accent-color, #F82249);
+  line-height: 1.2;
 }
 
 .store-banner-badge .badge-dot {
@@ -4383,8 +4384,8 @@ a.btn-shopee-outline:hover {
 .store-banner-subtitle {
   font-size: clamp(0.82rem, 1vw, 0.92rem);
   color: #475569;
-  line-height: 1.5;
-  max-width: 540px;
+  line-height: 1.55;
+  max-width: 500px;
 }
 
 @media (max-width: 991.98px) {
