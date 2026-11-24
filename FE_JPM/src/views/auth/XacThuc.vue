@@ -112,7 +112,7 @@
                 <hr class="flex-grow-1 m-0 auth-divider">
               </div>
 
-              <button type="button" class="btn w-100 text-white d-flex justify-content-center align-items-center gap-2 hover-bg-google" style="height: 44px; font-size: 0.9rem; font-weight: 500; border: 1px solid rgba(255,255,255,0.18); background: rgba(255,255,255,0.04); border-radius: var(--jpm-radius-control, 8px);">
+              <button type="button" class="btn w-100 text-white d-flex justify-content-center align-items-center gap-2 hover-bg-google" style="height: 44px; font-size: 0.9rem; font-weight: 500; border: 1px solid rgba(255,255,255,0.18); background: rgba(255,255,255,0.04); border-radius: 8px;">
                 <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="G" style="width: 18px;">
                 Google
               </button>
@@ -175,7 +175,7 @@
                 <hr class="flex-grow-1 m-0 auth-divider">
               </div>
 
-              <button type="button" class="btn w-100 text-white d-flex justify-content-center align-items-center gap-2 hover-bg-google" style="height: 44px; font-size: 0.9rem; font-weight: 500; border: 1px solid rgba(255,255,255,0.18); background: rgba(255,255,255,0.04); border-radius: var(--jpm-radius-control, 8px);">
+              <button type="button" class="btn w-100 text-white d-flex justify-content-center align-items-center gap-2 hover-bg-google" style="height: 44px; font-size: 0.9rem; font-weight: 500; border: 1px solid rgba(255,255,255,0.18); background: rgba(255,255,255,0.04); border-radius: 8px;">
                 <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="G" style="width: 18px;">
                 Google
               </button>
@@ -431,34 +431,41 @@ export default {
 <style scoped>
 
 .auth-label {
-  font-family: var(--heading-font, 'Raleway', sans-serif);
-  font-size: 0.85rem;
+  font-family: var(--default-font, 'Inter', sans-serif);
+  font-size: 0.875rem;
   letter-spacing: normal;
   text-transform: none;
-  font-weight: 600;
-  color: rgba(255, 255, 255, 0.9);
-  margin-bottom: 0.35rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.95);
+  margin-bottom: 0.45rem;
+  display: block;
 }
 .auth-submit-btn {
-  background-color: var(--jpm-color-red-marine, #F82249);
-  height: 44px;
-  padding: 0 16px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-family: var(--heading-font, 'Raleway', sans-serif);
-  font-size: 0.95rem;
-  font-weight: 600;
-  letter-spacing: normal;
-  text-transform: none;
-  border-radius: var(--jpm-radius-control, 8px);
+  background-color: var(--jpm-color-red-marine, #F82249) !important;
+  border: 1px solid var(--jpm-color-red-marine, #F82249) !important;
+  height: 44px !important;
+  min-height: 44px !important;
+  max-height: 44px !important;
+  padding: 0 16px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-family: var(--default-font, 'Inter', sans-serif) !important;
+  font-size: 0.95rem !important;
+  font-weight: 600 !important;
+  letter-spacing: normal !important;
+  text-transform: none !important;
+  border-radius: 8px !important;
   box-shadow: none !important;
-  border: none;
-  transition: all 0.2s ease;
+  transition: all 0.2s ease !important;
+  width: 100% !important;
+  color: #ffffff !important;
+  cursor: pointer !important;
 }
-.auth-submit-btn:hover {
-  background-color: var(--jpm-color-red-hover, #D9163A);
-  transform: translateY(-1px);
+.auth-submit-btn:hover:not(:disabled) {
+  background-color: var(--jpm-color-red-hover, #D9163A) !important;
+  border-color: var(--jpm-color-red-hover, #D9163A) !important;
+  transform: translateY(-1px) !important;
   box-shadow: none !important;
 }
 .auth-submit-btn:focus,
@@ -467,28 +474,34 @@ export default {
   outline: none !important;
 }
 .auth-pw-icon {
-  opacity: 0.55;
+  position: absolute !important;
+  right: 14px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  opacity: 0.65;
   cursor: pointer;
-  font-size: 1.1rem;
-  padding-right: 14px;
+  font-size: 1.15rem;
+  padding: 0 !important;
+  line-height: 1 !important;
+  z-index: 5 !important;
   transition: opacity 0.2s ease, color 0.2s ease;
 }
 .auth-pw-icon:hover {
   opacity: 1;
-  color: var(--jpm-color-red-marine, #F82249);
+  color: var(--jpm-color-red-marine, #F82249) !important;
 }
 .auth-divider {
   border-color: rgba(255, 255, 255, 0.15);
 }
 .auth-heading {
-  font-family: var(--heading-font, 'Raleway', sans-serif);
-  font-size: 26px;
+  font-family: var(--default-font, 'Inter', sans-serif);
+  font-size: 28px;
   font-weight: 700;
-  letter-spacing: -0.3px;
+  letter-spacing: -0.02em;
   text-transform: none;
 }
 .auth-subtext {
-  color: rgba(255, 255, 255, 0.65);
+  color: rgba(255, 255, 255, 0.7);
   font-size: 0.88rem;
   letter-spacing: normal;
   font-weight: 400;
@@ -499,27 +512,57 @@ export default {
 .fade-enter-from, .fade-leave-to { opacity: 0; transform: translateY(4px); }
 
 /* ORIGINAL GLASSMORPHISM INPUTS */
-.minimal-input {
+.minimal-input,
+input.minimal-input,
+.form-control.minimal-input {
+  display: block !important;
+  width: 100% !important;
+  height: 44px !important;
+  min-height: 44px !important;
+  max-height: 44px !important;
+  line-height: 42px !important;
+  padding: 0 16px !important;
+  box-sizing: border-box !important;
   background: rgba(255, 255, 255, 0.08) !important;
   border: 1px solid rgba(255, 255, 255, 0.2) !important;
-  border-radius: var(--jpm-radius-control, 8px) !important;
-  color: #fff !important;
-  height: 44px;
-  padding: 0 14px !important;
-  font-size: 0.92rem;
-  font-weight: 400;
+  border-radius: 8px !important;
+  color: #ffffff !important;
+  font-family: var(--default-font, 'Inter', sans-serif) !important;
+  font-size: 0.92rem !important;
+  font-weight: 400 !important;
   box-shadow: none !important;
-  transition: all 0.2s ease;
+  transition: all 0.2s ease !important;
 }
 
-.minimal-input:focus {
+.minimal-input.pe-5,
+input.minimal-input.pe-5,
+.form-control.minimal-input.pe-5 {
+  padding-right: 44px !important;
+}
+
+.minimal-input:focus,
+input.minimal-input:focus,
+.form-control.minimal-input:focus {
   border-color: var(--jpm-color-red-marine, #F82249) !important;
-  background: rgba(248, 34, 73, 0.06) !important;
+  background: rgba(248, 34, 73, 0.08) !important;
   box-shadow: 0 0 0 3px rgba(248, 34, 73, 0.2) !important;
+  outline: none !important;
+  color: #ffffff !important;
 }
 
-.minimal-input::placeholder {
-  color: rgba(255, 255, 255, 0.45) !important;
+.minimal-input::placeholder,
+input.minimal-input::placeholder,
+.form-control.minimal-input::placeholder {
+  color: rgba(255, 255, 255, 0.5) !important;
+  font-weight: 400 !important;
+  opacity: 1 !important;
+  transform: none !important;
+}
+
+.minimal-input:focus::placeholder,
+input.minimal-input:focus::placeholder,
+.form-control.minimal-input:focus::placeholder {
+  transform: none !important;
 }
 
 /* FIX AUTOFILL */
@@ -534,22 +577,23 @@ export default {
 
 /* Minimal Checkbox */
 .minimal-checkbox {
-  background-color: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.5);
-  border-radius: 4px;
+  background-color: rgba(255, 255, 255, 0.08) !important;
+  border: 1px solid rgba(255, 255, 255, 0.4) !important;
+  border-radius: 4px !important;
   cursor: pointer;
-  width: 16px;
-  height: 16px;
-  margin-left: 0 !important;
+  width: 17px !important;
+  height: 17px !important;
+  min-width: 17px !important;
+  margin: 0 !important;
   transition: all 0.2s ease;
 }
 .minimal-checkbox:checked {
-  background-color: var(--jpm-color-red-marine, #F82249);
-  border-color: var(--jpm-color-red-marine, #F82249);
+  background-color: var(--jpm-color-red-marine, #F82249) !important;
+  border-color: var(--jpm-color-red-marine, #F82249) !important;
 }
 .minimal-checkbox:focus {
-  box-shadow: 0 0 0 2px rgba(248, 34, 73, 0.25);
-  border-color: var(--jpm-color-red-marine, #F82249);
+  box-shadow: 0 0 0 2px rgba(248, 34, 73, 0.25) !important;
+  border-color: var(--jpm-color-red-marine, #F82249) !important;
 }
 
 .hover-lift {
@@ -582,12 +626,13 @@ export default {
 
 .hover-bg-google {
   transition: all 0.25s ease;
+  border-radius: 8px !important;
 }
 .hover-bg-google:hover {
   background: rgba(255, 255, 255, 0.12) !important;
   border-color: rgba(255, 255, 255, 0.35) !important;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  transform: translateY(-1px);
+  box-shadow: none !important;
 }
 </style>
 

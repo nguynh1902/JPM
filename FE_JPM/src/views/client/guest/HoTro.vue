@@ -619,8 +619,8 @@ textarea.contact-field-input {
 
 .btn-contact-submit:hover:not(:disabled) {
   background-color: var(--jpm-color-red-hover, #D9163A);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
-  transform: translateY(-2px);
+  box-shadow: none !important;
+  transform: translateY(-1px);
 }
 
 .btn-contact-submit:disabled {

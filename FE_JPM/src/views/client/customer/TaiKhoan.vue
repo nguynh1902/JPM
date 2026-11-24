@@ -832,9 +832,9 @@ const setDefault = (id) => {
 .btn-secondary-action {
   height: 40px;
   padding: 0 18px;
-  background-color: #f1f5f9;
+  background-color: #ffffff;
   color: #475569;
-  border: 1px solid #e2e8f0;
+  border: 1px solid #cbd5e1;
   border-radius: var(--jpm-radius-control, 8px);
   font-size: 0.875rem;
   font-weight: 600;
@@ -843,10 +843,13 @@ const setDefault = (id) => {
   justify-content: center;
   transition: all 0.2s ease;
   cursor: pointer;
+  box-shadow: none !important;
 }
 
 .btn-secondary-action:hover {
-  background-color: #e2e8f0;
-  color: #0f172a;
+  background-color: #f1f5f9;
+  border-color: #94a3b8;
+  color: var(--jpm-color-navy-dark, #0A1128);
+  transform: translateY(-1px);
 }
 </style>

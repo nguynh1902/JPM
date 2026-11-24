@@ -375,8 +375,8 @@ watch(() => props.options, () => {
   cursor: pointer;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
   font-size: 0.875rem;
-  font-weight: 400;
-  color: var(--jpm-neutral-700, #334155);
+  font-weight: 500;
+  color: var(--jpm-neutral-900, #0F172A);
   font-family: var(--jpm-font-body, 'Roboto', sans-serif);
   outline: none;
   user-select: none;
@@ -408,7 +408,12 @@ watch(() => props.options, () => {
 }
 
 .text-placeholder {
-  color: var(--jpm-neutral-400, #94A3B8);
+  color: var(--jpm-neutral-500, #64748B);
+  font-weight: 500;
+}
+
+.select-display-text {
+  font-weight: 500;
 }
 
 .select-arrow {
@@ -453,7 +458,7 @@ watch(() => props.options, () => {
   box-shadow: none !important;
   background: transparent !important;
   margin: 0 !important;
-  padding: 4px 0 !important;
+  padding: 0 !important;
   max-height: 330px !important; /* Hiển thị ~8 mục cân đối, các mục còn lại cuộn mượt */
   overflow-y: auto !important;
   overflow-x: hidden !important;
@@ -464,20 +469,46 @@ watch(() => props.options, () => {
 .dropdown-item-option {
   padding: 10px 14px;
   font-size: 0.875rem;
-  color: var(--jpm-neutral-800, #1E293B);
+  font-weight: 500;
+  color: var(--jpm-neutral-900, #0F172A);
   cursor: pointer;
   transition: background-color 0.15s ease, color 0.15s ease;
   line-height: 1.35;
 }
 
+.dropdown-item-option .option-label {
+  font-weight: 500;
+  color: var(--jpm-neutral-900, #0F172A);
+}
+
+.custom-dropdown-panel .dropdown-item-option:first-child {
+  border-top-left-radius: calc(var(--jpm-radius-control, 8px) - 1px);
+  border-top-right-radius: calc(var(--jpm-radius-control, 8px) - 1px);
+}
+
+.custom-dropdown-panel .dropdown-item-option:last-child {
+  border-bottom-left-radius: calc(var(--jpm-radius-control, 8px) - 1px);
+  border-bottom-right-radius: calc(var(--jpm-radius-control, 8px) - 1px);
+}
+
 .dropdown-item-option:hover,
 .dropdown-item-option.highlighted {
   background-color: var(--jpm-neutral-100, #F1F5F9);
-  color: var(--jpm-neutral-900, #0F172A);
+  color: #000000;
+}
+
+.dropdown-item-option:hover .option-label,
+.dropdown-item-option.highlighted .option-label {
+  color: #000000;
 }
 
 .dropdown-item-option.active {
   background-color: #fef2f4;
+  color: var(--jpm-color-red-marine, #F82249);
+  font-weight: 600;
+}
+
+.dropdown-item-option.active .option-label {
   color: var(--jpm-color-red-marine, #F82249);
   font-weight: 600;
 }

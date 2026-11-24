@@ -595,7 +595,7 @@
               <router-link v-if="selectedOrderForModal.token" :to="'/bao-gia/' + selectedOrderForModal.token" class="btn btn-outline-primary btn-sm px-3" @click="closeProductModal">
                 <i class="bi bi-receipt me-1"></i> Bảng Báo Giá Chi Tiết
               </router-link>
-              <button type="button" class="btn btn-secondary btn-sm px-3" @click="closeProductModal">Đóng</button>
+              <button type="button" class="btn btn-outline-secondary btn-sm px-3" @click="closeProductModal">Đóng</button>
             </div>
           </div>
 

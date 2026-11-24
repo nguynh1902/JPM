@@ -841,7 +841,7 @@ const filteredModels = computed(() => {
   border-color: var(--accent-color, #f82249);
   color: #ffffff;
   transform: translateY(-1px);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
+  box-shadow: none !important;
 }
 
 .btn-view-diagram:hover .arrow-icon {

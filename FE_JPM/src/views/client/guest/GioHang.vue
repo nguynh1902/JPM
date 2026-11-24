@@ -318,7 +318,7 @@
                     <label class="form-check-label small ms-2 cursor-pointer" for="laMacDinh">Đặt làm địa chỉ nhận hàng mặc định</label>
                   </div>
                   <div class="d-flex gap-2 mt-4">
-                    <button type="button" class="btn btn-light flex-grow-1 btn-rounded-8" @click="modalState = 'list'">Hủy</button>
+                    <button type="button" class="btn btn-outline-secondary flex-grow-1 btn-rounded-8" @click="modalState = 'list'">Hủy</button>
                     <button type="submit" class="btn btn-danger flex-grow-1 btn-rounded-8" :disabled="isSavingAddress">
                       <span v-if="isSavingAddress" class="spinner-border spinner-border-sm me-2"></span>
                       Lưu địa chỉ
@@ -1245,8 +1245,8 @@ export default {
   background-color: var(--jpm-color-red-hover, #D9163A) !important;
   border-color: var(--jpm-color-red-hover, #D9163A) !important;
   color: #ffffff !important;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12) !important;
+  transform: translateY(-1px);
+  box-shadow: none !important;
 }
 
 .btn-empty-cart-action i {

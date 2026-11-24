@@ -140,7 +140,6 @@
                     labelKey="ten_loai_dong_co"
                     placeholder="Tất cả loại động cơ"
                     allOptionLabel="Tất cả loại động cơ"
-                    :disabled="!filters.thuong_hieu_id"
                     @update:modelValue="onEngineTypeChange"
                   />
 
@@ -151,7 +150,6 @@
                     :options="years || []"
                     placeholder="Tất cả các năm"
                     allOptionLabel="Tất cả các năm"
-                    :disabled="!filters.thuong_hieu_id"
                     @update:modelValue="() => filters.page = 1"
                   />
 
@@ -163,7 +161,6 @@
                     labelKey="ten_model"
                     placeholder="Tất cả model"
                     allOptionLabel="Tất cả model"
-                    :disabled="!filters.thuong_hieu_id"
                     @update:modelValue="() => filters.page = 1"
                   />
                 </div>
@@ -506,24 +503,21 @@ export default {
     });
 
     const { data: engineTypes } = useQuery({
-      queryKey: computed(() => ['public-engine-types', filters.thuong_hieu_id]),
-      queryFn: () => axiosClient.get('/public/loai-dong-co', { params: { thuong_hieu_id: filters.thuong_hieu_id } }).then(res => res.data?.data || res.data || res),
-      staleTime: 1000 * 60 * 30,
-      enabled: computed(() => !!filters.thuong_hieu_id)
+      queryKey: computed(() => ['public-engine-types', filters.thuong_hieu_id || 'all']),
+      queryFn: () => axiosClient.get('/public/loai-dong-co', { params: { thuong_hieu_id: filters.thuong_hieu_id || undefined } }).then(res => res.data?.data || res.data || res),
+      staleTime: 1000 * 60 * 30
     });
 
     const { data: engineModels } = useQuery({
-      queryKey: computed(() => ['public-models-v6', filters.thuong_hieu_id, filters.loai_dong_co_id, filters.nam_sx]),
-      queryFn: () => axiosClient.get('/public/dong-co-model', { params: { thuong_hieu_id: filters.thuong_hieu_id, loai_dong_co_id: filters.loai_dong_co_id, nam_sx: filters.nam_sx } }).then(res => res.data?.data || res.data || res),
-      staleTime: 1000 * 60 * 30,
-      enabled: computed(() => !!filters.thuong_hieu_id)
+      queryKey: computed(() => ['public-models-v6', filters.thuong_hieu_id || 'all', filters.loai_dong_co_id || 'all', filters.nam_sx || 'all']),
+      queryFn: () => axiosClient.get('/public/dong-co-model', { params: { thuong_hieu_id: filters.thuong_hieu_id || undefined, loai_dong_co_id: filters.loai_dong_co_id || undefined, nam_sx: filters.nam_sx || undefined } }).then(res => res.data?.data || res.data || res),
+      staleTime: 1000 * 60 * 30
     });
 
     const { data: years } = useQuery({
-      queryKey: computed(() => ['public-years-v6', filters.thuong_hieu_id, filters.loai_dong_co_id]),
-      queryFn: () => axiosClient.get('/public/nam-san-xuat', { params: { thuong_hieu_id: filters.thuong_hieu_id, loai_dong_co_id: filters.loai_dong_co_id } }).then(res => res.data?.data || res.data || res),
-      staleTime: 1000 * 60 * 30,
-      enabled: computed(() => !!filters.thuong_hieu_id)
+      queryKey: computed(() => ['public-years-v6', filters.thuong_hieu_id || 'all', filters.loai_dong_co_id || 'all']),
+      queryFn: () => axiosClient.get('/public/nam-san-xuat', { params: { thuong_hieu_id: filters.thuong_hieu_id || undefined, loai_dong_co_id: filters.loai_dong_co_id || undefined } }).then(res => res.data?.data || res.data || res),
+      staleTime: 1000 * 60 * 30
     });
 
     // Diagrams Search Query (bản vẽ sơ đồ phụ tùng của máy)
@@ -1066,14 +1060,16 @@ export default {
   background: transparent;
   padding: 0;
   font-size: 0.88rem;
-  color: #1e293b;
+  font-weight: 500;
+  color: #0f172a;
   outline: none;
   box-shadow: none;
   width: 100%;
 }
 
 .search-input-field::placeholder {
-  color: #94a3b8;
+  color: #64748b;
+  font-weight: 500;
   font-size: 0.85rem;
 }
 

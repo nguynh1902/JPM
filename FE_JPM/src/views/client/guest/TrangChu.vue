@@ -98,7 +98,6 @@
                 all-option-label="Tất cả loại động cơ"
                 value-key="id"
                 label-key="ten_loai_dong_co"
-                :disabled="!selectedBrand"
               />
             </div>
 
@@ -110,7 +109,6 @@
                 :options="years || []"
                 placeholder="Chọn năm sản xuất"
                 all-option-label="Tất cả các năm"
-                :disabled="!selectedBrand"
               />
             </div>
 
@@ -124,7 +122,6 @@
                 all-option-label="Tất cả model"
                 value-key="id"
                 label-key="ten_model"
-                :disabled="!selectedBrand"
               />
             </div>
           </div>
@@ -153,7 +150,7 @@
               <div class="d-flex gap-2">
                 <button
                   type="button"
-                  class="btn btn-light filter-control-h px-3 flex-shrink-0 text-nowrap"
+                  class="btn btn-outline-secondary filter-control-h px-3 flex-shrink-0 text-nowrap"
                   @click="resetSearch"
                   title="Đặt lại bộ lọc"
                 >
@@ -517,24 +514,21 @@ export default {
     });
 
     const { data: engineTypes } = useQuery({
-      queryKey: computed(() => ['public-engine-types', selectedBrand.value]),
-      queryFn: () => axiosClient.get('/public/loai-dong-co', { params: { thuong_hieu_id: selectedBrand.value } }).then(res => res.data?.data || res.data || res),
-      staleTime: 1000 * 60 * 30,
-      enabled: computed(() => !!selectedBrand.value)
+      queryKey: computed(() => ['public-engine-types', selectedBrand.value || 'all']),
+      queryFn: () => axiosClient.get('/public/loai-dong-co', { params: { thuong_hieu_id: selectedBrand.value || undefined } }).then(res => res.data?.data || res.data || res),
+      staleTime: 1000 * 60 * 30
     });
 
     const { data: engineModels } = useQuery({
-      queryKey: computed(() => ['public-models-v6', selectedBrand.value, selectedEngineType.value, selectedYear.value]),
-      queryFn: () => axiosClient.get('/public/dong-co-model', { params: { thuong_hieu_id: selectedBrand.value, loai_dong_co_id: selectedEngineType.value, nam_sx: selectedYear.value } }).then(res => res.data?.data || res.data || res),
-      staleTime: 1000 * 60 * 30,
-      enabled: computed(() => !!selectedBrand.value)
+      queryKey: computed(() => ['public-models-v6', selectedBrand.value || 'all', selectedEngineType.value || 'all', selectedYear.value || 'all']),
+      queryFn: () => axiosClient.get('/public/dong-co-model', { params: { thuong_hieu_id: selectedBrand.value || undefined, loai_dong_co_id: selectedEngineType.value || undefined, nam_sx: selectedYear.value || undefined } }).then(res => res.data?.data || res.data || res),
+      staleTime: 1000 * 60 * 30
     });
 
     const { data: years } = useQuery({
-      queryKey: computed(() => ['public-years-v6', selectedBrand.value, selectedEngineType.value]),
-      queryFn: () => axiosClient.get('/public/nam-san-xuat', { params: { thuong_hieu_id: selectedBrand.value, loai_dong_co_id: selectedEngineType.value } }).then(res => res.data?.data || res.data || res),
-      staleTime: 1000 * 60 * 30,
-      enabled: computed(() => !!selectedBrand.value)
+      queryKey: computed(() => ['public-years-v6', selectedBrand.value || 'all', selectedEngineType.value || 'all']),
+      queryFn: () => axiosClient.get('/public/nam-san-xuat', { params: { thuong_hieu_id: selectedBrand.value || undefined, loai_dong_co_id: selectedEngineType.value || undefined } }).then(res => res.data?.data || res.data || res),
+      staleTime: 1000 * 60 * 30
     });
 
     // Lấy 8 sản phẩm bán chạy nhất (2 hàng x 4 cột)
@@ -971,10 +965,11 @@ export default {
   font-size: 0.875rem;
   font-family: var(--default-font);
   color: var(--heading-color, #0A1128);
-  font-weight: 400;
+  font-weight: 500;
 }
 .search-input-field::placeholder {
-  color: #94a3b8;
+  color: #64748b;
+  font-weight: 500;
   transition: all 0.25s ease;
 }
 .search-input-field:focus::placeholder {

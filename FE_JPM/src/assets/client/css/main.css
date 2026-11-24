@@ -2285,23 +2285,28 @@ section,
 /* =========================================
    GLOBAL UNIFIED BUTTON STYLES (JPM KIT)
 ========================================== */
-/* 1. Primary Solid Button (Override Bootstrap's btn-danger) */
+/* 1. Primary Solid Button (Override Bootstrap's btn-danger - Đồng bộ 100% nút Chỉnh sửa) */
 .btn-danger, .btn-jpm {
-  background-color: var(--accent-color, #f82249);
-  color: #ffffff;
-  border: 1px solid var(--accent-color, #f82249);
-  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
-  font-family: var(--default-font);
-  font-weight: 600;
-  border-radius: 8px;
-  box-shadow: none;
+  background-color: var(--jpm-color-red-marine, #F82249) !important;
+  color: #ffffff !important;
+  border: 1px solid var(--jpm-color-red-marine, #F82249) !important;
+  transition: all 0.2s ease !important;
+  font-family: var(--heading-font, 'Raleway', 'Montserrat', var(--default-font)) !important;
+  font-weight: 600 !important;
+  border-radius: var(--jpm-radius-control, 8px) !important;
+  box-shadow: none !important;
   padding: 10px 20px;
 }
 .btn-danger:hover, .btn-jpm:hover {
-  background-color: var(--jpm-color-red-hover, #D9163A);
-  border-color: var(--jpm-color-red-hover, #D9163A);
-  color: #ffffff;
-  box-shadow: none;
+  background-color: var(--jpm-color-red-hover, #D9163A) !important;
+  border-color: var(--jpm-color-red-hover, #D9163A) !important;
+  color: #ffffff !important;
+  box-shadow: none !important;
+  transform: translateY(-1px) !important;
+}
+.btn-danger:active, .btn-jpm:active {
+  transform: translateY(0) !important;
+  box-shadow: none !important;
 }
 
 /* 2. Primary Blue Button (Thêm mới - Bootstrap Standard Blue #0d6efd / DEC-05) */
@@ -2313,6 +2318,7 @@ section,
   font-family: var(--default-font, 'Roboto', sans-serif);
   font-weight: 600;
   border-radius: var(--jpm-radius-control, 8px) !important;
+  box-shadow: none !important;
   transition: all 0.2s ease;
 }
 .btn-blue-primary:hover,
@@ -2320,22 +2326,66 @@ section,
   background-color: #0b5ed7 !important;
   border-color: #0a58ca !important;
   color: #ffffff !important;
+  box-shadow: none !important;
+  transform: translateY(-1px) !important;
+}
+.btn-blue-primary:active,
+.btn-primary-blue:active {
+  transform: translateY(0) !important;
 }
 
-/* 3. Secondary Outline Button (Viền xám chuẩn Design System 2026) */
-.btn-outline-secondary {
+/* 3. Secondary Outline Button (Viền xám chuẩn Design System 2026 - Đồng bộ 100% nút Đổi mật khẩu) */
+.btn-outline-secondary,
+.btn-secondary-outline,
+.btn-outline-action {
+  background-color: #ffffff !important;
   border: 1px solid #cbd5e1 !important;
   color: #475569 !important;
-  font-family: var(--default-font, 'Roboto', sans-serif);
-  font-weight: 600;
+  font-family: var(--heading-font, 'Raleway', 'Montserrat', var(--default-font)) !important;
+  font-weight: 600 !important;
   border-radius: var(--jpm-radius-control, 8px) !important;
-  transition: all 0.2s ease;
-  background-color: transparent !important;
+  box-shadow: none !important;
+  transition: all 0.2s ease !important;
 }
-.btn-outline-secondary:hover {
+.btn-outline-secondary:hover,
+.btn-secondary-outline:hover,
+.btn-outline-action:hover {
   background-color: #f1f5f9 !important;
   border-color: #94a3b8 !important;
   color: var(--jpm-color-navy-dark, #0A1128) !important;
+  box-shadow: none !important;
+  transform: translateY(-1px) !important;
+}
+.btn-outline-secondary:active,
+.btn-secondary-outline:active,
+.btn-outline-action:active {
+  background-color: #e2e8f0 !important;
+  transform: translateY(0) !important;
+}
+
+/* 3b. Danger Outline Button (Viền đỏ nền trắng chuẩn Design System 2026) */
+.btn-outline-danger,
+.btn-outline-jpm {
+  background-color: #ffffff !important;
+  border: 1px solid var(--jpm-color-red-marine, #F82249) !important;
+  color: var(--jpm-color-red-marine, #F82249) !important;
+  font-family: var(--heading-font, 'Raleway', 'Montserrat', var(--default-font)) !important;
+  font-weight: 600 !important;
+  border-radius: var(--jpm-radius-control, 8px) !important;
+  box-shadow: none !important;
+  transition: all 0.2s ease !important;
+}
+.btn-outline-danger:hover,
+.btn-outline-jpm:hover {
+  background-color: var(--jpm-color-red-marine, #F82249) !important;
+  border-color: var(--jpm-color-red-marine, #F82249) !important;
+  color: #ffffff !important;
+  box-shadow: none !important;
+  transform: translateY(-1px) !important;
+}
+.btn-outline-danger:active,
+.btn-outline-jpm:active {
+  transform: translateY(0) !important;
 }
 
 /* 4. Unified Action Buttons (Thống nhất 100% kích thước 40px & chuẩn Red Marine toàn Client) */
@@ -2636,7 +2686,7 @@ button.jpm-more-link:hover i {
    ========================================================= */
 
 /* 1. Form Controls & Input Group (Refined Client Modern Focus - 8px Border-Radius & Subtle Aura) */
-.index-page .form-control,
+.index-page .form-control:not(.minimal-input),
 .index-page .form-select,
 .index-page .input-group-text {
   height: auto;
@@ -2651,26 +2701,50 @@ button.jpm-more-link:hover i {
   box-shadow: none;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
-.index-page .form-control:hover,
+.index-page .form-control:not(.minimal-input):hover,
 .index-page .form-select:hover {
   border-color: #cbd5e1;
 }
-.index-page .form-control:focus,
+.index-page .form-control:not(.minimal-input):focus,
 .index-page .form-select:focus {
   border-width: 1px !important;
   border-color: var(--accent-color, #f82249) !important;
   box-shadow: 0 0 0 3px rgba(248, 34, 73, 0.12) !important;
   outline: 0 !important;
 }
-.index-page .form-control::placeholder {
+.index-page .form-control:not(.minimal-input)::placeholder {
   color: #b4bdc6;
   font-weight: 400;
   opacity: 1;
   transition: all 0.25s ease;
 }
-.index-page .form-control:focus::placeholder {
+.index-page .form-control:not(.minimal-input):focus::placeholder {
   transform: translate(5px);
   transition: all 0.25s ease;
+}
+
+/* Glassmorphism Auth Form Controls Isolation */
+.auth-page .minimal-input,
+.layout-auth .minimal-input,
+.index-page .minimal-input {
+  display: block !important;
+  width: 100% !important;
+  height: 44px !important;
+  min-height: 44px !important;
+  max-height: 44px !important;
+  line-height: 42px !important;
+  padding: 0 16px !important;
+  box-sizing: border-box !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  border-radius: 8px !important;
+  color: #ffffff !important;
+  box-shadow: none !important;
+}
+.auth-page .minimal-input.pe-5,
+.layout-auth .minimal-input.pe-5,
+.index-page .minimal-input.pe-5 {
+  padding-right: 44px !important;
 }
 .index-page .btn {
   font-family: var(--default-font);
@@ -4411,31 +4485,38 @@ a.footer-contact-value:hover {
 }
 
 .btn-danger {
-  background-color: var(--jpm-color-red-marine, #F82249);
-  border-color: var(--jpm-color-red-marine, #F82249);
-  color: #ffffff;
+  background-color: var(--jpm-color-red-marine, #F82249) !important;
+  border-color: var(--jpm-color-red-marine, #F82249) !important;
+  color: #ffffff !important;
+  box-shadow: none !important;
 }
 .btn-danger:hover,
-.btn-danger:focus,
-.btn-danger:active {
+.btn-danger:focus {
   background-color: var(--jpm-color-red-hover, #D9163A) !important;
   border-color: var(--jpm-color-red-hover, #D9163A) !important;
   color: #ffffff !important;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  box-shadow: none !important;
+  transform: translateY(-1px) !important;
+}
+.btn-danger:active {
+  transform: translateY(0) !important;
+  box-shadow: none !important;
 }
 
 .btn-outline-danger {
-  color: var(--jpm-color-red-marine, #F82249);
-  border-color: var(--jpm-color-red-marine, #F82249);
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  background-color: #ffffff !important;
+  color: var(--jpm-color-red-marine, #F82249) !important;
+  border-color: var(--jpm-color-red-marine, #F82249) !important;
+  box-shadow: none !important;
+  transition: all 0.2s ease !important;
 }
 .btn-outline-danger:hover,
 .btn-outline-danger:focus {
   background-color: var(--jpm-color-red-marine, #F82249) !important;
   border-color: var(--jpm-color-red-marine, #F82249) !important;
   color: #ffffff !important;
-  transform: translateY(-2px) !important;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12) !important;
+  transform: translateY(-1px) !important;
+  box-shadow: none !important;
 }
 .btn-outline-danger:active {
   transform: translateY(0) !important;
@@ -4443,17 +4524,19 @@ a.footer-contact-value:hover {
 }
 
 .btn-outline-primary {
-  color: var(--jpm-color-navy-dark, #0A1128);
-  border-color: var(--jpm-color-navy-dark, #0A1128);
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  background-color: #ffffff !important;
+  color: var(--jpm-color-navy-dark, #0A1128) !important;
+  border-color: var(--jpm-color-navy-dark, #0A1128) !important;
+  box-shadow: none !important;
+  transition: all 0.2s ease !important;
 }
 .btn-outline-primary:hover,
 .btn-outline-primary:focus {
   background-color: var(--jpm-color-navy-dark, #0A1128) !important;
   border-color: var(--jpm-color-navy-dark, #0A1128) !important;
   color: #ffffff !important;
-  transform: translateY(-2px) !important;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12) !important;
+  transform: translateY(-1px) !important;
+  box-shadow: none !important;
 }
 .btn-outline-primary:active {
   transform: translateY(0) !important;

@@ -1,5 +1,5 @@
 <template>
-  <div class="index-page">
+  <div class="index-page auth-page">
     <main class="main">
       <router-view />
     </main>

@@ -1026,7 +1026,7 @@ const scrollToProducts = () => {
 .btn-reset-filters:hover {
   background-color: var(--jpm-color-red-hover, #D9163A) !important;
   border-color: var(--jpm-color-red-hover, #D9163A) !important;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12) !important;
+  box-shadow: none !important;
   transform: translateY(-1px);
 }
 

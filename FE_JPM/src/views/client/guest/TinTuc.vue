@@ -816,7 +816,7 @@ export default {
 .btn-load-more:hover {
   background-color: var(--jpm-color-red-marine, #F82249);
   color: #ffffff;
-  transform: translateY(-2px);
+  transform: translateY(-1px);
   box-shadow: none !important;
 }
 
