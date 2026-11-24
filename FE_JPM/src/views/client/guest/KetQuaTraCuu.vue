@@ -120,52 +120,52 @@
                   <div class="sidebar-section-title mb-2">Tương Thích Động Cơ</div>
 
                   <!-- Hãng sản xuất -->
-                  <div class="custom-select-wrapper mb-2" :class="{ 'z-active': openDropdown === 'brand' }">
-                    <div class="custom-select-box" :class="{ 'is-focused': openDropdown === 'brand', 'has-value': filters.thuong_hieu_id !== '' }" @click="toggleDropdown('brand')">
-                      <span class="text-truncate">{{ brandLabel }}</span>
-                      <i class="bi bi-chevron-down select-arrow" :class="{ 'rotated': openDropdown === 'brand' }"></i>
-                    </div>
-                    <ul class="custom-dropdown-list align-left custom-scrollbar" v-show="openDropdown === 'brand'">
-                      <li @click="selectOption('brand', '')" :class="{ active: filters.thuong_hieu_id === '' }">Tất cả thương hiệu</li>
-                      <li v-for="b in brands" :key="b.id" @click="selectOption('brand', b.id)" :class="{ active: filters.thuong_hieu_id === b.id }">{{ b.name }}</li>
-                    </ul>
-                  </div>
+                  <JpmSelect
+                    class="mb-2"
+                    v-model="filters.thuong_hieu_id"
+                    :options="brands || []"
+                    valueKey="id"
+                    labelKey="name"
+                    placeholder="Tất cả thương hiệu"
+                    allOptionLabel="Tất cả thương hiệu"
+                    @update:modelValue="onBrandChange"
+                  />
 
                   <!-- Loại động cơ -->
-                  <div class="custom-select-wrapper mb-2" :class="{ 'z-active': openDropdown === 'engineType' }">
-                    <div class="custom-select-box" :class="{ 'is-focused': openDropdown === 'engineType', 'has-value': filters.loai_dong_co_id !== '' }" @click="toggleDropdown('engineType')">
-                      <span class="text-truncate">{{ engineTypeLabel }}</span>
-                      <i class="bi bi-chevron-down select-arrow" :class="{ 'rotated': openDropdown === 'engineType' }"></i>
-                    </div>
-                    <ul class="custom-dropdown-list align-left custom-scrollbar" v-show="openDropdown === 'engineType'">
-                      <li @click="selectOption('engineType', '')" :class="{ active: filters.loai_dong_co_id === '' }">Tất cả loại động cơ</li>
-                      <li v-for="e in engineTypes" :key="e.id" @click="selectOption('engineType', e.id)" :class="{ active: filters.loai_dong_co_id === e.id }">{{ e.ten_loai_dong_co }}</li>
-                    </ul>
-                  </div>
+                  <JpmSelect
+                    class="mb-2"
+                    v-model="filters.loai_dong_co_id"
+                    :options="engineTypes || []"
+                    valueKey="id"
+                    labelKey="ten_loai_dong_co"
+                    placeholder="Tất cả loại động cơ"
+                    allOptionLabel="Tất cả loại động cơ"
+                    :disabled="!filters.thuong_hieu_id"
+                    @update:modelValue="onEngineTypeChange"
+                  />
 
                   <!-- Năm sản xuất -->
-                  <div class="custom-select-wrapper mb-2" :class="{ 'z-active': openDropdown === 'year' }">
-                    <div class="custom-select-box" :class="{ 'is-focused': openDropdown === 'year', 'has-value': filters.nam_sx !== '' }" @click="toggleDropdown('year')">
-                      <span class="text-truncate">{{ yearLabel }}</span>
-                      <i class="bi bi-chevron-down select-arrow" :class="{ 'rotated': openDropdown === 'year' }"></i>
-                    </div>
-                    <ul class="custom-dropdown-list align-left custom-scrollbar" v-show="openDropdown === 'year'">
-                      <li @click="selectOption('year', '')" :class="{ active: filters.nam_sx === '' }">Tất cả các năm</li>
-                      <li v-for="y in years" :key="y" @click="selectOption('year', y)" :class="{ active: filters.nam_sx === y }">{{ y }}</li>
-                    </ul>
-                  </div>
+                  <JpmSelect
+                    class="mb-2"
+                    v-model="filters.nam_sx"
+                    :options="years || []"
+                    placeholder="Tất cả các năm"
+                    allOptionLabel="Tất cả các năm"
+                    :disabled="!filters.thuong_hieu_id"
+                    @update:modelValue="() => filters.page = 1"
+                  />
 
                   <!-- Model -->
-                  <div class="custom-select-wrapper" :class="{ 'z-active': openDropdown === 'model' }">
-                    <div class="custom-select-box" :class="{ 'is-focused': openDropdown === 'model', 'has-value': filters.dong_co_model_id !== '' }" @click="toggleDropdown('model')">
-                      <span class="text-truncate">{{ modelLabel }}</span>
-                      <i class="bi bi-chevron-down select-arrow" :class="{ 'rotated': openDropdown === 'model' }"></i>
-                    </div>
-                    <ul class="custom-dropdown-list align-left custom-scrollbar" v-show="openDropdown === 'model'">
-                      <li @click="selectOption('model', '')" :class="{ active: filters.dong_co_model_id === '' }">Tất cả model</li>
-                      <li v-for="m in engineModels" :key="m.id" @click="selectOption('model', m.id)" :class="{ active: filters.dong_co_model_id === m.id }">{{ m.ten_model }}</li>
-                    </ul>
-                  </div>
+                  <JpmSelect
+                    v-model="filters.dong_co_model_id"
+                    :options="engineModels || []"
+                    valueKey="id"
+                    labelKey="ten_model"
+                    placeholder="Tất cả model"
+                    allOptionLabel="Tất cả model"
+                    :disabled="!filters.thuong_hieu_id"
+                    @update:modelValue="() => filters.page = 1"
+                  />
                 </div>
 
                 <!-- 4. NHÓM PHỤ TÙNG (ĐỒNG BỘ 100% CỬA HÀNG SANPHAM.VUE, KHÔNG CUỘN) -->
@@ -224,7 +224,7 @@
 
             <!-- THANH TIÊU ĐỀ KẾT QUẢ TRA CỨU SƠ ĐỒ KỸ THUẬT EPC (ĐỒNG BỘ 100% CỬA HÀNG) -->
             <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-2">
-              <h4 class="fw-bold mb-0 text-capitalize" style="color: var(--heading-color, #0A1128); font-size: 1.25rem; font-family: var(--heading-font, 'Raleway', sans-serif);">
+              <h4 class="fw-bold mb-0 text-capitalize" style="font-size: 1.25rem;">
                 {{ activeTab === 'diagrams' ? 'Sơ Đồ Nhóm Phụ Tùng' : 'Danh Sách Phụ Tùng' }}
               </h4>
             </div>
@@ -325,7 +325,7 @@
                   <div v-for="group in groupedProducts" :key="group.id" class="mb-5">
                     <!-- HEADER NHÓM PHỤ TÙNG CHUẨN CỬA HÀNG -->
                     <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-2">
-                      <h4 class="fw-bold mb-0 text-capitalize" style="color: var(--heading-color, #0A1128); font-size: 1.25rem; font-family: var(--heading-font, 'Raleway', sans-serif);">
+                      <h4 class="fw-bold mb-0 text-capitalize" style="font-size: 1.25rem;">
                         {{ group.name }}
                       </h4>
                       <button 
@@ -409,11 +409,13 @@ import axiosClient from '../../../api/axiosClient';
 import { useCartStore } from '../../../stores/cartStore';
 import { useSiteSettings } from '../../../composables/useSiteSettings';
 import ProductCard from '../../../components/client/ProductCard.vue';
+import JpmSelect from '../../../components/client/JpmSelect.vue';
 
 export default {
   name: "KetQuaTraCuu",
   components: {
-    ProductCard
+    ProductCard,
+    JpmSelect
   },
   setup() {
     const route = useRoute();
@@ -678,6 +680,20 @@ export default {
     const openDropdown = ref(null);
     const toggleDropdown = (name) => { openDropdown.value = openDropdown.value === name ? null : name; };
 
+    const onBrandChange = (val) => {
+      filters.thuong_hieu_id = val ? Number(val) : '';
+      filters.loai_dong_co_id = '';
+      filters.dong_co_model_id = '';
+      filters.nam_sx = '';
+      filters.page = 1;
+    };
+
+    const onEngineTypeChange = (val) => {
+      filters.loai_dong_co_id = val ? Number(val) : '';
+      filters.dong_co_model_id = '';
+      filters.page = 1;
+    };
+
     const selectOption = (dropdown, value) => {
       if (dropdown === 'brand') {
         filters.thuong_hieu_id = value;
@@ -878,7 +894,7 @@ export default {
       activeTab, searchResult, searchDiagrams,
       sortBy, sortLabel, selectSort, cartStore,
       goToDiagram, prefetchDiagram, getDiagramImage, getDiagramGroupName, getDiagramBrandName,
-      resetFilters, changePage, openDropdown, toggleDropdown, selectOption,
+      resetFilters, changePage, openDropdown, toggleDropdown, selectOption, onBrandChange, onEngineTypeChange,
       brandLabel, engineTypeLabel, modelLabel, yearLabel, years, activeFilters, removeFilter, toggleCategory, isFilterEmpty,
       hasEngineSelected, isFetchingPartGroups
     };

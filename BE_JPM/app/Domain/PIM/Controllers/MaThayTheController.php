@@ -8,12 +8,44 @@ use Illuminate\Http\Request;
 
 class MaThayTheController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $items = MaThayThe::with(['phuTungCu', 'phuTungMoi'])->orderBy('id', 'desc')->get();
+        $query = MaThayThe::with(['phuTungCu', 'phuTungMoi'])->orderBy('id', 'desc');
+
+        if ($request->filled('search')) {
+            $s = trim($request->input('search'));
+            $query->where(function ($q) use ($s) {
+                $q->whereHas('phuTungCu', function ($sub) use ($s) {
+                    $sub->where('ma_phu_tung', 'like', "%{$s}%")
+                        ->orWhere('ten_phu_tung', 'like', "%{$s}%");
+                })->orWhereHas('phuTungMoi', function ($sub) use ($s) {
+                    $sub->where('ma_phu_tung', 'like', "%{$s}%")
+                        ->orWhere('ten_phu_tung', 'like', "%{$s}%");
+                });
+            });
+        }
+
+        $hasPagination = $request->has('per_page') || $request->has('page');
+        $all = $request->boolean('all', false) || !$hasPagination;
+        $perPage = $all ? null : (int) $request->input('per_page', 50);
+
+        if ($all || !$perPage) {
+            return response()->json([
+                'success' => true,
+                'data' => $query->get()
+            ]);
+        }
+
+        $paginated = $query->paginate($perPage);
         return response()->json([
             'success' => true,
-            'data' => $items
+            'data' => $paginated->items(),
+            'meta' => [
+                'current_page' => $paginated->currentPage(),
+                'last_page'    => $paginated->lastPage(),
+                'per_page'     => $paginated->perPage(),
+                'total'        => $paginated->total(),
+            ]
         ]);
     }
 

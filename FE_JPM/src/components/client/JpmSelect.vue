@@ -56,6 +56,31 @@
           class="custom-dropdown-panel position-absolute w-100"
           role="listbox"
         >
+          <!-- Ô tìm kiếm nếu searchable = true -->
+          <div v-if="isSearchVisible" class="dropdown-search-box p-2 border-bottom">
+            <div class="input-group input-group-sm">
+              <span class="input-group-text bg-white border-end-0">
+                <i class="bi bi-search text-muted"></i>
+              </span>
+              <input
+                ref="searchInputRef"
+                v-model="searchQuery"
+                type="text"
+                class="form-control border-start-0 ps-0"
+                placeholder="Tìm kiếm..."
+                @click.stop
+                @keydown.stop
+              />
+              <button
+                v-if="searchQuery"
+                class="btn btn-outline-secondary border-start-0"
+                type="button"
+                @click.stop="searchQuery = ''"
+              >
+                <i class="bi bi-x"></i>
+              </button>
+            </div>
+          </div>
           <!-- Danh sách Options -->
           <ul class="jpm-select-options custom-dropdown-list list-unstyled mb-0 custom-scrollbar">
             <!-- Mục Tất cả / Bỏ chọn nếu có allOptionLabel -->

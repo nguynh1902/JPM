@@ -11,6 +11,8 @@ use App\Domain\MarineCatalog\Resources\DongCoModelResource;
 use App\Domain\MarineCatalog\Services\DongCoModelService;
 use Exception;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+
 class DongCoModelController extends Controller
 {
     protected $DongCoModelService;
@@ -20,12 +22,31 @@ class DongCoModelController extends Controller
         $this->DongCoModelService = $DongCoModelService;
     }
 
-    public function index(): JsonResponse
+    public function index(Request $request): JsonResponse
     {
-        $data = $this->DongCoModelService->getAll();
+        $filters = $request->only(['search', 'thuong_hieu_id', 'loai_dong_co_id', 'nam_san_xuat']);
+        $hasPagination = $request->has('per_page') || $request->has('page');
+        $all = $request->boolean('all', false) || !$hasPagination;
+        $perPage = $all ? null : (int) $request->input('per_page', 50);
+
+        $models = $this->DongCoModelService->getAll($filters, $perPage);
+
+        if ($all || !$perPage) {
+            return response()->json([
+                'success' => true,
+                'data' => DongCoModelResource::collection($models)
+            ]);
+        }
+
         return response()->json([
             'success' => true,
-            'data' => DongCoModelResource::collection($data)
+            'data' => DongCoModelResource::collection($models->items()),
+            'meta' => [
+                'current_page' => $models->currentPage(),
+                'last_page'    => $models->lastPage(),
+                'per_page'     => $models->perPage(),
+                'total'        => $models->total(),
+            ]
         ]);
     }
 

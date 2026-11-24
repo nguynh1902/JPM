@@ -428,7 +428,7 @@
         <!-- 5. RELATED BLOGS SECTION (CHUẨN HÓA ĐỒNG BỘ 100% THEO THẺ CỬA HÀNG & JPM DESIGN SYSTEM) -->
         <div v-if="relatedArticles && relatedArticles.length > 0" class="related-blogs-section mt-5 pt-5 border-top bg-white">
           <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-2">
-            <h4 class="fw-bold mb-0 text-capitalize" style="color: var(--heading-color, #0A1128); font-size: 1.25rem; font-family: var(--heading-font, 'Raleway', sans-serif);">
+            <h4 class="fw-bold mb-0 text-capitalize" style="font-size: 1.25rem;">
               Bài viết liên quan
             </h4>
             <router-link

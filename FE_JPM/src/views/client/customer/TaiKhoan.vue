@@ -1,212 +1,286 @@
 <template>
-  <div>
+  <div class="h-100 d-flex flex-column flex-grow-1">
             
-            <!-- THÔNG TIN CÁ NHÂN -->
-            <div class="card border-0 jpm-card mb-4">
-              <div class="card-header jpm-card-header">
-                <h5 class="jpm-card-title">Thông tin cá nhân</h5>
-              </div>
-              <div class="card-body p-4">
-                <form @submit.prevent="saveProfile">
-                  <div class="row g-4">
-                    <div class="col-md-6">
-                      <label class="form-label fw-bold tk-form-label">Họ và tên</label>
-                      <input type="text" v-model="profileForm.name" :class="['form-control-lg fw-bold', isEditingProfile ? 'form-control' : 'form-control-plaintext']" :readonly="!isEditingProfile" required class="tk-form-input">
-                    </div>
-                    <div class="col-md-6">
-                      <label class="form-label fw-bold tk-form-label">Tên công ty <span class="fw-normal text-muted">(Nếu B2B)</span></label>
-                      <input type="text" v-model="profileForm.ten_cong_ty" :class="['form-control-lg fw-bold', isEditingProfile ? 'form-control' : 'form-control-plaintext']" :placeholder="isEditingProfile ? 'Nhập tên công ty...' : 'Chưa cập nhật'" :readonly="!isEditingProfile" class="tk-form-input">
-                    </div>
-                    <div class="col-md-6">
-                      <label class="form-label fw-bold tk-form-label">Số điện thoại</label>
-                      <input type="tel" v-model="profileForm.phone" :class="['form-control-lg fw-bold', isEditingProfile ? 'form-control' : 'form-control-plaintext']" :readonly="!isEditingProfile" class="tk-form-input">
-                    </div>
-                    <div class="col-md-6">
-                      <label class="form-label fw-bold tk-form-label">Địa chỉ Email</label>
-                      <input type="email" v-model="profileForm.email" :class="['form-control-lg fw-bold', isEditingProfile ? 'form-control' : 'form-control-plaintext']" :readonly="!isEditingProfile" required class="tk-form-input">
-                    </div>
-                    
-                    <div class="col-12 mt-4 pt-4 border-top d-flex justify-content-end gap-3">
-                      <template v-if="!isEditingProfile">
-                        <button type="button" class="btn btn-outline-secondary px-3 py-2 fw-semibold d-inline-flex align-items-center justify-content-center gap-2" data-bs-toggle="modal" data-bs-target="#changePasswordModal"><i class="bi bi-shield-lock"></i>Đổi mật khẩu</button>
-                        <button type="button" @click="startEditProfile" class="btn btn-danger px-4 py-2 fw-semibold d-inline-flex align-items-center gap-2"><i class="bi bi-pencil"></i>Chỉnh sửa</button>
-                      </template>
-                      <template v-else>
-                        <button type="button" class="btn btn-outline-secondary px-3 py-2 fw-semibold d-inline-flex align-items-center justify-content-center gap-2" @click="cancelEditProfile"><i class="bi bi-x-circle"></i>Hủy bỏ</button>
-                        <button type="submit" class="btn btn-danger px-4 py-2 fw-semibold d-inline-flex align-items-center gap-2" :disabled="isUpdatingProfile">
-                          <span v-if="isUpdatingProfile" class="spinner-border spinner-border-sm me-2"></span>
-                          <i class="bi bi-check-circle" v-else></i> Lưu thay đổi
-                        </button>
-                      </template>
-                    </div>
-                  </div>
-                </form>
-              </div>
+    <!-- ========================================================
+         CARD 1: THÔNG TIN CÁ NHÂN (Đồng bộ 100% Client Design System)
+         ======================================================== -->
+    <div class="card border-0 jpm-card mb-4">
+      <div class="card-header jpm-card-header">
+        <h5 class="jpm-card-title">Thông tin cá nhân</h5>
+      </div>
+      <div class="card-body p-4">
+        <form @submit.prevent="saveProfile">
+          <div class="row g-4">
+            <!-- Họ và tên -->
+            <div class="col-md-6">
+              <label class="form-label tk-form-label">Họ và tên</label>
+              <input 
+                type="text" 
+                v-model="profileForm.name" 
+                :class="[isEditingProfile ? 'form-control' : 'form-control-plaintext']" 
+                :readonly="!isEditingProfile" 
+                required 
+                class="tk-form-input"
+              >
             </div>
 
-            <!-- ĐỊA CHỈ GIAO HÀNG -->
-            <div class="card border-0 jpm-card">
-              <div class="card-header jpm-card-header">
-                <h5 class="jpm-card-title">Địa chỉ giao hàng</h5>
-                <button class="btn btn-blue-primary btn-action-header" @click="openAddAddressModal">
-                  <i class="bi bi-plus-lg"></i>
-                  <span>Thêm địa chỉ mới</span>
+            <!-- Tên công ty -->
+            <div class="col-md-6">
+              <label class="form-label tk-form-label">Tên công ty <span class="fw-normal text-muted">(Nếu B2B)</span></label>
+              <input 
+                type="text" 
+                v-model="profileForm.ten_cong_ty" 
+                :class="[isEditingProfile ? 'form-control' : 'form-control-plaintext']" 
+                :placeholder="isEditingProfile ? 'Nhập tên công ty...' : 'Chưa cập nhật'" 
+                :readonly="!isEditingProfile" 
+                class="tk-form-input"
+              >
+            </div>
+
+            <!-- Số điện thoại -->
+            <div class="col-md-6">
+              <label class="form-label tk-form-label">Số điện thoại</label>
+              <input 
+                type="tel" 
+                v-model="profileForm.phone" 
+                :class="[isEditingProfile ? 'form-control' : 'form-control-plaintext']" 
+                :readonly="!isEditingProfile" 
+                class="tk-form-input tabular-nums"
+              >
+            </div>
+
+            <!-- Địa chỉ Email -->
+            <div class="col-md-6">
+              <label class="form-label tk-form-label">Địa chỉ Email</label>
+              <input 
+                type="email" 
+                v-model="profileForm.email" 
+                :class="[isEditingProfile ? 'form-control' : 'form-control-plaintext']" 
+                :readonly="!isEditingProfile" 
+                required 
+                class="tk-form-input"
+              >
+            </div>
+            
+            <!-- Nhóm nút hành động ở đáy form (Đồng bộ 100% chuẩn Client Design System) -->
+            <div class="col-12 mt-4 pt-4 border-top d-flex justify-content-end gap-3">
+              <template v-if="!isEditingProfile">
+                <button 
+                  type="button" 
+                  class="btn btn-action-secondary" 
+                  data-bs-toggle="modal" 
+                  data-bs-target="#changePasswordModal"
+                >
+                  <i class="bi bi-shield-lock"></i>
+                  <span>Đổi mật khẩu</span>
                 </button>
+                <button 
+                  type="button" 
+                  @click="startEditProfile" 
+                  class="btn btn-action-primary"
+                >
+                  <i class="bi bi-pencil"></i>
+                  <span>Chỉnh sửa</span>
+                </button>
+              </template>
+              <template v-else>
+                <button 
+                  type="button" 
+                  class="btn btn-action-secondary" 
+                  @click="cancelEditProfile"
+                >
+                  <i class="bi bi-x-circle"></i>
+                  <span>Hủy bỏ</span>
+                </button>
+                <button 
+                  type="submit" 
+                  class="btn btn-action-primary" 
+                  :disabled="isUpdatingProfile"
+                >
+                  <span v-if="isUpdatingProfile" class="spinner-border spinner-border-sm me-2"></span>
+                  <i class="bi bi-check-circle" v-else></i>
+                  <span>Lưu thay đổi</span>
+                </button>
+              </template>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- ========================================================
+         CARD 2: ĐỊA CHỈ GIAO HÀNG (Đồng bộ 100% kích thước & màu sắc)
+         ======================================================== -->
+    <div class="card border-0 jpm-card">
+      <div class="card-header jpm-card-header">
+        <h5 class="jpm-card-title">Địa chỉ giao hàng</h5>
+        <!-- Nút Thêm mới đối tượng: Đồng bộ kích thước 40px & chuẩn Red Marine toàn Client -->
+        <button class="btn btn-action-primary" @click="openAddAddressModal">
+          <i class="bi bi-plus-lg"></i>
+          <span>Thêm địa chỉ mới</span>
+        </button>
+      </div>
+      <div class="card-body p-4">
+
+        <!-- Empty State -->
+        <div class="text-center py-5" v-if="addresses.length === 0">
+          <div class="empty-icon-wrap mx-auto mb-3">
+            <i class="bi bi-geo-alt"></i>
+          </div>
+          <h6 class="mb-1 tk-heading">Chưa có địa chỉ nào</h6>
+          <p class="text-muted small mb-0">Vui lòng thêm địa chỉ để nhận báo giá hoặc giao hàng thuận tiện nhất.</p>
+        </div>
+
+        <!-- List địa chỉ: Đồng bộ 100% hình khối & kích thước với Garage và Vật tư thường mua -->
+        <div class="d-flex flex-column gap-3" v-else>
+          <div
+            v-for="address in addresses"
+            :key="address.id"
+            class="border address-item-card d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3"
+            :class="{ 'address-item-default': address.la_mac_dinh }"
+          >
+            <!-- Bên trái: Thông tin chi tiết địa chỉ -->
+            <div class="flex-grow-1 min-w-0">
+              <!-- Dòng trên: Tên người nhận + SĐT + Badge Mặc định -->
+              <div class="d-flex align-items-center gap-2 mb-1 flex-wrap">
+                <h6 class="fw-bold mb-0 text-truncate address-recipient-name">
+                  {{ address.ten_nguoi_nhan }}
+                </h6>
+                <span class="address-divider">|</span>
+                <span class="address-recipient-phone">
+                  <i class="bi bi-telephone me-1 opacity-75"></i>{{ address.so_dien_thoai }}
+                </span>
+                <span v-if="address.la_mac_dinh" class="badge address-default-badge">
+                  Mặc định
+                </span>
               </div>
-              <div class="card-body p-4">
 
-                <!-- Empty State -->
-                <div class="text-center py-5" v-if="addresses.length === 0">
-                  <div class="empty-icon-wrap mx-auto mb-3">
-                    <i class="bi bi-geo-alt"></i>
-                  </div>
-                  <h6 class="mb-1 tk-heading">Chưa có địa chỉ nào</h6>
-                  <p class="text-muted small mb-0">Vui lòng thêm địa chỉ để nhận báo giá hoặc giao hàng thuận tiện nhất.</p>
-                </div>
-
-                <!-- List -->
-                <div class="d-flex flex-column gap-3" v-else>
-                  <div
-                    v-for="address in addresses"
-                    :key="address.id"
-                    class="border address-item-card d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3"
-                    :class="{ 'address-item-default': address.la_mac_dinh }"
-                  >
-                    <!-- Bên trái: Thông tin chi tiết địa chỉ (2 dòng gọn gàng, đồng bộ với Garage / VatTuThuongMua) -->
-                    <div class="flex-grow-1 min-w-0">
-                      <!-- Dòng trên: Tên người nhận + SĐT + Badge Mặc định -->
-                      <div class="d-flex align-items-center gap-2 mb-1 flex-wrap">
-                        <h6 class="fw-bold mb-0 text-truncate address-recipient-name">
-                          {{ address.ten_nguoi_nhan }}
-                        </h6>
-                        <span class="address-divider">|</span>
-                        <span class="address-recipient-phone">
-                          <i class="bi bi-telephone me-1 opacity-75"></i>{{ address.so_dien_thoai }}
-                        </span>
-                        <span v-if="address.la_mac_dinh" class="badge address-default-badge">
-                          Mặc định
-                        </span>
-                      </div>
-
-                      <!-- Dòng dưới: Địa chỉ cụ thể -->
-                      <p class="mb-0 text-truncate address-text" :title="address.dia_chi_cu_the">
-                        {{ address.dia_chi_cu_the }}
-                      </p>
-                    </div>
-
-                    <!-- Bên phải: Các nút thao tác chuẩn 36px đồng bộ với Garage / VatTuThuongMua -->
-                    <div class="d-flex align-items-center gap-2 flex-shrink-0 pe-1 align-self-end align-self-md-center">
-                      <!-- Nút Đặt mặc định: Cao 36px, bo góc 8px -->
-                      <button
-                        v-if="!address.la_mac_dinh"
-                        type="button"
-                        class="btn btn-set-default"
-                        title="Đặt làm địa chỉ nhận hàng mặc định"
-                        @click="setDefault(address.id)"
-                      >
-                        Đặt mặc định
-                      </button>
-
-                      <!-- Nút Sửa: 36x36px -->
-                      <button
-                        type="button"
-                        class="btn btn-action-icon btn-edit-icon"
-                        title="Sửa địa chỉ"
-                        @click.prevent="openEditAddressModal(address)"
-                      >
-                        <i class="bi bi-pencil"></i>
-                      </button>
-
-                      <!-- Nút Xóa: 36x36px -->
-                      <button
-                        type="button"
-                        class="btn btn-action-icon btn-delete-icon"
-                        title="Xóa địa chỉ"
-                        @click.prevent="deleteAddress(address.id)"
-                      >
-                        <i class="bi bi-trash3"></i>
-                      </button>
-                    </div>
-                  </div>
-                </div>
-
-              </div>
+              <!-- Dòng dưới: Địa chỉ cụ thể -->
+              <p class="mb-0 text-truncate address-text" :title="address.dia_chi_cu_the">
+                {{ address.dia_chi_cu_the }}
+              </p>
             </div>
 
-          </div>
-        
+            <!-- Bên phải: Các nút thao tác chuẩn 36px đồng bộ 100% với Garage & VatTuThuongMua -->
+            <div class="d-flex align-items-center gap-2 pe-1 flex-shrink-0 align-self-end align-self-md-center">
+              <!-- Nút Đặt mặc định: Cao 36px, bo góc 8px -->
+              <button
+                v-if="!address.la_mac_dinh"
+                type="button"
+                class="btn btn-set-default"
+                title="Đặt làm địa chỉ nhận hàng mặc định"
+                @click="setDefault(address.id)"
+              >
+                Đặt mặc định
+              </button>
 
-    <!-- MODAL: Doi mat khau -->
+              <!-- Nút Sửa: 36x36px icon chuẩn -->
+              <button
+                type="button"
+                class="btn btn-action-icon btn-edit-icon"
+                title="Sửa địa chỉ"
+                @click.prevent="openEditAddressModal(address)"
+              >
+                <i class="bi bi-pencil"></i>
+              </button>
+
+              <!-- Nút Xóa: 36x36px icon chuẩn -->
+              <button
+                type="button"
+                class="btn btn-action-icon btn-delete-icon"
+                title="Xóa địa chỉ"
+                @click.prevent="deleteAddress(address.id)"
+              >
+                <i class="bi bi-trash3"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ========================================================
+         MODAL: ĐỔI MẬT KHẨU
+         ======================================================== -->
     <div class="modal fade" id="changePasswordModal" tabindex="-1" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content border-0 shadow-lg" style="border-radius: var(--jpm-radius-card, 12px) !important; overflow: hidden;">
-          <div class="modal-header border-bottom-0 pt-4 pb-2 px-4">
+          <div class="modal-header d-flex justify-content-between align-items-center w-100 border-bottom px-4 py-3">
             <h5 class="modal-title tk-heading mb-0">Đổi Mật Khẩu</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body p-4">
             <form @submit.prevent="changePassword">
               <div class="mb-3">
-                <label class="form-label tk-form-label">Mật khẩu hiện tại</label>
-                <input type="password" v-model="passwordForm.current_password" class="form-control form-control-lg" required>
+                <label class="form-label tk-form-label">Mật khẩu hiện tại <span class="text-danger">*</span></label>
+                <input type="password" v-model="passwordForm.current_password" class="form-control" placeholder="Nhập mật khẩu hiện tại..." required>
                 <div class="text-danger small mt-1" v-if="passwordErrors.current_password">{{ passwordErrors.current_password[0] }}</div>
               </div>
               <div class="mb-3">
-                <label class="form-label tk-form-label">Mật khẩu mới</label>
-                <input type="password" v-model="passwordForm.new_password" class="form-control form-control-lg" required>
+                <label class="form-label tk-form-label">Mật khẩu mới <span class="text-danger">*</span></label>
+                <input type="password" v-model="passwordForm.new_password" class="form-control" placeholder="Nhập mật khẩu mới..." required>
                 <div class="text-danger small mt-1" v-if="passwordErrors.new_password">{{ passwordErrors.new_password[0] }}</div>
               </div>
-              <div class="mb-4">
-                <label class="form-label tk-form-label">Xác nhận mật khẩu</label>
-                <input type="password" v-model="passwordForm.new_password_confirmation" class="form-control form-control-lg" required>
+              <div class="mb-3">
+                <label class="form-label tk-form-label">Xác nhận mật khẩu mới <span class="text-danger">*</span></label>
+                <input type="password" v-model="passwordForm.new_password_confirmation" class="form-control" placeholder="Xác nhận lại mật khẩu mới..." required>
               </div>
-              <button type="submit" class="btn btn-danger w-100 justify-content-center py-2 fw-semibold mt-3" :disabled="isChangingPassword">
-                <span v-if="isChangingPassword" class="spinner-border spinner-border-sm me-2"></span>
-                <i class="bi bi-shield-check" v-else></i> Cập nhật mật khẩu
-              </button>
+              <div class="d-flex justify-content-end gap-2 pt-3 mt-4 border-top">
+                <button type="button" class="btn btn-secondary-action" data-bs-dismiss="modal">Hủy</button>
+                <button type="submit" class="btn btn-danger-action" :disabled="isChangingPassword">
+                  <span v-if="isChangingPassword" class="spinner-border spinner-border-sm me-2"></span>
+                  Cập nhật mật khẩu
+                </button>
+              </div>
             </form>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- MODAL: Dia chi -->
+    <!-- ========================================================
+         MODAL: THÊM / SỬA ĐỊA CHỈ
+         ======================================================== -->
     <div class="modal fade" id="addressModal" tabindex="-1" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content border-0 shadow-lg" style="border-radius: var(--jpm-radius-card, 12px) !important; overflow: hidden;">
-          <div class="modal-header border-bottom-0 pt-4 pb-2 px-4">
+          <div class="modal-header d-flex justify-content-between align-items-center w-100 border-bottom px-4 py-3">
             <h5 class="modal-title tk-heading mb-0">{{ isEditingAddress ? 'Chỉnh Sửa Địa Chỉ' : 'Thêm Địa Chỉ Mới' }}</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body p-4">
             <form @submit.prevent="saveAddress">
               <div class="mb-3">
-                <label class="form-label tk-form-label">Họ và tên người nhận</label>
-                <input type="text" v-model="addressForm.ten_nguoi_nhan" class="form-control form-control-lg fw-bold" required>
+                <label class="form-label tk-form-label">Họ và tên người nhận <span class="text-danger">*</span></label>
+                <input type="text" v-model="addressForm.ten_nguoi_nhan" class="form-control" placeholder="Nhập họ và tên người nhận hàng..." required>
               </div>
               <div class="mb-3">
-                <label class="form-label tk-form-label">Số điện thoại liên hệ</label>
-                <input type="text" v-model="addressForm.so_dien_thoai" class="form-control form-control-lg fw-bold" required>
+                <label class="form-label tk-form-label">Số điện thoại liên hệ <span class="text-danger">*</span></label>
+                <input type="text" v-model="addressForm.so_dien_thoai" class="form-control" placeholder="Nhập số điện thoại liên hệ..." required>
               </div>
-              <div class="mb-4">
-                <label class="form-label tk-form-label">Địa chỉ nhận hàng cụ thể</label>
-                <textarea v-model="addressForm.dia_chi_cu_the" class="form-control form-control-lg" rows="3" placeholder="Số nhà, đường, phường/xã, quận/huyện, tỉnh/thành phố..." required></textarea>
+              <div class="mb-3">
+                <label class="form-label tk-form-label">Địa chỉ nhận hàng cụ thể <span class="text-danger">*</span></label>
+                <textarea v-model="addressForm.dia_chi_cu_the" class="form-control" rows="3" placeholder="Số nhà, đường, phường/xã, quận/huyện, tỉnh/thành phố hoặc bến chành xe..." required></textarea>
               </div>
-              <div class="mb-4 form-check">
+              <div class="mb-3 form-check">
                 <input type="checkbox" class="form-check-input" id="defaultAddress" v-model="addressForm.la_mac_dinh">
-                <label class="form-check-label fw-semibold text-secondary" style="font-size: 13.5px;" for="defaultAddress">Đặt làm địa chỉ mặc định</label>
+                <label class="form-check-label fw-semibold text-secondary ms-1 cursor-pointer" style="font-size: 13.5px;" for="defaultAddress">Đặt làm địa chỉ mặc định</label>
               </div>
-              <button type="submit" class="btn btn-danger w-100 justify-content-center py-2 fw-semibold mt-3" :disabled="isSavingAddress">
-                <span v-if="isSavingAddress" class="spinner-border spinner-border-sm me-2"></span>
-                <i class="bi bi-save" v-else></i> Lưu địa chỉ
-              </button>
+              <div class="d-flex justify-content-end gap-2 pt-3 mt-4 border-top">
+                <button type="button" class="btn btn-secondary-action" data-bs-dismiss="modal">Hủy</button>
+                <button type="submit" class="btn btn-danger-action" :disabled="isSavingAddress">
+                  <span v-if="isSavingAddress" class="spinner-border spinner-border-sm me-2"></span>
+                  Lưu địa chỉ
+                </button>
+              </div>
             </form>
           </div>
         </div>
       </div>
     </div>
 
-    
+  </div>
 </template>
 
 <script setup>
@@ -236,9 +310,6 @@ const { data: addressesData, isLoading: isLoadingAddresses } = useQuery({
   staleTime: 5 * 60 * 1000,
 });
 const addresses = computed(() => addressesData.value || []);
-
-// Global page loading: shows full-screen preloader until all data is ready (same as TrangChu.vue)
-
 
 // Local States
 const isEditingProfile = ref(false);
@@ -392,8 +463,13 @@ const saveAddressMutation = useMutation({
       return axiosClient.post('/client/profile/addresses', data);
     }
   },
-  
-  onError: (error) => { if (error.response?.status === 422) { Object.values(error.response.data.errors).forEach(err => toaster.error(err[0])); } else { toaster.error("Có lỗi xảy ra khi lưu địa chỉ!"); } },
+  onError: (error) => { 
+    if (error.response?.status === 422) { 
+      Object.values(error.response.data.errors).forEach(err => toaster.error(err[0])); 
+    } else { 
+      toaster.error("Có lỗi xảy ra khi lưu địa chỉ!"); 
+    } 
+  },
   onSettled: () => {
     queryClient.invalidateQueries({ queryKey: ['clientAddresses'] });
   },
@@ -452,14 +528,14 @@ const deleteAddress = async (id) => {
 
 // Set Default Address Mutation
 const setDefaultMutation = useMutation({
-  mutationFn: (id) => axiosClient.put('/client/profile/addresses/' + id + '/set-default'),
+  mutationFn: (id) => axiosClient.put(`/client/profile/addresses/${id}/default`),
   onMutate: async (id) => {
     await queryClient.cancelQueries({ queryKey: ['clientAddresses'] });
     const previousAddresses = queryClient.getQueryData(['clientAddresses']);
     
     queryClient.setQueryData(['clientAddresses'], (old) => {
-      const list = Array.isArray(old) ? old : [];
-      return list.map(item => ({
+      if (!Array.isArray(old)) return old;
+      return old.map(item => ({
         ...item,
         la_mac_dinh: item.id === id ? 1 : 0
       }));
@@ -485,26 +561,13 @@ const setDefault = (id) => {
 </script>
 
 <style scoped>
-.tk-card {
-  box-shadow: 0 4px 16px rgba(10, 17, 40, 0.04) !important;
-  border: 1px solid #e2e8f0 !important;
-  border-radius: var(--jpm-radius-card, 12px) !important;
-  background-color: #ffffff;
-}
-.tk-card-header {
-  padding: 16px 24px;
-  min-height: 70px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border-bottom: 1px solid #e2e8f0 !important;
-}
 .tk-heading {
   font-family: var(--heading-font, 'Raleway', sans-serif);
   color: var(--jpm-color-navy-dark, #0A1128);
   font-weight: 700;
   letter-spacing: -0.01em;
 }
+
 .tk-form-label {
   font-size: 0.8125rem;
   font-weight: 600;
@@ -512,13 +575,16 @@ const setDefault = (id) => {
   margin-bottom: 0.375rem;
   display: block;
 }
+
 .tk-form-input {
-  font-size: 0.875rem;
+  font-size: 0.95rem;
+  font-weight: 600;
   color: var(--jpm-color-navy-dark, #0A1128);
 }
 
-.hover-red:hover {
-  color: var(--jpm-color-red-marine, #F82249) !important;
+.form-control-plaintext {
+  padding: 0.375rem 0;
+  line-height: 1.5;
 }
 
 /* Card địa chỉ: Đồng bộ 100% kích thước & bo góc với Garage & VatTuThuongMua */
@@ -531,16 +597,21 @@ const setDefault = (id) => {
   transition: border-color 0.2s ease, background-color 0.2s ease;
 }
 
-.address-item-card:hover {
+.address-item-card:not(.address-item-default):hover {
   transform: none !important;
   box-shadow: none !important;
   border-color: #cbd5e1 !important;
   background-color: #fafbfc;
 }
 
-.address-item-default {
-  border-color: rgba(248, 34, 73, 0.4) !important;
+/* Card mặc định: Viền đỏ Marine trang nhã, hover KHÔNG chớp nền, KHÔNG đổi màu */
+.address-item-default,
+.address-item-default:hover {
+  border-color: rgba(248, 34, 73, 0.45) !important;
   background-color: rgba(248, 34, 73, 0.015) !important;
+  transform: none !important;
+  box-shadow: none !important;
+  cursor: default;
 }
 
 .address-recipient-name {
@@ -567,7 +638,7 @@ const setDefault = (id) => {
   font-weight: 600;
   font-size: 0.72rem;
   padding: 2px 8px;
-  border-radius: 4px;
+  border-radius: var(--jpm-radius-badge, 6px);
   letter-spacing: 0.2px;
 }
 
@@ -634,7 +705,7 @@ const setDefault = (id) => {
   border-color: var(--jpm-color-red-marine, #F82249);
   color: #ffffff;
   transform: translateY(-1px);
-  box-shadow: 0 3px 8px rgba(248, 34, 73, 0.2);
+  box-shadow: 0 4px 10px rgba(248, 34, 73, 0.25);
 }
 
 /* Empty State Wrap */
@@ -655,6 +726,127 @@ const setDefault = (id) => {
   opacity: 0.4 !important;
   font-weight: 500 !important;
 }
+
+/* Standard Unified Action Buttons (Đồng bộ 100% kích thước 40px giữa các Card trên trang) */
+.btn-action-primary {
+  height: 40px !important;
+  min-height: 40px !important;
+  max-height: 40px !important;
+  padding: 0 18px !important;
+  background-color: var(--jpm-color-red-marine, #F82249) !important;
+  border: 1px solid var(--jpm-color-red-marine, #F82249) !important;
+  color: #ffffff !important;
+  font-family: var(--heading-font, 'Raleway', 'Montserrat', sans-serif) !important;
+  font-size: 0.875rem !important;
+  font-weight: 600 !important;
+  border-radius: var(--jpm-radius-control, 8px) !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  white-space: nowrap !important;
+  box-sizing: border-box !important;
+  transition: all 0.2s ease !important;
+  line-height: 1 !important;
+  text-decoration: none !important;
+}
+
+.btn-action-primary:hover:not(:disabled) {
+  background-color: var(--jpm-color-red-hover, #D9163A) !important;
+  border-color: var(--jpm-color-red-hover, #D9163A) !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 12px rgba(248, 34, 73, 0.25) !important;
+  transform: translateY(-1px) !important;
+}
+
+.btn-action-primary:disabled {
+  opacity: 0.65 !important;
+  cursor: not-allowed !important;
+}
+
+.btn-action-secondary {
+  height: 40px !important;
+  min-height: 40px !important;
+  max-height: 40px !important;
+  padding: 0 18px !important;
+  background-color: #ffffff !important;
+  border: 1px solid #cbd5e1 !important;
+  color: #475569 !important;
+  font-family: var(--heading-font, 'Raleway', 'Montserrat', sans-serif) !important;
+  font-size: 0.875rem !important;
+  font-weight: 600 !important;
+  border-radius: var(--jpm-radius-control, 8px) !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  white-space: nowrap !important;
+  box-sizing: border-box !important;
+  transition: all 0.2s ease !important;
+  line-height: 1 !important;
+  text-decoration: none !important;
+}
+
+.btn-action-secondary:hover {
+  background-color: #f1f5f9 !important;
+  border-color: #94a3b8 !important;
+  color: var(--jpm-color-navy-dark, #0A1128) !important;
+  transform: translateY(-1px) !important;
+}
+
+.btn-action-primary i,
+.btn-action-secondary i {
+  font-size: 15px !important;
+  line-height: 1 !important;
+}
+
+/* Standard Modal Action Buttons */
+.btn-danger-action {
+  height: 40px;
+  padding: 0 22px;
+  background-color: var(--jpm-color-red-marine, #F82249);
+  color: #ffffff;
+  border: 1px solid var(--jpm-color-red-marine, #F82249);
+  border-radius: var(--jpm-radius-control, 8px);
+  font-size: 0.875rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.btn-danger-action:hover:not(:disabled) {
+  background-color: #d91438;
+  border-color: #d91438;
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(248, 34, 73, 0.25);
+}
+
+.btn-danger-action:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.btn-secondary-action {
+  height: 40px;
+  padding: 0 18px;
+  background-color: #f1f5f9;
+  color: #475569;
+  border: 1px solid #e2e8f0;
+  border-radius: var(--jpm-radius-control, 8px);
+  font-size: 0.875rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.btn-secondary-action:hover {
+  background-color: #e2e8f0;
+  color: #0f172a;
+}
 </style>
-
-

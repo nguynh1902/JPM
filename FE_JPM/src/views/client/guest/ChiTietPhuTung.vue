@@ -391,7 +391,7 @@
         <!-- PHỤ TÙNG LIÊN QUAN -->
         <div class="mb-5" data-aos="fade-up" v-if="relatedParts && relatedParts.length > 0">
           <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-2">
-            <h4 class="fw-bold mb-0 text-capitalize" style="color: var(--heading-color, #0A1128); font-size: 1.25rem; font-family: var(--heading-font, 'Raleway', sans-serif);">
+            <h4 class="fw-bold mb-0 text-capitalize" style="font-size: 1.25rem;">
               Những sản phẩm khác
             </h4>
             <router-link
@@ -1060,7 +1060,7 @@ watch(compatibleModels, (models) => {
   height: 385px;
   background: #f8fafc;
   border: 1px solid #e2e8f0;
-  border-radius: 14px;
+  border-radius: var(--jpm-radius-card, 12px);
   overflow: hidden;
   box-shadow: none;
   display: flex;

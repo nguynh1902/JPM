@@ -420,6 +420,10 @@ const router = createRouter({
     if (to.hash) {
       return { el: to.hash, behavior: "smooth" };
     }
+    // Giữ nguyên vị trí cuộn khi chỉ chuyển đổi tab / query params trên cùng một trang
+    if (to.path === from.path) {
+      return false;
+    }
     return { top: 0 };
   },
 });

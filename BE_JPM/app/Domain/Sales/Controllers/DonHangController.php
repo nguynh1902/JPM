@@ -113,62 +113,52 @@ class DonHangController extends Controller
             return response()->json($resBody, $status);
         }
     }
+    public function index(Request $request) { 
+        $query = DonHang::with(['khachHang', 'diaChi', 'chiTiet.phuTung', 'chiTiet.sanPham'])->orderBy('id', 'desc');
 
-    public function index() { 
-        return response()->json([
-            'success' => true, 
-            'data' => DonHang::with(['khachHang', 'diaChi', 'chiTiet.phuTung', 'chiTiet.sanPham'])->orderBy('id', 'desc')->get()
-        ]); 
-    }
-
-    public function update(Request $request, $id)
-    {
-        DB::beginTransaction();
-        try {
-            $donHang = DonHang::lockForUpdate()->findOrFail($id);
-            $oldStatus = (int) $donHang->trang_thai;
-            $newStatus = isset($request->status) ? (int) $request->status : $oldStatus;
-            
-            if ($oldStatus == 3 && $newStatus == 4) {
-                throw new \Exception("Không thể hủy đơn hàng đã hoàn thành. Vui lòng dùng quy trình đổi trả.");
-            }
-            
-            $donHang->update([
-                'trang_thai' => $newStatus,
-                'trang_thai_thanh_toan' => $request->payment_status ?? $donHang->trang_thai_thanh_toan,
-                'tong_tien' => $request->total_amount ?? $donHang->tong_tien,
-                'phi_van_chuyen' => $request->shipping_fee ?? $donHang->phi_van_chuyen,
-                'loai_don' => $request->order_type ?? $donHang->loai_don,
-                'tien_coc_yeu_cau' => $request->deposit_required ?? $donHang->tien_coc_yeu_cau,
-                'da_thu' => $request->paid_amount ?? $donHang->da_thu,
-                'khach_tu_tra_cuoc' => $request->freight_collect ?? $donHang->khach_tu_tra_cuoc,
-                'dia_chi_text' => $request->address ?? $request->dia_chi_text ?? $donHang->dia_chi_text,
-                'anh_chuyen_khoan' => $request->input('anh_chuyen_khoan', $request->input('receipt_image', $donHang->anh_chuyen_khoan)),
-                'anh_chuyen_khoan_2' => $request->input('anh_chuyen_khoan_2', $request->input('receipt_image_2', $donHang->anh_chuyen_khoan_2)),
-            ]);
-
-            if ($oldStatus != 4 && $newStatus == 4) {
-                $orderService = new OrderService();
-                $orderService->cancelOrderInventory($donHang, auth()->id() ?? 1);
-            }
-
-            DB::commit();
-            return response()->json([
-                'success' => true,
-                'message' => 'Cập nhật đơn hàng thành công',
-                'data' => $donHang
-            ]);
-        } catch (\Exception $e) {
-            DB::rollBack();
-            $status = 500;
-            if (str_contains($e->getMessage(), 'Không thể hủy')) {
-                $status = 409;
-            }
-            return response()->json([
-                'success' => false,
-                'message' => 'Lỗi cập nhật đơn hàng: ' . $e->getMessage()
-            ], $status);
+        if ($request->filled('search')) {
+            $s = trim($request->input('search'));
+            $query->where(function ($q) use ($s) {
+                $q->where('ma_don_hang', 'like', "%{$s}%")
+                  ->orWhere('ten_nguoi_nhan', 'like', "%{$s}%")
+                  ->orWhere('so_dien_thoai_nhan', 'like', "%{$s}%")
+                  ->orWhereHas('khachHang.user', function ($sub) use ($s) {
+                      $sub->where('name', 'like', "%{$s}%")
+                          ->orWhere('phone', 'like', "%{$s}%");
+                  });
+            });
         }
+
+        if ($request->has('trang_thai') && $request->input('trang_thai') !== '' && $request->input('trang_thai') !== null) {
+            $query->where('trang_thai', (int) $request->input('trang_thai'));
+        }
+
+        if ($request->has('trang_thai_thanh_toan') && $request->input('trang_thai_thanh_toan') !== '' && $request->input('trang_thai_thanh_toan') !== null) {
+            $query->where('trang_thai_thanh_toan', (int) $request->input('trang_thai_thanh_toan'));
+        }
+
+        $hasPagination = $request->has('per_page') || $request->has('page');
+        $all = $request->boolean('all', false) || !$hasPagination;
+        $perPage = $all ? null : (int) $request->input('per_page', 50);
+
+        if ($all || !$perPage) {
+            return response()->json([
+                'success' => true, 
+                'data' => $query->get()
+            ]);
+        }
+
+        $paginated = $query->paginate($perPage);
+        return response()->json([
+            'success' => true,
+            'data' => $paginated->items(),
+            'meta' => [
+                'current_page' => $paginated->currentPage(),
+                'last_page'    => $paginated->lastPage(),
+                'per_page'     => $paginated->perPage(),
+                'total'        => $paginated->total(),
+            ]
+        ]);
     }
 
     public function show($id)

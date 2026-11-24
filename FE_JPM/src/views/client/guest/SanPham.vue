@@ -133,7 +133,7 @@
               <div v-else-if="groupedCategories.length > 0">
                 <div v-for="cat in groupedCategories" :key="cat.id" class="mb-5">
                   <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-2">
-                    <h4 class="fw-bold mb-0 text-capitalize" style="color: var(--heading-color, #0A1128); font-size: 1.25rem; font-family: var(--heading-font, 'Raleway', sans-serif);">{{ cat.ten_danh_muc }}</h4>
+                    <h4 class="fw-bold mb-0 text-capitalize" style="font-size: 1.25rem;">{{ cat.ten_danh_muc }}</h4>
                     <button type="button" class="jpm-more-link" @click="viewCategory(cat.slug)">
                       Xem thêm <i class="bi bi-arrow-right"></i>
                     </button>
@@ -159,7 +159,7 @@
             <div v-else>
               <!-- Thanh điều khiển: Tiêu đề + Dropdown Sắp xếp -->
               <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 pb-2 border-bottom gap-2">
-                <h4 class="fw-bold mb-0 text-capitalize" style="color: var(--heading-color, #0A1128); font-size: 1.25rem; font-family: var(--heading-font, 'Raleway', sans-serif);">
+                <h4 class="fw-bold mb-0 text-capitalize" style="font-size: 1.25rem;">
                   <template v-if="selectedCategories.length === 1 && !searchKeyword">
                     {{ getCategoryName(selectedCategories[0]) }}
                   </template>
@@ -174,29 +174,17 @@
                   </template>
                 </h4>
 
-                <!-- Dropdown Sắp Xếp Chuẩn Luxury (Đồng bộ 100% Thương Hiệu) -->
+                <!-- Dropdown Sắp Xếp Chuẩn Luxury (Đồng bộ 100% qua JpmSelect) -->
                 <div class="d-flex align-items-center gap-2">
                   <span class="text-muted small fw-medium text-nowrap d-none d-sm-inline">Sắp xếp:</span>
-                  <div class="custom-select-wrapper" :class="{ 'z-active': isSortDropdownOpen }">
-                    <div 
-                      class="custom-select-box shop-sort-box" 
-                      :class="{ 'is-focused': isSortDropdownOpen }"
-                      @click.stop="isSortDropdownOpen = !isSortDropdownOpen"
-                    >
-                      <span class="text-truncate">{{ currentSortLabel }}</span>
-                      <i class="bi bi-chevron-down select-arrow" :class="{ rotated: isSortDropdownOpen }"></i>
-                    </div>
-                    <ul class="custom-dropdown-list align-right shadow-sm" v-show="isSortDropdownOpen">
-                      <li 
-                        v-for="opt in sortOptions" 
-                        :key="opt.value" 
-                        :class="{ active: sortBy === opt.value }"
-                        @click="selectSort(opt.value)"
-                      >
-                        {{ opt.label }}
-                      </li>
-                    </ul>
-                  </div>
+                  <JpmSelect
+                    v-model="sortBy"
+                    :options="sortOptions"
+                    valueKey="value"
+                    labelKey="label"
+                    placeholder="Sắp xếp"
+                    style="min-width: 175px;"
+                  />
                 </div>
               </div>
               
@@ -276,7 +264,7 @@
 </template>
 
 <script setup>
-import { ref, watch, computed, onMounted, onUnmounted } from 'vue';
+import { ref, watch, computed } from 'vue';
 import { useQuery } from '@tanstack/vue-query';
 import axiosClient from '../../../api/axiosClient';
 import { useRoute, useRouter } from 'vue-router';
@@ -284,6 +272,7 @@ import { useCartStore } from '../../../stores/cartStore';
 import { createToaster } from '@meforma/vue-toaster';
 import { useSiteSettings } from '../../../composables/useSiteSettings';
 import ProductCard from '../../../components/client/ProductCard.vue';
+import JpmSelect from '../../../components/client/JpmSelect.vue';
 
 const route = useRoute();
 const router = useRouter();
@@ -310,32 +299,12 @@ const selectedCategories = ref(route.query.danh_muc ? (Array.isArray(route.query
 const sortBy = ref(route.query.sort || 'newest');
 const currentPage = ref(parseInt(route.query.page) || 1);
 
-// Custom Luxury Sort Dropdown
-const isSortDropdownOpen = ref(false);
+// Sort Options for JpmSelect
 const sortOptions = [
   { value: 'newest', label: 'Mới nhất' },
   { value: 'price_asc', label: 'Giá: Thấp đến cao' },
   { value: 'price_desc', label: 'Giá: Cao đến thấp' },
 ];
-const currentSortLabel = computed(() => {
-  return sortOptions.find(opt => opt.value === sortBy.value)?.label || 'Mới nhất';
-});
-const selectSort = (val) => {
-  sortBy.value = val;
-  isSortDropdownOpen.value = false;
-};
-const handleClickOutside = (event) => {
-  if (isSortDropdownOpen.value && !event.target.closest('.custom-select-wrapper')) {
-    isSortDropdownOpen.value = false;
-  }
-};
-onMounted(() => {
-  document.addEventListener('click', handleClickOutside);
-});
-onUnmounted(() => {
-  document.removeEventListener('click', handleClickOutside);
-  isSortDropdownOpen.value = false;
-});
 
 // Computed property for mode
 const isGroupedMode = computed(() => {

@@ -42,7 +42,7 @@
           </div>
           
           <!-- HEADLINE -->
-          <h1 data-aos="fade-up" data-aos-delay="100" style="font-family: var(--heading-font, 'Raleway', sans-serif); font-size: clamp(32px, 3.2vw, 44px); font-weight: 700; color: #fff; line-height: 1.2; margin-bottom: 24px; text-shadow: 0 4px 24px rgba(0, 0, 0, 0.5);">
+          <h1 data-aos="fade-up" data-aos-delay="100" style="font-size: clamp(32px, 3.2vw, 44px); font-weight: 700; color: #fff; line-height: 1.2; margin-bottom: 24px; text-shadow: 0 4px 24px rgba(0, 0, 0, 0.5);">
             Hệ Thống Phụ Tùng<br />
             <span style="color: var(--jpm-color-red-marine, #F82249);">Tàu Thuyền</span>
           </h1>

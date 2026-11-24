@@ -67,10 +67,11 @@
   --jpm-shadow-lg: 0 12px 24px -4px rgba(10, 17, 40, 0.12), 0 4px 10px -2px rgba(10, 17, 40, 0.06);
   --jpm-shadow-xl: 0 24px 48px -12px rgba(10, 17, 40, 0.20);
 
-  /* 7. Typography: Hỗ trợ tiếng Việt hoàn hảo cho tiêu đề & thương hiệu */
-  --jpm-font-heading: 'Raleway', 'Montserrat', 'Roboto', sans-serif;
-  --jpm-font-body: 'Roboto', sans-serif;
-  --jpm-font-mono: 'Roboto Mono', monospace;
+  /* 7. Typography: Hệ thống phông chữ chuẩn hóa duy nhất (Inter) toàn diện cho Client */
+  --jpm-font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --jpm-font-heading: var(--jpm-font-family);
+  --jpm-font-body: var(--jpm-font-family);
+  --jpm-font-mono: 'Roboto Mono', SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 
   /* 8. Layout Offset (Khớp chính xác 100% với .header height: 70px) */
   --jpm-header-height: 70px;
@@ -78,9 +79,9 @@
   /* ═════════════════════════════════════════════════════════════════
      GLOBAL BRIDGES: Ánh xạ các biến cũ sang Design Tokens 2026
      ═════════════════════════════════════════════════════════════════ */
-  --default-font: var(--jpm-font-body);
-  --heading-font: var(--jpm-font-heading);
-  --nav-font: var(--jpm-font-heading);
+  --default-font: var(--jpm-font-family);
+  --heading-font: var(--jpm-font-family);
+  --nav-font: var(--jpm-font-family);
 
   --background-color: var(--jpm-neutral-50, #F8FAFC);
   --default-color: var(--jpm-neutral-700, #334155);
@@ -215,11 +216,27 @@
   transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
 }
 
+/* ═════════════════════════════════════════════════════════════════
+   GLOBAL TYPOGRAPHY & TAG HIERARCHY (SINGLE STANDARD FONT: INTER)
+   ═════════════════════════════════════════════════════════════════ */
+body,
+button,
+input,
+select,
+textarea {
+  font-family: var(--jpm-font-family);
+}
+
 body {
   color: var(--default-color);
   background-color: var(--background-color);
   font-family: var(--default-font);
   font-variant-numeric: lining-nums;
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
 a {
@@ -242,44 +259,65 @@ h6 {
   color: var(--heading-color);
   font-family: var(--heading-font);
   font-variant-numeric: lining-nums;
-  letter-spacing: -0.3px;
+  letter-spacing: -0.2px;
   margin-top: 0;
+  margin-bottom: 0.5rem;
 }
 
 h1 {
-  font-size: 1.55rem;
-  font-weight: 800;
+  font-size: 1.75rem;
+  font-weight: 700;
   line-height: 1.25;
+  letter-spacing: -0.3px;
 }
 
 h2 {
-  font-size: 1.35rem;
-  font-weight: 700;
+  font-size: 1.5rem;
+  font-weight: 600;
   line-height: 1.3;
+  letter-spacing: -0.25px;
 }
 
 h3 {
-  font-size: 1.1rem;
-  font-weight: 700;
+  font-size: 1.25rem;
+  font-weight: 600;
   line-height: 1.35;
+  letter-spacing: -0.2px;
 }
 
 h4 {
-  font-size: 1rem;
-  font-weight: 700;
+  font-size: 1.125rem;
+  font-weight: 600;
   line-height: 1.4;
+  letter-spacing: -0.15px;
 }
 
 h5 {
-  font-size: 0.95rem;
-  font-weight: 700;
+  font-size: 1rem;
+  font-weight: 500;
   line-height: 1.4;
 }
 
 h6 {
   font-size: 0.875rem;
-  font-weight: 700;
-  line-height: 1.35;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+p {
+  font-size: 0.9375rem;
+  font-weight: 400;
+  line-height: 1.6;
+  color: var(--default-color);
+  margin-top: 0;
+  margin-bottom: 1rem;
+}
+
+small,
+.small {
+  font-size: 0.8125rem;
+  font-weight: 400;
+  line-height: 1.4;
 }
 
 /* Pulsating Play Button
@@ -788,7 +826,7 @@ h6 {
 }
 
 .home-banner-title {
-  font-family: var(--heading-font, 'Raleway', sans-serif);
+  font-family: var(--heading-font);
   font-size: 1.75rem;
   font-weight: 800;
   line-height: 1.25;
@@ -1209,25 +1247,25 @@ section,
 .hero-main-title .hero-title-accent {
   display: inline-block;
   color: var(--accent-color);
-  font-size: 30px;
-  font-weight: 700;
-  letter-spacing: 2.5px;
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: 3px;
   text-transform: uppercase;
   margin-bottom: 8px;
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
-/* Định vị cốt lõi (PHỤ TÙNG TÀU THUYỀN NHẬT BẢN) - Nét 600 thanh thoát, kích thước vừa vặn */
+/* Định vị cốt lõi (PHỤ TÙNG TÀU THUYỀN NHẬT BẢN) - Nét SemiBold thanh thoát, tỷ lệ chuẩn hàng hải */
 .hero-main-title .hero-title-white {
   display: block;
   color: #ffffff;
-  font-size: 44px;
+  font-size: clamp(32px, 3.2vw, 42px);
   font-weight: 600;
-  letter-spacing: 0.5px;
-  line-height: 1.2;
+  letter-spacing: 1.5px;
+  line-height: 1.25;
   text-transform: uppercase;
   font-style: normal;
-  text-shadow: 0 2px 16px rgba(0, 0, 0, 0.4);
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
 }
 
 .hero p,
@@ -1343,17 +1381,18 @@ section,
 }
 
 .hero .about-info h2 {
-  font-size: 24px;
+  font-size: 20px;
   font-weight: 600;
-  letter-spacing: normal;
+  letter-spacing: -0.2px;
   text-transform: none;
   margin-bottom: 8px;
   color: #fff;
 }
 
 .hero .about-info h3 {
-  font-size: 17px;
-  font-weight: 500;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: -0.1px;
   margin-bottom: 5px;
   color: #fff;
 }
@@ -1795,7 +1834,7 @@ section,
   padding: 20px;
   margin-bottom: 15px;
   border: 1px solid color-mix(in srgb, var(--default-color), transparent 85%);
-  border-radius: 5px;
+  border-radius: var(--jpm-radius-card, 12px);
   overflow: hidden;
 }
 
@@ -2224,7 +2263,7 @@ section,
    GLOBAL PAGE TITLE STYLES (JPM KIT)
 ========================================== */
 .jpm-page-title {
-  font-family: var(--heading-font, 'Raleway', 'Montserrat', sans-serif) !important;
+  font-family: var(--heading-font) !important;
   font-size: 1.5rem !important; /* Chuẩn 24px Desktop theo 10_Client_UI_Standard.md */
   font-weight: 700 !important; /* Chuẩn H2 Weight 700 sang trọng, dứt khoát */
   color: var(--heading-color, #0A1128) !important;
@@ -2235,7 +2274,7 @@ section,
 }
 
 .jpm-page-subtitle {
-  font-family: var(--default-font, 'Roboto', sans-serif) !important;
+  font-family: var(--default-font) !important;
   font-size: 0.875rem !important; /* 14px chuẩn Body Standard */
   font-weight: 400 !important;
   color: var(--jpm-neutral-500, #64748B) !important;
@@ -2299,20 +2338,92 @@ section,
   color: var(--jpm-color-navy-dark, #0A1128) !important;
 }
 
-/* 4. Unified Card Header Action Button (Thống nhất 100% kích thước & vị trí cho button trên Card Header toàn Client) */
-.btn-action-header {
-  height: 38px !important;
-  min-height: 38px !important;
-  max-height: 38px !important;
-  padding: 0 16px !important;
-  font-size: 13.5px !important;
+/* 4. Unified Action Buttons (Thống nhất 100% kích thước 40px & chuẩn Red Marine toàn Client) */
+.btn-action-primary {
+  height: 40px !important;
+  min-height: 40px !important;
+  max-height: 40px !important;
+  padding: 0 18px !important;
+  background-color: var(--jpm-color-red-marine, #F82249) !important;
+  border: 1px solid var(--jpm-color-red-marine, #F82249) !important;
+  color: #ffffff !important;
+  font-family: var(--default-font) !important;
+  font-size: 0.875rem !important;
   font-weight: 600 !important;
-  line-height: 36px !important;
   border-radius: var(--jpm-radius-control, 8px) !important;
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
-  gap: 6px !important;
+  gap: 8px !important;
+  white-space: nowrap !important;
+  box-sizing: border-box !important;
+  transition: all 0.2s ease !important;
+  line-height: 1 !important;
+  text-decoration: none !important;
+}
+
+.btn-action-primary:hover:not(:disabled) {
+  background-color: var(--jpm-color-red-hover, #D9163A) !important;
+  border-color: var(--jpm-color-red-hover, #D9163A) !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 12px rgba(248, 34, 73, 0.25) !important;
+  transform: translateY(-1px) !important;
+}
+
+.btn-action-primary:disabled {
+  opacity: 0.65 !important;
+  cursor: not-allowed !important;
+}
+
+.btn-action-secondary {
+  height: 40px !important;
+  min-height: 40px !important;
+  max-height: 40px !important;
+  padding: 0 18px !important;
+  background-color: #ffffff !important;
+  border: 1px solid #cbd5e1 !important;
+  color: #475569 !important;
+  font-family: var(--default-font) !important;
+  font-size: 0.875rem !important;
+  font-weight: 600 !important;
+  border-radius: var(--jpm-radius-control, 8px) !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  white-space: nowrap !important;
+  box-sizing: border-box !important;
+  transition: all 0.2s ease !important;
+  line-height: 1 !important;
+  text-decoration: none !important;
+}
+
+.btn-action-secondary:hover {
+  background-color: #f1f5f9 !important;
+  border-color: #94a3b8 !important;
+  color: var(--jpm-color-navy-dark, #0A1128) !important;
+  transform: translateY(-1px) !important;
+}
+
+.btn-action-primary i,
+.btn-action-secondary i {
+  font-size: 15px !important;
+  line-height: 1 !important;
+}
+
+.btn-action-header {
+  height: 40px !important;
+  min-height: 40px !important;
+  max-height: 40px !important;
+  padding: 0 18px !important;
+  font-size: 0.875rem !important;
+  font-weight: 600 !important;
+  line-height: 38px !important;
+  border-radius: var(--jpm-radius-control, 8px) !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
   white-space: nowrap !important;
   box-sizing: border-box !important;
   text-decoration: none !important;
@@ -2341,7 +2452,7 @@ section,
 }
 
 .jpm-card-title {
-  font-family: var(--heading-font, 'Raleway', 'Montserrat', sans-serif) !important;
+  font-family: var(--heading-font) !important;
   color: var(--jpm-color-navy-dark, #0A1128) !important;
   font-weight: 700 !important;
   font-size: 1.125rem !important; /* Chuẩn 18px theo 10_Client_UI_Standard.md DEC-01 Mục 0.8 */
@@ -2351,7 +2462,7 @@ section,
 }
 
 .catalog-sidebar-title {
-  font-family: var(--heading-font, 'Raleway', sans-serif) !important;
+  font-family: var(--heading-font) !important;
   font-size: 1.1rem !important;
   font-weight: 700 !important;
   color: var(--jpm-color-navy-dark, #0A1128) !important;
@@ -2365,7 +2476,7 @@ section,
 a.jpm-more-link,
 button.jpm-more-link {
   color: var(--jpm-color-red-marine, #F82249) !important;
-  font-family: var(--heading-font, 'Raleway', sans-serif) !important;
+  font-family: var(--default-font) !important;
   font-size: 0.95rem !important;
   font-weight: 700 !important;
   text-decoration: none !important;
@@ -3168,7 +3279,7 @@ input[type="number"] {
   margin-bottom: 1.25rem;
 }
 .footer-brand-title {
-  font-family: var(--heading-font, var(--jpm-font-heading, 'Raleway', 'Montserrat', 'Roboto', sans-serif));
+  font-family: var(--heading-font);
   font-size: 1.625rem;
   font-weight: 800;
   color: #ffffff;
@@ -3187,7 +3298,7 @@ input[type="number"] {
   }
 }
 .footer-heading {
-  font-family: var(--heading-font, var(--jpm-font-heading, 'Raleway', 'Montserrat', 'Roboto', sans-serif));
+  font-family: var(--heading-font);
   font-size: 1.05rem;
   font-weight: 700;
   color: #ffffff;
@@ -3514,7 +3625,7 @@ a.footer-contact-value:hover {
     justify-self: end;
   }
 
-  /* Top-Level Nav Links (Original Raleway 15px 600 Typography) */
+  /* Top-Level Nav Links (Standard Roboto 15px 600 Typography) */
   .navmenu > ul > li {
     padding: 15px 14px;
   }
@@ -3526,9 +3637,9 @@ a.footer-contact-value:hover {
   .navmenu > ul > li > a,
   .navmenu > ul > li > a:focus {
     font-family: var(--nav-font);
-    font-size: 15px;
-    font-weight: 600;
-    letter-spacing: normal;
+    font-size: 14.5px;
+    font-weight: 500;
+    letter-spacing: 0.1px;
     color: var(--nav-color);
     gap: 5px;
   }
@@ -3742,13 +3853,31 @@ a.footer-contact-value:hover {
 }
 
 .modal-header {
-  border-bottom: 1px solid #f0f2f5;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  width: 100% !important;
+  border-bottom: 1px solid #e2e8f0;
   padding: 1.1rem 1.5rem;
   border-radius: 12px 12px 0 0 !important;
 }
 
+.modal-header .btn-close {
+  margin-left: auto !important;
+  margin-right: 0 !important;
+  opacity: 0.65;
+  transition: opacity 0.2s ease;
+}
+
+.modal-header .btn-close:hover {
+  opacity: 1;
+}
+
 .modal-footer {
-  border-top: 1px solid #f0f2f5;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  border-top: 1px solid #e2e8f0;
   padding: 1rem 1.5rem;
   border-radius: 0 0 12px 12px !important;
 }
@@ -3758,9 +3887,95 @@ a.footer-contact-value:hover {
 }
 
 .modal-title {
+  font-family: var(--heading-font);
   font-weight: 700;
-  font-size: 1rem;
-  letter-spacing: 0.01em;
+  font-size: 1.1rem;
+  color: var(--jpm-color-navy-dark, #0A1128);
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+
+/* Modal Form Standard Controls */
+.modal-body .form-label {
+  font-size: 0.8125rem !important;
+  font-weight: 600 !important;
+  color: #475569 !important;
+  margin-bottom: 0.375rem !important;
+}
+
+.modal-body .form-control,
+.modal-body .form-select {
+  height: 42px;
+  font-size: 0.875rem !important;
+  font-weight: 400 !important;
+  color: var(--jpm-color-navy-dark, #0A1128) !important;
+  border: 1px solid #cbd5e1 !important;
+  border-radius: var(--jpm-radius-control, 8px) !important;
+  padding: 0.5rem 0.875rem !important;
+  background-color: #ffffff !important;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.modal-body textarea.form-control {
+  height: auto !important;
+  min-height: 80px;
+}
+
+.modal-body .form-control:focus,
+.modal-body .form-select:focus {
+  border-color: var(--accent-color, #f82249) !important;
+  box-shadow: 0 0 0 3px rgba(248, 34, 73, 0.12) !important;
+  outline: none !important;
+}
+
+/* Modal Standard Action Buttons */
+.btn-danger-action {
+  height: 40px !important;
+  padding: 0 22px !important;
+  background-color: var(--jpm-color-red-marine, #F82249) !important;
+  color: #ffffff !important;
+  border: 1px solid var(--jpm-color-red-marine, #F82249) !important;
+  border-radius: var(--jpm-radius-control, 8px) !important;
+  font-size: 0.875rem !important;
+  font-weight: 600 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: all 0.2s ease !important;
+  cursor: pointer;
+}
+
+.btn-danger-action:hover:not(:disabled) {
+  background-color: #d91438 !important;
+  border-color: #d91438 !important;
+  color: #ffffff !important;
+  box-shadow: 0 2px 8px rgba(248, 34, 73, 0.25) !important;
+}
+
+.btn-danger-action:disabled {
+  opacity: 0.65 !important;
+  cursor: not-allowed !important;
+}
+
+.btn-secondary-action {
+  height: 40px !important;
+  padding: 0 18px !important;
+  background-color: #f1f5f9 !important;
+  color: #475569 !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: var(--jpm-radius-control, 8px) !important;
+  font-size: 0.875rem !important;
+  font-weight: 600 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: all 0.2s ease !important;
+  cursor: pointer;
+}
+
+.btn-secondary-action:hover {
+  background-color: #e2e8f0 !important;
+  color: #0f172a !important;
 }
 
 /* Smooth entry animation */
@@ -4174,7 +4389,7 @@ a.footer-contact-value:hover {
 
 /* --- Global Button Consistency --- */
 .btn {
-  font-family: var(--heading-font, 'Raleway', sans-serif);
+  font-family: var(--default-font);
   border-radius: var(--jpm-radius-control, 8px);
   font-weight: 600;
   transition: all 0.2s ease-in-out;
@@ -4301,7 +4516,7 @@ a.footer-contact-value:hover {
   margin-bottom: 1.25rem;
 }
 .empty-state-title {
-  font-family: var(--heading-font, 'Raleway', sans-serif);
+  font-family: var(--heading-font);
   font-size: 1.25rem;
   font-weight: 700;
   color: var(--jpm-color-navy-dark, #0A1128);
@@ -4324,7 +4539,7 @@ a.footer-contact-value:hover {
 button.btn-shopee,
 a.btn-shopee {
   border-radius: var(--jpm-radius-control, 8px) !important;
-  font-family: var(--heading-font, 'Raleway', sans-serif) !important;
+  font-family: var(--default-font) !important;
   font-weight: 600 !important;
   transition: all 0.2s ease !important;
 }
@@ -4457,7 +4672,7 @@ a.btn-shopee-outline:hover {
 }
 
 .store-banner-badge {
-  font-family: var(--heading-font, 'Raleway', sans-serif);
+  font-family: var(--default-font);
   font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 1.5px;
@@ -4486,7 +4701,7 @@ a.btn-shopee-outline:hover {
 }
 
 .store-banner-title {
-  font-family: var(--heading-font, 'Raleway', sans-serif);
+  font-family: var(--heading-font);
   font-size: clamp(1.65rem, 2.4vw, 2.1rem);
   font-weight: 800;
   color: #0a1128;

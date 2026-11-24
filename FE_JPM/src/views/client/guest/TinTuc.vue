@@ -149,23 +149,24 @@
               v-for="tab in tabs"
               :key="tab"
               type="button"
-              class="wireframe-tab-btn"
+              class="wireframe-tab-btn d-inline-flex align-items-center gap-2"
               :class="{ active: activeTab === tab }"
               @click="selectTab(tab)"
             >
-              {{ tab }}
+              <span>{{ tab }}</span>
+              <span class="tab-count-badge">{{ getCategoryCount(tab) }}</span>
             </button>
           </nav>
 
-          <!-- Link Xem thêm đồng bộ chuẩn JPM Design System -->
+          <!-- Link Xem tất cả / Thu gọn nhanh ở header (khi có > 4 bài) -->
           <button
             v-if="topCategoryArticles.length > 4"
             type="button"
             class="jpm-more-link flex-shrink-0 ms-3 pb-2"
-            @click="showAllTopCategory = !showAllTopCategory"
+            @click="toggleExpandTopCategory"
           >
-            <span>{{ showAllTopCategory ? 'Thu gọn' : 'Xem thêm' }}</span>
-            <i class="bi" :class="showAllTopCategory ? 'bi-arrow-up' : 'bi-arrow-right'"></i>
+            <span>{{ isTopCategoryExpanded ? 'Thu gọn' : 'Xem tất cả' }}</span>
+            <i class="bi" :class="isTopCategoryExpanded ? 'bi-arrow-up' : 'bi-arrow-right'"></i>
           </button>
         </div>
 
@@ -176,32 +177,68 @@
           <button type="button" class="btn btn-outline-action" @click="resetFilters">Xem tất cả bài viết</button>
         </div>
 
-        <!-- 4 Landscape Cards Grid (Tỉ lệ 16:10, Danh mục đỏ trên tiêu đề & Ngày đăng có icon) -->
-        <div v-else class="row row-cols-1 row-cols-sm-2 row-cols-lg-4 g-4">
-          <div class="col" v-for="item in displayedTopCategoryArticles" :key="item.id">
-            <router-link :to="`/tin-tuc/${item.id}`" class="text-decoration-none d-block group-hover h-100">
-              <div class="portrait-card-img position-relative overflow-hidden mb-2 bg-light shadow-xs">
-                <img :src="getImageUrl(item.img)" :alt="item.title" class="w-100 h-100 object-fit-cover transition-transform" @error="onImgError" />
-                <div
-                  v-if="item.hasVideo"
-                  class="position-absolute top-50 start-50 translate-middle rounded-circle d-flex align-items-center justify-content-center play-circle-btn shadow"
-                  @click.stop.prevent="openVideoModal(item)"
-                  title="Bấm để xem video"
-                >
-                  <i class="bi bi-play-fill fs-4 ms-1"></i>
+        <!-- Landscape Cards Grid & Nút Xem Thêm Chuẩn UX -->
+        <div v-else>
+          <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-4 g-4">
+            <div class="col" v-for="item in displayedTopCategoryArticles" :key="item.id">
+              <router-link :to="`/tin-tuc/${item.id}`" class="text-decoration-none d-block group-hover h-100">
+                <div class="portrait-card-img position-relative overflow-hidden mb-2 bg-light shadow-xs">
+                  <img :src="getImageUrl(item.img)" :alt="item.title" class="w-100 h-100 object-fit-cover transition-transform" @error="onImgError" />
+                  <div
+                    v-if="item.hasVideo"
+                    class="position-absolute top-50 start-50 translate-middle rounded-circle d-flex align-items-center justify-content-center play-circle-btn shadow"
+                    @click.stop.prevent="openVideoModal(item)"
+                    title="Bấm để xem video"
+                  >
+                    <i class="bi bi-play-fill fs-4 ms-1"></i>
+                  </div>
                 </div>
-              </div>
-              <div class="news-category-label mb-1 text-truncate" :title="item.cat">
-                {{ item.cat }}
-              </div>
-              <h5 class="fw-bold mb-2 text-truncate-2 hero-title-hover landscape-card-title">
-                {{ item.title }}
-              </h5>
-              <div class="news-meta">
-                <i class="bi bi-calendar3"></i>
-                <span>{{ item.dateFormatted }}</span>
-              </div>
-            </router-link>
+                <div class="news-category-label mb-1 text-truncate" :title="item.cat">
+                  {{ item.cat }}
+                </div>
+                <h5 class="fw-bold mb-2 text-truncate-2 hero-title-hover landscape-card-title">
+                  {{ item.title }}
+                </h5>
+                <div class="news-meta">
+                  <i class="bi bi-calendar3"></i>
+                  <span>{{ item.dateFormatted }}</span>
+                </div>
+              </router-link>
+            </div>
+          </div>
+
+          <!-- Bottom Action Toolbar: Xem Thêm / Thu Gọn / Đã xem hết -->
+          <div class="text-center mt-4 pt-2">
+            <!-- Nút Xem thêm bài viết khi còn bài viết trong chuyên mục -->
+            <button
+              v-if="topCategoryArticles.length > displayedTopCategoryArticles.length"
+              type="button"
+              class="btn btn-load-more px-4 py-2 rounded-pill fw-semibold shadow-xs d-inline-flex align-items-center gap-2"
+              @click="loadMoreTopCategory"
+            >
+              <span>Xem thêm bài viết (còn {{ topCategoryArticles.length - displayedTopCategoryArticles.length }} bài)</span>
+              <i class="bi bi-chevron-down"></i>
+            </button>
+
+            <!-- Nút Thu gọn khi đã mở hết toàn bộ bài viết và có > 4 bài -->
+            <button
+              v-else-if="topCategoryArticles.length > 4"
+              type="button"
+              class="btn btn-load-more-outline px-4 py-2 rounded-pill fw-semibold d-inline-flex align-items-center gap-2"
+              @click="collapseTopCategory"
+            >
+              <span>Thu gọn danh sách</span>
+              <i class="bi bi-chevron-up"></i>
+            </button>
+
+            <!-- Ghi chú tinh tế khi chuyên mục có <= 4 bài và đã hiển thị đầy đủ -->
+            <div
+              v-else-if="topCategoryArticles.length > 0"
+              class="text-muted small d-inline-flex align-items-center justify-content-center gap-2 py-2 px-3 bg-white rounded-pill border shadow-xs"
+            >
+              <i class="bi bi-check2-circle text-success fs-6"></i>
+              <span>Đã hiển thị toàn bộ {{ topCategoryArticles.length }} bài viết của chuyên mục <strong>{{ activeTab }}</strong></span>
+            </div>
           </div>
         </div>
       </div>
@@ -284,6 +321,28 @@
               </div>
             </article>
           </div>
+        </div>
+
+        <!-- Bottom Action Toolbar cho Cẩm nang & Kinh nghiệm kỹ thuật -->
+        <div class="text-center mt-4 pt-2" v-if="guideArticles.length > 4">
+          <button
+            v-if="!showMoreGuide"
+            type="button"
+            class="btn btn-load-more px-4 py-2 rounded-pill fw-semibold shadow-xs d-inline-flex align-items-center gap-2"
+            @click="showMoreGuide = true"
+          >
+            <span>Xem thêm cẩm nang (còn {{ guideArticles.length - 4 }} bài)</span>
+            <i class="bi bi-chevron-down"></i>
+          </button>
+          <button
+            v-else
+            type="button"
+            class="btn btn-load-more-outline px-4 py-2 rounded-pill fw-semibold d-inline-flex align-items-center gap-2"
+            @click="showMoreGuide = false"
+          >
+            <span>Thu gọn cẩm nang</span>
+            <i class="bi bi-chevron-up"></i>
+          </button>
         </div>
       </div>
     </section>
@@ -396,7 +455,7 @@ export default {
 
     const activeTab = ref(route.query.category ? String(route.query.category) : 'Tất cả');
     const searchQuery = ref(route.query.search ? String(route.query.search) : '');
-    const showAllTopCategory = ref(false);
+    const topCategoryLimit = ref(4);
     const showMoreLatest = ref(false);
 
     // Video modal state
@@ -407,10 +466,10 @@ export default {
       (q) => {
         if (q.category) {
           activeTab.value = String(q.category);
-          showAllTopCategory.value = true;
         } else {
           activeTab.value = 'Tất cả';
         }
+        topCategoryLimit.value = 4;
         searchQuery.value = q.search ? String(q.search) : '';
       }
     );
@@ -453,6 +512,14 @@ export default {
       const el = document.getElementById('newsVideoModal');
       if (el) {
         el.addEventListener('hidden.bs.modal', closeVideoModal);
+      }
+      if (route.query.category) {
+        setTimeout(() => {
+          const catSection = document.getElementById('top-destinations');
+          if (catSection) {
+            catSection.scrollIntoView({ behavior: 'smooth' });
+          }
+        }, 300);
       }
     });
 
@@ -551,11 +618,38 @@ export default {
     });
 
     const displayedTopCategoryArticles = computed(() => {
-      if (showAllTopCategory.value || searchQuery.value !== '') {
+      if (searchQuery.value !== '') {
         return topCategoryArticles.value;
       }
-      return topCategoryArticles.value.slice(0, 4);
+      return topCategoryArticles.value.slice(0, topCategoryLimit.value);
     });
+
+    const isTopCategoryExpanded = computed(() => {
+      return displayedTopCategoryArticles.value.length >= topCategoryArticles.value.length;
+    });
+
+    const loadMoreTopCategory = () => {
+      topCategoryLimit.value += 4;
+    };
+
+    const collapseTopCategory = () => {
+      topCategoryLimit.value = 4;
+    };
+
+    const toggleExpandTopCategory = () => {
+      if (isTopCategoryExpanded.value) {
+        topCategoryLimit.value = 4;
+      } else {
+        topCategoryLimit.value = topCategoryArticles.value.length;
+      }
+    };
+
+    const getCategoryCount = (tab) => {
+      if (tab === 'Tất cả') {
+        return allNews.value.length;
+      }
+      return allNews.value.filter((art) => art.cat === tab).length;
+    };
 
     // 3. TẦNG 3: Cẩm Nang & Kinh Nghiệm Kỹ Thuật (Lưới Card Lớn phía dưới)
     // Lấy các bài viết từ index 4 trở đi để không trùng lặp với Hero tầng 1
@@ -574,7 +668,7 @@ export default {
     // === Actions ===
     const selectTab = (tab) => {
       activeTab.value = tab;
-      showAllTopCategory.value = false;
+      topCategoryLimit.value = 4;
       const query = {};
       if (tab !== 'Tất cả') query.category = tab;
       if (searchQuery.value) query.search = searchQuery.value;
@@ -584,7 +678,7 @@ export default {
     const resetFilters = () => {
       activeTab.value = 'Tất cả';
       searchQuery.value = '';
-      showAllTopCategory.value = false;
+      topCategoryLimit.value = 4;
       router.replace({ path: '/tin-tuc', query: {} });
     };
 
@@ -601,7 +695,12 @@ export default {
       activeTab,
       tabs,
       searchQuery,
-      showAllTopCategory,
+      topCategoryLimit,
+      isTopCategoryExpanded,
+      loadMoreTopCategory,
+      collapseTopCategory,
+      toggleExpandTopCategory,
+      getCategoryCount,
       showMoreLatest,
       showMoreGuide,
       activeVideoModalItem,
@@ -736,6 +835,61 @@ export default {
   color: var(--jpm-color-red-marine, #f82249);
   font-weight: 700;
   border-bottom-color: var(--jpm-color-red-marine, #f82249);
+}
+
+/* ── TAB COUNT BADGE ── */
+.tab-count-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background-color: #f1f5f9;
+  color: #64748b;
+  line-height: 1.2;
+  transition: all 0.2s ease;
+}
+.wireframe-tab-btn:hover .tab-count-badge {
+  background-color: #e2e8f0;
+  color: #334155;
+}
+.wireframe-tab-btn.active .tab-count-badge {
+  background-color: rgba(248, 34, 73, 0.12);
+  color: var(--jpm-color-red-marine, #f82249);
+}
+
+/* ── LOAD MORE & ACTION BUTTONS (DESIGN SYSTEM 2026) ── */
+.btn-load-more {
+  background-color: #ffffff;
+  color: var(--jpm-color-red-marine, #F82249);
+  border: 1.5px solid var(--jpm-color-red-marine, #F82249);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  font-family: var(--heading-font, 'Raleway', sans-serif);
+  font-size: 0.92rem;
+  letter-spacing: -0.1px;
+}
+.btn-load-more:hover {
+  background-color: var(--jpm-color-red-marine, #F82249);
+  color: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(248, 34, 73, 0.25) !important;
+}
+
+.btn-load-more-outline {
+  background-color: #ffffff;
+  color: #64748b;
+  border: 1.5px solid #cbd5e1;
+  transition: all 0.2s ease;
+  font-family: var(--heading-font, 'Raleway', sans-serif);
+  font-size: 0.92rem;
+}
+.btn-load-more-outline:hover {
+  background-color: #f1f5f9;
+  color: #0F172A;
+  border-color: #94a3b8;
+  transform: translateY(-1px);
 }
 
 .portrait-card-img {

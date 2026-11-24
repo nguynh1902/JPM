@@ -36,7 +36,7 @@ html:has(body.modal-open) {
   overflow-y: hidden !important;
 }
 
-/* Fix nút đóng modal (.btn-close) không bị lệch/tràn ra khỏi góc modal */
+/* Fix nút đóng modal (.btn-close) luôn căn sát lề phải chuẩn Flexbox */
 .modal .btn-close,
 .modal-header .btn-close {
   background-color: transparent !important;
@@ -46,7 +46,7 @@ html:has(body.modal-open) {
   box-shadow: none !important;
   transition: all 0.2s ease-in-out !important;
   transform: none !important;
-  margin: 0 !important;
+  margin-left: auto !important;
 }
 
 .modal .btn-close:hover,

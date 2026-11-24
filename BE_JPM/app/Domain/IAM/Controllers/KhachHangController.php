@@ -31,14 +31,32 @@ class KhachHangController extends Controller
             return response()->json(['success' => false, 'message' => $e->getMessage()], 404);
         }
     }
-
-    public function index(): JsonResponse
+    public function index(Request $request): JsonResponse
     {
         try {
-            $khachHangs = $this->khachHangService->getAll();
+            $filters = $request->only(['search']);
+            $hasPagination = $request->has('per_page') || $request->has('page');
+            $all = $request->boolean('all', false) || !$hasPagination;
+            $perPage = $all ? null : (int) $request->input('per_page', 50);
+
+            $khachHangs = $this->khachHangService->getAll($filters, $perPage);
+
+            if ($all || !$perPage) {
+                return response()->json([
+                    'success' => true,
+                    'data' => KhachHangResource::collection($khachHangs)
+                ]);
+            }
+
             return response()->json([
                 'success' => true,
-                'data' => KhachHangResource::collection($khachHangs)
+                'data' => KhachHangResource::collection($khachHangs->items()),
+                'meta' => [
+                    'current_page' => $khachHangs->currentPage(),
+                    'last_page'    => $khachHangs->lastPage(),
+                    'per_page'     => $khachHangs->perPage(),
+                    'total'        => $khachHangs->total(),
+                ]
             ]);
         } catch (Exception $e) {
             return response()->json(['success' => false, 'message' => $e->getMessage()], 500);

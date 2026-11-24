@@ -16,12 +16,29 @@ class KhachHangService
         return KhachHang::with(['user.diaChis'])->findOrFail($id);
     }
 
-    public function getAll()
+    public function getAll(array $filters = [], ?int $perPage = null)
     {
         $query = KhachHang::with(['user.diaChis'])->orderBy('id', 'desc');
+
+        if (!empty($filters['search'])) {
+            $s = trim($filters['search']);
+            $query->where(function ($q) use ($s) {
+                $q->whereHas('user', function ($sub) use ($s) {
+                    $sub->where('name', 'like', "%{$s}%")
+                        ->orWhere('email', 'like', "%{$s}%")
+                        ->orWhere('phone', 'like', "%{$s}%");
+                })->orWhere('ten_cong_ty', 'like', "%{$s}%");
+            });
+        }
+
         if (request()->filled('cursor')) {
             return $query->cursorPaginate(50);
         }
+
+        if ($perPage) {
+            return $query->paginate($perPage);
+        }
+
         return $query->get();
     }
 

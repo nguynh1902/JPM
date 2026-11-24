@@ -11,7 +11,7 @@
           <path d="M14.5 1 L14.5 19 L2 19 Z" fill="white" />
           <path d="M17.5 1 L30 19 L17.5 19 Z" fill="white" />
         </svg>
-        <span style="font-family: var(--heading-font); font-size: 14px; font-weight: 700; letter-spacing: 4px; color: white; line-height: 1; margin-left: 6px;">JPM</span>
+        <span style="font-size: 14px; font-weight: 700; letter-spacing: 4px; color: white; line-height: 1; margin-left: 6px;">JPM</span>
       </router-link>
 
       <!-- Vùng 2 (Giữa): Menu điều hướng chính -->

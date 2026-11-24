@@ -362,16 +362,46 @@ class YeuCauBaoGiaController extends Controller
     /**
      * Admin: Danh sách toàn bộ yêu cầu báo giá
      */
-    public function index()
+    public function index(Request $request)
     {
         try {
-            $quotes = YeuCauBaoGia::with('chiTiet')
-                ->orderBy('id', 'desc')
-                ->get();
+            $query = YeuCauBaoGia::with('chiTiet')->orderBy('id', 'desc');
 
+            if ($request->filled('search')) {
+                $s = trim($request->input('search'));
+                $query->where(function ($q) use ($s) {
+                    $q->where('ma_yeu_cau', 'like', "%{$s}%")
+                      ->orWhere('khach_hang_ten', 'like', "%{$s}%")
+                      ->orWhere('khach_hang_sdt', 'like', "%{$s}%")
+                      ->orWhere('khach_hang_email', 'like', "%{$s}%");
+                });
+            }
+
+            if ($request->has('trang_thai') && $request->input('trang_thai') !== '' && $request->input('trang_thai') !== null) {
+                $query->where('trang_thai', (int) $request->input('trang_thai'));
+            }
+
+            $hasPagination = $request->has('per_page') || $request->has('page');
+            $all = $request->boolean('all', false) || !$hasPagination;
+            $perPage = $all ? null : (int) $request->input('per_page', 50);
+
+            if ($all || !$perPage) {
+                return response()->json([
+                    'success' => true,
+                    'data'    => $query->get()
+                ]);
+            }
+
+            $paginated = $query->paginate($perPage);
             return response()->json([
                 'success' => true,
-                'data'    => $quotes
+                'data'    => $paginated->items(),
+                'meta'    => [
+                    'current_page' => $paginated->currentPage(),
+                    'last_page'    => $paginated->lastPage(),
+                    'per_page'     => $paginated->perPage(),
+                    'total'        => $paginated->total(),
+                ]
             ]);
         } catch (\Exception $e) {
             return response()->json([

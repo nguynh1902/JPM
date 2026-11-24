@@ -15,9 +15,37 @@ class DongCoModelService
         Cache::forget('public_dong_co_models');
     }
 
-    public function getAll()
+    public function getAll(array $filters = [], ?int $perPage = null)
     {
-        return DongCoModel::with(['thuongHieu', 'loaiDongCo'])->orderBy('id', 'desc')->get();
+        $query = DongCoModel::with(['thuongHieu', 'loaiDongCo']);
+
+        if (!empty($filters['search'])) {
+            $s = trim($filters['search']);
+            $query->where(function ($q) use ($s) {
+                $q->where('ten_model', 'like', "%{$s}%")
+                  ->orWhere('ma_model', 'like', "%{$s}%");
+            });
+        }
+
+        if (!empty($filters['thuong_hieu_id'])) {
+            $query->where('thuong_hieu_id', $filters['thuong_hieu_id']);
+        }
+
+        if (!empty($filters['loai_dong_co_id'])) {
+            $query->where('loai_dong_co_id', $filters['loai_dong_co_id']);
+        }
+
+        if (!empty($filters['nam_san_xuat'])) {
+            $query->where('nam_san_xuat', $filters['nam_san_xuat']);
+        }
+
+        $query->orderBy('id', 'desc');
+
+        if ($perPage) {
+            return $query->paginate($perPage);
+        }
+
+        return $query->get();
     }
 
     public function create(array $data)
