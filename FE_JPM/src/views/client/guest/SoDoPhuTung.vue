@@ -892,7 +892,7 @@ const startSidebarDrag = () => {
    ======================================================== */
 .diagram-panel-card {
   border-radius: var(--jpm-radius-card, 12px) !important;
-  border: 1px solid #edf2f7 !important;
+  border: 1px solid #e2e8f0 !important;
   background: #ffffff;
   box-shadow: 0 4px 14px rgba(10, 17, 40, 0.03);
   overflow: hidden;
@@ -931,7 +931,7 @@ const startSidebarDrag = () => {
    ======================================================== */
 .catalog-sidebar-card {
   border-radius: 12px !important;
-  border: 1px solid #edf2f7 !important;
+  border: 1px solid #e2e8f0 !important;
   background: #ffffff;
   box-shadow: 0 4px 14px rgba(10, 17, 40, 0.03);
   overflow: hidden;
@@ -1052,15 +1052,15 @@ const startSidebarDrag = () => {
 }
 
 .custom-table thead th {
-  background-color: #ffffff !important;
+  background-color: #f8fafc !important;
   color: #0A1128 !important;
-  font-family: var(--heading-font, 'Raleway', sans-serif);
+  font-family: var(--heading-font, var(--jpm-font-family));
   font-size: 0.88rem;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: 0.2px;
   text-transform: none;
-  border-top: 1px solid #edf2f7 !important;
-  border-bottom: 2px solid #e2e8f0 !important;
+  border-top: none !important;
+  border-bottom: 1px solid #e2e8f0 !important;
   padding-top: 13px;
   padding-bottom: 13px;
   vertical-align: middle;
@@ -1070,15 +1070,13 @@ const startSidebarDrag = () => {
   padding: 14px 10px;
   border-bottom: 1px solid #edf2f7;
   vertical-align: middle;
+  background-color: #ffffff !important;
   transition: background-color 0.15s ease;
 }
 
-.custom-table tbody tr:nth-child(odd) td {
-  background-color: #ffffff;
-}
-
+.custom-table tbody tr:nth-child(odd) td,
 .custom-table tbody tr:nth-child(even) td {
-  background-color: #f8fafc;
+  background-color: #ffffff !important;
 }
 
 .table-row-hover {

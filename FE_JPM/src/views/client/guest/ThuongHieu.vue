@@ -409,7 +409,7 @@ const filteredModels = computed(() => {
    ======================================================== */
 .catalog-sidebar-card {
   border-radius: 12px !important;
-  border: 1px solid #edf2f7 !important;
+  border: 1px solid #e2e8f0 !important;
   background: #ffffff;
   box-shadow: 0 4px 14px rgba(10, 17, 40, 0.03);
   overflow: hidden;
@@ -565,7 +565,7 @@ const filteredModels = computed(() => {
    ======================================================== */
 .catalog-content-card {
   border-radius: 12px !important;
-  border: 1px solid #edf2f7 !important;
+  border: 1px solid #e2e8f0 !important;
   background: #ffffff;
   box-shadow: 0 4px 20px rgba(10, 17, 40, 0.04);
   overflow: hidden;
@@ -692,15 +692,15 @@ const filteredModels = computed(() => {
 }
 
 .custom-model-table thead th {
-  background-color: #ffffff !important;
+  background-color: #f8fafc !important;
   color: #0A1128 !important;
-  font-family: var(--heading-font, 'Raleway', sans-serif);
+  font-family: var(--heading-font, var(--jpm-font-family));
   font-size: 0.88rem;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: 0.2px;
   text-transform: none;
-  border-top: 1px solid #edf2f7 !important;
-  border-bottom: 2px solid #e2e8f0 !important;
+  border-top: none !important;
+  border-bottom: 1px solid #e2e8f0 !important;
   padding-top: 13px;
   padding-bottom: 13px;
   vertical-align: middle;
@@ -710,15 +710,13 @@ const filteredModels = computed(() => {
   padding: 14px 12px;
   border-bottom: 1px solid #edf2f7;
   vertical-align: middle;
+  background-color: #ffffff !important;
   transition: background-color 0.15s ease;
 }
 
-.custom-model-table tbody tr:nth-child(odd) td {
-  background-color: #ffffff;
-}
-
+.custom-model-table tbody tr:nth-child(odd) td,
 .custom-model-table tbody tr:nth-child(even) td {
-  background-color: #f8fafc;
+  background-color: #ffffff !important;
 }
 
 .th-stt {

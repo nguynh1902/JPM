@@ -780,15 +780,15 @@ export default {
 }
 
 .custom-cart-table thead th {
-  background-color: #ffffff !important;
+  background-color: #f8fafc !important;
   color: #0A1128 !important;
-  font-family: var(--heading-font, 'Raleway', sans-serif);
+  font-family: var(--heading-font, var(--jpm-font-family));
   font-size: 0.88rem;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: 0.2px;
   text-transform: none;
-  border-top: 1px solid #edf2f7 !important;
-  border-bottom: 2px solid #e2e8f0 !important;
+  border-top: none !important;
+  border-bottom: 1px solid #e2e8f0 !important;
   padding-top: 13px;
   padding-bottom: 13px;
   vertical-align: middle;
@@ -798,15 +798,13 @@ export default {
   padding: 14px 12px;
   border-bottom: 1px solid #edf2f7;
   vertical-align: middle;
+  background-color: #ffffff !important;
   transition: background-color 0.15s ease;
 }
 
-.custom-cart-table tbody tr:nth-child(odd) td {
-  background-color: #ffffff;
-}
-
+.custom-cart-table tbody tr:nth-child(odd) td,
 .custom-cart-table tbody tr:nth-child(even) td {
-  background-color: #f8fafc;
+  background-color: #ffffff !important;
 }
 
 /* Căn lề trái thẳng trục hoàn hảo với padding px-4 (24px) của Card Header */
