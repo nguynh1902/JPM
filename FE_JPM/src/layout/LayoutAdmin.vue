@@ -157,3 +157,8 @@ export default {
 };
 </script>
 
+<style>
+/* Font chuẩn hóa duy nhất đồng bộ cho Admin: Inter */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+</style>
+

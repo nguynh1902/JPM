@@ -658,7 +658,7 @@ const barChartOptions = computed(() => ({
     height: 255,
     parentHeightOffset: 0,
     toolbar: { show: false },
-    fontFamily: 'Public Sans, sans-serif'
+    fontFamily: 'Inter, sans-serif'
   },
   plotOptions: {
     bar: {
@@ -719,7 +719,7 @@ const donutChartOptions = computed(() => ({
   chart: {
     type: 'donut',
     height: 300,
-    fontFamily: 'Public Sans, sans-serif'
+    fontFamily: 'Inter, sans-serif'
   },
   labels: distributionChartData.value.labels || ['Đơn Hoàn Tất', 'Đơn Đang Xử Lý', 'Yêu Cầu Báo Giá'],
   colors: ['#03c3ec', '#696cff', '#ffab00'],
