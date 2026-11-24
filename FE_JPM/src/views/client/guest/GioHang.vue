@@ -115,22 +115,22 @@
           <!-- CỘT PHẢI (COL-LG-5 COL-XL-4): SIDEBAR TỔNG KẾT & FORM ĐẶT HÀNG (STICKY) -->
           <div class="col-lg-5 col-xl-4">
             <div class="card catalog-cart-card sticky-sidebar" data-aos="fade-up" data-aos-delay="150">
-              <div class="card-header bg-white px-4 py-3 border-bottom d-flex align-items-center" style="min-height: 60px;">
+              <div class="card-header cart-sidebar-header bg-white px-4 py-3 border-bottom d-flex align-items-center" style="min-height: 60px;">
                 <h5 class="mb-0 jpm-card-title">Thông Tin Đặt Hàng & Báo Giá</h5>
               </div>
               
               <div class="card-body p-4">
                 
-                <!-- 1. Tóm tắt tài chính (Phẳng tinh tế trên nền Card, không đóng khung hộp nền) -->
+                <!-- 1. TỔNG QUAN TÀI CHÍNH -->
                 <div class="summary-section mb-4 pb-3 border-bottom">
                   <div class="d-flex justify-content-between align-items-center mb-2">
                     <span class="summary-label">Số lượng đã chọn:</span>
                     <strong class="summary-val">{{ totalQuantity }} món</strong>
                   </div>
-                  <div class="d-flex justify-content-between align-items-baseline pt-2">
+                  <div class="d-flex justify-content-between align-items-baseline pt-1">
                     <span class="summary-total-label">Tạm tính tiền hàng:</span>
                     <div class="text-end">
-                      <strong class="summary-zero-amount" v-if="selectedItems.length === 0">0 ₫</strong>
+                      <strong class="summary-price-accent fs-5 fw-bold" v-if="selectedItems.length === 0">0 ₫</strong>
                       <strong class="summary-price-accent fs-5 fw-bold" v-else-if="hasPricedItems">{{ formatPrice(pricedTotalAmount) }}</strong>
                       <strong class="summary-price-accent fs-5 fw-bold" v-else>Liên hệ báo giá</strong>
                       <div v-if="isMixedCart && selectedItems.length > 0" class="small text-muted fst-italic mt-1">
@@ -139,40 +139,48 @@
                     </div>
                   </div>
                   
-                  <!-- Thông báo quy trình xác nhận báo giá (Giữ màu xanh thân thiện) -->
+                  <!-- Thông báo quy trình vận chuyển & cọc -->
                   <div class="b2b-notice-box mt-3">
-                    <i class="bi bi-info-circle-fill me-2 flex-shrink-0 mt-0"></i>
+                    <i class="bi bi-truck me-2 flex-shrink-0 fs-6"></i>
                     <span>Cước vận chuyển chành xe và tiền đặt cọc sẽ được Kỹ thuật viên JPM liên hệ báo giá chính xác sau khi tiếp nhận đơn.</span>
                   </div>
                 </div>
 
-                <!-- 2. Form Giao Hàng & Báo Giá (Input 8px chuẩn Trang Chủ) -->
-                <form @submit.prevent="submitQuotation">
+                <!-- 2. THÔNG TIN GIAO HÀNG & BÁO GIÁ -->
+                <form novalidate @submit.prevent="submitQuotation">
                   
+                  <div class="form-partition-header d-flex align-items-center gap-2 mb-3">
+                    <i class="bi bi-geo-alt-fill text-danger"></i>
+                    <span class="fw-bold text-dark small text-uppercase" style="letter-spacing: 0.5px;">Thông tin nhận hàng</span>
+                  </div>
+
                   <!-- Trường hợp 2A: Khách vãng lai (Guest) -->
                   <div v-if="!isAuthenticated">
-                    <div class="mb-3">
-                      <label class="form-label field-label">Họ và tên <span style="color: var(--jpm-color-red-marine, #F82249);">*</span></label>
-                      <input type="text" class="form-control custom-form-input" v-model="checkoutForm.name" required placeholder="Nhập tên của bạn...">
+                    <!-- HÀNG 2 CỘT GỌN GÀNG: HỌ TÊN + SỐ ĐIỆN THOẠI -->
+                    <div class="row g-2 mb-3">
+                      <div class="col-6">
+                        <label class="form-label field-label">Họ và tên <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control custom-form-input" v-model="checkoutForm.name" placeholder="Tên của bạn...">
+                      </div>
+                      <div class="col-6">
+                        <label class="form-label field-label">Số điện thoại / Zalo <span class="text-danger">*</span></label>
+                        <input type="tel" class="form-control custom-form-input" v-model="checkoutForm.phone" placeholder="SĐT / Zalo...">
+                      </div>
                     </div>
+
                     <div class="mb-3">
-                      <label class="form-label field-label">Số điện thoại / Zalo <span style="color: var(--jpm-color-red-marine, #F82249);">*</span></label>
-                      <input type="tel" class="form-control custom-form-input" v-model="checkoutForm.phone" required placeholder="Nhập số điện thoại nhận báo giá...">
-                    </div>
-                    <div class="mb-3">
-                      <label class="form-label field-label">Email (Tuỳ chọn)</label>
+                      <label class="form-label field-label">Email <span class="text-muted fw-normal small">(Không bắt buộc)</span></label>
                       <input type="email" class="form-control custom-form-input" v-model="checkoutForm.email" placeholder="Nhập email nhận hóa đơn...">
                     </div>
+                    
                     <div class="mb-3">
-                      <label class="form-label field-label">Địa chỉ nhận hàng <span style="color: var(--jpm-color-red-marine, #F82249);">*</span></label>
-                      <textarea class="form-control custom-form-input custom-textarea" v-model="checkoutForm.address" required rows="2" placeholder="Số nhà, Tỉnh/Thành phố hoặc Tên Chành Xe quen thuộc"></textarea>
+                      <label class="form-label field-label">Địa chỉ nhận hàng <span class="text-danger">*</span></label>
+                      <textarea class="form-control custom-form-input custom-textarea" v-model="checkoutForm.address" rows="2" placeholder="Số nhà, Tỉnh/Thành phố hoặc Tên Chành Xe quen thuộc"></textarea>
                     </div>
                   </div>
 
                   <!-- Trường hợp 2B: Khách đã đăng nhập (Member có sổ địa chỉ) -->
-                  <div v-else class="mb-4">
-                    <label class="form-label field-label mb-2">Thông tin & Địa chỉ giao hàng</label>
-                    
+                  <div v-else class="mb-3">
                     <!-- Trạng thái 1: ĐÃ CHỌN ĐỊA CHỈ -->
                     <div v-if="selectedAddress" class="address-preview-card p-3">
                       <div class="d-flex justify-content-between align-items-center mb-1">
@@ -189,7 +197,7 @@
                       </div>
                     </div>
 
-                    <!-- Trạng thái 2: CHƯA CÓ ĐỊA CHỈ (Gọn gàng, tối giản, không hiệu ứng rườm rà) -->
+                    <!-- Trạng thái 2: CHƯA CÓ ĐỊA CHỈ -->
                     <div v-else class="no-address-box p-3 text-center">
                       <i class="bi bi-geo-alt fs-4 mb-1 d-block text-secondary"></i>
                       <p class="text-muted small mb-2">Bạn chưa có địa chỉ nào trong Sổ địa chỉ.</p>
@@ -199,21 +207,24 @@
                     </div>
                   </div>
 
-                  <!-- Ghi chú chung -->
+                  <!-- Ghi chú chung (Gọn gàng 2 dòng) -->
                   <div class="mb-4">
-                    <label class="form-label field-label">Ghi chú (Tuỳ chọn)</label>
-                    <textarea class="form-control custom-form-input custom-textarea" v-model="checkoutForm.note" rows="3" placeholder="Ghi chú số khung, chành xe nhận, yêu cầu hóa đơn..."></textarea>
+                    <label class="form-label field-label">Ghi chú đơn hàng <span class="text-muted fw-normal small">(Không bắt buộc)</span></label>
+                    <textarea class="form-control custom-form-input custom-textarea" v-model="checkoutForm.note" rows="2" placeholder="Ghi chú số khung, chành xe nhận, yêu cầu hóa đơn..."></textarea>
                   </div>
 
-                  <!-- Nút Gửi Báo Giá Chuẩn Bootstrap Danger (8px bo góc chuẩn Trang Chủ) -->
-                  <button type="submit" class="btn btn-danger btn-jpm-submit w-100 d-flex justify-content-center align-items-center gap-2" :disabled="isSubmitting || selectedItems.length === 0">
+                  <!-- 3. HÀNH ĐỘNG & BẢO ĐẢM -->
+                  <button type="submit" class="btn btn-danger btn-jpm-submit w-100 d-flex justify-content-center align-items-center gap-2" :disabled="isSubmitting">
                     <span v-if="isSubmitting" class="spinner-border spinner-border-sm"></span>
-                    <span v-else class="fw-bold">{{ buttonText }}</span>
-                    <i class="bi bi-arrow-right" v-if="!isSubmitting && selectedItems.length > 0"></i>
+                    <template v-else>
+                      <span class="fw-bold">{{ buttonText }}</span>
+                      <i class="bi bi-arrow-right"></i>
+                    </template>
                   </button>
                   
-                  <div class="security-guarantee-text text-center mt-3 mb-0">
-                    <i class="bi bi-shield-check text-success me-1"></i> Cam kết bảo mật thông tin & chính hãng 100%
+                  <div class="security-guarantee-text text-center mt-3 mb-0 d-flex align-items-center justify-content-center gap-2">
+                    <i class="bi bi-shield-fill-check text-success fs-6"></i>
+                    <span>Cam kết bảo mật thông tin & chính hãng 100%</span>
                   </div>
                 </form>
 
@@ -402,7 +413,6 @@ export default {
       }, 0)
     },
     buttonText() {
-      if (this.selectedItems.length === 0) return 'Vui lòng chọn sản phẩm'
       return 'Gửi Yêu Cầu Báo Giá'
     },
     totalAmount() {
@@ -553,31 +563,65 @@ export default {
     },
     async submitQuotation() {
       if (this.selectedItems.length === 0) {
-        Swal.fire({ icon: 'warning', title: 'Chưa chọn sản phẩm', text: 'Vui lòng chọn ít nhất 1 sản phẩm!', confirmButtonColor: '#f82249' })
+        Swal.fire({
+          icon: 'warning',
+          title: 'Chưa chọn sản phẩm',
+          text: 'Vui lòng tích chọn ít nhất 1 sản phẩm trong giỏ hàng để gửi yêu cầu báo giá!',
+          confirmButtonColor: '#f82249',
+          confirmButtonText: 'Đã hiểu'
+        })
         return
       }
 
       if (!this.isAuthenticated) {
-        if (!this.checkoutForm.name.trim() || !this.checkoutForm.phone.trim()) {
-          Swal.fire({ icon: 'warning', title: 'Thiếu thông tin', text: 'Vui lòng điền đầy đủ Họ Tên và Số điện thoại!', confirmButtonColor: '#f82249' })
+        if (!this.checkoutForm.name || !this.checkoutForm.name.trim()) {
+          Swal.fire({
+            icon: 'warning',
+            title: 'Thiếu thông tin',
+            text: 'Vui lòng nhập Họ và tên người nhận!',
+            confirmButtonColor: '#f82249',
+            confirmButtonText: 'Đã hiểu'
+          })
           return
         }
-        if (!this.checkoutForm.address.trim()) {
-          Swal.fire({ icon: 'warning', title: 'Thiếu thông tin', text: 'Vui lòng điền địa chỉ giao hàng!', confirmButtonColor: '#f82249' })
+        if (!this.checkoutForm.phone || !this.checkoutForm.phone.trim()) {
+          Swal.fire({
+            icon: 'warning',
+            title: 'Thiếu thông tin',
+            text: 'Vui lòng nhập Số điện thoại / Zalo để nhận báo giá!',
+            confirmButtonColor: '#f82249',
+            confirmButtonText: 'Đã hiểu'
+          })
+          return
+        }
+        if (!this.checkoutForm.address || !this.checkoutForm.address.trim()) {
+          Swal.fire({
+            icon: 'warning',
+            title: 'Thiếu thông tin',
+            text: 'Vui lòng nhập Địa chỉ nhận hàng hoặc tên Chành Xe quen thuộc!',
+            confirmButtonColor: '#f82249',
+            confirmButtonText: 'Đã hiểu'
+          })
           return
         }
       } else {
         if (!this.selectedAddressId) {
-          Swal.fire({ icon: 'warning', title: 'Thiếu địa chỉ', text: 'Vui lòng chọn hoặc thêm một địa chỉ giao hàng!', confirmButtonColor: '#f82249' })
+          Swal.fire({
+            icon: 'warning',
+            title: 'Chưa chọn địa chỉ',
+            text: 'Vui lòng chọn hoặc thêm địa chỉ nhận hàng trong Sổ địa chỉ!',
+            confirmButtonColor: '#f82249',
+            confirmButtonText: 'Đã hiểu'
+          })
           return
         }
       }
 
       const selectedCartItems = this.cartItems.filter(item => this.selectedItems.includes(item.ma_phu_tung))
       
-      let finalName = this.checkoutForm.name.trim()
-      let finalPhone = this.checkoutForm.phone.trim()
-      let finalAddress = this.checkoutForm.address ? this.checkoutForm.address.trim() : null
+      let finalName = (this.checkoutForm.name || '').trim()
+      let finalPhone = (this.checkoutForm.phone || '').trim()
+      let finalAddress = (this.checkoutForm.address || '').trim()
 
       if (this.isAuthenticated && this.selectedAddress) {
         finalName = this.selectedAddress.ten_nguoi_nhan
@@ -953,82 +997,98 @@ export default {
   top: 95px;
 }
 
-.summary-section {
-  /* Nằm phẳng tự nhiên trên nền Card, không đóng khung hộp */
+/* Card chính: Nổi khối cao cấp 12px bo góc, bóng mờ dịu mắt */
+.catalog-cart-card {
+  border-radius: var(--jpm-radius-card, 12px) !important;
+  border: 1px solid #e2e8f0 !important;
+  background: #ffffff;
+  box-shadow: 0 8px 24px -4px rgba(10, 17, 40, 0.07), 0 2px 6px -2px rgba(10, 17, 40, 0.04) !important;
+  overflow: hidden;
 }
 
+.cart-sidebar-header {
+  background: #ffffff;
+  border-bottom: 1px solid #f1f5f9 !important;
+}
+
+/* PHÂN VÙNG 1: KHỐI TÀI CHÍNH */
 .summary-label {
-  color: #475569;
-  font-size: 0.9rem;
+  color: #64748b;
+  font-size: 0.875rem;
   font-weight: 500;
 }
 
 .summary-val {
   color: var(--jpm-color-navy-deep, #0A1128);
-  font-family: var(--heading-font, 'Raleway', sans-serif);
   font-size: 0.95rem;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .summary-total-label {
   color: var(--jpm-color-navy-deep, #0A1128);
-  font-family: var(--heading-font, 'Raleway', sans-serif);
-  font-size: 0.95rem;
-  font-weight: 700;
+  font-size: 0.9rem;
+  font-weight: 600;
 }
 
 .summary-zero-amount {
-  color: #64748b;
-  font-family: var(--heading-font, 'Raleway', sans-serif);
-  font-size: 1.15rem;
+  color: var(--jpm-color-red-marine, #F82249);
+  font-size: 1.25rem;
   font-weight: 700;
 }
 
 .summary-price-accent {
   color: var(--jpm-color-red-marine, #F82249);
-  font-family: var(--heading-font, 'Raleway', sans-serif);
   font-size: 1.25rem;
   letter-spacing: -0.3px;
+  font-weight: 700;
 }
 
+/* THÔNG BÁO QUY TRÌNH CHÀNH XE & CỌC (SKY BLUE ALERT) */
 .b2b-notice-box {
   display: flex;
   align-items: flex-start;
-  gap: 10px;
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
-  color: #475569;
-  font-size: 0.8rem;
-  line-height: 1.5;
-  padding: 10px 14px;
+  gap: 8px;
+  background: #f0f9ff;
+  border: 1px solid #bae6fd;
+  color: #0369a1;
+  font-size: 0.775rem;
+  line-height: 1.45;
+  padding: 9px 12px;
   border-radius: 8px;
 }
 
 .b2b-notice-box i {
   color: #0284c7 !important;
-  font-size: 1rem;
+  font-size: 0.95rem;
+  margin-top: 1px;
+}
+
+/* PHÂN VÙNG 2: THÔNG TIN GIAO NHẬN (FORM) */
+.form-partition-header {
+  padding-bottom: 6px;
+  border-bottom: 1px dashed #e2e8f0;
 }
 
 .field-label {
-  font-size: 0.85rem;
-  font-weight: 700;
-  color: #0A1128;
-  margin-bottom: 6px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 5px;
 }
 
-/* Custom Input Form: 8px bo góc chuẩn search-input-box và select-box của Trang Chủ */
+/* Custom Input Form: 8px bo góc chuẩn Trang Chủ, nền trắng sạch, focus viền đỏ marine */
 .custom-form-input {
   border-radius: var(--jpm-radius-control, 8px) !important;
-  border: 1px solid #e2e8f0;
-  font-size: 0.875rem;
-  padding: 9px 13px;
+  border: 1px solid #cbd5e1;
+  font-size: 0.85rem;
+  padding: 8px 12px;
   color: var(--jpm-color-navy-deep, #0A1128);
   background-color: #ffffff;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  transition: all 0.2s ease;
 }
 
 .custom-form-input:hover {
-  border-color: #cbd5e1;
+  border-color: #94a3b8;
 }
 
 .custom-form-input:focus {
@@ -1039,7 +1099,8 @@ export default {
 
 .custom-textarea {
   resize: vertical;
-  min-height: 96px;
+  min-height: 60px;
+  line-height: 1.45;
 }
 
 /* ===== ĐỊA CHỈ GIAO HÀNG (TỐI GIẢN, GỌN GÀNG, KHÔNG HIỆU ỨNG RƯỜM RÀ) ===== */
@@ -1084,25 +1145,24 @@ export default {
   color: #ffffff !important;
 }
 
-/* Submit Button: 8px bo góc chuẩn btn-cart-action và filter-control ở Trang Chủ */
+/* PHÂN VÙNG 3: NÚT GỬI BÁO GIÁ & BẢO ĐẢM */
 .btn-jpm-submit {
   height: 48px;
   border-radius: var(--jpm-radius-control, 8px) !important;
-  font-family: var(--heading-font, 'Raleway', sans-serif);
-  font-weight: 700;
+  font-weight: 600;
   font-size: 0.95rem;
-  letter-spacing: 0.3px;
+  letter-spacing: 0.2px;
   transition: all 0.2s ease;
   box-shadow: none;
 }
 
 .btn-jpm-submit:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(248, 34, 73, 0.25) !important;
 }
 
 .btn-jpm-submit:disabled {
-  background-color: #e2e8f0 !important;
+  background-color: #f1f5f9 !important;
   border-color: #e2e8f0 !important;
   color: #94a3b8 !important;
   box-shadow: none;
@@ -1110,7 +1170,7 @@ export default {
 }
 
 .security-guarantee-text {
-  font-size: 0.8rem;
+  font-size: 0.775rem;
   color: #64748b;
 }
 
