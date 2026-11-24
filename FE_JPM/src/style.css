@@ -22,8 +22,8 @@ body {
   overflow-x: hidden;
 }
 
-/* Global Table Header Styles */
-.table th {
+/* Admin Table Header Styles (Scoped để không đè Client) */
+body.layout-admin .table th {
   text-transform: uppercase;
   font-size: 0.75rem;
   letter-spacing: 1px;
@@ -66,16 +66,16 @@ html:has(body.modal-open) {
   background-color: rgba(255, 255, 255, 0.2) !important;
 }
 
-/* Chuẩn hóa Input File theo mẫu gốc Sneat 1.0.0 */
-.form-control[type="file"] {
+/* Chuẩn hóa Input File theo mẫu gốc Sneat 1.0.0 (Scoped riêng cho Admin) */
+body.layout-admin .form-control[type="file"] {
   min-height: auto !important;
   height: auto !important;
   padding: 0 0.875rem 0 0 !important;
   overflow: hidden;
 }
 
-.form-control[type="file"]::file-selector-button,
-.form-control[type="file"]::-webkit-file-upload-button {
+body.layout-admin .form-control[type="file"]::file-selector-button,
+body.layout-admin .form-control[type="file"]::-webkit-file-upload-button {
   padding: 0.4375rem 0.875rem !important;
   margin: 0 !important;
   margin-inline-end: 0.875rem !important;
@@ -90,13 +90,13 @@ html:has(body.modal-open) {
   transition: all 0.2s ease-in-out !important;
 }
 
-.form-control[type="file"]:hover::file-selector-button,
-.form-control[type="file"]:hover::-webkit-file-upload-button {
+body.layout-admin .form-control[type="file"]:hover::file-selector-button,
+body.layout-admin .form-control[type="file"]:hover::-webkit-file-upload-button {
   background-color: #f2f2f2 !important;
 }
 
-.form-control[type="file"]:focus::file-selector-button,
-.form-control[type="file"]:focus::-webkit-file-upload-button {
+body.layout-admin .form-control[type="file"]:focus::file-selector-button,
+body.layout-admin .form-control[type="file"]:focus::-webkit-file-upload-button {
   box-shadow: none !important;
   border-color: inherit !important;
 }

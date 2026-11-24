@@ -40,6 +40,14 @@ export default {
           document.documentElement.style.setProperty('--background-color', '#f5f6fa');
         }
       }
+    },
+    '$route.meta.layout': {
+      immediate: true,
+      handler(layout) {
+        const layoutName = layout || 'client';
+        document.body.classList.remove('layout-client', 'layout-admin', 'layout-auth');
+        document.body.classList.add(`layout-${layoutName}`);
+      }
     }
   }
 };

@@ -57,11 +57,11 @@
         <div class="row gy-4">
           <!-- Cột 1: Branding & Thông tin chung -->
           <div class="col-lg-4 col-md-6 footer-about pe-lg-5">
-            <h5 class="footer-heading mb-4">
-              <router-link to="/" class="text-white text-decoration-none">
+            <div class="footer-brand mb-3">
+              <router-link to="/" class="footer-brand-title text-decoration-none">
                 {{ settings.company_name || 'JPM Marine' }}
               </router-link>
-            </h5>
+            </div>
             <p class="footer-about-desc mb-4">
               {{ settings.footer_about_text || 'Nhà phân phối phụ tùng động cơ thủy gắn ngoài hàng đầu tại Việt Nam. Uy tín, chất lượng và đồng hành cùng bạn trên mọi hành trình vươn khơi.' }}
             </p>
@@ -291,5 +291,32 @@ export default {
   color: var(--jpm-neutral-700, #334155);
   margin-bottom: 0;
   line-height: 1.45;
+}
+
+/* Footer Brand Typography - Editorial Luxury */
+.footer-brand {
+  margin-bottom: 1.25rem;
+}
+
+.footer-brand-title {
+  font-family: var(--heading-font, var(--jpm-font-heading, 'Raleway', 'Montserrat', 'Roboto', sans-serif));
+  font-size: 1.625rem; /* ~26px - Rõ ràng, uy lực, chuẩn nhận diện thương hiệu cao cấp */
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: 0.5px;
+  line-height: 1.25;
+  display: inline-block;
+  text-decoration: none;
+  transition: color 0.25s ease;
+}
+
+.footer-brand-title:hover {
+  color: var(--accent-color, #f82249);
+}
+
+@media (max-width: 767.98px) {
+  .footer-brand-title {
+    font-size: 1.35rem;
+  }
 }
 </style>

@@ -3164,12 +3164,34 @@ input[type="number"] {
 .btn-view-all { font-size: 0.8rem; letter-spacing: 1px; transition: all 0.3s ease; }
 
 /* Footer Customizations (Editorial Luxury + Marine Red #f82249 Brand Accents) */
-.footer-heading {
-  font-family: var(--default-font);
-  font-size: 0.95rem;
-  font-weight: 600;
+.footer-brand {
+  margin-bottom: 1.25rem;
+}
+.footer-brand-title {
+  font-family: var(--heading-font, var(--jpm-font-heading, 'Raleway', 'Montserrat', 'Roboto', sans-serif));
+  font-size: 1.625rem;
+  font-weight: 800;
   color: #ffffff;
-  letter-spacing: 0.2px;
+  letter-spacing: 0.5px;
+  line-height: 1.25;
+  display: inline-block;
+  text-decoration: none;
+  transition: color 0.25s ease;
+}
+.footer-brand-title:hover {
+  color: var(--accent-color, #f82249);
+}
+@media (max-width: 767.98px) {
+  .footer-brand-title {
+    font-size: 1.35rem;
+  }
+}
+.footer-heading {
+  font-family: var(--heading-font, var(--jpm-font-heading, 'Raleway', 'Montserrat', 'Roboto', sans-serif));
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: 0.3px;
   position: relative;
   padding-bottom: 10px;
 }
