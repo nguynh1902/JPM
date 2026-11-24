@@ -1151,19 +1151,26 @@ export default {
   font-size: 0.95rem;
   letter-spacing: 0.2px;
   transition: all 0.2s ease;
-  box-shadow: none;
+  box-shadow: none !important;
 }
 
 .btn-jpm-submit:hover:not(:disabled) {
   transform: translateY(-1px);
-  box-shadow: 0 4px 14px rgba(248, 34, 73, 0.25) !important;
+  background-color: var(--jpm-color-red-hover, #D9163A) !important;
+  border-color: var(--jpm-color-red-hover, #D9163A) !important;
+  box-shadow: none !important;
+}
+
+.btn-jpm-submit:focus,
+.btn-jpm-submit:active {
+  box-shadow: none !important;
 }
 
 .btn-jpm-submit:disabled {
   background-color: #f1f5f9 !important;
   border-color: #e2e8f0 !important;
   color: #94a3b8 !important;
-  box-shadow: none;
+  box-shadow: none !important;
   cursor: not-allowed;
 }
 

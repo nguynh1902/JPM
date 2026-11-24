@@ -2366,7 +2366,7 @@ section,
   background-color: var(--jpm-color-red-hover, #D9163A) !important;
   border-color: var(--jpm-color-red-hover, #D9163A) !important;
   color: #ffffff !important;
-  box-shadow: 0 4px 12px rgba(248, 34, 73, 0.25) !important;
+  box-shadow: none !important;
   transform: translateY(-1px) !important;
 }
 
@@ -2478,7 +2478,7 @@ button.jpm-more-link {
   color: var(--jpm-color-red-marine, #F82249) !important;
   font-family: var(--default-font) !important;
   font-size: 0.95rem !important;
-  font-weight: 700 !important;
+  font-weight: 600 !important;
   text-decoration: none !important;
   display: inline-flex !important;
   align-items: center !important;
@@ -2513,7 +2513,8 @@ a.jpm-more-link:active,
 button.jpm-more-link:hover,
 button.jpm-more-link:focus,
 button.jpm-more-link:active {
-  color: var(--jpm-color-red-hover, #D9163A) !important;
+  color: var(--jpm-color-red-marine, #F82249) !important;
+  opacity: 1 !important;
   text-decoration: none !important;
   box-shadow: none !important;
   outline: none !important;
@@ -3084,7 +3085,7 @@ a.badge-pill-jpm:hover, button.badge-pill-jpm:hover {
   color: #fff;
   border-color: #f82249;
   transform: translateY(-2px);
-  box-shadow: 0 4px 10px rgba(248, 34, 73, 0.2);
+  box-shadow: none !important;
 }
 
 /* Hide native number input arrows globally */
@@ -3201,7 +3202,7 @@ input[type="number"] {
 .custom-pagination .page-item.active .page-link {
   background-color: var(--accent-color);
   color: #fff;
-  box-shadow: 0 2px 4px rgba(248,34,73,0.3);
+  box-shadow: none !important;
 }
 .custom-pagination .page-item.disabled .page-link {
   color: #bbb;
@@ -3949,7 +3950,7 @@ a.footer-contact-value:hover {
   background-color: #d91438 !important;
   border-color: #d91438 !important;
   color: #ffffff !important;
-  box-shadow: 0 2px 8px rgba(248, 34, 73, 0.25) !important;
+  box-shadow: none !important;
 }
 
 .btn-danger-action:disabled {

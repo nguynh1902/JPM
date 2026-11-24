@@ -149,12 +149,11 @@
               v-for="tab in tabs"
               :key="tab"
               type="button"
-              class="wireframe-tab-btn d-inline-flex align-items-center gap-2"
+              class="wireframe-tab-btn"
               :class="{ active: activeTab === tab }"
               @click="selectTab(tab)"
             >
               <span>{{ tab }}</span>
-              <span class="tab-count-badge">{{ getCategoryCount(tab) }}</span>
             </button>
           </nav>
 
@@ -177,7 +176,7 @@
           <button type="button" class="btn btn-outline-action" @click="resetFilters">Xem tất cả bài viết</button>
         </div>
 
-        <!-- Landscape Cards Grid & Nút Xem Thêm Chuẩn UX -->
+        <!-- Landscape Cards Grid -->
         <div v-else>
           <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-4 g-4">
             <div class="col" v-for="item in displayedTopCategoryArticles" :key="item.id">
@@ -204,40 +203,6 @@
                   <span>{{ item.dateFormatted }}</span>
                 </div>
               </router-link>
-            </div>
-          </div>
-
-          <!-- Bottom Action Toolbar: Xem Thêm / Thu Gọn / Đã xem hết -->
-          <div class="text-center mt-4 pt-2">
-            <!-- Nút Xem thêm bài viết khi còn bài viết trong chuyên mục -->
-            <button
-              v-if="topCategoryArticles.length > displayedTopCategoryArticles.length"
-              type="button"
-              class="btn btn-load-more px-4 py-2 rounded-pill fw-semibold shadow-xs d-inline-flex align-items-center gap-2"
-              @click="loadMoreTopCategory"
-            >
-              <span>Xem thêm bài viết (còn {{ topCategoryArticles.length - displayedTopCategoryArticles.length }} bài)</span>
-              <i class="bi bi-chevron-down"></i>
-            </button>
-
-            <!-- Nút Thu gọn khi đã mở hết toàn bộ bài viết và có > 4 bài -->
-            <button
-              v-else-if="topCategoryArticles.length > 4"
-              type="button"
-              class="btn btn-load-more-outline px-4 py-2 rounded-pill fw-semibold d-inline-flex align-items-center gap-2"
-              @click="collapseTopCategory"
-            >
-              <span>Thu gọn danh sách</span>
-              <i class="bi bi-chevron-up"></i>
-            </button>
-
-            <!-- Ghi chú tinh tế khi chuyên mục có <= 4 bài và đã hiển thị đầy đủ -->
-            <div
-              v-else-if="topCategoryArticles.length > 0"
-              class="text-muted small d-inline-flex align-items-center justify-content-center gap-2 py-2 px-3 bg-white rounded-pill border shadow-xs"
-            >
-              <i class="bi bi-check2-circle text-success fs-6"></i>
-              <span>Đã hiển thị toàn bộ {{ topCategoryArticles.length }} bài viết của chuyên mục <strong>{{ activeTab }}</strong></span>
             </div>
           </div>
         </div>
@@ -321,28 +286,6 @@
               </div>
             </article>
           </div>
-        </div>
-
-        <!-- Bottom Action Toolbar cho Cẩm nang & Kinh nghiệm kỹ thuật -->
-        <div class="text-center mt-4 pt-2" v-if="guideArticles.length > 4">
-          <button
-            v-if="!showMoreGuide"
-            type="button"
-            class="btn btn-load-more px-4 py-2 rounded-pill fw-semibold shadow-xs d-inline-flex align-items-center gap-2"
-            @click="showMoreGuide = true"
-          >
-            <span>Xem thêm cẩm nang (còn {{ guideArticles.length - 4 }} bài)</span>
-            <i class="bi bi-chevron-down"></i>
-          </button>
-          <button
-            v-else
-            type="button"
-            class="btn btn-load-more-outline px-4 py-2 rounded-pill fw-semibold d-inline-flex align-items-center gap-2"
-            @click="showMoreGuide = false"
-          >
-            <span>Thu gọn cẩm nang</span>
-            <i class="bi bi-chevron-up"></i>
-          </button>
         </div>
       </div>
     </section>

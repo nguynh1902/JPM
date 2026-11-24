@@ -8,10 +8,10 @@
     </main>
   <!-- Floating Contact Action Buttons -->
   <div class="floating-contact-actions">
-    <div v-if="settings.social_instagram" class="contact-btn-wrap instagram-wrap">
-      <div class="contact-btn-tooltip">Instagram</div>
-      <a :href="settings.social_instagram" target="_blank" rel="noopener noreferrer" class="contact-btn instagram">
-        <i class="bi bi-instagram"></i>
+    <div v-if="settings.social_youtube" class="contact-btn-wrap youtube-wrap">
+      <div class="contact-btn-tooltip">YouTube</div>
+      <a :href="settings.social_youtube" target="_blank" rel="noopener noreferrer" class="contact-btn youtube" aria-label="Kênh YouTube">
+        <i class="bi bi-youtube"></i>
       </a>
     </div>
 
@@ -210,6 +210,7 @@ export default {
   .contact-btn.phone { background-color: #00a65a; }
   .contact-btn.zalo { background-color: #0068ff; }
   .contact-btn.facebook { background-color: #1877f2; }
+  .contact-btn.youtube { background-color: #ff0000; }
   .contact-btn.instagram { 
     background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%); 
   }
@@ -219,6 +220,7 @@ export default {
 .contact-btn.phone:hover { box-shadow: 0 4px 15px rgba(0, 166, 90, 0.4); }
 .contact-btn.zalo:hover { box-shadow: 0 4px 15px rgba(0, 104, 255, 0.4); }
 .contact-btn.facebook:hover { box-shadow: 0 4px 15px rgba(24, 119, 242, 0.4); }
+.contact-btn.youtube:hover { box-shadow: 0 4px 15px rgba(255, 0, 0, 0.4); }
 .contact-btn.instagram:hover { box-shadow: 0 4px 15px rgba(214, 36, 159, 0.5); }
 
 /* Radar Ripple Effect (ONLY FOR PHONE) */
