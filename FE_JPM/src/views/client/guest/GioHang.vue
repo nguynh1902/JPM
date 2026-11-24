@@ -686,13 +686,13 @@ export default {
   color: var(--default-color, #212529);
 }
 
-/* ===== HEADER TITLE (KHÔI PHỤC BẢN GỐC 2 HÔM TRƯỚC) ===== */
+/* ===== HEADER TITLE (ĐỒNG BỘ DESIGN SYSTEM 2026) ===== */
 .jpm-page-title {
-  font-family: var(--heading-font, 'Raleway', sans-serif);
-  font-size: 1.55rem;
-  font-weight: 800;
-  color: #0A1128;
-  letter-spacing: -0.4px;
+  font-family: var(--heading-font, 'Raleway', 'Montserrat', sans-serif);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--heading-color, #0A1128);
+  letter-spacing: -0.3px;
 }
 
 /* ===== SHARED 12PX CARDS (CHUẨN PRODUCT-CARD VÀ FILTER CONSOLE TRANG CHỦ) ===== */
@@ -705,8 +705,8 @@ export default {
 }
 
 .jpm-card-title {
-  font-family: var(--heading-font, 'Raleway', sans-serif);
-  font-size: 0.95rem;
+  font-family: var(--heading-font, 'Raleway', 'Montserrat', sans-serif);
+  font-size: 1.125rem;
   font-weight: 700;
   color: var(--jpm-color-navy-deep, #0A1128);
   letter-spacing: -0.2px;

@@ -397,10 +397,11 @@ const filteredModels = computed(() => {
    1. PAGE HEADER (MATCHING GIO HANG)
    ======================================================== */
 .jpm-page-title {
-  font-family: var(--heading-font, 'Raleway', sans-serif);
-  font-weight: 800;
-  color: #0A1128;
-  letter-spacing: -0.5px;
+  font-family: var(--heading-font, 'Raleway', 'Montserrat', sans-serif);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--heading-color, #0A1128);
+  letter-spacing: -0.3px;
 }
 
 /* ========================================================
@@ -571,10 +572,10 @@ const filteredModels = computed(() => {
 }
 
 .jpm-card-title {
-  font-family: var(--heading-font, 'Raleway', sans-serif);
+  font-family: var(--heading-font, 'Raleway', 'Montserrat', sans-serif);
   font-weight: 700;
-  font-size: 0.95rem;
-  color: #0A1128;
+  font-size: 1.125rem;
+  color: var(--heading-color, #0A1128);
 }
 
 .badge-item-count {

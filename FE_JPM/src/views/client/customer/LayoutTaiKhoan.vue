@@ -3,11 +3,11 @@
     <section class="py-0" style="background: transparent;">
       <div class="container">
         
-        <!-- Header chuẩn 100% Cửa Hàng & Giỏ Hàng -->
+        <!-- Header chuẩn 100% Client Design System -->
         <div class="row mb-4">
           <div class="col-12" data-aos="fade-down">
             <h2 class="jpm-page-title">
-              {{ titleParts.main }} <span class="text-danger">{{ titleParts.accent }}</span>
+              {{ titleParts.title }}
             </h2>
             <p class="text-muted jpm-page-subtitle mb-0">
               {{ titleParts.desc }}
@@ -60,28 +60,23 @@ const isUploadingAvatar = ref(false);
 
 const titleParts = computed(() => {
   if (route.path === '/tai-khoan') return { 
-    main: 'Hồ Sơ', 
-    accent: 'Cá Nhân', 
+    title: 'Hồ sơ cá nhân', 
     desc: 'Quản lý thông tin tài khoản cá nhân, bảo mật và sổ địa chỉ giao nhận hàng hải.' 
   };
   if (route.path === '/garage' || route.path.startsWith('/garage/')) return { 
-    main: 'Garage', 
-    accent: 'Của Tôi', 
+    title: 'Garage của tôi', 
     desc: 'Quản lý danh sách động cơ máy thủy, sơ đồ kỹ thuật và phụ tùng đã lưu trong garage.' 
   };
   if (route.path === '/vat-tu-thuong-mua') return { 
-    main: 'Vật Tư', 
-    accent: 'Thường Mua', 
+    title: 'Vật tư thường mua', 
     desc: 'Theo dõi danh mục vật tư tiêu hao, phụ tùng định kỳ và đặt hàng nhanh chóng.' 
   };
   if (route.path === '/lich-su-don-hang') return { 
-    main: 'Đơn Hàng &', 
-    accent: 'Báo Giá', 
+    title: 'Đơn hàng & báo giá', 
     desc: 'Theo dõi tiến trình báo giá, thanh toán đặt cọc và lộ trình giao nhận phụ tùng.' 
   };
   return { 
-    main: 'Quản Lý', 
-    accent: 'Tài Khoản', 
+    title: 'Quản lý tài khoản', 
     desc: 'Trung tâm quản lý tài khoản và giao dịch khách hàng JPM Marine.' 
   };
 });
@@ -158,20 +153,5 @@ const handleAvatarFileChange = async (event) => {
 </script>
 
 <style scoped>
-/* jpm-page-title & jpm-page-subtitle đồng bộ 100% Cửa Hàng, Tra Cứu, Tin Tức */
-.jpm-page-title {
-  font-family: var(--heading-font, 'Raleway', sans-serif);
-  font-size: 1.55rem !important;
-  font-weight: 800;
-  color: var(--heading-color, #0A1128) !important;
-  letter-spacing: -0.4px;
-  line-height: 1.25;
-}
-.jpm-page-subtitle {
-  font-family: var(--default-font, 'Roboto', sans-serif);
-  font-size: 0.85rem;
-  font-weight: 400;
-  color: #64748b !important;
-  line-height: 1.55;
-}
+/* Toàn bộ typography của .jpm-page-title và .jpm-page-subtitle tự động kế thừa 100% từ main.css theo DEC-01 */
 </style>

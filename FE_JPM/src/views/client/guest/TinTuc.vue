@@ -638,12 +638,12 @@ export default {
 
 /* ── PAGE TITLE & SUBTITLE (ĐỒNG BỘ 100% CỬA HÀNG & TRA CỨU) ── */
 .jpm-page-title {
-  font-family: var(--heading-font, 'Raleway', sans-serif);
-  font-size: 1.55rem !important;
-  font-weight: 800;
+  font-family: var(--heading-font, 'Raleway', 'Montserrat', sans-serif);
+  font-size: 1.5rem !important;
+  font-weight: 700;
   color: var(--heading-color, #0A1128) !important;
-  letter-spacing: -0.4px;
-  line-height: 1.25;
+  letter-spacing: -0.3px;
+  line-height: 1.3;
 }
 .jpm-page-subtitle,
 .inner-page-section p.text-muted {

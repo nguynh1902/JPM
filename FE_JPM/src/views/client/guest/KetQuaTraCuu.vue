@@ -926,11 +926,11 @@ export default {
 
 /* ── TIÊU ĐỀ TRANG & BỐ CỤC ── */
 .jpm-page-title {
-  font-family: var(--heading-font, 'Raleway', sans-serif);
-  font-size: 1.55rem;
-  font-weight: 800;
-  color: #0A1128;
-  letter-spacing: -0.4px;
+  font-family: var(--heading-font, 'Raleway', 'Montserrat', sans-serif);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--heading-color, #0A1128);
+  letter-spacing: -0.3px;
   margin-bottom: 0.35rem;
 }
 

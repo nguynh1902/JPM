@@ -67,8 +67,8 @@
   --jpm-shadow-lg: 0 12px 24px -4px rgba(10, 17, 40, 0.12), 0 4px 10px -2px rgba(10, 17, 40, 0.06);
   --jpm-shadow-xl: 0 24px 48px -12px rgba(10, 17, 40, 0.20);
 
-  /* 7. Typography */
-  --jpm-font-heading: 'Raleway', sans-serif;
+  /* 7. Typography: Hỗ trợ tiếng Việt hoàn hảo cho tiêu đề & thương hiệu */
+  --jpm-font-heading: 'Raleway', 'Montserrat', 'Roboto', sans-serif;
   --jpm-font-body: 'Roboto', sans-serif;
   --jpm-font-mono: 'Roboto Mono', monospace;
 
@@ -2224,14 +2224,23 @@ section,
    GLOBAL PAGE TITLE STYLES (JPM KIT)
 ========================================== */
 .jpm-page-title {
-  font-family: var(--heading-font) !important;
-  font-size: 1.55rem !important;
-  font-weight: 800 !important;
-  color: var(--heading-color) !important;
+  font-family: var(--heading-font, 'Raleway', 'Montserrat', sans-serif) !important;
+  font-size: 1.5rem !important; /* Chuẩn 24px Desktop theo 10_Client_UI_Standard.md */
+  font-weight: 700 !important; /* Chuẩn H2 Weight 700 sang trọng, dứt khoát */
+  color: var(--heading-color, #0A1128) !important;
   text-transform: none !important;
-  letter-spacing: -0.4px !important;
-  line-height: 1.25 !important;
+  letter-spacing: -0.3px !important;
+  line-height: 1.3 !important;
   margin-bottom: 0.35rem !important;
+}
+
+.jpm-page-subtitle {
+  font-family: var(--default-font, 'Roboto', sans-serif) !important;
+  font-size: 0.875rem !important; /* 14px chuẩn Body Standard */
+  font-weight: 400 !important;
+  color: var(--jpm-neutral-500, #64748B) !important;
+  line-height: 1.5 !important;
+  margin-bottom: 0 !important;
 }
 
 /* =========================================
@@ -2332,10 +2341,10 @@ section,
 }
 
 .jpm-card-title {
-  font-family: var(--heading-font, 'Raleway', sans-serif) !important;
+  font-family: var(--heading-font, 'Raleway', 'Montserrat', sans-serif) !important;
   color: var(--jpm-color-navy-dark, #0A1128) !important;
   font-weight: 700 !important;
-  font-size: 0.95rem !important;
+  font-size: 1.125rem !important; /* Chuẩn 18px theo 10_Client_UI_Standard.md DEC-01 Mục 0.8 */
   line-height: 1.4 !important;
   margin-bottom: 0 !important;
   letter-spacing: -0.2px !important;
