@@ -705,7 +705,7 @@ const setDefault = (id) => {
   border-color: var(--jpm-color-red-marine, #F82249);
   color: #ffffff;
   transform: translateY(-1px);
-  box-shadow: 0 4px 10px rgba(248, 34, 73, 0.25);
+  box-shadow: none !important;
 }
 
 /* Empty State Wrap */
@@ -755,7 +755,7 @@ const setDefault = (id) => {
   background-color: var(--jpm-color-red-hover, #D9163A) !important;
   border-color: var(--jpm-color-red-hover, #D9163A) !important;
   color: #ffffff !important;
-  box-shadow: 0 4px 12px rgba(248, 34, 73, 0.25) !important;
+  box-shadow: none !important;
   transform: translateY(-1px) !important;
 }
 
@@ -821,7 +821,7 @@ const setDefault = (id) => {
   background-color: #d91438;
   border-color: #d91438;
   color: #ffffff;
-  box-shadow: 0 2px 8px rgba(248, 34, 73, 0.25);
+  box-shadow: none !important;
 }
 
 .btn-danger-action:disabled {

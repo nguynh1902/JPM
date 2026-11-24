@@ -936,7 +936,7 @@ export default {
 .search-input-box {
   display: flex;
   align-items: center;
-  height: 46px;
+  height: 44px;
   border-radius: 8px;
   border: 1px solid #e2e8f0;
   background: #ffffff;
@@ -982,9 +982,9 @@ export default {
   transition: all 0.25s ease;
 }
 
-/* Đồng bộ chiều cao nút với ô input 46px trong bộ lọc (Màu sắc, bo góc, font lấy 100% từ .btn trong main.css) */
+/* Đồng bộ chiều cao nút với ô input & JpmSelect 44px trong bộ lọc (Màu sắc, bo góc, font lấy 100% từ .btn trong main.css) */
 .filter-control-h {
-  height: 46px;
+  height: 44px;
 }
 
 /* Bố cục hàng Từ Khóa Gợi Ý (Style .popular-tags-label & .quick-pill-tag dùng chung tại main.css) */

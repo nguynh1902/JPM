@@ -3906,7 +3906,7 @@ a.footer-contact-value:hover {
 
 .modal-body .form-control,
 .modal-body .form-select {
-  height: 42px;
+  height: 40px;
   font-size: 0.875rem !important;
   font-weight: 400 !important;
   color: var(--jpm-color-navy-dark, #0A1128) !important;

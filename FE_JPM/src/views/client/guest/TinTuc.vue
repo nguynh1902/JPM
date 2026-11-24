@@ -817,7 +817,7 @@ export default {
   background-color: var(--jpm-color-red-marine, #F82249);
   color: #ffffff;
   transform: translateY(-2px);
-  box-shadow: 0 6px 18px rgba(248, 34, 73, 0.25) !important;
+  box-shadow: none !important;
 }
 
 .btn-load-more-outline {

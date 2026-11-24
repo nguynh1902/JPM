@@ -100,7 +100,7 @@
                   <a href="#" @click.prevent="switchToForgot" class="text-white text-decoration-none hover-lift" style="font-size: 0.85rem; font-weight: 400; opacity: 0.85;">Quên mật khẩu?</a>
                 </div>
 
-                <button type="submit" class="btn w-100 text-white fw-bold hover-lift-btn auth-submit-btn" :disabled="isLoading">
+                <button type="submit" class="btn w-100 text-white fw-semibold hover-lift-btn auth-submit-btn" :disabled="isLoading">
                   <span v-if="isLoading" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
                   Đăng nhập
                 </button>
@@ -112,7 +112,7 @@
                 <hr class="flex-grow-1 m-0 auth-divider">
               </div>
 
-              <button type="button" class="btn w-100 text-white d-flex justify-content-center align-items-center gap-2 hover-bg-google" style="padding: 11px; font-size: 0.9rem; font-weight: 500; border: 1px solid rgba(255,255,255,0.18); background: rgba(255,255,255,0.04); border-radius: var(--jpm-radius-control, 8px);">
+              <button type="button" class="btn w-100 text-white d-flex justify-content-center align-items-center gap-2 hover-bg-google" style="height: 44px; font-size: 0.9rem; font-weight: 500; border: 1px solid rgba(255,255,255,0.18); background: rgba(255,255,255,0.04); border-radius: var(--jpm-radius-control, 8px);">
                 <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="G" style="width: 18px;">
                 Google
               </button>
@@ -163,7 +163,7 @@
                   </label>
                 </div>
 
-                <button type="submit" class="btn w-100 text-white fw-bold hover-lift-btn auth-submit-btn" :disabled="isLoading">
+                <button type="submit" class="btn w-100 text-white fw-semibold hover-lift-btn auth-submit-btn" :disabled="isLoading">
                   <span v-if="isLoading" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
                   Tạo tài khoản
                 </button>
@@ -175,7 +175,7 @@
                 <hr class="flex-grow-1 m-0 auth-divider">
               </div>
 
-              <button type="button" class="btn w-100 text-white d-flex justify-content-center align-items-center gap-2 hover-bg-google" style="padding: 11px; font-size: 0.9rem; font-weight: 500; border: 1px solid rgba(255,255,255,0.18); background: rgba(255,255,255,0.04); border-radius: var(--jpm-radius-control, 8px);">
+              <button type="button" class="btn w-100 text-white d-flex justify-content-center align-items-center gap-2 hover-bg-google" style="height: 44px; font-size: 0.9rem; font-weight: 500; border: 1px solid rgba(255,255,255,0.18); background: rgba(255,255,255,0.04); border-radius: var(--jpm-radius-control, 8px);">
                 <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="G" style="width: 18px;">
                 Google
               </button>
@@ -192,7 +192,7 @@
                   <input type="email" class="form-control minimal-input" placeholder="Nhập địa chỉ email của bạn" v-model="forgotForm.email" required />
                 </div>
 
-                <button type="submit" class="btn w-100 text-white fw-bold hover-lift-btn auth-submit-btn mb-4 mt-2" :disabled="isLoading">
+                <button type="submit" class="btn w-100 text-white fw-semibold hover-lift-btn auth-submit-btn mb-4 mt-2" :disabled="isLoading">
                   <span v-if="isLoading" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
                   Gửi liên kết khôi phục
                 </button>
@@ -227,7 +227,7 @@
                   </div>
                 </div>
 
-                <button type="submit" class="btn w-100 text-white fw-bold hover-lift-btn auth-submit-btn mb-4 mt-2" :disabled="isLoading">
+                <button type="submit" class="btn w-100 text-white fw-semibold hover-lift-btn auth-submit-btn mb-4 mt-2" :disabled="isLoading">
                   <span v-if="isLoading" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
                   Đổi mật khẩu
                 </button>
@@ -441,21 +441,30 @@ export default {
 }
 .auth-submit-btn {
   background-color: var(--jpm-color-red-marine, #F82249);
-  padding: 12px;
+  height: 44px;
+  padding: 0 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   font-family: var(--heading-font, 'Raleway', sans-serif);
   font-size: 0.95rem;
   font-weight: 600;
   letter-spacing: normal;
   text-transform: none;
   border-radius: var(--jpm-radius-control, 8px);
-  box-shadow: 0 4px 15px rgba(248, 34, 73, 0.25);
+  box-shadow: none !important;
   border: none;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
 }
 .auth-submit-btn:hover {
   background-color: var(--jpm-color-red-hover, #D9163A);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(248, 34, 73, 0.4);
+  transform: translateY(-1px);
+  box-shadow: none !important;
+}
+.auth-submit-btn:focus,
+.auth-submit-btn:active {
+  box-shadow: none !important;
+  outline: none !important;
 }
 .auth-pw-icon {
   opacity: 0.55;
@@ -495,7 +504,8 @@ export default {
   border: 1px solid rgba(255, 255, 255, 0.2) !important;
   border-radius: var(--jpm-radius-control, 8px) !important;
   color: #fff !important;
-  padding: 10px 14px !important;
+  height: 44px;
+  padding: 0 14px !important;
   font-size: 0.92rem;
   font-weight: 400;
   box-shadow: none !important;
@@ -552,21 +562,22 @@ export default {
 
 /* Button Hover Effects */
 .hover-lift-btn {
-  transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.25s ease, background-color 0.25s ease;
+  transition: transform 0.2s ease, background-color 0.2s ease;
   border: none !important;
   outline: none !important;
+  box-shadow: none !important;
 }
 .hover-lift-btn:focus, .hover-lift-btn:active {
   outline: none !important;
-  box-shadow: 0 4px 15px rgba(248, 34, 73, 0.25) !important;
+  box-shadow: none !important;
 }
 .hover-lift-btn:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 22px rgba(248, 34, 73, 0.45) !important;
+  transform: translateY(-1px);
+  box-shadow: none !important;
 }
 .hover-lift-btn:active:not(:disabled) {
   transform: translateY(0px);
-  box-shadow: 0 4px 10px rgba(248, 34, 73, 0.3) !important;
+  box-shadow: none !important;
 }
 
 .hover-bg-google {

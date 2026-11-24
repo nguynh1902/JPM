@@ -123,9 +123,8 @@
               </div>
               <div class="d-flex align-items-center gap-3">
                 <a :href="settings.social_facebook || '#'" :target="settings.social_facebook ? '_blank' : '_self'" rel="noopener noreferrer" class="contact-social-link" title="Facebook"><i class="bi bi-facebook"></i></a>
-                <a :href="settings.social_instagram || '#'" :target="settings.social_instagram ? '_blank' : '_self'" rel="noopener noreferrer" class="contact-social-link" title="Instagram"><i class="bi bi-instagram"></i></a>
-                <a :href="settings.social_zalo || '#'" :target="settings.social_zalo ? '_blank' : '_self'" rel="noopener noreferrer" class="contact-social-link" title="Zalo"><i class="bi bi-chat-dots-fill"></i></a>
                 <a :href="settings.social_youtube || '#'" :target="settings.social_youtube ? '_blank' : '_self'" rel="noopener noreferrer" class="contact-social-link" title="YouTube"><i class="bi bi-youtube"></i></a>
+                <a :href="settings.social_zalo || '#'" :target="settings.social_zalo ? '_blank' : '_self'" rel="noopener noreferrer" class="contact-social-link" title="Zalo"><i class="bi bi-chat-dots-fill"></i></a>
               </div>
             </div>
           </div>

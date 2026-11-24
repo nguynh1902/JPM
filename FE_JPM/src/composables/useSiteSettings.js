@@ -29,7 +29,7 @@ export const DEFAULT_SETTINGS = {
   social_facebook: 'https://facebook.com/jpmmarine',
   social_youtube: 'https://youtube.com/@jpmmarine',
   social_zalo: 'https://zalo.me/0909123456',
-  social_instagram: 'https://instagram.com/jpmmarine',
+  social_instagram: '',
   footer_about_text: 'Nhà phân phối phụ tùng động cơ thủy gắn ngoài hàng đầu tại Việt Nam. Uy tín, chất lượng và đồng hành cùng bạn trên mọi hành trình vươn khơi.',
   copyright_text: '© 2026 JPM Marine. Bảo lưu mọi quyền.'
 };

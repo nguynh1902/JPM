@@ -1085,6 +1085,10 @@ export default {
   transition: all 0.2s ease;
 }
 
+.custom-form-input:not(textarea) {
+  height: 40px;
+}
+
 .custom-form-input:hover {
   border-color: #94a3b8;
 }

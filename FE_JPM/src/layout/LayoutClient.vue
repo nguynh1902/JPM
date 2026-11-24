@@ -211,9 +211,6 @@ export default {
   .contact-btn.zalo { background-color: #0068ff; }
   .contact-btn.facebook { background-color: #1877f2; }
   .contact-btn.youtube { background-color: #ff0000; }
-  .contact-btn.instagram { 
-    background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%); 
-  }
 
 
 /* Reveal colors on hover */
@@ -221,7 +218,6 @@ export default {
 .contact-btn.zalo:hover { box-shadow: 0 4px 15px rgba(0, 104, 255, 0.4); }
 .contact-btn.facebook:hover { box-shadow: 0 4px 15px rgba(24, 119, 242, 0.4); }
 .contact-btn.youtube:hover { box-shadow: 0 4px 15px rgba(255, 0, 0, 0.4); }
-.contact-btn.instagram:hover { box-shadow: 0 4px 15px rgba(214, 36, 159, 0.5); }
 
 /* Radar Ripple Effect (ONLY FOR PHONE) */
 .contact-btn-wrap.phone-wrap::before, .contact-btn-wrap.phone-wrap::after {

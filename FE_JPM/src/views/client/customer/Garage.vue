@@ -457,7 +457,7 @@ const getImageUrl = (path) => {
   border-color: var(--jpm-color-red-marine, #F82249);
   color: #ffffff;
   transform: translateY(-1px);
-  box-shadow: 0 4px 10px rgba(248, 34, 73, 0.25);
+  box-shadow: none !important;
 }
 .empty-icon-wrap {
   width: 72px;
