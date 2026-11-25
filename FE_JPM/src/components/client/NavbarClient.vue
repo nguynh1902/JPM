@@ -175,12 +175,16 @@ export default {
   },
   async mounted() {
     try {
-      const res = await axiosClient.get('/public/danh-muc-san-pham');
-      const allCats = res.data?.data || res.data || [];
+      // Tải song song Danh mục & Thương hiệu với Promise.all (loại bỏ waterfall và ?_t= để tối đa hóa HTTP & Redis cache)
+      const [resCats, resBrands] = await Promise.all([
+        axiosClient.get('/public/danh-muc-san-pham'),
+        axiosClient.get('/public/thuong-hieu')
+      ]);
+
+      const allCats = resCats.data?.data || resCats.data || [];
       this.navCategories = allCats.slice(0, 17);
       this.hasMoreCategories = allCats.length > 17;
         
-      const resBrands = await axiosClient.get('/public/thuong-hieu?_t=' + new Date().getTime());
       const allBrands = resBrands.data?.data || resBrands.data || [];
       this.navBrands = allBrands.slice(0, 17);
       this.hasMoreBrands = allBrands.length > 17;
@@ -334,8 +338,8 @@ export default {
   border-radius: 8px;
   font-family: var(--default-font);
   font-size: 0.875rem;
-  font-weight: 400;
-  color: #334155;
+  font-weight: 500;
+  color: var(--jpm-color-navy-dark, #0A1128);
   text-decoration: none;
   white-space: nowrap;
   transition: background-color 0.18s ease, color 0.18s ease;

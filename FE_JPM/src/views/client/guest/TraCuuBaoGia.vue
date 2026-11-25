@@ -69,7 +69,7 @@
                     <p class="text-muted small mb-2">
                       Do tỷ giá Yên Nhật và cước vận chuyển quốc tế biến động theo từng đợt, mức giá này đã hết hiệu lực bảo lưu. Quý khách vui lòng bấm nút bên dưới để nhân viên JPM cập nhật bảng giá mới nhất.
                     </p>
-                    <button class="btn btn-primary fw-bold px-4 py-2 shadow-sm" @click="handleAction('re_quote')" :disabled="isSubmitting">
+                    <button class="btn btn-danger fw-semibold px-4 py-2" @click="handleAction('re_quote')" :disabled="isSubmitting">
                       <i class="bi bi-arrow-repeat me-1"></i> Yêu Cầu Báo Giá Lại
                     </button>
                   </div>
@@ -178,7 +178,7 @@
                       <img :src="vietQrData.qr_url" alt="VietQR Napas247" class="img-fluid" style="max-width: 220px; border-radius: 6px;">
                     </div>
                     <div class="mt-3">
-                      <button type="button" class="btn btn-sm btn-primary px-3 shadow-sm" @click="openZaloReceipt">
+                      <button type="button" class="btn btn-sm btn-primary px-3 fw-semibold" @click="openZaloReceipt">
                         <i class="bi bi-send me-1"></i> Mở Zalo Gửi Biên Lai Cọc
                       </button>
                     </div>
@@ -246,7 +246,7 @@
               <div v-else-if="quote.trang_thai === 3 || quote.is_expired" class="text-center border-top pt-4">
                 <p class="text-muted mb-3">Quý khách cần cập nhật giá mới hoặc đàm phán số lượng lớn cho công trình/tàu cá?</p>
                 <div class="d-flex justify-content-center gap-2">
-                  <button class="btn btn-primary px-4 py-2 fw-bold" @click="handleAction('re_quote')" :disabled="isSubmitting">
+                  <button class="btn btn-danger px-4 py-2 fw-semibold" @click="handleAction('re_quote')" :disabled="isSubmitting">
                     <i class="bi bi-arrow-repeat me-1"></i> Yêu Cầu Báo Giá Lại
                   </button>
                   <a href="https://zalo.me/0123456789" target="_blank" class="btn btn-outline-primary px-4 py-2">

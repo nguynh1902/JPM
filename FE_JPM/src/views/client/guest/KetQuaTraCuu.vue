@@ -360,7 +360,7 @@
                         <p class="fw-bold mb-1" style="color: #0A1128; font-size: 0.95rem;">Bạn không tìm thấy phụ tùng mong muốn?</p>
                         <p class="text-muted mb-0" style="font-size: 0.85rem;">JPM Marine hỗ trợ tra cứu và đặt hàng từ nước ngoài — <strong>Tư vấn miễn phí</strong>.</p>
                       </div>
-                      <a href="tel:0900000000" class="btn btn-danger px-4 py-2 fw-bold shadow-sm d-inline-flex align-items-center text-uppercase text-nowrap flex-shrink-0" style="border-radius: 8px; letter-spacing: 0.5px; background-color: #f82249; border-color: #f82249;">
+                      <a href="tel:0900000000" class="btn btn-danger px-4 py-2 fw-semibold d-inline-flex align-items-center text-uppercase text-nowrap flex-shrink-0" style="letter-spacing: 0.5px;">
                         <i class="bi bi-telephone-fill me-2"></i> Liên Hệ Ngay
                       </a>
                     </div>

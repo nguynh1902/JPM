@@ -315,7 +315,7 @@ const addToQuote = (sanPham) => {
   justify-content: center;
   font-size: 1.1rem;
   transition: all 0.2s ease;
-  box-shadow: 0 1px 3px rgba(13, 110, 253, 0.08);
+  box-shadow: none !important;
 }
 
 .btn-cart-icon:hover {
@@ -323,7 +323,7 @@ const addToQuote = (sanPham) => {
   border-color: #0d6efd;
   color: #ffffff;
   transform: translateY(-1px);
-  box-shadow: 0 4px 10px rgba(13, 110, 253, 0.25);
+  box-shadow: none !important;
 }
 
 /* Nút Xóa: Bình thường xám trung tính tinh tế, khi hover chuyển sang ĐỎ rực rỡ */

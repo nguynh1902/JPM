@@ -1,6 +1,5 @@
 <template>
   <div class="index-page">
-
     <NavbarClient />
 
     <main class="main d-flex flex-column" :class="{ 'main-inner-page': $route.path !== '/' }">
@@ -46,9 +45,7 @@
     <i class="bi bi-arrow-up-short"></i>
   </a>
 
-  <!-- Preloader -->
     <FooterClient />
-    <div id="preloader" v-if="isLoading"></div>
   </div>
 </template>
 
@@ -69,46 +66,14 @@ import Swiper from 'swiper/bundle'
 import 'swiper/css/bundle'
 window.Swiper = Swiper
 
-// Dynamic CSS URLs - Cô lập 100% tài nguyên Client, không rò rỉ sang Admin
-import bootstrapCss from '../assets/client/vendor/bootstrap/css/bootstrap.min.css?url';
-import bootstrapIconsCss from '../assets/client/vendor/bootstrap-icons/bootstrap-icons.css?url';
-import glightboxCss from '../assets/client/vendor/glightbox/css/glightbox.min.css?url';
-import swiperCss from '../assets/client/vendor/swiper/swiper-bundle.min.css?url';
-import mainCss from '../assets/client/css/main.css?url';
+// Singleton Dynamic CSS Loader - Tải trước & cô lập 100% tài nguyên Client
+import { loadClientCSS, unloadClientCSS } from '../utils/clientCssLoader';
 
 import '../assets/client/vendor/bootstrap/js/bootstrap.bundle.min.js'
 import '../assets/client/vendor/glightbox/js/glightbox.min.js'
 import '../assets/client/vendor/php-email-form/validate.js'
 
 import { useSiteSettings } from '../composables/useSiteSettings'
-
-const clientCssFiles = [
-  { href: bootstrapCss, class: "client-bootstrap-css" },
-  { href: bootstrapIconsCss, class: "client-icons-css" },
-  { href: glightboxCss, class: "" },
-  { href: swiperCss, class: "" },
-  { href: mainCss, class: "client-main-css" },
-];
-
-const loadClientCSS = () => {
-  return Promise.all(
-    clientCssFiles.map((file) => {
-      return new Promise((resolve, reject) => {
-        if (document.querySelector(`link[href="${file.href}"]`)) {
-          return resolve();
-        }
-        const link = document.createElement("link");
-        link.rel = "stylesheet";
-        link.href = file.href;
-        if (file.class) link.classList.add(file.class);
-        link.setAttribute("data-layout", "client");
-        link.onload = resolve;
-        link.onerror = reject;
-        document.head.appendChild(link);
-      });
-    })
-  );
-};
 
 export default {
   name: 'LayoutClient',
@@ -118,13 +83,14 @@ export default {
     FooterClient
   },
   setup() {
+    // Kích hoạt nạp CSS song song ngay từ setup() trước khi component render DOM
+    loadClientCSS();
     const { settings } = useSiteSettings();
     return { settings };
   },
   data() {
     return {
-      isScrolled: false,
-      isLoading: true
+      isScrolled: false
     }
   },
   methods: {
@@ -138,6 +104,10 @@ export default {
       });
     }
   },
+  beforeMount() {
+    // Đảm bảo CSS được yêu cầu tải sớm nhất có thể
+    loadClientCSS();
+  },
   mounted() {
     window.addEventListener('scroll', this.handleScroll);
     
@@ -149,18 +119,19 @@ export default {
     });
 
     loadClientCSS().finally(() => {
-      import('../assets/client/js/main.js').then(() => {
-        setTimeout(() => {
-          this.isLoading = false;
+      import('../assets/client/js/main.js')
+        .catch(err => console.warn('Client script init warning:', err))
+        .finally(() => {
           window.dispatchEvent(new Event('load'));
-        }, 100);
-      });
+        });
     });
   },
   unmounted() {
     window.removeEventListener('scroll', this.handleScroll);
-    // Dọn sạch toàn bộ CSS của Client khi chuyển sang Admin layout
-    document.querySelectorAll('link[data-layout="client"]').forEach(el => el.remove());
+    // Chỉ dọn CSS Client khi chuyển sang Admin layout (tránh reload lại khi chuyển giữa các trang Client)
+    if (this.$route.meta?.layout === 'admin') {
+      unloadClientCSS();
+    }
   }
 }
 </script>

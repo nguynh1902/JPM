@@ -4,6 +4,16 @@
   box-sizing: border-box;
 }
 
+:root {
+  --default-font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --heading-font: var(--default-font);
+  --nav-font: var(--default-font);
+  --jpm-color-navy-dark: #0A1128;
+  --nav-color: rgba(255, 255, 255, 0.85);
+  --nav-hover-color: #ffffff;
+  --accent-color: #F82249;
+}
+
 html,
 body,
 #app {
@@ -19,7 +29,18 @@ body,
 }
 
 body {
+  font-family: var(--default-font);
+  color: var(--jpm-color-navy-dark);
+  background-color: #ffffff;
   overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Neutralize raw link colors and decorations before external stylesheets load */
+a {
+  color: inherit;
+  text-decoration: none;
 }
 
 /* Admin Table Header Styles (Scoped để không đè Client) */

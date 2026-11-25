@@ -506,10 +506,10 @@ export default {
     });
 
     // ===== 2. TRUY VẤN DỮ LIỆU TỪ BACKEND (VUE QUERY SWR CACHING) =====
-    // Lấy danh sách thương hiệu động cơ
+    // Lấy danh sách thương hiệu động cơ (Tận dụng TanStack cache & Backend Response Cache)
     const { data: brands, isLoading: isLoadingBrands } = useQuery({
-      queryKey: ['public-brands-v4'],
-      queryFn: () => axiosClient.get('/public/thuong-hieu?_t=' + new Date().getTime()).then(res => res.data?.data || res.data || []),
+      queryKey: ['public-brands'],
+      queryFn: () => axiosClient.get('/public/thuong-hieu').then(res => res.data?.data || res.data || []),
       staleTime: 1000 * 60 * 30
     });
 

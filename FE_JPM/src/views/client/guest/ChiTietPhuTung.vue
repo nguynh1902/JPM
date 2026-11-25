@@ -202,7 +202,7 @@
                           v-for="tt in phuTung.ma_thay_thes" 
                           :key="tt.id" 
                           :to="'/chi-tiet-phu-tung/' + (tt.phu_tung_moi?.ma_phu_tung || '')"
-                          class="btn btn-sm btn-outline-danger fw-bold rounded-pill px-3 py-1 bg-white"
+                          class="btn btn-sm btn-outline-danger fw-semibold px-3 py-1 bg-white"
                         >
                           <i class="bi bi-box-arrow-up-right me-1"></i>
                           {{ tt.phu_tung_moi?.ma_phu_tung }} ({{ tt.phu_tung_moi?.ten_phu_tung }})
@@ -1580,8 +1580,8 @@ watch(compatibleModels, (models) => {
   background-color: var(--jpm-color-red-hover, #D9163A) !important;
   border-color: var(--jpm-color-red-hover, #D9163A) !important;
   color: #ffffff !important;
-  transform: translateY(-2px) !important;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12) !important;
+  transform: translateY(-1px) !important;
+  box-shadow: none !important;
 }
 
 .btn-product-cart:active {
@@ -1605,7 +1605,7 @@ watch(compatibleModels, (models) => {
   gap: 6px;
   padding: 0 16px;
   box-shadow: none;
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  transition: all 0.2s ease !important;
   flex-shrink: 0;
 }
 
@@ -1613,8 +1613,8 @@ watch(compatibleModels, (models) => {
   background-color: #0d6efd !important;
   border-color: #0d6efd !important;
   color: #ffffff !important;
-  transform: translateY(-2px) !important;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12) !important;
+  transform: translateY(-1px) !important;
+  box-shadow: none !important;
 }
 
 .btn-product-garage:hover i,

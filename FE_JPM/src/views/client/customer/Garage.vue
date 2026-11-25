@@ -163,7 +163,7 @@
                               <p class="text-muted small mb-0" v-if="item.ghi_chu"><i class="bi bi-info-circle me-1"></i>{{ item.ghi_chu }}</p>
                           </div>
                           <div class="d-flex flex-column gap-2">
-                              <button class="btn btn-danger btn-sm fw-semibold shadow-sm" @click="addToCart(item.phu_tung, item.so_luong)"><i class="bi bi-cart-plus me-1"></i>Thêm giỏ</button>
+                              <button class="btn btn-danger btn-sm fw-semibold" @click="addToCart(item.phu_tung, item.so_luong)"><i class="bi bi-cart-plus me-1"></i>Thêm giỏ</button>
                               <button class="btn btn-outline-secondary btn-sm" @click="removeSavedPart(item.id)"><i class="bi bi-trash3 me-1"></i>Xóa</button>
                           </div>
                       </div>
@@ -426,7 +426,7 @@ const getImageUrl = (path) => {
   justify-content: center;
   font-size: 1rem;
   transition: all 0.2s ease;
-  box-shadow: 0 1px 3px rgba(13, 110, 253, 0.08);
+  box-shadow: none !important;
 }
 
 .btn-search-icon:hover {
@@ -434,7 +434,7 @@ const getImageUrl = (path) => {
   border-color: #0d6efd;
   color: #ffffff;
   transform: translateY(-1px);
-  box-shadow: 0 4px 10px rgba(13, 110, 253, 0.25);
+  box-shadow: none !important;
 }
 
 /* Nút Xóa: Bình thường xám trung tính tinh tế, khi hover chuyển sang ĐỎ rực rỡ y hệt btn-delete-icon */

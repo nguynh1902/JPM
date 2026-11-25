@@ -1222,8 +1222,8 @@ onMounted(() => {
   background-color: var(--jpm-color-red-hover, #D9163A) !important;
   border-color: var(--jpm-color-red-hover, #D9163A) !important;
   color: #ffffff !important;
-  transform: translateY(-2px) !important;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12) !important;
+  transform: translateY(-1px) !important;
+  box-shadow: none !important;
 }
 
 .btn-product-cart:active {
@@ -1231,7 +1231,7 @@ onMounted(() => {
   box-shadow: none !important;
 }
 
-/* Secondary Wishlist Button 44px (Chuẩn Outline Blue #0d6efd Nổi 3D) */
+/* Secondary Wishlist Button 44px (Chuẩn Outline Blue #0d6efd) */
 .btn-product-garage {
   height: 44px;
   min-width: 120px;
@@ -1247,7 +1247,7 @@ onMounted(() => {
   gap: 6px;
   padding: 0 16px;
   box-shadow: none;
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  transition: all 0.2s ease !important;
   flex-shrink: 0;
 }
 
@@ -1255,8 +1255,8 @@ onMounted(() => {
   background-color: #0d6efd !important;
   border-color: #0d6efd !important;
   color: #ffffff !important;
-  transform: translateY(-2px) !important;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12) !important;
+  transform: translateY(-1px) !important;
+  box-shadow: none !important;
 }
 
 .btn-product-garage:hover i,

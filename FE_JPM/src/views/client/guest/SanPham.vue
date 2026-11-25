@@ -212,7 +212,7 @@
                 <div>
                   <button 
                     type="button"
-                    class="btn btn-reset-filters shadow-sm" 
+                    class="btn btn-reset-filters" 
                     @click="resetFilters"
                   >
                     <i class="bi bi-arrow-counterclockwise me-1"></i> Xóa bộ lọc

@@ -94,8 +94,8 @@
                 <span class="text-muted opacity-50">•</span>
                 <button
                   type="button"
-                  class="btn btn-sm btn-outline-danger d-inline-flex align-items-center gap-1 rounded-pill py-0 px-2 fw-semibold"
-                  style="font-size: 0.78rem; height: 26px;"
+                  class="btn btn-sm btn-outline-danger d-inline-flex align-items-center gap-1 py-0 px-2 fw-semibold"
+                  style="font-size: 0.78rem; height: 26px; border-radius: var(--jpm-radius-badge, 6px);"
                   @click="selectVideoMedia"
                   title="Chuyển sang xem video thực tế bài viết"
                 >
