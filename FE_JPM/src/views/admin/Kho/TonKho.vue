@@ -360,12 +360,6 @@ export default {
     });
   },
   methods: {
-      getImageUrl(path) {
-        if (!path) return "";
-        if (path.startsWith("blob:") || path.startsWith("http")) return path;
-        // Ensure starting slash
-        return `http://localhost:8000${path.startsWith("/") ? "" : "/"}${path}`;
-      },
     resetFilters() {
       this.filters.search = '';
       this.filters.warehouse = '';

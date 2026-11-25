@@ -407,7 +407,7 @@ class TraCuuController extends Controller
             });
         }
 
-        $perPage = $request->per_page ?? 24;
+        $perPage = min(max((int) ($request->per_page ?? 24), 1), 100);
         $diagrams = $query->orderBy('may_thuy_model_id')->orderBy('thu_tu')->paginate($perPage);
 
         return response()->json([
@@ -556,7 +556,7 @@ class TraCuuController extends Controller
             $query->orderBy('id', 'desc');
         }
 
-        $perPage = $request->has('per_page') ? (int) $request->per_page : 12;
+        $perPage = min(max((int) ($request->has('per_page') ? $request->per_page : 12), 1), 100);
         $phuTungs = $query->paginate($perPage);
 
         return response()->json([
@@ -749,6 +749,7 @@ class TraCuuController extends Controller
         $cleanCode = str_replace(['-', ' ', '.', '_'], '', $upperCode);
 
         $query = PhuTung::with(['thuongHieu', 'nhomPhuTung', 'dongCoModels', 'soDoPhuTungs.model.thuongHieu', 'maThayThes.phuTungMoi', 'thayTheChos.phuTungCu'])
+            ->where('trang_thai', 1)
             ->where(function($q) use ($upperCode, $cleanCode, $code) {
                 $q->where('ma_phu_tung', $upperCode)
                   ->orWhereRaw("REPLACE(REPLACE(REPLACE(ma_phu_tung, '-', ''), ' ', ''), '.', '') = ?", [$cleanCode]);

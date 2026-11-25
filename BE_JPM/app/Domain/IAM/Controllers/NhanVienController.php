@@ -6,12 +6,14 @@ use App\Http\Controllers\Controller;
 use App\Domain\IAM\Models\NhanVien;
 use App\Domain\IAM\Models\User;
 use App\Domain\IAM\Requests\NhanVienRequest;
+use App\Domain\IAM\Services\CachedSanctumPersonalAccessToken;
+use App\Domain\Core\Services\ImageUploadService;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Spatie\Permission\Models\Role;
-use Illuminate\Support\Facades\File;
 
 class NhanVienController extends Controller
 {
@@ -72,22 +74,44 @@ class NhanVienController extends Controller
         }
     }
 
+    private function isSuperAdminUser(?User $user): bool
+    {
+        return (bool) ($user && ($user->hasRole('admin') || $user->hasRole('Super Admin')));
+    }
+
+    private function isPrivilegedRole(?string $roleName): bool
+    {
+        return in_array(strtolower(trim((string) $roleName)), ['admin', 'super admin'], true);
+    }
+
     public function store(NhanVienRequest $request): JsonResponse
     {
+        $actor = auth()->user();
+        if ($this->isPrivilegedRole($request->role) && !$this->isSuperAdminUser($actor)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Bạn không có quyền gán vai trò Quản trị viên (Admin / Super Admin).'
+            ], 403);
+        }
+
         DB::beginTransaction();
         try {
             $avatarPath = null;
             if ($request->hasFile('avatar')) {
-                $file = $request->file('avatar');
-                $filename = time() . '_' . $file->getClientOriginalName();
-                $file->move(public_path('uploads/avatars'), $filename);
-                $avatarPath = '/uploads/avatars/' . $filename;
+                $avatarPath = ImageUploadService::storeUploadedFile(
+                    $request->file('avatar'),
+                    'uploads/avatars',
+                    'avatar',
+                    400
+                );
             }
+
+            $plainPassword = !empty($request->password) ? $request->password : (Str::random(10) . '!9');
 
             $user = User::create([
                 'name' => $request->name,
                 'email' => $request->email,
-                'password' => Hash::make(!empty($request->password) ? $request->password : 'Jpm@2026'),
+                'password' => Hash::make($plainPassword),
                 'phone' => $request->phone,
                 'status' => $request->status ?? 1,
                 'avatar' => $avatarPath
@@ -112,47 +136,63 @@ class NhanVienController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Thêm nhân viên thành công',
-                'data' => $nv
+                'data' => $nv,
+                'temporary_password' => empty($request->password) ? $plainPassword : null,
             ], 201);
         } catch (Exception $e) {
             DB::rollBack();
-            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+            return response()->json(['success' => false, 'message' => 'Lỗi thêm nhân viên.'], 500);
         }
     }
 
     public function update(NhanVienRequest $request, $id): JsonResponse
     {
+        $actor = auth()->user();
+        $nv = NhanVien::with('user')->findOrFail($id);
+
+        if ($nv->user && $this->isSuperAdminUser($nv->user) && !$this->isSuperAdminUser($actor)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Không thể chỉnh sửa tài khoản Quản trị viên (Admin / Super Admin).'
+            ], 403);
+        }
+
+        if ($this->isPrivilegedRole($request->role) && !$this->isSuperAdminUser($actor)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Bạn không có quyền gán vai trò Quản trị viên (Admin / Super Admin).'
+            ], 403);
+        }
+
         DB::beginTransaction();
         try {
-            $nv = NhanVien::findOrFail($id);
-            
             $nv->update([
                 'ho_ten' => $request->name,
                 'so_dien_thoai' => $request->phone,
             ]);
             
             if ($nv->user) {
+                $oldStatus = (int) $nv->user->status;
+                $newStatus = $request->has('status') ? (int) $request->status : $oldStatus;
+
                 $updateData = [
                     'name' => $request->name,
                     'email' => $request->email,
                     'phone' => $request->phone,
-                    'status' => $request->status,
+                    'status' => $newStatus,
                 ];
 
                 if ($request->hasFile('avatar')) {
-                    $file = $request->file('avatar');
-                    $filename = time() . '_' . $file->getClientOriginalName();
-                    $file->move(public_path('uploads/avatars'), $filename);
-                    $updateData['avatar'] = '/uploads/avatars/' . $filename;
-                    
-                    // Xóa ảnh cũ
-                    if ($nv->user->avatar && file_exists(public_path($nv->user->avatar))) {
-                        @unlink(public_path($nv->user->avatar));
-                    }
+                    $oldAvatar = $nv->user->avatar;
+                    $updateData['avatar'] = ImageUploadService::storeUploadedFile(
+                        $request->file('avatar'),
+                        'uploads/avatars',
+                        'avatar',
+                        400
+                    );
+                    ImageUploadService::delete($oldAvatar);
                 } elseif ($request->boolean('remove_avatar') || ($request->has('avatar') && ($request->input('avatar') === null || $request->input('avatar') === ''))) {
-                    if ($nv->user->avatar && file_exists(public_path($nv->user->avatar))) {
-                        @unlink(public_path($nv->user->avatar));
-                    }
+                    ImageUploadService::delete($nv->user->avatar);
                     $updateData['avatar'] = null;
                 }
 
@@ -160,6 +200,11 @@ class NhanVienController extends Controller
                 
                 if ($request->role) {
                     $nv->user->syncRoles([$request->role]);
+                }
+
+                if ($newStatus === 0) {
+                    $nv->user->tokens()->delete();
+                    CachedSanctumPersonalAccessToken::invalidateUserTokens($nv->user->id);
                 }
             }
             DB::commit();
@@ -170,7 +215,7 @@ class NhanVienController extends Controller
             ]);
         } catch (Exception $e) {
             DB::rollBack();
-            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+            return response()->json(['success' => false, 'message' => 'Lỗi cập nhật nhân viên.'], 500);
         }
     }
 
@@ -178,7 +223,7 @@ class NhanVienController extends Controller
     {
         DB::beginTransaction();
         try {
-            $nv = NhanVien::findOrFail($id);
+            $nv = NhanVien::with('user')->findOrFail($id);
             $user = $nv->user;
 
             if ($user && $user->id === auth()->id()) {
@@ -189,7 +234,7 @@ class NhanVienController extends Controller
                 ], 403);
             }
 
-            if ($user && ($user->hasRole('admin') || $user->hasRole('Super Admin'))) {
+            if ($user && $this->isSuperAdminUser($user)) {
                 DB::rollBack();
                 return response()->json([
                     'success' => false,
@@ -201,8 +246,11 @@ class NhanVienController extends Controller
             $nv->delete();
             
             if ($user) {
+                $oldAvatar = $user->avatar;
                 $user->tokens()->delete();
+                CachedSanctumPersonalAccessToken::invalidateUserTokens($user->id);
                 $user->delete();
+                ImageUploadService::delete($oldAvatar);
             }
             
             DB::commit();
@@ -215,30 +263,42 @@ class NhanVienController extends Controller
             if ($e->getCode() == '23000') {
                 return response()->json(['success' => false, 'message' => 'Không thể xóa nhân viên này vì đã phát sinh dữ liệu (đơn hàng, báo giá, thẻ kho...). Vui lòng Khóa tài khoản thay vì xóa.'], 409);
             }
-            return response()->json(['success' => false, 'message' => 'Lỗi hệ thống: ' . $e->getMessage()], 500);
+            return response()->json(['success' => false, 'message' => 'Lỗi hệ thống khi xóa nhân viên.'], 500);
         } catch (Exception $e) {
             DB::rollBack();
-            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+            return response()->json(['success' => false, 'message' => 'Lỗi xóa nhân viên.'], 500);
         }
     }
     
     public function resetPassword($id): JsonResponse
     {
         try {
-            $nv = NhanVien::findOrFail($id);
+            $actor = auth()->user();
+            $nv = NhanVien::with('user')->findOrFail($id);
+
+            if ($nv->user && $this->isSuperAdminUser($nv->user) && !$this->isSuperAdminUser($actor)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Không có quyền đặt lại mật khẩu tài khoản Quản trị viên (Admin / Super Admin)!'
+                ], 403);
+            }
+
+            $tempPassword = Str::random(10) . '!9';
             if ($nv->user) {
                 $nv->user->update([
-                    'password' => Hash::make('Jpm@2026')
+                    'password' => Hash::make($tempPassword)
                 ]);
-                // Revoke tokens to force logout
+                // Revoke tokens + invalidate Redis token cache to force immediate logout
                 $nv->user->tokens()->delete();
+                CachedSanctumPersonalAccessToken::invalidateUserTokens($nv->user->id);
             }
             return response()->json([
                 'success' => true,
-                'message' => 'Đã reset mật khẩu thành công (Jpm@2026)!'
+                'message' => "Đã đặt lại mật khẩu thành công! Mật khẩu tạm thời: {$tempPassword}",
+                'temporary_password' => $tempPassword,
             ]);
         } catch (Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+            return response()->json(['success' => false, 'message' => 'Lỗi đặt lại mật khẩu.'], 500);
         }
     }
 }

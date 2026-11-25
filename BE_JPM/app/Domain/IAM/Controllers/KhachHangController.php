@@ -37,7 +37,7 @@ class KhachHangController extends Controller
             $filters = $request->only(['search']);
             $hasPagination = $request->has('per_page') || $request->has('page');
             $all = $request->boolean('all', false) || !$hasPagination;
-            $perPage = $all ? null : (int) $request->input('per_page', 50);
+            $perPage = $all ? null : min(max((int) $request->input('per_page', 50), 1), 100);
 
             $khachHangs = $this->khachHangService->getAll($filters, $perPage);
 
@@ -66,7 +66,7 @@ class KhachHangController extends Controller
     public function store(KhachHangRequest $request): JsonResponse
     {
         try {
-            $kh = $this->khachHangService->create($request->all());
+            $kh = $this->khachHangService->create($request->validated());
             return response()->json([
                 'success' => true,
                 'message' => 'Thêm khách hàng thành công',
@@ -80,7 +80,11 @@ class KhachHangController extends Controller
     public function update(KhachHangRequest $request, $id): JsonResponse
     {
         try {
-            $kh = $this->khachHangService->update($id, $request->all());
+            $data = $request->validated();
+            if ($request->boolean('remove_avatar')) {
+                $data['remove_avatar'] = true;
+            }
+            $kh = $this->khachHangService->update($id, $data);
             return response()->json([
                 'success' => true,
                 'message' => 'Cập nhật khách hàng thành công',
@@ -94,10 +98,11 @@ class KhachHangController extends Controller
     public function resetPassword($id): JsonResponse
     {
         try {
-            $this->khachHangService->resetPassword($id);
+            $tempPassword = $this->khachHangService->resetPassword($id);
             return response()->json([
                 'success' => true,
-                'message' => 'Đã reset mật khẩu về mặc định (Jpm@2026)'
+                'message' => "Đã đặt lại mật khẩu thành công! Mật khẩu tạm thời: {$tempPassword}",
+                'temporary_password' => $tempPassword,
             ]);
         } catch (Exception $e) {
             return response()->json(['success' => false, 'message' => $e->getMessage()], 500);

@@ -8,7 +8,7 @@
 
     <div class="row">
       <!-- Cột Form (Thêm/Sửa) -->
-      <div class="col-md-4 mb-4">
+      <div class="col-md-4 mb-4" v-if="authStore.hasAnyPermission(['Thêm Phụ tùng', 'Sửa Phụ tùng'])">
         <div class="card">
           <div class="card-header border-bottom">
             <h5 class="mb-0 fw-bold text-dark">{{ isEditMode ? 'Cập Nhật Nhóm Phụ Tùng' : 'Thêm Nhóm Phụ Tùng' }}</h5>
@@ -57,7 +57,7 @@
       </div>
 
       <!-- Cột Bảng (Danh sách) -->
-      <div class="col-md-8 mb-4">
+      <div :class="authStore.hasAnyPermission(['Thêm Phụ tùng', 'Sửa Phụ tùng']) ? 'col-md-8' : 'col-12'" class="mb-4">
         <div class="card">
           <div class="card-header border-bottom d-flex justify-content-between align-items-center">
             <h5 class="mb-0 fw-bold text-dark">Danh sách Nhóm Phụ Tùng</h5>
@@ -104,7 +104,8 @@
                   </td>
                   <td class="text-center">
                     <div class="d-flex align-items-center justify-content-center">
-                      <button 
+                      <button
+                        v-if="authStore.hasPermission('Sửa Phụ tùng')"
                         type="button" 
                         class="action-btn text-primary me-1" 
                         @click="openEditModal(item)"
@@ -112,7 +113,8 @@
                       >
                         <i class="bx bx-edit-alt"></i>
                       </button>
-                      <button 
+                      <button
+                        v-if="authStore.hasPermission('Xóa Phụ tùng')"
                         type="button" 
                         class="action-btn text-danger" 
                         @click="confirmDelete(item)"
@@ -187,7 +189,7 @@ export default {
       onSettled: () => queryClient.invalidateQueries({ queryKey: ['nhom-phu-tung'] })
     });
 
-    return { queryClient, nhomPhuTung, isFetching, isPending, deleteMutation, saveMutation, toaster };
+    return { authStore, queryClient, nhomPhuTung, isFetching, isPending, deleteMutation, saveMutation, toaster };
   },
   data() {
     return {

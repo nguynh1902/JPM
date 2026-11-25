@@ -723,7 +723,7 @@ export default {
       },
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ['admin-site-settings'] });
-        queryClient.invalidateQueries({ queryKey: ['public-site-settings'] });
+        queryClient.invalidateQueries({ queryKey: ['public-site-settings-v2'] });
         initialSnapshot.value = JSON.parse(JSON.stringify(formData));
         toaster.success('Đã lưu cấu hình hệ thống và cập nhật giao diện Client.');
       },

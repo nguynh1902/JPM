@@ -1,51 +1,44 @@
 <template>
   <div class="footer-wrapper">
-    <!-- Dải cam kết dịch vụ (Service Feature Strip) chuẩn Surface / Apple cho các trang con -->
-    <section v-if="route.path !== '/'" class="service-trust-strip">
-      <div class="container py-3 py-lg-4">
-        <div class="row g-0">
-          <!-- 1. Hàng Chính Hãng 100% -->
-          <div class="col-12 col-sm-6 col-lg-3 trust-badge-col">
-            <div class="trust-badge-item">
-              <div class="trust-badge-icon">
-                <i class="bi bi-patch-check"></i>
-              </div>
-              <h6 class="trust-badge-title">Hàng Chính Hãng 100%</h6>
-              <p class="trust-badge-desc">Cam kết cung cấp phụ tùng chính hãng nhập khẩu trực tiếp từ Yamaha, Honda, Suzuki.</p>
-            </div>
+    <!-- Pre-Footer Technical Concierge Band (Dùng chung toàn Client - Luxury Minimal) -->
+    <section class="prefooter-concierge">
+      <div class="container">
+        <div class="prefooter-inner d-flex flex-column flex-lg-row justify-content-between align-items-start align-items-lg-center gap-4">
+          <div class="prefooter-copy">
+            <span class="prefooter-eyebrow">Tư vấn kỹ thuật OEM</span>
+            <h4 class="prefooter-title">Chưa tìm thấy đúng mã phụ tùng cho đời máy của bạn?</h4>
+            <p class="prefooter-desc">
+              Gửi số khung (VIN) hoặc ảnh linh kiện — kỹ thuật viên JPM đối chiếu sơ đồ và báo giá nhanh.
+            </p>
           </div>
 
-          <!-- 2. Giao Hàng Siêu Tốc -->
-          <div class="col-12 col-sm-6 col-lg-3 trust-badge-col">
-            <div class="trust-badge-item">
-              <div class="trust-badge-icon">
-                <i class="bi bi-truck"></i>
-              </div>
-              <h6 class="trust-badge-title">Giao Hàng Siêu Tốc</h6>
-              <p class="trust-badge-desc">Mạng lưới phân phối rộng khắp toàn quốc giúp phụ tùng đến tay nhanh chóng, an toàn.</p>
-            </div>
-          </div>
+          <div class="prefooter-actions d-flex flex-wrap align-items-center gap-2 flex-shrink-0">
+            <a
+              :href="'tel:' + (settings.company_hotline || '0909123456').replace(/\s+/g, '')"
+              class="btn btn-outline-secondary prefooter-btn d-inline-flex align-items-center justify-content-center gap-2 text-nowrap"
+            >
+              <i class="bi bi-telephone"></i>
+              <span>{{ settings.company_hotline || '0909 123 456' }}</span>
+            </a>
 
-          <!-- 3. Hỗ Trợ Kỹ Thuật 24/7 -->
-          <div class="col-12 col-sm-6 col-lg-3 trust-badge-col">
-            <div class="trust-badge-item">
-              <div class="trust-badge-icon">
-                <i class="bi bi-headset"></i>
-              </div>
-              <h6 class="trust-badge-title">Hỗ Trợ Kỹ Thuật 24/7</h6>
-              <p class="trust-badge-desc">Đội ngũ chuyên gia kỹ thuật hàng hải giàu kinh nghiệm luôn sẵn sàng tư vấn chuyên sâu.</p>
-            </div>
-          </div>
-
-          <!-- 4. Chính Sách Bảo Hành Tốt -->
-          <div class="col-12 col-sm-6 col-lg-3 trust-badge-col">
-            <div class="trust-badge-item">
-              <div class="trust-badge-icon">
-                <i class="bi bi-shield-check"></i>
-              </div>
-              <h6 class="trust-badge-title">Chính Sách Bảo Hành Tốt</h6>
-              <p class="trust-badge-desc">Bảo hành chính hãng cho mọi sản phẩm, hỗ trợ đổi trả linh hoạt theo quy định.</p>
-            </div>
+            <a
+              v-if="settings.social_zalo"
+              :href="settings.social_zalo"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="btn btn-danger prefooter-btn d-inline-flex align-items-center justify-content-center gap-2 text-nowrap"
+            >
+              <span>Tư vấn qua Zalo</span>
+              <i class="bi bi-arrow-right"></i>
+            </a>
+            <router-link
+              v-else
+              to="/ho-tro"
+              class="btn btn-danger prefooter-btn d-inline-flex align-items-center justify-content-center gap-2 text-nowrap"
+            >
+              <span>Liên hệ kỹ thuật</span>
+              <i class="bi bi-arrow-right"></i>
+            </router-link>
           </div>
         </div>
       </div>
@@ -220,76 +213,75 @@ export default {
   color: var(--accent-color, #f82249) !important;
 }
 
-/* Service Feature Strip (Kiểu tối giản thanh lịch Surface / Apple) */
-.service-trust-strip {
-  background-color: #ffffff;
-  border-top: 1px solid var(--jpm-neutral-200, #e2e8f0);
+/* Pre-Footer Technical Concierge Band (Luxury Minimal - Dùng chung toàn Client) */
+.prefooter-concierge {
+  background-color: var(--jpm-neutral-50, #F8FAFC);
+  border-top: 1px solid var(--jpm-neutral-200, #E2E8F0);
+  padding: 36px 0;
 }
 
-.trust-badge-col {
-  position: relative;
-  padding: 6px 20px;
+.prefooter-copy {
+  max-width: 620px;
 }
 
-/* Vạch kẻ chia cột thanh lịch trên Desktop (>= 992px) */
-@media (min-width: 992px) {
-  .trust-badge-col:not(:last-child)::after {
-    content: "";
-    position: absolute;
-    right: 0;
-    top: 6%;
-    height: 88%;
-    width: 1px;
-    background-color: var(--jpm-neutral-200, #e2e8f0);
-  }
-}
-
-/* Vạch kẻ chia cột trên màn hình Tablet (576px - 991px) chia 2 cột */
-@media (min-width: 576px) and (max-width: 991.98px) {
-  .trust-badge-col:nth-child(odd)::after {
-    content: "";
-    position: absolute;
-    right: 0;
-    top: 6%;
-    height: 88%;
-    width: 1px;
-    background-color: var(--jpm-neutral-200, #e2e8f0);
-  }
-}
-
-.trust-badge-item {
-  text-align: left;
-}
-
-.trust-badge-icon {
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  background-color: var(--jpm-neutral-100, #f1f5f9);
-  color: var(--jpm-neutral-800, #1e293b);
+.prefooter-eyebrow {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  font-size: 1.05rem;
-  margin-bottom: 8px;
+  gap: 8px;
+  font-family: var(--heading-font, 'Inter', sans-serif);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--jpm-color-red-marine, #F82249);
+  margin-bottom: 6px;
 }
 
-.trust-badge-title {
-  font-family: var(--heading-font, var(--jpm-font-heading, 'Raleway', sans-serif));
-  font-size: 0.875rem;
+.prefooter-eyebrow::before {
+  content: "";
+  display: inline-block;
+  width: 16px;
+  height: 1.5px;
+  background-color: var(--jpm-color-red-marine, #F82249);
+}
+
+.prefooter-title {
+  font-family: var(--heading-font, 'Inter', sans-serif);
+  font-size: 1.25rem;
   font-weight: 700;
   color: var(--jpm-color-navy-dark, #0A1128);
-  margin-bottom: 4px;
+  letter-spacing: -0.3px;
   line-height: 1.35;
-  letter-spacing: -0.2px;
+  margin-bottom: 4px;
 }
 
-.trust-badge-desc {
-  font-family: var(--default-font, var(--jpm-font-body, 'Roboto', sans-serif));
-  font-size: 0.8rem;
-  color: var(--jpm-neutral-700, #334155);
+.prefooter-desc {
+  font-family: var(--default-font, 'Inter', sans-serif);
+  font-size: 0.875rem;
+  color: var(--jpm-neutral-500, #64748B);
+  line-height: 1.5;
   margin-bottom: 0;
-  line-height: 1.45;
+}
+
+.prefooter-btn {
+  height: 44px;
+  padding: 0 20px !important;
+  font-size: 0.875rem;
+}
+
+@media (max-width: 767.98px) {
+  .prefooter-concierge {
+    padding: 28px 0;
+  }
+  .prefooter-title {
+    font-size: 1.1rem;
+  }
+  .prefooter-actions {
+    width: 100%;
+  }
+  .prefooter-btn {
+    flex: 1 1 auto;
+  }
 }
 
 /* Footer Brand Typography - Editorial Luxury */

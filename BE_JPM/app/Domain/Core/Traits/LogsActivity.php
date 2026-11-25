@@ -55,7 +55,7 @@ trait LogsActivity
                 $name = 'Model Động Cơ (' . ($model->ten_model ?? $model->id) . ')';
                 break;
             case 'TonKho':
-                $name = 'Tồn Kho Phụ Tùng ID: ' . $model->id_phu_tung;
+                $name = 'Tồn Kho Sản Phẩm ID: ' . ($model->id_san_pham ?? $model->id);
                 break;
             case 'Kho':
                 $name = 'Kho (' . ($model->ten_kho ?? $model->id) . ')';

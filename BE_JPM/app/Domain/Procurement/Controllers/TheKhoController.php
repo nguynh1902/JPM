@@ -71,11 +71,12 @@ class TheKhoController extends Controller
                 });
             }
 
-            $perPage = $request->get('per_page', 'all');
+            $perPage = $request->get('per_page', 50);
             if ($perPage === 'all') {
-                $items = $query->get();
+                $items = $query->limit(500)->get();
             } else {
-                $items = $query->paginate((int) $perPage);
+                $capped = min(max((int) $perPage, 1), 100);
+                $items = $query->paginate($capped);
             }
 
             return response()->json([

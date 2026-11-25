@@ -1,5 +1,5 @@
 <template>
-  <div class="container-fluid vh-100 p-0 overflow-hidden position-relative">
+  <div class="container-fluid min-vh-100 p-0 overflow-x-hidden position-relative d-flex flex-column">
     
     <!-- ================= LAYER 1: HÌNH ẢNH NỀN CỐ ĐỊNH (NGỌN SÓNG BIỂN NGỌC) ================= -->
     <div
@@ -15,7 +15,7 @@
     <div class="position-absolute w-100 h-100 z-1" style="background: linear-gradient(90deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0) 100%); pointer-events: none;"></div>
 
     <!-- ================= LAYER 3: BỐ CỤC CHIA CỘT ================= -->
-    <div class="row g-0 h-100 position-relative z-2 justify-content-end">
+    <div class="row g-0 flex-grow-1 min-vh-100 position-relative z-2 justify-content-end">
       
       <!-- CỘT TRÁI: TYPOGRAPHY (Original) -->
       <div class="col d-none d-lg-flex flex-column p-5" style="padding-left: 8% !important;">
@@ -68,8 +68,21 @@
       </div>
 
       <!-- CỘT PHẢI: BỐ CỤC CHUẨN GLASSMORPHISM DEEP NAVY -->
-      <div class="col-12 col-md-6 col-lg-4 d-flex align-items-center justify-content-center h-100" style="background: rgba(10, 17, 40, 0.55); backdrop-filter: blur(20px); border-left: 1px solid rgba(255,255,255,0.05); box-shadow: -15px 0 50px rgba(10, 17, 40, 0.6); min-width: 420px; max-width: 480px;">
+      <div class="col-12 col-md-7 col-lg-4 d-flex flex-column align-items-center justify-content-center min-vh-100 auth-panel">
         <div class="w-100 p-4 p-xl-5">
+          <!-- Mobile Logo & Back to Home -->
+          <div class="d-flex d-lg-none justify-content-between align-items-center mb-4 pb-3 border-bottom border-white border-opacity-10">
+            <router-link to="/" class="text-decoration-none d-inline-flex align-items-center gap-2">
+              <svg width="32" height="20" viewBox="0 0 32 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M14.5 1 L14.5 19 L2 19 Z" fill="white" />
+                <path d="M17.5 1 L30 19 L17.5 19 Z" fill="white" />
+              </svg>
+              <span style="font-size: 15px; font-weight: 800; letter-spacing: 2px; color: white;">JPM</span>
+            </router-link>
+            <router-link to="/" class="text-white text-decoration-none small d-inline-flex align-items-center gap-1 opacity-75">
+              <i class="bi bi-arrow-left"></i> Trang chủ
+            </router-link>
+          </div>
           
           <transition name="fade" mode="out-in">
             <!-- FORM ĐĂNG NHẬP -->
@@ -105,17 +118,6 @@
                   Đăng nhập
                 </button>
               </form>
-
-              <div class="d-flex align-items-center my-4">
-                <hr class="flex-grow-1 m-0 auth-divider">
-                <span class="px-3" style="color: rgba(255,255,255,0.5); font-size: 0.8rem; font-weight: 400;">Hoặc tiếp tục với</span>
-                <hr class="flex-grow-1 m-0 auth-divider">
-              </div>
-
-              <button type="button" class="btn w-100 text-white d-flex justify-content-center align-items-center gap-2 hover-bg-google" style="height: 44px; font-size: 0.9rem; font-weight: 600; border: 1px solid rgba(255,255,255,0.18); background: rgba(255,255,255,0.04); border-radius: 8px;">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="G" style="width: 18px;">
-                Google
-              </button>
             </div>
 
             <!-- FORM ĐĂNG KÝ -->
@@ -159,7 +161,7 @@
                 <div class="form-check mb-4 mt-3 ps-0 d-flex align-items-center gap-2">
                   <input class="form-check-input minimal-checkbox m-0" type="checkbox" id="terms" required>
                   <label class="form-check-label text-white m-0" for="terms" style="font-size: 0.85rem; font-weight: 400; opacity: 0.8;">
-                    Tôi đồng ý với <a href="#" class="text-white text-decoration-none" style="font-weight: 500;">Điều khoản & Chính sách</a>
+                    Tôi đồng ý với <router-link to="/ho-tro" target="_blank" class="text-white text-decoration-underline" style="font-weight: 500;">Điều khoản & Chính sách</router-link>
                   </label>
                 </div>
 
@@ -168,17 +170,6 @@
                   Tạo tài khoản
                 </button>
               </form>
-              
-              <div class="d-flex align-items-center my-4">
-                <hr class="flex-grow-1 m-0 auth-divider">
-                <span class="px-3" style="color: rgba(255,255,255,0.5); font-size: 0.8rem; font-weight: 400;">Hoặc tiếp tục với</span>
-                <hr class="flex-grow-1 m-0 auth-divider">
-              </div>
-
-              <button type="button" class="btn w-100 text-white d-flex justify-content-center align-items-center gap-2 hover-bg-google" style="height: 44px; font-size: 0.9rem; font-weight: 600; border: 1px solid rgba(255,255,255,0.18); background: rgba(255,255,255,0.04); border-radius: 8px;">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="G" style="width: 18px;">
-                Google
-              </button>
             </div>
             <!-- FORM QUÊN MẬT KHẨU -->
             <div v-else-if="activeForm === 'forgot'" key="forgot">
@@ -251,12 +242,14 @@
 import { useAuthStore } from "../../stores/authStore";
 import { useCartStore } from "../../stores/cartStore";
 import axiosClient from "../../api/axiosClient";
+import Swal from "sweetalert2";
 
 export default {
   name: 'XacThuc',
   data() {
     return {
-      activeForm: 'login', // 'login', 'register', 'forgot'
+      activeForm: 'login', // 'login', 'register', 'forgot', 'reset'
+      localLoading: false,
       showPw: false,
       showRegPw: false,
       
@@ -278,7 +271,7 @@ export default {
       return useAuthStore();
     },
     isLoading() {
-      return this.authStore.loading;
+      return this.authStore.loading || this.localLoading;
     }
   },
   watch: {
@@ -320,34 +313,40 @@ export default {
       this.authStore.error = null;
       this.activeForm = 'forgot';
     },
+    notify(type, msg) {
+      if (this.$toast && typeof this.$toast[type] === 'function') {
+        this.$toast[type](msg);
+      } else {
+        Swal.fire({
+          toast: true,
+          position: 'top-end',
+          icon: type === 'error' ? 'error' : 'success',
+          title: msg,
+          showConfirmButton: false,
+          timer: 3000,
+        });
+      }
+    },
     async handleForgot() {
       const email = this.forgotEmail || this.forgotForm.email;
+      this.localLoading = true;
       try {
         const res = await axiosClient.post('/forgot-password', { email });
-        const msg = res?.message || "Đã gửi liên kết khôi phục đến email: " + email;
-        if (this.$toast) {
-          this.$toast.success(msg);
-        } else {
-          alert(msg);
-        }
+        const msg = res?.message || "Nếu email tồn tại trong hệ thống, liên kết khôi phục đã được gửi.";
+        this.notify('success', msg);
       } catch (err) {
         const msg = err.response?.data?.message || "Không thể gửi yêu cầu khôi phục mật khẩu, vui lòng kiểm tra lại email!";
-        if (this.$toast) {
-          this.$toast.error(msg);
-        } else {
-          alert(msg);
-        }
+        this.notify('error', msg);
+      } finally {
+        this.localLoading = false;
       }
     },
     async handleReset() {
       if (this.resetForm.password !== this.resetForm.password_confirmation) {
-        if (this.$toast) {
-          this.$toast.error("Mật khẩu xác nhận không khớp!");
-        } else {
-          alert("Mật khẩu xác nhận không khớp!");
-        }
+        this.notify('error', "Mật khẩu xác nhận không khớp!");
         return;
       }
+      this.localLoading = true;
       try {
         const res = await axiosClient.post('/reset-password', {
           ...this.resetForm,
@@ -355,20 +354,14 @@ export default {
           email: this.$route.query.email
         });
         const msg = res?.message || "Đổi mật khẩu thành công!";
-        if (this.$toast) {
-          this.$toast.success(msg);
-        } else {
-          alert(msg);
-        }
+        this.notify('success', msg);
         this.activeForm = 'login';
         this.$router.push('/dang-nhap');
       } catch (err) {
-        const msg = err.response?.data?.message || "Đặt lại mật khẩu thất bại, vui lòng thử lại!";
-        if (this.$toast) {
-          this.$toast.error(msg);
-        } else {
-          alert(msg);
-        }
+        const msg = err.response?.data?.message || "Đặt lại mật khẩu thất bại, liên kết có thể đã hết hạn!";
+        this.notify('error', msg);
+      } finally {
+        this.localLoading = false;
       }
     },
     async handleLogin() {
@@ -378,9 +371,7 @@ export default {
         const cartStore = useCartStore();
         await cartStore.fetchFromCloud();
 
-        if (this.$toast) {
-          this.$toast.success("Đăng nhập thành công!");
-        }
+        this.notify('success', "Đăng nhập thành công!");
 
         if (authStore.isStaffOrAdmin) {
           this.$router.push('/portal/dashboard');
@@ -389,11 +380,7 @@ export default {
         }
       } else {
         const msg = authStore.error || "Đăng nhập thất bại, vui lòng kiểm tra lại thông tin!";
-        if (this.$toast) {
-          this.$toast.error(msg);
-        } else {
-          alert(msg);
-        }
+        this.notify('error', msg);
       }
     },
     async handleRegister() {
@@ -404,9 +391,7 @@ export default {
       const authStore = useAuthStore();
       const success = await authStore.register(this.registerForm);
       if (success) {
-        if (this.$toast) {
-          this.$toast.success("Đăng ký tài khoản thành công!");
-        }
+        this.notify('success', "Đăng ký tài khoản thành công!");
         if (authStore.isLoggedIn) {
           const cartStore = useCartStore();
           await cartStore.fetchFromCloud();
@@ -417,11 +402,7 @@ export default {
         }
       } else {
         const msg = authStore.error || "Đăng ký thất bại, vui lòng kiểm tra lại thông tin!";
-        if (this.$toast) {
-          this.$toast.error(msg);
-        } else {
-          alert(msg);
-        }
+        this.notify('error', msg);
       }
     }
   }
@@ -429,6 +410,19 @@ export default {
 </script>
 
 <style scoped>
+.auth-panel {
+  background: rgba(10, 17, 40, 0.58);
+  backdrop-filter: blur(20px);
+  border-left: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: -15px 0 50px rgba(10, 17, 40, 0.6);
+  width: 100%;
+  max-width: 480px;
+}
+@media (min-width: 768px) {
+  .auth-panel {
+    min-width: 420px;
+  }
+}
 
 .auth-label {
   font-family: var(--default-font, 'Inter', sans-serif);

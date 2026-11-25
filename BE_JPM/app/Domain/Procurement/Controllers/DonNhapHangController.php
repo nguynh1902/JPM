@@ -96,9 +96,17 @@ class DonNhapHangController extends Controller
     {
         DB::beginTransaction();
         try {
-            $donNhapHang = DonNhapHang::with('chiTiet')->findOrFail($id);
+            $donNhapHang = DonNhapHang::with('chiTiet')->lockForUpdate()->findOrFail($id);
             $oldStatus = (int) $donNhapHang->trang_thai;
             $newStatus = $request->has('trang_thai') ? (int) $request->trang_thai : $oldStatus;
+
+            if ($oldStatus === 2 && $newStatus !== 2) {
+                DB::rollBack();
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Đơn nhập hàng đã hoàn thành nhập kho, không thể thay đổi trạng thái ngược lại.'
+                ], 422);
+            }
             
             $donNhapHang->update($request->only(['id_nha_cung_cap', 'id_kho', 'trang_thai', 'ngay_du_kien', 'ghi_chu']));
             
@@ -113,6 +121,7 @@ class DonNhapHangController extends Controller
                     if ($soLuongNhap <= 0 || !$idSanPham) continue;
 
                     $tonKho = TonKho::where('id_san_pham', $idSanPham)
+                        ->where('loai_san_pham', $loaiSanPham)
                         ->where('id_kho', $idKho)
                         ->lockForUpdate()
                         ->first();

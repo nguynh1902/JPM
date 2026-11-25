@@ -92,27 +92,39 @@ class AuthController extends Controller
             ]);
 
             $user = User::where('email', $request->email)->first();
-            if (!$user) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Không tìm thấy tài khoản với địa chỉ email này.'
-                ], 404);
-            }
 
-            $token = Str::random(64);
-            DB::table('password_reset_tokens')->updateOrInsert(
-                ['email' => $user->email],
-                [
-                    'token' => Hash::make($token),
-                    'created_at' => now(),
-                ]
-            );
+            // Luôn trả về thông báo chung để tránh lộ danh sách email hợp lệ (User Enumeration)
+            if ($user) {
+                $token = Str::random(64);
+                DB::table('password_reset_tokens')->updateOrInsert(
+                    ['email' => $user->email],
+                    [
+                        'token' => Hash::make($token),
+                        'created_at' => now(),
+                    ]
+                );
+
+                // Gửi liên kết khôi phục qua Mail (hoặc log mailer ở môi trường dev)
+                try {
+                    $frontendUrl = rtrim(env('FRONTEND_URL', 'http://localhost:5173'), '/');
+                    $resetUrl = $frontendUrl . '/dat-lai-mat-khau?token=' . urlencode($token) . '&email=' . urlencode($user->email);
+                    \Illuminate\Support\Facades\Mail::raw(
+                        "Chào {$user->name},\n\nBạn vừa yêu cầu đặt lại mật khẩu tại JPM Marine.\nNhấn vào liên kết sau (hiệu lực 60 phút):\n{$resetUrl}\n\nNếu không phải bạn yêu cầu, vui lòng bỏ qua email này.",
+                        function ($message) use ($user) {
+                            $message->to($user->email)->subject('JPM Marine — Khôi phục mật khẩu tài khoản');
+                        }
+                    );
+                } catch (\Throwable $mailErr) {
+                    \Illuminate\Support\Facades\Log::warning('Password reset mail dispatch failed', [
+                        'email' => $user->email,
+                        'error' => $mailErr->getMessage(),
+                    ]);
+                }
+            }
 
             return response()->json([
                 'success' => true,
-                'message' => 'Đã tạo liên kết khôi phục mật khẩu thành công.',
-                'reset_token' => $token,
-                'email' => $user->email,
+                'message' => 'Nếu email tồn tại trong hệ thống, liên kết khôi phục mật khẩu đã được gửi tới hộp thư của bạn.',
             ], 200);
         } catch (ValidationException $e) {
             return response()->json([
@@ -121,9 +133,10 @@ class AuthController extends Controller
                 'errors' => $e->errors(),
             ], 422);
         } catch (Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Forgot password error: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
-                'message' => 'Lỗi xử lý yêu cầu: ' . $e->getMessage(),
+                'message' => 'Không thể xử lý yêu cầu lúc này. Vui lòng thử lại sau.',
             ], 500);
         }
     }
@@ -136,10 +149,11 @@ class AuthController extends Controller
         try {
             $request->validate([
                 'email' => 'required|email',
-                'token' => 'nullable|string',
+                'token' => 'required|string|min:16',
                 'password' => 'required|string|min:8|max:25|confirmed',
             ], [
                 'email.required' => 'Vui lòng nhập email.',
+                'token.required' => 'Thiếu mã xác thực khôi phục mật khẩu.',
                 'password.required' => 'Vui lòng nhập mật khẩu mới.',
                 'password.min' => 'Mật khẩu phải từ 8 đến 25 ký tự.',
                 'password.max' => 'Mật khẩu phải từ 8 đến 25 ký tự.',
@@ -147,21 +161,16 @@ class AuthController extends Controller
             ]);
 
             $user = User::where('email', $request->email)->first();
-            if (!$user) {
+            $record = DB::table('password_reset_tokens')->where('email', $request->email)->first();
+
+            $expireMinutes = (int) config('auth.passwords.users.expire', 60);
+            $isExpired = !$record || !$record->created_at || \Illuminate\Support\Carbon::parse($record->created_at)->addMinutes($expireMinutes)->isPast();
+
+            if (!$user || !$record || $isExpired || !Hash::check($request->token, $record->token)) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Không tìm thấy tài khoản với email này.'
-                ], 404);
-            }
-
-            if ($request->filled('token')) {
-                $record = DB::table('password_reset_tokens')->where('email', $user->email)->first();
-                if (!$record || !Hash::check($request->token, $record->token)) {
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'Mã khôi phục không hợp lệ hoặc đã hết hạn.'
-                    ], 422);
-                }
+                    'message' => 'Mã khôi phục không hợp lệ hoặc đã hết hạn.'
+                ], 422);
             }
 
             $user->password = Hash::make($request->password);
@@ -169,6 +178,7 @@ class AuthController extends Controller
 
             DB::table('password_reset_tokens')->where('email', $user->email)->delete();
             $user->tokens()->delete();
+            \App\Domain\IAM\Services\CachedSanctumPersonalAccessToken::invalidateUserTokens($user->id);
 
             return response()->json([
                 'success' => true,
@@ -181,9 +191,10 @@ class AuthController extends Controller
                 'errors' => $e->errors(),
             ], 422);
         } catch (Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Reset password error: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
-                'message' => 'Lỗi đặt lại mật khẩu: ' . $e->getMessage(),
+                'message' => 'Không thể đặt lại mật khẩu lúc này. Vui lòng thử lại sau.',
             ], 500);
         }
     }
@@ -199,23 +210,39 @@ class AuthController extends Controller
             $data = $request->validate([
                 'name' => 'required|string|max:100',
                 'email' => 'required|email|max:100|unique:users,email,' . $user->id,
-                'phone' => 'nullable|string|regex:/^[0-9]{9,15}$/',
-                'avatar' => 'nullable|file|mimes:jpeg,png,jpg,gif,svg,webp,bmp,avif,heic,heif,tiff,tif,ico,jfif,eps,raw,cr2,nef,psd,ai|max:20480',
+                'phone' => 'nullable|string|regex:/^[0-9]{9,15}$/|unique:users,phone,' . $user->id,
+                'current_password' => 'nullable|string',
+                'avatar' => 'nullable|file|mimes:jpeg,png,jpg,webp|extensions:jpg,jpeg,png,webp|max:5120',
             ], [
                 'name.max' => 'Họ và tên không được vượt quá 100 ký tự.',
                 'phone.regex' => 'Số điện thoại không hợp lệ.',
-                'avatar.max' => 'Ảnh đại diện không được vượt quá 20MB.',
+                'phone.unique' => 'Số điện thoại này đã được sử dụng bởi tài khoản khác.',
+                'avatar.mimes' => 'Ảnh đại diện chỉ chấp nhận định dạng JPG, PNG, WebP.',
+                'avatar.max' => 'Ảnh đại diện không được vượt quá 5MB.',
             ]);
 
-            if ($request->hasFile('avatar')) {
-                $file = $request->file('avatar');
-                $filename = time() . '_' . $file->getClientOriginalName();
-                $file->move(public_path('uploads/avatars'), $filename);
-                $user->avatar = '/uploads/avatars/' . $filename;
-            } elseif ($request->boolean('remove_avatar') || ($request->has('avatar') && ($request->input('avatar') === '' || $request->input('avatar') === null))) {
-                if ($user->avatar && file_exists(public_path($user->avatar))) {
-                    @unlink(public_path($user->avatar));
+            // Yêu cầu xác nhận mật khẩu hiện tại nếu người dùng thay đổi email
+            if (strtolower($data['email']) !== strtolower((string) $user->email)) {
+                if (empty($data['current_password']) || !Hash::check($data['current_password'], $user->password)) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Vui lòng nhập đúng mật khẩu hiện tại để thay đổi địa chỉ email.',
+                    ], 422);
                 }
+            }
+
+            $imageService = app(\App\Domain\Core\Services\ImageUploadService::class);
+            if ($request->hasFile('avatar')) {
+                $oldAvatar = $user->avatar;
+                $user->avatar = $imageService->storeUploadedFile($request->file('avatar'), 'avatars', [
+                    'max_kb' => 5120,
+                    'max_width' => 400,
+                    'quality' => 82,
+                    'public_uploads' => true,
+                ]);
+                $imageService->delete($oldAvatar);
+            } elseif ($request->boolean('remove_avatar') || ($request->has('avatar') && ($request->input('avatar') === '' || $request->input('avatar') === null))) {
+                $imageService->delete($user->avatar);
                 $user->avatar = null;
             }
 
@@ -251,9 +278,10 @@ class AuthController extends Controller
                 'errors' => $e->errors(),
             ], 422);
         } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Update profile error: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
-                'message' => $e->getMessage()
+                'message' => 'Không thể cập nhật hồ sơ lúc này.'
             ], 500);
         }
     }
@@ -261,8 +289,7 @@ class AuthController extends Controller
     public function me(Request $request)
     {
         $userData = new UserResource($request->user());
-        \Illuminate\Support\Facades\Log::info('Get Me API response:', $userData->toArray($request));
-        
+
         return response()->json([
             'success' => true,
             'data' => [
@@ -360,6 +387,7 @@ class AuthController extends Controller
 
             // Revoke tokens to force logout
             $user->tokens()->delete();
+            \App\Domain\IAM\Services\CachedSanctumPersonalAccessToken::invalidateUserTokens($user->id);
 
             return response()->json([
                 'success' => true,

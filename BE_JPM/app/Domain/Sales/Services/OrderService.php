@@ -23,6 +23,18 @@ class OrderService
         $processedItems = [];
         $tongTien = 0;
 
+        // Batch-load tất cả sản phẩm & phụ tùng trước vòng lặp để triệt tiêu N+1 query
+        $allIds = [];
+        foreach ($chiTiet as $item) {
+            $id = $item['id_san_pham'] ?? $item['id_phu_tung'] ?? null;
+            if ($id) {
+                $allIds[] = (int) $id;
+            }
+        }
+        $allIds = array_values(array_unique($allIds));
+        $phuTungMap = !empty($allIds) ? PhuTung::whereIn('id', $allIds)->get()->keyBy('id') : collect();
+        $sanPhamMap = !empty($allIds) ? SanPham::whereIn('id', $allIds)->get()->keyBy('id') : collect();
+
         foreach ($chiTiet as $item) {
             $idItem = $item['id_san_pham'] ?? $item['id_phu_tung'] ?? null;
             $soLuong = (int) ($item['so_luong'] ?? 1);
@@ -35,11 +47,12 @@ class OrderService
                 throw new \Exception("ID sản phẩm không được để trống.");
             }
 
+            $idItem = (int) $idItem;
             $loaiSanPham = $item['loai_san_pham'] ?? 'phu_tung';
 
             // 1. Xác thực thông tin sản phẩm và đơn giá authoritative từ Server
             if ($loaiSanPham === 'san_pham') {
-                $product = SanPham::find($idItem);
+                $product = $sanPhamMap->get($idItem);
                 if (!$product) {
                     throw new \Exception("Không tìm thấy sản phẩm phổ thông ID: {$idItem}");
                 }
@@ -47,10 +60,10 @@ class OrderService
                 $maItem = $product->ma_san_pham;
                 $donGia = $product->is_gia_lien_he ? 0 : (float) $product->gia_ban;
             } else {
-                $product = PhuTung::find($idItem);
+                $product = $phuTungMap->get($idItem);
                 if (!$product) {
                     // Fallback thử tìm trong SanPham phòng trường hợp khách gửi nhầm loai_san_pham
-                    $fallback = SanPham::find($idItem);
+                    $fallback = $sanPhamMap->get($idItem);
                     if ($fallback) {
                         $product = $fallback;
                         $loaiSanPham = 'san_pham';

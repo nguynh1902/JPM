@@ -58,7 +58,7 @@ class SeoBotController extends Controller
             'soDoPhuTungs.model.thuongHieu',
             'maThayThes.phuTungMoi',
             'thayTheChos.phuTungCu'
-        ])->where('ma_phu_tung', strtoupper($code))->first();
+        ])->where('trang_thai', 1)->where('ma_phu_tung', strtoupper($code))->first();
 
         if (!$phuTung) {
             return redirect($frontendUrl . '/tra-cuu?keyword=' . urlencode($code));
@@ -98,7 +98,7 @@ class SeoBotController extends Controller
                 ]
             ]
         ];
-        $schemaJson = json_encode($schema, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
+        $schemaJson = json_encode($schema, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_PRETTY_PRINT);
 
         $breadcrumb = [
             '@context' => 'https://schema.org',
@@ -124,7 +124,7 @@ class SeoBotController extends Controller
                 ]
             ]
         ];
-        $breadcrumbJson = json_encode($breadcrumb, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
+        $breadcrumbJson = json_encode($breadcrumb, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_PRETTY_PRINT);
 
         return view('seo.phu_tung', compact('phuTung', 'brandName', 'title', 'description', 'canonical', 'targetUrl', 'schemaJson', 'breadcrumbJson', 'frontendUrl'));
     }
@@ -138,8 +138,10 @@ class SeoBotController extends Controller
         $targetUrl = $frontendUrl . '/so-do/' . rawurlencode($model);
 
         $dongCo = DongCoModel::with(['thuongHieu', 'loaiDongCo', 'soDoPhuTungs'])
-            ->where('ma_model', $model)
-            ->orWhere('id', $model)
+            ->where('trang_thai', 1)
+            ->where(function ($q) use ($model) {
+                $q->where('ma_model', $model)->orWhere('id', $model);
+            })
             ->first();
 
         if (!$dongCo) {
@@ -163,7 +165,7 @@ class SeoBotController extends Controller
             'description' => $description,
             'url' => $canonical
         ];
-        $schemaJson = json_encode($schema, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
+        $schemaJson = json_encode($schema, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_PRETTY_PRINT);
 
         $breadcrumb = [
             '@context' => 'https://schema.org',
@@ -189,7 +191,7 @@ class SeoBotController extends Controller
                 ]
             ]
         ];
-        $breadcrumbJson = json_encode($breadcrumb, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
+        $breadcrumbJson = json_encode($breadcrumb, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_PRETTY_PRINT);
 
         return view('seo.so_do', compact('dongCo', 'brandName', 'modelName', 'title', 'description', 'canonical', 'targetUrl', 'schemaJson', 'breadcrumbJson', 'frontendUrl'));
     }
@@ -203,8 +205,10 @@ class SeoBotController extends Controller
         $targetUrl = $frontendUrl . '/chi-tiet-san-pham/' . $slug;
 
         $sanPham = SanPham::with(['danhMuc'])
-            ->where('slug', $slug)
-            ->orWhere('id', $slug)
+            ->where('trang_thai', 1)
+            ->where(function ($q) use ($slug) {
+                $q->where('slug', $slug)->orWhere('id', $slug);
+            })
             ->first();
 
         if (!$sanPham) {
@@ -245,7 +249,7 @@ class SeoBotController extends Controller
                 ]
             ]
         ];
-        $schemaJson = json_encode($schema, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
+        $schemaJson = json_encode($schema, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_PRETTY_PRINT);
 
         return view('seo.san_pham', compact('sanPham', 'brandName', 'categoryName', 'title', 'description', 'canonical', 'targetUrl', 'schemaJson', 'frontendUrl'));
     }

@@ -129,17 +129,12 @@ import Swal from "sweetalert2";
 import { createToaster } from "@meforma/vue-toaster";
 import { useRouter } from "vue-router";
 import { useCartStore } from "../../../stores/cartStore";
+import { getImageUrl } from "../../../utils/imageUrl";
 
 const queryClient = useQueryClient();
 const toaster = createToaster({ position: "top-right" });
 const router = useRouter();
 const cartStore = useCartStore();
-
-const getImageUrl = (path) => {
-  if (!path) return "";
-  if (path.startsWith("blob:") || path.startsWith("http") || path.startsWith("data:")) return path;
-  return `http://localhost:8000${path.startsWith("/") ? "" : "/"}${path}`;
-};
 
 const formatCurrency = (val) => {
   if (!val || isNaN(val)) return 'Liên hệ';

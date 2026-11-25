@@ -3,6 +3,9 @@
 namespace App\Domain\Core\Controllers;
 
 use App\Domain\Core\Services\CauHinhService;
+use App\Domain\Core\Services\ImageUploadService;
+use App\Domain\MarineCatalog\Services\CatalogCacheService;
+use App\Domain\Sales\Services\VietQRService;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -78,6 +81,8 @@ class CauHinhController extends Controller
 
         try {
             $updatedSettings = $this->cauHinhService->updateBatch($request->input('settings'));
+            VietQRService::clearBankConfigCache();
+            CatalogCacheService::bumpVersion();
 
             return response()->json([
                 'success' => true,
@@ -98,26 +103,33 @@ class CauHinhController extends Controller
     public function uploadBanner(Request $request): JsonResponse
     {
         $request->validate([
-            'file' => 'required|file|mimes:jpeg,png,jpg,gif,svg,webp,bmp,avif,heic,heif,tiff,tif,ico,jfif|max:20480',
+            'file' => 'required|image|mimes:jpeg,png,jpg,webp|extensions:jpg,jpeg,png,webp|max:5120',
         ], [
             'file.required' => 'Vui lòng chọn file ảnh banner.',
-            'file.mimes'    => 'Định dạng ảnh không được hỗ trợ.',
-            'file.max'      => 'Kích thước file ảnh không được vượt quá 20MB.',
+            'file.image'    => 'File tải lên phải là hình ảnh hợp lệ.',
+            'file.mimes'    => 'Chỉ chấp nhận định dạng JPG, PNG, WebP.',
+            'file.max'      => 'Kích thước file ảnh không được vượt quá 5MB.',
         ]);
 
         try {
-            $path = $request->file('file')->store('banners', 'public');
-            $url = '/storage/' . $path;
+            $url = ImageUploadService::storeUploadedFile(
+                $request->file('file'),
+                'uploads/banners',
+                'banner',
+                1920
+            );
 
             return response()->json([
                 'success' => true,
                 'message' => 'Tải ảnh banner lên thành công!',
                 'url'     => $url,
             ], 200);
+        } catch (\InvalidArgumentException $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 422);
         } catch (Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Lỗi khi lưu ảnh banner: ' . $e->getMessage(),
+                'message' => 'Lỗi khi lưu ảnh banner.',
             ], 500);
         }
     }

@@ -47,6 +47,7 @@
 import { computed } from "vue";
 import { useRouter } from "vue-router";
 import { useAuthStore } from "../../stores/authStore";
+import { getImageUrl } from "../../utils/imageUrl";
 import Swal from "sweetalert2";
 
 const props = defineProps({
@@ -71,7 +72,8 @@ const authStore = useAuthStore();
 
 const userAvatar = computed(() => {
   if (props.previewAvatar) return props.previewAvatar;
-  return authStore.user?.avatar || "https://ui-avatars.com/api/?name=" + (authStore.user?.name || "U") + "&background=random";
+  const fallback = "https://ui-avatars.com/api/?name=" + encodeURIComponent(authStore.user?.name || "U") + "&background=0A1128&color=fff";
+  return authStore.user?.avatar ? getImageUrl(authStore.user.avatar, fallback) : fallback;
 });
 
 const userName = computed(() => {

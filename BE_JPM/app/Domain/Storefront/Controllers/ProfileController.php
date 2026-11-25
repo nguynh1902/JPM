@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Domain\IAM\Models\KhachHang;
 use App\Domain\IAM\Models\DiaChi;
+use App\Domain\Core\Services\ImageUploadService;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
@@ -29,15 +30,13 @@ class ProfileController extends Controller
         $user = $request->user();
         $emailChanged = $request->email && $request->email !== $user->email;
 
-        // Validation rules
         $rules = [
             'name'         => 'required|string|max:255',
-            'phone'        => 'nullable|string|max:20',
+            'phone'        => 'nullable|string|max:20|unique:users,phone,' . $user->id,
             'email'        => 'required|string|email|max:255|unique:users,email,' . $user->id,
             'ten_cong_ty'  => 'nullable|string|max:255',
         ];
 
-        // Chỉ bắt nhập mật khẩu khi email thay đổi
         if ($emailChanged) {
             $rules['current_password'] = 'required|string';
         }
@@ -48,7 +47,6 @@ class ProfileController extends Controller
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
-        // Nếu email bị đổi → kiểm tra mật khẩu
         if ($emailChanged) {
             if (!Hash::check($request->current_password, $user->password)) {
                 return response()->json([
@@ -66,9 +64,9 @@ class ProfileController extends Controller
             $user->save();
 
             if ($user->khachHang) {
-                $user->khachHang->ho_ten      = $request->name;
+                $user->khachHang->ho_ten        = $request->name;
                 $user->khachHang->so_dien_thoai = $request->phone;
-                $user->khachHang->ten_cong_ty = $request->ten_cong_ty;
+                $user->khachHang->ten_cong_ty   = $request->ten_cong_ty;
                 $user->khachHang->save();
             }
 
@@ -87,7 +85,7 @@ class ProfileController extends Controller
 
         $validator = Validator::make($request->all(), [
             'current_password' => 'required',
-            'new_password' => 'required|min:6|confirmed',
+            'new_password'     => ['required', 'string', 'min:8', 'max:25', 'regex:/^[\x20-\x7E]+$/', 'confirmed'],
         ]);
 
         if ($validator->fails()) {
@@ -100,6 +98,12 @@ class ProfileController extends Controller
 
         $user->password = Hash::make($request->new_password);
         $user->save();
+
+        // Thu hồi các phiên đăng nhập khác (giữ lại phiên hiện tại để UX mượt)
+        $currentTokenId = $user->currentAccessToken()?->id;
+        if ($currentTokenId) {
+            $user->tokens()->where('id', '!=', $currentTokenId)->delete();
+        }
 
         return response()->json(['message' => 'Đổi mật khẩu thành công.']);
     }
@@ -117,9 +121,9 @@ class ProfileController extends Controller
 
         $validator = Validator::make($request->all(), [
             'ten_nguoi_nhan' => 'required|string|max:255',
-            'so_dien_thoai' => 'required|string|max:20',
+            'so_dien_thoai'  => 'required|string|max:20',
             'dia_chi_cu_the' => 'required|string',
-            'la_mac_dinh' => 'boolean',
+            'la_mac_dinh'    => 'boolean',
         ]);
 
         if ($validator->fails()) {
@@ -130,7 +134,6 @@ class ProfileController extends Controller
             DB::beginTransaction();
             $laMacDinh = $request->input('la_mac_dinh', false);
 
-            // If this is the first address, make it default
             if (DiaChi::where('id_tai_khoan', $user->id)->lockForUpdate()->count() === 0) {
                 $laMacDinh = true;
             }
@@ -140,11 +143,11 @@ class ProfileController extends Controller
             }
 
             $address = DiaChi::create([
-                'id_tai_khoan' => $user->id,
+                'id_tai_khoan'   => $user->id,
                 'ten_nguoi_nhan' => $request->ten_nguoi_nhan,
-                'so_dien_thoai' => $request->so_dien_thoai,
+                'so_dien_thoai'  => $request->so_dien_thoai,
                 'dia_chi_cu_the' => $request->dia_chi_cu_the,
-                'la_mac_dinh' => $laMacDinh,
+                'la_mac_dinh'    => $laMacDinh,
             ]);
 
             DB::commit();
@@ -159,12 +162,12 @@ class ProfileController extends Controller
     public function updateAddress(Request $request, $id)
     {
         $user = $request->user();
-        
+
         $validator = Validator::make($request->all(), [
             'ten_nguoi_nhan' => 'required|string|max:255',
-            'so_dien_thoai' => 'required|string|max:20',
+            'so_dien_thoai'  => 'required|string|max:20',
             'dia_chi_cu_the' => 'required|string',
-            'la_mac_dinh' => 'boolean',
+            'la_mac_dinh'    => 'boolean',
         ]);
 
         if ($validator->fails()) {
@@ -178,19 +181,17 @@ class ProfileController extends Controller
 
             if ($laMacDinh && !$address->la_mac_dinh) {
                 DiaChi::where('id_tai_khoan', $user->id)->update(['la_mac_dinh' => false]);
-            } else if (!$laMacDinh && $address->la_mac_dinh) {
-                // Cannot unset default address if it's the only one
+            } elseif (!$laMacDinh && $address->la_mac_dinh) {
                 if (DiaChi::where('id_tai_khoan', $user->id)->count() > 1) {
-                    // Not allowed to just unset, must set another one as default. We'll ignore the unset.
-                    $laMacDinh = true; 
+                    $laMacDinh = true;
                 }
             }
 
             $address->update([
                 'ten_nguoi_nhan' => $request->ten_nguoi_nhan,
-                'so_dien_thoai' => $request->so_dien_thoai,
+                'so_dien_thoai'  => $request->so_dien_thoai,
                 'dia_chi_cu_the' => $request->dia_chi_cu_the,
-                'la_mac_dinh' => $laMacDinh,
+                'la_mac_dinh'    => $laMacDinh,
             ]);
 
             DB::commit();
@@ -205,15 +206,14 @@ class ProfileController extends Controller
     public function deleteAddress(Request $request, $id)
     {
         $user = $request->user();
-        
+
         try {
             DB::beginTransaction();
             $address = DiaChi::where('id_tai_khoan', $user->id)->lockForUpdate()->findOrFail($id);
-            
+
             $wasDefault = $address->la_mac_dinh;
             $address->delete();
 
-            // If we deleted the default address, make the first remaining one default
             if ($wasDefault) {
                 $firstRemaining = DiaChi::where('id_tai_khoan', $user->id)->first();
                 if ($firstRemaining) {
@@ -233,7 +233,7 @@ class ProfileController extends Controller
     public function setDefaultAddress(Request $request, $id)
     {
         $user = $request->user();
-        
+
         try {
             DB::beginTransaction();
             $address = DiaChi::where('id_tai_khoan', $user->id)->lockForUpdate()->findOrFail($id);
@@ -260,8 +260,12 @@ class ProfileController extends Controller
 
     public function updateCart(Request $request)
     {
+        $validated = $request->validate([
+            'cart_data' => 'present|array|max:200',
+        ]);
+
         $user = $request->user();
-        $user->cart_data = json_encode($request->input('cart_data', []));
+        $user->cart_data = json_encode($validated['cart_data']);
         $user->save();
         return response()->json(['message' => 'Cart updated successfully.']);
     }
@@ -272,9 +276,9 @@ class ProfileController extends Controller
         $notifications = $user->notifications()->latest()->limit(20)->get();
 
         return response()->json([
-            'success' => true,
+            'success'      => true,
             'unread_count' => $user->unreadNotifications()->count(),
-            'data' => $notifications
+            'data'         => $notifications
         ]);
     }
 
@@ -285,24 +289,25 @@ class ProfileController extends Controller
         if ($id) {
             $user->unreadNotifications()->where('id', $id)->update(['read_at' => now()]);
         } else {
-            $user->unreadNotifications->markAsRead();
+            $user->unreadNotifications()->update(['read_at' => now()]);
         }
 
         return response()->json([
-            'success' => true,
+            'success'      => true,
             'unread_count' => $user->unreadNotifications()->count(),
-            'message' => $id ? 'Đã đánh dấu thông báo là đã đọc.' : 'Đã đánh dấu đã đọc tất cả thông báo.'
+            'message'      => $id ? 'Đã đánh dấu thông báo là đã đọc.' : 'Đã đánh dấu đã đọc tất cả thông báo.'
         ]);
     }
 
     public function uploadAvatar(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'avatar' => 'required|file|mimes:jpeg,png,jpg,gif,svg,webp,bmp,avif,heic,heif,tiff,tif,ico,jfif,eps,raw,cr2,nef,psd,ai|max:20480',
+            'avatar' => 'required|image|mimes:jpeg,png,jpg,webp|extensions:jpg,jpeg,png,webp|max:5120',
         ], [
             'avatar.required' => 'Vui lòng chọn một file ảnh.',
-            'avatar.mimes'    => 'Định dạng ảnh không được hỗ trợ.',
-            'avatar.max'      => 'Kích thước file ảnh không được vượt quá 20MB.',
+            'avatar.image'    => 'File tải lên phải là hình ảnh hợp lệ.',
+            'avatar.mimes'    => 'Chỉ chấp nhận định dạng JPG, PNG, WebP.',
+            'avatar.max'      => 'Kích thước file ảnh không được vượt quá 5MB.',
         ]);
 
         if ($validator->fails()) {
@@ -312,18 +317,28 @@ class ProfileController extends Controller
         $user = $request->user();
 
         if ($request->hasFile('avatar')) {
-            $file = $request->file('avatar');
-            $filename = 'avatar_' . $user->id . '_' . time() . '.' . $file->getClientOriginalExtension();
-            $path = $file->storeAs('avatars', $filename, 'public');
+            try {
+                $oldAvatar = $user->avatar;
+                $user->avatar = ImageUploadService::storeUploadedFile(
+                    $request->file('avatar'),
+                    'uploads/avatars',
+                    'avatar_' . $user->id,
+                    400
+                );
+                $user->save();
+                ImageUploadService::delete($oldAvatar);
 
-            $user->avatar = '/storage/' . $path;
-            $user->save();
-
-            return response()->json([
-                'message' => 'Cập nhật ảnh đại diện thành công.',
-                'avatar'  => $user->avatar,
-                'user'    => $user->load('khachHang')
-            ]);
+                return response()->json([
+                    'message' => 'Cập nhật ảnh đại diện thành công.',
+                    'avatar'  => $user->avatar,
+                    'user'    => $user->load('khachHang')
+                ]);
+            } catch (\InvalidArgumentException $e) {
+                return response()->json(['message' => $e->getMessage()], 422);
+            } catch (\Throwable $e) {
+                Log::error('Upload Avatar Error: ' . $e->getMessage());
+                return response()->json(['message' => 'Không thể tải ảnh đại diện.'], 500);
+            }
         }
 
         return response()->json(['message' => 'Không tìm thấy file ảnh.'], 400);

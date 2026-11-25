@@ -516,61 +516,13 @@ const AUTHOR_AVATARS = [
  * khi bài viết trong DB chỉ mới có 1 đoạn văn ngắn từ Seeder.
  */
 function buildStructuredArticleHtml(article, rawHtml) {
-  const cleanIntro = rawHtml && rawHtml.trim()
-    ? rawHtml
-    : `<p>${article?.summary || 'Trong ngành hàng hải hiện đại, việc nắm vững quy trình kỹ thuật và lựa chọn phụ tùng đạt chuẩn OEM đóng vai trò quyết định đến độ bền động cơ cũng như sự an toàn của mỗi chuyến hải trình.'}</p>`;
-
-  const category = article?.category || 'Công Nghệ Hàng Hải';
-
-  if (category === 'Bảo Dưỡng Động Cơ') {
-    return `
-      ${cleanIntro}
-      <p>Các dòng động cơ thủy hiện đại hoạt động trong môi trường nước mặn khắc nghiệt luôn đòi hỏi chế độ chăm sóc nghiêm ngặt. Sự chênh lệch nhiệt độ lớn, độ ẩm cao và hàm lượng muối biển dễ dàng gây ăn mòn điện hóa nếu chủ tàu chỉ áp dụng các biện pháp bảo trì truyền thống.</p>
-      <p>Kết quả là khoảng cách giữa hiệu suất thiết kế của nhà sản xuất và tình trạng vận hành thực tế ngày càng bị thu hẹp nếu thiếu quy trình kiểm tra định kỳ bài bản.</p>
-
-      <h2>Tại sao phương pháp bảo dưỡng truyền thống chưa đủ hiệu quả?</h2>
-
-      <h3>1. Hệ thống làm mát và nguy cơ kết tủa muối biển:</h3>
-      <p>Nhiều chủ tàu vẫn giữ thói quen chỉ kiểm tra cánh bơm nước (impeller) khi động cơ đã báo quá nhiệt. Thực tế, muối biển và cặn khoáng tích tụ âm thầm bên trong áo nước làm mát và bộ sinh hàn, làm giảm đáng kể khả năng giải nhiệt ngay cả khi lưu lượng nước đầu ra vẫn có vẻ bình thường.</p>
-      <p class="article-example">Ví dụ: Một động cơ máy ngoài 150HP hoạt động liên tục 200 giờ tại vùng biển nước mặn nhưng không được súc rửa nước ngọt sau mỗi chuyến đi có thể giảm tới 30% tiết diện lưu thông nhiệt trong đường ống.</p>
-
-      <h3>2. Bỏ qua chu kỳ thay thế lọc nhiên liệu tách nước:</h3>
-      <p>Nhiên liệu lưu trữ tại cảng hoặc trong bồn chứa tàu dài ngày rất dễ nhiễm hơi nước ngưng tụ. Nếu hệ thống lọc tách nước không được xả cặn và thay lõi đúng định kỳ 100 giờ máy, nước lẫn vào buồng đốt sẽ gây rỉ sét kim phun điện tử áp suất cao.</p>
-      <p class="article-example">Ví dụ: Chỉ một lượng nhỏ nước nhiễm vào hệ thống Common Rail trên động cơ Diesel hàng hải có thể làm kẹt kim phun, dẫn đến chi phí đại tu lớn gấp nhiều lần giá trị của một lõi lọc chính hãng.</p>
-
-      <h3>3. Thiếu dữ liệu chẩn đoán sớm và phụ tùng đồng bộ:</h3>
-      <p>Việc chờ đợi linh kiện hỏng hoàn toàn mới thay thế khiến tàu dễ gặp sự cố đột xuất giữa khơi. Xu hướng bảo dưỡng hiện đại yêu cầu kết hợp đọc thông số ECU động cơ, kiểm tra kẽm chống ăn mòn (Anode) và thay thế đồng bộ gioăng phớt chính hãng theo số giờ vận hành.</p>
-      <p class="article-example">Ví dụ: Kiểm tra định kỳ độ mòn của kẽm hy sinh và dầu hộp số chân vịt giúp phát hiện sớm tình trạng hở phớt trục chân vịt trước khi nước biển xâm nhập làm hỏng bánh răng truyền động.</p>
-
-      <h2>Kết luận: Nâng tầm quy trình chăm sóc máy thủy</h2>
-      <p>Bảo dưỡng động cơ hàng hải không chỉ đơn thuần là thay dầu nhớt khi đến hạn, mà là sự kết hợp đồng bộ giữa quy trình kiểm tra phòng ngừa, thiết bị chẩn đoán chính xác và nguồn linh kiện OEM đạt chuẩn.</p>
-      <p>Tương lai của vận hành tàu thuyền an toàn nằm ở sự chủ động: kiểm soát thông số kỹ thuật, bảo vệ hệ thống trước tác nhân ăn mòn và đồng hành cùng đội ngũ kỹ sư chuyên nghiệp từ JPM Marine.</p>
-    `;
+  if (rawHtml && rawHtml.trim()) {
+    return rawHtml;
   }
-
-  return `
-    ${cleanIntro}
-    <p>Hệ thống thiết bị và phụ tùng tàu thuyền truyền thống vốn được thiết kế xoay quanh các tiêu chuẩn vận hành cơ khí độc lập. Tuy nhiên, sự phát triển mạnh mẽ của động cơ điều khiển điện tử, thiết bị định vị hàng hải thông minh và tiêu chuẩn tiết kiệm nhiên liệu đã đặt ra những yêu cầu hoàn toàn mới cho các chủ tàu và xưởng dịch vụ.</p>
-    <p>Hệ quả là một khoảng cách lớn xuất hiện giữa cách thức quản lý vật tư thủ công trước đây với nhu cầu tra cứu chính xác, đồng bộ hóa linh kiện nhanh chóng trong ngành hàng hải hiện đại.</p>
-
-    <h2>Những thách thức kỹ thuật thường gặp trong vận hành thực tế</h2>
-
-    <h3>1. Sai lệch mã phụ tùng giữa các đời động cơ (Model Year):</h3>
-    <p>Nhiều dòng động cơ thủy có vẻ ngoài tương đồng nhưng lại sử dụng các chi tiết cơ khí và cảm biến khác nhau tùy theo năm sản xuất hoặc thị trường phân phối. Việc đặt hàng chỉ dựa vào tên gọi thông thường hoặc đo đạc thủ công rất dễ dẫn đến lắp lẫn không tương thích.</p>
-    <p class="article-example">Ví dụ: Cùng một dòng máy 4 kỳ công suất lớn, bộ cánh bơm nước và gioăng quy-lát của phiên bản tiêu chuẩn có thể khác biệt hoàn toàn về thông số rãnh then so với phiên bản chân dài (Ultra Long Shaft).</p>
-
-    <h3>2. Gián đoạn thời gian khai thác tàu do thiếu vật tư dự phòng:</h3>
-    <p>Trong hoạt động vận tải biển, du lịch hay đánh bắt xa bờ, mỗi ngày tàu nằm bờ chờ linh kiện đều gây thiệt hại kinh tế đáng kể. Các phương thức tìm kiếm vật tư rời rạc qua nhiều khâu trung gian thường làm chậm trễ tiến độ sửa chữa tại cảng.</p>
-    <p class="article-example">Ví dụ: Một tàu dịch vụ phải dừng lịch trình 5 ngày chỉ vì đặt nhầm mã phớt thủy lực lái, trong khi việc tra cứu trực tiếp trên sơ đồ bóc tách (Exploded View) chỉ mất chưa đầy 2 phút để xác định đúng mã OEM.</p>
-
-    <h3>3. Dữ liệu bảo trì chưa được chuẩn hóa theo hồ sơ tàu:</h3>
-    <p>Mỗi con tàu sở hữu cấu hình máy chính, máy phát và hệ thống lái riêng biệt. Khi không lưu trữ lịch sử thay thế phụ tùng và mã quy đổi tương đương (Cross-Reference), đội ngũ kỹ thuật sẽ mất nhiều thời gian rà soát lại từ đầu trong các kỳ đại tu tiếp theo.</p>
-    <p class="article-example">Ví dụ: Việc lưu trữ cấu hình động cơ trong sổ tay kỹ thuật số (Garage Tàu) giúp chủ tàu đặt lại chính xác bộ lọc nhớt, lọc nhiên liệu và bugi định kỳ chỉ với một thao tác duy nhất.</p>
-
-    <h2>Kết luận: Giải pháp đồng bộ cho ngành hàng hải hiện đại</h2>
-    <p>Những khó khăn trong công tác bảo trì và cung ứng vật tư hàng hải hoàn toàn có thể được giải quyết khi chuyển dịch sang quy trình tra cứu chuẩn hóa theo sơ đồ kỹ thuật và sử dụng linh kiện chính hãng có nguồn gốc rõ ràng.</p>
-    <p>Hướng tới sự bền bỉ và an toàn trên mọi hải trình, JPM Marine cam kết mang đến hệ sinh thái tra cứu phụ tùng trực quan, kết nối trực tiếp kho vật tư OEM với từng nhu cầu kỹ thuật thực tế của bạn.</p>
-  `;
+  if (article?.summary && String(article.summary).trim()) {
+    return `<p>${String(article.summary).replace(/</g, '&lt;').replace(/>/g, '&gt;')}</p>`;
+  }
+  return '<p class="text-muted fst-italic">Nội dung bài viết đang được cập nhật.</p>';
 }
 
 export default {

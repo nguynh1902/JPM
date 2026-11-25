@@ -522,11 +522,8 @@ const relatedProducts = computed(() => data.value?.data?.related_products || [])
   const faqs = computed(() => faqsData.value?.data || []);
 
 
-const getImageUrl = (path) => {
-  if (!path) return 'https://placehold.co/400x300/f8f9fa/a1acb8?text=JPM';
-  if (path.startsWith('http')) return path;
-  return 'http://localhost:8000' + path; // Fallback
-};
+import { getImageUrl as resolveImageUrl } from '../../../utils/imageUrl';
+const getImageUrl = (path) => resolveImageUrl(path, 'https://placehold.co/400x300/f8f9fa/a1acb8?text=JPM');
 
 const getEmbedUrl = (url) => {
   if (!url) return '';

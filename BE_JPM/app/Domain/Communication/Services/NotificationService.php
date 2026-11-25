@@ -2,6 +2,7 @@
 
 namespace App\Domain\Communication\Services;
 
+use App\Domain\Communication\Jobs\DispatchNotificationJob;
 use App\Domain\Communication\Models\LichSuThongBao;
 use App\Domain\Sales\Models\DonHang;
 use App\Domain\Sales\Models\YeuCauBaoGia;
@@ -52,7 +53,12 @@ class NotificationService
         $name = $order->khach_hang_ten ?? 'Quý khách';
         $code = $order->ma_don_hang;
         $amountFormatted = number_format($amount, 0, ',', '.') . ' đ';
-        $statusText = $order->trang_thai_thanh_toan ?? 'Đã cọc';
+        $paymentStatusMap = [
+            0 => 'Chưa thanh toán',
+            1 => 'Đã đặt cọc',
+            2 => 'Đã thanh toán đủ',
+        ];
+        $statusText = $paymentStatusMap[(int)($order->trang_thai_thanh_toan ?? 1)] ?? 'Đã đặt cọc';
 
         $content = "JPM MARINE: Đã nhận thành công {$amountFormatted} cho đơn hàng #{$code}. Trạng thái: {$statusText}. Kỹ thuật viên JPM đang chuẩn bị kiện hàng xuất kho.";
 
@@ -126,7 +132,8 @@ class NotificationService
         $customerName = $order->khach_hang_ten;
         $customerPhone = $order->khach_hang_sdt;
         $soKien = $shippingDetails['so_kien_hang'] ?? 1;
-        $tienThuHo = ($order->tong_tien + $order->phi_van_chuyen - $order->da_thu);
+        $shippingFee = $order->khach_tu_tra_cuoc ? 0 : (float)($order->phi_van_chuyen ?? 0);
+        $tienThuHo = max(0, (float)$order->tong_tien + $shippingFee - (float)($order->da_thu ?? 0));
         $codFormatted = $tienThuHo > 0 ? (number_format($tienThuHo, 0, ',', '.') . ' đ') : '0 đ (Đã thanh toán đủ)';
 
         $content = "JPM MARINE gửi xe: Kiện hàng #{$code} ({$soKien} kiện linh kiện máy thủy). Người nhận: {$customerName} - SĐT: {$customerPhone}. Tiền thu hộ COD: {$codFormatted}.";
@@ -172,49 +179,45 @@ class NotificationService
         $sandbox = $isZalo ? config('services.zalo_zns.sandbox', true) : config('services.sms_brandname.sandbox', true);
 
         if (!empty($apiKey) && !$sandbox) {
-            try {
-                if ($isZalo) {
-                    $kenhGui = 'Zalo ZNS Official';
-                    // Gọi Zalo Cloud API ZNS thực tế
-                    $response = Http::withHeaders([
-                        'access_token' => $apiKey,
-                    ])->timeout(8)->post('https://business.openapi.zalo.me/message/template', [
-                        'phone' => preg_replace('/^0/', '84', $soDienThoai),
-                        'template_id' => $data['template_id'] ?? config('services.zalo_zns.template_quote_ready'),
-                        'template_data' => $data['template_data'] ?? [],
-                    ]);
-                    $gatewayResponse = $response->json();
-                    $status = ($response->successful() && ($gatewayResponse['error'] ?? 0) === 0) ? 'thanh_cong' : 'that_bai';
-                } else {
-                    $kenhGui = config('services.sms_brandname.provider', 'SpeedSMS');
-                    // Gọi SMS Brandname API
-                    $response = Http::withBasicAuth($apiKey, 'x')
-                        ->timeout(8)
-                        ->post('https://api.speedsms.vn/index.php/sms/send', [
-                            'to' => [$soDienThoai],
-                            'content' => $noiDung,
-                            'sms_type' => 2, // Brandname CSKH
-                            'sender' => config('services.sms_brandname.brandname', 'JPM_MARINE'),
-                        ]);
-                    $gatewayResponse = $response->json();
-                    $status = ($response->successful() && ($gatewayResponse['status'] ?? '') === 'success') ? 'thanh_cong' : 'that_bai';
-                }
-            } catch (\Exception $e) {
-                $status = 'that_bai';
-                $gatewayResponse = ['error' => $e->getMessage()];
-                Log::error("Notification Gateway Error: " . $e->getMessage());
-            }
-        } else {
-            // Chế độ mô phỏng / Mock an toàn cho môi trường Dev & Test
-            $kenhGui = $isZalo ? 'Mock Zalo ZNS' : 'Mock SMS Brandname';
-            $status = 'mo_phong';
-            $gatewayResponse = [
-                'mode' => 'sandbox_simulation',
-                'message' => 'Tin nhắn đã được mô phỏng gửi thành công chuẩn cú pháp viễn thông.',
-                'timestamp' => now()->toIso8601String(),
+            $kenhGui = $isZalo ? 'Zalo ZNS Official' : config('services.sms_brandname.provider', 'SpeedSMS');
+            $status = 'dang_gui';
+            $gatewayResponse = ['mode' => 'queued', 'queued_at' => now()->toIso8601String()];
+
+            $log = LichSuThongBao::create([
+                'loai_tin' => $loaiTin,
+                'kenh_gui' => $kenhGui,
+                'nguoi_nhan_loai' => $data['nguoi_nhan_loai'] ?? 'khach_hang',
+                'so_dien_thoai' => $soDienThoai,
+                'ten_nguoi_nhan' => $data['ten_nguoi_nhan'] ?? null,
+                'mau_thong_bao' => $data['mau_thong_bao'] ?? null,
+                'tieu_de' => $data['tieu_de'] ?? null,
+                'noi_dung' => $noiDung,
+                'ma_tham_chieu' => $data['ma_tham_chieu'] ?? null,
+                'trang_thai' => $status,
+                'phan_hoi_gateway' => $gatewayResponse,
+            ]);
+
+            DispatchNotificationJob::dispatch($log->id, $data);
+
+            return [
+                'success' => true,
+                'status' => $status,
+                'log_id' => $log->id,
+                'channel' => $kenhGui,
+                'recipient' => $soDienThoai,
+                'message' => $noiDung,
             ];
-            Log::info("[NOTIFICATION {$loaiTin}] Sent to {$soDienThoai}: {$noiDung}");
         }
+
+        // Chế độ mô phỏng / Mock an toàn cho môi trường Dev & Test
+        $kenhGui = $isZalo ? 'Mock Zalo ZNS' : 'Mock SMS Brandname';
+        $status = 'mo_phong';
+        $gatewayResponse = [
+            'mode' => 'sandbox_simulation',
+            'message' => 'Tin nhắn đã được mô phỏng gửi thành công chuẩn cú pháp viễn thông.',
+            'timestamp' => now()->toIso8601String(),
+        ];
+        Log::info("[NOTIFICATION {$loaiTin}] Sent to {$soDienThoai}: {$noiDung}");
 
         // Ghi nhật ký vào database
         $log = LichSuThongBao::create([

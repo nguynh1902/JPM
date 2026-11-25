@@ -45,7 +45,7 @@
           <button class="btn btn-secondary text-nowrap" @click="resetFilters">
             Đặt lại
           </button>
-          <button class="btn btn-primary text-nowrap" @click="openAddModal" data-bs-toggle="modal" data-bs-target="#modalFAQ">
+          <button v-if="authStore.hasPermission('Soạn thảo Tin tức & CMS')" class="btn btn-primary text-nowrap" @click="openAddModal" data-bs-toggle="modal" data-bs-target="#modalFAQ">
             <i class="bx bx-plus me-1"></i> Thêm Mới
           </button>
         </div>
@@ -88,10 +88,10 @@
               </td>
               <td class="text-center">
                 <div class="d-flex align-items-center justify-content-center">
-                  <button type="button" class="action-btn text-primary me-2" @click="openEditModal(item)" data-bs-toggle="modal" data-bs-target="#modalFAQ" title="Sửa">
+                  <button v-if="authStore.hasPermission('Soạn thảo Tin tức & CMS')" type="button" class="action-btn text-primary me-2" @click="openEditModal(item)" data-bs-toggle="modal" data-bs-target="#modalFAQ" title="Sửa">
                     <i class="bx bx-edit-alt"></i>
                   </button>
-                  <button type="button" class="action-btn text-danger" @click="confirmDelete(item)" title="Xóa">
+                  <button v-if="authStore.hasPermission('Xóa Tin tức & CMS')" type="button" class="action-btn text-danger" @click="confirmDelete(item)" title="Xóa">
                     <i class="bx bx-trash"></i>
                   </button>
                 </div>
@@ -188,6 +188,7 @@
 import vSelect from '@vueform/multiselect';
 import axiosClient from '../../../api/axiosClient';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/vue-query';
+import { useAuthStore } from '../../../stores/authStore';
 import Swal from 'sweetalert2';
 
 export default {
@@ -196,6 +197,7 @@ export default {
     vSelect
   },
   setup() {
+    const authStore = useAuthStore();
     const queryClient = useQueryClient();
     
     const { data: rawCategories, isFetching: isFetchingCategories } = useQuery({
@@ -260,7 +262,7 @@ export default {
       }
     });
 
-    return { faqs, isFetchingFaqs, isFetchingCategories, rawCategories, queryClient, deleteMutation, saveMutation };
+    return { authStore, faqs, isFetchingFaqs, isFetchingCategories, rawCategories, queryClient, deleteMutation, saveMutation };
   },
   data() {
     return {

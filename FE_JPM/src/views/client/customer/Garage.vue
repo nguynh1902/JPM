@@ -185,6 +185,7 @@ import { useCartStore } from "../../../stores/cartStore";
 
 
 import axiosClient from "../../../api/axiosClient";
+import { getImageUrl } from "../../../utils/imageUrl";
 import Swal from "sweetalert2";
 import { createToaster } from "@meforma/vue-toaster";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/vue-query";
@@ -197,7 +198,7 @@ const queryClient = useQueryClient();
 // ===================== AVATAR =====================
 const userAvatar = computed(() => {
   const user = authStore.user;
-  if (user?.avatar) return user.avatar;
+  if (user?.avatar) return getImageUrl(user.avatar);
   return "https://ui-avatars.com/api/?name=" + encodeURIComponent(user?.name || "User") + "&size=140&background=0A1128&color=fff";
 });
 
@@ -282,7 +283,13 @@ const { data: savedPartsData, isLoading: isLoadingSavedParts, refetch: refetchSa
   enabled: computed(() => !!activeGarageId.value)
 });
 
-const savedParts = computed(() => savedPartsData.value?.data?.data || []);
+const savedParts = computed(() => {
+    const raw = savedPartsData.value;
+    if (Array.isArray(raw)) return raw;
+    if (Array.isArray(raw?.data)) return raw.data;
+    if (Array.isArray(raw?.data?.data)) return raw.data.data;
+    return [];
+});
 let savedPartsModalInstance = null;
 
 const openSavedParts = (id) => {
@@ -300,14 +307,13 @@ const removeSavedPartMutation = useMutation({
         await queryClient.cancelQueries({ queryKey: ['saved-parts', activeGarageId.value] });
         const previous = queryClient.getQueryData(['saved-parts', activeGarageId.value]);
         queryClient.setQueryData(['saved-parts', activeGarageId.value], (old) => {
-            if(!old || !old.data || !old.data.data) return old;
-            return {
-                ...old,
-                data: {
-                    ...old.data,
-                    data: old.data.data.filter(item => item.id !== id)
-                }
-            };
+            if (!old) return old;
+            if (Array.isArray(old)) return old.filter(item => item.id !== id);
+            if (Array.isArray(old.data)) return { ...old, data: old.data.filter(item => item.id !== id) };
+            if (Array.isArray(old.data?.data)) {
+                return { ...old, data: { ...old.data, data: old.data.data.filter(item => item.id !== id) } };
+            }
+            return old;
         });
         return { previous };
     },
@@ -342,16 +348,6 @@ const cartStore = useCartStore();
 const addToCart = (item, qty = 1) => {
     cartStore.addItem(item, qty);
     toaster.success("Đã thêm vào giỏ!");
-};
-
-const getImageUrl = (path) => {
-  if (!path) return null;
-  if (path.startsWith("blob:") || path.startsWith("http") || path.startsWith("data:")) return path;
-  const clean = path.startsWith("/") ? path.slice(1) : path;
-  if (clean.startsWith("storage/") || clean.startsWith("uploads/")) {
-    return `http://localhost:8000/${clean}`;
-  }
-  return `http://localhost:8000/storage/${clean}`;
 };
 </script>
 

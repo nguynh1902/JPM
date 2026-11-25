@@ -528,7 +528,7 @@ const deleteAddress = async (id) => {
 
 // Set Default Address Mutation
 const setDefaultMutation = useMutation({
-  mutationFn: (id) => axiosClient.put(`/client/profile/addresses/${id}/default`),
+  mutationFn: (id) => axiosClient.put(`/client/profile/addresses/${id}/set-default`),
   onMutate: async (id) => {
     await queryClient.cancelQueries({ queryKey: ['clientAddresses'] });
     const previousAddresses = queryClient.getQueryData(['clientAddresses']);

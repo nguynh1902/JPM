@@ -121,11 +121,13 @@ const handleAvatarFileChange = async (event) => {
       headers: { 'Content-Type': 'multipart/form-data' },
     });
 
-    if (res.data?.avatar) {
+    const uploadedAvatar = res?.avatar || res?.data?.avatar;
+    if (uploadedAvatar) {
       if (authStore.user) {
-        authStore.user.avatar = res.data.avatar;
+        authStore.user.avatar = uploadedAvatar;
+        localStorage.setItem('auth_user', JSON.stringify(authStore.user));
       }
-      queryClient.invalidateQueries(['clientProfile']);
+      queryClient.invalidateQueries({ queryKey: ['clientProfile'] });
       
       Swal.fire({
         icon: 'success',

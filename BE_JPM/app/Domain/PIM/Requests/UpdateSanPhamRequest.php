@@ -25,10 +25,10 @@ class UpdateSanPhamRequest extends FormRequest
             'is_gia_lien_he' => 'nullable|boolean',
             'so_luong_ton' => 'nullable|integer|min:0',
             'hinh_anh_chinh' => 'nullable|string',
-            'hinh_anh_chinh_file' => 'nullable|file|mimes:jpeg,png,jpg,gif,svg,webp,bmp,avif,heic,heif,tiff,tif,ico,jfif,eps,raw,cr2,nef,psd,ai|max:20480',
+            'hinh_anh_chinh_file' => 'nullable|image|mimes:jpeg,png,jpg,webp|extensions:jpg,jpeg,png,webp|max:5120',
             'thu_vien_anh_kept' => 'nullable|string',
-            'thu_vien_anh_files' => 'nullable|array',
-            'thu_vien_anh_files.*' => 'nullable|file|mimes:jpeg,png,jpg,gif,svg,webp,bmp,avif,heic,heif,tiff,tif,ico,jfif,eps,raw,cr2,nef,psd,ai|max:20480',
+            'thu_vien_anh_files' => 'nullable|array|max:20',
+            'thu_vien_anh_files.*' => 'nullable|image|mimes:jpeg,png,jpg,webp|extensions:jpg,jpeg,png,webp|max:5120',
             'trang_thai' => 'required|integer|in:0,1',
         ];
     }

@@ -160,7 +160,7 @@
                       <img :src="vietQrData.qr_url" alt="VietQR Napas247" class="img-fluid" style="max-width: 240px; border-radius: 8px;">
                     </div>
                     <div class="mt-3">
-                      <a :href="'https://zalo.me/0123456789?text=' + encodeURIComponent('Tôi vừa chuyển cọc cho đơn ' + (result.data.ma_don_hang || result.data.ma_yeu_cau))" target="_blank" class="btn btn-sm btn-primary px-3 fw-semibold">
+                      <a :href="buildZaloUrl('Tôi vừa chuyển cọc cho đơn ' + (result.data.ma_don_hang || result.data.ma_yeu_cau))" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-danger px-3 fw-semibold">
                         <i class="bi bi-send me-1"></i> Mở Zalo Gửi Biên Lai Cọc
                       </a>
                     </div>
@@ -255,7 +255,7 @@
               <!-- Zalo Support -->
               <div class="text-center mt-5">
                 <p class="text-muted small mb-2">Cần hỗ trợ thêm về giao dịch này?</p>
-                <a href="https://zalo.me/0123456789" target="_blank" class="btn btn-outline-primary px-4 py-2 fw-semibold">
+                <a :href="buildZaloUrl()" target="_blank" rel="noopener noreferrer" class="btn btn-outline-secondary px-4 py-2 fw-semibold">
                   <i class="bi bi-chat-text me-1"></i> Liên hệ Zalo CSKH
                 </a>
               </div>
@@ -272,9 +272,20 @@
 <script>
 import axiosClient from '../../../api/axiosClient'
 import Swal from 'sweetalert2'
+import { useSiteSettings } from '../../../composables/useSiteSettings'
 
 export default {
   name: 'TraCuuDonHang',
+  setup() {
+    const { settings } = useSiteSettings();
+    const buildZaloUrl = (text = '') => {
+      const base = (settings.value?.social_zalo || '').trim() || `https://zalo.me/${String(settings.value?.company_hotline || '').replace(/[^0-9]/g, '')}`;
+      if (!text) return base;
+      const sep = base.includes('?') ? '&' : '?';
+      return `${base}${sep}text=${encodeURIComponent(text)}`;
+    };
+    return { settings, buildZaloUrl };
+  },
   data() {
     return {
       form: {

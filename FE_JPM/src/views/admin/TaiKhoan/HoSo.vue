@@ -219,10 +219,11 @@ onMounted(() => {
   }
 });
 
+import { getImageUrl } from '../../../utils/imageUrl';
+
 const getAvatarUrl = (path) => {
-  if (!path) return `https://ui-avatars.com/api/?name=${encodeURIComponent(authStore.user?.name || 'Admin')}&background=e7e7ff&color=696cff`;
-  if (path.startsWith('http')) return path;
-  return `http://localhost:8000${path}`;
+  const fallback = `https://ui-avatars.com/api/?name=${encodeURIComponent(authStore.user?.name || 'Admin')}&background=e7e7ff&color=696cff`;
+  return getImageUrl(path, fallback);
 };
 
 const handleAvatarUpload = async (event) => {

@@ -10,6 +10,7 @@ use App\Domain\CMS\Models\SanPham;
 use App\Domain\CMS\Models\DanhMucSanPham;
 use App\Domain\MarineCatalog\Models\ThuongHieu;
 use App\Domain\CMS\Models\TinTuc;
+use Illuminate\Support\Facades\Cache;
 
 class SitemapController extends Controller
 {
@@ -58,28 +59,32 @@ class SitemapController extends Controller
      */
     public function phuTung(): Response
     {
-        $frontendUrl = $this->getFrontendUrl();
-        $items = PhuTung::where('trang_thai', 1)
-            ->select('id', 'ma_phu_tung', 'updated_at')
-            ->orderBy('id', 'desc')
-            ->get();
+        $xml = Cache::remember('sitemap_phu_tung_xml', 3600, function () {
+            $frontendUrl = $this->getFrontendUrl();
+            $items = PhuTung::where('trang_thai', 1)
+                ->select('id', 'ma_phu_tung', 'updated_at')
+                ->orderBy('id', 'desc')
+                ->limit(50000)
+                ->get();
 
-        $xml = '<?xml version="1.0" encoding="UTF-8"?>' . PHP_EOL;
-        $xml .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . PHP_EOL;
+            $xml = '<?xml version="1.0" encoding="UTF-8"?>' . PHP_EOL;
+            $xml .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . PHP_EOL;
 
-        foreach ($items as $item) {
-            $loc = $frontendUrl . '/chi-tiet-phu-tung/' . rawurlencode($item->ma_phu_tung);
-            $lastmod = $item->updated_at ? $item->updated_at->toAtomString() : now()->toAtomString();
+            foreach ($items as $item) {
+                $loc = $frontendUrl . '/chi-tiet-phu-tung/' . rawurlencode($item->ma_phu_tung);
+                $lastmod = $item->updated_at ? $item->updated_at->toAtomString() : now()->toAtomString();
 
-            $xml .= '  <url>' . PHP_EOL;
-            $xml .= '    <loc>' . htmlspecialchars($loc) . '</loc>' . PHP_EOL;
-            $xml .= '    <lastmod>' . $lastmod . '</lastmod>' . PHP_EOL;
-            $xml .= '    <changefreq>weekly</changefreq>' . PHP_EOL;
-            $xml .= '    <priority>0.9</priority>' . PHP_EOL;
-            $xml .= '  </url>' . PHP_EOL;
-        }
+                $xml .= '  <url>' . PHP_EOL;
+                $xml .= '    <loc>' . htmlspecialchars($loc) . '</loc>' . PHP_EOL;
+                $xml .= '    <lastmod>' . $lastmod . '</lastmod>' . PHP_EOL;
+                $xml .= '    <changefreq>weekly</changefreq>' . PHP_EOL;
+                $xml .= '    <priority>0.9</priority>' . PHP_EOL;
+                $xml .= '  </url>' . PHP_EOL;
+            }
 
-        $xml .= '</urlset>';
+            $xml .= '</urlset>';
+            return $xml;
+        });
 
         return response($xml, 200)->header('Content-Type', 'application/xml; charset=utf-8');
     }
@@ -89,28 +94,32 @@ class SitemapController extends Controller
      */
     public function soDo(): Response
     {
-        $frontendUrl = $this->getFrontendUrl();
-        $models = DongCoModel::where('trang_thai', 1)
-            ->select('id', 'ma_model', 'updated_at')
-            ->orderBy('id', 'desc')
-            ->get();
+        $xml = Cache::remember('sitemap_so_do_xml', 3600, function () {
+            $frontendUrl = $this->getFrontendUrl();
+            $models = DongCoModel::where('trang_thai', 1)
+                ->select('id', 'ma_model', 'updated_at')
+                ->orderBy('id', 'desc')
+                ->limit(50000)
+                ->get();
 
-        $xml = '<?xml version="1.0" encoding="UTF-8"?>' . PHP_EOL;
-        $xml .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . PHP_EOL;
+            $xml = '<?xml version="1.0" encoding="UTF-8"?>' . PHP_EOL;
+            $xml .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . PHP_EOL;
 
-        foreach ($models as $m) {
-            $loc = $frontendUrl . '/so-do/' . rawurlencode($m->ma_model);
-            $lastmod = $m->updated_at ? $m->updated_at->toAtomString() : now()->toAtomString();
+            foreach ($models as $m) {
+                $loc = $frontendUrl . '/so-do/' . rawurlencode($m->ma_model);
+                $lastmod = $m->updated_at ? $m->updated_at->toAtomString() : now()->toAtomString();
 
-            $xml .= '  <url>' . PHP_EOL;
-            $xml .= '    <loc>' . htmlspecialchars($loc) . '</loc>' . PHP_EOL;
-            $xml .= '    <lastmod>' . $lastmod . '</lastmod>' . PHP_EOL;
-            $xml .= '    <changefreq>monthly</changefreq>' . PHP_EOL;
-            $xml .= '    <priority>0.85</priority>' . PHP_EOL;
-            $xml .= '  </url>' . PHP_EOL;
-        }
+                $xml .= '  <url>' . PHP_EOL;
+                $xml .= '    <loc>' . htmlspecialchars($loc) . '</loc>' . PHP_EOL;
+                $xml .= '    <lastmod>' . $lastmod . '</lastmod>' . PHP_EOL;
+                $xml .= '    <changefreq>monthly</changefreq>' . PHP_EOL;
+                $xml .= '    <priority>0.85</priority>' . PHP_EOL;
+                $xml .= '  </url>' . PHP_EOL;
+            }
 
-        $xml .= '</urlset>';
+            $xml .= '</urlset>';
+            return $xml;
+        });
 
         return response($xml, 200)->header('Content-Type', 'application/xml; charset=utf-8');
     }
@@ -120,28 +129,32 @@ class SitemapController extends Controller
      */
     public function sanPham(): Response
     {
-        $frontendUrl = $this->getFrontendUrl();
-        $products = SanPham::where('trang_thai', 1)
-            ->select('id', 'slug', 'updated_at')
-            ->orderBy('id', 'desc')
-            ->get();
+        $xml = Cache::remember('sitemap_san_pham_xml', 3600, function () {
+            $frontendUrl = $this->getFrontendUrl();
+            $products = SanPham::where('trang_thai', 1)
+                ->select('id', 'slug', 'updated_at')
+                ->orderBy('id', 'desc')
+                ->limit(50000)
+                ->get();
 
-        $xml = '<?xml version="1.0" encoding="UTF-8"?>' . PHP_EOL;
-        $xml .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . PHP_EOL;
+            $xml = '<?xml version="1.0" encoding="UTF-8"?>' . PHP_EOL;
+            $xml .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . PHP_EOL;
 
-        foreach ($products as $p) {
-            $loc = $frontendUrl . '/chi-tiet-san-pham/' . ($p->slug ?: $p->id);
-            $lastmod = $p->updated_at ? $p->updated_at->toAtomString() : now()->toAtomString();
+            foreach ($products as $p) {
+                $loc = $frontendUrl . '/chi-tiet-san-pham/' . ($p->slug ?: $p->id);
+                $lastmod = $p->updated_at ? $p->updated_at->toAtomString() : now()->toAtomString();
 
-            $xml .= '  <url>' . PHP_EOL;
-            $xml .= '    <loc>' . htmlspecialchars($loc) . '</loc>' . PHP_EOL;
-            $xml .= '    <lastmod>' . $lastmod . '</lastmod>' . PHP_EOL;
-            $xml .= '    <changefreq>weekly</changefreq>' . PHP_EOL;
-            $xml .= '    <priority>0.8</priority>' . PHP_EOL;
-            $xml .= '  </url>' . PHP_EOL;
-        }
+                $xml .= '  <url>' . PHP_EOL;
+                $xml .= '    <loc>' . htmlspecialchars($loc) . '</loc>' . PHP_EOL;
+                $xml .= '    <lastmod>' . $lastmod . '</lastmod>' . PHP_EOL;
+                $xml .= '    <changefreq>weekly</changefreq>' . PHP_EOL;
+                $xml .= '    <priority>0.8</priority>' . PHP_EOL;
+                $xml .= '  </url>' . PHP_EOL;
+            }
 
-        $xml .= '</urlset>';
+            $xml .= '</urlset>';
+            return $xml;
+        });
 
         return response($xml, 200)->header('Content-Type', 'application/xml; charset=utf-8');
     }
@@ -151,57 +164,60 @@ class SitemapController extends Controller
      */
     public function chung(): Response
     {
-        $frontendUrl = $this->getFrontendUrl();
-        $now = now()->toAtomString();
+        $xml = Cache::remember('sitemap_chung_xml', 3600, function () {
+            $frontendUrl = $this->getFrontendUrl();
+            $now = now()->toAtomString();
 
-        $staticPages = [
-            ['path' => '/', 'priority' => '1.0', 'changefreq' => 'daily'],
-            ['path' => '/tra-cuu', 'priority' => '0.9', 'changefreq' => 'daily'],
-            ['path' => '/san-pham', 'priority' => '0.85', 'changefreq' => 'daily'],
-            ['path' => '/thuong-hieu', 'priority' => '0.8', 'changefreq' => 'weekly'],
-            ['path' => '/tin-tuc', 'priority' => '0.75', 'changefreq' => 'weekly'],
-            ['path' => '/ho-tro', 'priority' => '0.6', 'changefreq' => 'monthly'],
-        ];
+            $staticPages = [
+                ['path' => '/', 'priority' => '1.0', 'changefreq' => 'daily'],
+                ['path' => '/tra-cuu', 'priority' => '0.9', 'changefreq' => 'daily'],
+                ['path' => '/san-pham', 'priority' => '0.85', 'changefreq' => 'daily'],
+                ['path' => '/thuong-hieu', 'priority' => '0.8', 'changefreq' => 'weekly'],
+                ['path' => '/tin-tuc', 'priority' => '0.75', 'changefreq' => 'weekly'],
+                ['path' => '/ho-tro', 'priority' => '0.6', 'changefreq' => 'monthly'],
+            ];
 
-        $xml = '<?xml version="1.0" encoding="UTF-8"?>' . PHP_EOL;
-        $xml .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . PHP_EOL;
+            $xml = '<?xml version="1.0" encoding="UTF-8"?>' . PHP_EOL;
+            $xml .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . PHP_EOL;
 
-        foreach ($staticPages as $page) {
-            $xml .= '  <url>' . PHP_EOL;
-            $xml .= '    <loc>' . htmlspecialchars($frontendUrl . $page['path']) . '</loc>' . PHP_EOL;
-            $xml .= '    <lastmod>' . $now . '</lastmod>' . PHP_EOL;
-            $xml .= '    <changefreq>' . $page['changefreq'] . '</changefreq>' . PHP_EOL;
-            $xml .= '    <priority>' . $page['priority'] . '</priority>' . PHP_EOL;
-            $xml .= '  </url>' . PHP_EOL;
-        }
+            foreach ($staticPages as $page) {
+                $xml .= '  <url>' . PHP_EOL;
+                $xml .= '    <loc>' . htmlspecialchars($frontendUrl . $page['path']) . '</loc>' . PHP_EOL;
+                $xml .= '    <lastmod>' . $now . '</lastmod>' . PHP_EOL;
+                $xml .= '    <changefreq>' . $page['changefreq'] . '</changefreq>' . PHP_EOL;
+                $xml .= '    <priority>' . $page['priority'] . '</priority>' . PHP_EOL;
+                $xml .= '  </url>' . PHP_EOL;
+            }
 
-        // Thương hiệu
-        $brands = ThuongHieu::where('trang_thai', 1)->select('id', 'code', 'updated_at')->get();
-        foreach ($brands as $b) {
-            $loc = $frontendUrl . '/thuong-hieu/' . strtolower($b->code);
-            $lastmod = $b->updated_at ? $b->updated_at->toAtomString() : $now;
-            $xml .= '  <url>' . PHP_EOL;
-            $xml .= '    <loc>' . htmlspecialchars($loc) . '</loc>' . PHP_EOL;
-            $xml .= '    <lastmod>' . $lastmod . '</lastmod>' . PHP_EOL;
-            $xml .= '    <changefreq>weekly</changefreq>' . PHP_EOL;
-            $xml .= '    <priority>0.8</priority>' . PHP_EOL;
-            $xml .= '  </url>' . PHP_EOL;
-        }
+            // Thương hiệu (cột status = 1)
+            $brands = ThuongHieu::where('status', 1)->select('id', 'code', 'updated_at')->limit(5000)->get();
+            foreach ($brands as $b) {
+                $loc = $frontendUrl . '/thuong-hieu/' . strtolower($b->code);
+                $lastmod = $b->updated_at ? $b->updated_at->toAtomString() : $now;
+                $xml .= '  <url>' . PHP_EOL;
+                $xml .= '    <loc>' . htmlspecialchars($loc) . '</loc>' . PHP_EOL;
+                $xml .= '    <lastmod>' . $lastmod . '</lastmod>' . PHP_EOL;
+                $xml .= '    <changefreq>weekly</changefreq>' . PHP_EOL;
+                $xml .= '    <priority>0.8</priority>' . PHP_EOL;
+                $xml .= '  </url>' . PHP_EOL;
+            }
 
-        // Tin tức
-        $news = TinTuc::where('trang_thai', 1)->select('id', 'updated_at')->get();
-        foreach ($news as $n) {
-            $loc = $frontendUrl . '/tin-tuc/' . $n->id;
-            $lastmod = $n->updated_at ? $n->updated_at->toAtomString() : $now;
-            $xml .= '  <url>' . PHP_EOL;
-            $xml .= '    <loc>' . htmlspecialchars($loc) . '</loc>' . PHP_EOL;
-            $xml .= '    <lastmod>' . $lastmod . '</lastmod>' . PHP_EOL;
-            $xml .= '    <changefreq>monthly</changefreq>' . PHP_EOL;
-            $xml .= '    <priority>0.7</priority>' . PHP_EOL;
-            $xml .= '  </url>' . PHP_EOL;
-        }
+            // Tin tức (cột status = 'PUBLISHED')
+            $news = TinTuc::where('status', 'PUBLISHED')->select('id', 'updated_at')->limit(20000)->get();
+            foreach ($news as $n) {
+                $loc = $frontendUrl . '/tin-tuc/' . $n->id;
+                $lastmod = $n->updated_at ? $n->updated_at->toAtomString() : $now;
+                $xml .= '  <url>' . PHP_EOL;
+                $xml .= '    <loc>' . htmlspecialchars($loc) . '</loc>' . PHP_EOL;
+                $xml .= '    <lastmod>' . $lastmod . '</lastmod>' . PHP_EOL;
+                $xml .= '    <changefreq>monthly</changefreq>' . PHP_EOL;
+                $xml .= '    <priority>0.7</priority>' . PHP_EOL;
+                $xml .= '  </url>' . PHP_EOL;
+            }
 
-        $xml .= '</urlset>';
+            $xml .= '</urlset>';
+            return $xml;
+        });
 
         return response($xml, 200)->header('Content-Type', 'application/xml; charset=utf-8');
     }

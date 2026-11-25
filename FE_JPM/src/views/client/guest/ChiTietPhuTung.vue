@@ -735,11 +735,8 @@ const diagramGroups = computed(() => {
     return url;
   };
 
-  const getImageUrl = (path) => {
-  if (!path) return '';
-  if (path.startsWith('http')) return path;
-  return 'http://localhost:8000' + path;
-};
+import { getImageUrl as resolveImageUrl } from '../../../utils/imageUrl';
+const getImageUrl = (path) => resolveImageUrl(path);
 
 watch(phuTung, (newPart) => {
   if (newPart) {

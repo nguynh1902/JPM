@@ -9,6 +9,7 @@ use App\Domain\Sales\Models\ChiTietBaoGia;
 use App\Domain\Sales\Models\DonHang;
 use App\Domain\Sales\Models\ChiTietDonHang;
 use App\Domain\IAM\Models\KhachHang;
+use App\Domain\Core\Services\ImageUploadService;
 use App\Domain\Sales\Services\OrderService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -160,12 +161,11 @@ class YeuCauBaoGiaController extends Controller
     public function publicStore(Request $request)
     {
         $request->validate([
-            'user_id'         => 'nullable|integer',
             'loai_yeu_cau'    => 'nullable|string|in:quote,order,bao_gia',
             'khach_hang_ten'  => 'required|string|max:255',
             'khach_hang_sdt'  => 'required|string|max:20',
-            'chi_tiet'        => 'required|array|min:1',
-            'chi_tiet.*.so_luong' => 'required|integer|min:1',
+            'chi_tiet'        => 'required|array|min:1|max:200',
+            'chi_tiet.*.so_luong' => 'required|integer|min:1|max:10000',
         ]);
 
         $idempotencyKey = $request->header('Idempotency-Key');
@@ -197,16 +197,11 @@ class YeuCauBaoGiaController extends Controller
         try {
             $loaiYeuCau = $request->input('loai_yeu_cau', 'quote');
 
-            // Nhận diện khách hàng B2B vs B2C
+            // Nhận diện khách hàng B2B vs B2C — CHỈ tin cậy auth('sanctum')->id(), cấm spoof user_id từ request
             $idKhachHang = null;
             $loaiDon = 'b2c';
             $khachTuTraCuoc = 1; // Mặc định B2C: Khách trả cước nội địa
             $verifiedUserId = auth('sanctum')->id();
-            if (!$verifiedUserId && $request->user_id) {
-                if (\App\Domain\IAM\Models\User::where('id', $request->user_id)->exists()) {
-                    $verifiedUserId = (int) $request->user_id;
-                }
-            }
 
             if ($verifiedUserId) {
                 $kh = KhachHang::where('id_tai_khoan', $verifiedUserId)->first();
@@ -270,7 +265,7 @@ class YeuCauBaoGiaController extends Controller
                 $tongTienTamTinh = 0;
                 foreach ($request->chi_tiet as $item) {
                     $qty = (int) ($item['so_luong'] ?? 1);
-                    $price = (float) ($item['gia_ban'] ?? 0);
+                    $price = 0; // Chỉ lấy giá authoritative từ DB, không tin cậy gia_ban từ client
                     $tenItem = $item['ten_phu_tung'] ?? 'Không rõ';
                     $maItem = $item['ma_phu_tung'] ?? 'N/A';
 
@@ -350,9 +345,18 @@ class YeuCauBaoGiaController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
 
+            if ($idempotencyKey) {
+                try {
+                    DB::table('idempotency_keys')
+                        ->where('key', $idempotencyKey)
+                        ->whereNull('response_body')
+                        ->delete();
+                } catch (\Throwable $ignored) {}
+            }
+
             $resBody = [
                 'success' => false,
-                'message' => 'Lỗi xử lý: ' . $e->getMessage()
+                'message' => 'Lỗi xử lý yêu cầu. Vui lòng thử lại.'
             ];
 
             return response()->json($resBody, 500);
@@ -383,12 +387,12 @@ class YeuCauBaoGiaController extends Controller
 
             $hasPagination = $request->has('per_page') || $request->has('page');
             $all = $request->boolean('all', false) || !$hasPagination;
-            $perPage = $all ? null : (int) $request->input('per_page', 50);
+            $perPage = $all ? null : min(max((int) $request->input('per_page', 50), 1), 100);
 
             if ($all || !$perPage) {
                 return response()->json([
                     'success' => true,
-                    'data'    => $query->get()
+                    'data'    => $query->limit(500)->get()
                 ]);
             }
 
@@ -557,7 +561,7 @@ class YeuCauBaoGiaController extends Controller
             return response()->json([
                 'success' => true,
                 'data'    => $quoteData
-            ]);
+            ])->header('Cache-Control', 'no-store, private');
         } catch (\Exception $e) {
             return response()->json(['success' => false, 'message' => 'Báo giá không tồn tại hoặc đã hết hạn.'], 404);
         }
@@ -637,10 +641,12 @@ class YeuCauBaoGiaController extends Controller
     {
         DB::beginTransaction();
         try {
-            $quote = YeuCauBaoGia::with('chiTiet')->findOrFail($id);
+            $quote = YeuCauBaoGia::with('chiTiet')->lockForUpdate()->findOrFail($id);
 
-            // Kiểm tra nếu đã chuyển rồi
-            if ($quote->trang_thai == 2) {
+            // Kiểm tra đã tồn tại đơn hàng được chuyển từ báo giá này chưa (tránh nhầm với trạng thái khách tự duyệt trang_thai == 2)
+            $alreadyConverted = DonHang::where('ghi_chu_khach_hang', 'like', '%Báo giá #' . $quote->ma_yeu_cau . '%')->exists();
+            if ($alreadyConverted || (int) $quote->trang_thai === 4) {
+                DB::rollBack();
                 return response()->json([
                     'success' => false,
                     'message' => 'Yêu cầu báo giá này đã được tạo thành đơn hàng trước đó.'
@@ -670,14 +676,15 @@ class YeuCauBaoGiaController extends Controller
                 'dia_chi_text'          => $quote->dia_chi_giao_hang,
                 'anh_chuyen_khoan'      => $quote->anh_chuyen_khoan,
                 'anh_chuyen_khoan_2'    => $quote->anh_chuyen_khoan_2,
-                'ghi_chu_khach_hang'    => $quote->ghi_chu_khach_hang . ($quote->ghi_chu_zalo ? ' | ' . $quote->ghi_chu_zalo : ''),
+                'ghi_chu_khach_hang'    => 'Báo giá #' . $quote->ma_yeu_cau . ($quote->ghi_chu_khach_hang ? ' | ' . $quote->ghi_chu_khach_hang : '') . ($quote->ghi_chu_zalo ? ' | ' . $quote->ghi_chu_zalo : ''),
                 'tong_tien'             => $quote->tong_tien,
                 'phi_van_chuyen'        => $quote->phi_van_chuyen,
                 'tien_coc_yeu_cau'      => $quote->tien_coc_yeu_cau,
+                'da_thu'                => (float) ($quote->da_thu ?? 0),
                 'khach_tu_tra_cuoc'     => $quote->khach_tu_tra_cuoc,
                 'loai_don'              => $loaiDon,
-                'trang_thai'            => 0, // Chờ xác nhận
-                'trang_thai_thanh_toan' => 0, // Chờ thanh toán / cọc
+                'trang_thai'            => ((float) ($quote->da_thu ?? 0) > 0) ? 1 : 0,
+                'trang_thai_thanh_toan' => ((float) ($quote->da_thu ?? 0) > 0) ? 1 : 0,
             ]);
 
             // Sao chép chi tiết từ Báo giá sang Đơn hàng
@@ -955,39 +962,32 @@ class YeuCauBaoGiaController extends Controller
     {
         try {
             $url = null;
-            $dir = public_path('uploads/receipts');
-            if (!file_exists($dir)) {
-                mkdir($dir, 0755, true);
-            }
 
             if ($request->hasFile('file')) {
                 $request->validate([
-                    'file' => 'required|file|mimes:jpeg,png,jpg,gif,svg,webp,bmp,avif,heic,heif,tiff,tif,ico,jfif,eps,raw,cr2,nef,psd,ai|max:20480'
+                    'file' => 'required|image|mimes:jpeg,png,jpg,webp|extensions:jpg,jpeg,png,webp|max:5120'
                 ]);
-                $file = $request->file('file');
-                $filename = 'receipt_' . date('Ymd_His') . '_' . Str::random(8) . '.' . $file->getClientOriginalExtension();
-                $file->move($dir, $filename);
-                $url = '/uploads/receipts/' . $filename;
+                $url = ImageUploadService::storeUploadedFile(
+                    $request->file('file'),
+                    'uploads/receipts',
+                    'receipt',
+                    1600
+                );
             } elseif ($request->filled('image_base64')) {
-                $base64 = $request->input('image_base64');
-                if (preg_match('/^data:image\/(\w+);base64,/', $base64, $matches)) {
-                    $ext = strtolower($matches[1]);
-                    if ($ext === 'jpeg') $ext = 'jpg';
-                    $data = substr($base64, strpos($base64, ',') + 1);
-                    $data = base64_decode($data);
-                    if ($data !== false) {
-                        $filename = 'receipt_' . date('Ymd_His') . '_' . Str::random(8) . '.' . $ext;
-                        file_put_contents($dir . '/' . $filename, $data);
-                        $url = '/uploads/receipts/' . $filename;
-                    }
-                }
+                $url = ImageUploadService::storeBase64(
+                    (string) $request->input('image_base64'),
+                    'uploads/receipts',
+                    'receipt',
+                    1600,
+                    5 * 1024 * 1024
+                );
             }
 
             if (!$url) {
-                return response()->json(['success' => false, 'message' => 'Không tìm thấy dữ liệu hình ảnh hợp lệ.'], 422);
+                return response()->json(['success' => false, 'message' => 'Dữ liệu hình ảnh không hợp lệ (chỉ chấp nhận JPG, PNG, WebP tối đa 5MB).'], 422);
             }
 
-            // Nếu truyền type & id, tự động gắn vào record
+            // Nếu truyền type & id, tự động gắn vào record và dọn ảnh cũ
             $type = $request->input('type');
             $id = $request->input('id');
             $slot = (int) $request->input('slot', 1);
@@ -996,14 +996,18 @@ class YeuCauBaoGiaController extends Controller
             if ($type === 'quote' && $id) {
                 $quote = YeuCauBaoGia::find($id);
                 if ($quote) {
+                    $old = $quote->{$field};
                     $quote->{$field} = $url;
                     $quote->save();
+                    ImageUploadService::delete($old);
                 }
             } elseif ($type === 'order' && $id) {
                 $order = DonHang::find($id);
                 if ($order) {
+                    $old = $order->{$field};
                     $order->{$field} = $url;
                     $order->save();
+                    ImageUploadService::delete($old);
                 }
             }
 
@@ -1013,8 +1017,16 @@ class YeuCauBaoGiaController extends Controller
                 'url' => $url,
                 'slot' => $slot
             ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'File ảnh không hợp lệ (chỉ chấp nhận JPG, PNG, WebP tối đa 5MB).',
+                'errors' => $e->errors(),
+            ], 422);
+        } catch (\InvalidArgumentException $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 422);
         } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => 'Lỗi tải ảnh: ' . $e->getMessage()], 500);
+            return response()->json(['success' => false, 'message' => 'Lỗi tải ảnh biên lai.'], 500);
         }
     }
 
@@ -1031,14 +1043,18 @@ class YeuCauBaoGiaController extends Controller
         if ($type === 'quote' && $id) {
             $quote = YeuCauBaoGia::find($id);
             if ($quote) {
+                $old = $quote->{$field};
                 $quote->{$field} = null;
                 $quote->save();
+                ImageUploadService::delete($old);
             }
         } elseif ($type === 'order' && $id) {
             $order = DonHang::find($id);
             if ($order) {
+                $old = $order->{$field};
                 $order->{$field} = null;
                 $order->save();
+                ImageUploadService::delete($old);
             }
         }
         return response()->json(['success' => true, 'message' => 'Đã gỡ ảnh biên lai']);

@@ -438,12 +438,7 @@ const goBackTraCuu = () => {
   }
 };
 
-const getImageUrl = (path) => {
-  if (!path) return '';
-  if (path.startsWith('blob:') || path.startsWith('http')) return path;
-  let cleanPath = path.replace(/^\/?storage\//, '');
-  return 'http://localhost:8000/storage/' + cleanPath;
-};
+import { getImageUrl } from '../../../utils/imageUrl';
 
 const targetPartCode = computed(() => (route.query.part || '').toString().trim().toUpperCase());
 

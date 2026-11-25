@@ -19,11 +19,10 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => [
-        env('FRONTEND_URL', 'http://localhost:5173'),
-        'http://localhost:5173',
-        'http://127.0.0.1:5173',
-    ],
+    'allowed_origins' => array_values(array_filter(array_map('trim', explode(',', env(
+        'CORS_ALLOWED_ORIGINS',
+        env('FRONTEND_URL', 'http://localhost:5173') . (env('APP_ENV', 'local') === 'local' ? ',http://localhost:5173,http://127.0.0.1:5173' : '')
+    ))))),
 
     'allowed_origins_patterns' => [],
 

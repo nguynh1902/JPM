@@ -8,6 +8,7 @@ use App\Domain\PIM\Requests\StoreSanPhamRequest;
 use App\Domain\PIM\Requests\UpdateSanPhamRequest;
 use App\Domain\PIM\Resources\SanPhamResource;
 use App\Domain\PIM\Services\SanPhamService;
+use App\Domain\Core\Services\ImageUploadService;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Storage;
@@ -37,7 +38,7 @@ class SanPhamController extends Controller
     public function index(\Illuminate\Http\Request $request): JsonResponse
     {
         $all = $request->boolean('all', false);
-        $perPage = $all ? null : (int) $request->input('per_page', 50);
+        $perPage = $all ? null : min(max((int) $request->input('per_page', 50), 1), 100);
         $filters = $request->only(['keyword', 'danh_muc_id']);
 
         $data = $this->sanPhamService->getAll($filters, $perPage);
@@ -67,8 +68,12 @@ class SanPhamController extends Controller
             $data = $request->validated();
             
             if ($request->hasFile('hinh_anh_chinh_file')) {
-                $path = $request->file('hinh_anh_chinh_file')->store('san_phams', 'public');
-                $data['hinh_anh_chinh'] = '/storage/' . $path;
+                $data['hinh_anh_chinh'] = ImageUploadService::storeUploadedFile(
+                    $request->file('hinh_anh_chinh_file'),
+                    'uploads/san_phams',
+                    'sp',
+                    1600
+                );
             } elseif ($request->exists('hinh_anh_chinh_file')) {
                 $data['hinh_anh_chinh'] = null;
             }
@@ -76,8 +81,12 @@ class SanPhamController extends Controller
             if ($request->hasFile('thu_vien_anh_files')) {
                 $gallery = [];
                 foreach ($request->file('thu_vien_anh_files') as $file) {
-                    $path = $file->store('san_phams', 'public');
-                    $gallery[] = '/storage/' . $path;
+                    $gallery[] = ImageUploadService::storeUploadedFile(
+                        $file,
+                        'uploads/san_phams',
+                        'sp_gal',
+                        1600
+                    );
                 }
                 $data['thu_vien_anh'] = $gallery;
             }
@@ -99,9 +108,17 @@ class SanPhamController extends Controller
         try {
             $data = $request->validated();
             
+            $existing = $this->sanPhamService->getById($id);
+            $oldMain = $existing->hinh_anh_chinh;
+            $oldGallery = is_array($existing->thu_vien_anh) ? $existing->thu_vien_anh : (json_decode((string) $existing->thu_vien_anh, true) ?? []);
+
             if ($request->hasFile('hinh_anh_chinh_file')) {
-                $path = $request->file('hinh_anh_chinh_file')->store('san_phams', 'public');
-                $data['hinh_anh_chinh'] = '/storage/' . $path;
+                $data['hinh_anh_chinh'] = ImageUploadService::storeUploadedFile(
+                    $request->file('hinh_anh_chinh_file'),
+                    'uploads/san_phams',
+                    'sp',
+                    1600
+                );
             }
 
             $gallery = [];
@@ -111,13 +128,25 @@ class SanPhamController extends Controller
             
             if ($request->hasFile('thu_vien_anh_files')) {
                 foreach ($request->file('thu_vien_anh_files') as $file) {
-                    $path = $file->store('san_phams', 'public');
-                    $gallery[] = '/storage/' . $path;
+                    $gallery[] = ImageUploadService::storeUploadedFile(
+                        $file,
+                        'uploads/san_phams',
+                        'sp_gal',
+                        1600
+                    );
                 }
             }
             $data['thu_vien_anh'] = $gallery;
 
             $sanPham = $this->sanPhamService->update($id, $data);
+
+            // Dọn ảnh cũ bị thay thế/gỡ bỏ
+            if ($request->hasFile('hinh_anh_chinh_file') && $oldMain && $oldMain !== $sanPham->hinh_anh_chinh) {
+                ImageUploadService::delete($oldMain);
+            }
+            foreach (array_diff($oldGallery, $gallery) as $removedPath) {
+                ImageUploadService::delete((string) $removedPath);
+            }
             return response()->json([
                 'success' => true,
                 'message' => 'Cập nhật sản phẩm thành công',
@@ -169,12 +198,8 @@ class SanPhamController extends Controller
             $query->orderBy('id', 'desc');
         }
 
-        if (request()->has('all')) {
-            $data = $query->get();
-        } else {
-            $perPage = (int) request()->input('per_page', 16);
-            $data = $query->paginate($perPage);
-        }
+        $perPage = min(max((int) $request->input('per_page', 16), 1), 100);
+        $data = $query->paginate($perPage);
 
         return response()->json([
             'success' => true,

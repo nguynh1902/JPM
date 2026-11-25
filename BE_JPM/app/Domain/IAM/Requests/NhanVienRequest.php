@@ -14,7 +14,7 @@ class NhanVienRequest extends FormRequest
         public function rules(): array
     {
         $isUpdate = $this->isMethod('put') || $this->isMethod('patch');
-        $id = $this->route('nhan_vien');
+        $id = $this->route('nhan_vien') ?? $this->route('id');
         $userId = null;
         
         if ($id) {
@@ -38,6 +38,9 @@ class NhanVienRequest extends FormRequest
             'role' => 'required|string',
             'email' => $emailRule,
             'phone' => $phoneRule,
+            'status' => 'nullable|integer|in:0,1',
+            'avatar' => 'nullable|image|mimes:jpeg,png,jpg,webp|extensions:jpg,jpeg,png,webp|max:5120',
+            'remove_avatar' => 'nullable|boolean',
             'password' => ['nullable', 'string', 'min:8', 'max:25', 'regex:/^[\x20-\x7E]+$/']
         ];
     }

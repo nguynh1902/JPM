@@ -53,17 +53,27 @@ class GaragePhuTungController extends Controller
             }
 
             DB::beginTransaction();
-            
-            $item = GaragePhuTung::updateOrCreate(
-                [
+
+            $qtyToAdd = (int) ($request->so_luong ?? 1);
+            $item = GaragePhuTung::where('garage_id', $request->garage_id)
+                ->where('phu_tung_id', $request->phu_tung_id)
+                ->lockForUpdate()
+                ->first();
+
+            if ($item) {
+                $item->so_luong = (int) $item->so_luong + $qtyToAdd;
+                if ($request->filled('ghi_chu')) {
+                    $item->ghi_chu = $request->ghi_chu;
+                }
+                $item->save();
+            } else {
+                $item = GaragePhuTung::create([
                     'garage_id' => $request->garage_id,
                     'phu_tung_id' => $request->phu_tung_id,
-                ],
-                [
-                    'so_luong' => DB::raw('so_luong + ' . ($request->so_luong ?? 1)),
-                    'ghi_chu' => $request->ghi_chu
-                ]
-            );
+                    'so_luong' => $qtyToAdd,
+                    'ghi_chu' => $request->ghi_chu,
+                ]);
+            }
 
             DB::commit();
 

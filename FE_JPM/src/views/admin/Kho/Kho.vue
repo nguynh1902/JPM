@@ -6,7 +6,7 @@
 
     <div class="row">
       <!-- Cột Form (Thêm/Sửa) -->
-      <div class="col-md-4 mb-4">
+      <div class="col-md-4 mb-4" v-if="authStore.hasPermission('Quản lý Danh sách kho')">
         <div class="card">
           <div class="card-header border-bottom">
             <h5 class="mb-0 fw-bold text-dark">{{ isEditMode ? 'Cập Nhật Kho' : 'Thêm Mới Kho' }}</h5>
@@ -61,7 +61,7 @@
       </div>
 
       <!-- Cột Bảng (Danh sách) -->
-      <div class="col-md-8 mb-4">
+      <div :class="authStore.hasPermission('Quản lý Danh sách kho') ? 'col-md-8' : 'col-12'" class="mb-4">
         <div class="card">
           <div class="card-header border-bottom d-flex justify-content-between align-items-center">
             <h5 class="mb-0 fw-bold text-dark">Danh sách Kho Bãi</h5>
@@ -111,7 +111,8 @@
                   </td>
                   <td class="text-center">
                     <div class="d-flex align-items-center justify-content-center">
-                      <button 
+                      <button
+                        v-if="authStore.hasPermission('Quản lý Danh sách kho')"
                         type="button" 
                         class="action-btn text-primary me-1" 
                         @click="openEditModal(item)"
@@ -119,7 +120,8 @@
                       >
                         <i class="bx bx-edit-alt"></i>
                       </button>
-                      <button 
+                      <button
+                        v-if="authStore.hasPermission('Quản lý Danh sách kho')"
                         type="button" 
                         class="action-btn text-danger" 
                         @click="confirmDelete(item)"
@@ -149,6 +151,7 @@ import axiosClient from '../../../api/axiosClient';
 import Swal from 'sweetalert2';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/vue-query';
 import { createToaster } from "@meforma/vue-toaster";
+import { useAuthStore } from '../../../stores/authStore';
 
 export default {
   name: "Kho",
@@ -156,6 +159,7 @@ export default {
     vSelect
   },
   setup() {
+    const authStore = useAuthStore();
     const queryClient = useQueryClient();
     const toaster = createToaster({ position: "top-right", duration: 3000 });
 
@@ -211,7 +215,7 @@ export default {
       }
     });
 
-    return { warehouses, isLoading, queryClient, deleteMutation, saveMutation, toaster };
+    return { authStore, warehouses, isLoading, queryClient, deleteMutation, saveMutation, toaster };
   },
   data() {
     return {

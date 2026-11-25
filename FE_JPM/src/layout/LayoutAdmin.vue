@@ -28,6 +28,7 @@
 import HeaderAdmin from "../components/admin/HeaderAdmin.vue";
 import NavbarAdmin from "../components/admin/NavbarAdmin.vue";
 import FooterAdmin from "../components/admin/FooterAdmin.vue";
+import { unloadClientCSS } from "../utils/clientCssLoader";
 
 // CSS URLs
 import boxiconsCss from "../assets/admin/template/vendor/fonts/boxicons.css?url";
@@ -63,6 +64,8 @@ export default {
   },
 
   mounted() {
+    // Dọn sạch CSS Client để không xung đột style với Sneat Admin
+    unloadClientCSS();
     // HTML Attributes required by Sneat
     document.documentElement.classList.add("light-style", "layout-menu-fixed");
     document.documentElement.setAttribute("dir", "ltr");
@@ -145,8 +148,18 @@ export default {
   },
 
   unmounted() {
+    // Dừng resize auto-update listener của Sneat Helpers khi rời Admin
+    try {
+      window.Helpers?.setAutoUpdate(false);
+    } catch (_) {}
+
     // Cleanup HTML Attributes when leaving Admin layout
-    document.documentElement.classList.remove("light-style", "layout-menu-fixed");
+    document.documentElement.classList.remove(
+      "light-style",
+      "layout-menu-fixed",
+      "layout-menu-expanded",
+      "layout-menu-collapsed"
+    );
     document.documentElement.removeAttribute("dir");
     document.documentElement.removeAttribute("data-theme");
     document.documentElement.removeAttribute("data-template");

@@ -55,6 +55,10 @@ class TonKhoController extends Controller
             }
 
             $soLuongTon = (int) ($request->so_luong_ton ?? 0);
+            if ($soLuongTon < 0) {
+                DB::rollBack();
+                return response()->json(['success' => false, 'message' => 'Số lượng tồn kho không được âm'], 422);
+            }
 
             $tonKho = new TonKho();
             $tonKho->id_kho = $request->id_kho;
@@ -100,6 +104,10 @@ class TonKhoController extends Controller
 
             $oldQty = (int) $tonKho->so_luong_ton;
             $newQty = $request->has('so_luong_ton') ? (int) $request->so_luong_ton : $oldQty;
+            if ($newQty < 0) {
+                DB::rollBack();
+                return response()->json(['success' => false, 'message' => 'Số lượng tồn kho không được âm'], 422);
+            }
             $diff = $newQty - $oldQty;
             
             // Only update what we can safely update
@@ -137,6 +145,12 @@ class TonKhoController extends Controller
             $tonKho = TonKho::find($id);
             if (!$tonKho) {
                 return response()->json(["success" => false, "message" => "Không tìm thấy bản ghi tồn kho"], 404);
+            }
+            if ((int)$tonKho->so_luong_ton > 0 || (int)$tonKho->so_luong_dang_giu > 0) {
+                return response()->json([
+                    "success" => false,
+                    "message" => "Không thể xóa dòng tồn kho khi số lượng tồn hoặc đang giữ chỗ lớn hơn 0."
+                ], 400);
             }
             $tonKho->delete();
             return response()->json(["success" => true, "message" => "Xóa thành công"]);

@@ -7,7 +7,7 @@
 
     <div class="row">
       <!-- Cột Form (Thêm/Sửa) -->
-      <div class="col-md-4 mb-4">
+      <div class="col-md-4 mb-4" v-if="authStore.hasAnyPermission(['Thêm Phụ tùng', 'Sửa Phụ tùng'])">
         <div class="card border-0 shadow-sm">
           <div class="card-header border-bottom pb-3">
             <h5 class="card-title mb-0 fw-bold text-dark">
@@ -82,7 +82,7 @@
       </div>
 
       <!-- Cột Danh Sách -->
-      <div class="col-md-8 mb-4">
+      <div :class="authStore.hasAnyPermission(['Thêm Phụ tùng', 'Sửa Phụ tùng']) ? 'col-md-8' : 'col-12'" class="mb-4">
         <div class="card border-0 shadow-sm">
           <div class="card-header border-bottom pb-3 d-flex justify-content-between align-items-center">
             <h5 class="card-title mb-0 fw-bold text-dark">Danh Sách Mã Thay Thế</h5>
@@ -129,10 +129,10 @@
                     </td>
                     <td class="text-center align-middle">
                       <div class="d-flex justify-content-center">
-                        <button class="btn btn-sm btn-icon action-btn text-primary me-1" @click="editItem(item)" title="Sửa">
+                        <button v-if="authStore.hasPermission('Sửa Phụ tùng')" class="btn btn-sm btn-icon action-btn text-primary me-1" @click="editItem(item)" title="Sửa">
                           <i class="bx bx-edit-alt"></i>
                         </button>
-                        <button class="btn btn-sm btn-icon action-btn text-danger" @click="confirmDelete(item.id)" title="Xóa">
+                        <button v-if="authStore.hasPermission('Xóa Phụ tùng')" class="btn btn-sm btn-icon action-btn text-danger" @click="confirmDelete(item.id)" title="Xóa">
                           <i class="bx bx-trash"></i>
                         </button>
                       </div>
@@ -153,6 +153,8 @@
 
 <script setup>
 import { ref, computed } from 'vue';
+import { useAuthStore } from '../../../stores/authStore';
+const authStore = useAuthStore();
 import vSelect from '@vueform/multiselect';
 import axiosClient from '../../../api/axiosClient';
 import Swal from 'sweetalert2';

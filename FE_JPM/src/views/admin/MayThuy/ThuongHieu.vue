@@ -201,12 +201,7 @@ const switchTab = (tab) => {
 };
 
 
-  const getImageUrl = (path) => {
-  if (!path) return '';
-  if (path.startsWith('blob:') || path.startsWith('http')) return path;
-  if (path.startsWith('/client/image/')) return path; // Use frontend public asset directly
-  return `http://localhost:8000/storage/${path.replace(/^\/?storage\//, '')}`;
-};
+import { getImageUrl } from '../../../utils/imageUrl';
 
 // Reset Form
 const resetForm = () => {

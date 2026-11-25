@@ -43,18 +43,12 @@ app.component("admin-layout", Admin);
 app.component("client-layout", Client);
 app.component("auth-layout", Auth);
 
-const BACKEND_BASE = (import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8000/api").replace(/\/api\/?$/, "");
+import { getImageUrl } from './utils/imageUrl'
 
 app.mixin({
   methods: {
-    getImageUrl(path) {
-      if (!path) return "";
-      if (path.startsWith("blob:") || path.startsWith("http") || path.startsWith("data:")) return path;
-      const clean = path.startsWith("/") ? path.slice(1) : path;
-      if (clean.startsWith("storage/") || clean.startsWith("uploads/")) {
-        return `${BACKEND_BASE}/${clean}`;
-      }
-      return `${BACKEND_BASE}/storage/${clean}`;
+    getImageUrl(path, fallback = "") {
+      return getImageUrl(path, fallback);
     },
     getBlobUrl(file) {
       if (!file) return "";

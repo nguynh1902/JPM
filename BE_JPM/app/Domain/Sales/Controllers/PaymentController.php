@@ -62,7 +62,8 @@ class PaymentController extends Controller
                 return response()->json(['success' => false, 'message' => 'Đơn hàng không tồn tại'], 404);
             }
 
-            $totalOrder = (float)($order->tong_tien + ($order->phi_van_chuyen ?? 0));
+            $shippingFee = $order->khach_tu_tra_cuoc ? 0 : (float)($order->phi_van_chuyen ?? 0);
+            $totalOrder = (float)($order->tong_tien + $shippingFee);
             $isPaid = ($order->da_thu >= $totalOrder && $totalOrder > 0);
             $isDepositPaid = ($order->da_thu >= $order->tien_coc_yeu_cau && $order->tien_coc_yeu_cau > 0);
 
@@ -105,6 +106,23 @@ class PaymentController extends Controller
      */
     public function webhookReconciliation(Request $request)
     {
+        $expectedToken = (string) config('services.sepay.webhook_token', '');
+        $providedToken = (string) ($request->header('X-Webhook-Token') ?? '');
+
+        if ($providedToken === '') {
+            $authHeader = (string) ($request->header('Authorization') ?? '');
+            if (preg_match('/^(?:Apikey|Bearer)\s+(.+)$/i', trim($authHeader), $matches)) {
+                $providedToken = trim($matches[1]);
+            }
+        }
+
+        if ($expectedToken === '' || $providedToken === '' || !hash_equals($expectedToken, $providedToken)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Unauthorized webhook signature.',
+            ], 401);
+        }
+
         $payload = $request->all();
         $result = $this->vietQRService->reconcileWebhook($payload);
 
@@ -135,7 +153,7 @@ class PaymentController extends Controller
             $query->where('trang_thai', $request->status);
         }
 
-        $perPage = (int)$request->get('per_page', 15);
+        $perPage = min(max((int)$request->get('per_page', 15), 1), 100);
         $transactions = $query->paginate($perPage);
 
         return response()->json([

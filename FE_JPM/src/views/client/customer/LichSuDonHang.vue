@@ -197,9 +197,22 @@
 
         <!-- Khung VietQR cọc nếu bấm mở (Ở bước 2) -->
         <div v-if="activeQrOrderCode === order.code" class="qr-deposit-box">
-          <div class="qr-inner">
+          <div v-if="isLoadingQr" class="text-center py-4 text-muted small">
+            <span class="spinner-border spinner-border-sm text-danger me-2"></span>
+            Đang tải thông tin thanh toán VietQR từ hệ thống...
+          </div>
+          <div v-else-if="vietQrError || !vietQrData?.qr_url" class="text-center py-4">
+            <p class="text-danger small mb-2 fw-semibold">
+              <i class="bi bi-exclamation-triangle me-1"></i>
+              {{ vietQrError || 'Không thể tải mã VietQR lúc này. Vui lòng thử lại hoặc liên hệ Zalo kỹ thuật.' }}
+            </p>
+            <button type="button" class="btn btn-sm btn-outline-danger" @click="loadVietQR(order)">
+              <i class="bi bi-arrow-clockwise me-1"></i> Thử tải lại mã QR
+            </button>
+          </div>
+          <div v-else class="qr-inner">
             <div class="text-center qr-img-col">
-              <img :src="vietQrData?.qr_url || getVietQrImageUrl(order)" alt="VietQR" class="img-fluid rounded border p-1" style="max-width: 190px;">
+              <img :src="vietQrData.qr_url" alt="VietQR" class="img-fluid rounded border p-1" style="max-width: 190px;">
               <div class="mt-2 text-muted small d-flex align-items-center justify-content-center gap-1">
                 <span class="spinner-grow spinner-grow-sm text-danger me-1"></span>
                 <span>Chờ thanh toán...</span>
@@ -208,28 +221,28 @@
             <div class="qr-info-col">
               <div class="info-row">
                 <span class="text-muted">Ngân hàng:</span>
-                <strong>{{ vietQrData ? `${vietQrData.bank_name} (${vietQrData.bank_id})` : 'VietinBank (ICB)' }}</strong>
+                <strong>{{ `${vietQrData.bank_name} (${vietQrData.bank_id})` }}</strong>
               </div>
               <div class="info-row">
                 <span class="text-muted">Số tài khoản:</span>
                 <div>
-                  <strong class="font-monospace">{{ vietQrData?.account_no || '108876543210' }}</strong>
-                  <button type="button" class="btn-copy" @click="copyText(vietQrData?.account_no || '108876543210', 'Đã copy STK')">Copy</button>
+                  <strong class="font-monospace">{{ vietQrData.account_no }}</strong>
+                  <button type="button" class="btn-copy" @click="copyText(vietQrData.account_no, 'Đã copy STK')">Copy</button>
                 </div>
               </div>
               <div class="info-row">
                 <span class="text-muted">Chủ tài khoản:</span>
-                <strong>{{ vietQrData?.account_name || 'CONG TY PHU TUNG MAY THUY JPM' }}</strong>
+                <strong>{{ vietQrData.account_name }}</strong>
               </div>
               <div class="info-row">
                 <span class="text-muted">Số tiền cọc:</span>
-                <strong class="text-danger fs-6">{{ vietQrData?.amount_formatted || (formatPrice(order.tien_coc_yeu_cau || 0) + '₫') }}</strong>
+                <strong class="text-danger fs-6">{{ vietQrData.amount_formatted || (formatPrice(order.tien_coc_yeu_cau || 0) + '₫') }}</strong>
               </div>
               <div class="info-row">
                 <span class="text-muted">Nội dung CK:</span>
                 <div>
-                  <strong class="font-monospace text-danger">{{ vietQrData?.transfer_content || order.code }}</strong>
-                  <button type="button" class="btn-copy" @click="copyText(vietQrData?.transfer_content || order.code, 'Đã copy nội dung')">Copy</button>
+                  <strong class="font-monospace text-danger">{{ vietQrData.transfer_content || order.code }}</strong>
+                  <button type="button" class="btn-copy" @click="copyText(vietQrData.transfer_content || order.code, 'Đã copy nội dung')">Copy</button>
                 </div>
               </div>
               <div class="mt-2 text-end">
@@ -405,7 +418,7 @@
 
             <!-- Bước 1: Liên hệ hỗ trợ -->
             <template v-if="getStage(order) === 1">
-              <a :href="'https://zalo.me/0123456789?text=' + encodeURIComponent('Chào JPM, tôi muốn hỏi về đơn hàng mã #' + order.code)" target="_blank" class="btn btn-danger btn-order-action">
+              <a :href="buildZaloUrl('Chào JPM, tôi muốn hỏi về đơn hàng mã #' + order.code)" target="_blank" rel="noopener noreferrer" class="btn btn-danger btn-order-action">
                 <i class="bi bi-chat-dots me-1"></i> Chat Kỹ Thuật
               </a>
             </template>
@@ -426,14 +439,14 @@
 
             <!-- Bước 3: Đang xử lý / gom hàng -->
             <template v-else-if="getStage(order) === 3">
-              <a :href="'https://zalo.me/0123456789?text=' + encodeURIComponent('Hỏi tiến độ chuẩn bị gom hàng cho đơn #' + order.code)" target="_blank" class="btn btn-outline-secondary btn-order-action">
+              <a :href="buildZaloUrl('Hỏi tiến độ chuẩn bị gom hàng cho đơn #' + order.code)" target="_blank" rel="noopener noreferrer" class="btn btn-outline-secondary btn-order-action">
                 <i class="bi bi-box-seam me-1"></i> Tiến Độ Chuẩn Bị
               </a>
             </template>
 
             <!-- Bước 4: Đang giao -->
             <template v-else-if="getStage(order) === 4">
-              <a :href="'https://zalo.me/0123456789?text=' + encodeURIComponent('Hỏi tiến độ vận chuyển chành xe cho đơn #' + order.code)" target="_blank" class="btn btn-danger btn-order-action">
+              <a :href="buildZaloUrl('Hỏi tiến độ vận chuyển chành xe cho đơn #' + order.code)" target="_blank" rel="noopener noreferrer" class="btn btn-danger btn-order-action">
                 <i class="bi bi-truck me-1"></i> Tiến Độ Vận Chuyển
               </a>
             </template>
@@ -614,11 +627,21 @@ import { useCartStore } from "../../../stores/cartStore";
 import Swal from "sweetalert2";
 import axiosClient from "../../../api/axiosClient";
 import { useQuery, useQueryClient } from "@tanstack/vue-query";
+import { useSiteSettings } from "../../../composables/useSiteSettings";
+import { getImageUrl } from "../../../utils/imageUrl";
 
 const router = useRouter();
 const authStore = useAuthStore();
 const cartStore = useCartStore();
 const queryClient = useQueryClient();
+const { settings } = useSiteSettings();
+
+const buildZaloUrl = (text = '') => {
+  const base = (settings.value?.social_zalo || '').trim() || `https://zalo.me/${String(settings.value?.company_hotline || '').replace(/[^0-9]/g, '')}`;
+  if (!text) return base;
+  const sep = base.includes('?') ? '&' : '?';
+  return `${base}${sep}text=${encodeURIComponent(text)}`;
+};
 
 // ===================== DATA FETCHING =====================
 const { data: quotesData, isLoading: isLoadingQuotes } = useQuery({
@@ -642,6 +665,8 @@ const isLoading = computed(() => isLoadingQuotes.value || isLoadingOrders.value)
 const currentTab = ref('all'); // 'all' | '1' | '2' | '3' | '4' | '-1'
 const activeQrOrderCode = ref(null);
 const vietQrData = ref(null);
+const isLoadingQr = ref(false);
+const vietQrError = ref('');
 const pollingTimer = ref(null);
 const selectedOrderForModal = ref(null);
 
@@ -724,13 +749,6 @@ const getStage = (order) => {
   }
 };
 
-const getImageUrl = (path) => {
-  if (!path) return '';
-  if (path.startsWith('http')) return path;
-  if (path.startsWith('/storage/')) return 'http://localhost:8000' + path;
-  return 'http://localhost:8000/storage/' + path.replace(/^\/+/, '');
-};
-
 // Phân loại đơn ở Giai đoạn 1 (Chờ báo giá)
 // 1 = Toàn bộ sản phẩm có giá
 // 2 = Vừa có giá vừa liên hệ (hỗn hợp)
@@ -806,7 +824,8 @@ const getItemProducts = (order) => {
   if (!order) return [];
   const list = order.items || order.chi_tiet || [];
   return list.map(p => ({
-    id: p.id || p.phu_tung_id || p.san_pham_id,
+    id: p.id_san_pham || p.id_phu_tung || p.san_pham_id || p.phu_tung_id || p.id,
+    loai_san_pham: p.loai_san_pham || (p.slug || p.san_pham?.slug ? 'san_pham' : 'phu_tung'),
     name: p.ten_phu_tung || p.ten_san_pham || 'Phụ tùng máy thủy',
     code: p.ma_phu_tung || p.ma_san_pham || '',
     slug: p.slug || p.san_pham?.slug || '',
@@ -917,6 +936,8 @@ const goToProductDetail = (prod) => {
 const handleAddToCart = (prod) => {
   cartStore.addItem({
     id: prod.id,
+    loai_san_pham: prod.loai_san_pham || 'phu_tung',
+    slug: prod.slug || null,
     ma_phu_tung: prod.code,
     ten_phu_tung: prod.name,
     hinh_anh: prod.image,
@@ -935,36 +956,37 @@ const handleAddToCart = (prod) => {
 };
 
 // ===================== VIETQR & ACTIONS =====================
+const loadVietQR = async (order) => {
+  vietQrData.value = null;
+  vietQrError.value = '';
+  isLoadingQr.value = true;
+  try {
+    const endpoint = order._type === 'quote'
+      ? `/public/vietqr/bao-gia/${order.code}`
+      : `/public/vietqr/don-hang/${order.code}`;
+    const res = await axiosClient.get(endpoint);
+    const payload = res?.qr_url ? res : res?.data;
+    if (payload?.qr_url && payload?.account_no) {
+      vietQrData.value = payload;
+    } else {
+      vietQrError.value = 'Hệ thống chưa cấu hình số tài khoản VietQR. Vui lòng liên hệ Zalo JPM Marine.';
+    }
+  } catch (e) {
+    vietQrError.value = 'Không thể kết nối máy chủ để lấy mã VietQR. Vui lòng thử lại.';
+  } finally {
+    isLoadingQr.value = false;
+  }
+};
+
 const toggleVietQR = async (order) => {
   if (activeQrOrderCode.value === order.code) {
     activeQrOrderCode.value = null;
     vietQrData.value = null;
+    vietQrError.value = '';
   } else {
     activeQrOrderCode.value = order.code;
-    vietQrData.value = null;
-    try {
-      const endpoint = order._type === 'quote'
-        ? `/public/vietqr/bao-gia/${order.code}`
-        : `/public/vietqr/don-hang/${order.code}`;
-      const res = await axiosClient.get(endpoint);
-      const payload = res?.qr_url ? res : res?.data;
-      if (payload && (res?.success || payload?.success)) {
-        vietQrData.value = payload;
-      }
-    } catch (e) {
-      // Fallback to static VietQR URL
-    }
+    await loadVietQR(order);
   }
-};
-
-const getVietQrImageUrl = (order) => {
-  if (!order) return '';
-  const bankId = "ICB"; // VietinBank (ICB)
-  const accountNo = "108876543210";
-  const amount = Number(order.tien_coc_yeu_cau || 0);
-  const addInfo = order.code || 'COC JPM';
-  const template = "compact2";
-  return `https://img.vietqr.io/image/${bankId}-${accountNo}-${template}.png?amount=${amount}&addInfo=${encodeURIComponent(addInfo)}&accountName=${encodeURIComponent('CONG TY PHU TUNG MAY THUY JPM')}`;
 };
 
 const copyText = (text, msg) => {
@@ -1006,7 +1028,6 @@ const confirmManualPaid = async (order) => {
     activeQrOrderCode.value = null;
     vietQrData.value = null;
 
-    const zaloPhone = '0123456789';
     const msg = `Chào JPM Marine, tôi vừa chuyển cọc ${formatPrice(depositAmt)}₫ cho đơn #${order.code}. Nhờ Kỹ thuật viên kiểm tra ngân hàng và lên đơn đặt hàng Nhật giúp tôi nhé!`;
 
     Swal.fire({
@@ -1019,7 +1040,7 @@ const confirmManualPaid = async (order) => {
       confirmButtonColor: '#0068ff'
     }).then((res) => {
       if (res.isConfirmed) {
-        window.open(`https://zalo.me/${zaloPhone}?text=${encodeURIComponent(msg)}`, '_blank');
+        window.open(buildZaloUrl(msg), '_blank', 'noopener,noreferrer');
       }
     });
 

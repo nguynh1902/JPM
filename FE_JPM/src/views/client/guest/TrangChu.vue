@@ -254,50 +254,53 @@
     </section>
 
     <!-- ========================================================
-         KHỐI 4: BANNER QUẢNG BÁ TẠI SAO CHỌN JPM MARINE (Chỉ có ở Trang chủ)
+         KHỐI 4: BANNER QUẢNG BÁ TẠI SAO CHỌN JPM MARINE (Editorial Luxury)
          ======================================================== -->
     <section class="home-full-banner">
       <div class="container banner-container">
         <div class="banner-content">
-          <!-- Nhãn dẫn Thế mạnh vượt trội (Editorial Eyebrow) -->
-          <span class="banner-eyebrow mb-2">
+          <!-- Nhãn dẫn Editorial -->
+          <span class="banner-eyebrow">
             Thế mạnh vượt trội
           </span>
 
-          <!-- Tiêu đề chiến lược -->
-          <h2 class="home-banner-title mb-2">
+          <!-- Tiêu đề tối giản, thoáng rộng -->
+          <h2 class="home-banner-title">
             Tại sao chọn <span class="banner-title-accent">JPM Marine</span>
           </h2>
 
-          <!-- Mô tả cam kết dịch vụ chuyên ngành máy thủy -->
-          <p class="home-banner-desc mb-4">
-            Không chỉ cung cấp phụ tùng máy thủy, chúng tôi đồng hành kỹ thuật giúp tàu thuyền của bạn vận hành bền bỉ và an tâm trên mọi hải trình.
-          </p>
-
-          <!-- Lưới 4 thế mạnh cốt lõi (Bố cục 2x2 tối giản, không icon) -->
-          <div class="banner-reasons-grid mb-0">
-            <!-- Mục 1: Phụ tùng OEM chính hãng -->
+          <!-- Lưới 2x2 Editorial Minimal (01 - 04) -->
+          <div class="banner-reasons-grid">
             <div class="reason-item">
-              <h6 class="reason-title">Phụ tùng OEM chính hãng</h6>
-              <p class="reason-desc">Cung cấp linh kiện chuẩn mã OEM từ Yamaha, Mercury, Honda, Suzuki, Yanmar — đúng đời máy và dải số khung.</p>
+              <span class="reason-index">01</span>
+              <div class="reason-body">
+                <h6 class="reason-title">Chuẩn mã OEM chính hãng</h6>
+                <p class="reason-desc">Yamaha · Mercury · Honda · Suzuki · Yanmar</p>
+              </div>
             </div>
 
-            <!-- Mục 2: Giao nhanh toàn quốc & chành xe -->
             <div class="reason-item">
-              <h6 class="reason-title">Giao nhanh toàn quốc &amp; chành xe</h6>
-              <p class="reason-desc">Hỗ trợ gửi hỏa tốc qua chành xe liên tỉnh và chuyển phát nhanh tận xưởng, bến tàu trên toàn quốc.</p>
+              <span class="reason-index">02</span>
+              <div class="reason-body">
+                <h6 class="reason-title">Chính xác theo sơ đồ rã máy</h6>
+                <p class="reason-desc">Đối chiếu trực tiếp từng dải số khung</p>
+              </div>
             </div>
 
-            <!-- Mục 3: Tư vấn chuẩn sơ đồ rã máy -->
             <div class="reason-item">
-              <h6 class="reason-title">Tư vấn chuẩn sơ đồ rã máy</h6>
-              <p class="reason-desc">Hỗ trợ đối chiếu bản vẽ kỹ thuật, mã thay thế OEM trực tiếp qua Zalo — đảm bảo đúng chi tiết, không lắp nhầm.</p>
+              <span class="reason-index">03</span>
+              <div class="reason-body">
+                <h6 class="reason-title">Hỏa tốc toàn quốc &amp; chành xe</h6>
+                <p class="reason-desc">Giao tận xưởng, cảng và bến tàu</p>
+              </div>
             </div>
 
-            <!-- Mục 4: Báo giá & bảo hành minh bạch -->
             <div class="reason-item">
-              <h6 class="reason-title">Báo giá &amp; bảo hành minh bạch</h6>
-              <p class="reason-desc">Báo giá rõ ràng trước khi đặt cọc, bảo hành chuẩn hãng và hỗ trợ đổi trả nhanh theo đúng cam kết.</p>
+              <span class="reason-index">04</span>
+              <div class="reason-body">
+                <h6 class="reason-title">Báo giá &amp; bảo hành minh bạch</h6>
+                <p class="reason-desc">Cam kết chuẩn hãng, đổi trả linh hoạt</p>
+              </div>
             </div>
           </div>
         </div>
@@ -673,12 +676,6 @@ export default {
   },
   // ===== 5. CÁC HÀM XỬ LÝ SỰ KIỆN & ĐIỀU HƯỚNG (METHODS) =====
   methods: {
-    getImageUrl(path) {
-      if (!path) return "";
-      if (path.startsWith("blob:") || path.startsWith("http")) return path;
-      const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
-      return `${baseUrl}${path.startsWith("/") ? "" : "/"}${path}`;
-    },
     searchParts() {
       if (!this.searchKeyword && !this.selectedBrand && !this.selectedEngineType && !this.selectedYear && !this.selectedModel) {
         this.$toast.error("Vui lòng nhập từ khóa hoặc chọn ít nhất 1 điều kiện để tìm kiếm!");
@@ -1005,29 +1002,30 @@ export default {
 }
 
 /* ==============================================================
-   Khối 4: Banner Quảng Bá Tại Sao Chọn JPM Marine (Trang chủ)
+   Khối 4: Banner Quảng Bá Tại Sao Chọn JPM Marine (Editorial Luxury)
    ============================================================== */
 .home-full-banner {
   align-items: flex-start !important;
 }
 
 .banner-container {
-  padding-top: clamp(4px, 0.8vw, 12px);
+  padding-top: clamp(12px, 1.8vw, 28px);
   padding-bottom: 0;
 }
 
 .banner-content {
-  max-width: 660px;
+  max-width: 640px;
 }
 
 .banner-eyebrow {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  font-family: var(--heading-font, 'Raleway', sans-serif);
-  font-size: 0.78rem;
+  gap: 10px;
+  margin-bottom: 10px;
+  font-family: var(--heading-font, 'Inter', sans-serif);
+  font-size: 0.72rem;
   font-weight: 700;
-  letter-spacing: 1.5px;
+  letter-spacing: 2px;
   text-transform: uppercase;
   color: var(--jpm-color-red-marine, #F82249);
 }
@@ -1035,9 +1033,13 @@ export default {
 .banner-eyebrow::before {
   content: "";
   display: inline-block;
-  width: 20px;
-  height: 2px;
+  width: 18px;
+  height: 1.5px;
   background: var(--jpm-color-red-marine, #F82249);
+}
+
+.banner-content .home-banner-title {
+  margin-bottom: 28px;
 }
 
 .banner-title-accent {
@@ -1047,29 +1049,47 @@ export default {
 .banner-reasons-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 18px 32px;
+  gap: 20px 40px;
 }
 
 .reason-item {
-  border-left: 2px solid var(--jpm-color-red-marine, #F82249);
-  padding-left: 14px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(10, 17, 40, 0.08);
+}
+
+.reason-index {
+  font-family: var(--jpm-font-mono, 'Roboto Mono', monospace);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--jpm-color-red-marine, #F82249);
+  letter-spacing: 0.5px;
+  line-height: 1.55;
+  flex-shrink: 0;
+  opacity: 0.85;
+}
+
+.reason-body {
+  min-width: 0;
 }
 
 .reason-title {
-  font-family: var(--heading-font, var(--jpm-font-heading, 'Raleway', sans-serif));
+  font-family: var(--heading-font, var(--jpm-font-heading, 'Inter', sans-serif));
   font-size: 0.9375rem;
   font-weight: 700;
   color: var(--jpm-color-navy-dark, #0A1128);
-  margin-bottom: 5px;
+  margin-bottom: 4px;
   line-height: 1.35;
   letter-spacing: -0.2px;
 }
 
 .reason-desc {
-  font-family: var(--default-font, var(--jpm-font-body, 'Roboto', sans-serif));
-  font-size: 0.855rem;
-  color: var(--jpm-neutral-700, #334155);
-  line-height: 1.5;
+  font-family: var(--default-font, var(--jpm-font-body, 'Inter', sans-serif));
+  font-size: 0.825rem;
+  color: var(--jpm-neutral-500, #64748B);
+  line-height: 1.45;
   margin-bottom: 0;
 }
 
@@ -1081,16 +1101,19 @@ export default {
   .banner-content {
     background: rgba(255, 255, 255, 0.94);
     backdrop-filter: blur(10px);
-    padding: 22px;
+    padding: 24px;
     border-radius: var(--jpm-radius-card, 12px);
     box-shadow: 0 4px 20px rgba(10, 17, 40, 0.08);
+  }
+  .banner-content .home-banner-title {
+    margin-bottom: 20px;
   }
 }
 
 @media (max-width: 576px) {
   .banner-reasons-grid {
     grid-template-columns: 1fr;
-    gap: 10px;
+    gap: 14px;
   }
 }
 </style>

@@ -1,14 +1,11 @@
 import { defineStore } from "pinia";
 import axiosClient from "../api/axiosClient";
 
+// Chỉ hỗ trợ alias 1 chiều an toàn (quyền Xem không bao giờ được nâng lên quyền Quản lý/Ghi)
 const PERMISSION_ALIASES = {
-  "quản lý model & động cơ": ["xem động cơ & thương hiệu"],
   "xem động cơ & thương hiệu": ["quản lý model & động cơ"],
-  "quản lý thẻ kho": ["xem thẻ kho"],
   "xem thẻ kho": ["quản lý thẻ kho"],
-  "quản lý sản phẩm": ["xem sản phẩm"],
   "xem sản phẩm": ["quản lý sản phẩm"],
-  "quản lý tin tức & cms": ["xem tin tức & cms"],
   "xem tin tức & cms": ["quản lý tin tức & cms"],
 };
 

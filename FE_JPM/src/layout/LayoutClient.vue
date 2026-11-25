@@ -56,14 +56,12 @@ import FooterClient from '../components/client/FooterClient.vue'
 
 
 import AOS from 'aos'
-import 'aos/dist/aos.css'
 window.AOS = AOS
 
 import GLightbox from 'glightbox'
 window.GLightbox = GLightbox
 
 import Swiper from 'swiper/bundle'
-import 'swiper/css/bundle'
 window.Swiper = Swiper
 
 // Singleton Dynamic CSS Loader - Tải trước & cô lập 100% tài nguyên Client
@@ -139,7 +137,6 @@ export default {
 <style>
 /* Font chuẩn hóa duy nhất toàn diện cho Client: Inter & Roboto Mono (cho mã phụ tùng) */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Roboto+Mono:wght@500;600&display=swap');
-@import url('https://fonts.gstatic.com');
 
 /* Floating Contact Actions */
 .floating-contact-actions {

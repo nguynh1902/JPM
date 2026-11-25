@@ -208,17 +208,9 @@ const cartStore = useCartStore();
 const queryClient = useQueryClient();
 const toaster = createToaster({ position: 'top-right', duration: 3000 });
 
-const garageId = computed(() => route.params.id);
+import { getImageUrl } from '../../../utils/imageUrl';
 
-const getImageUrl = (path) => {
-  if (!path) return "";
-  if (path.startsWith("blob:") || path.startsWith("http") || path.startsWith("data:")) return path;
-  const clean = path.startsWith("/") ? path.slice(1) : path;
-  if (clean.startsWith("storage/") || clean.startsWith("uploads/")) {
-    return `http://localhost:8000/${clean}`;
-  }
-  return `http://localhost:8000/storage/${clean}`;
-};
+const garageId = computed(() => route.params.id);
 
 // ─── FETCH DATA ───────────────────────────────────────────────────────────────
 const { data: chiTietData, isLoading } = useQuery({

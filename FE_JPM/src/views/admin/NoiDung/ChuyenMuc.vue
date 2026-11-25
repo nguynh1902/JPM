@@ -6,7 +6,7 @@
 
     <div class="row">
       <!-- Cột trái: Form nhập liệu (Layout 1) -->
-      <div class="col-md-4 mb-4">
+      <div class="col-md-4 mb-4" v-if="authStore.hasPermission('Soạn thảo Tin tức & CMS')">
         <div class="card">
           <div class="card-header border-bottom">
             <h5 class="mb-0 fw-bold text-dark">
@@ -68,7 +68,7 @@
       </div>
 
       <!-- Cột phải: Bảng dữ liệu -->
-      <div class="col-md-8 mb-4">
+      <div :class="authStore.hasPermission('Soạn thảo Tin tức & CMS') ? 'col-md-8' : 'col-12'" class="mb-4">
         <div class="card">
           <div class="card-header border-bottom d-flex justify-content-between align-items-center flex-wrap gap-2">
             <h5 class="mb-0 fw-bold text-dark">Danh Sách Chuyên Mục</h5>
@@ -130,10 +130,10 @@
                   </td>
                   <td class="text-center">
                     <div class="d-flex align-items-center justify-content-center">
-                      <button type="button" class="action-btn text-primary me-2" @click="editItem(item)" title="Sửa">
+                      <button v-if="authStore.hasPermission('Soạn thảo Tin tức & CMS')" type="button" class="action-btn text-primary me-2" @click="editItem(item)" title="Sửa">
                         <i class="bx bx-edit-alt"></i>
                       </button>
-                      <button type="button" class="action-btn text-danger" @click="confirmDelete(item)" title="Xóa">
+                      <button v-if="authStore.hasPermission('Xóa Tin tức & CMS')" type="button" class="action-btn text-danger" @click="confirmDelete(item)" title="Xóa">
                         <i class="bx bx-trash"></i>
                       </button>
                     </div>
@@ -157,6 +157,7 @@ import vSelect from '@vueform/multiselect';
 import axiosClient from '../../../api/axiosClient';
 import Swal from 'sweetalert2';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/vue-query';
+import { useAuthStore } from '../../../stores/authStore';
 
 export default {
   name: "ChuyenMuc",
@@ -164,6 +165,7 @@ export default {
     vSelect
   },
   setup() {
+    const authStore = useAuthStore();
     const queryClient = useQueryClient();
 
     const fetchCategories = async () => {
@@ -206,7 +208,7 @@ export default {
       }
     });
 
-    return { categories, isPending, isFetching, queryClient, deleteMutation, saveMutation };
+    return { authStore, categories, isPending, isFetching, queryClient, deleteMutation, saveMutation };
   },
   data() {
     return {

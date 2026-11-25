@@ -752,15 +752,6 @@ export default {
         currency: "VND",
       }).format(value);
     },
-    getImageUrl(path) {
-      if (!path) return "";
-      if (path.startsWith("http")) return path;
-      return "http://localhost:8000" + path;
-    },
-    getBlobUrl(file) {
-      if (!file) return "";
-      return URL.createObjectURL(file);
-    },
     onGiaLienHeChange() {
       if (this.formData.is_gia_lien_he) {
         this.formData.gia_ban = 0;

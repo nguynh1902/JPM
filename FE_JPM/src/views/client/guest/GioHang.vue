@@ -371,6 +371,7 @@
 <script>
 import { useCartStore } from '../../../stores/cartStore'
 import axiosClient from '../../../api/axiosClient'
+import { getImageUrl as resolveImageUrl } from '../../../utils/imageUrl'
 import Swal from 'sweetalert2'
 
 export default {
@@ -506,10 +507,7 @@ export default {
   },
   methods: {
     getImageUrl(path) {
-      if (!path) return 'https://placehold.co/400x300/f8f9fa/a1acb8?text=JPM+Marine'
-      if (path.startsWith('http')) return path
-      if (path.startsWith('/storage/')) return 'http://localhost:8000' + path
-      return 'http://localhost:8000/storage/' + path.replace(/^\/+/, '')
+      return resolveImageUrl(path, 'https://placehold.co/400x300/f8f9fa/a1acb8?text=JPM+Marine')
     },
     formatPrice(price) {
       if (!price) return '0 ₫'
@@ -549,9 +547,7 @@ export default {
         cancelButtonText: 'Hủy',
       })
       if (result.isConfirmed) {
-        this.selectedItems.forEach(maPhuTung => {
-          this.cartStore.removeItem(maPhuTung)
-        })
+        this.cartStore.removeItems(this.selectedItems)
         this.selectedItems = []
       }
     },
@@ -700,7 +696,7 @@ export default {
             text: 'Hệ thống phát hiện mất kết nối mạng. Đơn hàng của bạn đã được lưu tạm và sẽ tự động gửi đi khi có mạng trở lại.',
             confirmButtonColor: '#f82249'
           })
-          this.selectedItems.forEach(id => this.cartStore.removeItem(id))
+          this.cartStore.removeItems(this.selectedItems)
           this.selectedItems = []
           this.isSubmitting = false
           return
@@ -712,7 +708,7 @@ export default {
           this.pendingOrderId = responseData.code || responseData.ma_yeu_cau || ('YCBG-' + Date.now())
           const token = responseData.token
           
-          this.selectedItems.forEach(id => this.cartStore.removeItem(id))
+          this.cartStore.removeItems(this.selectedItems)
           this.selectedItems = []
           
           const descText = `Hệ thống đã tiếp nhận đơn yêu cầu #${this.pendingOrderId}. Đội ngũ JPM Marine sẽ kiểm tra phụ tùng, tính cước vận chuyển và tiền cọc, sau đó gửi link báo giá qua Zalo cho Quý khách.`

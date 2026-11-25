@@ -34,11 +34,13 @@ axiosClient.interceptors.response.use(
   (error) => {
     // Xử lý chung các mã lỗi thường gặp
     if (error.response && error.response.status === 401) {
-      // 401: Hết hạn token hoặc không có quyền truy cập
+      const hadToken = !!localStorage.getItem("auth_token");
       localStorage.removeItem("auth_token");
-      // Tránh lặp vô hạn nếu đang ở trang đăng nhập
-      if (window.location.pathname !== '/dang-nhap') {
-         window.location.href = "/dang-nhap";
+      localStorage.removeItem("auth_user");
+      const path = window.location.pathname || "";
+      const isProtectedPath = path.startsWith("/portal") || path.startsWith("/admin") || path.startsWith("/tai-khoan") || path.startsWith("/garage") || path.startsWith("/lich-su");
+      if ((hadToken || isProtectedPath) && path !== "/dang-nhap") {
+        window.location.href = "/dang-nhap";
       }
     }
     return Promise.reject(error);

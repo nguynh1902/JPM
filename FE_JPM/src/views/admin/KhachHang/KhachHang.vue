@@ -81,7 +81,6 @@
               <th
                 class="text-center"
                 style="width: 10%"
-                v-if="canManageCustomer"
               >
                 Trạng thái
               </th>
@@ -96,14 +95,14 @@
           </thead>
           <tbody class="table-border-bottom-0">
             <tr v-if="isFetching && filteredCustomers.length === 0">
-              <td :colspan="canManageCustomer ? 9 : 7" class="text-center py-5">
+              <td :colspan="canManageCustomer ? 9 : 8" class="text-center py-5">
                 <div class="spinner-border text-primary" role="status">
                   <span class="visually-hidden">Loading...</span>
                 </div>
               </td>
             </tr>
             <tr v-else-if="filteredCustomers.length === 0">
-              <td :colspan="canManageCustomer ? 9 : 7" class="text-center py-5 text-muted">
+              <td :colspan="canManageCustomer ? 9 : 8" class="text-center py-5 text-muted">
                 <i class="bx bx-folder-open text-secondary fs-1 d-block mb-2"></i>
                 Không có dữ liệu
               </td>
@@ -141,7 +140,7 @@
               <td>{{ item.phone }}</td>
               <td class="fw-semibold text-secondary">{{ item.email }}</td>
               <td class="fw-semibold text-secondary">{{ item.address || "N/A" }}</td>
-              <td class="text-center" v-if="canManageCustomer">
+              <td class="text-center">
                 <span
                   class="badge badge-custom"
                   :class="

@@ -4,10 +4,11 @@ namespace App\Domain\IAM\Services;
 
 use App\Domain\IAM\Models\KhachHang;
 use App\Domain\IAM\Models\User;
+use App\Domain\Core\Services\ImageUploadService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 use Exception;
-use Illuminate\Support\Facades\Storage;
 
 class KhachHangService
 {
@@ -39,7 +40,7 @@ class KhachHangService
             return $query->paginate($perPage);
         }
 
-        return $query->get();
+        return $query->limit(500)->get();
     }
 
     public function create(array $data)
@@ -50,20 +51,23 @@ class KhachHangService
                 throw new Exception('Email này đã được sử dụng.', 422);
             }
 
+            $plainPassword = !empty($data['password']) ? $data['password'] : (Str::random(10) . '!9');
             $user = User::create([
                 'name' => $data['name'],
                 'email' => $data['email'],
-                'password' => Hash::make(!empty($data['password']) ? $data['password'] : 'Jpm@2026'),
+                'password' => Hash::make($plainPassword),
                 'phone' => $data['phone'],
                 'status' => $data['status'] ?? 1,
             ]);
             $user->assignRole('customer');
 
-            if (isset($data['avatar']) && request()->hasFile('avatar')) {
-                $file = request()->file('avatar');
-                $filename = time() . '_' . $file->getClientOriginalName();
-                $file->move(public_path('uploads/avatars'), $filename);
-                $user->avatar = '/uploads/avatars/' . $filename;
+            if (request()->hasFile('avatar')) {
+                $user->avatar = ImageUploadService::storeUploadedFile(
+                    request()->file('avatar'),
+                    'uploads/avatars',
+                    'avatar',
+                    400
+                );
                 $user->save();
             }
 
@@ -89,28 +93,33 @@ class KhachHangService
             
             // Update User properties (Name, Email, Phone, Status, Avatar)
             if ($kh->user) {
+                $newStatus = isset($data['status']) ? (int) $data['status'] : (int) $kh->user->status;
                 $kh->user->update([
                     'name' => $data['name'],
                     'email' => $data['email'],
                     'phone' => $data['phone'] ?? $kh->user->phone,
-                    'status' => $data['status'] ?? 1,
+                    'status' => $newStatus,
                 ]);
 
-                if (isset($data['avatar']) && request()->hasFile('avatar')) {
-                    if ($kh->user->avatar && file_exists(public_path($kh->user->avatar))) {
-                        @unlink(public_path($kh->user->avatar));
-                    }
-                    $file = request()->file('avatar');
-                    $filename = time() . '_' . $file->getClientOriginalName();
-                    $file->move(public_path('uploads/avatars'), $filename);
-                    $kh->user->avatar = '/uploads/avatars/' . $filename;
+                if (request()->hasFile('avatar')) {
+                    $oldAvatar = $kh->user->avatar;
+                    $kh->user->avatar = ImageUploadService::storeUploadedFile(
+                        request()->file('avatar'),
+                        'uploads/avatars',
+                        'avatar',
+                        400
+                    );
+                    ImageUploadService::delete($oldAvatar);
                 } elseif (!empty($data['remove_avatar']) || request()->boolean('remove_avatar') || (array_key_exists('avatar', $data) && ($data['avatar'] === '' || $data['avatar'] === null))) {
-                    if ($kh->user->avatar && file_exists(public_path($kh->user->avatar))) {
-                        @unlink(public_path($kh->user->avatar));
-                    }
+                    ImageUploadService::delete($kh->user->avatar);
                     $kh->user->avatar = null;
                 }
                 $kh->user->save();
+
+                if ($newStatus === 0) {
+                    $kh->user->tokens()->delete();
+                    CachedSanctumPersonalAccessToken::invalidateUserTokens($kh->user->id);
+                }
             }
 
             // Update KhachHang properties
@@ -127,21 +136,23 @@ class KhachHangService
         }
     }
 
-    public function resetPassword($id)
+    public function resetPassword($id): string
     {
         DB::beginTransaction();
         try {
             $kh = KhachHang::findOrFail($id);
+            $tempPassword = Str::random(10) . '!9';
             if ($kh->user) {
-                $kh->user->password = Hash::make('Jpm@2026');
-                // Revoke tokens so they are forced to re-login with the new password
+                $kh->user->password = Hash::make($tempPassword);
+                // Revoke tokens + invalidate Redis cache so they are forced to re-login immediately
                 $kh->user->tokens()->delete();
+                CachedSanctumPersonalAccessToken::invalidateUserTokens($kh->user->id);
                 $kh->user->save();
             } else {
                 throw new Exception("Không tìm thấy tài khoản người dùng.");
             }
             DB::commit();
-            return true;
+            return $tempPassword;
         } catch (Exception $e) {
             DB::rollBack();
             throw $e;
@@ -165,8 +176,11 @@ class KhachHangService
             $kh->delete();
             
             if ($user) {
+                $oldAvatar = $user->avatar;
                 $user->tokens()->delete();
+                CachedSanctumPersonalAccessToken::invalidateUserTokens($user->id);
                 $user->delete();
+                ImageUploadService::delete($oldAvatar);
             }
             
             DB::commit();

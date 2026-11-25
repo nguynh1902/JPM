@@ -4,76 +4,78 @@ namespace App\Domain\IAM\Services;
 
 use Illuminate\Support\Facades\Cache;
 use Laravel\Sanctum\PersonalAccessToken;
-use Laravel\Sanctum\Contracts\HasApiTokens;
 
 /**
  * CachedSanctumPersonalAccessToken
  *
- * Thay thế việc lookup token Sanctum từ MySQL sang Redis Cache.
- * Mỗi API request bình thường tốn 1 query MySQL để verify token.
- * Với model này, sau lần đầu tiên, token được cache trong Redis 30 phút.
- * Kết quả: giảm tải MySQL ~85% cho các request xác thực.
+ * Cache token Sanctum với cơ chế thu hồi tức thì theo từng user (user_token_revoked_at)
+ * và kiểm tra trạng thái tài khoản hoạt động (status === 1).
  */
 class CachedSanctumPersonalAccessToken extends PersonalAccessToken
 {
     protected $table = 'personal_access_tokens';
 
-    /**
-     * TTL của token cache trong Redis (giây).
-     * 30 phút = đủ ngắn để invalidate kịp thời khi logout,
-     *           đủ dài để giảm đáng kể số query MySQL.
-     */
     const CACHE_TTL_SECONDS = 1800;
 
-    /**
-     * Override phương thức findToken của Sanctum.
-     * Sanctum gọi phương thức này trên mọi API request có Bearer Token.
-     *
-     * @param string $token - plain text token từ Authorization header
-     * @return static|null
-     */
     public static function findToken($token)
     {
-        // Tách ID và hash từ token Sanctum (định dạng: {id}|{token_hash})
         if (strpos($token, '|') === false) {
-            // Token không đúng định dạng Sanctum, fallback về original
             return parent::findToken($token);
         }
 
         [$id, $tokenHash] = explode('|', $token, 2);
         $cacheKey = 'sanctum_token:' . $id . ':' . hash('sha256', $tokenHash);
 
-        // Thử lấy từ Cache (Redis/File tùy môi trường cấu hình)
+        $accessToken = null;
+        $fromCache = false;
+
         try {
             $cachedToken = Cache::get($cacheKey);
             if ($cachedToken !== null) {
-                // Cache hit - không cần query MySQL
-                return $cachedToken;
+                $accessToken = $cachedToken;
+                $fromCache = true;
             }
         } catch (\Throwable $e) {
-            // Graceful fallback nếu cache tạm thời không khả dụng
+            // Graceful fallback
         }
 
-        // Cache miss - query MySQL
-        $accessToken = parent::findToken($token);
+        if (!$accessToken) {
+            $accessToken = parent::findToken($token);
+            if (!$accessToken) {
+                return null;
+            }
+        }
 
-        if ($accessToken) {
+        // Kiểm tra thu hồi tức thì theo user (khi reset mật khẩu / khóa / xóa tài khoản)
+        try {
+            $revokedAt = Cache::get('user_token_revoked_at:' . $accessToken->tokenable_id);
+            $tokenCreatedTs = $accessToken->created_at ? $accessToken->created_at->timestamp : 0;
+            if ($revokedAt !== null && $tokenCreatedTs <= (int) $revokedAt) {
+                Cache::forget($cacheKey);
+                return null;
+            }
+        } catch (\Throwable $e) {
+            // Ignore cache read error
+        }
+
+        // Từ chối ngay nếu tài khoản đã bị khóa (status = 0)
+        $tokenable = $accessToken->tokenable;
+        if ($tokenable && isset($tokenable->status) && (int) $tokenable->status === 0) {
+            Cache::forget($cacheKey);
+            return null;
+        }
+
+        if (!$fromCache) {
             try {
                 Cache::put($cacheKey, $accessToken, self::CACHE_TTL_SECONDS);
             } catch (\Throwable $e) {
-                // Bỏ qua lỗi cache write để request không bị gián đoạn
+                // Ignore cache write error
             }
         }
 
         return $accessToken;
     }
 
-    /**
-     * Xóa token khỏi cache khi logout.
-     * Gọi phương thức này trong AuthController::logout()
-     *
-     * @param string $plainTextToken - plain text token cần invalidate
-     */
     public static function invalidateCache(string $plainTextToken): void
     {
         if (strpos($plainTextToken, '|') === false) {
@@ -85,6 +87,18 @@ class CachedSanctumPersonalAccessToken extends PersonalAccessToken
 
         try {
             Cache::forget($cacheKey);
+        } catch (\Throwable $e) {
+            // Silently ignore
+        }
+    }
+
+    /**
+     * Thu hồi tức thì toàn bộ token đang cache của 1 user (khóa tài khoản, xóa user, reset password).
+     */
+    public static function invalidateUserTokens(int $userId): void
+    {
+        try {
+            Cache::put('user_token_revoked_at:' . $userId, time(), self::CACHE_TTL_SECONDS + 60);
         } catch (\Throwable $e) {
             // Silently ignore
         }

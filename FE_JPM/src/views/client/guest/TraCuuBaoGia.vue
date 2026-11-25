@@ -237,7 +237,7 @@
               <div v-else-if="quote.trang_thai === 2" class="text-center border-top pt-4">
                 <h5 class="text-success fw-bold"><i class="bi bi-check-circle me-2"></i>Cảm ơn Quý khách đã chốt đơn!</h5>
                 <p class="text-muted">Đơn hàng của Quý khách đang được JPM xử lý và tiến hành gom đơn nhập hàng từ Nhật Bản.</p>
-                <a href="https://zalo.me/0123456789" target="_blank" class="btn btn-primary mt-2">
+                <a :href="zaloBaseUrl" target="_blank" rel="noopener noreferrer" class="btn btn-danger mt-2">
                   <i class="bi bi-chat-text me-1"></i> Chat Zalo Hỗ Trợ Kỹ Thuật
                 </a>
               </div>
@@ -245,11 +245,11 @@
               <!-- Message khi hết hạn mà chưa bấm yêu cầu lại -->
               <div v-else-if="quote.trang_thai === 3 || quote.is_expired" class="text-center border-top pt-4">
                 <p class="text-muted mb-3">Quý khách cần cập nhật giá mới hoặc đàm phán số lượng lớn cho công trình/tàu cá?</p>
-                <div class="d-flex justify-content-center gap-2">
+                <div class="d-flex justify-content-center gap-2 flex-wrap">
                   <button class="btn btn-danger px-4 py-2 fw-semibold" @click="handleAction('re_quote')" :disabled="isSubmitting">
                     <i class="bi bi-arrow-repeat me-1"></i> Yêu Cầu Báo Giá Lại
                   </button>
-                  <a href="https://zalo.me/0123456789" target="_blank" class="btn btn-outline-primary px-4 py-2">
+                  <a :href="zaloBaseUrl" target="_blank" rel="noopener noreferrer" class="btn btn-outline-secondary px-4 py-2">
                     <i class="bi bi-chat-text me-1"></i> Liên Hệ Kỹ Thuật
                   </a>
                 </div>
@@ -266,9 +266,14 @@
 <script>
 import axiosClient from '../../../api/axiosClient'
 import Swal from 'sweetalert2'
+import { useSiteSettings } from '../../../composables/useSiteSettings'
 
 export default {
   name: 'TraCuuBaoGia',
+  setup() {
+    const { settings } = useSiteSettings();
+    return { settings };
+  },
   data() {
     return {
       token: this.$route.params.token,
@@ -282,6 +287,12 @@ export default {
     }
   },
   computed: {
+    zaloBaseUrl() {
+      const configured = (this.settings?.social_zalo || '').trim();
+      if (configured) return configured;
+      const digits = String(this.settings?.company_hotline || '').replace(/[^0-9]/g, '');
+      return digits ? `https://zalo.me/${digits}` : '/ho-tro';
+    },
     formattedRemainingTime() {
       if (this.remainingSeconds <= 0) return '00:00:00';
       const hours = Math.floor(this.remainingSeconds / 3600);
@@ -327,10 +338,10 @@ export default {
     },
     openZaloReceipt() {
       if (!this.quote) return;
-      const phone = '0123456789';
       const depositText = this.formatCurrency(this.quote.tien_coc_yeu_cau);
       const msg = `Chào JPM Marine, tôi vừa chuyển cọc ${depositText} cho yêu cầu báo giá [${this.quote.ma_yeu_cau}]. Nhờ Kỹ thuật viên kiểm tra thông báo ngân hàng và lên đơn đặt hàng Nhật giúp tôi nhé!`;
-      window.open(`https://zalo.me/${phone}?text=${encodeURIComponent(msg)}`, '_blank');
+      const sep = this.zaloBaseUrl.includes('?') ? '&' : '?';
+      window.open(`${this.zaloBaseUrl}${sep}text=${encodeURIComponent(msg)}`, '_blank', 'noopener,noreferrer');
     },
     startCountdown() {
       this.stopCountdown();

@@ -22,12 +22,12 @@
           </li>
 
           <!-- CỬA HÀNG -->
-          <li class="dropdown">
+          <li class="dropdown" :class="{ 'mobile-dd-open': openMobileDropdown === 'store' }">
             <router-link to="/san-pham" :class="{ active: $route.path.startsWith('/san-pham') }">
               <span>Cửa hàng</span>
-              <i class="bi bi-chevron-down nav-chevron toggle-dropdown"></i>
+              <i class="bi bi-chevron-down nav-chevron toggle-dropdown" @click.prevent.stop="toggleMobileDropdown('store')"></i>
             </router-link>
-            <ul class="store-dropdown">
+            <ul class="store-dropdown" :class="{ 'dropdown-active': openMobileDropdown === 'store' }">
               <li v-for="cat in navCategories" :key="cat.id">
                 <router-link :to="'/san-pham?danh_muc=' + cat.slug" :class="{ active: $route.query.danh_muc === cat.slug }">
                   {{ cat.ten_danh_muc }}
@@ -43,12 +43,12 @@
           </li>
 
           <!-- THƯƠNG HIỆU -->
-          <li class="dropdown">
-            <a href="#" @click.prevent :class="{ active: $route.path.includes('/thuong-hieu') }">
+          <li class="dropdown" :class="{ 'mobile-dd-open': openMobileDropdown === 'brand' }">
+            <a href="#" @click.prevent="toggleMobileDropdown('brand')" :class="{ active: $route.path.includes('/thuong-hieu') }">
               <span>Thương hiệu</span>
               <i class="bi bi-chevron-down nav-chevron toggle-dropdown"></i>
             </a>
-            <ul class="store-dropdown">
+            <ul class="store-dropdown" :class="{ 'dropdown-active': openMobileDropdown === 'brand' }">
               <li v-for="brand in navBrands" :key="brand.id">
                 <router-link :to="'/thuong-hieu/' + brand.code.toLowerCase()" :class="{ active: $route.path === '/thuong-hieu/' + brand.code.toLowerCase() }">
                   {{ brand.name }}
@@ -78,7 +78,13 @@
             <router-link to="/ho-tro" :class="{ active: $route.path.startsWith('/ho-tro') }">Hỗ trợ</router-link>
           </li>
         </ul>
-        <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
+        <i
+          class="mobile-nav-toggle d-xl-none bi"
+          :class="mobileNavOpen ? 'bi-x' : 'bi-list'"
+          @click="toggleMobileNav"
+          role="button"
+          aria-label="Mở menu điều hướng"
+        ></i>
       </nav>
 
       <!-- Vùng 3 (Phải): Cụm tiện ích Giỏ hàng / Tài khoản -->
@@ -101,8 +107,8 @@
             <i class="bi bi-person fs-5" style="line-height: 1"></i>
           </router-link>
         </template>
-        <div v-else class="header-dropdown ms-1">
-          <a href="#" @click.prevent class="header-avatar-btn" title="Tài khoản">
+        <div v-else class="header-dropdown ms-1" :class="{ 'is-open': userMenuOpen }" ref="userDropdownRef">
+          <a href="#" @click.prevent.stop="userMenuOpen = !userMenuOpen" class="header-avatar-btn" title="Tài khoản">
             <div class="user-avatar" :class="{ 'user-avatar-fallback': !userAvatar }">
               <img v-if="userAvatar" :src="userAvatar" alt="Avatar" class="w-100 h-100 rounded-circle object-fit-cover">
               <i v-else class="bi bi-person-fill fs-6"></i>
@@ -110,15 +116,19 @@
           </a>
 
           <div class="header-popover user-popover">
-            <router-link to="/tai-khoan" class="um-item">
+            <router-link v-if="authStore.isStaffOrAdmin" to="/portal/dashboard" class="um-item" @click="userMenuOpen = false">
+              <i class="bi bi-speedometer2"></i>
+              <span>Cổng Quản Trị</span>
+            </router-link>
+            <router-link to="/tai-khoan" class="um-item" @click="userMenuOpen = false">
               <i class="bi bi-person-circle"></i>
               <span>Quản lý tài khoản</span>
             </router-link>
-            <router-link to="/garage" class="um-item">
+            <router-link to="/garage" class="um-item" @click="userMenuOpen = false">
               <i class="bi bi-tools"></i>
               <span>Garage</span>
             </router-link>
-            <router-link to="/lich-su-don-hang" class="um-item">
+            <router-link to="/lich-su-don-hang" class="um-item" @click="userMenuOpen = false">
               <i class="bi bi-receipt"></i>
               <span>Đơn hàng & Báo giá</span>
             </router-link>
@@ -138,6 +148,7 @@
 import { useAuthStore } from '../../stores/authStore'
 import axiosClient from '../../api/axiosClient'
 import { useCartStore } from '../../stores/cartStore'
+import { getImageUrl } from '../../utils/imageUrl'
 
 export default {
   name: "NavbarClient",
@@ -157,7 +168,7 @@ export default {
     },
     userAvatar() {
       if (this.authStore.user?.avatar) {
-        return this.authStore.user.avatar;
+        return getImageUrl(this.authStore.user.avatar);
       }
       if (this.authStore.user?.name) {
         return `https://ui-avatars.com/api/?name=${encodeURIComponent(this.authStore.user.name)}&background=f82249&color=fff&size=120`;
@@ -171,9 +182,19 @@ export default {
       hasMoreCategories: false,
       navBrands: [],
       hasMoreBrands: false,
+      mobileNavOpen: false,
+      openMobileDropdown: null,
+      userMenuOpen: false,
     };
   },
+  watch: {
+    '$route.fullPath'() {
+      this.closeMobileNav();
+      this.userMenuOpen = false;
+    }
+  },
   async mounted() {
+    document.addEventListener('click', this.handleOutsideClick);
     try {
       // Tải song song Danh mục & Thương hiệu với Promise.all (loại bỏ waterfall và ?_t= để tối đa hóa HTTP & Redis cache)
       const [resCats, resBrands] = await Promise.all([
@@ -192,8 +213,34 @@ export default {
       console.warn('Không tải được danh mục navbar:', e);
     }
   },
+  beforeUnmount() {
+    document.removeEventListener('click', this.handleOutsideClick);
+    document.body.classList.remove('mobile-nav-active');
+  },
   methods: {
+    toggleMobileNav() {
+      this.mobileNavOpen = !this.mobileNavOpen;
+      document.body.classList.toggle('mobile-nav-active', this.mobileNavOpen);
+      if (!this.mobileNavOpen) {
+        this.openMobileDropdown = null;
+      }
+    },
+    closeMobileNav() {
+      this.mobileNavOpen = false;
+      this.openMobileDropdown = null;
+      document.body.classList.remove('mobile-nav-active');
+    },
+    toggleMobileDropdown(key) {
+      this.openMobileDropdown = this.openMobileDropdown === key ? null : key;
+    },
+    handleOutsideClick(e) {
+      const el = this.$refs.userDropdownRef;
+      if (this.userMenuOpen && el && !el.contains(e.target)) {
+        this.userMenuOpen = false;
+      }
+    },
     async logout() {
+      this.userMenuOpen = false;
       await this.authStore.logout();
       this.$router.push('/dang-nhap');
     },
@@ -314,7 +361,8 @@ export default {
   background: transparent;
 }
 
-.header-dropdown:hover > .header-popover {
+.header-dropdown:hover > .header-popover,
+.header-dropdown.is-open > .header-popover {
   opacity: 1;
   visibility: visible;
   pointer-events: auto;

@@ -8,13 +8,14 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Domain\PIM\Models\SoDoPhuTung;
 use App\Domain\PIM\Models\ChiTietSoDo;
+use App\Domain\Core\Services\ImageUploadService;
 
 class SoDoPhuTungController extends Controller
 {
     public function index(Request $request)
     {
         $all = $request->boolean('all', false);
-        $perPage = $all ? null : (int) $request->input('per_page', 50);
+        $perPage = $all ? null : min(max((int) $request->input('per_page', 50), 1), 100);
         $query = SoDoPhuTung::with(['model.thuongHieu', 'model.loaiDongCo', 'nhomPhuTung'])->orderBy('id', 'desc');
 
         if ($request->filled('search')) {
@@ -58,15 +59,19 @@ class SoDoPhuTungController extends Controller
                 'may_thuy_model_id' => 'required|integer',
                 'nhom_phu_tung_id' => 'required|integer',
                 'hinh_anh' => 'nullable|string',
-                'hinh_anh_file' => 'nullable|file|mimes:jpeg,png,jpg,gif,svg,webp,bmp,avif,heic,heif,tiff,tif,ico,jfif,eps,raw,cr2,nef,psd,ai|max:20480',
+                'hinh_anh_file' => 'nullable|image|mimes:jpeg,png,jpg,webp|extensions:jpg,jpeg,png,webp|max:5120',
                 'thu_tu' => 'nullable|integer',
                 'trang_thai' => 'nullable|integer',
                 'chiTiet' => 'nullable|array'
             ]);
 
             if ($request->hasFile('hinh_anh_file')) {
-                $path = $request->file('hinh_anh_file')->store('so_dos', 'public');
-                $data['hinh_anh'] = '/storage/' . $path;
+                $data['hinh_anh'] = ImageUploadService::storeUploadedFile(
+                    $request->file('hinh_anh_file'),
+                    'uploads/so_dos',
+                    'sodo',
+                    2000
+                );
             }
             $soDo = SoDoPhuTung::create($data);
 
@@ -117,20 +122,21 @@ class SoDoPhuTungController extends Controller
                 'may_thuy_model_id' => 'nullable|integer',
                 'nhom_phu_tung_id' => 'nullable|integer',
                 'hinh_anh' => 'nullable|string',
-                'hinh_anh_file' => 'nullable|file|mimes:jpeg,png,jpg,gif,svg,webp,bmp,avif,heic,heif,tiff,tif,ico,jfif,eps,raw,cr2,nef,psd,ai|max:20480',
+                'hinh_anh_file' => 'nullable|image|mimes:jpeg,png,jpg,webp|extensions:jpg,jpeg,png,webp|max:5120',
                 'thu_tu' => 'nullable|integer',
                 'trang_thai' => 'nullable|integer',
                 'chiTiet' => 'nullable|array'
             ]);
 
             if ($request->hasFile('hinh_anh_file')) {
-                // Delete old image if needed (optional, keeping it simple)
-                if ($soDo->hinh_anh && str_starts_with($soDo->hinh_anh, '/storage/')) {
-                    $oldPath = str_replace('/storage/', '', $soDo->hinh_anh);
-                    \Illuminate\Support\Facades\Storage::disk('public')->delete($oldPath);
-                }
-                $path = $request->file('hinh_anh_file')->store('so_dos', 'public');
-                $data['hinh_anh'] = '/storage/' . $path;
+                $oldImg = $soDo->hinh_anh;
+                $data['hinh_anh'] = ImageUploadService::storeUploadedFile(
+                    $request->file('hinh_anh_file'),
+                    'uploads/so_dos',
+                    'sodo',
+                    2000
+                );
+                ImageUploadService::delete($oldImg);
             }
             $soDo->update($data);
 
@@ -169,10 +175,12 @@ class SoDoPhuTungController extends Controller
         DB::beginTransaction();
         try {
             $soDo = SoDoPhuTung::findOrFail($id);
+            $oldImg = $soDo->hinh_anh;
             // Xóa các chi tiết sơ đồ trước
             ChiTietSoDo::where('so_do_phu_tung_id', $id)->delete();
             $soDo->delete();
             DB::commit();
+            ImageUploadService::delete($oldImg);
 
             return response()->json([
                 'success' => true,

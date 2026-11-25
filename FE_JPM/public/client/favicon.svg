@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <style>
+    .jpm-mark { fill: #FFFFFF; }
+    @media (prefers-color-scheme: light) {
+      .jpm-mark { fill: #0E1B4D; }
+    }
+  </style>
+  <!-- Hai cánh buồm JPM chuẩn tỷ lệ từ NavbarClient (viewBox 32x20 nhân 2) -->
+  <path class="jpm-mark" d="M29 4 L29 40 L4 40 Z" />
+  <path class="jpm-mark" d="M35 4 L60 40 L35 40 Z" />
+  <!-- Chữ JPM đồng bộ dưới cánh buồm -->
+  <text
+    class="jpm-mark"
+    x="34"
+    y="59"
+    text-anchor="middle"
+    font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif"
+    font-size="18.5"
+    font-weight="800"
+    letter-spacing="4"
+  >JPM</text>
+</svg>

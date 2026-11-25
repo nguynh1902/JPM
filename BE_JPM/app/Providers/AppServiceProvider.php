@@ -66,7 +66,8 @@ class AppServiceProvider extends ServiceProvider
         // Login Rate Limiter: 5 lần thử/phút theo IP + email
         // Chống Brute Force & Peak Login Spikes
         RateLimiter::for('login', function (Request $request) {
-            $key = 'login:' . $request->input('login_id', 'guest') . '|' . $request->ip();
+            $identifier = strtolower(trim((string) ($request->input('login_id') ?: $request->input('email') ?: 'guest')));
+            $key = 'login:' . $identifier . '|' . $request->ip();
             return Limit::perMinute(5)->by($key)->response(function (Request $req, array $headers) {
                 return response()->json([
                     'success' => false,

@@ -43,7 +43,7 @@ class NhomPhuTungController extends Controller
         $item->ma_nhom = 'NPT' . str_pad($item->id, 2, '0', STR_PAD_LEFT);
         $item->save();
 
-        \Illuminate\Support\Facades\Artisan::call('cache:clear');
+        app(\App\Domain\MarineCatalog\Services\CatalogCacheService::class)->clearAllCatalogCache();
 
         return response()->json([
             'success' => true,
@@ -70,7 +70,7 @@ class NhomPhuTungController extends Controller
         
         $item->update($validated);
         
-        \Illuminate\Support\Facades\Artisan::call('cache:clear');
+        app(\App\Domain\MarineCatalog\Services\CatalogCacheService::class)->clearAllCatalogCache();
 
         return response()->json([
             'success' => true,
@@ -90,7 +90,7 @@ class NhomPhuTungController extends Controller
             }
             
             $item->delete();
-            \Illuminate\Support\Facades\Artisan::call('cache:clear');
+            app(\App\Domain\MarineCatalog\Services\CatalogCacheService::class)->clearAllCatalogCache();
 
             return response()->json([
                 'success' => true,

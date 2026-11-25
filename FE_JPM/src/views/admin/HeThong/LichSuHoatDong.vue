@@ -261,11 +261,7 @@ onMounted(() => {
   fetchLogs();
 });
 
-const getImageUrl = (path) => {
-  if (!path) return '';
-  if (path.startsWith('blob:') || path.startsWith('http') || path.startsWith('data:')) return path;
-  return `http://localhost:8000${path.startsWith('/') ? '' : '/'}${path}`;
-};
+import { getImageUrl } from '../../../utils/imageUrl';
 
 const getActionBadgeClass = (action) => {
   switch (action) {

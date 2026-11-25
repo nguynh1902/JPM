@@ -26,7 +26,7 @@ class TinTucController extends Controller
      */
     public function moiNhat(Request $request)
     {
-        $limit = (int) $request->get('limit', 6);
+        $limit = min(max((int) $request->get('limit', 6), 1), 50);
         $excluded = $this->getExcludedCategories();
 
         $query = TinTuc::where('status', 'PUBLISHED');
@@ -49,7 +49,7 @@ class TinTucController extends Controller
      */
     public function danhSach(Request $request)
     {
-        $perPage  = (int) $request->get('per_page', 9);
+        $perPage  = min(max((int) $request->get('per_page', 9), 1), 50);
         $category = trim((string) $request->get('category', ''));
         $search   = trim((string) $request->get('search', ''));
         $excluded = $this->getExcludedCategories();
@@ -103,18 +103,12 @@ class TinTucController extends Controller
      */
     public function chiTiet($id)
     {
-        $hasSlug = Schema::hasColumn('tin_tucs', 'slug');
         $news = TinTuc::where('status', 'PUBLISHED')
-            ->where(function ($q) use ($id, $hasSlug) {
+            ->where(function ($q) use ($id) {
                 if (is_numeric($id)) {
-                    $q->where('id', $id);
-                    if ($hasSlug) {
-                        $q->orWhere('slug', $id);
-                    }
-                } elseif ($hasSlug) {
-                    $q->where('slug', $id);
+                    $q->where('id', (int) $id);
                 } else {
-                    $q->where('id', $id)->orWhere('title', $id);
+                    $q->where('title', $id);
                 }
             })->firstOrFail();
         

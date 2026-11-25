@@ -7,6 +7,7 @@ import bootstrapCss from '../assets/client/vendor/bootstrap/css/bootstrap.min.cs
 import bootstrapIconsCss from '../assets/client/vendor/bootstrap-icons/bootstrap-icons.css?url';
 import glightboxCss from '../assets/client/vendor/glightbox/css/glightbox.min.css?url';
 import swiperCss from '../assets/client/vendor/swiper/swiper-bundle.min.css?url';
+import aosCss from 'aos/dist/aos.css?url';
 import mainCssContent from '../assets/client/css/main.css?inline';
 
 const clientVendorCssFiles = [
@@ -14,6 +15,7 @@ const clientVendorCssFiles = [
   { href: bootstrapIconsCss, class: "client-icons-css" },
   { href: glightboxCss, class: "" },
   { href: swiperCss, class: "" },
+  { href: aosCss, class: "" },
 ];
 
 let currentMainCss = mainCssContent;

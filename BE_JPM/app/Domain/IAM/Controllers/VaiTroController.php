@@ -187,16 +187,26 @@ class VaiTroController extends Controller
         DB::beginTransaction();
         try {
             $role = Role::findOrFail($id);
-            
-            // Bảo vệ vai trò Admin: không cho đổi tên hoặc khóa trạng thái
-            if (strtolower($role->name) === 'admin') {
+            $isSystemRole = in_array(strtolower($role->name), ['admin', 'super admin'], true);
+            $actor = auth()->user();
+            $isSuperAdmin = $actor && ($actor->hasRole('admin') || $actor->hasRole('Super Admin'));
+
+            // Chỉ Super Admin mới được phép sửa quyền trên vai trò hệ thống (Admin / Super Admin)
+            if ($isSystemRole && !$isSuperAdmin) {
+                DB::rollBack();
+                return response()->json(['success' => false, 'message' => 'Chỉ Quản trị viên tối cao mới được chỉnh sửa vai trò hệ thống.'], 403);
+            }
+
+            // Bảo vệ vai trò Admin / Super Admin: không cho đổi tên hoặc khóa trạng thái
+            if ($isSystemRole) {
                 if ($request->has('status') && (int)$request->status === 0) {
-                    return response()->json(['success' => false, 'message' => 'Không thể khóa vai trò Quản trị viên hệ thống (Admin)'], 400);
+                    DB::rollBack();
+                    return response()->json(['success' => false, 'message' => 'Không thể khóa vai trò Quản trị viên hệ thống'], 400);
                 }
             }
 
             $role->update([
-                'name' => (strtolower($role->name) === 'admin') ? 'admin' : $request->name,
+                'name' => $isSystemRole ? $role->name : $request->name,
                 'description' => $request->description,
                 'status' => $request->status ?? 1
             ]);
@@ -215,7 +225,7 @@ class VaiTroController extends Controller
                     'id' => $role->id,
                     'name' => $role->name,
                     'description' => $role->description,
-                    'is_system' => strtolower($role->name) === 'admin',
+                    'is_system' => $isSystemRole,
                     'user_count' => DB::table(config('permission.table_names.model_has_roles'))->where('role_id', $role->id)->count(),
                     'permissions' => $role->permissions->pluck('id')->toArray(),
                     'status' => $role->status ?? 1
@@ -223,7 +233,7 @@ class VaiTroController extends Controller
             ]);
         } catch (Exception $e) {
             DB::rollBack();
-            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+            return response()->json(['success' => false, 'message' => 'Lỗi cập nhật vai trò.'], 500);
         }
     }
 
@@ -231,8 +241,8 @@ class VaiTroController extends Controller
     {
         try {
             $role = Role::findOrFail($id);
-            if (strtolower($role->name) === 'admin') {
-                return response()->json(['success' => false, 'message' => 'Không thể xóa vai trò Quản trị viên hệ thống (Admin)'], 400);
+            if (in_array(strtolower($role->name), ['admin', 'super admin'], true)) {
+                return response()->json(['success' => false, 'message' => 'Không thể xóa vai trò Quản trị viên hệ thống'], 400);
             }
 
             if (DB::table(config('permission.table_names.model_has_roles'))->where('role_id', $role->id)->count() > 0) {

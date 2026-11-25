@@ -64,13 +64,22 @@ it('can reconcile payment webhook and notify customer via simulation', function 
         'gateway' => 'VietinBank Test',
     ];
 
-    $response = $this->postJson('/api/webhooks/payment/reconciliation', $payload);
+    $webhookToken = config('services.sepay.webhook_token');
+
+    // Unauthenticated webhook must be rejected
+    $this->postJson('/api/webhooks/payment/reconciliation', $payload)
+        ->assertStatus(401);
+
+    $response = $this->withHeaders([
+        'Authorization' => 'Apikey ' . $webhookToken,
+    ])->postJson('/api/webhooks/payment/reconciliation', $payload);
     $response->assertStatus(200)
              ->assertJson([
                  'success' => true,
                  'matched' => 'don_hang',
                  'order_code' => 'DH-TEST-RECON-002',
                  'paid_added' => 500000,
+                 'payment_status' => 1,
              ]);
 
     $this->assertDatabaseHas('don_hangs', [

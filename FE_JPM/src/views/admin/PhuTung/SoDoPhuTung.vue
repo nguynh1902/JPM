@@ -500,12 +500,6 @@ export default {
     return { authStore, queryClient, toaster, brands, isFetchingBrands, equipmentTypes, isFetchingTypes, engineModels, isFetchingModels, nhomPhuTungs, isFetchingNhom, phuTungs, isFetchingPhuTungs, diagrams, isFetchingDiagrams , deleteMutation, saveMutation };
   },
   methods: {
-    getImageUrl(path) {
-      if (!path) return '';
-      if (path.startsWith('blob:') || path.startsWith('http')) return path;
-      if (path.startsWith('/client/image/')) return path;
-      return `http://localhost:8000/storage/${path.replace(/^\/?storage\//, '')}`;
-    },
     async handleImageUpload(event) {
       const file = event.target.files[0];
       if (file) {

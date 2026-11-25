@@ -33,8 +33,8 @@
               v-model="filters.status"
               :options="[
                 {value: '', label: 'Tất cả trạng thái'},
-                {value: 'PUBLISHED', label: 'Hoạt động'},
-                {value: 'DRAFT', label: 'Tạm khóa'}
+                {value: 'PUBLISHED', label: 'Đã xuất bản'},
+                {value: 'DRAFT', label: 'Bản nháp'}
               ]"
               placeholder="Trạng thái"
               :can-clear="false"
@@ -44,7 +44,7 @@
           <button class="btn btn-secondary text-nowrap" @click="resetFilters">
             Đặt lại
           </button>
-          <button class="btn btn-primary text-nowrap" @click="openAddModal" data-bs-toggle="modal" data-bs-target="#modalNews">
+          <button v-if="authStore.hasPermission('Soạn thảo Tin tức & CMS')" class="btn btn-primary text-nowrap" @click="openAddModal" data-bs-toggle="modal" data-bs-target="#modalNews">
             <i class="bx bx-plus me-1"></i> Thêm Mới
           </button>
         </div>
@@ -98,12 +98,13 @@
               </td>
               <td class="text-center align-middle"><span class="fw-medium text-secondary">{{ item.views }}</span></td>
               <td class="text-center align-middle">
-                <span v-if="item.status === 'PUBLISHED'" class="badge badge-custom bg-pastel-success">HOẠT ĐỘNG</span>
-                <span v-else class="badge badge-custom bg-pastel-danger">TẠM KHÓA</span>
+                <span v-if="item.status === 'PUBLISHED'" class="badge badge-custom bg-pastel-success">ĐÃ XUẤT BẢN</span>
+                <span v-else class="badge badge-custom bg-pastel-warning">BẢN NHÁP</span>
               </td>
               <td class="text-center align-middle">
                 <div class="d-flex align-items-center justify-content-center">
-                  <button 
+                  <button
+                    v-if="authStore.hasPermission('Soạn thảo Tin tức & CMS')"
                     type="button" 
                     class="action-btn text-primary me-1" 
                     @click="openEditModal(item)"
@@ -113,7 +114,8 @@
                   >
                     <i class="bx bx-edit-alt"></i>
                   </button>
-                  <button 
+                  <button
+                    v-if="authStore.hasPermission('Xóa Tin tức & CMS')"
                     type="button" 
                     class="action-btn text-danger" 
                     @click="confirmDelete(item)"
@@ -196,7 +198,7 @@
                   <v-select
                     v-model="formData.status"
                     :options="[
-                      {value: 'DRAFT', label: 'Tạm khóa'},
+                      {value: 'DRAFT', label: 'Bản nháp'},
                       {value: 'PUBLISHED', label: 'Hoạt động'}
                     ]"
                     placeholder="Chọn trạng thái..."
@@ -286,12 +288,15 @@ import Swal from 'sweetalert2';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/vue-query';
 import { compressImage, compressImages, formatBytes } from '../../../utils/imageOptimizer';
 
+import { useAuthStore } from '../../../stores/authStore';
+
 export default {
   name: "TinTuc",
   components: {
     vSelect
   },
   setup() {
+    const authStore = useAuthStore();
     const queryClient = useQueryClient();
 
         const fetchCategories = async () => {
@@ -359,7 +364,7 @@ export default {
 
     const isPending = computed(() => isPendingarticles.value || isPendingrawCategories.value);
 
-    return { articles, isFetchingArticles, isFetchingCategories, isPending, rawCategories, queryClient, deleteMutation, saveMutation };
+    return { authStore, articles, isFetchingArticles, isFetchingCategories, isPending, rawCategories, queryClient, deleteMutation, saveMutation };
   },
       data() {
       return {
@@ -499,11 +504,6 @@ export default {
       this.thumbnailFile = null;
       this.galleryFiles = [];
       this.formData = this.getInitialFormData();
-    },
-    getImageUrl(path) {
-      if (!path) return '';
-      if (path.startsWith('blob:') || path.startsWith('http')) return path;
-      return `http://localhost:8000/${path.replace(/^\/?storage\//, 'storage/')}`;
     },
     async handleThumbnailUpload(event) {
       const file = event.target.files[0];

@@ -8,55 +8,59 @@ use App\Domain\MarineCatalog\Models\ThuongHieu;
 use App\Domain\PIM\Models\NhomPhuTung;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Redis;
 
 class CatalogCacheService
 {
-    /**
-     * Danh sách tiền tố cache keys của Catalog
-     */
-    protected const CACHE_PREFIXES = [
-        'public_thuong_hieu',
-        'public_loai_dong_co_',
-        'public_dong_co_model_',
-        'public_nam_san_xuat_',
-        'public_nhom_phu_tung_',
-        'public_sodo_',
-    ];
+    public const VERSION_KEY = 'catalog_cache_version';
 
     /**
-     * Xóa sạch toàn bộ cache của Catalog và PIM
+     * Lấy phiên bản cache hiện tại cho public response & catalog keys (O(1), không bao giờ dùng KEYS * hay Cache::flush)
+     */
+    public static function getVersion(): int
+    {
+        try {
+            $ver = Cache::get(self::VERSION_KEY);
+            if ($ver === null) {
+                Cache::forever(self::VERSION_KEY, 1);
+                return 1;
+            }
+            return (int) $ver;
+        } catch (\Throwable $e) {
+            return 1;
+        }
+    }
+
+    /**
+     * Tăng phiên bản cache để vô hiệu hóa toàn bộ Public API Cache tức thì mà không phá session/rate-limiter/Sanctum tokens
+     */
+    public static function bumpVersion(): int
+    {
+        try {
+            $next = self::getVersion() + 1;
+            Cache::forever(self::VERSION_KEY, $next);
+            return $next;
+        } catch (\Throwable $e) {
+            return 1;
+        }
+    }
+
+    /**
+     * Xóa sạch toàn bộ cache của Catalog và PIM một cách an toàn (Zero Cache::flush / Zero Redis KEYS *)
      */
     public function clearAllCatalogCache(): bool
     {
         try {
-            // 1. Thử xóa qua Redis nếu Redis driver đang hoạt động
-            if (config('cache.default') === 'redis' || config('cache.default') === 'failover') {
-                try {
-                    $redis = Redis::connection('cache');
-                    $prefix = config('cache.prefix', '');
-                    foreach (self::CACHE_PREFIXES as $p) {
-                        $keys = $redis->keys($prefix . $p . '*');
-                        if (!empty($keys)) {
-                            $redis->del($keys);
-                        }
-                    }
-                } catch (\Exception $e) {
-                    // Fallback an toàn nếu Redis không chạy
-                }
-            }
+            $newVersion = self::bumpVersion();
 
-            // 2. Xóa các key cố định trực tiếp qua Cache facade
+            // Xóa trực tiếp các fixed catalog keys
             Cache::forget('public_thuong_hieu');
             Cache::forget('public_loai_dong_co_all');
             Cache::forget('public_dong_co_model_all_all_all');
             Cache::forget('public_nam_san_xuat_all_all');
             Cache::forget('public_nhom_phu_tung_all_all_all_all');
+            Cache::forget('public_site_settings');
 
-            // 3. Xóa application cache
-            Cache::flush();
-
-            Log::info("[CATALOG CACHE] Successfully cleared all catalog cache.");
+            Log::info("[CATALOG CACHE] Bumped catalog cache version to v{$newVersion} (safe invalidation).");
             return true;
         } catch (\Exception $e) {
             Log::error("[CATALOG CACHE] Error clearing cache: " . $e->getMessage());
@@ -73,25 +77,21 @@ class CatalogCacheService
 
         $stats = [];
 
-        // 1. Cache Thương hiệu
         $brands = Cache::remember('public_thuong_hieu', 86400, function () {
             return ThuongHieu::where('status', 1)->orderBy('created_at', 'asc')->get();
         });
         $stats['thuong_hieu'] = $brands->count();
 
-        // 2. Cache Loại động cơ
         $types = Cache::remember('public_loai_dong_co_all', 86400, function () {
             return LoaiDongCo::where('trang_thai', 1)->get();
         });
         $stats['loai_dong_co'] = $types->count();
 
-        // 3. Cache Model động cơ
         $models = Cache::remember('public_dong_co_model_all_all_all', 86400, function () {
             return DongCoModel::where('trang_thai', 1)->get();
         });
         $stats['dong_co_model'] = $models->count();
 
-        // 4. Cache Nhóm phụ tùng
         $groups = Cache::remember('public_nhom_phu_tung_all_all_all_all', 86400, function () {
             return NhomPhuTung::where('trang_thai', 1)->get();
         });

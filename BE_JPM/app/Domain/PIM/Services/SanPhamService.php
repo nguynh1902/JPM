@@ -3,6 +3,7 @@
 namespace App\Domain\PIM\Services;
 
 use App\Domain\CMS\Models\SanPham;
+use App\Domain\Core\Services\ImageUploadService;
 use Exception;
 
 class SanPhamService
@@ -63,7 +64,17 @@ class SanPhamService
     {
         try {
             $sanPham = $this->getById($id);
-            return $sanPham->delete();
+            $oldMain = $sanPham->hinh_anh_chinh;
+            $oldGallery = is_array($sanPham->thu_vien_anh) ? $sanPham->thu_vien_anh : (json_decode((string) $sanPham->thu_vien_anh, true) ?? []);
+            $deleted = $sanPham->delete();
+
+            if ($deleted) {
+                ImageUploadService::delete($oldMain);
+                foreach ($oldGallery as $path) {
+                    ImageUploadService::delete((string) $path);
+                }
+            }
+            return $deleted;
         } catch (Exception $e) {
             throw new Exception("Lỗi khi xóa sản phẩm: " . $e->getMessage());
         }

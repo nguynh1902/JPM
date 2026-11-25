@@ -120,8 +120,9 @@ class DonHangController extends Controller
             $s = trim($request->input('search'));
             $query->where(function ($q) use ($s) {
                 $q->where('ma_don_hang', 'like', "%{$s}%")
-                  ->orWhere('ten_nguoi_nhan', 'like', "%{$s}%")
-                  ->orWhere('so_dien_thoai_nhan', 'like', "%{$s}%")
+                  ->orWhere('khach_hang_ten', 'like', "%{$s}%")
+                  ->orWhere('khach_hang_sdt', 'like', "%{$s}%")
+                  ->orWhere('khach_hang_email', 'like', "%{$s}%")
                   ->orWhereHas('khachHang.user', function ($sub) use ($s) {
                       $sub->where('name', 'like', "%{$s}%")
                           ->orWhere('phone', 'like', "%{$s}%");
@@ -139,12 +140,12 @@ class DonHangController extends Controller
 
         $hasPagination = $request->has('per_page') || $request->has('page');
         $all = $request->boolean('all', false) || !$hasPagination;
-        $perPage = $all ? null : (int) $request->input('per_page', 50);
+        $perPage = $all ? null : min(max((int) $request->input('per_page', 50), 1), 100);
 
         if ($all || !$perPage) {
             return response()->json([
-                'success' => true, 
-                'data' => $query->get()
+                'success' => true,
+                'data' => $query->limit(500)->get()
             ]);
         }
 
@@ -174,6 +175,75 @@ class DonHangController extends Controller
                 'success' => false,
                 'message' => 'Không tìm thấy đơn hàng: ' . $e->getMessage()
             ], 404);
+        }
+    }
+
+    public function update(Request $request, $id)
+    {
+        DB::beginTransaction();
+        try {
+            $donHang = DonHang::lockForUpdate()->findOrFail($id);
+
+            $newStatus = $request->has('status')
+                ? (int) $request->input('status')
+                : ($request->has('trang_thai') ? (int) $request->input('trang_thai') : (int) $donHang->trang_thai);
+
+            // Khi chuyển sang trạng thái Đã Hủy (4) lần đầu -> tự động hoàn kho / giảm giữ chỗ
+            if ($newStatus === 4 && (int) $donHang->trang_thai !== 4) {
+                $orderService = new OrderService();
+                $orderService->cancelOrderInventory($donHang, auth()->id() ?? 1);
+            }
+
+            $donHang->trang_thai = $newStatus;
+
+            if ($request->has('payment_status') || $request->has('trang_thai_thanh_toan')) {
+                $donHang->trang_thai_thanh_toan = (int) $request->input('payment_status', $request->input('trang_thai_thanh_toan'));
+            }
+            if ($request->has('total_amount') || $request->has('tong_tien')) {
+                $donHang->tong_tien = max(0, (float) $request->input('total_amount', $request->input('tong_tien')));
+            }
+            if ($request->has('shipping_fee') || $request->has('phi_van_chuyen')) {
+                $donHang->phi_van_chuyen = max(0, (float) $request->input('shipping_fee', $request->input('phi_van_chuyen')));
+            }
+            if ($request->has('order_type') || $request->has('loai_don')) {
+                $orderType = (string) $request->input('order_type', $request->input('loai_don'));
+                if (in_array($orderType, ['b2b', 'b2c'], true)) {
+                    $donHang->loai_don = $orderType;
+                }
+            }
+            if ($request->has('deposit_required') || $request->has('tien_coc_yeu_cau')) {
+                $donHang->tien_coc_yeu_cau = max(0, (float) $request->input('deposit_required', $request->input('tien_coc_yeu_cau')));
+            }
+            if ($request->has('paid_amount') || $request->has('da_thu')) {
+                $donHang->da_thu = max(0, (float) $request->input('paid_amount', $request->input('da_thu')));
+            }
+            if ($request->has('freight_collect') || $request->has('khach_tu_tra_cuoc')) {
+                $donHang->khach_tu_tra_cuoc = (int) (bool) $request->input('freight_collect', $request->input('khach_tu_tra_cuoc'));
+            }
+            if ($request->filled('dia_chi_text') || $request->filled('address')) {
+                $donHang->dia_chi_text = $request->input('dia_chi_text', $request->input('address'));
+            }
+            if ($request->has('anh_chuyen_khoan') || $request->has('receipt_image')) {
+                $donHang->anh_chuyen_khoan = $request->input('anh_chuyen_khoan', $request->input('receipt_image'));
+            }
+            if ($request->has('anh_chuyen_khoan_2') || $request->has('receipt_image_2')) {
+                $donHang->anh_chuyen_khoan_2 = $request->input('anh_chuyen_khoan_2', $request->input('receipt_image_2'));
+            }
+
+            $donHang->save();
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Cập nhật đơn hàng thành công',
+                'data' => $donHang->fresh(['khachHang.user', 'diaChi', 'chiTiet.phuTung', 'chiTiet.sanPham'])
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => 'Lỗi cập nhật đơn hàng: ' . $e->getMessage()
+            ], 500);
         }
     }
 
@@ -220,7 +290,8 @@ class DonHangController extends Controller
             $query->whereIn('trang_thai', [0, 1]);
         }
 
-        $orders = $query->orderBy('created_at', 'desc')->get();
+        $totalOrders = (clone $query)->count();
+        $ordersCursor = $query->orderBy('created_at', 'desc')->lazy(200);
 
         $filename = 'JPM_PO_JAPAN_' . date('Ymd_His') . '.csv';
 
@@ -232,14 +303,22 @@ class DonHangController extends Controller
             'Expires' => '0',
         ];
 
-        $callback = function () use ($orders) {
+        $sanitizeCsv = static function ($value): string {
+            $str = (string) ($value ?? '');
+            if ($str !== '' && preg_match('/^[=+\-@\t\r]/', $str)) {
+                return "'" . $str;
+            }
+            return $str;
+        };
+
+        $callback = function () use ($ordersCursor, $totalOrders, $sanitizeCsv) {
             $output = fopen('php://output', 'w');
 
             // Ghi UTF-8 BOM để Excel hiển thị đúng dấu tiếng Việt / tiếng Nhật
             fprintf($output, chr(0xEF) . chr(0xBB) . chr(0xBF));
 
             fputcsv($output, ['JPM MARINE - PURCHASE ORDER (PO) TO JAPAN SUPPLIER']);
-            fputcsv($output, ['Export Date', date('Y-m-d H:i:s'), 'Total Orders', $orders->count()]);
+            fputcsv($output, ['Export Date', date('Y-m-d H:i:s'), 'Total Orders', $totalOrders]);
             fputcsv($output, []);
 
             fputcsv($output, [
@@ -255,7 +334,7 @@ class DonHangController extends Controller
             ]);
 
             $stt = 1;
-            foreach ($orders as $order) {
+            foreach ($ordersCursor as $order) {
                 foreach ($order->chiTiet as $item) {
                     $partNo = $item->ma_phu_tung ?? ($item->phuTung->ma_phu_tung ?? $item->sanPham->ma_san_pham ?? 'N/A');
                     $partName = $item->ten_phu_tung ?? ($item->phuTung->ten_phu_tung ?? $item->sanPham->ten_san_pham ?? 'Không rõ');
@@ -263,13 +342,13 @@ class DonHangController extends Controller
 
                     fputcsv($output, [
                         $stt++,
-                        $order->ma_don_hang,
-                        $partNo,
-                        $partName,
-                        $item->so_luong,
-                        $brand,
-                        $order->ghi_chu_khach_hang ?? 'Theo tiêu chuẩn nhà sản xuất',
-                        $order->khach_hang_ten,
+                        $sanitizeCsv($order->ma_don_hang),
+                        $sanitizeCsv($partNo),
+                        $sanitizeCsv($partName),
+                        (int) $item->so_luong,
+                        $sanitizeCsv($brand),
+                        $sanitizeCsv($order->ghi_chu_khach_hang ?? 'Theo tiêu chuẩn nhà sản xuất'),
+                        $sanitizeCsv($order->khach_hang_ten),
                         $order->created_at ? $order->created_at->format('Y-m-d H:i') : ''
                     ]);
                 }

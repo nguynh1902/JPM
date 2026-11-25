@@ -67,7 +67,8 @@ const routes = [
   },
   {
     path: "/tra-cuu-don-hang",
-    redirect: "/ho-tro",
+    component: () => import("../views/client/guest/TraCuuDonHang.vue"),
+    meta: { layout: "client" },
   },
     { path: "/tra-cuu",
     component: () => import("../views/client/guest/KetQuaTraCuu.vue"),
@@ -100,6 +101,7 @@ const routes = [
   // CLIENT - CUSTOMER (Requires Auth)
   {
     path: "/_account",
+    redirect: "/tai-khoan",
     component: () => import("../views/client/customer/LayoutTaiKhoan.vue"),
     meta: { layout: "client", requiresAuth: true },
     children: [
@@ -406,6 +408,14 @@ const routes = [
   { path: "/staff/thong-bao", redirect: "/portal/dashboard" },
   { path: "/staff/ho-so", redirect: "/portal/ho-so" },
   { path: "/staff/doi-mat-khau", redirect: "/portal/doi-mat-khau" },
+
+  // 404 Catch-All
+  {
+    path: "/:pathMatch(.*)*",
+    name: "NotFound",
+    component: () => import("../views/client/guest/NotFound.vue"),
+    meta: { layout: "client" },
+  },
 ];
 
 import { useAuthStore } from "../stores/authStore";
@@ -439,8 +449,9 @@ router.beforeEach((to, from, next) => {
     return next();
   }
 
-  // Chặn đăng nhập nếu đã đăng nhập rồi: Nhân sự vào Portal Dashboard, Khách vào Trang chủ
-  if (to.path === "/dang-nhap" && authStore.isLoggedIn) {
+  // Chặn các trang Auth nếu đã đăng nhập rồi: Nhân sự vào Portal Dashboard, Khách vào Trang chủ
+  const authGuestPaths = ["/dang-nhap", "/dang-ky", "/quen-mat-khau", "/dat-lai-mat-khau"];
+  if (authGuestPaths.includes(to.path) && authStore.isLoggedIn) {
     if (authStore.isStaffOrAdmin) return next("/portal/dashboard");
     return next("/");
   }

@@ -7,6 +7,7 @@ use App\Domain\Core\Models\CauHinh;
 use App\Domain\Sales\Models\DonHang;
 use App\Domain\Sales\Models\GiaoDichThanhToan;
 use App\Domain\Sales\Models\YeuCauBaoGia;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -24,27 +25,34 @@ class VietQRService
      */
     public function getBankConfig(): array
     {
-        try {
-            $dbConfigs = CauHinh::whereIn('khoa_cau_hinh', [
-                'vietqr_bank_id',
-                'vietqr_bank_name',
-                'vietqr_account_no',
-                'vietqr_account_name',
-                'vietqr_template',
-                'vietqr_prefix',
-            ])->pluck('gia_tri', 'khoa_cau_hinh')->toArray();
-        } catch (\Throwable $e) {
-            $dbConfigs = [];
-        }
+        $dbConfigs = Cache::remember('vietqr_bank_config', 300, function () {
+            try {
+                return CauHinh::whereIn('khoa_cau_hinh', [
+                    'vietqr_bank_id',
+                    'vietqr_bank_name',
+                    'vietqr_account_no',
+                    'vietqr_account_name',
+                    'vietqr_template',
+                    'vietqr_prefix',
+                ])->pluck('gia_tri', 'khoa_cau_hinh')->toArray();
+            } catch (\Throwable $e) {
+                return [];
+            }
+        });
 
         return [
             'bank_id'      => !empty($dbConfigs['vietqr_bank_id']) ? $dbConfigs['vietqr_bank_id'] : config('services.vietqr.bank_id', 'ICB'),
             'bank_name'    => !empty($dbConfigs['vietqr_bank_name']) ? $dbConfigs['vietqr_bank_name'] : config('services.vietqr.bank_name', 'VietinBank'),
-            'account_no'   => !empty($dbConfigs['vietqr_account_no']) ? $dbConfigs['vietqr_account_no'] : config('services.vietqr.account_no', '108876543210'),
+            'account_no'   => !empty($dbConfigs['vietqr_account_no']) ? $dbConfigs['vietqr_account_no'] : config('services.vietqr.account_no', ''),
             'account_name' => !empty($dbConfigs['vietqr_account_name']) ? $dbConfigs['vietqr_account_name'] : config('services.vietqr.account_name', 'CONG TY PHU TUNG MAY THUY JPM'),
             'template'     => !empty($dbConfigs['vietqr_template']) ? $dbConfigs['vietqr_template'] : config('services.vietqr.template', 'compact2'),
             'prefix'       => !empty($dbConfigs['vietqr_prefix']) ? trim($dbConfigs['vietqr_prefix']) : 'COC',
         ];
+    }
+
+    public static function clearBankConfigCache(): void
+    {
+        Cache::forget('vietqr_bank_config');
     }
 
     /**
@@ -59,7 +67,8 @@ class VietQRService
         $accountName = $bankCfg['account_name'];
         $template = $bankCfg['template'];
 
-        $totalOrder = (float)($donHang->tong_tien + ($donHang->phi_van_chuyen ?? 0));
+        $shippingFee = $donHang->khach_tu_tra_cuoc ? 0 : (float)($donHang->phi_van_chuyen ?? 0);
+        $totalOrder = (float)($donHang->tong_tien + $shippingFee);
         $daThu = (float)($donHang->da_thu ?? 0);
         $tienCoc = (float)($donHang->tien_coc_yeu_cau ?? 0);
 
@@ -177,16 +186,6 @@ class VietQRService
             return ['success' => false, 'message' => 'Số tiền giao dịch không hợp lệ'];
         }
 
-        // Kiểm tra xem giao dịch ngân hàng này đã được ghi nhận trước đó chưa (Chống duplicate Webhook)
-        $existingTx = GiaoDichThanhToan::where('ma_giao_dich', $refNumber)->first();
-        if ($existingTx) {
-            return [
-                'success' => true,
-                'message' => 'Giao dịch đã được đối soát trước đó',
-                'transaction_id' => $existingTx->id,
-            ];
-        }
-
         // Bóc tách mã Đơn hàng (DH...) hoặc Mã Yêu cầu báo giá (YCBG...) từ nội dung chuyển khoản
         $matchedOrderCode = null;
         $matchedQuoteCode = null;
@@ -201,24 +200,37 @@ class VietQRService
             $matchedQuoteCode = strtoupper($m2[0]);
         }
 
-        return DB::transaction(function () use (
-            $amountIn, $content, $refNumber, $accountNo, $gateway, $transactionDate, $matchedOrderCode, $matchedQuoteCode, $payload
+        $notifyOrder = null;
+
+        $result = DB::transaction(function () use (
+            $amountIn, $content, $refNumber, $accountNo, $gateway, $transactionDate, $matchedOrderCode, $matchedQuoteCode, $payload, &$notifyOrder
         ) {
+            // Kiểm tra chống duplicate Webhook bên trong transaction với lockForUpdate
+            $existingTx = GiaoDichThanhToan::where('ma_giao_dich', $refNumber)->lockForUpdate()->first();
+            if ($existingTx) {
+                return [
+                    'success' => true,
+                    'message' => 'Giao dịch đã được đối soát trước đó',
+                    'transaction_id' => $existingTx->id,
+                ];
+            }
+
             // 1. Trường hợp khớp Đơn hàng (DonHang)
             if ($matchedOrderCode) {
-                $order = DonHang::where('ma_don_hang', $matchedOrderCode)->first();
+                $order = DonHang::where('ma_don_hang', $matchedOrderCode)->lockForUpdate()->first();
                 if ($order) {
                     $order->da_thu = (float)($order->da_thu ?? 0) + $amountIn;
-                    $totalRequired = (float)($order->tong_tien + ($order->phi_van_chuyen ?? 0));
+                    $shippingFee = $order->khach_tu_tra_cuoc ? 0 : (float)($order->phi_van_chuyen ?? 0);
+                    $totalRequired = (float)($order->tong_tien + $shippingFee);
                     $depositRequired = (float)($order->tien_coc_yeu_cau ?? 0);
 
-                    if ($order->da_thu >= $totalRequired) {
-                        $order->trang_thai_thanh_toan = 1; // Đã thanh toán đủ
+                    if ($totalRequired > 0 && $order->da_thu >= $totalRequired) {
+                        $order->trang_thai_thanh_toan = 2; // 2 = Đã thanh toán 100%
                         if ((int)$order->trang_thai === 0) {
                             $order->trang_thai = 1; // Đang xử lý
                         }
-                    } elseif (($depositRequired > 0 && $order->da_thu >= $depositRequired) || ($order->da_thu > 0 && $order->da_thu < $totalRequired)) {
-                        $order->trang_thai_thanh_toan = 2; // Đã đặt cọc
+                    } elseif (($depositRequired > 0 && $order->da_thu >= $depositRequired) || ($order->da_thu > 0 && ($totalRequired <= 0 || $order->da_thu < $totalRequired))) {
+                        $order->trang_thai_thanh_toan = 1; // 1 = Đã đặt cọc
                         if ((int)$order->trang_thai === 0) {
                             $order->trang_thai = 1; // Đang xử lý
                         }
@@ -240,8 +252,8 @@ class VietQRService
                         'ngay_giao_dich' => $transactionDate,
                     ]);
 
-                    // Tự động kích hoạt gửi SMS / Zalo ZNS xác nhận cho khách hàng
-                    $this->notificationService->sendDepositConfirmedToCustomer($order, $amountIn);
+                    // Đánh dấu để gửi thông báo SAU khi DB transaction commit
+                    $notifyOrder = $order;
 
                     return [
                         'success' => true,
@@ -258,9 +270,13 @@ class VietQRService
 
             // 2. Trường hợp khớp Yêu cầu báo giá (YeuCauBaoGia)
             if ($matchedQuoteCode) {
-                $quote = YeuCauBaoGia::where('ma_yeu_cau', $matchedQuoteCode)->first();
+                $quote = YeuCauBaoGia::where('ma_yeu_cau', $matchedQuoteCode)->lockForUpdate()->first();
                 if ($quote) {
-                    $quote->trang_thai = 2; // Đã chốt / Đã cọc
+                    $quote->da_thu = (float)($quote->da_thu ?? 0) + $amountIn;
+                    $depositReq = (float)($quote->tien_coc_yeu_cau ?? 0);
+                    if ($depositReq <= 0 || $quote->da_thu >= $depositReq) {
+                        $quote->trang_thai = 2; // Đã chốt / Đã cọc
+                    }
                     $quote->save();
 
                     $tx = GiaoDichThanhToan::create([
@@ -281,6 +297,8 @@ class VietQRService
                         'success' => true,
                         'matched' => 'yeu_cau_bao_gia',
                         'quote_code' => $quote->ma_yeu_cau,
+                        'paid_added' => $amountIn,
+                        'total_paid' => $quote->da_thu,
                         'quote_status' => $quote->trang_thai,
                         'transaction_id' => $tx->id,
                     ];
@@ -309,5 +327,16 @@ class VietQRService
                 'transaction_id' => $unmatchedTx->id,
             ];
         });
+
+        // Gửi SMS / Zalo ZNS xác nhận NGOÀI DB::transaction để không giữ DB lock
+        if ($notifyOrder) {
+            try {
+                $this->notificationService->sendDepositConfirmedToCustomer($notifyOrder, $amountIn);
+            } catch (\Throwable $e) {
+                Log::error("[VIETQR NOTIFY ERROR] Order {$notifyOrder->ma_don_hang}: " . $e->getMessage());
+            }
+        }
+
+        return $result;
     }
 }

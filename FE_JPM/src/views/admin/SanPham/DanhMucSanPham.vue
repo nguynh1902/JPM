@@ -5,7 +5,7 @@
     </h4>
 
     <div class="row">
-      <div class="col-md-4 mb-4">
+      <div class="col-md-4 mb-4" v-if="authStore.hasAnyPermission(['Thêm Sản phẩm', 'Sửa Sản phẩm'])">
         <div class="card">
           <div class="card-header border-bottom">
             <h5 class="mb-0 fw-medium text-dark">{{ isEditMode ? "Cập Nhật Danh Mục" : "Thêm Mới Danh Mục" }}</h5>
@@ -40,7 +40,7 @@
         </div>
       </div>
 
-      <div class="col-md-8 mb-4">
+      <div :class="authStore.hasAnyPermission(['Thêm Sản phẩm', 'Sửa Sản phẩm']) ? 'col-md-8' : 'col-12'" class="mb-4">
         <div class="card">
           <div class="card-header border-bottom d-flex justify-content-between align-items-center">
             <h5 class="mb-0 fw-medium text-dark">Danh Sách Danh Mục</h5>
@@ -81,8 +81,8 @@
                   </td>
                   <td class="text-center">
                     <div class="d-flex align-items-center justify-content-center">
-                      <button type="button" class="action-btn text-primary me-1" @click="openEditModal(item)" title="Sửa"><i class="bx bx-edit-alt"></i></button>
-                      <button type="button" class="action-btn text-danger" @click="confirmDelete(item)" title="Xóa"><i class="bx bx-trash"></i></button>
+                      <button v-if="authStore.hasPermission('Sửa Sản phẩm')" type="button" class="action-btn text-primary me-1" @click="openEditModal(item)" title="Sửa"><i class="bx bx-edit-alt"></i></button>
+                      <button v-if="authStore.hasPermission('Xóa Sản phẩm')" type="button" class="action-btn text-danger" @click="confirmDelete(item)" title="Xóa"><i class="bx bx-trash"></i></button>
                     </div>
                   </td>
                 </tr>
@@ -104,11 +104,13 @@ import vSelect from "@vueform/multiselect";
 import axiosClient from "../../../api/axiosClient";
 import Swal from "sweetalert2";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/vue-query";
+import { useAuthStore } from "../../../stores/authStore";
 
 export default {
   name: "DanhMucSanPham",
   components: { vSelect },
   setup() {
+    const authStore = useAuthStore();
     const queryClient = useQueryClient();
     const { data: categories, isFetching, isPending } = useQuery({
       queryKey: ["categories"],
@@ -141,7 +143,7 @@ export default {
       }
     });
 
-    return { categories, isFetching, isPending, queryClient, saveMutation, deleteMutation };
+    return { authStore, categories, isFetching, isPending, queryClient, saveMutation, deleteMutation };
   },
   data() {
     return {
