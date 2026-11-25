@@ -4569,6 +4569,46 @@ a.footer-contact-value:hover {
   box-shadow: none !important;
 }
 
+.btn-success {
+  background-color: #198754 !important;
+  border-color: #198754 !important;
+  color: #ffffff !important;
+  box-shadow: none !important;
+  transition: all 0.2s ease !important;
+}
+.btn-success:hover,
+.btn-success:focus {
+  background-color: #157347 !important;
+  border-color: #157347 !important;
+  color: #ffffff !important;
+  transform: translateY(-1px) !important;
+  box-shadow: none !important;
+}
+.btn-success:active {
+  transform: translateY(0) !important;
+  box-shadow: none !important;
+}
+
+.btn-outline-success {
+  background-color: #ffffff !important;
+  color: #198754 !important;
+  border-color: #198754 !important;
+  box-shadow: none !important;
+  transition: all 0.2s ease !important;
+}
+.btn-outline-success:hover,
+.btn-outline-success:focus {
+  background-color: #198754 !important;
+  border-color: #198754 !important;
+  color: #ffffff !important;
+  transform: translateY(-1px) !important;
+  box-shadow: none !important;
+}
+.btn-outline-success:active {
+  transform: translateY(0) !important;
+  box-shadow: none !important;
+}
+
 /* --- Global Form Control Consistency --- */
 .form-control,
 .form-select {

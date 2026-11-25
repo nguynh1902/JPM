@@ -20,7 +20,7 @@
                   <input type="tel" class="form-control form-control-lg border-0 bg-light px-4" 
                          v-model="form.phone" placeholder="Số điện thoại đã dùng để đặt hàng" required>
                 </div>
-                <button type="submit" class="btn btn-danger w-100 py-3 text-uppercase fw-semibold" style="letter-spacing: 0.5px; border-radius: var(--jpm-radius-control, 8px);" :disabled="isLoading">
+                <button type="submit" class="btn btn-danger w-100 py-3 text-uppercase fw-semibold" style="letter-spacing: 0.5px;" :disabled="isLoading">
                   <span v-if="isLoading" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
                   {{ isLoading ? 'Đang Tra Cứu...' : 'Tra Cứu Ngay' }}
                 </button>
@@ -220,7 +220,7 @@
                 </div>
                 <h5 class="fw-bold text-dark mb-2">Báo Giá & Tiền Cọc Đã Được Phê Duyệt</h5>
                 <p class="text-muted small mb-3">Admin đã kiểm tra phụ tùng, tính cước vận chuyển và xác định tiền cọc. Quý khách vui lòng kiểm tra bảng báo giá và xác nhận chốt đơn.</p>
-                <router-link v-if="result.data.token || result.data.token_xac_nhan" :to="'/bao-gia/' + (result.data.token || result.data.token_xac_nhan)" class="btn btn-danger px-4 py-2 fw-semibold" style="border-radius: var(--jpm-radius-control, 8px);">
+                <router-link v-if="result.data.token || result.data.token_xac_nhan" :to="'/bao-gia/' + (result.data.token || result.data.token_xac_nhan)" class="btn btn-danger px-4 py-2 fw-semibold">
                   <i class="bi bi-file-earmark-text me-1"></i> Xem Chi Tiết Báo Giá & Quét Mã Cọc
                 </router-link>
               </div>
@@ -255,7 +255,7 @@
               <!-- Zalo Support -->
               <div class="text-center mt-5">
                 <p class="text-muted small mb-2">Cần hỗ trợ thêm về giao dịch này?</p>
-                <a href="https://zalo.me/0123456789" target="_blank" class="btn btn-outline-primary px-4 py-2 fw-semibold" style="border-radius: var(--jpm-radius-control, 8px);">
+                <a href="https://zalo.me/0123456789" target="_blank" class="btn btn-outline-primary px-4 py-2 fw-semibold">
                   <i class="bi bi-chat-text me-1"></i> Liên hệ Zalo CSKH
                 </a>
               </div>

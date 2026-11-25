@@ -112,7 +112,7 @@
                 <hr class="flex-grow-1 m-0 auth-divider">
               </div>
 
-              <button type="button" class="btn w-100 text-white d-flex justify-content-center align-items-center gap-2 hover-bg-google" style="height: 44px; font-size: 0.9rem; font-weight: 500; border: 1px solid rgba(255,255,255,0.18); background: rgba(255,255,255,0.04); border-radius: 8px;">
+              <button type="button" class="btn w-100 text-white d-flex justify-content-center align-items-center gap-2 hover-bg-google" style="height: 44px; font-size: 0.9rem; font-weight: 600; border: 1px solid rgba(255,255,255,0.18); background: rgba(255,255,255,0.04); border-radius: 8px;">
                 <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="G" style="width: 18px;">
                 Google
               </button>
@@ -175,7 +175,7 @@
                 <hr class="flex-grow-1 m-0 auth-divider">
               </div>
 
-              <button type="button" class="btn w-100 text-white d-flex justify-content-center align-items-center gap-2 hover-bg-google" style="height: 44px; font-size: 0.9rem; font-weight: 500; border: 1px solid rgba(255,255,255,0.18); background: rgba(255,255,255,0.04); border-radius: 8px;">
+              <button type="button" class="btn w-100 text-white d-flex justify-content-center align-items-center gap-2 hover-bg-google" style="height: 44px; font-size: 0.9rem; font-weight: 600; border: 1px solid rgba(255,255,255,0.18); background: rgba(255,255,255,0.04); border-radius: 8px;">
                 <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="G" style="width: 18px;">
                 Google
               </button>

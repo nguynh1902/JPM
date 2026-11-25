@@ -29,7 +29,7 @@
       <i class="bi bi-exclamation-triangle text-danger display-1 mb-3"></i>
       <h2 class="fw-bold" style="color: var(--jpm-color-navy-dark, #0A1128);">Không tìm thấy bài viết</h2>
       <p class="text-secondary mb-4">Bài viết này không tồn tại hoặc đã bị xóa.</p>
-      <router-link to="/tin-tuc" class="btn btn-outline-dark px-4" style="border-radius: var(--jpm-radius-control, 8px); font-weight: 600;">
+      <router-link to="/tin-tuc" class="btn btn-outline-secondary px-4">
         <i class="bi bi-arrow-left me-2"></i> Quay lại danh sách
       </router-link>
     </div>
