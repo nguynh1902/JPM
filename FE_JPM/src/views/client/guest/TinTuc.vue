@@ -731,11 +731,16 @@ export default {
   transition: all 0.2s ease;
 }
 
+.btn-outline-action {
+  box-shadow: none !important;
+}
+
 .btn-outline-action:hover {
   border-color: var(--jpm-color-navy-dark, #0A1128);
   background-color: var(--jpm-color-navy-dark, #0A1128);
   color: #ffffff;
   transform: translateY(-1px);
+  box-shadow: none !important;
 }
 
 /* ── SECTION 2: TABS & CARDS (HỖ TRỢ NHIỀU DANH MỤC TRÀN NGANG) ── */
@@ -828,11 +833,16 @@ export default {
   font-family: var(--heading-font, 'Raleway', sans-serif);
   font-size: 0.92rem;
 }
+.btn-load-more-outline {
+  box-shadow: none !important;
+}
+
 .btn-load-more-outline:hover {
   background-color: #f1f5f9;
   color: #0F172A;
   border-color: #94a3b8;
   transform: translateY(-1px);
+  box-shadow: none !important;
 }
 
 .portrait-card-img {

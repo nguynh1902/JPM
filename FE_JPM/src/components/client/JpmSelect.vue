@@ -53,7 +53,9 @@
       <transition name="dropdown-fade">
         <div
           v-if="isOpen && !disabled"
-          class="custom-dropdown-panel position-absolute w-100"
+          ref="dropdownPanelRef"
+          class="custom-dropdown-panel position-absolute"
+          :class="{ 'align-right': alignRight }"
           role="listbox"
         >
           <!-- Ô tìm kiếm nếu searchable = true -->
@@ -112,8 +114,8 @@
               @click="!opt.disabled && handleSelect(opt)"
               @mouseenter="highlightedIndex = idx"
             >
-              <div class="option-text-wrap text-truncate me-2">
-                <span class="option-label text-truncate">{{ getOptionLabel(opt) }}</span>
+              <div class="option-text-wrap me-2">
+                <span class="option-label">{{ getOptionLabel(opt) }}</span>
                 <small v-if="opt.subtitle" class="option-subtitle d-block text-muted">{{ opt.subtitle }}</small>
               </div>
               <span v-if="opt.badge" class="badge bg-light text-dark jpm-badge-sm">{{ opt.badge }}</span>
@@ -191,8 +193,10 @@ const props = defineProps({
 const emit = defineEmits(['update:modelValue', 'change', 'clear']);
 
 const selectContainerRef = ref(null);
+const dropdownPanelRef = ref(null);
 const searchInputRef = ref(null);
 const isOpen = ref(false);
+const alignRight = ref(false);
 const searchQuery = ref('');
 const highlightedIndex = ref(-1);
 
@@ -244,22 +248,38 @@ const filteredOptions = computed(() => {
 });
 
 // ─── ACTIONS ─────────────────────────────────────────────────
+function updateDropdownAlignment() {
+  if (typeof window === 'undefined' || !dropdownPanelRef.value || !selectContainerRef.value) return;
+  const containerRect = selectContainerRef.value.getBoundingClientRect();
+  const panelWidth = dropdownPanelRef.value.offsetWidth;
+  const viewportWidth = window.innerWidth;
+  // Nếu menu bung sang phải bị tràn khỏi mép màn hình và bung sang trái đủ chỗ -> neo sang mép phải
+  if (containerRect.left + panelWidth > viewportWidth - 16 && containerRect.right - panelWidth >= 16) {
+    alignRight.value = true;
+  } else {
+    alignRight.value = false;
+  }
+}
+
 function toggleDropdown() {
   if (props.disabled || props.loading) return;
   isOpen.value = !isOpen.value;
   if (isOpen.value) {
+    alignRight.value = false;
     searchQuery.value = '';
     highlightedIndex.value = -1;
-    if (isSearchVisible.value) {
-      nextTick(() => {
+    nextTick(() => {
+      updateDropdownAlignment();
+      if (isSearchVisible.value) {
         searchInputRef.value?.focus();
-      });
-    }
+      }
+    });
   }
 }
 
 function closeDropdown() {
   isOpen.value = false;
+  alignRight.value = false;
   searchQuery.value = '';
   highlightedIndex.value = -1;
 }
@@ -427,18 +447,25 @@ watch(() => props.options, () => {
   color: var(--jpm-color-red-marine, #F82249);
 }
 
-/* Panel Menu Dropdown */
+/* Panel Menu Dropdown (Tự động giãn ngang theo tên dài nhất, không cắt dấu ...) */
 .custom-dropdown-panel {
   position: absolute;
   top: calc(100% + 4px);
   left: 0;
-  width: 100%;
+  min-width: 100%;
+  width: max-content;
+  max-width: min(640px, calc(100vw - 32px));
   background-color: var(--jpm-neutral-0, #FFFFFF);
   border: 1px solid var(--jpm-neutral-200, #E2E8F0);
   border-radius: var(--jpm-radius-control, 8px);
-  box-shadow: none !important;
+  box-shadow: 0 10px 28px -6px rgba(10, 17, 40, 0.12) !important;
   overflow: hidden;
   z-index: 1060;
+}
+
+.custom-dropdown-panel.align-right {
+  left: auto;
+  right: 0;
 }
 
 /* Đảm bảo danh sách options bên trong Panel luôn ở normal flow, độc lập hoàn toàn khỏi mọi style ngoài */
@@ -467,18 +494,38 @@ watch(() => props.options, () => {
 }
 
 .dropdown-item-option {
-  padding: 10px 14px;
+  padding: 10px 22px 10px 14px;
   font-size: 0.875rem;
   font-weight: 500;
   color: var(--jpm-neutral-900, #0F172A);
   cursor: pointer;
   transition: background-color 0.15s ease, color 0.15s ease;
   line-height: 1.35;
+  white-space: nowrap;
+}
+
+.dropdown-item-option .option-text-wrap {
+  min-width: 0;
+  white-space: nowrap;
 }
 
 .dropdown-item-option .option-label {
   font-weight: 500;
   color: var(--jpm-neutral-900, #0F172A);
+  white-space: nowrap;
+}
+
+@media (max-width: 575.98px) {
+  .custom-dropdown-panel {
+    width: 100%;
+    max-width: 100%;
+  }
+  .dropdown-item-option,
+  .dropdown-item-option .option-text-wrap,
+  .dropdown-item-option .option-label {
+    white-space: normal;
+    word-break: break-word;
+  }
 }
 
 .custom-dropdown-panel .dropdown-item-option:first-child {

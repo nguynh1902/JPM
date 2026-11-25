@@ -618,9 +618,15 @@ textarea.contact-field-input {
 }
 
 .btn-contact-submit:hover:not(:disabled) {
-  background-color: var(--jpm-color-red-hover, #D9163A);
+  background-color: var(--jpm-btn-red-hover, #FF3B5F) !important;
   box-shadow: none !important;
-  transform: translateY(-1px);
+  transform: translateY(-1px) !important;
+}
+
+.btn-contact-submit:active:not(:disabled) {
+  background-color: var(--jpm-btn-red-active, #D9163A) !important;
+  transform: translateY(0) !important;
+  box-shadow: none !important;
 }
 
 .btn-contact-submit:disabled {

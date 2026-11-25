@@ -1024,10 +1024,17 @@ const scrollToProducts = () => {
 }
 
 .btn-reset-filters:hover {
-  background-color: var(--jpm-color-red-hover, #D9163A) !important;
-  border-color: var(--jpm-color-red-hover, #D9163A) !important;
+  background-color: var(--jpm-btn-red-hover, #FF3B5F) !important;
+  border-color: var(--jpm-btn-red-hover, #FF3B5F) !important;
   box-shadow: none !important;
-  transform: translateY(-1px);
+  transform: translateY(-1px) !important;
+}
+
+.btn-reset-filters:active {
+  background-color: var(--jpm-btn-red-active, #D9163A) !important;
+  border-color: var(--jpm-btn-red-active, #D9163A) !important;
+  transform: translateY(0) !important;
+  box-shadow: none !important;
 }
 
 .btn-reset-filters:focus {
@@ -1055,7 +1062,7 @@ const scrollToProducts = () => {
   background-color: #f82249 !important;
   border-color: #f82249 !important;
   color: #ffffff !important;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+  box-shadow: none !important;
 }
 .page-item.disabled .jpm-pagination-btn,
 .jpm-pagination-btn:disabled {

@@ -1219,14 +1219,16 @@ onMounted(() => {
 }
 
 .btn-product-cart:hover {
-  background-color: var(--jpm-color-red-hover, #D9163A) !important;
-  border-color: var(--jpm-color-red-hover, #D9163A) !important;
+  background-color: var(--jpm-btn-red-hover, #FF3B5F) !important;
+  border-color: var(--jpm-btn-red-hover, #FF3B5F) !important;
   color: #ffffff !important;
   transform: translateY(-1px) !important;
   box-shadow: none !important;
 }
 
 .btn-product-cart:active {
+  background-color: var(--jpm-btn-red-active, #D9163A) !important;
+  border-color: var(--jpm-btn-red-active, #D9163A) !important;
   transform: translateY(0) !important;
   box-shadow: none !important;
 }

@@ -1553,7 +1553,8 @@ export default {
   align-items: center;
   justify-content: center;
   font-size: 1rem;
-  transition: all 0.2s ease;
+  transition: all 0.2s ease !important;
+  box-shadow: none !important;
   padding: 0;
 }
 
@@ -1561,7 +1562,13 @@ export default {
   background: #f82249;
   border-color: #f82249;
   color: #ffffff;
-  transform: scale(1.05);
+  transform: translateY(-1px) !important;
+  box-shadow: none !important;
+}
+
+.btn-cart-action:active {
+  transform: translateY(0) !important;
+  box-shadow: none !important;
 }
 
 @media (max-width: 575.98px) {

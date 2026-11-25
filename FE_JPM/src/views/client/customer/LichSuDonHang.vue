@@ -1528,10 +1528,18 @@ const formatDate = (dateStr) => {
 }
 
 .btn-add-cart {
-  transition: all 0.2s;
+  box-shadow: none !important;
+  transition: all 0.2s ease !important;
 }
 .btn-add-cart:hover {
-  background-color: var(--accent-color, #f82249);
-  color: #ffffff;
+  background-color: var(--accent-color, #f82249) !important;
+  border-color: var(--accent-color, #f82249) !important;
+  color: #ffffff !important;
+  transform: translateY(-1px) !important;
+  box-shadow: none !important;
+}
+.btn-add-cart:active {
+  transform: translateY(0) !important;
+  box-shadow: none !important;
 }
 </style>

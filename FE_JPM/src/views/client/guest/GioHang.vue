@@ -116,7 +116,7 @@
           <div class="col-lg-5 col-xl-4">
             <div class="card catalog-cart-card sticky-sidebar" data-aos="fade-up" data-aos-delay="150">
               <div class="card-header cart-sidebar-header bg-white px-4 py-3 border-bottom d-flex align-items-center" style="min-height: 60px;">
-                <h5 class="mb-0 jpm-card-title">Thông Tin Đặt Hàng & Báo Giá</h5>
+                <h5 class="mb-0 jpm-card-title">Thông tin đặt hàng & báo giá</h5>
               </div>
               
               <div class="card-body p-4">
@@ -141,7 +141,7 @@
                   
                   <!-- Thông báo quy trình vận chuyển & cọc -->
                   <div class="b2b-notice-box mt-3">
-                    <i class="bi bi-truck me-2 flex-shrink-0 fs-6"></i>
+                    <i class="bi bi-truck flex-shrink-0"></i>
                     <span>Cước vận chuyển chành xe và tiền đặt cọc sẽ được Kỹ thuật viên JPM liên hệ báo giá chính xác sau khi tiếp nhận đơn.</span>
                   </div>
                 </div>
@@ -156,26 +156,21 @@
 
                   <!-- Trường hợp 2A: Khách vãng lai (Guest) -->
                   <div v-if="!isAuthenticated">
-                    <!-- HÀNG 2 CỘT GỌN GÀNG: HỌ TÊN + SỐ ĐIỆN THOẠI -->
+                    <!-- HÀNG 2 CỘT GỌN GÀNG: HỌ TÊN + SỐ ĐIỆN THOẠI / ZALO -->
                     <div class="row g-2 mb-3">
                       <div class="col-6">
-                        <label class="form-label field-label">Họ và tên <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control custom-form-input" v-model="checkoutForm.name" placeholder="Tên của bạn...">
+                        <label class="form-label field-label">Họ và tên người nhận<span class="text-danger">*</span></label>
+                        <input type="text" class="form-control custom-form-input" v-model="checkoutForm.name" placeholder="Nhập họ và tên...">
                       </div>
                       <div class="col-6">
-                        <label class="form-label field-label">Số điện thoại / Zalo <span class="text-danger">*</span></label>
-                        <input type="tel" class="form-control custom-form-input" v-model="checkoutForm.phone" placeholder="SĐT / Zalo...">
+                        <label class="form-label field-label">Số điện thoại / Zalo<span class="text-danger">*</span></label>
+                        <input type="tel" class="form-control custom-form-input" v-model="checkoutForm.phone" placeholder="Nhập SĐT / Zalo...">
                       </div>
                     </div>
 
                     <div class="mb-3">
-                      <label class="form-label field-label">Email <span class="text-muted fw-normal small">(Không bắt buộc)</span></label>
-                      <input type="email" class="form-control custom-form-input" v-model="checkoutForm.email" placeholder="Nhập email nhận hóa đơn...">
-                    </div>
-                    
-                    <div class="mb-3">
-                      <label class="form-label field-label">Địa chỉ nhận hàng <span class="text-danger">*</span></label>
-                      <textarea class="form-control custom-form-input custom-textarea" v-model="checkoutForm.address" rows="2" placeholder="Số nhà, Tỉnh/Thành phố hoặc Tên Chành Xe quen thuộc"></textarea>
+                      <label class="form-label field-label">Địa chỉ nhận hàng / Chành xe<span class="text-danger">*</span></label>
+                      <textarea class="form-control custom-form-input custom-textarea" v-model="checkoutForm.address" rows="2" placeholder="Số nhà, đường, tỉnh/thành phố hoặc tên bến chành xe..."></textarea>
                     </div>
                   </div>
 
@@ -183,17 +178,22 @@
                   <div v-else class="mb-3">
                     <!-- Trạng thái 1: ĐÃ CHỌN ĐỊA CHỈ -->
                     <div v-if="selectedAddress" class="address-preview-card p-3">
-                      <div class="d-flex justify-content-between align-items-center mb-1">
-                        <strong class="fw-bold text-dark">{{ selectedAddress.ten_nguoi_nhan }}</strong>
-                        <button type="button" class="btn btn-link p-0 text-decoration-none address-change-link" data-bs-toggle="modal" data-bs-target="#addressModal" @click="modalState = 'list'">
+                      <div class="d-flex justify-content-between align-items-start gap-2 mb-2">
+                        <div class="d-flex align-items-center flex-wrap gap-2">
+                          <strong class="addr-recipient-name">{{ selectedAddress.ten_nguoi_nhan }}</strong>
+                          <span v-if="selectedAddress.la_mac_dinh" class="addr-default-badge">Mặc định</span>
+                        </div>
+                        <button type="button" class="btn btn-link p-0 text-decoration-none address-change-link flex-shrink-0" data-bs-toggle="modal" data-bs-target="#addressModal" @click="modalState = 'list'">
                           Thay đổi <i class="bi bi-chevron-right ms-1"></i>
                         </button>
                       </div>
-                      <div class="text-muted small">
-                        <i class="bi bi-telephone me-1"></i> {{ selectedAddress.so_dien_thoai }}
+                      <div class="addr-meta-row mb-1">
+                        <i class="bi bi-telephone"></i>
+                        <span>{{ selectedAddress.so_dien_thoai }}</span>
                       </div>
-                      <div class="small text-secondary mt-2 pt-2 border-top" style="line-height: 1.45;">
-                        <i class="bi bi-geo-alt me-1" style="color: var(--jpm-color-red-marine, #F82249);"></i> {{ selectedAddress.dia_chi_cu_the }}
+                      <div class="addr-meta-row addr-location-row">
+                        <i class="bi bi-geo-alt"></i>
+                        <span>{{ selectedAddress.dia_chi_cu_the }}</span>
                       </div>
                     </div>
 
@@ -207,18 +207,34 @@
                     </div>
                   </div>
 
+                  <!-- Email nhận báo giá / hóa đơn (Dùng chung cho cả Khách vãng lai & Khách đã đăng nhập) -->
+                  <div class="mb-3">
+                    <label class="form-label field-label">
+                      <span>Email nhận báo giá / hóa đơn</span>
+                      <span class="field-optional-tag">(Không bắt buộc)</span>
+                    </label>
+                    <input type="email" class="form-control custom-form-input" v-model="checkoutForm.email" placeholder="Nhập email nhận báo giá hoặc hóa đơn...">
+                  </div>
+
                   <!-- Ghi chú chung (Gọn gàng 2 dòng) -->
                   <div class="mb-4">
-                    <label class="form-label field-label">Ghi chú đơn hàng <span class="text-muted fw-normal small">(Không bắt buộc)</span></label>
+                    <label class="form-label field-label">
+                      <span>Ghi chú đơn hàng</span>
+                      <span class="field-optional-tag">(Không bắt buộc)</span>
+                    </label>
                     <textarea class="form-control custom-form-input custom-textarea" v-model="checkoutForm.note" rows="2" placeholder="Ghi chú số khung, chành xe nhận, yêu cầu hóa đơn..."></textarea>
                   </div>
 
                   <!-- 3. HÀNH ĐỘNG & BẢO ĐẢM -->
-                  <button type="submit" class="btn btn-danger btn-jpm-submit w-100 d-flex justify-content-center align-items-center gap-2" :disabled="isSubmitting">
+                  <button
+                    type="submit"
+                    class="btn btn-danger btn-jpm-submit w-100 d-flex justify-content-center align-items-center gap-2"
+                    :disabled="isSubmitting || selectedItems.length === 0"
+                  >
                     <span v-if="isSubmitting" class="spinner-border spinner-border-sm"></span>
                     <template v-else>
                       <span class="fw-bold">{{ buttonText }}</span>
-                      <i class="bi bi-arrow-right"></i>
+                      <i v-if="selectedItems.length > 0" class="bi bi-arrow-right"></i>
                     </template>
                   </button>
                   
@@ -272,7 +288,7 @@
           <div class="modal-content custom-modal-content">
             <div class="modal-header border-bottom px-4 py-3">
               <h5 class="modal-title fw-bold text-dark fs-5" id="addressModalLabel">
-                {{ modalState === 'list' ? 'Sổ Địa Chỉ Giao Hàng' : (editingAddressId ? 'Cập Nhật Địa Chỉ' : 'Thêm Địa Chỉ Mới') }}
+                {{ modalState === 'list' ? 'Sổ địa chỉ giao hàng' : (editingAddressId ? 'Cập nhật địa chỉ' : 'Thêm địa chỉ mới') }}
               </h5>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
@@ -283,17 +299,25 @@
                   Chưa có địa chỉ nào được lưu.
                 </div>
                 <div v-for="addr in addresses" :key="addr.id" class="address-item p-3 mb-3 border position-relative d-flex align-items-start gap-3" :class="{'selected-addr': selectedAddressId === addr.id}" style="cursor: pointer;" @click="selectedAddressId = addr.id">
-                  <div class="radio-wrap mt-1">
-                    <input class="form-check-input custom-checkbox" type="radio" :name="'address_radio'" :value="addr.id" v-model="selectedAddressId">
+                  <div class="radio-wrap mt-1 flex-shrink-0">
+                    <input class="form-check-input custom-radio" type="radio" :name="'address_radio'" :value="addr.id" v-model="selectedAddressId">
                   </div>
-                  <div class="flex-grow-1">
-                    <div class="d-flex justify-content-between align-items-center mb-1">
-                      <span class="fw-bold text-dark">{{ addr.ten_nguoi_nhan }}</span>
-                      <a href="#" class="text-decoration-none small fw-semibold" style="color: var(--jpm-color-red-marine, #F82249);" @click.stop.prevent="openEditAddress(addr)">Sửa</a>
+                  <div class="flex-grow-1 min-w-0">
+                    <div class="d-flex justify-content-between align-items-start gap-2 mb-1">
+                      <div class="d-flex align-items-center flex-wrap gap-2">
+                        <span class="fw-bold text-dark">{{ addr.ten_nguoi_nhan }}</span>
+                        <span v-if="addr.la_mac_dinh" class="addr-default-badge">Mặc định</span>
+                      </div>
+                      <a href="#" class="text-decoration-none small fw-semibold flex-shrink-0" style="color: var(--jpm-color-red-marine, #F82249);" @click.stop.prevent="openEditAddress(addr)">Sửa</a>
                     </div>
-                    <div class="text-muted small mb-1">(+84) {{ addr.so_dien_thoai }}</div>
-                    <div class="small text-secondary" style="line-height: 1.4;">{{ addr.dia_chi_cu_the }}</div>
-                    <span v-if="addr.la_mac_dinh" class="badge mt-2 px-2 py-1 small" style="border-radius: var(--jpm-radius-badge, 6px); background-color: rgba(248, 34, 73, 0.08); color: var(--jpm-color-red-marine, #F82249); font-weight: 600;">Mặc định</span>
+                    <div class="addr-meta-row mb-1">
+                      <i class="bi bi-telephone"></i>
+                      <span>{{ addr.so_dien_thoai }}</span>
+                    </div>
+                    <div class="addr-meta-row">
+                      <i class="bi bi-geo-alt"></i>
+                      <span>{{ addr.dia_chi_cu_the }}</span>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -302,24 +326,24 @@
               <div v-else class="address-form-inline">
                 <form @submit.prevent="saveAddress">
                   <div class="mb-3">
-                    <label class="form-label small fw-bold text-dark">Họ và tên người nhận <span style="color: var(--jpm-color-red-marine, #F82249);">*</span></label>
-                    <input type="text" class="form-control custom-form-input" v-model="addressForm.ten_nguoi_nhan" required placeholder="Tên người nhận hàng...">
+                    <label class="form-label field-label">Họ và tên người nhận<span class="text-danger">*</span></label>
+                    <input type="text" class="form-control custom-form-input" v-model="addressForm.ten_nguoi_nhan" required placeholder="Nhập họ và tên người nhận...">
                   </div>
                   <div class="mb-3">
-                    <label class="form-label small fw-bold text-dark">Số điện thoại <span style="color: var(--jpm-color-red-marine, #F82249);">*</span></label>
-                    <input type="text" class="form-control custom-form-input" v-model="addressForm.so_dien_thoai" required placeholder="Số điện thoại...">
+                    <label class="form-label field-label">Số điện thoại / Zalo<span class="text-danger">*</span></label>
+                    <input type="tel" class="form-control custom-form-input" v-model="addressForm.so_dien_thoai" required placeholder="Nhập SĐT / Zalo...">
                   </div>
                   <div class="mb-3">
-                    <label class="form-label small fw-bold text-dark">Địa chỉ cụ thể / Chành xe <span style="color: var(--jpm-color-red-marine, #F82249);">*</span></label>
-                    <textarea class="form-control custom-form-input" v-model="addressForm.dia_chi_cu_the" required rows="2" placeholder="Số nhà, đường, xã/phường, tỉnh/thành phố hoặc bến chành xe..."></textarea>
+                    <label class="form-label field-label">Địa chỉ nhận hàng / Chành xe<span class="text-danger">*</span></label>
+                    <textarea class="form-control custom-form-input custom-textarea" v-model="addressForm.dia_chi_cu_the" required rows="3" placeholder="Số nhà, đường, tỉnh/thành phố hoặc tên bến chành xe..."></textarea>
                   </div>
-                  <div class="mb-3 form-check">
-                    <input type="checkbox" class="form-check-input custom-checkbox" id="laMacDinh" v-model="addressForm.la_mac_dinh">
-                    <label class="form-check-label small ms-2 cursor-pointer" for="laMacDinh">Đặt làm địa chỉ nhận hàng mặc định</label>
+                  <div class="mb-3 modal-check-row">
+                    <input type="checkbox" class="form-check-input custom-checkbox modal-checkbox-input" id="laMacDinh" v-model="addressForm.la_mac_dinh">
+                    <label class="form-check-label small fw-medium text-secondary cursor-pointer mb-0" for="laMacDinh">Đặt làm địa chỉ nhận hàng mặc định</label>
                   </div>
-                  <div class="d-flex gap-2 mt-4">
-                    <button type="button" class="btn btn-outline-secondary flex-grow-1 btn-rounded-8" @click="modalState = 'list'">Hủy</button>
-                    <button type="submit" class="btn btn-danger flex-grow-1 btn-rounded-8" :disabled="isSavingAddress">
+                  <div class="d-flex justify-content-end gap-2 pt-3 mt-4 border-top">
+                    <button type="button" class="btn btn-outline-secondary px-4 btn-rounded-8" @click="modalState = 'list'">Hủy</button>
+                    <button type="submit" class="btn btn-danger px-4 btn-rounded-8" :disabled="isSavingAddress">
                       <span v-if="isSavingAddress" class="spinner-border spinner-border-sm me-2"></span>
                       Lưu địa chỉ
                     </button>
@@ -327,9 +351,13 @@
                 </form>
               </div>
             </div>
-            <div class="modal-footer border-top px-4 py-3" v-if="modalState === 'list'">
-              <button type="button" class="btn btn-danger w-100 py-2 d-flex justify-content-center align-items-center gap-2 btn-rounded-8" @click.prevent="openAddAddress">
-                <i class="bi bi-plus-lg"></i> Thêm Địa Chỉ Mới
+            <div class="modal-footer border-top px-4 py-3 d-flex justify-content-between align-items-center gap-2" v-if="modalState === 'list'">
+              <button type="button" class="btn btn-outline-secondary d-inline-flex align-items-center gap-1 px-3 btn-rounded-8" @click.prevent="openAddAddress">
+                <i class="bi bi-plus-lg"></i>
+                <span>Thêm địa chỉ mới</span>
+              </button>
+              <button type="button" class="btn btn-danger px-4 btn-rounded-8" data-bs-dismiss="modal">
+                Xác nhận
               </button>
             </div>
           </div>
@@ -362,6 +390,7 @@ export default {
         address: ''
       },
       selectedItems: [], // Danh sách mã phụ tùng được tick chọn
+      hasAutoSelected: false,
       isSubmitting: false,
       pendingOrderId: '',
 
@@ -413,7 +442,7 @@ export default {
       }, 0)
     },
     buttonText() {
-      return 'Gửi Yêu Cầu Báo Giá'
+      return this.selectedItems.length === 0 ? 'Chọn sản phẩm để báo giá' : 'Gửi yêu cầu báo giá'
     },
     totalAmount() {
       if (this.selectedItems.length === 0) return this.formatPrice(0)
@@ -443,6 +472,17 @@ export default {
         return s.includes('đại lý') || s.includes('b2b')
       })
       return hasB2BRole || Boolean(this.userProfile.ten_cong_ty)
+    }
+  },
+  watch: {
+    cartItems: {
+      immediate: true,
+      handler(items) {
+        if (!this.hasAutoSelected && Array.isArray(items) && items.length > 0) {
+          this.selectedItems = items.map(item => item.ma_phu_tung)
+          this.hasAutoSelected = true
+        }
+      }
     }
   },
   mounted() {
@@ -636,8 +676,8 @@ export default {
         khach_hang_ten: finalName,
         khach_hang_sdt: finalPhone,
         dia_chi_giao_hang: finalAddress,
-        khach_hang_email: this.checkoutForm.email || null,
-        ghi_chu_khach_hang: this.checkoutForm.note || null,
+        khach_hang_email: (this.checkoutForm.email || '').trim() || null,
+        ghi_chu_khach_hang: (this.checkoutForm.note || '').trim() || null,
         chi_tiet: selectedCartItems.map(item => ({
           id_phu_tung:  item.id,
           id_san_pham:  item.id,
@@ -1057,21 +1097,31 @@ export default {
 
 .b2b-notice-box i {
   color: #0284c7 !important;
-  font-size: 0.95rem;
-  margin-top: 1px;
+  font-size: 1rem;
+  line-height: 1;
+  margin-top: 2px;
 }
 
 /* PHÂN VÙNG 2: THÔNG TIN GIAO NHẬN (FORM) */
 .form-partition-header {
-  padding-bottom: 6px;
-  border-bottom: 1px dashed #e2e8f0;
+  padding-bottom: 0;
 }
 
 .field-label {
+  display: inline-flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 5px;
   font-size: 0.8125rem;
   font-weight: 600;
   color: #1e293b;
-  margin-bottom: 5px;
+  margin-bottom: 6px;
+}
+
+.field-optional-tag {
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: #64748b;
 }
 
 /* Custom Input Form: 8px bo góc chuẩn Trang Chủ, nền trắng sạch, focus viền đỏ marine */
@@ -1105,21 +1155,58 @@ export default {
   line-height: 1.45;
 }
 
-/* ===== ĐỊA CHỈ GIAO HÀNG (TỐI GIẢN, GỌN GÀNG, KHÔNG HIỆU ỨNG RƯỜM RÀ) ===== */
+/* ===== ĐỊA CHỈ GIAO HÀNG (TỐI GIẢN, GỌN GÀNG, CHUẨN CHECKOUT) ===== */
 .address-preview-card {
   background: #f8fafc;
   border: 1px solid #e2e8f0;
   border-radius: var(--jpm-radius-control, 8px);
 }
 
+.addr-recipient-name {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--jpm-color-navy-dark, #0A1128);
+  line-height: 1.3;
+}
+
+.addr-default-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: var(--jpm-radius-badge, 6px);
+  background-color: rgba(248, 34, 73, 0.08);
+  color: var(--jpm-color-red-marine, #F82249);
+  font-size: 0.7rem;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.addr-meta-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 0.825rem;
+  color: #475569;
+  line-height: 1.45;
+}
+
+.addr-meta-row i {
+  font-size: 0.85rem;
+  color: #64748b;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
 .address-change-link {
   color: var(--jpm-color-red-marine, #F82249);
   font-weight: 600;
   font-size: 0.82rem;
+  line-height: 1.3;
 }
 
 .address-change-link:hover {
   text-decoration: underline !important;
+  transform: none !important;
 }
 
 .no-address-box {
@@ -1141,10 +1228,25 @@ export default {
   transition: all 0.2s ease;
 }
 
+.no-address-box .btn-outline-danger {
+  font-family: var(--heading-font, 'Raleway', 'Montserrat', var(--default-font)) !important;
+  font-weight: 600 !important;
+  border-radius: var(--jpm-radius-control, 8px) !important;
+  box-shadow: none !important;
+  transition: all 0.2s ease !important;
+}
+
 .no-address-box .btn-outline-danger:hover {
   background-color: var(--jpm-color-red-marine, #F82249) !important;
   border-color: var(--jpm-color-red-marine, #F82249) !important;
   color: #ffffff !important;
+  transform: translateY(-1px) !important;
+  box-shadow: none !important;
+}
+
+.no-address-box .btn-outline-danger:active {
+  transform: translateY(0) !important;
+  box-shadow: none !important;
 }
 
 /* PHÂN VÙNG 3: NÚT GỬI BÁO GIÁ & BẢO ĐẢM */
@@ -1159,14 +1261,20 @@ export default {
 }
 
 .btn-jpm-submit:hover:not(:disabled) {
-  transform: translateY(-1px);
-  background-color: var(--jpm-color-red-hover, #D9163A) !important;
-  border-color: var(--jpm-color-red-hover, #D9163A) !important;
+  transform: translateY(-1px) !important;
+  background-color: var(--jpm-btn-red-hover, #FF3B5F) !important;
+  border-color: var(--jpm-btn-red-hover, #FF3B5F) !important;
   box-shadow: none !important;
 }
 
-.btn-jpm-submit:focus,
-.btn-jpm-submit:active {
+.btn-jpm-submit:active:not(:disabled) {
+  background-color: var(--jpm-btn-red-active, #D9163A) !important;
+  border-color: var(--jpm-btn-red-active, #D9163A) !important;
+  transform: translateY(0) !important;
+  box-shadow: none !important;
+}
+
+.btn-jpm-submit:focus {
   box-shadow: none !important;
 }
 
@@ -1242,10 +1350,17 @@ export default {
 }
 
 .btn-empty-cart-action:hover {
-  background-color: var(--jpm-color-red-hover, #D9163A) !important;
-  border-color: var(--jpm-color-red-hover, #D9163A) !important;
+  background-color: var(--jpm-btn-red-hover, #FF3B5F) !important;
+  border-color: var(--jpm-btn-red-hover, #FF3B5F) !important;
   color: #ffffff !important;
-  transform: translateY(-1px);
+  transform: translateY(-1px) !important;
+  box-shadow: none !important;
+}
+
+.btn-empty-cart-action:active {
+  background-color: var(--jpm-btn-red-active, #D9163A) !important;
+  border-color: var(--jpm-btn-red-active, #D9163A) !important;
+  transform: translateY(0) !important;
   box-shadow: none !important;
 }
 
@@ -1272,6 +1387,10 @@ export default {
   transition: all 0.15s ease;
 }
 
+.address-item:last-child {
+  margin-bottom: 0 !important;
+}
+
 .address-item:hover {
   border-color: #cbd5e1;
   background: #f8fafc;
@@ -1280,6 +1399,38 @@ export default {
 .address-item.selected-addr {
   border-color: var(--jpm-color-red-marine, #F82249) !important;
   background: rgba(248, 34, 73, 0.02);
+}
+
+.custom-radio {
+  width: 18px;
+  height: 18px;
+  border-color: #cbd5e1;
+  border-radius: 50% !important;
+  margin: 0 !important;
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+}
+
+.custom-radio:checked {
+  background-color: var(--jpm-color-red-marine, #F82249);
+  border-color: var(--jpm-color-red-marine, #F82249);
+}
+
+.custom-radio:focus {
+  border-color: var(--jpm-color-red-marine, #F82249);
+  box-shadow: 0 0 0 2px rgba(248, 34, 73, 0.2);
+}
+
+.modal-check-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-left: 0;
+}
+
+.modal-checkbox-input {
+  margin: 0 !important;
+  flex-shrink: 0;
 }
 
 .cursor-pointer {

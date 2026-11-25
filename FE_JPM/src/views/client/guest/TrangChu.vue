@@ -266,38 +266,38 @@
 
           <!-- Tiêu đề chiến lược -->
           <h2 class="home-banner-title mb-2">
-            Tại Sao Chọn <span class="banner-title-accent">JPM Marine</span>
+            Tại sao chọn <span class="banner-title-accent">JPM Marine</span>
           </h2>
 
-          <!-- Mô tả cam kết dịch vụ tiêu chuẩn quốc tế -->
-          <p class="home-banner-desc mb-3">
-            Chúng tôi không chỉ cung cấp phụ tùng, chúng tôi mang đến sự an tâm tuyệt đối cho mỗi chuyến ra khơi với dịch vụ tiêu chuẩn quốc tế.
+          <!-- Mô tả cam kết dịch vụ chuyên ngành máy thủy -->
+          <p class="home-banner-desc mb-4">
+            Không chỉ cung cấp phụ tùng máy thủy, chúng tôi đồng hành kỹ thuật giúp tàu thuyền của bạn vận hành bền bỉ và an tâm trên mọi hải trình.
           </p>
 
           <!-- Lưới 4 thế mạnh cốt lõi (Bố cục 2x2 tối giản, không icon) -->
           <div class="banner-reasons-grid mb-0">
-            <!-- Mục 1: Hàng Chính Hãng 100% -->
+            <!-- Mục 1: Phụ tùng OEM chính hãng -->
             <div class="reason-item">
-              <h6 class="reason-title">Hàng Chính Hãng 100%</h6>
-              <p class="reason-desc">Cam kết cung cấp phụ tùng chính hãng nhập khẩu trực tiếp từ Yamaha, Honda, Suzuki.</p>
+              <h6 class="reason-title">Phụ tùng OEM chính hãng</h6>
+              <p class="reason-desc">Cung cấp linh kiện chuẩn mã OEM từ Yamaha, Mercury, Honda, Suzuki, Yanmar — đúng đời máy và dải số khung.</p>
             </div>
 
-            <!-- Mục 2: Giao Hàng Siêu Tốc -->
+            <!-- Mục 2: Giao nhanh toàn quốc & chành xe -->
             <div class="reason-item">
-              <h6 class="reason-title">Giao Hàng Siêu Tốc</h6>
-              <p class="reason-desc">Mạng lưới phân phối rộng khắp toàn quốc giúp phụ tùng đến tay nhanh chóng, an toàn.</p>
+              <h6 class="reason-title">Giao nhanh toàn quốc &amp; chành xe</h6>
+              <p class="reason-desc">Hỗ trợ gửi hỏa tốc qua chành xe liên tỉnh và chuyển phát nhanh tận xưởng, bến tàu trên toàn quốc.</p>
             </div>
 
-            <!-- Mục 3: Hỗ Trợ Kỹ Thuật 24/7 -->
+            <!-- Mục 3: Tư vấn chuẩn sơ đồ rã máy -->
             <div class="reason-item">
-              <h6 class="reason-title">Hỗ Trợ Kỹ Thuật 24/7</h6>
-              <p class="reason-desc">Đội ngũ chuyên gia kỹ thuật hàng hải giàu kinh nghiệm luôn sẵn sàng tư vấn chuyên sâu.</p>
+              <h6 class="reason-title">Tư vấn chuẩn sơ đồ rã máy</h6>
+              <p class="reason-desc">Hỗ trợ đối chiếu bản vẽ kỹ thuật, mã thay thế OEM trực tiếp qua Zalo — đảm bảo đúng chi tiết, không lắp nhầm.</p>
             </div>
 
-            <!-- Mục 4: Chính Sách Bảo Hành Tốt -->
+            <!-- Mục 4: Báo giá & bảo hành minh bạch -->
             <div class="reason-item">
-              <h6 class="reason-title">Chính Sách Bảo Hành Tốt</h6>
-              <p class="reason-desc">Bảo hành chính hãng cho mọi sản phẩm, hỗ trợ đổi trả linh hoạt theo quy định.</p>
+              <h6 class="reason-title">Báo giá &amp; bảo hành minh bạch</h6>
+              <p class="reason-desc">Báo giá rõ ràng trước khi đặt cọc, bảo hành chuẩn hãng và hỗ trợ đổi trả nhanh theo đúng cam kết.</p>
             </div>
           </div>
         </div>
@@ -1017,7 +1017,7 @@ export default {
 }
 
 .banner-content {
-  max-width: 630px;
+  max-width: 660px;
 }
 
 .banner-eyebrow {
@@ -1025,7 +1025,7 @@ export default {
   align-items: center;
   gap: 8px;
   font-family: var(--heading-font, 'Raleway', sans-serif);
-  font-size: 0.75rem;
+  font-size: 0.78rem;
   font-weight: 700;
   letter-spacing: 1.5px;
   text-transform: uppercase;
@@ -1047,29 +1047,29 @@ export default {
 .banner-reasons-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 16px 28px;
+  gap: 18px 32px;
 }
 
 .reason-item {
   border-left: 2px solid var(--jpm-color-red-marine, #F82249);
-  padding-left: 12px;
+  padding-left: 14px;
 }
 
 .reason-title {
   font-family: var(--heading-font, var(--jpm-font-heading, 'Raleway', sans-serif));
-  font-size: 0.875rem;
+  font-size: 0.9375rem;
   font-weight: 700;
   color: var(--jpm-color-navy-dark, #0A1128);
-  margin-bottom: 4px;
+  margin-bottom: 5px;
   line-height: 1.35;
   letter-spacing: -0.2px;
 }
 
 .reason-desc {
   font-family: var(--default-font, var(--jpm-font-body, 'Roboto', sans-serif));
-  font-size: 0.8rem;
+  font-size: 0.855rem;
   color: var(--jpm-neutral-700, #334155);
-  line-height: 1.45;
+  line-height: 1.5;
   margin-bottom: 0;
 }
 

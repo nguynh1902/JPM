@@ -463,13 +463,19 @@ export default {
   cursor: pointer !important;
 }
 .auth-submit-btn:hover:not(:disabled) {
-  background-color: var(--jpm-color-red-hover, #D9163A) !important;
-  border-color: var(--jpm-color-red-hover, #D9163A) !important;
+  background-color: var(--jpm-btn-red-hover, #FF3B5F) !important;
+  border-color: var(--jpm-btn-red-hover, #FF3B5F) !important;
   transform: translateY(-1px) !important;
   box-shadow: none !important;
 }
-.auth-submit-btn:focus,
-.auth-submit-btn:active {
+.auth-submit-btn:active:not(:disabled) {
+  background-color: var(--jpm-btn-red-active, #D9163A) !important;
+  border-color: var(--jpm-btn-red-active, #D9163A) !important;
+  transform: translateY(0) !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+.auth-submit-btn:focus {
   box-shadow: none !important;
   outline: none !important;
 }
@@ -631,7 +637,11 @@ input.minimal-input:focus::placeholder,
 .hover-bg-google:hover {
   background: rgba(255, 255, 255, 0.12) !important;
   border-color: rgba(255, 255, 255, 0.35) !important;
-  transform: translateY(-1px);
+  transform: translateY(-1px) !important;
+  box-shadow: none !important;
+}
+.hover-bg-google:active {
+  transform: translateY(0) !important;
   box-shadow: none !important;
 }
 </style>

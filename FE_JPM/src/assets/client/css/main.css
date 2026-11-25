@@ -22,6 +22,16 @@
   --jpm-color-blue-electric: #0284C7;
   --jpm-color-gold-marine: #D97706;
 
+  /* Button Interaction States: Hover (sáng tươi +6-8%) / Active (đậm khi nhấn) */
+  --jpm-btn-red-hover: #FF3B5F;
+  --jpm-btn-red-active: #D9163A;
+  --jpm-btn-navy-hover: #1B2852;
+  --jpm-btn-navy-active: #060B1A;
+  --jpm-btn-blue-hover: #267DFF;
+  --jpm-btn-blue-active: #0B5ED7;
+  --jpm-btn-green-hover: #1E9E63;
+  --jpm-btn-green-active: #146C43;
+
   /* 2. Neutral Slate Grayscale Scale */
   --jpm-neutral-900: #0F172A;
   --jpm-neutral-800: #1E293B;
@@ -814,8 +824,8 @@ small,
 --------------------------------------------------------------*/
 .home-full-banner {
   width: 100%;
-  aspect-ratio: 3.2 / 1;
-  min-height: 380px;
+  aspect-ratio: 3.1 / 1;
+  min-height: 410px;
   background-image: url('/client/image/home_banner.png');
   background-position: center top;
   background-size: cover;
@@ -827,20 +837,20 @@ small,
 
 .home-banner-title {
   font-family: var(--heading-font);
-  font-size: 1.75rem;
+  font-size: 2rem;
   font-weight: 800;
   line-height: 1.25;
   color: var(--heading-color, #0A1128);
-  letter-spacing: -0.4px;
+  letter-spacing: -0.5px;
 }
 
 .home-banner-desc {
   font-family: var(--default-font);
-  font-size: 0.875rem;
+  font-size: 0.9375rem;
   font-weight: 400;
   line-height: 1.6;
   color: #334155;
-  max-width: 480px;
+  max-width: 540px;
 }
 
 @media (max-width: 991px) {
@@ -850,16 +860,16 @@ small,
     padding: 50px 0;
   }
   .home-banner-title {
-    font-size: 1.25rem;
+    font-size: 1.45rem;
   }
 }
 
 @media (max-width: 576px) {
   .home-banner-title {
-    font-size: 1.15rem;
+    font-size: 1.25rem;
   }
   .home-banner-desc {
-    font-size: 0.825rem;
+    font-size: 0.875rem;
   }
 }
 
@@ -1290,15 +1300,15 @@ section,
   background: rgba(10, 17, 40, 0.25);
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
-  transition: all 0.3s ease;
+  box-shadow: none !important;
+  transition: all 0.2s ease !important;
 }
 
 .btn-hero-cta:hover {
   background: var(--accent-color);
   border-color: var(--accent-color);
   color: #fff;
-  transform: translateY(-1px);
+  transform: translateY(-1px) !important;
   box-shadow: none !important;
 }
 
@@ -2295,16 +2305,17 @@ section,
   font-weight: 600 !important;
   border-radius: var(--jpm-radius-control, 8px) !important;
   box-shadow: none !important;
-  padding: 10px 20px;
 }
 .btn-danger:hover, .btn-jpm:hover {
-  background-color: var(--jpm-color-red-hover, #D9163A) !important;
-  border-color: var(--jpm-color-red-hover, #D9163A) !important;
+  background-color: var(--jpm-btn-red-hover, #FF3B5F) !important;
+  border-color: var(--jpm-btn-red-hover, #FF3B5F) !important;
   color: #ffffff !important;
   box-shadow: none !important;
   transform: translateY(-1px) !important;
 }
 .btn-danger:active, .btn-jpm:active {
+  background-color: var(--jpm-btn-red-active, #D9163A) !important;
+  border-color: var(--jpm-btn-red-active, #D9163A) !important;
   transform: translateY(0) !important;
   box-shadow: none !important;
 }
@@ -2323,15 +2334,18 @@ section,
 }
 .btn-blue-primary:hover,
 .btn-primary-blue:hover {
-  background-color: #0b5ed7 !important;
-  border-color: #0a58ca !important;
+  background-color: var(--jpm-btn-blue-hover, #267DFF) !important;
+  border-color: var(--jpm-btn-blue-hover, #267DFF) !important;
   color: #ffffff !important;
   box-shadow: none !important;
   transform: translateY(-1px) !important;
 }
 .btn-blue-primary:active,
 .btn-primary-blue:active {
+  background-color: var(--jpm-btn-blue-active, #0B5ED7) !important;
+  border-color: var(--jpm-btn-blue-active, #0B5ED7) !important;
   transform: translateY(0) !important;
+  box-shadow: none !important;
 }
 
 /* 3. Secondary Outline Button (Viền xám chuẩn Design System 2026 - Đồng bộ 100% nút Đổi mật khẩu) */
@@ -2413,11 +2427,18 @@ section,
 }
 
 .btn-action-primary:hover:not(:disabled) {
-  background-color: var(--jpm-color-red-hover, #D9163A) !important;
-  border-color: var(--jpm-color-red-hover, #D9163A) !important;
+  background-color: var(--jpm-btn-red-hover, #FF3B5F) !important;
+  border-color: var(--jpm-btn-red-hover, #FF3B5F) !important;
   color: #ffffff !important;
   box-shadow: none !important;
   transform: translateY(-1px) !important;
+}
+
+.btn-action-primary:active:not(:disabled) {
+  background-color: var(--jpm-btn-red-active, #D9163A) !important;
+  border-color: var(--jpm-btn-red-active, #D9163A) !important;
+  transform: translateY(0) !important;
+  box-shadow: none !important;
 }
 
 .btn-action-primary:disabled {
@@ -2749,11 +2770,11 @@ button.jpm-more-link:hover i {
 .index-page .btn {
   font-family: var(--default-font);
   font-size: 0.875rem;
-  font-weight: 500;
+  font-weight: 600;
   letter-spacing: 0.1px;
   border-radius: 8px !important;
   box-shadow: none !important;
-  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+  transition: all 0.2s ease !important;
 }
 .index-page .btn.btn-sm {
   font-size: 0.8125rem;
@@ -2782,33 +2803,16 @@ button.jpm-more-link:hover i {
   color: #fff;
   border: 1px solid #fff;
   position: relative;
-  transition: all 0.3s ease;
-  animation: btn-pulse-anim 2s infinite;
+  transition: all 0.2s ease !important;
+  box-shadow: none !important;
 }
 .btn-outline-pulse:hover {
   background-color: transparent !important;
   border-color: #fff !important;
-  color: #ffffff;
-  transform: translateY(-4px);
+  color: #ffffff !important;
+  transform: translateY(-1px) !important;
+  box-shadow: none !important;
 }
-@keyframes btn-pulse-anim {
-  0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.5); }
-  70% { box-shadow: 0 0 0 15px rgba(255, 255, 255, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);   }
-
-}
-
-
-
-
-
-
-
-
-
-
-
-
 
 /* 3. Circular Icon Button (Used in Product Cards) */
 .btn-icon-jpm {
@@ -2822,13 +2826,14 @@ button.jpm-more-link:hover i {
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-  transition: 0.2s;
+  box-shadow: none !important;
+  transition: all 0.2s ease !important;
 }
 .btn-icon-jpm:hover {
-  background: var(--accent-color);
-  color: #ffffff;
-  transform: translateY(-2px);
+  background: var(--accent-color) !important;
+  color: #ffffff !important;
+  transform: translateY(-1px) !important;
+  box-shadow: none !important;
 }
 
 /* =========================================
@@ -3285,10 +3290,6 @@ input[type="number"] {
 
 /* JPM Custom Global UI Elements */
 .text-danger { color: var(--accent-color, #f82249) !important; }
-.btn-danger { background-color: var(--accent-color, #f82249); color: white; border: none; }
-.btn-danger:hover { background-color: color-mix(in srgb, var(--accent-color, #f82249) 85%, black); color: white; }
-.btn-outline-danger { color: var(--accent-color, #f82249); border-color: var(--accent-color, #f82249); background-color: transparent; }
-.btn-outline-danger:hover { background-color: var(--accent-color, #f82249); color: #fff; }
 .bg-danger { background-color: var(--accent-color, #f82249) !important; }
 
 /* Pastel Badges */
@@ -4021,9 +4022,17 @@ a.footer-contact-value:hover {
 }
 
 .btn-danger-action:hover:not(:disabled) {
-  background-color: #d91438 !important;
-  border-color: #d91438 !important;
+  background-color: var(--jpm-btn-red-hover, #FF3B5F) !important;
+  border-color: var(--jpm-btn-red-hover, #FF3B5F) !important;
   color: #ffffff !important;
+  transform: translateY(-1px) !important;
+  box-shadow: none !important;
+}
+
+.btn-danger-action:active:not(:disabled) {
+  background-color: var(--jpm-btn-red-active, #D9163A) !important;
+  border-color: var(--jpm-btn-red-active, #D9163A) !important;
+  transform: translateY(0) !important;
   box-shadow: none !important;
 }
 
@@ -4045,12 +4054,23 @@ a.footer-contact-value:hover {
   align-items: center !important;
   justify-content: center !important;
   transition: all 0.2s ease !important;
+  box-shadow: none !important;
   cursor: pointer;
 }
 
 .btn-secondary-action:hover {
-  background-color: #e2e8f0 !important;
+  background-color: #f8fafc !important;
+  border-color: #cbd5e1 !important;
   color: #0f172a !important;
+  transform: translateY(-1px) !important;
+  box-shadow: none !important;
+}
+
+.btn-secondary-action:active {
+  background-color: #e2e8f0 !important;
+  border-color: #cbd5e1 !important;
+  transform: translateY(0) !important;
+  box-shadow: none !important;
 }
 
 /* Smooth entry animation */
@@ -4065,10 +4085,8 @@ a.footer-contact-value:hover {
 
 /* =========================================
    JPM LUXURY FLAT BUTTONS & TAGS SYSTEM (CLIENT UI)
-   - Unified 8px radius, Roboto technical typography, zero neon glow
-   - Danger / CTA Red: #f82249 -> #D9163A (hover)
-   - Light / Secondary Neutral (Đặt lại, Hủy, Đóng): #f1f5f9 -> #e2e8f0, Slate -> Deep Navy
-   - Primary / Dark Brand Navy: #0A1128 -> #16244f
+   - Unified 8px radius, Inter technical typography, zero neon glow
+   - Solid Hover: brighter +6-8% & lift -1px | Active: darker pressed & 0px
    ========================================= */
 
 /* 1. Danger / Red CTA Buttons */
@@ -4076,37 +4094,53 @@ a.footer-contact-value:hover {
   background-color: var(--accent-color, #f82249) !important;
   border-color: var(--accent-color, #f82249) !important;
   color: #ffffff !important;
-  font-weight: 600;
+  font-weight: 600 !important;
   box-shadow: none !important;
+  transition: all 0.2s ease !important;
 }
-.index-page .btn-danger:hover, .index-page .btn-danger:focus, .index-page .btn-danger:active, 
-.index-page .btn-jpm:hover, .index-page .btn-jpm:focus, .index-page .btn-jpm:active,
-.index-page .btn-getstarted:hover, .index-page .btn-getstarted:focus, .index-page .btn-getstarted:active {
-  background-color: var(--jpm-color-red-hover, #D9163A) !important;
-  border-color: var(--jpm-color-red-hover, #D9163A) !important;
+.index-page .btn-danger:hover, .index-page .btn-jpm:hover, .index-page .btn-getstarted:hover {
+  background-color: var(--jpm-btn-red-hover, #FF3B5F) !important;
+  border-color: var(--jpm-btn-red-hover, #FF3B5F) !important;
   color: #ffffff !important;
+  transform: translateY(-1px) !important;
   box-shadow: none !important;
-  transform: none !important;
 }
+.index-page .btn-danger:focus-visible, .index-page .btn-jpm:focus-visible, .index-page .btn-getstarted:focus-visible {
+  box-shadow: none !important;
+  outline: none !important;
+}
+.index-page .btn-danger:active, .index-page .btn-jpm:active, .index-page .btn-getstarted:active {
+  background-color: var(--jpm-btn-red-active, #D9163A) !important;
+  border-color: var(--jpm-btn-red-active, #D9163A) !important;
+  transform: translateY(0) !important;
+  box-shadow: none !important;
+}
+
 .index-page .btn-outline-danger, .index-page .btn-outline-jpm {
   color: var(--accent-color, #f82249) !important;
   border-color: var(--accent-color, #f82249) !important;
-  background-color: transparent !important;
-  font-weight: 600;
+  background-color: #ffffff !important;
+  font-weight: 600 !important;
   box-shadow: none !important;
-  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease !important;
+  transition: all 0.2s ease !important;
 }
-.index-page .btn-outline-danger:hover, .index-page .btn-outline-danger:active,
-.index-page .btn-outline-jpm:hover, .index-page .btn-outline-jpm:active {
+.index-page .btn-outline-danger:hover,
+.index-page .btn-outline-jpm:hover {
   background-color: var(--accent-color, #f82249) !important;
   border-color: var(--accent-color, #f82249) !important;
   color: #ffffff !important;
+  transform: translateY(-1px) !important;
+  box-shadow: none !important;
+}
+.index-page .btn-outline-danger:active,
+.index-page .btn-outline-jpm:active {
+  background-color: var(--jpm-btn-red-active, #D9163A) !important;
+  border-color: var(--jpm-btn-red-active, #D9163A) !important;
+  transform: translateY(0) !important;
   box-shadow: none !important;
 }
 .index-page .btn-outline-danger:focus, .index-page .btn-outline-jpm:focus {
-  background-color: transparent !important;
   border-color: var(--accent-color, #f82249) !important;
-  color: var(--accent-color, #f82249) !important;
   box-shadow: none !important;
   outline: none !important;
 }
@@ -4118,38 +4152,59 @@ a.footer-contact-value:hover {
   --bs-btn-bg: #f1f5f9;
   --bs-btn-border-color: #e2e8f0;
   --bs-btn-hover-color: #0A1128;
-  --bs-btn-hover-bg: #e2e8f0;
+  --bs-btn-hover-bg: #f8fafc;
   --bs-btn-hover-border-color: #cbd5e1;
   --bs-btn-active-color: #0A1128;
   --bs-btn-active-bg: #e2e8f0;
   --bs-btn-active-border-color: #cbd5e1;
   background-color: #f1f5f9 !important;
   border: 1px solid #e2e8f0 !important;
-  color: #475569;
-  font-weight: 500;
+  color: #475569 !important;
+  font-weight: 600 !important;
   box-shadow: none !important;
+  transition: all 0.2s ease !important;
 }
-.index-page .btn-light:hover, .index-page .btn-light:focus, .index-page .btn-light:active,
-.index-page .btn-secondary:hover, .index-page .btn-secondary:focus, .index-page .btn-secondary:active {
-  background-color: #e2e8f0 !important;
-  border-color: #cbd5e1 !important;
-  color: var(--heading-color, #0A1128);
-  box-shadow: none !important;
-  transform: none !important;
-}
-.index-page .btn-outline-secondary {
-  background-color: #ffffff !important;
-  border: 1px solid #e2e8f0 !important;
-  color: #475569;
-  font-weight: 500;
-  box-shadow: none !important;
-}
-.index-page .btn-outline-secondary:hover, .index-page .btn-outline-secondary:focus, .index-page .btn-outline-secondary:active {
-  background-color: #f1f5f9 !important;
+.index-page .btn-light:hover,
+.index-page .btn-secondary:hover {
+  background-color: #f8fafc !important;
   border-color: #cbd5e1 !important;
   color: var(--heading-color, #0A1128) !important;
+  transform: translateY(-1px) !important;
   box-shadow: none !important;
-  transform: none !important;
+}
+.index-page .btn-light:active,
+.index-page .btn-secondary:active {
+  background-color: #e2e8f0 !important;
+  border-color: #cbd5e1 !important;
+  transform: translateY(0) !important;
+  box-shadow: none !important;
+}
+
+.index-page .btn-outline-secondary,
+.index-page .btn-secondary-outline,
+.index-page .btn-outline-action {
+  background-color: #ffffff !important;
+  border: 1px solid #cbd5e1 !important;
+  color: #475569 !important;
+  font-weight: 600 !important;
+  box-shadow: none !important;
+  transition: all 0.2s ease !important;
+}
+.index-page .btn-outline-secondary:hover,
+.index-page .btn-secondary-outline:hover,
+.index-page .btn-outline-action:hover {
+  background-color: #f1f5f9 !important;
+  border-color: #94a3b8 !important;
+  color: var(--heading-color, #0A1128) !important;
+  transform: translateY(-1px) !important;
+  box-shadow: none !important;
+}
+.index-page .btn-outline-secondary:active,
+.index-page .btn-secondary-outline:active,
+.index-page .btn-outline-action:active {
+  background-color: #e2e8f0 !important;
+  transform: translateY(0) !important;
+  box-shadow: none !important;
 }
 
 /* 3. Primary / Dark Brand Navy Buttons (#0A1128 Deep Navy đồng bộ nhận diện JPM) */
@@ -4158,40 +4213,142 @@ a.footer-contact-value:hover {
   background-color: var(--heading-color, #0A1128) !important;
   border-color: var(--heading-color, #0A1128) !important;
   color: #ffffff !important;
-  font-weight: 600;
+  font-weight: 600 !important;
   box-shadow: none !important;
+  transition: all 0.2s ease !important;
 }
-.index-page .btn-primary:hover, .index-page .btn-primary:focus, .index-page .btn-primary:active,
-.index-page .btn-dark:hover, .index-page .btn-dark:focus, .index-page .btn-dark:active {
-  background-color: #16244f !important;
-  border-color: #16244f !important;
+.index-page .btn-primary:hover,
+.index-page .btn-dark:hover {
+  background-color: var(--jpm-btn-navy-hover, #1B2852) !important;
+  border-color: var(--jpm-btn-navy-hover, #1B2852) !important;
   color: #ffffff !important;
+  transform: translateY(-1px) !important;
   box-shadow: none !important;
-  transform: none !important;
 }
+.index-page .btn-primary:active,
+.index-page .btn-dark:active {
+  background-color: var(--jpm-btn-navy-active, #060B1A) !important;
+  border-color: var(--jpm-btn-navy-active, #060B1A) !important;
+  transform: translateY(0) !important;
+  box-shadow: none !important;
+}
+
 .index-page .btn-outline-primary,
 .index-page .btn-outline-dark {
   color: var(--heading-color, #0A1128) !important;
   border-color: var(--heading-color, #0A1128) !important;
-  background-color: transparent !important;
-  font-weight: 600;
+  background-color: #ffffff !important;
+  font-weight: 600 !important;
   box-shadow: none !important;
-  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease !important;
+  transition: all 0.2s ease !important;
 }
-.index-page .btn-outline-primary:hover, .index-page .btn-outline-primary:active,
-.index-page .btn-outline-dark:hover, .index-page .btn-outline-dark:active {
+.index-page .btn-outline-primary:hover,
+.index-page .btn-outline-dark:hover {
   background-color: var(--heading-color, #0A1128) !important;
   border-color: var(--heading-color, #0A1128) !important;
   color: #ffffff !important;
+  transform: translateY(-1px) !important;
+  box-shadow: none !important;
+}
+.index-page .btn-outline-primary:active,
+.index-page .btn-outline-dark:active {
+  background-color: var(--jpm-btn-navy-active, #060B1A) !important;
+  border-color: var(--jpm-btn-navy-active, #060B1A) !important;
+  transform: translateY(0) !important;
   box-shadow: none !important;
 }
 .index-page .btn-outline-primary:focus,
 .index-page .btn-outline-dark:focus {
-  background-color: transparent !important;
   border-color: var(--heading-color, #0A1128) !important;
-  color: var(--heading-color, #0A1128) !important;
   box-shadow: none !important;
   outline: none !important;
+}
+
+/* 4. Blue Buttons (Bootstrap Blue #0d6efd) */
+.index-page .btn-blue-primary,
+.index-page .btn-primary-blue {
+  background-color: #0d6efd !important;
+  border: 1px solid #0d6efd !important;
+  color: #ffffff !important;
+  font-weight: 600 !important;
+  transition: all 0.2s ease !important;
+}
+.index-page .btn-blue-primary:hover,
+.index-page .btn-primary-blue:hover {
+  background-color: var(--jpm-btn-blue-hover, #267DFF) !important;
+  border-color: var(--jpm-btn-blue-hover, #267DFF) !important;
+  color: #ffffff !important;
+  transform: translateY(-1px) !important;
+  box-shadow: none !important;
+}
+.index-page .btn-blue-primary:active,
+.index-page .btn-primary-blue:active {
+  background-color: var(--jpm-btn-blue-active, #0B5ED7) !important;
+  border-color: var(--jpm-btn-blue-active, #0B5ED7) !important;
+  transform: translateY(0) !important;
+  box-shadow: none !important;
+}
+
+.index-page .btn-outline-blue {
+  background-color: #ffffff !important;
+  border: 1.5px solid #0d6efd !important;
+  color: #0d6efd !important;
+  font-weight: 600 !important;
+  transition: all 0.2s ease !important;
+}
+.index-page .btn-outline-blue:hover {
+  background-color: #0d6efd !important;
+  border-color: #0d6efd !important;
+  color: #ffffff !important;
+  transform: translateY(-1px) !important;
+  box-shadow: none !important;
+}
+.index-page .btn-outline-blue:active {
+  background-color: var(--jpm-btn-blue-active, #0B5ED7) !important;
+  border-color: var(--jpm-btn-blue-active, #0B5ED7) !important;
+  transform: translateY(0) !important;
+  box-shadow: none !important;
+}
+
+/* 5. Success Buttons (Green #198754) */
+.index-page .btn-success {
+  background-color: #198754 !important;
+  border-color: #198754 !important;
+  color: #ffffff !important;
+  font-weight: 600 !important;
+  transition: all 0.2s ease !important;
+}
+.index-page .btn-success:hover {
+  background-color: var(--jpm-btn-green-hover, #1E9E63) !important;
+  border-color: var(--jpm-btn-green-hover, #1E9E63) !important;
+  color: #ffffff !important;
+  transform: translateY(-1px) !important;
+  box-shadow: none !important;
+}
+.index-page .btn-success:active {
+  background-color: var(--jpm-btn-green-active, #146C43) !important;
+  border-color: var(--jpm-btn-green-active, #146C43) !important;
+  transform: translateY(0) !important;
+  box-shadow: none !important;
+}
+
+.index-page .btn-outline-success {
+  background-color: #ffffff !important;
+  border-color: #198754 !important;
+  color: #198754 !important;
+  font-weight: 600 !important;
+  transition: all 0.2s ease !important;
+}
+.index-page .btn-outline-success:hover {
+  background-color: #198754 !important;
+  border-color: #198754 !important;
+  color: #ffffff !important;
+  transform: translateY(-1px) !important;
+  box-shadow: none !important;
+}
+.index-page .btn-outline-success:active {
+  transform: translateY(0) !important;
+  box-shadow: none !important;
 }
 
 .index-page .text-danger { color: #f82249 !important; }
@@ -4373,9 +4530,14 @@ a.footer-contact-value:hover {
   gap: 6px;
 }
 .btn-jpm-navy:hover {
-  background-color: var(--jpm-color-navy-subtle, #101E42);
+  background-color: var(--jpm-btn-navy-hover, #1B2852);
   color: #ffffff;
   transform: translateY(-1px);
+  box-shadow: none !important;
+}
+.btn-jpm-navy:active {
+  background-color: var(--jpm-btn-navy-active, #060B1A);
+  transform: translateY(0);
   box-shadow: none !important;
 }
 
@@ -4394,10 +4556,16 @@ a.footer-contact-value:hover {
   gap: 6px;
 }
 .btn-jpm-primary:hover {
-  background-color: var(--jpm-color-red-hover, #D9163A);
+  background-color: var(--jpm-btn-red-hover, #FF3B5F);
   color: #ffffff;
-  border-color: var(--jpm-color-red-hover, #D9163A);
+  border-color: var(--jpm-btn-red-hover, #FF3B5F);
   transform: translateY(-1px);
+  box-shadow: none !important;
+}
+.btn-jpm-primary:active {
+  background-color: var(--jpm-btn-red-active, #D9163A);
+  border-color: var(--jpm-btn-red-active, #D9163A);
+  transform: translateY(0);
   box-shadow: none !important;
 }
 
@@ -4464,10 +4632,29 @@ a.footer-contact-value:hover {
 
 /* --- Global Button Consistency --- */
 .btn {
+  --bs-btn-padding-y: 0.5rem;
+  --bs-btn-padding-x: 1rem;
+  --bs-btn-font-size: 0.875rem;
+  --bs-btn-line-height: 1.45;
   font-family: var(--default-font);
   border-radius: var(--jpm-radius-control, 8px);
   font-weight: 600;
-  transition: all 0.2s ease-in-out;
+  transition: all 0.2s ease !important;
+  box-shadow: none !important;
+}
+.btn:hover {
+  transform: translateY(-1px) !important;
+  box-shadow: none !important;
+}
+.btn:active {
+  transform: translateY(0) !important;
+  box-shadow: none !important;
+}
+.btn:disabled, .btn.disabled {
+  transform: none !important;
+  box-shadow: none !important;
+  opacity: 0.65;
+  cursor: not-allowed;
 }
 
 .btn-primary {
@@ -4475,17 +4662,16 @@ a.footer-contact-value:hover {
   border-color: var(--jpm-color-navy-dark, #0A1128);
   color: #ffffff;
 }
-.btn-primary:hover,
-.btn-primary:focus {
-  background-color: var(--jpm-color-navy-subtle, #101E42) !important;
-  border-color: var(--jpm-color-navy-subtle, #101E42) !important;
+.btn-primary:hover {
+  background-color: var(--jpm-btn-navy-hover, #1B2852) !important;
+  border-color: var(--jpm-btn-navy-hover, #1B2852) !important;
   color: #ffffff !important;
   box-shadow: none !important;
   transform: translateY(-1px) !important;
 }
 .btn-primary:active {
-  background-color: var(--jpm-color-navy-subtle, #101E42) !important;
-  border-color: var(--jpm-color-navy-subtle, #101E42) !important;
+  background-color: var(--jpm-btn-navy-active, #060B1A) !important;
+  border-color: var(--jpm-btn-navy-active, #060B1A) !important;
   color: #ffffff !important;
   transform: translateY(0) !important;
   box-shadow: none !important;
@@ -4497,15 +4683,16 @@ a.footer-contact-value:hover {
   color: #ffffff !important;
   box-shadow: none !important;
 }
-.btn-danger:hover,
-.btn-danger:focus {
-  background-color: var(--jpm-color-red-hover, #D9163A) !important;
-  border-color: var(--jpm-color-red-hover, #D9163A) !important;
+.btn-danger:hover {
+  background-color: var(--jpm-btn-red-hover, #FF3B5F) !important;
+  border-color: var(--jpm-btn-red-hover, #FF3B5F) !important;
   color: #ffffff !important;
   box-shadow: none !important;
   transform: translateY(-1px) !important;
 }
 .btn-danger:active {
+  background-color: var(--jpm-btn-red-active, #D9163A) !important;
+  border-color: var(--jpm-btn-red-active, #D9163A) !important;
   transform: translateY(0) !important;
   box-shadow: none !important;
 }
@@ -4517,8 +4704,7 @@ a.footer-contact-value:hover {
   box-shadow: none !important;
   transition: all 0.2s ease !important;
 }
-.btn-outline-danger:hover,
-.btn-outline-danger:focus {
+.btn-outline-danger:hover {
   background-color: var(--jpm-color-red-marine, #F82249) !important;
   border-color: var(--jpm-color-red-marine, #F82249) !important;
   color: #ffffff !important;
@@ -4526,6 +4712,8 @@ a.footer-contact-value:hover {
   box-shadow: none !important;
 }
 .btn-outline-danger:active {
+  background-color: var(--jpm-btn-red-active, #D9163A) !important;
+  border-color: var(--jpm-btn-red-active, #D9163A) !important;
   transform: translateY(0) !important;
   box-shadow: none !important;
 }
@@ -4537,8 +4725,7 @@ a.footer-contact-value:hover {
   box-shadow: none !important;
   transition: all 0.2s ease !important;
 }
-.btn-outline-primary:hover,
-.btn-outline-primary:focus {
+.btn-outline-primary:hover {
   background-color: var(--jpm-color-navy-dark, #0A1128) !important;
   border-color: var(--jpm-color-navy-dark, #0A1128) !important;
   color: #ffffff !important;
@@ -4546,6 +4733,8 @@ a.footer-contact-value:hover {
   box-shadow: none !important;
 }
 .btn-outline-primary:active {
+  background-color: var(--jpm-btn-navy-active, #060B1A) !important;
+  border-color: var(--jpm-btn-navy-active, #060B1A) !important;
   transform: translateY(0) !important;
   box-shadow: none !important;
 }
@@ -4556,8 +4745,7 @@ a.footer-contact-value:hover {
   background-color: #ffffff;
   transition: all 0.2s ease !important;
 }
-.btn-outline-blue:hover,
-.btn-outline-blue:focus {
+.btn-outline-blue:hover {
   background-color: #0d6efd !important;
   border-color: #0d6efd !important;
   color: #ffffff !important;
@@ -4565,6 +4753,8 @@ a.footer-contact-value:hover {
   box-shadow: none !important;
 }
 .btn-outline-blue:active {
+  background-color: var(--jpm-btn-blue-active, #0B5ED7) !important;
+  border-color: var(--jpm-btn-blue-active, #0B5ED7) !important;
   transform: translateY(0) !important;
   box-shadow: none !important;
 }
@@ -4576,15 +4766,16 @@ a.footer-contact-value:hover {
   box-shadow: none !important;
   transition: all 0.2s ease !important;
 }
-.btn-success:hover,
-.btn-success:focus {
-  background-color: #157347 !important;
-  border-color: #157347 !important;
+.btn-success:hover {
+  background-color: var(--jpm-btn-green-hover, #1E9E63) !important;
+  border-color: var(--jpm-btn-green-hover, #1E9E63) !important;
   color: #ffffff !important;
   transform: translateY(-1px) !important;
   box-shadow: none !important;
 }
 .btn-success:active {
+  background-color: var(--jpm-btn-green-active, #146C43) !important;
+  border-color: var(--jpm-btn-green-active, #146C43) !important;
   transform: translateY(0) !important;
   box-shadow: none !important;
 }
@@ -4596,8 +4787,7 @@ a.footer-contact-value:hover {
   box-shadow: none !important;
   transition: all 0.2s ease !important;
 }
-.btn-outline-success:hover,
-.btn-outline-success:focus {
+.btn-outline-success:hover {
   background-color: #198754 !important;
   border-color: #198754 !important;
   color: #ffffff !important;
@@ -4605,6 +4795,8 @@ a.footer-contact-value:hover {
   box-shadow: none !important;
 }
 .btn-outline-success:active {
+  background-color: var(--jpm-btn-green-active, #146C43) !important;
+  border-color: var(--jpm-btn-green-active, #146C43) !important;
   transform: translateY(0) !important;
   box-shadow: none !important;
 }
@@ -4684,11 +4876,19 @@ a.btn-shopee-primary {
 .btn-shopee-primary:hover,
 button.btn-shopee-primary:hover,
 a.btn-shopee-primary:hover {
-  background-color: var(--jpm-color-red-hover, #D9163A) !important;
-  border-color: var(--jpm-color-red-hover, #D9163A) !important;
+  background-color: var(--jpm-btn-red-hover, #FF3B5F) !important;
+  border-color: var(--jpm-btn-red-hover, #FF3B5F) !important;
   color: #ffffff !important;
   box-shadow: none !important;
   transform: translateY(-1px) !important;
+}
+.btn-shopee-primary:active,
+button.btn-shopee-primary:active,
+a.btn-shopee-primary:active {
+  background-color: var(--jpm-btn-red-active, #D9163A) !important;
+  border-color: var(--jpm-btn-red-active, #D9163A) !important;
+  transform: translateY(0) !important;
+  box-shadow: none !important;
 }
 .btn-shopee-outline,
 button.btn-shopee-outline,

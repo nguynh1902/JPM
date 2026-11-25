@@ -246,30 +246,30 @@
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content border-0 shadow-lg" style="border-radius: var(--jpm-radius-card, 12px) !important; overflow: hidden;">
           <div class="modal-header d-flex justify-content-between align-items-center w-100 border-bottom px-4 py-3">
-            <h5 class="modal-title tk-heading mb-0">{{ isEditingAddress ? 'Chỉnh Sửa Địa Chỉ' : 'Thêm Địa Chỉ Mới' }}</h5>
+            <h5 class="modal-title tk-heading mb-0">{{ isEditingAddress ? 'Cập nhật địa chỉ' : 'Thêm địa chỉ mới' }}</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body p-4">
             <form @submit.prevent="saveAddress">
               <div class="mb-3">
                 <label class="form-label tk-form-label">Họ và tên người nhận <span class="text-danger">*</span></label>
-                <input type="text" v-model="addressForm.ten_nguoi_nhan" class="form-control" placeholder="Nhập họ và tên người nhận hàng..." required>
+                <input type="text" v-model="addressForm.ten_nguoi_nhan" class="form-control" placeholder="Nhập họ và tên người nhận..." required>
               </div>
               <div class="mb-3">
-                <label class="form-label tk-form-label">Số điện thoại liên hệ <span class="text-danger">*</span></label>
-                <input type="text" v-model="addressForm.so_dien_thoai" class="form-control" placeholder="Nhập số điện thoại liên hệ..." required>
+                <label class="form-label tk-form-label">Số điện thoại / Zalo <span class="text-danger">*</span></label>
+                <input type="tel" v-model="addressForm.so_dien_thoai" class="form-control" placeholder="Nhập SĐT / Zalo..." required>
               </div>
               <div class="mb-3">
-                <label class="form-label tk-form-label">Địa chỉ nhận hàng cụ thể <span class="text-danger">*</span></label>
-                <textarea v-model="addressForm.dia_chi_cu_the" class="form-control" rows="3" placeholder="Số nhà, đường, phường/xã, quận/huyện, tỉnh/thành phố hoặc bến chành xe..." required></textarea>
+                <label class="form-label tk-form-label">Địa chỉ nhận hàng / Chành xe <span class="text-danger">*</span></label>
+                <textarea v-model="addressForm.dia_chi_cu_the" class="form-control" rows="3" placeholder="Số nhà, đường, tỉnh/thành phố hoặc tên bến chành xe..." required></textarea>
               </div>
-              <div class="mb-3 form-check">
-                <input type="checkbox" class="form-check-input" id="defaultAddress" v-model="addressForm.la_mac_dinh">
-                <label class="form-check-label fw-semibold text-secondary ms-1 cursor-pointer" style="font-size: 13.5px;" for="defaultAddress">Đặt làm địa chỉ mặc định</label>
+              <div class="mb-3 tk-modal-check-row">
+                <input type="checkbox" class="form-check-input tk-modal-checkbox" id="defaultAddress" v-model="addressForm.la_mac_dinh">
+                <label class="form-check-label fw-medium text-secondary cursor-pointer mb-0" style="font-size: 13.5px;" for="defaultAddress">Đặt làm địa chỉ nhận hàng mặc định</label>
               </div>
               <div class="d-flex justify-content-end gap-2 pt-3 mt-4 border-top">
-                <button type="button" class="btn btn-secondary-action" data-bs-dismiss="modal">Hủy</button>
-                <button type="submit" class="btn btn-danger-action" :disabled="isSavingAddress">
+                <button type="button" class="btn btn-outline-secondary px-4" data-bs-dismiss="modal">Hủy</button>
+                <button type="submit" class="btn btn-danger px-4" :disabled="isSavingAddress">
                   <span v-if="isSavingAddress" class="spinner-border spinner-border-sm me-2"></span>
                   Lưu địa chỉ
                 </button>
@@ -752,11 +752,18 @@ const setDefault = (id) => {
 }
 
 .btn-action-primary:hover:not(:disabled) {
-  background-color: var(--jpm-color-red-hover, #D9163A) !important;
-  border-color: var(--jpm-color-red-hover, #D9163A) !important;
+  background-color: var(--jpm-btn-red-hover, #FF3B5F) !important;
+  border-color: var(--jpm-btn-red-hover, #FF3B5F) !important;
   color: #ffffff !important;
   box-shadow: none !important;
   transform: translateY(-1px) !important;
+}
+
+.btn-action-primary:active:not(:disabled) {
+  background-color: var(--jpm-btn-red-active, #D9163A) !important;
+  border-color: var(--jpm-btn-red-active, #D9163A) !important;
+  transform: translateY(0) !important;
+  box-shadow: none !important;
 }
 
 .btn-action-primary:disabled {
@@ -818,9 +825,17 @@ const setDefault = (id) => {
 }
 
 .btn-danger-action:hover:not(:disabled) {
-  background-color: #d91438;
-  border-color: #d91438;
+  background-color: var(--jpm-btn-red-hover, #FF3B5F) !important;
+  border-color: var(--jpm-btn-red-hover, #FF3B5F) !important;
   color: #ffffff;
+  transform: translateY(-1px) !important;
+  box-shadow: none !important;
+}
+
+.btn-danger-action:active:not(:disabled) {
+  background-color: var(--jpm-btn-red-active, #D9163A) !important;
+  border-color: var(--jpm-btn-red-active, #D9163A) !important;
+  transform: translateY(0) !important;
   box-shadow: none !important;
 }
 
@@ -851,5 +866,32 @@ const setDefault = (id) => {
   border-color: #94a3b8;
   color: var(--jpm-color-navy-dark, #0A1128);
   transform: translateY(-1px);
+}
+
+.tk-modal-check-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-left: 0;
+}
+
+.tk-modal-checkbox {
+  width: 17px;
+  height: 17px;
+  border-color: #cbd5e1;
+  border-radius: var(--jpm-radius-badge, 6px);
+  margin: 0 !important;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+.tk-modal-checkbox:checked {
+  background-color: var(--jpm-color-red-marine, #F82249);
+  border-color: var(--jpm-color-red-marine, #F82249);
+}
+
+.tk-modal-checkbox:focus {
+  border-color: var(--jpm-color-red-marine, #F82249);
+  box-shadow: 0 0 0 2px rgba(248, 34, 73, 0.2);
 }
 </style>
