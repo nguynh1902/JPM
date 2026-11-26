@@ -187,8 +187,8 @@ body:not(.layout-admin) .swal2-popup:not(.swal2-toast) .swal2-icon.swal2-error [
 
 body:not(.layout-admin) .swal2-popup:not(.swal2-toast) .swal2-icon.swal2-info,
 body:not(.layout-admin) .swal2-popup:not(.swal2-toast) .swal2-icon.swal2-question {
-  border-color: rgba(29, 78, 216, 0.28) !important;
-  color: var(--jpm-color-blue-electric, #1D4ED8) !important;
+  border-color: rgba(2, 132, 199, 0.28) !important;
+  color: var(--jpm-color-blue-electric, #0284C7) !important;
 }
 
 body:not(.layout-admin) .swal2-popup:not(.swal2-toast) .swal2-title {

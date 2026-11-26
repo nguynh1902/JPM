@@ -253,11 +253,11 @@
             <!-- Legend góc phải: Ô màu rồi tới chữ -->
             <div class="d-flex align-items-center gap-3" style="font-size: 0.78rem;">
               <div class="d-flex align-items-center gap-2">
-                <span style="display: inline-block; width: 13px; height: 13px; border-radius: 3px; background-color: #696cff;"></span>
+                <span style="display: inline-block; width: 13px; height: 13px; border-radius: 3px; background-color: #0891b2;"></span>
                 <span class="text-muted fw-medium">Doanh thu bán</span>
               </div>
               <div class="d-flex align-items-center gap-2">
-                <span style="display: inline-block; width: 13px; height: 13px; border-radius: 3px; background-color: #8592a3;"></span>
+                <span style="display: inline-block; width: 13px; height: 13px; border-radius: 3px; background-color: #94a3b8;"></span>
                 <span class="text-muted fw-medium">Chi phí nhập</span>
               </div>
             </div>
@@ -342,7 +342,14 @@
                     </span>
                   </td>
                   <td class="text-end">
-                    <span class="fw-bold text-danger" style="font-size: 0.9rem;">
+                    <span
+                      v-if="item.type === 'quote' && (!item.amount || Number(item.amount) <= 0)"
+                      class="text-muted fw-medium"
+                      style="font-size: 0.85rem;"
+                    >
+                      Chờ báo giá
+                    </span>
+                    <span v-else class="fw-bold text-danger" style="font-size: 0.9rem;">
                       {{ formatCurrency(item.amount) }}
                     </span>
                   </td>
@@ -378,7 +385,7 @@
             <div class="border-top pt-3 mt-2">
               <div class="d-flex justify-content-between align-items-center mb-2" style="font-size: 0.8rem;">
                 <div class="d-flex align-items-center">
-                  <span class="me-2" style="display: inline-block; width: 13px; height: 13px; border-radius: 3px; background-color: #03c3ec;"></span>
+                  <span class="me-2" style="display: inline-block; width: 13px; height: 13px; border-radius: 3px; background-color: #0891b2;"></span>
                   <span class="text-dark fw-medium">Đơn Hoàn Tất</span>
                 </div>
                 <div class="fw-bold text-dark">
@@ -387,7 +394,7 @@
               </div>
               <div class="d-flex justify-content-between align-items-center mb-2" style="font-size: 0.8rem;">
                 <div class="d-flex align-items-center">
-                  <span class="me-2" style="display: inline-block; width: 13px; height: 13px; border-radius: 3px; background-color: #696cff;"></span>
+                  <span class="me-2" style="display: inline-block; width: 13px; height: 13px; border-radius: 3px; background-color: #38bdf8;"></span>
                   <span class="text-dark fw-medium">Đơn Đang Xử Lý</span>
                 </div>
                 <div class="fw-bold text-dark">
@@ -396,7 +403,7 @@
               </div>
               <div class="d-flex justify-content-between align-items-center" style="font-size: 0.8rem;">
                 <div class="d-flex align-items-center">
-                  <span class="me-2" style="display: inline-block; width: 13px; height: 13px; border-radius: 3px; background-color: #ffab00;"></span>
+                  <span class="me-2" style="display: inline-block; width: 13px; height: 13px; border-radius: 3px; background-color: #f59e0b;"></span>
                   <span class="text-dark fw-medium">Yêu Cầu Báo Giá</span>
                 </div>
                 <div class="fw-bold text-dark">
@@ -415,19 +422,12 @@
 import { ref, onMounted, onUnmounted, computed } from 'vue';
 import { useRoute } from 'vue-router';
 import apexchart from 'vue3-apexcharts';
-import Swal from 'sweetalert2';
+import { createToaster } from '@meforma/vue-toaster';
 import axiosClient from '../../../api/axiosClient';
 
 const route = useRoute();
 const basePath = computed(() => '/portal');
-
-const Toast = Swal.mixin({
-  toast: true,
-  position: 'top-end',
-  showConfirmButton: false,
-  timer: 2000,
-  timerProgressBar: true
-});
+const toaster = createToaster({ position: 'top-right', duration: 3000 });
 
 // Dropdown state & Date labels
 const dropdownRef = ref(null);
@@ -590,10 +590,7 @@ const selectPreset = (period) => {
   isDropdownOpen.value = false;
   currentPeriod.value = period;
   fetchData();
-  Toast.fire({
-    icon: 'info',
-    title: `Đang lọc dữ liệu: ${periodLabels[period] || period}`
-  });
+  toaster.info(`Đang lọc dữ liệu: ${periodLabels[period] || period}`);
 };
 
 const applyCustomRange = () => {
@@ -603,10 +600,7 @@ const applyCustomRange = () => {
   currentPeriod.value = 'custom';
   isDropdownOpen.value = false;
   fetchData();
-  Toast.fire({
-    icon: 'info',
-    title: `Lọc từ ${formatDisplayDate(activeStartDate.value)} đến ${formatDisplayDate(activeEndDate.value)}`
-  });
+  toaster.info(`Lọc từ ${formatDisplayDate(activeStartDate.value)} đến ${formatDisplayDate(activeEndDate.value)}`);
 };
 
 const kpis = ref({
@@ -669,13 +663,13 @@ const barChartOptions = computed(() => ({
   },
   dataLabels: { enabled: false },
   stroke: { show: true, width: 2, colors: ['transparent'] },
-  colors: ['#696cff', '#8592a3'],
+  colors: ['#0891b2', '#94a3b8'],
   xaxis: {
     categories: revenueChartData.value.categories || [],
     labels: {
       rotate: -45,
       rotateAlways: true,
-      style: { fontSize: '11px', colors: '#8592a3', fontWeight: 500 },
+      style: { fontSize: '11.5px', colors: '#64748b', fontWeight: 500 },
       trim: false
     },
     axisBorder: { show: false },
@@ -692,7 +686,7 @@ const barChartOptions = computed(() => ({
         }
         return val + ' Tr';
       },
-      style: { fontSize: '11px', colors: '#8592a3' }
+      style: { fontSize: '11.5px', colors: '#64748b' }
     }
   },
   fill: { opacity: 1 },
@@ -722,7 +716,7 @@ const donutChartOptions = computed(() => ({
     fontFamily: 'Inter, sans-serif'
   },
   labels: distributionChartData.value.labels || ['Đơn Hoàn Tất', 'Đơn Đang Xử Lý', 'Yêu Cầu Báo Giá'],
-  colors: ['#03c3ec', '#696cff', '#ffab00'],
+  colors: ['#0891b2', '#38bdf8', '#f59e0b'],
   stroke: { width: 3, colors: ['#fff'] },
   legend: { show: false },
   dataLabels: { enabled: false },
@@ -735,7 +729,7 @@ const donutChartOptions = computed(() => ({
           value: {
             fontSize: '1.5rem',
             fontWeight: 700,
-            color: '#233446',
+            color: '#0f172a',
             offsetY: -6,
             formatter: (val) => val
           },
@@ -746,7 +740,7 @@ const donutChartOptions = computed(() => ({
           total: {
             show: true,
             fontSize: '0.8rem',
-            color: '#8592a3',
+            color: '#64748b',
             label: 'Tổng giao dịch',
             formatter: (w) => {
               const totals = w?.globals?.seriesTotals;
@@ -805,19 +799,13 @@ const fetchData = async (isManual = false) => {
       recentActivities.value = res.data.recent_activities || [];
 
       if (isManual) {
-        Toast.fire({
-          icon: 'success',
-          title: 'Đã làm mới dữ liệu Dashboard thành công!'
-        });
+        toaster.success('Đã làm mới dữ liệu Dashboard thành công!');
       }
     }
   } catch (error) {
     console.error('Lỗi tải dữ liệu Dashboard:', error);
     if (isManual) {
-      Toast.fire({
-        icon: 'error',
-        title: 'Không thể làm mới dữ liệu. Vui lòng thử lại!'
-      });
+      toaster.error('Không thể làm mới dữ liệu. Vui lòng thử lại!');
     }
   } finally {
     isLoading.value = false;
@@ -847,39 +835,30 @@ onUnmounted(() => {
 .kpi-label {
   font-size: 0.75rem;
   text-transform: uppercase;
-  font-weight: 600;
-  letter-spacing: 0.5px;
-  color: #8592a3;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: #64748b;
 }
 
 .kpi-value {
-  font-size: 1.35rem;
+  font-size: 1.4rem;
   font-weight: 700;
-  color: #566a7f;
-  line-height: 1.2;
+  color: #0f172a;
+  line-height: 1.25;
+  font-variant-numeric: tabular-nums;
 }
 
 .kpi-subtext {
-  font-size: 0.75rem;
+  font-size: 0.78rem;
 }
 
-/* Custom Table header - Đồng bộ chuẩn font-weight 700 và màu sắc với các trang khác */
-.table th {
-  font-size: 0.75rem;
-  letter-spacing: 1px;
-  color: #233446 !important;
-  font-weight: 700 !important;
-  padding-top: 13px;
-  padding-bottom: 13px;
-}
-
-/* Sneat Active Item styling */
+/* Marine Teal Active Item styling đồng bộ toàn Admin */
 .active-sneat-item {
-  background-color: rgba(105, 108, 255, 0.12) !important;
-  color: #696cff !important;
+  background-color: rgba(8, 145, 178, 0.12) !important;
+  color: #0e7490 !important;
   font-weight: 600;
 }
 .dropdown-item:hover:not(.active-sneat-item) {
-  background-color: #f5f5f9;
+  background-color: #f1f5f9;
 }
 </style>

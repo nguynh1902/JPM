@@ -4,11 +4,11 @@
     <div class="app-brand demo py-3 position-relative" style="height: 76px; padding-left: 1rem; padding-right: 1rem;">
       <router-link to="/portal/ho-so" class="d-flex align-items-center w-100 text-decoration-none p-2 rounded user-profile-box" title="Xem Hồ sơ cá nhân">
         <div class="avatar avatar-online me-3" style="width: 44px; height: 44px; min-width: 44px;">
-          <img :src="userAvatar" alt="user-avatar" class="w-100 h-100 rounded-circle shadow-sm" style="object-fit: cover; border: 2px solid #e7e7ff;" />
+          <img :src="userAvatar" alt="user-avatar" class="w-100 h-100 rounded-circle shadow-sm" style="object-fit: cover; border: 2px solid #a5f3fc;" />
         </div>
         <div class="d-flex flex-column align-items-start overflow-hidden">
-          <span class="fw-bold text-dark text-truncate w-100" style="font-size: 15px; line-height: 1.2;">{{ userName }}</span>
-          <small class="text-primary fw-semibold" style="font-size: 11.5px;">{{ displayRoleName }}</small>
+          <span class="fw-bold text-dark text-truncate w-100" style="font-size: 0.95rem; line-height: 1.25;">{{ userName }}</span>
+          <small class="text-primary fw-semibold" style="font-size: 0.78rem;">{{ displayRoleName }}</small>
         </div>
       </router-link>
       

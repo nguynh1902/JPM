@@ -19,7 +19,7 @@
   --jpm-color-navy-subtle: #101E42;
   --jpm-color-red-marine: #F82249;
   --jpm-color-red-hover: #D9163A;
-  --jpm-color-blue-electric: #1D4ED8;
+  --jpm-color-blue-electric: #0284C7;
   --jpm-color-gold-marine: #D97706;
 
   /* Button Interaction States: Hover / Active chuẩn hóa theo từng màu */
@@ -27,8 +27,8 @@
   --jpm-btn-red-active: #B91230;
   --jpm-btn-navy-hover: #1B2852;
   --jpm-btn-navy-active: #060B1A;
-  --jpm-btn-blue-hover: #1E40AF;
-  --jpm-btn-blue-active: #1E3A8A;
+  --jpm-btn-blue-hover: #0369A1;
+  --jpm-btn-blue-active: #075985;
   --jpm-btn-green-hover: #1E9E63;
   --jpm-btn-green-active: #146C43;
 
@@ -47,8 +47,8 @@
   /* 3. Semantic Status */
   --jpm-status-stock-bg: #DCFCE7;
   --jpm-status-stock-text: #15803D;
-  --jpm-status-quote-bg: #DBEAFE;
-  --jpm-status-quote-text: #1D4ED8;
+  --jpm-status-quote-bg: #E0F2FE;
+  --jpm-status-quote-text: #0369A1;
   --jpm-status-order-bg: #FEF3C7;
   --jpm-status-order-text: #B45309;
   --jpm-status-super-bg: #EDE9FE;
@@ -103,8 +103,8 @@
   /* Overwrite Bootstrap Default Red & Primary */
   --bs-danger: var(--jpm-color-red-marine, #F82249);
   --bs-danger-rgb: 248, 34, 73;
-  --bs-primary: var(--jpm-color-blue-electric, #1D4ED8);
-  --bs-primary-rgb: 29, 78, 216;
+  --bs-primary: var(--jpm-color-blue-electric, #0284C7);
+  --bs-primary-rgb: 2, 132, 199;
 
   /* Premium Box Shadows */
   --shadow-sm: var(--jpm-shadow-sm);
@@ -2319,11 +2319,11 @@ section,
   box-shadow: none !important;
 }
 
-/* 2. Primary Blue Button (Thống nhất 1 màu Primary #1D4ED8 toàn Client) */
+/* 2. Primary Blue Button (Thống nhất 1 màu Primary #0284C7 toàn Client) */
 .btn-blue-primary,
 .btn-primary-blue {
-  background-color: var(--jpm-color-blue-electric, #1D4ED8) !important;
-  border: 1px solid var(--jpm-color-blue-electric, #1D4ED8) !important;
+  background-color: var(--jpm-color-blue-electric, #0284C7) !important;
+  border: 1px solid var(--jpm-color-blue-electric, #0284C7) !important;
   color: #ffffff !important;
   font-family: var(--default-font, 'Inter', sans-serif);
   font-weight: 600;
@@ -2333,16 +2333,16 @@ section,
 }
 .btn-blue-primary:hover,
 .btn-primary-blue:hover {
-  background-color: var(--jpm-btn-blue-hover, #1E40AF) !important;
-  border-color: var(--jpm-btn-blue-hover, #1E40AF) !important;
+  background-color: var(--jpm-btn-blue-hover, #0369A1) !important;
+  border-color: var(--jpm-btn-blue-hover, #0369A1) !important;
   color: #ffffff !important;
   box-shadow: none !important;
   transform: translateY(-1px) !important;
 }
 .btn-blue-primary:active,
 .btn-primary-blue:active {
-  background-color: var(--jpm-btn-blue-active, #1E3A8A) !important;
-  border-color: var(--jpm-btn-blue-active, #1E3A8A) !important;
+  background-color: var(--jpm-btn-blue-active, #075985) !important;
+  border-color: var(--jpm-btn-blue-active, #075985) !important;
   transform: translateY(0) !important;
   box-shadow: none !important;
 }
@@ -3551,7 +3551,7 @@ a.footer-contact-value:hover {
   margin-bottom: 0.25rem !important;
 }
 
-/* Kiểu chữ: Mã sản phẩm (SKU) đặt ngay dưới tên sản phẩm - Màu Primary thống nhất (#1D4ED8) */
+/* Kiểu chữ: Mã sản phẩm (SKU) đặt ngay dưới tên sản phẩm - Màu Primary thống nhất (#0284C7) */
 .product-sku {
   font-family: var(--default-font) !important;
   font-size: 0.8125rem !important; /* ~13px */
@@ -3574,14 +3574,14 @@ a.footer-contact-value:hover {
   font-size: 0.875rem !important;
   font-weight: 700 !important;
   font-variant-numeric: tabular-nums;
-  color: var(--jpm-color-blue-electric, #1D4ED8) !important;
+  color: var(--jpm-color-blue-electric, #0284C7) !important;
   letter-spacing: 0.1px !important;
   min-width: 0;
   transition: none !important;
 }
 .product-card:hover .product-sku .sku-code,
 .premium-product-card:hover .product-sku .sku-code {
-  color: var(--jpm-color-blue-electric, #1D4ED8) !important;
+  color: var(--jpm-color-blue-electric, #0284C7) !important;
 }
 
 /* Kiểu chữ: Tên sản phẩm & Thông tin Card (Chuẩn Typography E-Commerce) */
@@ -4258,12 +4258,12 @@ a.footer-contact-value:hover {
   outline: none !important;
 }
 
-/* 4. Primary Blue Buttons (Thống nhất 1 màu Primary #1D4ED8 toàn Client) */
+/* 4. Primary Blue Buttons (Thống nhất 1 màu Primary #0284C7 toàn Client) */
 .index-page .btn-primary,
 .index-page .btn-blue-primary,
 .index-page .btn-primary-blue {
-  background-color: var(--jpm-color-blue-electric, #1D4ED8) !important;
-  border: 1px solid var(--jpm-color-blue-electric, #1D4ED8) !important;
+  background-color: var(--jpm-color-blue-electric, #0284C7) !important;
+  border: 1px solid var(--jpm-color-blue-electric, #0284C7) !important;
   color: #ffffff !important;
   font-weight: 600 !important;
   box-shadow: none !important;
@@ -4272,8 +4272,8 @@ a.footer-contact-value:hover {
 .index-page .btn-primary:hover,
 .index-page .btn-blue-primary:hover,
 .index-page .btn-primary-blue:hover {
-  background-color: var(--jpm-btn-blue-hover, #1E40AF) !important;
-  border-color: var(--jpm-btn-blue-hover, #1E40AF) !important;
+  background-color: var(--jpm-btn-blue-hover, #0369A1) !important;
+  border-color: var(--jpm-btn-blue-hover, #0369A1) !important;
   color: #ffffff !important;
   transform: translateY(-1px) !important;
   box-shadow: none !important;
@@ -4281,8 +4281,8 @@ a.footer-contact-value:hover {
 .index-page .btn-primary:active,
 .index-page .btn-blue-primary:active,
 .index-page .btn-primary-blue:active {
-  background-color: var(--jpm-btn-blue-active, #1E3A8A) !important;
-  border-color: var(--jpm-btn-blue-active, #1E3A8A) !important;
+  background-color: var(--jpm-btn-blue-active, #075985) !important;
+  border-color: var(--jpm-btn-blue-active, #075985) !important;
   transform: translateY(0) !important;
   box-shadow: none !important;
 }
@@ -4290,31 +4290,31 @@ a.footer-contact-value:hover {
 .index-page .btn-outline-primary,
 .index-page .btn-outline-blue {
   background-color: #ffffff !important;
-  border: 1px solid var(--jpm-color-blue-electric, #1D4ED8) !important;
-  color: var(--jpm-color-blue-electric, #1D4ED8) !important;
+  border: 1px solid var(--jpm-color-blue-electric, #0284C7) !important;
+  color: var(--jpm-color-blue-electric, #0284C7) !important;
   font-weight: 600 !important;
   box-shadow: none !important;
   transition: all 0.2s ease !important;
 }
 .index-page .btn-outline-primary:hover,
 .index-page .btn-outline-blue:hover {
-  background-color: var(--jpm-color-blue-electric, #1D4ED8) !important;
-  border-color: var(--jpm-color-blue-electric, #1D4ED8) !important;
+  background-color: var(--jpm-color-blue-electric, #0284C7) !important;
+  border-color: var(--jpm-color-blue-electric, #0284C7) !important;
   color: #ffffff !important;
   transform: translateY(-1px) !important;
   box-shadow: none !important;
 }
 .index-page .btn-outline-primary:active,
 .index-page .btn-outline-blue:active {
-  background-color: var(--jpm-btn-blue-active, #1E3A8A) !important;
-  border-color: var(--jpm-btn-blue-active, #1E3A8A) !important;
+  background-color: var(--jpm-btn-blue-active, #075985) !important;
+  border-color: var(--jpm-btn-blue-active, #075985) !important;
   color: #ffffff !important;
   transform: translateY(0) !important;
   box-shadow: none !important;
 }
 .index-page .btn-outline-primary:focus,
 .index-page .btn-outline-blue:focus {
-  border-color: var(--jpm-color-blue-electric, #1D4ED8) !important;
+  border-color: var(--jpm-color-blue-electric, #0284C7) !important;
   box-shadow: none !important;
   outline: none !important;
 }
@@ -4500,7 +4500,7 @@ a.footer-contact-value:hover {
   height: 36px;
   padding: 0 12px;
   border-radius: var(--jpm-radius-control, 8px) !important;
-  color: var(--jpm-status-quote-text, #1D4ED8) !important;
+  color: var(--jpm-status-quote-text, #0284C7) !important;
   border: 1px solid #bfdbfe !important;
   background-color: var(--jpm-status-quote-bg, #DBEAFE) !important;
   font-size: 0.8125rem;
@@ -4517,9 +4517,9 @@ a.footer-contact-value:hover {
 }
 .btn-quote-action:hover,
 .btn-quote-action:active {
-  background-color: #1D4ED8 !important;
+  background-color: #0284C7 !important;
   color: #ffffff !important;
-  border-color: #1D4ED8 !important;
+  border-color: #0284C7 !important;
   transform: translateY(-1px);
   box-shadow: none !important;
 }
@@ -4603,7 +4603,7 @@ a.footer-contact-value:hover {
 }
 .badge-stock-quote {
   background-color: var(--jpm-status-quote-bg, #DBEAFE) !important;
-  color: var(--jpm-status-quote-text, #1D4ED8) !important;
+  color: var(--jpm-status-quote-text, #0284C7) !important;
   border-radius: var(--jpm-radius-badge, 6px) !important;
   font-size: 0.75rem;
   font-weight: 600;
@@ -4667,20 +4667,20 @@ a.footer-contact-value:hover {
 }
 
 .btn-primary {
-  background-color: var(--jpm-color-blue-electric, #1D4ED8) !important;
-  border-color: var(--jpm-color-blue-electric, #1D4ED8) !important;
+  background-color: var(--jpm-color-blue-electric, #0284C7) !important;
+  border-color: var(--jpm-color-blue-electric, #0284C7) !important;
   color: #ffffff !important;
 }
 .btn-primary:hover {
-  background-color: var(--jpm-btn-blue-hover, #1E40AF) !important;
-  border-color: var(--jpm-btn-blue-hover, #1E40AF) !important;
+  background-color: var(--jpm-btn-blue-hover, #0369A1) !important;
+  border-color: var(--jpm-btn-blue-hover, #0369A1) !important;
   color: #ffffff !important;
   box-shadow: none !important;
   transform: translateY(-1px) !important;
 }
 .btn-primary:active {
-  background-color: var(--jpm-btn-blue-active, #1E3A8A) !important;
-  border-color: var(--jpm-btn-blue-active, #1E3A8A) !important;
+  background-color: var(--jpm-btn-blue-active, #075985) !important;
+  border-color: var(--jpm-btn-blue-active, #075985) !important;
   color: #ffffff !important;
   transform: translateY(0) !important;
   box-shadow: none !important;
@@ -4730,23 +4730,23 @@ a.footer-contact-value:hover {
 .btn-outline-primary,
 .btn-outline-blue {
   background-color: #ffffff !important;
-  color: var(--jpm-color-blue-electric, #1D4ED8) !important;
-  border-color: var(--jpm-color-blue-electric, #1D4ED8) !important;
+  color: var(--jpm-color-blue-electric, #0284C7) !important;
+  border-color: var(--jpm-color-blue-electric, #0284C7) !important;
   box-shadow: none !important;
   transition: all 0.2s ease !important;
 }
 .btn-outline-primary:hover,
 .btn-outline-blue:hover {
-  background-color: var(--jpm-color-blue-electric, #1D4ED8) !important;
-  border-color: var(--jpm-color-blue-electric, #1D4ED8) !important;
+  background-color: var(--jpm-color-blue-electric, #0284C7) !important;
+  border-color: var(--jpm-color-blue-electric, #0284C7) !important;
   color: #ffffff !important;
   transform: translateY(-1px) !important;
   box-shadow: none !important;
 }
 .btn-outline-primary:active,
 .btn-outline-blue:active {
-  background-color: var(--jpm-btn-blue-active, #1E3A8A) !important;
-  border-color: var(--jpm-btn-blue-active, #1E3A8A) !important;
+  background-color: var(--jpm-btn-blue-active, #075985) !important;
+  border-color: var(--jpm-btn-blue-active, #075985) !important;
   color: #ffffff !important;
   transform: translateY(0) !important;
   box-shadow: none !important;
@@ -5353,15 +5353,15 @@ a.btn-shopee-outline:hover {
 .lux-status-indicator.status-shipping,
 .lux-status-indicator.status-stage-3,
 .lux-status-indicator.status-stage-4 {
-  background: #eff6ff;
-  border-color: #bfdbfe;
-  color: #1d4ed8;
+  background: #f0f9ff;
+  border-color: #bae6fd;
+  color: #0369a1;
 }
 .lux-status-indicator.status-processing .status-dot,
 .lux-status-indicator.status-shipping .status-dot,
 .lux-status-indicator.status-stage-3 .status-dot,
 .lux-status-indicator.status-stage-4 .status-dot {
-  background: #2563eb;
+  background: #0284c7;
 }
 
 .lux-status-indicator.status-confirmed,
@@ -5880,9 +5880,9 @@ a.btn-shopee-outline:hover {
 }
 
 .btn-card-action-primary:hover {
-  color: var(--jpm-color-blue-electric, #1D4ED8);
-  border-color: var(--jpm-color-blue-electric, #1D4ED8);
-  background-color: rgba(29, 78, 216, 0.06);
+  color: var(--jpm-color-blue-electric, #0284C7);
+  border-color: var(--jpm-color-blue-electric, #0284C7);
+  background-color: rgba(2, 132, 199, 0.06);
 }
 
 .btn-card-action-danger:hover {

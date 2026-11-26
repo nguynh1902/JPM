@@ -403,20 +403,21 @@
     <div v-if="selectedOrderForModal" class="modal fade show d-block" tabindex="-1" style="z-index: 1055;" @click.self="closeProductModal">
       <div class="modal-dialog modal-dialog-centered modal-xl">
         <div class="modal-content lux-modal-content">
-          <!-- Header: Trạng thái nổi bật + Loại đơn & Mã đơn & Ngày đặt -->
+          <!-- Header: Trạng thái nổi bật | Loại phiếu & Mã đơn | Ngày đặt -->
           <div class="lux-modal-header">
             <div class="d-flex align-items-center flex-wrap gap-2">
               <span class="lux-status-indicator" :class="'status-stage-' + getStage(selectedOrderForModal)">
                 <span class="status-dot"></span>
                 <span>{{ getStatusText(selectedOrderForModal) }}</span>
               </span>
+              <span class="lux-meta-divider" aria-hidden="true">|</span>
               <span class="lux-order-type">
                 {{ selectedOrderForModal._type === 'quote' ? 'Phiếu báo giá:' : 'Đơn hàng:' }}
               </span>
               <span class="lux-order-code">#{{ selectedOrderForModal.code }}</span>
               <span class="lux-meta-divider" aria-hidden="true">|</span>
               <span class="lux-order-date">
-                <i class="bi bi-calendar3 me-1"></i>{{ formatDate(selectedOrderForModal.created_at) }}
+                <i class="bi bi-calendar3 me-1"></i>Ngày đặt: <strong>{{ formatDate(selectedOrderForModal.created_at) }}</strong>
               </span>
             </div>
             <button type="button" class="btn-close" aria-label="Đóng" @click="closeProductModal"></button>
@@ -464,7 +465,6 @@
                     v-for="prod in filteredModalProducts"
                     :key="prod._uid"
                     class="lux-modal-item"
-                    :class="{ 'is-selected': selectedModalItemIds.includes(prod._uid) }"
                     @click="toggleModalItemSelection(prod._uid)"
                   >
                     <div class="d-flex align-items-center gap-3 flex-grow-1 min-w-0">
@@ -528,7 +528,7 @@
                     </div>
                     <div class="lux-info-row">
                       <span class="lux-info-label">Điện thoại</span>
-                      <span class="lux-info-val">{{ getOrderCustomerPhone(selectedOrderForModal) }}</span>
+                      <span class="lux-info-val tabular-nums">{{ getOrderCustomerPhone(selectedOrderForModal) }}</span>
                     </div>
                     <div class="lux-info-row" v-if="getOrderCustomerEmail(selectedOrderForModal)">
                       <span class="lux-info-label">Email</span>
@@ -555,61 +555,63 @@
 
                 <div class="lux-info-body pt-2">
                   <div class="lux-sum-row align-items-start">
-                  <span class="text-muted">Tạm tính tiền hàng</span>
-                  <div class="text-end">
-                    <template v-if="getItemSubtotal(selectedOrderForModal) > 0">
-                      <div class="fw-semibold text-navy tabular-nums">
-                        {{ formatPrice(getItemSubtotal(selectedOrderForModal)) }} ₫
-                      </div>
-                      <div
-                        v-if="getUnquotedCount(selectedOrderForModal) > 0 && getStage(selectedOrderForModal) === 1"
-                        class="lux-metric-note mt-1"
-                      >
-                        (+{{ getUnquotedCount(selectedOrderForModal) }} món chờ giá)
-                      </div>
-                    </template>
-                    <span v-else class="lux-metric-muted">Chờ báo giá</span>
+                    <span class="lux-info-label">Tạm tính tiền hàng</span>
+                    <div class="text-end">
+                      <template v-if="getItemSubtotal(selectedOrderForModal) > 0">
+                        <div class="fw-bold text-danger tabular-nums">
+                          {{ formatPrice(getItemSubtotal(selectedOrderForModal)) }} ₫
+                        </div>
+                        <div
+                          v-if="getUnquotedCount(selectedOrderForModal) > 0 && getStage(selectedOrderForModal) === 1"
+                          class="lux-metric-note mt-1"
+                        >
+                          (+{{ getUnquotedCount(selectedOrderForModal) }} món chờ giá)
+                        </div>
+                      </template>
+                      <span v-else class="lux-metric-muted">Chờ báo giá</span>
+                    </div>
                   </div>
-                </div>
 
-                <div class="lux-sum-row">
-                  <span class="text-muted">Cước vận chuyển</span>
-                  <span class="fw-medium text-navy text-end">
-                    <template v-if="getStage(selectedOrderForModal) === 1 && Number(selectedOrderForModal.phi_van_chuyen || 0) <= 0">
-                      <span class="lux-metric-muted">Chờ báo giá</span>
-                    </template>
-                    <template v-else-if="selectedOrderForModal.khach_tu_tra_cuoc">Khách tự trả chành xe</template>
-                    <template v-else-if="Number(selectedOrderForModal.phi_van_chuyen) > 0">{{ formatPrice(selectedOrderForModal.phi_van_chuyen) }} ₫</template>
-                    <template v-else><span class="text-success">Miễn phí</span></template>
-                  </span>
-                </div>
-
-                <div class="lux-sum-row" v-if="getDepositRequired(selectedOrderForModal) > 0">
-                  <span class="text-muted">Tiền cọc yêu cầu</span>
-                  <span class="fw-semibold text-navy text-end">
-                    {{ formatPrice(getDepositRequired(selectedOrderForModal)) }} ₫
-                    <span
-                      class="lux-deposit-state ms-1"
-                      :class="getDepositStatus(selectedOrderForModal) === 'paid' ? 'is-paid' : 'is-unpaid'"
-                    >
-                      {{ getDepositStatus(selectedOrderForModal) === 'paid' ? 'Đã cọc' : 'Chưa cọc' }}
+                  <div class="lux-sum-row">
+                    <span class="lux-info-label">Cước vận chuyển</span>
+                    <span class="text-end">
+                      <template v-if="getStage(selectedOrderForModal) === 1 && Number(selectedOrderForModal.phi_van_chuyen || 0) <= 0">
+                        <span class="lux-metric-muted">Chờ báo giá</span>
+                      </template>
+                      <template v-else-if="selectedOrderForModal.khach_tu_tra_cuoc"><span class="fw-medium text-navy">Khách tự trả chành xe</span></template>
+                      <template v-else-if="Number(selectedOrderForModal.phi_van_chuyen) > 0"><span class="fw-semibold text-navy tabular-nums">{{ formatPrice(selectedOrderForModal.phi_van_chuyen) }} ₫</span></template>
+                      <template v-else><span class="text-success fw-semibold">Miễn phí</span></template>
                     </span>
-                  </span>
-                </div>
+                  </div>
 
-                <div class="lux-sum-row lux-sum-total">
-                  <span>
-                    {{ getGrandTotal(selectedOrderForModal) > 0 && (getStage(selectedOrderForModal) >= 2 || getDepositRequired(selectedOrderForModal) > 0) ? 'Còn lại thanh toán (COD)' : 'Tổng giá trị đơn hàng' }}
-                  </span>
-                  <span class="lux-total-num text-end">
-                    <template v-if="getGrandTotal(selectedOrderForModal) !== null && getGrandTotal(selectedOrderForModal) > 0">
-                      {{ formatPrice(getStage(selectedOrderForModal) >= 2 || getDepositRequired(selectedOrderForModal) > 0 ? getRemainingAmount(selectedOrderForModal) : getGrandTotal(selectedOrderForModal)) }} ₫
-                    </template>
-                    <template v-else>
-                      <span class="lux-metric-muted fw-normal">Chờ hoàn tất báo giá</span>
-                    </template>
-                  </span>
-                </div>
+                  <div class="lux-sum-row" v-if="getDepositRequired(selectedOrderForModal) > 0">
+                    <span class="lux-info-label">Tiền cọc yêu cầu</span>
+                    <span class="fw-semibold text-navy text-end tabular-nums">
+                      {{ formatPrice(getDepositRequired(selectedOrderForModal)) }} ₫
+                      <span
+                        class="lux-deposit-state ms-1"
+                        :class="getDepositStatus(selectedOrderForModal) === 'paid' ? 'is-paid' : 'is-unpaid'"
+                      >
+                        {{ getDepositStatus(selectedOrderForModal) === 'paid' ? 'Đã cọc' : 'Chưa cọc' }}
+                      </span>
+                    </span>
+                  </div>
+
+                  <div class="lux-sum-row lux-sum-total">
+                    <span>
+                      {{ getGrandTotal(selectedOrderForModal) > 0 && (getStage(selectedOrderForModal) >= 2 || getDepositRequired(selectedOrderForModal) > 0) ? 'Còn lại thanh toán (COD)' : 'Tổng giá trị đơn hàng' }}
+                    </span>
+                    <span class="text-end">
+                      <template v-if="getGrandTotal(selectedOrderForModal) !== null && getGrandTotal(selectedOrderForModal) > 0">
+                        <span class="lux-total-num">
+                          {{ formatPrice(getStage(selectedOrderForModal) >= 2 || getDepositRequired(selectedOrderForModal) > 0 ? getRemainingAmount(selectedOrderForModal) : getGrandTotal(selectedOrderForModal)) }} ₫
+                        </span>
+                      </template>
+                      <template v-else>
+                        <span class="lux-metric-muted">Chờ hoàn tất báo giá</span>
+                      </template>
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -1499,7 +1501,7 @@ const formatDate = (dateStr) => {
 .lux-sku-code {
   font-family: var(--default-font, 'Inter', sans-serif);
   font-variant-numeric: tabular-nums;
-  color: var(--jpm-color-blue-electric, #1D4ED8);
+  color: var(--jpm-color-blue-electric, #0284C7);
   font-size: 0.875rem;
   font-weight: 700;
   letter-spacing: 0.1px;
@@ -1523,12 +1525,12 @@ const formatDate = (dateStr) => {
   padding-left: 12px;
 }
 
-/* Đơn giá sản phẩm đại diện: Deep Navy điềm đạm, nhường màu Đỏ cho Tổng tạm tính */
+/* Đơn giá sản phẩm: Đỏ Marine đồng bộ toàn bộ Storefront Client (ProductCard, GioHang, VatTuThuongMua) */
 .lux-item-unit-price {
   font-family: var(--default-font, 'Inter', sans-serif);
   font-size: 0.95rem;
   font-weight: 700;
-  color: var(--jpm-color-navy-dark, #0A1128);
+  color: var(--jpm-color-red-marine, #F82249);
   font-variant-numeric: tabular-nums;
 }
 
@@ -1614,6 +1616,12 @@ const formatDate = (dateStr) => {
   color: var(--jpm-neutral-500, #64748B);
   font-style: italic;
   font-weight: 400;
+}
+
+.lux-metric-muted {
+  color: var(--jpm-neutral-500, #64748B);
+  font-size: 0.825rem;
+  font-weight: 500;
 }
 
 .lux-metric-status {
@@ -1856,23 +1864,23 @@ const formatDate = (dateStr) => {
 
 .lux-note-box {
   background: #f8fafc;
-  border: 1px solid #f1f5f9;
-  border-radius: var(--jpm-radius-badge, 6px);
-  padding: 8px 10px;
+  border: 1px solid #e2e8f0;
+  border-radius: var(--jpm-radius-control, 8px);
+  padding: 10px 12px;
   font-size: 0.8125rem;
-  line-height: 1.45;
+  line-height: 1.5;
   text-align: left;
   word-break: break-word;
 }
 
 .lux-note-label {
-  color: #64748b;
+  color: var(--jpm-color-navy-dark, #0A1128);
   font-weight: 600;
   margin-right: 6px;
 }
 
 .lux-note-text {
-  color: #475569;
+  color: var(--jpm-neutral-700, #334155);
 }
 
 .lux-modal-search-bar {
@@ -1896,7 +1904,7 @@ const formatDate = (dateStr) => {
 .lux-check-input {
   width: 17px;
   height: 17px;
-  border-radius: 5px;
+  border-radius: var(--jpm-radius-badge, 6px);
   border-color: #cbd5e1;
   cursor: pointer;
   box-shadow: none !important;
@@ -1935,7 +1943,7 @@ const formatDate = (dateStr) => {
 }
 
 .lux-modal-search input:focus {
-  border-color: var(--jpm-color-blue-electric, #1D4ED8);
+  border-color: var(--jpm-color-blue-electric, #0284C7);
 }
 
 .lux-modal-body {
@@ -1959,30 +1967,26 @@ const formatDate = (dateStr) => {
   background-color: #fafbfc;
 }
 
-.lux-modal-item.is-selected {
-  background-color: rgba(248, 34, 73, 0.03);
-}
-
 .lux-modal-thumb {
-  width: 48px;
-  height: 48px;
-  border-radius: 8px;
-  border: 1px solid #e2e8f0;
-  background: #f8fafc;
+  width: 52px;
+  height: 52px;
+  border-radius: var(--jpm-radius-control, 8px);
+  border: 1px solid var(--jpm-neutral-200, #E2E8F0);
+  background: #ffffff;
   display: flex;
   align-items: center;
   justify-content: center;
   color: #94a3b8;
-  font-size: 1.2rem;
+  font-size: 1.25rem;
   flex-shrink: 0;
   overflow: hidden;
+  padding: 4px;
 }
 
 .lux-modal-thumb img {
-  width: 100%;
-  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
   object-fit: contain;
-  padding: 3px;
 }
 
 .lux-modal-prod-name {
@@ -1997,7 +2001,7 @@ const formatDate = (dateStr) => {
 }
 
 .lux-modal-prod-name:hover {
-  color: var(--jpm-color-blue-electric, #1D4ED8);
+  color: var(--jpm-color-blue-electric, #0284C7);
 }
 
 .lux-ext-icon {
@@ -2043,9 +2047,9 @@ const formatDate = (dateStr) => {
 .lux-sum-total {
   margin-top: 6px;
   padding-top: 10px;
-  border-top: 1px solid #f1f5f9;
+  border-top: 1px solid #e2e8f0;
   font-weight: 700;
-  color: #0a1128;
+  color: var(--jpm-color-navy-dark, #0A1128);
 }
 
 .lux-total-num {
