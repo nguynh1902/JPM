@@ -956,13 +956,8 @@ export default {
   padding: 14px 12px;
   border-bottom: 1px solid #edf2f7;
   vertical-align: middle;
-  background-color: #ffffff !important;
+  background-color: #ffffff;
   transition: background-color 0.15s ease;
-}
-
-.custom-cart-table tbody tr:nth-child(odd) td,
-.custom-cart-table tbody tr:nth-child(even) td {
-  background-color: #ffffff !important;
 }
 
 /* Căn lề trái thẳng trục hoàn hảo với padding px-4 (24px) của Card Header */
@@ -1001,6 +996,7 @@ export default {
   transition: all 0.15s ease;
 }
 
+.custom-cart-table tbody tr.table-row-hover:hover td,
 .table-row-hover:hover td {
   background-color: #f1f5f9 !important;
   --bs-table-accent-bg: transparent !important;

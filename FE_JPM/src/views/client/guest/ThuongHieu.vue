@@ -6,20 +6,11 @@
     <section class="catalog-content-section pb-5 inner-page-section">
       <div class="container">
 
-        <!-- Header chuẩn Giỏ Hàng + Logo hãng chính hãng -->
+        <!-- Header chuẩn Giỏ Hàng -->
         <div class="row mb-4">
-          <div class="col-12 d-flex flex-wrap align-items-center justify-content-between gap-3" data-aos="fade-down">
-            <div>
-              <h2 class="jpm-page-title mb-1">Tra Cứu Phụ Tùng <span class="text-danger">{{ brandName }}</span></h2>
-              <p class="text-muted mb-0">Lựa chọn loại động cơ, năm sản xuất và mã lực để tìm kiếm phụ tùng chính xác nhất.</p>
-            </div>
-            <img
-              v-if="brandLogo"
-              :src="brandLogo"
-              :alt="brandName"
-              class="brand-header-logo d-none d-sm-block"
-              @error="$event.target.style.display = 'none'"
-            />
+          <div class="col-12" data-aos="fade-down">
+            <h2 class="jpm-page-title">Tra Cứu Phụ Tùng <span class="text-danger">{{ brandName }}</span></h2>
+            <p class="text-muted">Lựa chọn loại động cơ, năm sản xuất và mã lực để tìm kiếm phụ tùng chính xác nhất.</p>
           </div>
         </div>
         <!-- Skeleton Loading khi đang tải dữ liệu -->
@@ -111,7 +102,7 @@
               <div class="catalog-filter-bar px-4 py-3 border-bottom bg-white">
                 <div class="row g-2 align-items-center">
                   <!-- Ô tìm kiếm Model -->
-                  <div class="col-12 col-md-5 col-xl-5">
+                  <div class="col-12 col-md-12 col-xl-4">
                     <div class="search-input-box">
                       <i class="bi bi-search search-input-icon"></i>
                       <input
@@ -138,7 +129,6 @@
                       v-model="selectedHp"
                       :options="hpOptions"
                       placeholder="Tất cả Mã Lực (HP)"
-                      all-option-label="Tất cả Mã Lực (HP)"
                       value-key="value"
                       label-key="label"
                     />
@@ -150,7 +140,6 @@
                       v-model="selectedStroke"
                       :options="strokeOptions"
                       placeholder="Tất cả Loại Thì"
-                      all-option-label="Tất cả Loại Thì"
                       value-key="value"
                       label-key="label"
                     />
@@ -162,7 +151,6 @@
                       v-model="selectedNam"
                       :options="yearOptions"
                       placeholder="Tất cả Năm"
-                      all-option-label="Tất cả Năm"
                       value-key="value"
                       label-key="label"
                     />
@@ -239,14 +227,29 @@
                           <span v-else class="text-muted">-</span>
                         </td>
                         <td class="th-action text-center">
-                          <router-link
-                            :to="`/thuong-hieu/${brandRoute}/${model.loai}/${model.year}/${model.code}/so-do`"
-                            class="btn btn-view-diagram"
-                            title="Xem sơ đồ phụ tùng rã máy"
-                          >
-                            <span>Sơ Đồ</span>
-                            <i class="bi bi-arrow-right arrow-icon"></i>
-                          </router-link>
+                          <div class="d-inline-flex align-items-center justify-content-center gap-2">
+                            <button
+                              type="button"
+                              class="btn-garage-icon"
+                              :class="{ 'is-saved': savedModelIds.has(Number(model.id)) }"
+                              :disabled="savingModelId === model.id"
+                              @click="handleSaveToGarage(model)"
+                              :title="savedModelIds.has(Number(model.id)) ? 'Đã lưu trong Garage của tôi (bấm để mở)' : 'Lưu động cơ này vào Garage'"
+                              :aria-label="savedModelIds.has(Number(model.id)) ? 'Đã lưu trong Garage' : 'Lưu vào Garage'"
+                            >
+                              <span v-if="savingModelId === model.id" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                              <i v-else class="bi" :class="savedModelIds.has(Number(model.id)) ? 'bi-check-lg' : 'bi-tools'"></i>
+                            </button>
+
+                            <router-link
+                              :to="`/thuong-hieu/${brandRoute}/${model.loai}/${model.year}/${model.code}/so-do`"
+                              class="btn btn-view-diagram"
+                              title="Xem sơ đồ phụ tùng rã máy"
+                            >
+                              <span>Sơ Đồ</span>
+                              <i class="bi bi-arrow-right arrow-icon"></i>
+                            </router-link>
+                          </div>
                         </td>
                       </tr>
                     </tbody>
@@ -263,12 +266,84 @@
 
 <script setup>
 import { computed, ref, watch } from 'vue';
-import { useRoute } from 'vue-router';
-import { useQuery } from '@tanstack/vue-query';
+import { useRoute, useRouter } from 'vue-router';
+import { useQuery, useQueryClient } from '@tanstack/vue-query';
+import Swal from 'sweetalert2';
 import axiosClient from '../../../api/axiosClient';
+import { useAuthStore } from '../../../stores/authStore';
 import JpmSelect from '../../../components/client/JpmSelect.vue';
 
 const route = useRoute();
+const router = useRouter();
+const queryClient = useQueryClient();
+const authStore = useAuthStore();
+
+const isLoggedIn = computed(() => !!(authStore.isLoggedIn || authStore.token));
+
+const { data: garageData } = useQuery({
+  queryKey: ['clientGarage'],
+  queryFn: () => axiosClient.get('/client/garage'),
+  enabled: isLoggedIn,
+  staleTime: 1000 * 60 * 5
+});
+
+const savedModelIds = computed(() => {
+  const list = Array.isArray(garageData.value) ? garageData.value : (garageData.value?.data || []);
+  return new Set(list.map(item => Number(item.dong_co_model_id)));
+});
+
+const savingModelId = ref(null);
+
+const handleSaveToGarage = async (model) => {
+  if (!isLoggedIn.value) {
+    const res = await Swal.fire({
+      icon: 'info',
+      title: 'Đăng nhập để lưu vào Garage',
+      text: `Bạn cần đăng nhập tài khoản để lưu động cơ ${model.name} vào Garage của tôi.`,
+      showCancelButton: true,
+      showDenyButton: false,
+      confirmButtonText: 'Đăng nhập ngay',
+      cancelButtonText: 'Để sau'
+    });
+    if (res.isConfirmed) {
+      router.push({ path: '/dang-nhap', query: { redirect: route.fullPath } });
+    }
+    return;
+  }
+
+  if (savedModelIds.value.has(Number(model.id))) {
+    router.push('/garage');
+    return;
+  }
+
+  savingModelId.value = model.id;
+  try {
+    await axiosClient.post('/client/garage', {
+      dong_co_model_id: model.id,
+      ten_may: model.name
+    });
+    await queryClient.invalidateQueries({ queryKey: ['clientGarage'] });
+    Swal.fire({
+      toast: true,
+      position: 'top-end',
+      icon: 'success',
+      title: `Đã lưu ${model.name} vào Garage`,
+      showConfirmButton: false,
+      timer: 2600
+    });
+  } catch (err) {
+    Swal.fire({
+      toast: true,
+      position: 'top-end',
+      icon: 'error',
+      title: err.response?.data?.message || 'Không thể lưu động cơ lúc này.',
+      showConfirmButton: false,
+      timer: 3000
+    });
+  } finally {
+    savingModelId.value = null;
+  }
+};
 
 const brandRoute = computed(() => route.params.brand || 'yamaha');
 
@@ -621,8 +696,8 @@ const filteredModels = computed(() => {
 
 .search-input-box:focus-within {
   border-width: 1px !important;
-  border-color: #94a3b8 !important;
-  box-shadow: 0 0 0 3px rgba(10, 17, 40, 0.06) !important;
+  border-color: var(--jpm-color-red-marine, #F82249) !important;
+  box-shadow: 0 0 0 3px rgba(248, 34, 73, 0.12) !important;
   outline: 0 !important;
 }
 
@@ -639,7 +714,7 @@ const filteredModels = computed(() => {
 }
 
 .search-input-box:focus-within .search-input-icon {
-  color: #0A1128;
+  color: var(--jpm-color-red-marine, #F82249);
 }
 
 .search-input-field {
@@ -683,8 +758,8 @@ const filteredModels = computed(() => {
 }
 
 .filter-dropdown-col {
-  min-width: 145px;
-  flex-grow: 1;
+  min-width: 0;
+  flex: 1 1 140px;
 }
 
 .btn-reset-filter {
@@ -722,13 +797,8 @@ const filteredModels = computed(() => {
   padding: 14px 12px;
   border-bottom: 1px solid #edf2f7;
   vertical-align: middle;
-  background-color: #ffffff !important;
+  background-color: #ffffff;
   transition: background-color 0.15s ease;
-}
-
-.custom-model-table tbody tr:nth-child(odd) td,
-.custom-model-table tbody tr:nth-child(even) td {
-  background-color: #ffffff !important;
 }
 
 .th-stt {
@@ -759,7 +829,7 @@ const filteredModels = computed(() => {
 }
 
 .th-action {
-  width: 130px;
+  width: 164px;
   padding-right: 24px !important;
   padding-left: 12px !important;
   white-space: nowrap !important;
@@ -769,6 +839,7 @@ const filteredModels = computed(() => {
   transition: all 0.15s ease;
 }
 
+.custom-model-table tbody tr.table-row-hover:hover td,
 .table-row-hover:hover td {
   background-color: #f1f5f9 !important;
   --bs-table-accent-bg: transparent !important;
@@ -804,14 +875,6 @@ const filteredModels = computed(() => {
   color: #0A1128 !important;
 }
 
-.brand-header-logo {
-  width: clamp(120px, 14vw, 175px);
-  max-height: 60px;
-  height: auto;
-  object-fit: contain;
-  flex-shrink: 0;
-}
-
 .model-name {
   font-family: var(--default-font, 'Inter', sans-serif);
   font-weight: 700;
@@ -834,6 +897,48 @@ const filteredModels = computed(() => {
 .spec-text.spec-hp {
   color: #1e293b;
   font-weight: 600;
+}
+
+/* Nút Lưu vào Garage chuẩn Marine Tech Blue (#0284C7 / DEC-05) */
+.btn-garage-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border-radius: var(--jpm-radius-control, 8px);
+  border: 1px solid var(--jpm-color-blue-electric, #0284C7);
+  background-color: #ffffff;
+  color: var(--jpm-color-blue-electric, #0284C7);
+  font-size: 0.88rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.btn-garage-icon:hover:not(:disabled) {
+  background-color: var(--jpm-color-blue-electric, #0284C7);
+  border-color: var(--jpm-color-blue-electric, #0284C7);
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+.btn-garage-icon.is-saved {
+  background-color: var(--jpm-color-blue-electric, #0284C7);
+  border-color: var(--jpm-color-blue-electric, #0284C7);
+  color: #ffffff;
+}
+
+.btn-garage-icon.is-saved:hover:not(:disabled) {
+  background-color: #0369a1;
+  border-color: #0369a1;
+  color: #ffffff;
+}
+
+.btn-garage-icon:disabled {
+  opacity: 0.65;
+  cursor: wait;
 }
 
 /* Nút Thao Tác Sơ Đồ: Đồng bộ 100% với nút Thao Tác bên Sơ Đồ Phụ Tùng */

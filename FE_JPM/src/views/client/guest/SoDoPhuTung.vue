@@ -1065,19 +1065,16 @@ const startSidebarDrag = () => {
   padding: 14px 10px;
   border-bottom: 1px solid #edf2f7;
   vertical-align: middle;
-  background-color: #ffffff !important;
+  background-color: #ffffff;
   transition: background-color 0.15s ease;
-}
-
-.custom-table tbody tr:nth-child(odd) td,
-.custom-table tbody tr:nth-child(even) td {
-  background-color: #ffffff !important;
 }
 
 .table-row-hover {
   transition: all 0.15s ease;
 }
 
+.custom-table tbody tr.table-row-hover:hover td,
+.custom-table tbody tr.table-hover-highlight td,
 .table-row-hover:hover td {
   background-color: #f1f5f9 !important;
   --bs-table-accent-bg: transparent !important;

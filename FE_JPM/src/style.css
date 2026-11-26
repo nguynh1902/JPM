@@ -177,18 +177,18 @@ body:not(.layout-admin) .swal2-popup:not(.swal2-toast) .swal2-icon.swal2-warning
 }
 
 body:not(.layout-admin) .swal2-popup:not(.swal2-toast) .swal2-icon.swal2-error {
-  border-color: rgba(220, 38, 38, 0.3) !important;
-  color: #dc2626 !important;
+  border-color: rgba(248, 34, 73, 0.3) !important;
+  color: #f82249 !important;
 }
 
 body:not(.layout-admin) .swal2-popup:not(.swal2-toast) .swal2-icon.swal2-error [class^="swal2-x-mark-line"] {
-  background-color: #dc2626 !important;
+  background-color: #f82249 !important;
 }
 
 body:not(.layout-admin) .swal2-popup:not(.swal2-toast) .swal2-icon.swal2-info,
 body:not(.layout-admin) .swal2-popup:not(.swal2-toast) .swal2-icon.swal2-question {
-  border-color: rgba(10, 17, 40, 0.22) !important;
-  color: #0a1128 !important;
+  border-color: rgba(2, 132, 199, 0.28) !important;
+  color: #0284c7 !important;
 }
 
 body:not(.layout-admin) .swal2-popup:not(.swal2-toast) .swal2-title {
@@ -236,27 +236,38 @@ body:not(.layout-admin) .swal2-popup:not(.swal2-toast) .swal2-styled {
   height: 40px !important;
   padding: 0 20px !important;
   margin: 0 !important;
-  border-radius: 8px !important;
+  border-radius: var(--jpm-radius-control, 8px) !important;
   font-family: var(--default-font, 'Inter', sans-serif) !important;
   font-size: 0.875rem !important;
   font-weight: 600 !important;
   letter-spacing: 0 !important;
   box-shadow: none !important;
-  display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
   gap: 6px !important;
   transition: all 0.2s ease !important;
 }
 
+body:not(.layout-admin) .swal2-popup:not(.swal2-toast) .swal2-styled:not([style*="display: none"]):not([style*="display:none"]) {
+  display: inline-flex !important;
+}
+
+body:not(.layout-admin) .swal2-popup:not(.swal2-toast) .swal2-styled[style*="display: none"],
+body:not(.layout-admin) .swal2-popup:not(.swal2-toast) .swal2-styled[style*="display:none"],
+body:not(.layout-admin) .swal2-popup:not(.swal2-toast) .swal2-actions button[style*="display: none"],
+body:not(.layout-admin) .swal2-popup:not(.swal2-toast) .swal2-actions button[style*="display:none"],
+body:not(.layout-admin) .swal2-popup:not(.swal2-toast) .swal2-deny:not(.swal2-deny-shown) {
+  display: none !important;
+}
+
 body:not(.layout-admin) .swal2-popup:not(.swal2-toast) .swal2-styled.swal2-confirm {
-  background-color: #f82249;
+  background-color: var(--jpm-color-red-marine, #f82249) !important;
   color: #ffffff !important;
   border: 1px solid transparent !important;
 }
 
 body:not(.layout-admin) .swal2-popup:not(.swal2-toast) .swal2-styled.swal2-confirm:hover {
-  filter: brightness(1.06);
+  background-color: var(--jpm-color-red-hover, #d9163a) !important;
   transform: translateY(-1px);
   background-image: none !important;
 }
