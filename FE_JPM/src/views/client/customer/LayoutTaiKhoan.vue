@@ -51,10 +51,12 @@ import axiosClient from '../../../api/axiosClient';
 import { compressAvatar, formatBytes } from '../../../utils/imageOptimizer';
 import { useAuthStore } from '../../../stores/authStore';
 import Swal from 'sweetalert2';
+import { createToaster } from '@meforma/vue-toaster';
 
 const route = useRoute();
 const authStore = useAuthStore();
 const queryClient = useQueryClient();
+const toaster = createToaster({ position: 'top-right', duration: 3000 });
 const avatarFileInput = ref(null);
 const isUploadingAvatar = ref(false);
 
@@ -129,15 +131,7 @@ const handleAvatarFileChange = async (event) => {
       }
       queryClient.invalidateQueries({ queryKey: ['clientProfile'] });
       
-      Swal.fire({
-        icon: 'success',
-        title: 'Đổi ảnh đại diện thành công!',
-        html: `Đã nén tối ưu: <strong>${formatBytes(originalSize)}</strong> &rarr; <strong>${formatBytes(compressedSize)}</strong> (tiết kiệm ${savedPercent}% dung lượng).`,
-        timer: 3500,
-        showConfirmButton: false,
-        toast: true,
-        position: 'top-end'
-      });
+      toaster.success(`Đổi ảnh đại diện thành công! (tiết kiệm ${savedPercent}% dung lượng)`);
     }
   } catch (error) {
     console.error('Lỗi upload avatar:', error);

@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use App\Domain\Sales\Models\YeuCauBaoGia;
 use App\Domain\Sales\Models\DonHang;
 use App\Domain\IAM\Models\KhachHang;
+use App\Domain\PIM\Models\PhuTung;
+use App\Domain\CMS\Models\SanPham;
 
 class HistoryController extends Controller
 {
@@ -30,12 +32,44 @@ class HistoryController extends Controller
             })
             ->orderBy('id', 'desc');
 
-        if ($request->has('per_page') || $request->has('page')) {
-            $perPage = min(max((int) $request->input('per_page', 20), 1), 50);
-            return response()->json($query->paginate($perPage));
+        $isPaginated = $request->has('per_page') || $request->has('page');
+        $quotes = $isPaginated
+            ? $query->paginate(min(max((int) $request->input('per_page', 20), 1), 50))
+            : $query->limit(200)->get();
+
+        $collection = $isPaginated ? $quotes->getCollection() : $quotes;
+
+        $codes = $collection->flatMap(function ($quote) {
+            return $quote->chiTiet->pluck('ma_phu_tung');
+        })
+            ->map(fn($c) => trim((string) $c))
+            ->filter(fn($c) => $c !== '' && strtoupper($c) !== 'N/A')
+            ->unique()
+            ->values();
+
+        $phuTungs = $codes->isNotEmpty()
+            ? PhuTung::whereIn('ma_phu_tung', $codes)->get(['id', 'ma_phu_tung', 'hinh_anh'])->keyBy('ma_phu_tung')
+            : collect();
+
+        $sanPhams = $codes->isNotEmpty()
+            ? SanPham::whereIn('ma_san_pham', $codes)->get(['id', 'ma_san_pham', 'hinh_anh_chinh', 'slug'])->keyBy('ma_san_pham')
+            : collect();
+
+        foreach ($collection as $quote) {
+            foreach ($quote->chiTiet as $detail) {
+                $code = trim((string) ($detail->ma_phu_tung ?? ''));
+                $sp = $code !== '' ? $sanPhams->get($code) : null;
+                $pt = $code !== '' ? $phuTungs->get($code) : null;
+
+                $detail->setAttribute('loai_san_pham', $sp ? 'san_pham' : 'phu_tung');
+                $detail->setAttribute('id_san_pham', $sp ? $sp->id : null);
+                $detail->setAttribute('id_phu_tung', $pt ? $pt->id : null);
+                $detail->setAttribute('slug', $sp ? $sp->slug : null);
+                $detail->setAttribute('hinh_anh', $sp ? ($sp->hinh_anh_chinh ?? null) : ($pt->hinh_anh ?? null));
+            }
         }
 
-        return response()->json($query->limit(200)->get());
+        return response()->json($quotes);
     }
 
     /**
@@ -46,7 +80,7 @@ class HistoryController extends Controller
         $user = $request->user();
         $khachHang = KhachHang::where('id_tai_khoan', $user->id)->first();
 
-        $query = DonHang::with(['chiTiet.phuTung', 'chiTiet.sanPham'])
+        $query = DonHang::with(['chiTiet.phuTung', 'chiTiet.sanPham', 'diaChi', 'khachHang'])
             ->where(function ($q) use ($user, $khachHang) {
                 if ($khachHang) {
                     $q->where('id_khach_hang', $khachHang->id);
@@ -81,7 +115,7 @@ class HistoryController extends Controller
                     ?? ($isSanPham ? ($detail->sanPham->ma_san_pham ?? null) : ($detail->phuTung->ma_phu_tung ?? null))
                     ?? '';
                 $hinhAnh = $isSanPham
-                    ? ($detail->sanPham->hinh_anh ?? null)
+                    ? ($detail->sanPham->hinh_anh_chinh ?? $detail->sanPham->hinh_anh ?? null)
                     : ($detail->phuTung->hinh_anh ?? null);
                 $slug = $isSanPham
                     ? ($detail->sanPham->slug ?? null)

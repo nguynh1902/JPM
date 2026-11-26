@@ -105,12 +105,17 @@
         :key="order._type + order.id"
         class="lux-order-card"
       >
-        <!-- 1. Header: Mã đơn + Ngày bên trái | 1 Trạng thái tinh tế bên phải -->
+        <!-- 1. Header: Loại phiếu + Mã đơn | Ngày đặt bên trái | Trạng thái bên phải -->
         <div class="lux-card-head">
           <div class="lux-head-meta">
+            <span class="lux-order-type">
+              {{ order._type === 'quote' ? 'Phiếu báo giá:' : 'Đơn hàng:' }}
+            </span>
             <span class="lux-order-code">#{{ order.code }}</span>
-            <span class="lux-meta-dot" aria-hidden="true">·</span>
-            <span class="lux-order-date">{{ formatDate(order.created_at) }}</span>
+            <span class="lux-meta-divider" aria-hidden="true">|</span>
+            <span class="lux-order-date">
+              <i class="bi bi-calendar3 me-1"></i>Ngày đặt: <strong>{{ formatDate(order.created_at) }}</strong>
+            </span>
           </div>
 
           <span class="lux-status-indicator" :class="'status-stage-' + getStage(order)">
@@ -119,7 +124,7 @@
           </span>
         </div>
 
-        <!-- 2. Sản phẩm đại diện + Địa chỉ giao hàng mảnh -->
+        <!-- 2. Sản phẩm đại diện (1 dòng phụ gọn ngang hàng: Mã | SL | +X phụ tùng khác) -->
         <div
           class="lux-card-body"
           role="button"
@@ -127,11 +132,6 @@
           @click="openProductModal(order)"
           @keydown.enter="openProductModal(order)"
         >
-          <div class="lux-address-line" v-if="getOrderAddress(order)">
-            <i class="bi bi-geo-alt"></i>
-            <span class="text-truncate">{{ getOrderAddress(order) }}</span>
-          </div>
-
           <div class="lux-product-row">
             <div class="lux-item-thumb">
               <img
@@ -147,19 +147,23 @@
                 {{ getItemProducts(order)[0]?.name || 'Phụ tùng máy thủy' }}
               </div>
               <div class="lux-item-sub">
-                <span>Mã OEM: <code>{{ getItemProducts(order)[0]?.code || 'N/A' }}</code></span>
-                <span class="lux-meta-dot">·</span>
-                <span>SL: <strong>{{ getItemProducts(order)[0]?.qty || 1 }}</strong></span>
+                <span class="lux-sub-label">Mã:</span>
+                <span class="lux-sku-code">{{ getItemProducts(order)[0]?.code || 'N/A' }}</span>
+                <span class="lux-meta-divider" aria-hidden="true">|</span>
+                <span class="lux-sub-label">SL:</span>
+                <strong class="lux-sub-qty">{{ getItemProducts(order)[0]?.qty || 1 }}</strong>
                 <template v-if="getItemProducts(order).length > 1">
-                  <span class="lux-meta-dot">·</span>
-                  <span class="lux-more-items">+{{ getItemProducts(order).length - 1 }} phụ tùng khác</span>
+                  <span class="lux-meta-divider" aria-hidden="true">|</span>
+                  <span class="lux-more-items-inline">
+                    +{{ getItemProducts(order).length - 1 }} phụ tùng khác
+                  </span>
                 </template>
               </div>
             </div>
 
             <div class="lux-item-price">
-              <span v-if="getItemProducts(order)[0]?.price > 0" class="lux-price-value">
-                {{ formatPrice(getItemProducts(order)[0].price) }}₫
+              <span v-if="getItemProducts(order)[0]?.price > 0" class="lux-item-unit-price">
+                {{ formatPrice(getItemProducts(order)[0].price) }} ₫
               </span>
               <span v-else class="lux-price-pending">Chờ báo giá</span>
             </div>
@@ -225,59 +229,70 @@
           </div>
         </div>
 
-        <!-- 4. Dải Tổng Kết Tài Chính Mỏng 1 Dòng (Chỉ hiện số liệu thực tế đã có) -->
+        <!-- 4. Dải Tổng Kết Tài Chính Mảnh 1 Dòng (Căn phải gọn gàng, không hiện PII khách ở ngoài) -->
         <div class="lux-summary-strip">
-          <div class="lux-metric">
-            <span class="lux-metric-label">
-              {{ getGrandTotal(order) !== null && getGrandTotal(order) > 0 ? 'Tổng đơn hàng' : 'Tạm tính' }}
-            </span>
-            <span class="lux-metric-val">
-              <template v-if="getGrandTotal(order) !== null && getGrandTotal(order) > 0">
-                <strong class="text-navy">{{ formatPrice(getGrandTotal(order)) }}₫</strong>
-              </template>
-              <template v-else-if="getItemSubtotal(order) > 0">
-                <strong class="text-navy">{{ formatPrice(getItemSubtotal(order)) }}₫</strong>
-                <span v-if="getUnquotedCount(order) > 0" class="lux-metric-note">
-                  (+{{ getUnquotedCount(order) }} món chờ giá)
+          <div class="lux-summary-right">
+            <div class="lux-fin-inline">
+              <div class="lux-fin-item">
+                <span class="lux-metric-label">Vận chuyển:</span>
+                <span class="lux-metric-val">
+                  <template v-if="getStage(order) === 1 && Number(order.phi_van_chuyen || 0) <= 0">
+                    <span class="lux-metric-status">Chờ báo giá</span>
+                  </template>
+                  <template v-else-if="order.khach_tu_tra_cuoc"><span class="lux-metric-status">Khách tự trả chành xe</span></template>
+                  <template v-else-if="Number(order.phi_van_chuyen) > 0"><span class="lux-metric-status">{{ formatPrice(order.phi_van_chuyen) }} ₫</span></template>
+                  <template v-else><span class="text-success fw-semibold">Miễn phí</span></template>
                 </span>
-              </template>
-              <template v-else>
-                <span class="lux-metric-muted">Đang báo giá</span>
-              </template>
-            </span>
-          </div>
+              </div>
 
-          <div class="lux-metric">
-            <span class="lux-metric-label">Vận chuyển</span>
-            <span class="lux-metric-val">
-              <template v-if="order.khach_tu_tra_cuoc">Khách tự trả chành xe</template>
-              <template v-else-if="Number(order.phi_van_chuyen) > 0">{{ formatPrice(order.phi_van_chuyen) }}₫</template>
-              <template v-else-if="getStage(order) === 1"><span class="lux-metric-muted">Đang tính cước</span></template>
-              <template v-else><span class="text-success fw-medium">Miễn phí</span></template>
-            </span>
-          </div>
+              <div class="lux-fin-item" v-if="getDepositRequired(order) > 0">
+                <span class="lux-meta-divider" aria-hidden="true">|</span>
+                <span class="lux-metric-label">Tiền cọc:</span>
+                <span class="lux-metric-val">
+                  <strong class="text-navy">{{ formatPrice(getDepositRequired(order)) }} ₫</strong>
+                  <span
+                    class="lux-deposit-state"
+                    :class="getDepositStatus(order) === 'paid' ? 'is-paid' : 'is-unpaid'"
+                  >
+                    {{ getDepositStatus(order) === 'paid' ? 'Đã cọc' : 'Chưa cọc' }}
+                  </span>
+                </span>
+              </div>
 
-          <div class="lux-metric" v-if="getDepositRequired(order) > 0">
-            <span class="lux-metric-label">Tiền cọc</span>
-            <span class="lux-metric-val">
-              <strong class="text-navy">{{ formatPrice(getDepositRequired(order)) }}₫</strong>
-              <span
-                class="lux-deposit-state"
-                :class="getDepositStatus(order) === 'paid' ? 'is-paid' : 'is-unpaid'"
+              <div class="lux-fin-item">
+                <span class="lux-meta-divider" aria-hidden="true">|</span>
+                <span class="lux-total-label">
+                  {{ getGrandTotal(order) !== null && getGrandTotal(order) > 0 ? 'Tổng đơn hàng:' : 'Tạm tính:' }}
+                </span>
+                <span class="lux-total-val">
+                  <template v-if="getGrandTotal(order) !== null && getGrandTotal(order) > 0">
+                    <strong class="lux-price-value">{{ formatPrice(getGrandTotal(order)) }} ₫</strong>
+                  </template>
+                  <template v-else-if="getItemSubtotal(order) > 0">
+                    <strong class="lux-price-value">{{ formatPrice(getItemSubtotal(order)) }} ₫</strong>
+                  </template>
+                  <template v-else>
+                    <span class="lux-metric-status">Chờ báo giá</span>
+                  </template>
+                </span>
+              </div>
+
+              <div
+                v-if="getGrandTotal(order) > 0 && (getStage(order) >= 2 || getDepositRequired(order) > 0)"
+                class="lux-fin-item"
               >
-                {{ getDepositStatus(order) === 'paid' ? 'Đã cọc' : 'Chưa cọc' }}
-              </span>
-            </span>
-          </div>
+                <span class="lux-meta-divider" aria-hidden="true">|</span>
+                <span class="lux-metric-label">Còn lại (COD):</span>
+                <strong class="text-danger tabular-nums">{{ formatPrice(getRemainingAmount(order)) }} ₫</strong>
+              </div>
+            </div>
 
-          <div
-            class="lux-metric"
-            v-if="getGrandTotal(order) > 0 && (getStage(order) >= 2 || getDepositRequired(order) > 0)"
-          >
-            <span class="lux-metric-label">Còn lại (COD)</span>
-            <span class="lux-metric-val">
-              <strong class="text-danger">{{ formatPrice(getRemainingAmount(order)) }}₫</strong>
-            </span>
+            <div
+              v-if="getGrandTotal(order) === null && getItemSubtotal(order) > 0 && getUnquotedCount(order) > 0"
+              class="lux-metric-note"
+            >
+              (+{{ getUnquotedCount(order) }} món chờ tư vấn giá)
+            </div>
           </div>
         </div>
 
@@ -382,138 +397,228 @@
     </div>
 
     <!-- ========================================================================= -->
-    <!-- MODAL CHI TIẾT ĐƠN HÀNG (ĐỒNG BỘ CHUẨN MODAL LUXURY CỦA JPM) -->
+    <!-- MODAL CHI TIẾT ĐƠN HÀNG 2 CỘT (TRÁI: SẢN PHẨM | PHẢI: KHÁCH & THANH TOÁN) -->
     <!-- ========================================================================= -->
     <div v-if="selectedOrderForModal" class="modal-backdrop fade show" style="z-index: 1050;" @click="closeProductModal"></div>
     <div v-if="selectedOrderForModal" class="modal fade show d-block" tabindex="-1" style="z-index: 1055;" @click.self="closeProductModal">
-      <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-dialog modal-dialog-centered modal-xl">
         <div class="modal-content lux-modal-content">
-          <!-- Header gọn gàng, sentence-case -->
+          <!-- Header: Trạng thái nổi bật + Loại đơn & Mã đơn & Ngày đặt -->
           <div class="lux-modal-header">
             <div class="d-flex align-items-center flex-wrap gap-2">
-              <h5 class="lux-modal-title mb-0">Chi tiết đơn #{{ selectedOrderForModal.code }}</h5>
               <span class="lux-status-indicator" :class="'status-stage-' + getStage(selectedOrderForModal)">
                 <span class="status-dot"></span>
                 <span>{{ getStatusText(selectedOrderForModal) }}</span>
+              </span>
+              <span class="lux-order-type">
+                {{ selectedOrderForModal._type === 'quote' ? 'Phiếu báo giá:' : 'Đơn hàng:' }}
+              </span>
+              <span class="lux-order-code">#{{ selectedOrderForModal.code }}</span>
+              <span class="lux-meta-divider" aria-hidden="true">|</span>
+              <span class="lux-order-date">
+                <i class="bi bi-calendar3 me-1"></i>{{ formatDate(selectedOrderForModal.created_at) }}
               </span>
             </div>
             <button type="button" class="btn-close" aria-label="Đóng" @click="closeProductModal"></button>
           </div>
 
-          <!-- Địa chỉ nhận hàng -->
-          <div class="lux-modal-address" v-if="getOrderAddress(selectedOrderForModal)">
-            <i class="bi bi-geo-alt"></i>
-            <span>{{ getOrderAddress(selectedOrderForModal) }}</span>
-          </div>
-
-          <!-- Danh sách sản phẩm -->
-          <div class="lux-modal-body">
-            <div
-              v-for="(prod, idx) in getItemProducts(selectedOrderForModal)"
-              :key="idx"
-              class="lux-modal-item"
-            >
-              <div class="lux-modal-item-left" @click="goToProductDetail(prod)">
-                <div class="lux-modal-thumb">
-                  <img v-if="prod.image" :src="getImageUrl(prod.image)" :alt="prod.name">
-                  <i v-else class="bi bi-box-seam"></i>
-                </div>
-                <div class="min-w-0">
-                  <div class="lux-modal-prod-name">
-                    <span>{{ prod.name }}</span>
-                    <i class="bi bi-arrow-up-right lux-ext-icon"></i>
+          <!-- Nội dung 2 cột trên nền slate dịu: Trái (Sản phẩm) | Phải (Thông tin nhận hàng + Thanh toán) -->
+          <div class="row g-3 lux-modal-split">
+            <!-- CỘT TRÁI: CHI TIẾT ĐƠN HÀNG (DANH SÁCH SẢN PHẨM CUỘN ĐỘC LẬP + TICK CHỌN) -->
+            <div class="col-lg-7 lux-modal-col-main">
+              <div class="lux-info-card p-0 d-flex flex-column h-100 overflow-hidden">
+                <div class="lux-card-head-sub d-flex align-items-center justify-content-between gap-2 flex-wrap">
+                  <div class="lux-info-heading mb-0">
+                    Chi tiết đơn ({{ modalProducts.length }} sản phẩm)
                   </div>
-                  <div class="lux-item-sub mt-1">
-                    <span>Mã OEM: <code>{{ prod.code || 'N/A' }}</code></span>
-                    <span class="lux-meta-dot">·</span>
-                    <span>SL: <strong>{{ prod.qty }}</strong></span>
+
+                  <label class="lux-select-all-label">
+                    <input
+                      type="checkbox"
+                      class="form-check-input lux-check-input m-0"
+                      :checked="isAllModalItemsSelected"
+                      :disabled="modalProducts.length === 0"
+                      @change="toggleSelectAllModalItems"
+                    />
+                    <span>Chọn tất cả</span>
+                  </label>
+                </div>
+
+                <div v-if="modalProducts.length > 4" class="lux-modal-search-bar">
+                  <div class="lux-modal-search w-100">
+                    <i class="bi bi-search"></i>
+                    <input
+                      v-model.trim="modalSearchQuery"
+                      type="text"
+                      placeholder="Tìm theo tên hoặc mã sản phẩm..."
+                    />
                   </div>
                 </div>
-              </div>
 
-              <div class="lux-modal-item-right">
-                <span v-if="prod.price > 0" class="lux-price-value">
-                  {{ formatPrice(prod.price) }}₫
-                </span>
-                <span v-else class="lux-price-pending">Chờ báo giá</span>
+                <div class="lux-modal-body">
+                  <div v-if="filteredModalProducts.length === 0" class="text-center py-5 text-muted small">
+                    Không tìm thấy sản phẩm phù hợp.
+                  </div>
 
-                <button
-                  type="button"
-                  class="lux-icon-cart-btn"
-                  title="Thêm vào giỏ hàng"
-                  aria-label="Thêm vào giỏ hàng"
-                  @click.stop="handleAddToCart(prod)"
-                >
-                  <i class="bi bi-cart-plus"></i>
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <!-- Tổng kết tài chính & Footer -->
-          <div class="lux-modal-footer" v-if="selectedOrderForModal">
-            <div class="lux-modal-summary">
-              <div class="lux-sum-row">
-                <span class="text-muted">Tạm tính tiền hàng</span>
-                <span class="fw-semibold text-navy">
-                  <template v-if="getItemSubtotal(selectedOrderForModal) > 0">
-                    {{ formatPrice(getItemSubtotal(selectedOrderForModal)) }}₫
-                    <span v-if="getUnquotedCount(selectedOrderForModal) > 0 && getStage(selectedOrderForModal) === 1" class="lux-metric-note">
-                      (+{{ getUnquotedCount(selectedOrderForModal) }} món chờ giá)
-                    </span>
-                  </template>
-                  <template v-else>Đang báo giá</template>
-                </span>
-              </div>
-
-              <div class="lux-sum-row">
-                <span class="text-muted">Cước vận chuyển</span>
-                <span class="fw-medium text-navy">
-                  <template v-if="selectedOrderForModal.khach_tu_tra_cuoc">Khách tự trả chành xe</template>
-                  <template v-else-if="Number(selectedOrderForModal.phi_van_chuyen) > 0">{{ formatPrice(selectedOrderForModal.phi_van_chuyen) }}₫</template>
-                  <template v-else-if="getStage(selectedOrderForModal) === 1">Đang tính cước</template>
-                  <template v-else>Miễn phí</template>
-                </span>
-              </div>
-
-              <div class="lux-sum-row" v-if="getDepositRequired(selectedOrderForModal) > 0">
-                <span class="text-muted">Tiền cọc yêu cầu</span>
-                <span class="fw-semibold text-navy">
-                  {{ formatPrice(getDepositRequired(selectedOrderForModal)) }}₫
-                  <span
-                    class="lux-deposit-state ms-1"
-                    :class="getDepositStatus(selectedOrderForModal) === 'paid' ? 'is-paid' : 'is-unpaid'"
+                  <div
+                    v-for="prod in filteredModalProducts"
+                    :key="prod._uid"
+                    class="lux-modal-item"
+                    :class="{ 'is-selected': selectedModalItemIds.includes(prod._uid) }"
+                    @click="toggleModalItemSelection(prod._uid)"
                   >
-                    {{ getDepositStatus(selectedOrderForModal) === 'paid' ? 'Đã cọc' : 'Chưa cọc' }}
-                  </span>
-                </span>
-              </div>
+                    <div class="d-flex align-items-center gap-3 flex-grow-1 min-w-0">
+                      <input
+                        type="checkbox"
+                        class="form-check-input lux-check-input m-0 flex-shrink-0"
+                        :value="prod._uid"
+                        v-model="selectedModalItemIds"
+                        :aria-label="'Chọn ' + prod.name"
+                        @click.stop
+                      />
 
-              <div class="lux-sum-row lux-sum-total">
-                <span>
-                  {{ getGrandTotal(selectedOrderForModal) > 0 && (getStage(selectedOrderForModal) >= 2 || getDepositRequired(selectedOrderForModal) > 0) ? 'Còn lại thanh toán (COD)' : 'Tổng giá trị đơn hàng' }}
-                </span>
-                <span class="lux-total-num">
-                  <template v-if="getGrandTotal(selectedOrderForModal) !== null && getGrandTotal(selectedOrderForModal) > 0">
-                    {{ formatPrice(getStage(selectedOrderForModal) >= 2 || getDepositRequired(selectedOrderForModal) > 0 ? getRemainingAmount(selectedOrderForModal) : getGrandTotal(selectedOrderForModal)) }}₫
-                  </template>
-                  <template v-else>
-                    <span class="lux-metric-muted fw-normal">Chờ hoàn tất báo giá</span>
-                  </template>
-                </span>
+                      <div class="lux-modal-thumb">
+                        <img v-if="prod.image" :src="getImageUrl(prod.image)" :alt="prod.name">
+                        <i v-else class="bi bi-box-seam"></i>
+                      </div>
+
+                      <div class="min-w-0 flex-grow-1">
+                        <div
+                          class="lux-modal-prod-name"
+                          title="Xem chi tiết sản phẩm"
+                          @click.stop="goToProductDetail(prod)"
+                        >
+                          <span class="text-truncate">{{ prod.name }}</span>
+                          <i class="bi bi-arrow-up-right lux-ext-icon flex-shrink-0"></i>
+                        </div>
+                        <div class="lux-item-sub mt-1">
+                          <span class="lux-sub-label">Mã:</span>
+                          <span class="lux-sku-code">{{ prod.code || 'N/A' }}</span>
+                          <span class="lux-meta-divider" aria-hidden="true">|</span>
+                          <span class="lux-sub-label">SL:</span>
+                          <strong class="lux-sub-qty">{{ prod.qty }}</strong>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="lux-modal-item-right">
+                      <span v-if="prod.price > 0" class="lux-item-unit-price">
+                        {{ formatPrice(prod.price) }} ₫
+                      </span>
+                      <span v-else class="lux-price-pending">Chờ báo giá</span>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
 
-            <div class="lux-modal-actions">
-              <button
-                type="button"
-                class="btn btn-outline-secondary lux-action-btn"
-                @click="handleReorderAll(selectedOrderForModal)"
-              >
-                <i class="bi bi-cart-plus me-1"></i> Thêm tất cả vào giỏ
-              </button>
+            <!-- CỘT PHẢI: THÔNG TIN KHÁCH HÀNG & CHI TIẾT THANH TOÁN -->
+            <div class="col-lg-5 lux-modal-col-side">
+              <!-- Khối 1: Thông tin người nhận -->
+              <div class="lux-info-card p-0 overflow-hidden">
+                <div class="lux-card-head-sub">
+                  <div class="lux-info-heading mb-0">Thông tin nhận hàng</div>
+                </div>
 
-              <div class="d-flex align-items-center gap-2">
+                <div class="lux-info-body">
+                  <div class="lux-info-list">
+                    <div class="lux-info-row">
+                      <span class="lux-info-label">Người nhận</span>
+                      <span class="lux-info-val">{{ getOrderCustomerName(selectedOrderForModal) }}</span>
+                    </div>
+                    <div class="lux-info-row">
+                      <span class="lux-info-label">Điện thoại</span>
+                      <span class="lux-info-val">{{ getOrderCustomerPhone(selectedOrderForModal) }}</span>
+                    </div>
+                    <div class="lux-info-row" v-if="getOrderCustomerEmail(selectedOrderForModal)">
+                      <span class="lux-info-label">Email</span>
+                      <span class="lux-info-val text-break">{{ getOrderCustomerEmail(selectedOrderForModal) }}</span>
+                    </div>
+                    <div class="lux-info-row">
+                      <span class="lux-info-label">Địa chỉ</span>
+                      <span class="lux-info-val">{{ getOrderAddress(selectedOrderForModal) || 'Chưa cập nhật' }}</span>
+                    </div>
+                  </div>
+
+                  <div class="lux-note-box mt-3" v-if="selectedOrderForModal.ghi_chu_khach_hang">
+                    <span class="lux-note-label">Ghi chú:</span>
+                    <span class="lux-note-text">{{ selectedOrderForModal.ghi_chu_khach_hang }}</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Khối 2: Tổng kết tài chính -->
+              <div class="lux-modal-summary p-0 overflow-hidden mb-0">
+                <div class="lux-card-head-sub">
+                  <div class="lux-info-heading mb-0">Chi tiết thanh toán</div>
+                </div>
+
+                <div class="lux-info-body pt-2">
+                  <div class="lux-sum-row align-items-start">
+                  <span class="text-muted">Tạm tính tiền hàng</span>
+                  <div class="text-end">
+                    <template v-if="getItemSubtotal(selectedOrderForModal) > 0">
+                      <div class="fw-semibold text-navy tabular-nums">
+                        {{ formatPrice(getItemSubtotal(selectedOrderForModal)) }} ₫
+                      </div>
+                      <div
+                        v-if="getUnquotedCount(selectedOrderForModal) > 0 && getStage(selectedOrderForModal) === 1"
+                        class="lux-metric-note mt-1"
+                      >
+                        (+{{ getUnquotedCount(selectedOrderForModal) }} món chờ giá)
+                      </div>
+                    </template>
+                    <span v-else class="lux-metric-muted">Chờ báo giá</span>
+                  </div>
+                </div>
+
+                <div class="lux-sum-row">
+                  <span class="text-muted">Cước vận chuyển</span>
+                  <span class="fw-medium text-navy text-end">
+                    <template v-if="getStage(selectedOrderForModal) === 1 && Number(selectedOrderForModal.phi_van_chuyen || 0) <= 0">
+                      <span class="lux-metric-muted">Chờ báo giá</span>
+                    </template>
+                    <template v-else-if="selectedOrderForModal.khach_tu_tra_cuoc">Khách tự trả chành xe</template>
+                    <template v-else-if="Number(selectedOrderForModal.phi_van_chuyen) > 0">{{ formatPrice(selectedOrderForModal.phi_van_chuyen) }} ₫</template>
+                    <template v-else><span class="text-success">Miễn phí</span></template>
+                  </span>
+                </div>
+
+                <div class="lux-sum-row" v-if="getDepositRequired(selectedOrderForModal) > 0">
+                  <span class="text-muted">Tiền cọc yêu cầu</span>
+                  <span class="fw-semibold text-navy text-end">
+                    {{ formatPrice(getDepositRequired(selectedOrderForModal)) }} ₫
+                    <span
+                      class="lux-deposit-state ms-1"
+                      :class="getDepositStatus(selectedOrderForModal) === 'paid' ? 'is-paid' : 'is-unpaid'"
+                    >
+                      {{ getDepositStatus(selectedOrderForModal) === 'paid' ? 'Đã cọc' : 'Chưa cọc' }}
+                    </span>
+                  </span>
+                </div>
+
+                <div class="lux-sum-row lux-sum-total">
+                  <span>
+                    {{ getGrandTotal(selectedOrderForModal) > 0 && (getStage(selectedOrderForModal) >= 2 || getDepositRequired(selectedOrderForModal) > 0) ? 'Còn lại thanh toán (COD)' : 'Tổng giá trị đơn hàng' }}
+                  </span>
+                  <span class="lux-total-num text-end">
+                    <template v-if="getGrandTotal(selectedOrderForModal) !== null && getGrandTotal(selectedOrderForModal) > 0">
+                      {{ formatPrice(getStage(selectedOrderForModal) >= 2 || getDepositRequired(selectedOrderForModal) > 0 ? getRemainingAmount(selectedOrderForModal) : getGrandTotal(selectedOrderForModal)) }} ₫
+                    </template>
+                    <template v-else>
+                      <span class="lux-metric-muted fw-normal">Chờ hoàn tất báo giá</span>
+                    </template>
+                  </span>
+                </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Footer: Nút Bảng báo giá bên trái | Đóng & nút Thêm vào giỏ (chỉ hiện khi đã tick chọn) bên phải -->
+          <div class="lux-modal-footer" v-if="selectedOrderForModal">
+            <div class="lux-modal-actions">
+              <div class="d-flex align-items-center gap-3 flex-wrap">
                 <router-link
                   v-if="selectedOrderForModal.token && getStage(selectedOrderForModal) >= 2"
                   :to="'/bao-gia/' + selectedOrderForModal.token"
@@ -522,8 +627,23 @@
                 >
                   Bảng báo giá
                 </router-link>
-                <button type="button" class="btn btn-danger lux-action-btn px-4" @click="closeProductModal">
+                <span v-if="selectedModalItemIds.length > 0" class="text-muted small fw-medium">
+                  Đã chọn <strong class="text-navy">{{ selectedModalItemIds.length }}</strong> sản phẩm
+                </span>
+              </div>
+
+              <div class="d-flex align-items-center gap-2 ms-auto">
+                <button type="button" class="btn btn-outline-secondary lux-action-btn px-4" @click="closeProductModal">
                   Đóng
+                </button>
+                <button
+                  v-if="selectedModalItemIds.length > 0"
+                  type="button"
+                  class="btn btn-danger lux-action-btn"
+                  @click="handleAddSelectedToCart"
+                >
+                  <i class="bi bi-cart-plus me-1"></i>
+                  Thêm vào giỏ ({{ selectedModalItemIds.length }})
                 </button>
               </div>
             </div>
@@ -540,6 +660,7 @@ import { useRouter } from "vue-router";
 import { useAuthStore } from "../../../stores/authStore";
 import { useCartStore } from "../../../stores/cartStore";
 import Swal from "sweetalert2";
+import { createToaster } from "@meforma/vue-toaster";
 import axiosClient from "../../../api/axiosClient";
 import { useQuery, useQueryClient } from "@tanstack/vue-query";
 import { useSiteSettings } from "../../../composables/useSiteSettings";
@@ -549,6 +670,7 @@ const router = useRouter();
 const authStore = useAuthStore();
 const cartStore = useCartStore();
 const queryClient = useQueryClient();
+const toaster = createToaster({ position: "top-right", duration: 2500 });
 const { settings } = useSiteSettings();
 
 const buildZaloUrl = (text = '') => {
@@ -732,10 +854,25 @@ const getProcessNote = (order) => {
 
 const getOrderAddress = (order) => {
   if (!order) return '';
-  if (order._type === 'quote') {
-    return order.dia_chi_giao_hang || '';
-  }
-  return order.dia_chi?.dia_chi_cu_the || order.dia_chi_text || '';
+  const raw = order._type === 'quote'
+    ? (order.dia_chi_giao_hang || '')
+    : (order.dia_chi?.dia_chi_cu_the || order.dia_chi_text || order.dia_chi_giao_hang || '');
+  return String(raw).replace(/\s*,\s*/g, ', ').replace(/\s+/g, ' ').trim();
+};
+
+const getOrderCustomerName = (order) => {
+  if (!order) return 'Chưa cập nhật';
+  return order.khach_hang_ten || order.khach_hang?.ho_ten || authStore.user?.name || 'Chưa cập nhật';
+};
+
+const getOrderCustomerPhone = (order) => {
+  if (!order) return '-';
+  return order.khach_hang_sdt || order.khach_hang?.so_dien_thoai || authStore.user?.so_dien_thoai || '-';
+};
+
+const getOrderCustomerEmail = (order) => {
+  if (!order) return '';
+  return order.khach_hang_email || order.khach_hang?.email || '';
 };
 
 const getLogisticsStatus = (order) => {
@@ -752,13 +889,14 @@ const getLogisticsStatus = (order) => {
 const getItemProducts = (order) => {
   if (!order) return [];
   const list = order.items || order.chi_tiet || [];
-  return list.map(p => ({
+  return list.map((p, idx) => ({
+    _uid: `${p.id || idx}-${idx}`,
     id: p.id_san_pham || p.id_phu_tung || p.san_pham_id || p.phu_tung_id || p.id,
     loai_san_pham: p.loai_san_pham || (p.slug || p.san_pham?.slug ? 'san_pham' : 'phu_tung'),
     name: p.ten_phu_tung || p.ten_san_pham || 'Phụ tùng máy thủy',
     code: p.ma_phu_tung || p.ma_san_pham || '',
     slug: p.slug || p.san_pham?.slug || '',
-    image: p.hinh_anh || p.hinh_anh_chinh || p.san_pham?.hinh_anh || p.san_pham?.hinh_anh_chinh || null,
+    image: p.hinh_anh || p.hinh_anh_chinh || p.san_pham?.hinh_anh_chinh || p.san_pham?.hinh_anh || null,
     qty: p.so_luong || 1,
     price: Number(p.don_gia || p.gia_ban || 0)
   }));
@@ -843,12 +981,73 @@ const calculateRemaining = (order) => {
 };
 
 // ===================== MODAL SẢN PHẨM & NAVIGATION =====================
+const selectedModalItemIds = ref([]);
+const modalSearchQuery = ref('');
+
+const modalProducts = computed(() => getItemProducts(selectedOrderForModal.value));
+
+const filteredModalProducts = computed(() => {
+  const q = modalSearchQuery.value.toLowerCase();
+  if (!q) return modalProducts.value;
+  return modalProducts.value.filter(p =>
+    (p.name || '').toLowerCase().includes(q) || (p.code || '').toLowerCase().includes(q)
+  );
+});
+
+const isAllModalItemsSelected = computed(() => {
+  return modalProducts.value.length > 0 && selectedModalItemIds.value.length === modalProducts.value.length;
+});
+
+const toggleSelectAllModalItems = () => {
+  if (isAllModalItemsSelected.value) {
+    selectedModalItemIds.value = [];
+  } else {
+    selectedModalItemIds.value = modalProducts.value.map(p => p._uid);
+  }
+};
+
+const toggleModalItemSelection = (uid) => {
+  const idx = selectedModalItemIds.value.indexOf(uid);
+  if (idx >= 0) {
+    selectedModalItemIds.value.splice(idx, 1);
+  } else {
+    selectedModalItemIds.value.push(uid);
+  }
+};
+
 const openProductModal = (order) => {
   selectedOrderForModal.value = order;
+  selectedModalItemIds.value = [];
+  modalSearchQuery.value = '';
 };
 
 const closeProductModal = () => {
   selectedOrderForModal.value = null;
+  selectedModalItemIds.value = [];
+  modalSearchQuery.value = '';
+};
+
+const handleAddSelectedToCart = () => {
+  const chosen = modalProducts.value.filter(p => selectedModalItemIds.value.includes(p._uid));
+  if (!chosen.length) return;
+  chosen.forEach((prod) => {
+    cartStore.addItem({
+      id: prod.id,
+      loai_san_pham: prod.loai_san_pham || 'phu_tung',
+      slug: prod.slug || null,
+      ma_phu_tung: prod.code,
+      ten_phu_tung: prod.name,
+      hinh_anh: prod.image,
+      gia_ban: prod.price > 0 ? prod.price : 0,
+      is_gia_lien_he: prod.price <= 0,
+    }, prod.qty || 1);
+  });
+  selectedModalItemIds.value = [];
+  toaster.success(
+    chosen.length === 1
+      ? `Đã thêm "${chosen[0].name}" vào giỏ hàng`
+      : `Đã thêm ${chosen.length} sản phẩm vào giỏ hàng`
+  );
 };
 
 const goToProductDetail = (prod) => {
@@ -874,14 +1073,7 @@ const handleAddToCart = (prod) => {
     is_gia_lien_he: prod.price <= 0
   }, prod.qty || 1);
 
-  Swal.fire({
-    toast: true,
-    position: 'top-end',
-    icon: 'success',
-    title: `Đã thêm "${prod.name}" vào giỏ hàng`,
-    showConfirmButton: false,
-    timer: 2000
-  });
+  toaster.success(`Đã thêm "${prod.name}" vào giỏ hàng`);
 };
 
 const handleReorderAll = (order) => {
@@ -900,14 +1092,7 @@ const handleReorderAll = (order) => {
     }, prod.qty || 1);
   });
   closeProductModal();
-  Swal.fire({
-    toast: true,
-    position: 'top-end',
-    icon: 'success',
-    title: `Đã thêm ${prods.length} phụ tùng vào giỏ hàng`,
-    showConfirmButton: false,
-    timer: 2200,
-  });
+  toaster.success(`Đã thêm ${prods.length} phụ tùng vào giỏ hàng`);
 };
 
 // ===================== VIETQR & ACTIONS =====================
@@ -949,14 +1134,7 @@ const copyText = (text, msg) => {
   if (navigator.clipboard) {
     navigator.clipboard.writeText(text);
   }
-  Swal.fire({
-    toast: true,
-    position: 'top-end',
-    icon: 'success',
-    title: msg || 'Đã sao chép!',
-    showConfirmButton: false,
-    timer: 2000
-  });
+  toaster.success(msg || 'Đã sao chép!');
 };
 
 const confirmManualPaid = async (order) => {
@@ -1065,7 +1243,11 @@ const formatDate = (dateStr) => {
 }
 
 .text-navy {
-  color: var(--jpm-color-navy-deep, #0a1128);
+  color: var(--jpm-color-navy-dark, #0A1128);
+}
+
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
 }
 
 /* ========================================================================= */
@@ -1076,7 +1258,7 @@ const formatDate = (dateStr) => {
   background-color: #ffffff;
   border: 1px solid #e2e8f0;
   border-radius: var(--jpm-radius-card, 12px);
-  box-shadow: 0 2px 12px rgba(10, 17, 40, 0.03);
+  box-shadow: 0 4px 16px rgba(10, 17, 40, 0.04);
   overflow-x: auto;
   white-space: nowrap;
 }
@@ -1100,12 +1282,12 @@ const formatDate = (dateStr) => {
 }
 
 .lux-tab-btn:hover {
-  color: #0a1128;
+  color: var(--jpm-color-navy-dark, #0A1128);
 }
 
 .lux-tab-btn.active {
-  color: var(--jpm-color-red-marine, #f82249);
-  border-bottom-color: var(--jpm-color-red-marine, #f82249);
+  color: var(--jpm-color-red-marine, #F82249);
+  border-bottom-color: var(--jpm-color-red-marine, #F82249);
   font-weight: 600;
 }
 
@@ -1121,7 +1303,7 @@ const formatDate = (dateStr) => {
 
 .lux-tab-btn.active .lux-tab-count {
   background-color: rgba(248, 34, 73, 0.1);
-  color: var(--jpm-color-red-marine, #f82249);
+  color: var(--jpm-color-red-marine, #F82249);
 }
 
 /* ========================================================================= */
@@ -1137,7 +1319,7 @@ const formatDate = (dateStr) => {
   margin-top: 16px;
   border: 1px solid #e2e8f0;
   border-radius: var(--jpm-radius-card, 12px);
-  box-shadow: 0 2px 12px rgba(10, 17, 40, 0.03);
+  box-shadow: 0 4px 16px rgba(10, 17, 40, 0.04);
 }
 
 .empty-icon-wrap {
@@ -1156,7 +1338,7 @@ const formatDate = (dateStr) => {
 .order-empty-heading {
   font-size: 1.05rem;
   font-weight: 700;
-  color: #0a1128;
+  color: var(--jpm-color-navy-dark, #0A1128);
 }
 
 .order-empty-desc {
@@ -1166,13 +1348,13 @@ const formatDate = (dateStr) => {
 }
 
 /* ========================================================================= */
-/* 3. ORDER CARD (MINIMALIST LUXURY) */
+/* 3. ORDER CARD (MINIMALIST LUXURY - CHUẨN DESIGN SYSTEM 2026) */
 /* ========================================================================= */
 .lux-order-card {
   background: #ffffff;
   border: 1px solid #e2e8f0;
   border-radius: var(--jpm-radius-card, 12px);
-  box-shadow: 0 2px 12px rgba(10, 17, 40, 0.03);
+  box-shadow: 0 4px 16px rgba(10, 17, 40, 0.04);
   overflow: hidden;
   transition: border-color 0.2s ease;
 }
@@ -1181,7 +1363,7 @@ const formatDate = (dateStr) => {
   border-color: #cbd5e1;
 }
 
-/* Header 1 dòng gọn */
+/* Header 1 dòng gọn: Loại đơn + Mã đơn | Ngày đặt bên trái | Trạng thái bên phải */
 .lux-card-head {
   padding: 13px 20px;
   display: flex;
@@ -1196,49 +1378,65 @@ const formatDate = (dateStr) => {
   display: flex;
   align-items: center;
   gap: 8px;
+  flex: 1;
+  min-width: 0;
+  flex-wrap: wrap;
+}
+
+.lux-order-type {
+  font-family: var(--default-font, 'Inter', sans-serif);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--jpm-neutral-500, #64748B);
+  flex-shrink: 0;
 }
 
 .lux-order-code {
-  font-family: 'Roboto Mono', monospace;
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: #0a1128;
-  letter-spacing: -0.01em;
+  font-family: var(--default-font, 'Inter', sans-serif);
+  font-variant-numeric: tabular-nums;
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--jpm-color-navy-dark, #0A1128);
+  letter-spacing: 0.1px;
+  flex-shrink: 0;
+}
+
+.lux-meta-divider {
+  color: #cbd5e1;
+  font-size: 0.78rem;
+  user-select: none;
+  margin: 0 2px;
+  flex-shrink: 0;
 }
 
 .lux-meta-dot {
   color: #cbd5e1;
   user-select: none;
+  margin: 0;
+  flex-shrink: 0;
 }
 
 .lux-order-date {
-  font-size: 0.8rem;
-  color: #64748b;
+  font-size: 0.8125rem;
+  color: var(--jpm-neutral-500, #64748B);
+  font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
 }
 
-/* Body: Địa chỉ + Sản phẩm đại diện */
+.lux-order-date strong {
+  color: var(--jpm-neutral-700, #334155);
+  font-weight: 600;
+}
+
+/* Body: Sản phẩm đại diện căn giữa trục ngang 100% */
 .lux-card-body {
-  padding: 14px 20px 16px;
+  padding: 16px 20px;
   cursor: pointer;
   transition: background-color 0.18s ease;
 }
 
 .lux-card-body:hover {
   background-color: #fafbfc;
-}
-
-.lux-address-line {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 0.78rem;
-  color: #64748b;
-  margin-bottom: 12px;
-}
-
-.lux-address-line i {
-  color: #94a3b8;
-  font-size: 0.85rem;
 }
 
 .lux-product-row {
@@ -1248,11 +1446,11 @@ const formatDate = (dateStr) => {
 }
 
 .lux-item-thumb {
-  width: 56px;
-  height: 56px;
-  background-color: #f8fafc;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
+  width: 58px;
+  height: 58px;
+  background-color: #ffffff;
+  border: 1px solid var(--jpm-neutral-200, #E2E8F0);
+  border-radius: var(--jpm-radius-control, 8px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1260,13 +1458,13 @@ const formatDate = (dateStr) => {
   font-size: 1.35rem;
   flex-shrink: 0;
   overflow: hidden;
+  padding: 4px;
 }
 
 .lux-item-thumb img {
-  width: 100%;
-  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
   object-fit: contain;
-  padding: 4px;
 }
 
 .lux-item-info {
@@ -1275,9 +1473,10 @@ const formatDate = (dateStr) => {
 }
 
 .lux-item-name {
-  font-size: 0.92rem;
+  font-family: var(--default-font, 'Inter', sans-serif);
+  font-size: 0.95rem;
   font-weight: 600;
-  color: #0a1128;
+  color: var(--jpm-color-navy-dark, #0A1128);
   line-height: 1.35;
 }
 
@@ -1286,23 +1485,36 @@ const formatDate = (dateStr) => {
   align-items: center;
   flex-wrap: wrap;
   gap: 6px;
-  font-size: 0.78rem;
-  color: #64748b;
+  font-size: 0.8125rem;
+  color: var(--jpm-neutral-500, #64748B);
   margin-top: 4px;
 }
 
-.lux-item-sub code {
-  font-family: 'Roboto Mono', monospace;
-  font-size: 0.76rem;
-  color: #475569;
-  background: #f1f5f9;
-  padding: 1px 6px;
-  border-radius: var(--jpm-radius-badge, 6px);
+.lux-sub-label {
+  color: var(--jpm-neutral-500, #64748B);
+  font-weight: 400;
 }
 
-.lux-more-items {
-  color: #0e1b4d;
-  font-weight: 500;
+/* Mã sản phẩm chữ xanh đồng bộ 100% với ProductCard, VatTuThuongMua, GarageChiTietMay */
+.lux-sku-code {
+  font-family: var(--default-font, 'Inter', sans-serif);
+  font-variant-numeric: tabular-nums;
+  color: var(--jpm-color-blue-electric, #1D4ED8);
+  font-size: 0.875rem;
+  font-weight: 700;
+  letter-spacing: 0.1px;
+}
+
+.lux-sub-qty {
+  color: var(--jpm-color-navy-dark, #0A1128);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.lux-more-items-inline {
+  color: var(--jpm-color-navy-dark, #0A1128);
+  font-size: 0.8125rem;
+  font-weight: 600;
 }
 
 .lux-item-price {
@@ -1311,62 +1523,113 @@ const formatDate = (dateStr) => {
   padding-left: 12px;
 }
 
+/* Đơn giá sản phẩm đại diện: Deep Navy điềm đạm, nhường màu Đỏ cho Tổng tạm tính */
+.lux-item-unit-price {
+  font-family: var(--default-font, 'Inter', sans-serif);
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--jpm-color-navy-dark, #0A1128);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Giá Tổng / Tạm tính của đơn: Điểm nhấn tài chính màu Đỏ Marine */
 .lux-price-value {
-  font-size: 0.92rem;
-  font-weight: 600;
-  color: #0a1128;
+  font-family: var(--default-font, 'Inter', sans-serif);
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--jpm-color-red-marine, #F82249);
   font-variant-numeric: tabular-nums;
 }
 
 .lux-price-pending {
-  font-size: 0.8rem;
-  font-weight: 500;
-  color: #64748b;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--jpm-neutral-500, #64748B);
 }
 
 /* ========================================================================= */
-/* 4. DẢI TỔNG KẾT TÀI CHÍNH MỎNG 1 DÒNG */
+/* 4. DẢI TỔNG KẾT TÀI CHÍNH MỎNG 1 DÒNG (CĂN PHẢI GỌN GÀNG)                 */
 /* ========================================================================= */
 .lux-summary-strip {
   display: flex;
-  flex-wrap: wrap;
+  justify-content: flex-end;
   align-items: center;
-  gap: 10px 28px;
   padding: 11px 20px;
   background-color: #f8fafc;
   border-top: 1px solid #f1f5f9;
   border-bottom: 1px solid #f1f5f9;
 }
 
-.lux-metric {
+.lux-summary-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 2px;
+  width: 100%;
+  text-align: right;
+}
+
+.lux-fin-inline {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: flex-end;
+  gap: 6px 10px;
+}
+
+.lux-fin-item {
   display: inline-flex;
   align-items: baseline;
-  gap: 8px;
-  font-size: 0.82rem;
+  gap: 6px;
+  font-size: 0.825rem;
 }
 
 .lux-metric-label {
-  color: #64748b;
+  color: var(--jpm-neutral-500, #64748B);
   font-weight: 400;
 }
 
 .lux-metric-val {
-  color: #0a1128;
+  color: var(--jpm-color-navy-dark, #0A1128);
   font-variant-numeric: tabular-nums;
   display: inline-flex;
   align-items: baseline;
   gap: 6px;
 }
 
+.lux-total-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--jpm-neutral-700, #334155);
+}
+
+.lux-total-val {
+  display: inline-flex;
+  align-items: baseline;
+}
+
 .lux-metric-note {
-  font-size: 0.75rem;
-  color: #64748b;
+  font-size: 0.76rem;
+  color: var(--jpm-neutral-500, #64748B);
+  font-style: italic;
   font-weight: 400;
 }
 
-.lux-metric-muted {
-  color: #64748b;
-  font-size: 0.8rem;
+.lux-metric-status {
+  color: var(--jpm-color-navy-dark, #0A1128);
+  font-size: 0.825rem;
+  font-weight: 600;
+}
+
+@media (max-width: 767.98px) {
+  .lux-fin-inline {
+    justify-content: flex-start;
+  }
+  .lux-summary-right {
+    align-items: flex-start;
+    text-align: left;
+  }
 }
 
 .lux-deposit-state {
@@ -1494,7 +1757,7 @@ const formatDate = (dateStr) => {
 }
 
 /* ========================================================================= */
-/* 7. MODAL CHI TIẾT ĐƠN HÀNG (MINIMALIST LUXURY) */
+/* 7. MODAL CHI TIẾT ĐƠN HÀNG 2 CỘT (MINIMALIST LUXURY) */
 /* ========================================================================= */
 .lux-modal-content {
   border: 1px solid #e2e8f0;
@@ -1509,8 +1772,8 @@ const formatDate = (dateStr) => {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  padding: 18px 24px;
-  border-bottom: 1px solid #f1f5f9;
+  padding: 16px 24px;
+  border-bottom: 1px solid #e2e8f0;
   background: #ffffff;
 }
 
@@ -1521,51 +1784,183 @@ const formatDate = (dateStr) => {
   letter-spacing: -0.01em;
 }
 
-.lux-modal-address {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 24px;
+.lux-modal-split {
   background: #f8fafc;
+  padding: 18px 20px;
+}
+
+.lux-modal-col-main {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.lux-modal-col-side {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.lux-info-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: var(--jpm-radius-control, 8px);
+}
+
+.lux-card-head-sub {
+  padding: 12px 16px;
+  background: #ffffff;
   border-bottom: 1px solid #f1f5f9;
-  font-size: 0.82rem;
+}
+
+.lux-info-heading {
+  font-family: var(--heading-font, 'Inter', sans-serif);
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-transform: none;
+  letter-spacing: -0.01em;
+  color: var(--jpm-color-navy-dark, #0A1128);
+}
+
+.lux-info-body {
+  padding: 14px 16px;
+}
+
+.lux-info-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.lux-info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  font-size: 0.84rem;
+  line-height: 1.45;
+}
+
+.lux-info-label {
+  color: #64748b;
+  flex-shrink: 0;
+  min-width: 78px;
+}
+
+.lux-info-val {
+  color: #0a1128;
+  font-weight: 600;
+  text-align: right;
+  word-break: break-word;
+}
+
+.lux-note-box {
+  background: #f8fafc;
+  border: 1px solid #f1f5f9;
+  border-radius: var(--jpm-radius-badge, 6px);
+  padding: 8px 10px;
+  font-size: 0.8125rem;
+  line-height: 1.45;
+  text-align: left;
+  word-break: break-word;
+}
+
+.lux-note-label {
+  color: #64748b;
+  font-weight: 600;
+  margin-right: 6px;
+}
+
+.lux-note-text {
   color: #475569;
 }
 
-.lux-modal-address i {
+.lux-modal-search-bar {
+  padding: 10px 16px;
+  background: #f8fafc;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.lux-select-all-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #475569;
+  cursor: pointer;
+  user-select: none;
+  margin: 0;
+}
+
+.lux-check-input {
+  width: 17px;
+  height: 17px;
+  border-radius: 5px;
+  border-color: #cbd5e1;
+  cursor: pointer;
+  box-shadow: none !important;
+}
+
+.lux-check-input:checked {
+  background-color: var(--jpm-color-red-marine, #f82249);
+  border-color: var(--jpm-color-red-marine, #f82249);
+}
+
+.lux-modal-search {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-width: 190px;
+}
+
+.lux-modal-search i {
+  position: absolute;
+  left: 10px;
+  font-size: 0.8rem;
   color: #94a3b8;
+  pointer-events: none;
+}
+
+.lux-modal-search input {
+  width: 100%;
+  height: 32px;
+  padding: 0 10px 0 30px;
+  font-size: 0.8125rem;
+  border: 1px solid #cbd5e1;
+  border-radius: var(--jpm-radius-control, 8px);
+  background: #ffffff;
+  color: #0a1128;
+  outline: none;
+}
+
+.lux-modal-search input:focus {
+  border-color: var(--jpm-color-blue-electric, #1D4ED8);
 }
 
 .lux-modal-body {
-  max-height: 52vh;
+  max-height: 410px;
   overflow-y: auto;
+  flex: 1;
 }
 
 .lux-modal-item {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
-  padding: 14px 24px;
+  gap: 14px;
+  padding: 13px 16px;
   border-bottom: 1px solid #f1f5f9;
+  cursor: pointer;
   transition: background-color 0.15s ease;
-}
-
-.lux-modal-item:last-child {
-  border-bottom: none;
 }
 
 .lux-modal-item:hover {
   background-color: #fafbfc;
 }
 
-.lux-modal-item-left {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  flex: 1;
-  min-width: 0;
-  cursor: pointer;
+.lux-modal-item.is-selected {
+  background-color: rgba(248, 34, 73, 0.03);
 }
 
 .lux-modal-thumb {
@@ -1594,14 +1989,15 @@ const formatDate = (dateStr) => {
   display: inline-flex;
   align-items: center;
   gap: 5px;
+  max-width: 100%;
   font-size: 0.9rem;
   font-weight: 600;
   color: #0a1128;
   transition: color 0.15s ease;
 }
 
-.lux-modal-item-left:hover .lux-modal-prod-name {
-  color: var(--jpm-color-navy-dark, #0A1128);
+.lux-modal-prod-name:hover {
+  color: var(--jpm-color-blue-electric, #1D4ED8);
 }
 
 .lux-ext-icon {
@@ -1612,35 +2008,13 @@ const formatDate = (dateStr) => {
 .lux-modal-item-right {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 10px;
   flex-shrink: 0;
 }
 
-.lux-icon-cart-btn {
-  width: 34px;
-  height: 34px;
-  border-radius: 8px;
-  border: 1px solid #e2e8f0;
-  background: #ffffff;
-  color: #475569;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.95rem;
-  cursor: pointer;
-  transition: all 0.18s ease;
-}
-
-.lux-icon-cart-btn:hover {
-  border-color: var(--jpm-color-red-marine, #f82249);
-  background: var(--jpm-color-red-marine, #f82249);
-  color: #ffffff;
-  transform: translateY(-1px);
-}
-
 .lux-modal-footer {
-  padding: 18px 24px 20px;
-  background: #f8fafc;
+  padding: 14px 24px;
+  background: #ffffff;
   border-top: 1px solid #e2e8f0;
 }
 
@@ -1648,8 +2022,13 @@ const formatDate = (dateStr) => {
   background: #ffffff;
   border: 1px solid #e2e8f0;
   border-radius: var(--jpm-radius-control, 8px);
-  padding: 12px 16px;
-  margin-bottom: 16px;
+  padding: 14px 16px;
+}
+
+@media (max-width: 991.98px) {
+  .lux-modal-split {
+    padding: 14px;
+  }
 }
 
 .lux-sum-row {

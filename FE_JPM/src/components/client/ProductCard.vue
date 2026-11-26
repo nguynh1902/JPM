@@ -301,7 +301,9 @@ function handleRequestQuote() {
 }
 
 .sku-code {
-  font-family: var(--jpm-font-mono, 'Roboto Mono', monospace);
+  font-family: var(--default-font, 'Inter', sans-serif);
+  font-size: 0.875rem;
+  font-variant-numeric: tabular-nums;
   color: var(--jpm-color-blue-electric) !important;
   font-weight: 700;
   min-width: 0;

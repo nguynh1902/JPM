@@ -363,19 +363,21 @@
 <script>
 import axiosClient from '../../../api/axiosClient'
 import Swal from 'sweetalert2'
+import { createToaster } from '@meforma/vue-toaster'
 import { useSiteSettings } from '../../../composables/useSiteSettings'
 
 export default {
   name: 'TraCuuDonHang',
   setup() {
     const { settings } = useSiteSettings()
+    const toaster = createToaster({ position: 'top-right', duration: 2200 })
     const buildZaloUrl = (text = '') => {
       const base = (settings.value?.social_zalo || '').trim() || `https://zalo.me/${String(settings.value?.company_hotline || '').replace(/[^0-9]/g, '')}`
       if (!text) return base
       const sep = base.includes('?') ? '&' : '?'
       return `${base}${sep}text=${encodeURIComponent(text)}`
     }
-    return { settings, buildZaloUrl }
+    return { settings, toaster, buildZaloUrl }
   },
   data() {
     return {
@@ -449,14 +451,7 @@ export default {
       if (navigator.clipboard) {
         navigator.clipboard.writeText(text)
       }
-      Swal.fire({
-        toast: true,
-        position: 'top-end',
-        icon: 'success',
-        title: msg || 'Đã sao chép',
-        showConfirmButton: false,
-        timer: 2000
-      })
+      this.toaster.success(msg || 'Đã sao chép')
     },
     calculateItemsTotal() {
       if (!this.result || !this.result.data.chi_tiet) return 0

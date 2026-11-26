@@ -230,15 +230,19 @@
                           <div class="d-inline-flex align-items-center justify-content-center gap-2">
                             <button
                               type="button"
-                              class="btn-garage-icon"
+                              class="btn btn-garage-toggle"
                               :class="{ 'is-saved': savedModelIds.has(Number(model.id)) }"
                               :disabled="savingModelId === model.id"
                               @click="handleSaveToGarage(model)"
-                              :title="savedModelIds.has(Number(model.id)) ? 'Đã lưu trong Garage của tôi (bấm để mở)' : 'Lưu động cơ này vào Garage'"
-                              :aria-label="savedModelIds.has(Number(model.id)) ? 'Đã lưu trong Garage' : 'Lưu vào Garage'"
+                              :title="savedModelIds.has(Number(model.id)) ? 'Đã lưu trong Garage (bấm để hủy lưu)' : 'Lưu động cơ này vào Garage'"
+                              :aria-label="savedModelIds.has(Number(model.id)) ? 'Hủy lưu khỏi Garage' : 'Lưu vào Garage'"
                             >
                               <span v-if="savingModelId === model.id" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                              <i v-else class="bi" :class="savedModelIds.has(Number(model.id)) ? 'bi-check-lg' : 'bi-tools'"></i>
+                              <template v-else-if="savedModelIds.has(Number(model.id))">
+                                <span class="label-saved"><i class="bi bi-check-lg"></i><span>Đã lưu</span></span>
+                                <span class="label-unsave"><i class="bi bi-x-lg"></i><span>Hủy lưu</span></span>
+                              </template>
+                              <span v-else class="label-save"><i class="bi bi-plus-lg"></i><span>Garage</span></span>
                             </button>
 
                             <router-link
@@ -269,6 +273,7 @@ import { computed, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useQuery, useQueryClient } from '@tanstack/vue-query';
 import Swal from 'sweetalert2';
+import { createToaster } from '@meforma/vue-toaster';
 import axiosClient from '../../../api/axiosClient';
 import { useAuthStore } from '../../../stores/authStore';
 import JpmSelect from '../../../components/client/JpmSelect.vue';
@@ -277,6 +282,7 @@ const route = useRoute();
 const router = useRouter();
 const queryClient = useQueryClient();
 const authStore = useAuthStore();
+const toaster = createToaster({ position: 'top-right', duration: 2800 });
 
 const isLoggedIn = computed(() => !!(authStore.isLoggedIn || authStore.token));
 
@@ -287,9 +293,12 @@ const { data: garageData } = useQuery({
   staleTime: 1000 * 60 * 5
 });
 
+const garageList = computed(() => {
+  return Array.isArray(garageData.value) ? garageData.value : (garageData.value?.data || []);
+});
+
 const savedModelIds = computed(() => {
-  const list = Array.isArray(garageData.value) ? garageData.value : (garageData.value?.data || []);
-  return new Set(list.map(item => Number(item.dong_co_model_id)));
+  return new Set(garageList.value.map(item => Number(item.dong_co_model_id)));
 });
 
 const savingModelId = ref(null);
@@ -311,35 +320,27 @@ const handleSaveToGarage = async (model) => {
     return;
   }
 
-  if (savedModelIds.value.has(Number(model.id))) {
-    router.push('/garage');
-    return;
-  }
-
   savingModelId.value = model.id;
   try {
+    const matchedIds = garageList.value
+      .filter(item => Number(item.dong_co_model_id) === Number(model.id))
+      .map(item => item.id);
+
+    if (matchedIds.length > 0) {
+      await Promise.all(matchedIds.map(id => axiosClient.delete(`/client/garage/${id}`)));
+      await queryClient.invalidateQueries({ queryKey: ['clientGarage'] });
+      toaster.success(`Đã hủy lưu ${model.name} khỏi Garage`);
+      return;
+    }
+
     await axiosClient.post('/client/garage', {
       dong_co_model_id: model.id,
       ten_may: model.name
     });
     await queryClient.invalidateQueries({ queryKey: ['clientGarage'] });
-    Swal.fire({
-      toast: true,
-      position: 'top-end',
-      icon: 'success',
-      title: `Đã lưu ${model.name} vào Garage`,
-      showConfirmButton: false,
-      timer: 2600
-    });
+    toaster.success(`Đã lưu ${model.name} vào Garage`);
   } catch (err) {
-    Swal.fire({
-      toast: true,
-      position: 'top-end',
-      icon: 'error',
-      title: err.response?.data?.message || 'Không thể lưu động cơ lúc này.',
-      showConfirmButton: false,
-      timer: 3000
-    });
+    toaster.error(err.response?.data?.message || 'Không thể cập nhật Garage lúc này.');
   } finally {
     savingModelId.value = null;
   }
@@ -829,7 +830,7 @@ const filteredModels = computed(() => {
 }
 
 .th-action {
-  width: 164px;
+  width: 214px;
   padding-right: 24px !important;
   padding-left: 12px !important;
   white-space: nowrap !important;
@@ -899,44 +900,69 @@ const filteredModels = computed(() => {
   font-weight: 600;
 }
 
-/* Nút Lưu vào Garage kế thừa biến Primary từ main.css */
-.btn-garage-icon {
+/* Nút Lưu vào Garage dạng chữ gọn nhẹ, đồng bộ nút xám / trạng thái Đã lưu dịu mắt */
+.btn-garage-toggle {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
   height: 32px;
-  padding: 0;
+  min-width: 90px;
+  padding: 0 12px;
   border-radius: var(--jpm-radius-control, 8px);
-  border: 1px solid var(--jpm-color-blue-electric);
+  border: 1px solid #cbd5e1;
   background-color: #ffffff;
-  color: var(--jpm-color-blue-electric);
-  font-size: 0.88rem;
+  color: #64748b;
+  font-family: var(--default-font, 'Inter', sans-serif);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
   cursor: pointer;
   transition: all 0.2s ease;
+  box-shadow: none !important;
   flex-shrink: 0;
 }
 
-.btn-garage-icon:hover:not(:disabled) {
-  background-color: var(--jpm-color-blue-electric);
-  border-color: var(--jpm-color-blue-electric);
-  color: #ffffff;
+.btn-garage-toggle .label-save,
+.btn-garage-toggle .label-saved,
+.btn-garage-toggle .label-unsave {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.btn-garage-toggle .label-unsave {
+  display: none;
+}
+
+.btn-garage-toggle:hover:not(:disabled) {
+  background-color: #f8fafc;
+  border-color: #94a3b8;
+  color: var(--jpm-color-navy-dark, #0A1128);
   transform: translateY(-1px);
 }
 
-.btn-garage-icon.is-saved {
-  background-color: var(--jpm-color-blue-electric);
-  border-color: var(--jpm-color-blue-electric);
-  color: #ffffff;
+.btn-garage-toggle.is-saved {
+  background-color: var(--jpm-status-stock-bg, #DCFCE7);
+  border-color: #bbf7d0;
+  color: var(--jpm-status-stock-text, #15803D);
 }
 
-.btn-garage-icon.is-saved:hover:not(:disabled) {
-  background-color: var(--jpm-btn-blue-hover);
-  border-color: var(--jpm-btn-blue-hover);
-  color: #ffffff;
+.btn-garage-toggle.is-saved:hover:not(:disabled) {
+  background-color: var(--jpm-status-out-bg, #FEE2E2);
+  border-color: #fecaca;
+  color: var(--jpm-status-out-text, #B91C1C);
 }
 
-.btn-garage-icon:disabled {
+.btn-garage-toggle.is-saved:hover:not(:disabled) .label-saved {
+  display: none;
+}
+
+.btn-garage-toggle.is-saved:hover:not(:disabled) .label-unsave {
+  display: inline-flex;
+}
+
+.btn-garage-toggle:disabled {
   opacity: 0.65;
   cursor: wait;
 }

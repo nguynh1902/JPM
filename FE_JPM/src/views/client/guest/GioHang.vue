@@ -464,13 +464,15 @@ import { useSiteSettings } from '../../../composables/useSiteSettings'
 import axiosClient from '../../../api/axiosClient'
 import { getImageUrl as resolveImageUrl } from '../../../utils/imageUrl'
 import Swal from 'sweetalert2'
+import { createToaster } from '@meforma/vue-toaster'
 
 export default {
   name: 'GioHang',
   setup() {
     const cartStore = useCartStore()
     const { settings: siteSettings } = useSiteSettings()
-    return { cartStore, siteSettings }
+    const toaster = createToaster({ position: 'top-right', duration: 2200 })
+    return { cartStore, siteSettings, toaster }
   },
   data() {
     return {
@@ -844,14 +846,7 @@ export default {
           this.orderConfirmModal.copied = false
         }, 2000)
       } catch (_) {
-        Swal.fire({
-          toast: true,
-          position: 'top-end',
-          icon: 'success',
-          title: `Mã yêu cầu: #${text}`,
-          showConfirmButton: false,
-          timer: 2000
-        })
+        this.toaster.success(`Mã yêu cầu: #${text}`)
       }
     },
     openConfirmZalo() {

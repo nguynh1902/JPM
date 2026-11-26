@@ -174,7 +174,7 @@
                     </h1>
                     <div class="product-sku-info">
                       <span class="sku-label">Mã:</span>
-                      <span class="sku-code font-monospace">{{ sanPham.ma_san_pham }}</span>
+                      <span class="sku-code">{{ sanPham.ma_san_pham }}</span>
                     </div>
                   </div>
 
@@ -497,10 +497,10 @@ const handleShare = async () => {
       await navigator.clipboard.writeText(window.location.href);
       toaster.success("Đã sao chép liên kết sản phẩm!");
     } else {
-      toaster.info("Liên kết: " + window.location.href);
+      toaster.success("Liên kết: " + window.location.href);
     }
   } catch (e) {
-    toaster.info("Liên kết: " + window.location.href);
+    toaster.success("Liên kết: " + window.location.href);
   }
 };
 
@@ -1063,10 +1063,12 @@ onMounted(() => {
 }
 
 .product-sku-info .sku-code {
+  font-family: var(--default-font, 'Inter', sans-serif) !important;
+  font-variant-numeric: tabular-nums;
   color: var(--jpm-color-blue-electric) !important;
-  font-size: 1.15rem !important;
+  font-size: 1.25rem !important;
   font-weight: 700 !important;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.01em;
 }
 
 .product-price-val {

@@ -447,6 +447,7 @@
 <script>
 import axiosClient from '../../../api/axiosClient'
 import Swal from 'sweetalert2'
+import { createToaster } from '@meforma/vue-toaster'
 import { useSiteSettings } from '../../../composables/useSiteSettings'
 import { useAuthStore } from '../../../stores/authStore'
 
@@ -455,7 +456,8 @@ export default {
   setup() {
     const { settings } = useSiteSettings()
     const authStore = useAuthStore()
-    return { settings, authStore }
+    const toaster = createToaster({ position: 'top-right', duration: 2200 })
+    return { settings, authStore, toaster }
   },
   data() {
     return {
@@ -587,14 +589,7 @@ export default {
       if (navigator.clipboard) {
         navigator.clipboard.writeText(text)
       }
-      Swal.fire({
-        toast: true,
-        position: 'top-end',
-        icon: 'success',
-        title: msg || 'Đã sao chép',
-        showConfirmButton: false,
-        timer: 2000
-      })
+      this.toaster.success(msg || 'Đã sao chép')
     },
     openZaloReceipt() {
       if (!this.quote) return

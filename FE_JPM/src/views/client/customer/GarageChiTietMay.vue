@@ -292,11 +292,12 @@ const addOneToCart = (item) => {
 }
 
 .garage-model-code {
-  font-family: var(--jpm-font-mono, 'Roboto Mono', monospace);
+  font-family: var(--default-font, 'Inter', sans-serif);
+  font-variant-numeric: tabular-nums;
   color: var(--jpm-color-blue-electric) !important;
-  font-size: 0.85rem;
+  font-size: 0.92rem;
   font-weight: 700;
-  letter-spacing: 0.3px;
+  letter-spacing: 0.1px;
   flex-shrink: 0;
 }
 
@@ -328,13 +329,14 @@ const addOneToCart = (item) => {
   line-height: 1.35;
 }
 
-/* Mã phụ tùng: kế thừa biến Primary từ main.css */
+/* Mã phụ tùng: kế thừa font & màu Primary từ main.css */
 .part-sku-code {
-  font-family: var(--jpm-font-mono, 'Roboto Mono', monospace);
+  font-family: var(--default-font, 'Inter', sans-serif);
+  font-variant-numeric: tabular-nums;
   color: var(--jpm-color-blue-electric) !important;
-  font-size: 0.85rem;
+  font-size: 0.92rem;
   font-weight: 700;
-  letter-spacing: 0.3px;
+  letter-spacing: 0.1px;
   flex-shrink: 0;
 }
 
