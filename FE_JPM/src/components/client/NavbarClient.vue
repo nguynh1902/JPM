@@ -382,15 +382,15 @@ export default {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 9px 12px;
+  padding: 8px 12px;
   border-radius: 8px;
   font-family: var(--default-font);
-  font-size: 0.875rem;
+  font-size: 0.88rem;
   font-weight: 500;
-  color: var(--jpm-color-navy-dark, #0A1128);
+  color: #475569;
   text-decoration: none;
   white-space: nowrap;
-  transition: background-color 0.18s ease, color 0.18s ease;
+  transition: color 0.15s ease;
 }
 
 .um-item i {
@@ -398,15 +398,24 @@ export default {
   line-height: 1;
   color: #64748b;
   flex-shrink: 0;
-  transition: color 0.18s ease;
+  transition: color 0.15s ease;
 }
 
 .um-item:hover {
-  background-color: #f8fafc;
-  color: var(--accent-color, #f82249);
+  background-color: transparent;
+  color: var(--jpm-color-navy-dark, #0A1128);
 }
 
 .um-item:hover i {
+  color: var(--jpm-color-navy-dark, #0A1128);
+}
+
+.um-item-logout:hover {
+  background-color: transparent;
+  color: var(--accent-color, #f82249);
+}
+
+.um-item-logout:hover i {
   color: var(--accent-color, #f82249);
 }
 

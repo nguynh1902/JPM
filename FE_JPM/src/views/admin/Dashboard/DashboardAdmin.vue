@@ -253,11 +253,11 @@
             <!-- Legend góc phải: Ô màu rồi tới chữ -->
             <div class="d-flex align-items-center gap-3" style="font-size: 0.78rem;">
               <div class="d-flex align-items-center gap-2">
-                <span style="display: inline-block; width: 13px; height: 13px; border-radius: 3px; background-color: #0891b2;"></span>
+                <span style="display: inline-block; width: 13px; height: 13px; border-radius: 3px; background-color: #17a2b8;"></span>
                 <span class="text-muted fw-medium">Doanh thu bán</span>
               </div>
               <div class="d-flex align-items-center gap-2">
-                <span style="display: inline-block; width: 13px; height: 13px; border-radius: 3px; background-color: #94a3b8;"></span>
+                <span style="display: inline-block; width: 13px; height: 13px; border-radius: 3px; background-color: #a1acb8;"></span>
                 <span class="text-muted fw-medium">Chi phí nhập</span>
               </div>
             </div>
@@ -385,7 +385,7 @@
             <div class="border-top pt-3 mt-2">
               <div class="d-flex justify-content-between align-items-center mb-2" style="font-size: 0.8rem;">
                 <div class="d-flex align-items-center">
-                  <span class="me-2" style="display: inline-block; width: 13px; height: 13px; border-radius: 3px; background-color: #0891b2;"></span>
+                  <span class="me-2" style="display: inline-block; width: 13px; height: 13px; border-radius: 3px; background-color: #17a2b8;"></span>
                   <span class="text-dark fw-medium">Đơn Hoàn Tất</span>
                 </div>
                 <div class="fw-bold text-dark">
@@ -394,7 +394,7 @@
               </div>
               <div class="d-flex justify-content-between align-items-center mb-2" style="font-size: 0.8rem;">
                 <div class="d-flex align-items-center">
-                  <span class="me-2" style="display: inline-block; width: 13px; height: 13px; border-radius: 3px; background-color: #38bdf8;"></span>
+                  <span class="me-2" style="display: inline-block; width: 13px; height: 13px; border-radius: 3px; background-color: #6fd3e4;"></span>
                   <span class="text-dark fw-medium">Đơn Đang Xử Lý</span>
                 </div>
                 <div class="fw-bold text-dark">
@@ -403,7 +403,7 @@
               </div>
               <div class="d-flex justify-content-between align-items-center" style="font-size: 0.8rem;">
                 <div class="d-flex align-items-center">
-                  <span class="me-2" style="display: inline-block; width: 13px; height: 13px; border-radius: 3px; background-color: #f59e0b;"></span>
+                  <span class="me-2" style="display: inline-block; width: 13px; height: 13px; border-radius: 3px; background-color: #ffbe42;"></span>
                   <span class="text-dark fw-medium">Yêu Cầu Báo Giá</span>
                 </div>
                 <div class="fw-bold text-dark">
@@ -663,13 +663,13 @@ const barChartOptions = computed(() => ({
   },
   dataLabels: { enabled: false },
   stroke: { show: true, width: 2, colors: ['transparent'] },
-  colors: ['#0891b2', '#94a3b8'],
+  colors: ['#17a2b8', '#a1acb8'],
   xaxis: {
     categories: revenueChartData.value.categories || [],
     labels: {
       rotate: -45,
       rotateAlways: true,
-      style: { fontSize: '11.5px', colors: '#64748b', fontWeight: 500 },
+      style: { fontSize: '11.5px', colors: '#8592a3', fontWeight: 500 },
       trim: false
     },
     axisBorder: { show: false },
@@ -686,7 +686,7 @@ const barChartOptions = computed(() => ({
         }
         return val + ' Tr';
       },
-      style: { fontSize: '11.5px', colors: '#64748b' }
+      style: { fontSize: '11.5px', colors: '#8592a3' }
     }
   },
   fill: { opacity: 1 },
@@ -716,7 +716,7 @@ const donutChartOptions = computed(() => ({
     fontFamily: 'Inter, sans-serif'
   },
   labels: distributionChartData.value.labels || ['Đơn Hoàn Tất', 'Đơn Đang Xử Lý', 'Yêu Cầu Báo Giá'],
-  colors: ['#0891b2', '#38bdf8', '#f59e0b'],
+  colors: ['#17a2b8', '#6fd3e4', '#ffbe42'],
   stroke: { width: 3, colors: ['#fff'] },
   legend: { show: false },
   dataLabels: { enabled: false },
@@ -729,7 +729,7 @@ const donutChartOptions = computed(() => ({
           value: {
             fontSize: '1.5rem',
             fontWeight: 700,
-            color: '#0f172a',
+            color: '#566a7f',
             offsetY: -6,
             formatter: (val) => val
           },
@@ -740,7 +740,7 @@ const donutChartOptions = computed(() => ({
           total: {
             show: true,
             fontSize: '0.8rem',
-            color: '#64748b',
+            color: '#8592a3',
             label: 'Tổng giao dịch',
             formatter: (w) => {
               const totals = w?.globals?.seriesTotals;
@@ -837,13 +837,13 @@ onUnmounted(() => {
   text-transform: uppercase;
   font-weight: 700;
   letter-spacing: 0.04em;
-  color: #64748b;
+  color: #8592a3;
 }
 
 .kpi-value {
   font-size: 1.4rem;
   font-weight: 700;
-  color: #0f172a;
+  color: #566a7f;
   line-height: 1.25;
   font-variant-numeric: tabular-nums;
 }
@@ -852,13 +852,13 @@ onUnmounted(() => {
   font-size: 0.78rem;
 }
 
-/* Marine Teal Active Item styling đồng bộ toàn Admin */
+/* Marine Cyan Active Item styling dịu mắt đồng bộ toàn Admin */
 .active-sneat-item {
-  background-color: rgba(8, 145, 178, 0.12) !important;
-  color: #0e7490 !important;
+  background-color: rgba(23, 162, 184, 0.1) !important;
+  color: #17a2b8 !important;
   font-weight: 600;
 }
 .dropdown-item:hover:not(.active-sneat-item) {
-  background-color: #f1f5f9;
+  background-color: #f8f9fa;
 }
 </style>

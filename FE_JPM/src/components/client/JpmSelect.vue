@@ -468,7 +468,7 @@ watch(() => props.options, () => {
   right: 0;
 }
 
-/* Đảm bảo danh sách options bên trong Panel luôn ở normal flow, độc lập hoàn toàn khỏi mọi style ngoài */
+/* Đảm bảo danh sách options bên trong Panel luôn có padding & pill đồng bộ chuẩn Cửa Hàng */
 .custom-dropdown-panel .jpm-select-options,
 .custom-dropdown-panel .custom-dropdown-list,
 .custom-dropdown-panel ul {
@@ -485,21 +485,25 @@ watch(() => props.options, () => {
   box-shadow: none !important;
   background: transparent !important;
   margin: 0 !important;
-  padding: 0 !important;
+  padding: 6px !important;
   max-height: 368px !important; /* Hiển thị gọn danh sách thương hiệu không dư thanh cuộn */
   overflow-y: auto !important;
   overflow-x: hidden !important;
-  display: block !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 3px !important;
   list-style: none !important;
 }
 
 .dropdown-item-option {
-  padding: 10px 22px 10px 14px;
-  font-size: 0.875rem;
+  padding: 8px 12px;
+  font-family: var(--default-font, 'Inter', sans-serif);
+  font-size: 0.88rem;
   font-weight: 500;
-  color: var(--jpm-neutral-900, #0F172A);
+  color: #475569;
+  border-radius: var(--jpm-radius-control, 8px);
   cursor: pointer;
-  transition: background-color 0.15s ease, color 0.15s ease;
+  transition: color 0.15s ease;
   line-height: 1.35;
   white-space: nowrap;
 }
@@ -510,8 +514,8 @@ watch(() => props.options, () => {
 }
 
 .dropdown-item-option .option-label {
-  font-weight: 500;
-  color: var(--jpm-neutral-900, #0F172A);
+  font-weight: inherit;
+  color: inherit;
   white-space: nowrap;
 }
 
@@ -528,29 +532,19 @@ watch(() => props.options, () => {
   }
 }
 
-.custom-dropdown-panel .dropdown-item-option:first-child {
-  border-top-left-radius: calc(var(--jpm-radius-control, 8px) - 1px);
-  border-top-right-radius: calc(var(--jpm-radius-control, 8px) - 1px);
-}
-
-.custom-dropdown-panel .dropdown-item-option:last-child {
-  border-bottom-left-radius: calc(var(--jpm-radius-control, 8px) - 1px);
-  border-bottom-right-radius: calc(var(--jpm-radius-control, 8px) - 1px);
-}
-
 .dropdown-item-option:hover,
 .dropdown-item-option.highlighted {
-  background-color: var(--jpm-neutral-100, #F1F5F9);
-  color: #000000;
+  background-color: transparent;
+  color: var(--jpm-color-navy-dark, #0A1128);
 }
 
 .dropdown-item-option:hover .option-label,
 .dropdown-item-option.highlighted .option-label {
-  color: #000000;
+  color: var(--jpm-color-navy-dark, #0A1128);
 }
 
 .dropdown-item-option.active {
-  background-color: #fef2f4;
+  background-color: rgba(248, 34, 73, 0.06);
   color: var(--jpm-color-red-marine, #F82249);
   font-weight: 600;
 }
@@ -562,7 +556,7 @@ watch(() => props.options, () => {
 
 .dropdown-item-option.active:hover,
 .dropdown-item-option.active.highlighted {
-  background-color: #fee2e6;
+  background-color: rgba(248, 34, 73, 0.06);
   color: var(--jpm-color-red-marine, #F82249);
 }
 

@@ -1011,142 +1011,17 @@ export default {
   }
 }
 
-/* ── SIDEBAR CARD CHUẨN LUXURY MINIMALISM ── */
+/* ── SIDEBAR CARD CHUẨN LUXURY MINIMALISM (Kế thừa main.css, giữ overflow: visible cho JpmSelect) ── */
 .catalog-sidebar-card {
-  border-radius: 12px !important;
-  border: 1px solid #edf2f7 !important;
-  background: #ffffff;
-  box-shadow: 0 4px 14px rgba(10, 17, 40, 0.03);
   overflow: visible;
 }
 
 .catalog-sidebar-header {
-  height: 54px;
-  min-height: 54px;
-  padding: 0 20px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border-bottom: 1px solid #f1f5f9;
-  background: #ffffff;
-  box-sizing: border-box;
   border-radius: 12px 12px 0 0;
-  flex-shrink: 0;
-}
-
-.catalog-sidebar-title {
-  font-family: var(--heading-font, 'Raleway', sans-serif);
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: #0A1128;
-  margin: 0;
-  line-height: 1.2;
-}
-
-.btn-reset-sidebar-filter {
-  background: transparent;
-  border: none;
-  color: #f82249;
-  font-size: 0.82rem;
-  font-weight: 600;
-  padding: 0;
-  cursor: pointer;
-  line-height: 1;
-  transition: opacity 0.2s ease, visibility 0.2s ease, color 0.15s ease;
-}
-
-.btn-reset-sidebar-filter.is-hidden {
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
-}
-
-.btn-reset-sidebar-filter:hover {
-  color: var(--jpm-color-red-hover, #D9163A);
-  text-decoration: underline;
 }
 
 .catalog-sidebar-body {
-  padding: 16px 18px;
   overflow: visible;
-}
-
-.sidebar-section-title {
-  font-family: var(--heading-font, 'Raleway', sans-serif);
-  font-size: 0.8125rem;
-  font-weight: 800;
-  letter-spacing: 0.6px;
-  text-transform: uppercase;
-  color: #0A1128;
-  padding: 0 2px 8px 2px;
-  border-bottom: 1px solid #f1f5f9;
-}
-
-/* ── SEARCH INPUT IN SIDEBAR ── */
-.search-input-box {
-  display: flex;
-  align-items: center;
-  height: 44px;
-  border-radius: 8px;
-  border: 1px solid #e2e8f0;
-  background: #ffffff;
-  box-shadow: none;
-  padding: 0 12px;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
-  width: 100%;
-}
-
-.search-input-box:focus-within {
-  border-color: #f82249 !important;
-  box-shadow: 0 0 0 3px rgba(248, 34, 73, 0.12) !important;
-  outline: 0 !important;
-}
-
-.search-input-box:hover {
-  border-color: #cbd5e1;
-}
-
-.search-input-icon {
-  font-size: 0.9rem;
-  color: #94a3b8;
-  margin-right: 8px;
-  flex-shrink: 0;
-}
-
-.search-input-field {
-  flex: 1;
-  border: none;
-  background: transparent;
-  padding: 0;
-  font-size: 0.88rem;
-  font-weight: 500;
-  color: #0f172a;
-  outline: none;
-  box-shadow: none;
-  width: 100%;
-}
-
-.search-input-field::placeholder {
-  color: #64748b;
-  font-weight: 500;
-  font-size: 0.85rem;
-}
-
-.btn-clear-search {
-  background: transparent;
-  border: none;
-  color: #94a3b8;
-  padding: 0;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.95rem;
-  transition: color 0.15s ease;
-}
-
-.btn-clear-search:hover {
-  color: #f82249;
 }
 
 /* ── CUSTOM SELECT & DROPDOWN ── */
@@ -1240,10 +1115,14 @@ export default {
   width: 100%;
   max-height: 220px;
   overflow-y: auto;
+  overflow-x: hidden;
   margin-top: 6px;
   margin-bottom: 8px;
   list-style: none;
   padding: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
   background: #f8fafc;
   border: 1px solid #e2e8f0;
   border-radius: 8px;
@@ -1261,112 +1140,45 @@ export default {
   width: max-content;
   max-height: 240px;
   overflow-y: auto;
+  overflow-x: hidden;
   list-style: none;
   margin: 0;
   padding: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
   background: #ffffff;
   border: 1px solid #e2e8f0;
   border-radius: 8px;
-  box-shadow: none !important;
+  box-shadow: 0 10px 28px -6px rgba(10, 17, 40, 0.12) !important;
   z-index: 1065;
 }
 
 .custom-dropdown-list li {
   padding: 8px 12px;
-  font-size: 0.85rem;
-  color: #334155;
-  border-radius: 6px;
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: #475569;
+  border-radius: 8px;
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: color 0.15s ease;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .custom-dropdown-list li:hover {
-  background: #f1f5f9;
+  background: transparent;
   color: #0A1128;
 }
 
 .custom-dropdown-list li.active {
-  background: rgba(248, 34, 73, 0.08);
+  background: rgba(248, 34, 73, 0.06);
   color: #f82249;
-  font-weight: 700;
-}
-
-/* ── NAVIGATION LIST IN SIDEBAR (ĐỒNG BỘ 100% CỬA HÀNG SANPHAM.VUE) ── */
-.catalog-nav-list {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  padding: 4px 6px 4px 0;
-  overflow-x: hidden !important;
-}
-
-.catalog-nav-btn {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  border: 1px solid transparent;
-  background: transparent;
-  padding: 8px 12px;
-  border-radius: 8px;
-  font-family: var(--default-font, sans-serif);
-  font-weight: 500;
-  font-size: 0.88rem;
-  color: #475569;
-  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
-  cursor: pointer;
-  text-align: left;
-}
-
-.catalog-nav-btn:hover {
-  background: #f1f5f9;
-  color: #0A1128;
   font-weight: 600;
-  transform: translateX(4px);
 }
 
-.catalog-nav-btn.active {
-  background: rgba(248, 34, 73, 0.08);
-  border-color: rgba(248, 34, 73, 0.2);
-  color: #f82249;
-  font-weight: 700;
-}
-
-.catalog-nav-btn.active:hover {
-  background: rgba(248, 34, 73, 0.12);
-  color: #f82249;
-  transform: translateX(4px);
-}
-
-.catalog-nav-text {
-  flex: 1;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.catalog-nav-arrow {
-  font-size: 0.72rem;
-  opacity: 0;
-  transform: translateX(-4px);
-  transition: all 0.2s ease;
-  color: inherit;
-  flex-shrink: 0;
-}
-
-.catalog-nav-btn:hover .catalog-nav-arrow {
-  opacity: 0.6;
-  transform: translateX(0);
-}
-
-.catalog-nav-btn.active .catalog-nav-arrow {
-  opacity: 1;
-  transform: translateX(0);
-  color: #f82249;
-}
+/* Navigation List trong Sidebar kế thừa chuẩn .catalog-nav-* từ main.css */
 
 /* ── TABS CHUYỂN ĐỔI (PHỤ TÙNG / SƠ ĐỒ) ── */
 .tab-pill-btn {

@@ -493,18 +493,8 @@ const filteredModels = computed(() => {
 }
 
 /* ========================================================
-   2. SIDEBAR CARD (LOẠI ĐỘNG CƠ)
+   2. SIDEBAR CARD (LOẠI ĐỘNG CƠ - KẾ THỪA CHUẨN TỪ MAIN.CSS)
    ======================================================== */
-.catalog-sidebar-card {
-  border-radius: 12px !important;
-  border: 1px solid #e2e8f0 !important;
-  background: #ffffff;
-  box-shadow: 0 4px 14px rgba(10, 17, 40, 0.03);
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-}
-
 @media (min-width: 992px) {
   .sticky-sidebar {
     position: sticky;
@@ -514,138 +504,6 @@ const filteredModels = computed(() => {
   .catalog-sidebar-card {
     min-height: 260px;
   }
-}
-
-.catalog-sidebar-header {
-  padding: 16px 20px;
-  min-height: 60px;
-  border-bottom: 1px solid #f1f5f9;
-  background: #ffffff;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.catalog-sidebar-title {
-  font-family: var(--heading-font, 'Raleway', sans-serif);
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: #0A1128;
-  margin: 0;
-}
-
-.btn-reset-sidebar-filter {
-  background: transparent;
-  border: none;
-  color: #64748b;
-  font-size: 0.82rem;
-  font-weight: 600;
-  padding: 0;
-  cursor: pointer;
-  line-height: 1;
-  transition: opacity 0.2s ease, visibility 0.2s ease, color 0.15s ease;
-}
-
-.btn-reset-sidebar-filter.is-hidden {
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
-}
-
-.btn-reset-sidebar-filter:hover {
-  color: var(--accent-color, #f82249);
-  text-decoration: underline;
-}
-
-.catalog-sidebar-body {
-  padding: 16px;
-  display: flex;
-  flex-direction: column;
-}
-
-.sidebar-section-title {
-  font-family: var(--heading-font, 'Raleway', sans-serif);
-  font-size: 0.8125rem;
-  font-weight: 800;
-  letter-spacing: 0.6px;
-  text-transform: uppercase;
-  color: #0A1128;
-  padding: 0 4px 8px 4px;
-  border-bottom: 1px solid #f1f5f9;
-}
-
-/* ── NAVIGATION LIST IN SIDEBAR (Đồng bộ 100% Cửa Hàng SanPham) ── */
-.catalog-nav-list {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  padding: 4px 6px 4px 0;
-  overflow-x: hidden !important;
-}
-
-.catalog-nav-btn {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  border: 1px solid transparent;
-  background: transparent;
-  padding: 8px 12px;
-  border-radius: 8px;
-  font-family: var(--default-font, sans-serif);
-  font-weight: 500;
-  font-size: 0.88rem;
-  color: #475569;
-  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
-  cursor: pointer;
-  text-align: left;
-}
-
-.catalog-nav-btn:hover {
-  background: #f1f5f9;
-  color: #0A1128;
-  font-weight: 600;
-  transform: translateX(4px);
-}
-
-.catalog-nav-btn.active {
-  background: rgba(248, 34, 73, 0.08);
-  border-color: rgba(248, 34, 73, 0.2);
-  color: #f82249;
-  font-weight: 700;
-}
-
-.catalog-nav-btn.active:hover {
-  background: rgba(248, 34, 73, 0.12);
-  color: #f82249;
-  transform: translateX(4px);
-}
-
-.catalog-nav-text {
-  flex: 1;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.catalog-nav-arrow {
-  font-size: 0.72rem;
-  opacity: 0;
-  transform: translateX(-4px);
-  transition: all 0.2s ease;
-  color: inherit;
-  flex-shrink: 0;
-}
-
-.catalog-nav-btn:hover .catalog-nav-arrow {
-  opacity: 0.6;
-  transform: translateX(0);
-}
-
-.catalog-nav-btn.active .catalog-nav-arrow {
-  opacity: 1;
-  transform: translateX(0);
-  color: #f82249;
 }
 
 /* ========================================================

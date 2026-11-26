@@ -213,27 +213,27 @@
 
 /* ==========================================================================
    JPM ADMIN STANDARD - CHUẨN HÓA V-SELECT (@vueform/multiselect) THEO SNEAT 1.0.0
-   Màu chủ đạo Admin: #0891b2 (Marine Teal chuẩn WCAG AA, đồng bộ toàn Backoffice)
+   Màu chủ đạo Admin: #17a2b8 (Marine Cyan dịu mắt, chuẩn Sneat/JPM Backoffice)
    Khắc phục triệt để: Lệch chiều cao với form-control, thụt bảng giữa các trang
    ========================================================================== */
 
-/* 1. Thiết lập biến CSS gốc chuẩn Sneat với màu chủ đạo #0891b2 */
+/* 1. Thiết lập biến CSS gốc chuẩn Sneat với màu chủ đạo #17a2b8 */
 :root {
   --ms-font-size: 0.875rem;
   --ms-line-height: 1.45;
   --ms-bg: #ffffff;
-  --ms-border-color: #cbd5e1;
+  --ms-border-color: #d9dee3;
   --ms-border-width: 1px;
   --ms-border-width-active: 1px;
   --ms-radius: 0.375rem;
   --ms-py: 0.4375rem;
   --ms-px: 0.875rem;
-  --ms-placeholder-color: #94a3b8;
-  --ms-border-color-active: #0891b2;
+  --ms-placeholder-color: #b4bdc6;
+  --ms-border-color-active: #17a2b8;
   --ms-ring-width: 0px;
-  --ms-ring-color: rgba(8, 145, 178, 0);
+  --ms-ring-color: rgba(23, 162, 184, 0);
   --ms-dropdown-bg: #ffffff;
-  --ms-dropdown-border-color: #cbd5e1;
+  --ms-dropdown-border-color: #d9dee3;
   --ms-dropdown-border-width: 1px;
   --ms-dropdown-radius: 0.5rem;
   --ms-max-height: 20rem;
@@ -241,15 +241,15 @@
   --ms-option-line-height: 1.45;
   --ms-option-py: 0.45rem;
   --ms-option-px: 0.875rem;
-  --ms-option-bg-pointed: rgba(8, 145, 178, 0.08);
-  --ms-option-color-pointed: #0e7490;
-  --ms-option-bg-selected: #0891b2;
+  --ms-option-bg-pointed: rgba(23, 162, 184, 0.08);
+  --ms-option-color-pointed: #138496;
+  --ms-option-bg-selected: #17a2b8;
   --ms-option-color-selected: #ffffff;
-  --ms-option-bg-selected-pointed: #0e7490;
+  --ms-option-bg-selected-pointed: #138496;
   --ms-option-color-selected-pointed: #ffffff;
-  --ms-caret-color: #64748b;
-  --ms-clear-color: #94a3b8;
-  --ms-clear-color-hover: #0891b2;
+  --ms-caret-color: #8592a3;
+  --ms-clear-color: #a1acb8;
+  --ms-clear-color-hover: #17a2b8;
 }
 
 /* 2. Cố định chiều cao tuyệt đối khớp 100% với .form-control và .btn (38px) */
@@ -260,9 +260,9 @@
   font-family: inherit !important;
   font-size: 0.875rem !important;
   line-height: 1.45 !important;
-  color: #334155 !important;
+  color: #697a8d !important;
   background-color: #ffffff !important;
-  border: 1px solid #cbd5e1 !important;
+  border: 1px solid #d9dee3 !important;
   border-radius: 0.375rem !important;
   box-sizing: border-box !important;
   box-shadow: none !important;
@@ -298,29 +298,29 @@
 }
 
 .multiselect-single-label-text {
-  color: #1e293b !important;
+  color: #566a7f !important;
   font-weight: 500 !important;
   font-size: 0.875rem !important;
 }
 
 .multiselect-placeholder {
-  color: #94a3b8 !important;
+  color: #b4bdc6 !important;
   font-size: 0.875rem !important;
 }
 
-/* 5. Trạng thái Focus / Active - Đồng bộ 100% viền Marine Teal #0891b2 */
+/* 5. Trạng thái Focus / Active - Đồng bộ 100% viền Marine Cyan #17a2b8 */
 .multiselect-search,
 .multiselect-tags-search {
   background: transparent !important;
   background-color: transparent !important;
-  color: #1e293b !important;
+  color: #566a7f !important;
 }
 
 .multiselect.is-active,
 .multiselect.is-open {
   border-width: 1px !important;
-  border-color: #0891b2 !important;
-  box-shadow: 0 0 0 3px rgba(8, 145, 178, 0.14) !important;
+  border-color: #17a2b8 !important;
+  box-shadow: 0 0 0 0.2rem rgba(23, 162, 184, 0.12) !important;
   outline: 0 !important;
   border-radius: 0.375rem !important;
 }
@@ -336,9 +336,9 @@
   min-width: calc(100% + 2px) !important;
   width: max-content !important;
   max-width: min(480px, 85vw) !important;
-  border: 1px solid #cbd5e1 !important;
+  border: 1px solid #d9dee3 !important;
   border-radius: 0.5rem !important;
-  box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.12), 0 4px 10px -2px rgba(15, 23, 42, 0.06) !important;
+  box-shadow: 0 0.25rem 1rem rgba(161, 172, 184, 0.32) !important;
   background-color: #ffffff !important;
   overflow-y: auto !important;
   z-index: 1060 !important;
@@ -359,31 +359,31 @@
   font-size: 0.875rem !important;
   line-height: 1.45 !important;
   padding: 0.45rem 0.875rem !important;
-  color: #334155 !important;
+  color: #697a8d !important;
   white-space: nowrap !important;
   transition: all 0.15s ease !important;
 }
 
 .multiselect-option.is-pointed {
-  background-color: rgba(8, 145, 178, 0.08) !important;
-  color: #0e7490 !important;
+  background-color: rgba(23, 162, 184, 0.08) !important;
+  color: #138496 !important;
 }
 
 .multiselect-option.is-selected {
-  background-color: #0891b2 !important;
+  background-color: #17a2b8 !important;
   color: #ffffff !important;
   font-weight: 600 !important;
 }
 
 .multiselect-option.is-selected.is-pointed {
-  background-color: #0e7490 !important;
+  background-color: #138496 !important;
   color: #ffffff !important;
 }
 
 /* 9. Mũi tên Caret icon */
 .multiselect-caret {
   margin-right: 0.875rem !important;
-  background-color: #64748b !important;
+  background-color: #8592a3 !important;
   transition: transform 0.2s ease !important;
 }
 
@@ -393,11 +393,11 @@
 }
 
 .multiselect-clear-icon {
-  background-color: #94a3b8 !important;
+  background-color: #a1acb8 !important;
 }
 
 .multiselect-clear-icon:hover {
-  background-color: #0891b2 !important;
+  background-color: #17a2b8 !important;
 }
 
 /* Tự động ẩn placeholder khi focus để con trỏ soạn thảo không đè lên số 0 / placeholder */
@@ -417,27 +417,26 @@ input:focus::-moz-placeholder {
 
 /* ══════════════════════════════════════════════════════════════
    ADMIN GLOBAL DESIGN TOKENS, TYPOGRAPHY & ERP DENSITY SYSTEM
-   - Chuẩn hóa đồng bộ font Inter, kích thước chữ, độ tương phản Slate (WCAG AA)
-     và màu thương hiệu Marine Teal (#0891b2 / #0e7490) cho toàn bộ Admin
+   - Chuẩn hóa font Inter sắc nét cùng bảng màu Sneat dịu mắt, thanh thoát (#17a2b8 & Slate)
    - Phạm vi cô lập hoàn toàn trong html.light-style & #admin-layout
    - Tuyệt đối không ảnh hưởng đến giao diện Client
    ══════════════════════════════════════════════════════════════ */
 html.light-style {
   font-size: 93.75% !important; /* 15px root: sắc nét, dễ đọc nhưng vẫn giữ mật độ ERP */
-  --bs-primary: #0891b2;
-  --bs-primary-rgb: 8, 145, 178;
-  --bs-link-color: #0e7490;
-  --bs-link-hover-color: #0891b2;
-  --bs-body-color: #334155;
-  --bs-heading-color: #0f172a;
-  --bs-secondary-color: #475569;
-  --bs-border-color: #e2e8f0;
+  --bs-primary: #17a2b8;
+  --bs-primary-rgb: 23, 162, 184;
+  --bs-link-color: #17a2b8;
+  --bs-link-hover-color: #138496;
+  --bs-body-color: #697a8d;
+  --bs-heading-color: #566a7f;
+  --bs-secondary-color: #8592a3;
+  --bs-border-color: #eceef1;
 }
 
-/* 0. Typography & Color Hierarchy toàn Admin */
+/* 0. Typography & Color Hierarchy toàn Admin (Mát mắt chuẩn Sneat 1.0.0) */
 #admin-layout {
   font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
-  color: #334155;
+  color: #697a8d;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
@@ -452,7 +451,7 @@ html.light-style {
 #admin-layout .card-title,
 #admin-layout .modal-title {
   font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  color: #0f172a;
+  color: #566a7f;
   font-weight: 700;
   letter-spacing: -0.015em;
 }
@@ -463,7 +462,7 @@ html.light-style {
 
 #admin-layout h4 .text-muted.fw-light,
 #admin-layout h4 .text-muted {
-  color: #64748b !important;
+  color: #8592a3 !important;
   font-weight: 500 !important;
 }
 
@@ -475,39 +474,39 @@ html.light-style {
 }
 
 #admin-layout .text-dark {
-  color: #0f172a !important;
+  color: #435971 !important;
 }
 
 #admin-layout .text-body {
-  color: #334155 !important;
+  color: #697a8d !important;
 }
 
 #admin-layout .text-secondary {
-  color: #475569 !important;
+  color: #697a8d !important;
 }
 
 #admin-layout .text-muted {
-  color: #64748b !important;
+  color: #8592a3 !important;
 }
 
 #admin-layout .text-primary {
-  color: #0e7490 !important;
+  color: #17a2b8 !important;
 }
 
 #admin-layout .text-info {
-  color: #0284c7 !important;
+  color: #03a9d4 !important;
 }
 
 #admin-layout .text-warning {
-  color: #b45309 !important;
+  color: #e69500 !important;
 }
 
 #admin-layout .text-success {
-  color: #15803d !important;
+  color: #28a745 !important;
 }
 
 #admin-layout .text-danger {
-  color: #dc2626 !important;
+  color: #ea5455 !important;
 }
 
 #admin-layout .font-monospace {
@@ -517,23 +516,23 @@ html.light-style {
 
 /* Card & Surface đồng nhất toàn Admin */
 #admin-layout .card {
-  border: 1px solid #e2e8f0;
-  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+  border: 1px solid #eceef1;
+  box-shadow: 0 2px 6px 0 rgba(67, 89, 113, 0.08);
 }
 
 #admin-layout .card-header {
-  border-bottom-color: #f1f5f9;
+  border-bottom-color: #eceef1;
 }
 
 /* 1. Tinh chỉnh Bảng Dữ Liệu (Data Table) */
 #admin-layout .table {
   font-size: 0.875rem;
-  color: #334155;
+  color: #697a8d;
 }
 
 #admin-layout .table > :not(caption) > * > * {
   padding: 0.625rem 0.9rem;
-  border-bottom-color: #f1f5f9;
+  border-bottom-color: #eceef1;
 }
 
 #admin-layout .table > tbody > tr > td {
@@ -541,7 +540,7 @@ html.light-style {
 }
 
 #admin-layout .table > tbody > tr:hover > * {
-  background-color: #f0f9ff !important;
+  background-color: rgba(23, 162, 184, 0.035) !important;
 }
 
 #admin-layout .table .text-end {
@@ -553,40 +552,40 @@ html.light-style {
   position: sticky;
   top: 0;
   z-index: 2;
-  background-color: #f8fafc;
+  background-color: #f9fafb;
 }
 
 #admin-layout .table thead th {
-  background-color: #f8fafc !important;
-  color: #475569 !important;
+  background-color: #f9fafb !important;
+  color: #566a7f !important;
   font-size: 0.75rem !important;
   letter-spacing: 0.04em;
   text-transform: uppercase;
   padding-top: 0.7rem;
   padding-bottom: 0.7rem;
   font-weight: 700 !important;
-  border-bottom: 1.5px solid #e2e8f0 !important;
+  border-bottom: 1px solid #d9dee3 !important;
 }
 
 /* 2. Tinh chỉnh Sidebar Menu */
 #admin-layout .menu-inner .menu-link {
   font-size: 0.9rem;
   font-weight: 500;
-  color: #334155;
+  color: #697a8d;
   padding-top: 0.48rem;
   padding-bottom: 0.48rem;
   border-radius: 0.45rem;
 }
 
 #admin-layout .menu-inner .menu-item.active > .menu-link:not(.menu-toggle) {
-  background: linear-gradient(90deg, rgba(8, 145, 178, 0.14) 0%, rgba(8, 145, 178, 0.05) 100%) !important;
-  color: #0e7490 !important;
+  background: linear-gradient(90deg, rgba(23, 162, 184, 0.14) 0%, rgba(23, 162, 184, 0.04) 100%) !important;
+  color: #17a2b8 !important;
   font-weight: 600;
 }
 
 #admin-layout .menu-inner .menu-item:not(.active) > .menu-link:hover {
-  background-color: #f1f5f9 !important;
-  color: #0f172a !important;
+  background-color: rgba(67, 89, 113, 0.04) !important;
+  color: #566a7f !important;
 }
 
 #admin-layout .menu-inner .menu-icon {
@@ -598,7 +597,7 @@ html.light-style {
   font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 0.06em;
-  color: #475569 !important;
+  color: #8592a3 !important;
 }
 
 #admin-layout .menu-header {
@@ -613,31 +612,31 @@ html.light-style {
   font-size: 0.875rem;
   min-height: 38px;
   height: 38px;
-  color: #1e293b;
-  border-color: #cbd5e1;
+  color: #566a7f;
+  border-color: #d9dee3;
 }
 
 #admin-layout textarea.form-control {
   font-size: 0.875rem;
-  color: #1e293b;
-  border-color: #cbd5e1;
+  color: #566a7f;
+  border-color: #d9dee3;
 }
 
 #admin-layout .form-control::placeholder {
-  color: #94a3b8 !important;
+  color: #b4bdc6 !important;
   opacity: 1;
 }
 
 #admin-layout .form-control:focus,
 #admin-layout .form-select:focus {
-  border-color: #0891b2 !important;
-  box-shadow: 0 0 0 0.18rem rgba(8, 145, 178, 0.16) !important;
+  border-color: #17a2b8 !important;
+  box-shadow: 0 0 0 0.2rem rgba(23, 162, 184, 0.12) !important;
 }
 
 #admin-layout .form-label {
   font-size: 0.82rem;
   font-weight: 600;
-  color: #334155;
+  color: #566a7f;
 }
 
 #admin-layout .btn:not(.btn-sm):not(.btn-xs):not(.btn-close):not(.btn-link):not(.action-btn) {
@@ -654,42 +653,42 @@ html.light-style {
 }
 
 #admin-layout .btn-primary {
-  background-color: #0891b2 !important;
-  border-color: #0891b2 !important;
+  background-color: #17a2b8 !important;
+  border-color: #17a2b8 !important;
   color: #ffffff !important;
-  box-shadow: 0 2px 6px rgba(8, 145, 178, 0.22) !important;
+  box-shadow: 0 2px 6px rgba(23, 162, 184, 0.2) !important;
 }
 
 #admin-layout .btn-primary:hover,
 #admin-layout .btn-primary:focus,
 #admin-layout .btn-primary:active {
-  background-color: #0e7490 !important;
-  border-color: #0e7490 !important;
+  background-color: #138496 !important;
+  border-color: #138496 !important;
   color: #ffffff !important;
 }
 
 #admin-layout .btn-outline-primary {
-  color: #0e7490 !important;
-  border-color: #0891b2 !important;
+  color: #17a2b8 !important;
+  border-color: #17a2b8 !important;
 }
 
 #admin-layout .btn-outline-primary:hover,
 #admin-layout .btn-outline-primary:focus {
-  background-color: #0891b2 !important;
-  border-color: #0891b2 !important;
+  background-color: #17a2b8 !important;
+  border-color: #17a2b8 !important;
   color: #ffffff !important;
 }
 
 #admin-layout .btn-secondary {
-  background-color: #64748b !important;
-  border-color: #64748b !important;
+  background-color: #8592a3 !important;
+  border-color: #8592a3 !important;
   color: #ffffff !important;
 }
 
 #admin-layout .btn-secondary:hover,
 #admin-layout .btn-secondary:focus {
-  background-color: #475569 !important;
-  border-color: #475569 !important;
+  background-color: #697a8d !important;
+  border-color: #697a8d !important;
   color: #ffffff !important;
 }
 
@@ -699,7 +698,7 @@ html.light-style {
   height: auto !important;
   padding: 0 0.875rem 0 0 !important;
   overflow: hidden;
-  border-color: #cbd5e1;
+  border-color: #d9dee3;
 }
 
 #admin-layout .form-control[type="file"]::file-selector-button,
@@ -707,8 +706,8 @@ html.light-style {
   padding: 0.45rem 0.875rem !important;
   margin: 0 !important;
   margin-inline-end: 0.875rem !important;
-  color: #475569 !important;
-  background-color: #f8fafc !important;
+  color: #697a8d !important;
+  background-color: #f9fafb !important;
   border-width: 0 !important;
   border-inline-end-width: 1px !important;
   border-color: inherit !important;
@@ -720,7 +719,7 @@ html.light-style {
 
 #admin-layout .form-control[type="file"]:hover::file-selector-button,
 #admin-layout .form-control[type="file"]:hover::-webkit-file-upload-button {
-  background-color: #f1f5f9 !important;
+  background-color: #f2f2f2 !important;
 }
 
 #admin-layout .form-control[type="file"]:focus::file-selector-button,
@@ -729,7 +728,7 @@ html.light-style {
   border-color: inherit !important;
 }
 
-/* 4. Tinh chỉnh Badge, Pills & Pagination */
+/* 4. Tinh chỉnh Badge, Pills & Pagination (Pastel Sneat dịu mắt) */
 #admin-layout .badge.badge-custom {
   min-width: 96px !important;
   font-size: 0.72rem !important;
@@ -741,49 +740,49 @@ html.light-style {
 
 #admin-layout .bg-pastel-success,
 #admin-layout .bg-label-success {
-  background-color: #dcfce7 !important;
-  color: #15803d !important;
+  background-color: #e8fadf !important;
+  color: #28a745 !important;
 }
 
 #admin-layout .bg-pastel-warning,
 #admin-layout .bg-label-warning {
-  background-color: #fef3c7 !important;
-  color: #b45309 !important;
+  background-color: #fff2d6 !important;
+  color: #c97a00 !important;
 }
 
 #admin-layout .bg-pastel-info,
 #admin-layout .bg-label-info {
-  background-color: #e0f2fe !important;
-  color: #0369a1 !important;
+  background-color: #d7f5fc !important;
+  color: #0396b8 !important;
 }
 
 #admin-layout .bg-pastel-danger,
 #admin-layout .bg-label-danger {
-  background-color: #fee2e2 !important;
-  color: #b91c1c !important;
+  background-color: #ffe0db !important;
+  color: #dc4c4c !important;
 }
 
 #admin-layout .bg-pastel-secondary,
 #admin-layout .bg-label-secondary {
-  background-color: #f1f5f9 !important;
-  color: #475569 !important;
+  background-color: #ebeef0 !important;
+  color: #697a8d !important;
 }
 
 #admin-layout .bg-label-primary {
-  background-color: #cffafe !important;
-  color: #0e7490 !important;
+  background-color: #e0f7fa !important;
+  color: #17a2b8 !important;
 }
 
 #admin-layout .nav-pills .nav-link.active,
 #admin-layout .nav-pills .nav-link.active:hover {
-  background-color: #0891b2 !important;
+  background-color: #17a2b8 !important;
   color: #ffffff !important;
-  box-shadow: 0 2px 6px rgba(8, 145, 178, 0.25) !important;
+  box-shadow: 0 2px 6px rgba(23, 162, 184, 0.22) !important;
 }
 
 #admin-layout .page-item.active .page-link {
-  background-color: #0891b2 !important;
-  border-color: #0891b2 !important;
+  background-color: #17a2b8 !important;
+  border-color: #17a2b8 !important;
   color: #ffffff !important;
 }
 

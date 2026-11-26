@@ -726,7 +726,10 @@ const scrollToProducts = () => {
   background: #ffffff;
   border: 1px solid #e2e8f0;
   border-radius: 8px;
-  box-shadow: none !important;
+  box-shadow: 0 10px 28px -6px rgba(10, 17, 40, 0.12) !important;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
   z-index: 1055;
 }
 
@@ -737,250 +740,29 @@ const scrollToProducts = () => {
 
 .custom-dropdown-list li {
   padding: 8px 12px;
-  font-size: 0.85rem;
-  color: #334155;
-  border-radius: 6px;
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: #475569;
+  border-radius: 8px;
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: color 0.15s ease;
   white-space: nowrap;
 }
 
 .custom-dropdown-list li:hover {
-  background: #f1f5f9;
+  background: transparent;
   color: #0A1128;
 }
 
 .custom-dropdown-list li.active {
-  background: rgba(248, 34, 73, 0.08);
+  background: rgba(248, 34, 73, 0.06);
   color: #f82249;
-  font-weight: 700;
+  font-weight: 600;
 }
 
-/* ── SIDEBAR LUXURY STYLING (ĐỒNG BỘ 100% THUONG HIEU) ── */
+/* ── SIDEBAR LUXURY STYLING (Kế thừa từ main.css, chỉ giữ giới hạn chiều cao cuộn riêng trang Cửa Hàng) ── */
 .catalog-sidebar-card {
-  border-radius: 12px !important;
-  border: 1px solid #edf2f7 !important;
-  background: #ffffff;
-  box-shadow: 0 4px 14px rgba(10, 17, 40, 0.03);
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
   max-height: calc(100vh - 106px);
-}
-
-@media (min-width: 992px) {
-  .sticky-sidebar {
-    position: sticky;
-    top: 86px;
-    z-index: 100;
-  }
-}
-
-.catalog-sidebar-header {
-  height: 54px;
-  min-height: 54px;
-  padding: 0 20px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border-bottom: 1px solid #f1f5f9;
-  background: #ffffff;
-  box-sizing: border-box;
-  flex-shrink: 0;
-}
-
-.catalog-sidebar-title {
-  font-family: var(--heading-font, 'Raleway', sans-serif);
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: #0A1128;
-  margin: 0;
-  line-height: 1.2;
-}
-
-.btn-reset-sidebar-filter {
-  background: transparent;
-  border: none;
-  color: #f82249;
-  font-size: 0.82rem;
-  font-weight: 600;
-  padding: 0;
-  cursor: pointer;
-  line-height: 1;
-  transition: opacity 0.2s ease, visibility 0.2s ease, color 0.15s ease;
-}
-
-.btn-reset-sidebar-filter.is-hidden {
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
-}
-
-.btn-reset-sidebar-filter:hover {
-  color: var(--jpm-color-red-hover, #D9163A);
-  text-decoration: underline;
-}
-
-.catalog-sidebar-body {
-  padding: 14px;
-  flex: 1 1 auto;
-  overflow-y: auto;
-  overflow-x: hidden;
-}
-
-.sidebar-section-title {
-  font-family: var(--heading-font, 'Raleway', sans-serif);
-  font-size: 0.8125rem;
-  font-weight: 800;
-  letter-spacing: 0.6px;
-  text-transform: uppercase;
-  color: #0A1128; /* Deep Navy chuẩn thương hiệu JPM - tương phản sắc nét với danh sách con */
-  padding: 0 4px 8px 4px;
-  border-bottom: 1px solid #f1f5f9;
-}
-
-/* ── SEARCH INPUT IN SIDEBAR (MATCHING THUONG HIEU) ── */
-.search-input-box {
-  display: flex;
-  align-items: center;
-  height: 42px;
-  border-radius: 8px;
-  border: 1px solid #e2e8f0;
-  background: #ffffff;
-  box-shadow: none;
-  padding: 0 12px;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
-  width: 100%;
-}
-
-.search-input-box:focus-within {
-  border-color: #f82249 !important;
-  box-shadow: 0 0 0 3px rgba(248, 34, 73, 0.12) !important;
-  outline: 0 !important;
-}
-
-.search-input-box:hover {
-  border-color: #cbd5e1;
-}
-
-.search-input-icon {
-  font-size: 0.9rem;
-  color: #94a3b8;
-  margin-right: 8px;
-  flex-shrink: 0;
-  transition: color 0.15s ease-in-out;
-}
-
-.search-input-box:focus-within .search-input-icon {
-  color: #f82249;
-}
-
-.search-input-field {
-  flex: 1;
-  border: none;
-  background: transparent;
-  outline: none;
-  font-size: 0.875rem;
-  font-family: var(--default-font, sans-serif);
-  color: #0A1128;
-  font-weight: 400;
-  padding: 0;
-  height: 100%;
-}
-
-.search-input-field::placeholder {
-  color: #94a3b8;
-}
-
-.btn-clear-search {
-  background: transparent;
-  border: none;
-  color: #94a3b8;
-  font-size: 0.9rem;
-  cursor: pointer;
-  padding: 0;
-  margin-left: 6px;
-  line-height: 1;
-  flex-shrink: 0;
-  transition: color 0.15s ease;
-}
-
-.btn-clear-search:hover {
-  color: var(--accent-color, #F82249);
-}
-
-/* ── NAVIGATION LIST IN SIDEBAR ── */
-.catalog-nav-list {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  padding: 4px 6px 4px 0;
-  overflow-x: hidden !important;
-}
-
-.catalog-nav-btn {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  border: 1px solid transparent;
-  background: transparent;
-  padding: 8px 12px;
-  border-radius: 8px;
-  font-family: var(--default-font, sans-serif);
-  font-weight: 500;
-  font-size: 0.88rem;
-  color: #475569; /* Slate trung tính, mềm mại hơn so với tiêu đề Navy */
-  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
-  cursor: pointer;
-  text-align: left;
-}
-
-.catalog-nav-btn:hover {
-  background: #f1f5f9;
-  color: #0A1128;
-  font-weight: 600;
-  transform: translateX(4px);
-}
-
-.catalog-nav-btn.active {
-  background: rgba(248, 34, 73, 0.08);
-  border-color: rgba(248, 34, 73, 0.2);
-  color: #f82249;
-  font-weight: 700;
-}
-
-.catalog-nav-btn.active:hover {
-  background: rgba(248, 34, 73, 0.12);
-  color: #f82249;
-  transform: translateX(4px);
-}
-
-.catalog-nav-text {
-  flex: 1;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.catalog-nav-arrow {
-  font-size: 0.72rem;
-  opacity: 0;
-  transform: translateX(-4px);
-  transition: all 0.2s ease;
-  color: inherit;
-  flex-shrink: 0;
-}
-
-.catalog-nav-btn:hover .catalog-nav-arrow {
-  opacity: 0.6;
-  transform: translateX(0);
-}
-
-.catalog-nav-btn.active .catalog-nav-arrow {
-  opacity: 1;
-  transform: translateX(0);
-  color: #f82249;
 }
 
 /* ── LUXURY EMPTY STATE ── */
