@@ -7,11 +7,11 @@
     <div class="container header-container position-relative d-flex align-items-center w-100 h-100">
       <!-- Vùng 1 (Trái): Logo JPM -->
       <router-link to="/" class="logo d-flex flex-column align-items-center justify-content-center me-auto me-xl-0 h-100 text-decoration-none">
-        <svg width="42" height="26" viewBox="0 0 32 20" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-bottom: 2px;">
+        <svg width="34" height="21" viewBox="0 0 32 20" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-bottom: 2px;">
           <path d="M14.5 1 L14.5 19 L2 19 Z" fill="white" />
           <path d="M17.5 1 L30 19 L17.5 19 Z" fill="white" />
         </svg>
-        <span style="font-size: 14px; font-weight: 700; letter-spacing: 4px; color: white; line-height: 1; margin-left: 6px;">JPM</span>
+        <span style="font-size: 12px; font-weight: 700; letter-spacing: 3.5px; color: white; line-height: 1; margin-left: 4px;">JPM</span>
       </router-link>
 
       <!-- Vùng 2 (Giữa): Menu điều hướng chính -->
@@ -276,7 +276,7 @@ export default {
 .header-actions {
   display: flex;
   align-items: center;
-  gap: 24px;
+  gap: 18px;
 }
 
 .header-icon-btn {
@@ -298,7 +298,7 @@ export default {
   color: #ffffff !important;
 }
 
-/* Avatar Trigger (Original 40x40 borderless circle) */
+/* Avatar Trigger (Compact 34x34 borderless circle) */
 .header-avatar-btn {
   display: inline-flex;
   align-items: center;
@@ -307,8 +307,8 @@ export default {
 }
 
 .user-avatar {
-  width: 40px;
-  height: 40px;
+  width: 34px;
+  height: 34px;
   border-radius: 50%;
   background: transparent;
   display: flex;
@@ -390,7 +390,7 @@ export default {
   color: #475569;
   text-decoration: none;
   white-space: nowrap;
-  transition: color 0.15s ease;
+  transition: background-color 0.15s ease, color 0.15s ease;
 }
 
 .um-item i {
@@ -402,8 +402,9 @@ export default {
 }
 
 .um-item:hover {
-  background-color: transparent;
+  background-color: #f1f5f9;
   color: var(--jpm-color-navy-dark, #0A1128);
+  font-weight: 600;
 }
 
 .um-item:hover i {
@@ -411,7 +412,7 @@ export default {
 }
 
 .um-item-logout:hover {
-  background-color: transparent;
+  background-color: rgba(248, 34, 73, 0.08);
   color: var(--accent-color, #f82249);
 }
 

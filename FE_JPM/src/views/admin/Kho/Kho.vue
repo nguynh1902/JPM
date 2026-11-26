@@ -66,7 +66,7 @@
           <div class="card-header border-bottom d-flex justify-content-between align-items-center">
             <h5 class="mb-0 fw-bold text-dark">Danh Sách Kho Bãi</h5>
             <div style="width: 250px;">
-              <input type="text" class="form-control form-control-sm" placeholder="Tìm kiếm tên kho, địa chỉ..." v-model="searchKeyword">
+              <input type="text" class="form-control" placeholder="Tìm kiếm tên kho, địa chỉ..." v-model="searchKeyword">
             </div>
           </div>
 

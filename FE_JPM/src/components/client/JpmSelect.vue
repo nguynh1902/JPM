@@ -534,7 +534,7 @@ watch(() => props.options, () => {
 
 .dropdown-item-option:hover,
 .dropdown-item-option.highlighted {
-  background-color: transparent;
+  background-color: #f1f5f9;
   color: var(--jpm-color-navy-dark, #0A1128);
 }
 
@@ -544,7 +544,7 @@ watch(() => props.options, () => {
 }
 
 .dropdown-item-option.active {
-  background-color: rgba(248, 34, 73, 0.06);
+  background-color: rgba(248, 34, 73, 0.08);
   color: var(--jpm-color-red-marine, #F82249);
   font-weight: 600;
 }
@@ -556,7 +556,7 @@ watch(() => props.options, () => {
 
 .dropdown-item-option.active:hover,
 .dropdown-item-option.active.highlighted {
-  background-color: rgba(248, 34, 73, 0.06);
+  background-color: rgba(248, 34, 73, 0.12);
   color: var(--jpm-color-red-marine, #F82249);
 }
 

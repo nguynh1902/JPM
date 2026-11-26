@@ -213,7 +213,7 @@
 
 /* ==========================================================================
    JPM ADMIN STANDARD - CHUẨN HÓA V-SELECT (@vueform/multiselect) THEO SNEAT 1.0.0
-   Màu chủ đạo Admin: #17a2b8 (Marine Cyan dịu mắt, chuẩn Sneat/JPM Backoffice)
+   Màu chủ đạo Admin: #17a2b8 (Teal hàng hải)
    Khắc phục triệt để: Lệch chiều cao với form-control, thụt bảng giữa các trang
    ========================================================================== */
 
@@ -235,37 +235,37 @@
   --ms-dropdown-bg: #ffffff;
   --ms-dropdown-border-color: #d9dee3;
   --ms-dropdown-border-width: 1px;
-  --ms-dropdown-radius: 0.5rem;
+  --ms-dropdown-radius: 0.375rem;
   --ms-max-height: 20rem;
   --ms-option-font-size: 0.875rem;
   --ms-option-line-height: 1.45;
   --ms-option-py: 0.45rem;
   --ms-option-px: 0.875rem;
   --ms-option-bg-pointed: rgba(23, 162, 184, 0.08);
-  --ms-option-color-pointed: #138496;
+  --ms-option-color-pointed: #17a2b8;
   --ms-option-bg-selected: #17a2b8;
   --ms-option-color-selected: #ffffff;
   --ms-option-bg-selected-pointed: #138496;
   --ms-option-color-selected-pointed: #ffffff;
-  --ms-caret-color: #8592a3;
-  --ms-clear-color: #a1acb8;
+  --ms-caret-color: #697a8d;
+  --ms-clear-color: #b4bdc6;
   --ms-clear-color-hover: #17a2b8;
 }
 
-/* 2. Cố định chiều cao tuyệt đối khớp 100% với .form-control và .btn (38px) */
+/* 2. Cố định chiều cao tuyệt đối khớp 100% với .form-control và .btn (34px compact ERP) */
 .multiselect {
-  min-height: 38px !important;
-  max-height: 38px !important;
-  height: 38px !important;
+  min-height: 34px !important;
+  max-height: 34px !important;
+  height: 34px !important;
   font-family: inherit !important;
-  font-size: 0.875rem !important;
-  line-height: 1.45 !important;
+  font-size: 0.923rem !important;
+  line-height: 1.4 !important;
   color: #697a8d !important;
   background-color: #ffffff !important;
   border: 1px solid #d9dee3 !important;
   border-radius: 0.375rem !important;
   box-sizing: border-box !important;
-  box-shadow: none !important;
+  box-shadow: inset 0 0 0 0 rgba(23, 162, 184, 0), 0 2px 6px 0 rgba(23, 162, 184, 0) !important;
   transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out !important;
   margin: 0 !important;
   padding: 0 !important;
@@ -285,10 +285,10 @@
 /* 4. Nhãn hiển thị giá trị & Placeholder - căn giữa tuyệt đối theo trục dọc */
 .multiselect-single-label,
 .multiselect-placeholder {
-  font-size: 0.9375rem !important;
-  line-height: 1.53 !important;
-  padding-left: 0.875rem !important;
-  padding-right: 2.25rem !important;
+  font-size: 0.923rem !important;
+  line-height: 1.45 !important;
+  padding-left: 0.8rem !important;
+  padding-right: 2.1rem !important;
   padding-top: 0 !important;
   padding-bottom: 0 !important;
   box-sizing: border-box !important;
@@ -298,29 +298,29 @@
 }
 
 .multiselect-single-label-text {
-  color: #566a7f !important;
+  color: #697a8d !important;
   font-weight: 500 !important;
-  font-size: 0.875rem !important;
+  font-size: 0.923rem !important;
 }
 
 .multiselect-placeholder {
   color: #b4bdc6 !important;
-  font-size: 0.875rem !important;
+  font-size: 0.923rem !important;
 }
 
-/* 5. Trạng thái Focus / Active - Đồng bộ 100% viền Marine Cyan #17a2b8 */
+/* 5. Trạng thái Focus / Active - Đồng bộ 100% viền đậm 2px không giật & bóng đổ dưới chuẩn Sneat */
 .multiselect-search,
 .multiselect-tags-search {
   background: transparent !important;
   background-color: transparent !important;
-  color: #566a7f !important;
+  color: #697a8d !important;
 }
 
 .multiselect.is-active,
 .multiselect.is-open {
   border-width: 1px !important;
   border-color: #17a2b8 !important;
-  box-shadow: 0 0 0 0.2rem rgba(23, 162, 184, 0.12) !important;
+  box-shadow: 0 2px 6px 0 rgba(23, 162, 184, 0.2) !important;
   outline: 0 !important;
   border-radius: 0.375rem !important;
 }
@@ -337,8 +337,8 @@
   width: max-content !important;
   max-width: min(480px, 85vw) !important;
   border: 1px solid #d9dee3 !important;
-  border-radius: 0.5rem !important;
-  box-shadow: 0 0.25rem 1rem rgba(161, 172, 184, 0.32) !important;
+  border-radius: 0.375rem !important;
+  box-shadow: 0 10px 25px -5px rgba(67, 89, 113, 0.25), 0 8px 10px -6px rgba(67, 89, 113, 0.2) !important;
   background-color: #ffffff !important;
   overflow-y: auto !important;
   z-index: 1060 !important;
@@ -351,10 +351,10 @@
   transform: none !important;
   margin-top: 0 !important;
   margin-bottom: 4px !important;
-  border-radius: 0.5rem !important;
+  border-radius: 0.375rem !important;
 }
 
-/* 8. Tinh chỉnh Option bên trong Menu */
+/* 8. Tinh chỉnh Option bên trong Menu với màu chủ đạo #17a2b8 */
 .multiselect-option {
   font-size: 0.875rem !important;
   line-height: 1.45 !important;
@@ -366,7 +366,7 @@
 
 .multiselect-option.is-pointed {
   background-color: rgba(23, 162, 184, 0.08) !important;
-  color: #138496 !important;
+  color: #17a2b8 !important;
 }
 
 .multiselect-option.is-selected {
@@ -383,7 +383,7 @@
 /* 9. Mũi tên Caret icon */
 .multiselect-caret {
   margin-right: 0.875rem !important;
-  background-color: #8592a3 !important;
+  background-color: #697a8d !important;
   transition: transform 0.2s ease !important;
 }
 
@@ -393,7 +393,7 @@
 }
 
 .multiselect-clear-icon {
-  background-color: #a1acb8 !important;
+  background-color: #b4bdc6 !important;
 }
 
 .multiselect-clear-icon:hover {
@@ -416,27 +416,41 @@ input:focus::-moz-placeholder {
 }
 
 /* ══════════════════════════════════════════════════════════════
-   ADMIN GLOBAL DESIGN TOKENS, TYPOGRAPHY & ERP DENSITY SYSTEM
-   - Chuẩn hóa font Inter sắc nét cùng bảng màu Sneat dịu mắt, thanh thoát (#17a2b8 & Slate)
-   - Phạm vi cô lập hoàn toàn trong html.light-style & #admin-layout
-   - Tuyệt đối không ảnh hưởng đến giao diện Client
+   ADMIN TYPOGRAPHY & ERP DENSITY SYSTEM (SNEAT 1.0.0 ORIGINAL COLORS)
+   - Giữ nguyên bảng màu gốc Sneat 1.0.0 (#17a2b8 & Slate Sneat)
+   - Giữ nguyên .container-xxl max-width 1440px & khoảng trống 2 bên chuẩn Desktop
+   - Thu nhỏ đồng bộ toàn hệ thống Admin về tỉ lệ 81.25% (13px root) gọn sắc nét
    ══════════════════════════════════════════════════════════════ */
-html.light-style {
-  font-size: 93.75% !important; /* 15px root: sắc nét, dễ đọc nhưng vẫn giữ mật độ ERP */
-  --bs-primary: #17a2b8;
-  --bs-primary-rgb: 23, 162, 184;
-  --bs-link-color: #17a2b8;
-  --bs-link-hover-color: #138496;
-  --bs-body-color: #697a8d;
-  --bs-heading-color: #566a7f;
-  --bs-secondary-color: #8592a3;
-  --bs-border-color: #eceef1;
+@media (min-width: 992px) {
+  html.light-style {
+    font-size: 81.25% !important; /* 13px compact ERP root */
+  }
+
+  #admin-layout .container-xxl {
+    max-width: 1440px;
+    padding-left: 24px !important;
+    padding-right: 24px !important;
+  }
+
+  #admin-layout .container-p-y:not([class^=pt-]):not([class*=" pt-"]) {
+    padding-top: 1.25rem !important;
+  }
+
+  #admin-layout .container-p-y:not([class^=pb-]):not([class*=" pb-"]) {
+    padding-bottom: 1.25rem !important;
+  }
 }
 
-/* 0. Typography & Color Hierarchy toàn Admin (Mát mắt chuẩn Sneat 1.0.0) */
+@media (max-width: 991.98px) {
+  html.light-style {
+    font-size: 87.5% !important;
+  }
+}
+
+/* 0. Typography toàn Admin */
 #admin-layout {
   font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
-  color: #697a8d;
+  font-size: 1rem;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
@@ -451,7 +465,6 @@ html.light-style {
 #admin-layout .card-title,
 #admin-layout .modal-title {
   font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  color: #566a7f;
   font-weight: 700;
   letter-spacing: -0.015em;
 }
@@ -460,9 +473,26 @@ html.light-style {
   font-size: 1.35rem;
 }
 
+#admin-layout h4.fw-bold.py-3 {
+  padding-top: 0.65rem !important;
+  padding-bottom: 0.65rem !important;
+  margin-bottom: 1rem !important;
+}
+
+#admin-layout .card-header {
+  padding: 1rem 1.25rem;
+}
+
+#admin-layout .card-body {
+  padding: 1.1rem 1.25rem;
+}
+
+#admin-layout .card-footer {
+  padding: 0.85rem 1.25rem;
+}
+
 #admin-layout h4 .text-muted.fw-light,
 #admin-layout h4 .text-muted {
-  color: #8592a3 !important;
   font-weight: 500 !important;
 }
 
@@ -473,74 +503,22 @@ html.light-style {
   font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
-#admin-layout .text-dark {
-  color: #435971 !important;
-}
-
-#admin-layout .text-body {
-  color: #697a8d !important;
-}
-
-#admin-layout .text-secondary {
-  color: #697a8d !important;
-}
-
-#admin-layout .text-muted {
-  color: #8592a3 !important;
-}
-
-#admin-layout .text-primary {
-  color: #17a2b8 !important;
-}
-
-#admin-layout .text-info {
-  color: #03a9d4 !important;
-}
-
-#admin-layout .text-warning {
-  color: #e69500 !important;
-}
-
-#admin-layout .text-success {
-  color: #28a745 !important;
-}
-
-#admin-layout .text-danger {
-  color: #ea5455 !important;
-}
-
 #admin-layout .font-monospace {
   font-family: "Roboto Mono", ui-monospace, SFMono-Regular, Menlo, monospace !important;
   font-variant-numeric: tabular-nums;
 }
 
-/* Card & Surface đồng nhất toàn Admin */
-#admin-layout .card {
-  border: 1px solid #eceef1;
-  box-shadow: 0 2px 6px 0 rgba(67, 89, 113, 0.08);
-}
-
-#admin-layout .card-header {
-  border-bottom-color: #eceef1;
-}
-
 /* 1. Tinh chỉnh Bảng Dữ Liệu (Data Table) */
 #admin-layout .table {
-  font-size: 0.875rem;
-  color: #697a8d;
+  font-size: 0.923rem;
 }
 
 #admin-layout .table > :not(caption) > * > * {
-  padding: 0.625rem 0.9rem;
-  border-bottom-color: #eceef1;
+  padding: 0.48rem 0.78rem;
 }
 
 #admin-layout .table > tbody > tr > td {
   vertical-align: middle;
-}
-
-#admin-layout .table > tbody > tr:hover > * {
-  background-color: rgba(23, 162, 184, 0.035) !important;
 }
 
 #admin-layout .table .text-end {
@@ -552,40 +530,25 @@ html.light-style {
   position: sticky;
   top: 0;
   z-index: 2;
-  background-color: #f9fafb;
+  background-color: #ffffff;
 }
 
 #admin-layout .table thead th {
-  background-color: #f9fafb !important;
-  color: #566a7f !important;
-  font-size: 0.75rem !important;
+  font-size: 0.77rem !important;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  padding-top: 0.7rem;
-  padding-bottom: 0.7rem;
+  padding-top: 0.58rem;
+  padding-bottom: 0.58rem;
   font-weight: 700 !important;
-  border-bottom: 1px solid #d9dee3 !important;
 }
 
 /* 2. Tinh chỉnh Sidebar Menu */
 #admin-layout .menu-inner .menu-link {
-  font-size: 0.9rem;
+  font-size: 0.96rem;
   font-weight: 500;
-  color: #697a8d;
-  padding-top: 0.48rem;
-  padding-bottom: 0.48rem;
-  border-radius: 0.45rem;
-}
-
-#admin-layout .menu-inner .menu-item.active > .menu-link:not(.menu-toggle) {
-  background: linear-gradient(90deg, rgba(23, 162, 184, 0.14) 0%, rgba(23, 162, 184, 0.04) 100%) !important;
-  color: #17a2b8 !important;
-  font-weight: 600;
-}
-
-#admin-layout .menu-inner .menu-item:not(.active) > .menu-link:hover {
-  background-color: rgba(67, 89, 113, 0.04) !important;
-  color: #566a7f !important;
+  padding-top: 0.42rem;
+  padding-bottom: 0.42rem;
+  border-radius: 0.4rem;
 }
 
 #admin-layout .menu-inner .menu-icon {
@@ -594,102 +557,66 @@ html.light-style {
 
 #admin-layout .menu-header,
 #admin-layout .menu-header-text {
-  font-size: 0.72rem;
+  font-size: 0.74rem;
   font-weight: 700;
   letter-spacing: 0.06em;
-  color: #8592a3 !important;
 }
 
 #admin-layout .menu-header {
-  padding-top: 0.7rem;
-  padding-bottom: 0.35rem;
+  padding-top: 0.6rem;
+  padding-bottom: 0.3rem;
 }
 
-/* 3. Tinh chỉnh Toolbar lọc, ô nhập liệu & Nút bấm (cao 38px đồng đều) */
-#admin-layout .form-control:not([type="file"]):not(textarea),
-#admin-layout .form-select,
+/* 3. Tinh chỉnh Toolbar lọc, ô nhập liệu & Nút bấm (cao 34px đồng đều gọn mắt) */
+#admin-layout .form-control:not([type="file"]):not(textarea):not(.form-control-sm):not(.form-control-lg),
+#admin-layout .form-select:not(.form-select-sm):not(.form-select-lg),
 #admin-layout .multiselect {
-  font-size: 0.875rem;
-  min-height: 38px;
-  height: 38px;
-  color: #566a7f;
-  border-color: #d9dee3;
+  font-size: 0.923rem !important;
+  min-height: 34px !important;
+  height: 34px !important;
+}
+
+#admin-layout .form-control-sm,
+#admin-layout .form-select-sm {
+  font-size: 0.846rem !important;
+  min-height: 28px !important;
+  height: auto !important;
+  border-radius: 0.375rem !important;
+}
+
+#admin-layout .form-control-lg,
+#admin-layout .form-select-lg {
+  font-size: 1rem !important;
+  min-height: 40px !important;
+  height: auto !important;
+}
+
+#admin-layout .form-control.border-0,
+#admin-layout .form-control.border-0:focus {
+  border: 0 !important;
+  box-shadow: none !important;
 }
 
 #admin-layout textarea.form-control {
-  font-size: 0.875rem;
-  color: #566a7f;
-  border-color: #d9dee3;
-}
-
-#admin-layout .form-control::placeholder {
-  color: #b4bdc6 !important;
-  opacity: 1;
-}
-
-#admin-layout .form-control:focus,
-#admin-layout .form-select:focus {
-  border-color: #17a2b8 !important;
-  box-shadow: 0 0 0 0.2rem rgba(23, 162, 184, 0.12) !important;
+  font-size: 0.923rem !important;
 }
 
 #admin-layout .form-label {
-  font-size: 0.82rem;
+  font-size: 0.846rem;
   font-weight: 600;
-  color: #566a7f;
 }
 
 #admin-layout .btn:not(.btn-sm):not(.btn-xs):not(.btn-close):not(.btn-link):not(.action-btn) {
-  min-height: 38px;
+  min-height: 34px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.35rem;
+  gap: 0.32rem;
 }
 
 #admin-layout .btn {
-  font-size: 0.875rem;
+  font-size: 0.923rem;
   font-weight: 600;
-}
-
-#admin-layout .btn-primary {
-  background-color: #17a2b8 !important;
-  border-color: #17a2b8 !important;
-  color: #ffffff !important;
-  box-shadow: 0 2px 6px rgba(23, 162, 184, 0.2) !important;
-}
-
-#admin-layout .btn-primary:hover,
-#admin-layout .btn-primary:focus,
-#admin-layout .btn-primary:active {
-  background-color: #138496 !important;
-  border-color: #138496 !important;
-  color: #ffffff !important;
-}
-
-#admin-layout .btn-outline-primary {
-  color: #17a2b8 !important;
-  border-color: #17a2b8 !important;
-}
-
-#admin-layout .btn-outline-primary:hover,
-#admin-layout .btn-outline-primary:focus {
-  background-color: #17a2b8 !important;
-  border-color: #17a2b8 !important;
-  color: #ffffff !important;
-}
-
-#admin-layout .btn-secondary {
-  background-color: #8592a3 !important;
-  border-color: #8592a3 !important;
-  color: #ffffff !important;
-}
-
-#admin-layout .btn-secondary:hover,
-#admin-layout .btn-secondary:focus {
-  background-color: #697a8d !important;
-  border-color: #697a8d !important;
-  color: #ffffff !important;
 }
 
 /* Chuẩn hóa Input File theo mẫu gốc Sneat 1.0.0 (không vỡ layout, không lệch viền, không gạch chân) */
@@ -698,16 +625,15 @@ html.light-style {
   height: auto !important;
   padding: 0 0.875rem 0 0 !important;
   overflow: hidden;
-  border-color: #d9dee3;
 }
 
 #admin-layout .form-control[type="file"]::file-selector-button,
 #admin-layout .form-control[type="file"]::-webkit-file-upload-button {
-  padding: 0.45rem 0.875rem !important;
+  padding: 0.4375rem 0.875rem !important;
   margin: 0 !important;
   margin-inline-end: 0.875rem !important;
   color: #697a8d !important;
-  background-color: #f9fafb !important;
+  background-color: #fff !important;
   border-width: 0 !important;
   border-inline-end-width: 1px !important;
   border-color: inherit !important;
@@ -728,62 +654,14 @@ html.light-style {
   border-color: inherit !important;
 }
 
-/* 4. Tinh chỉnh Badge, Pills & Pagination (Pastel Sneat dịu mắt) */
+/* 4. Tinh chỉnh Badge */
 #admin-layout .badge.badge-custom {
-  min-width: 96px !important;
-  font-size: 0.72rem !important;
+  min-width: 82px !important;
+  font-size: 0.76rem !important;
   font-weight: 700 !important;
-  padding: 0.34rem 0.65rem !important;
+  padding: 0.28rem 0.55rem !important;
   letter-spacing: 0.03em;
   border-radius: 0.375rem;
-}
-
-#admin-layout .bg-pastel-success,
-#admin-layout .bg-label-success {
-  background-color: #e8fadf !important;
-  color: #28a745 !important;
-}
-
-#admin-layout .bg-pastel-warning,
-#admin-layout .bg-label-warning {
-  background-color: #fff2d6 !important;
-  color: #c97a00 !important;
-}
-
-#admin-layout .bg-pastel-info,
-#admin-layout .bg-label-info {
-  background-color: #d7f5fc !important;
-  color: #0396b8 !important;
-}
-
-#admin-layout .bg-pastel-danger,
-#admin-layout .bg-label-danger {
-  background-color: #ffe0db !important;
-  color: #dc4c4c !important;
-}
-
-#admin-layout .bg-pastel-secondary,
-#admin-layout .bg-label-secondary {
-  background-color: #ebeef0 !important;
-  color: #697a8d !important;
-}
-
-#admin-layout .bg-label-primary {
-  background-color: #e0f7fa !important;
-  color: #17a2b8 !important;
-}
-
-#admin-layout .nav-pills .nav-link.active,
-#admin-layout .nav-pills .nav-link.active:hover {
-  background-color: #17a2b8 !important;
-  color: #ffffff !important;
-  box-shadow: 0 2px 6px rgba(23, 162, 184, 0.22) !important;
-}
-
-#admin-layout .page-item.active .page-link {
-  background-color: #17a2b8 !important;
-  border-color: #17a2b8 !important;
-  color: #ffffff !important;
 }
 
 /* 5. Tinh chỉnh nút đóng Modal (.btn-close) chuẩn chỉnh, không bị lệch/tràn góc */

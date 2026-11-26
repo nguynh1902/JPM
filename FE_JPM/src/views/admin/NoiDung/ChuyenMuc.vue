@@ -74,7 +74,7 @@
             <h5 class="mb-0 fw-bold text-dark">Danh Sách Chuyên Mục</h5>
             
             <div class="d-flex gap-2" style="max-width: 420px; width: 100%;">
-              <input type="text" class="form-control form-control-sm" placeholder="Tìm kiếm tên..." v-model="searchKeyword">
+              <input type="text" class="form-control" placeholder="Tìm kiếm tên..." v-model="searchKeyword">
               <div style="min-width: 170px;">
                 <v-select
                   v-model="filterType"

@@ -253,11 +253,11 @@
             <!-- Legend góc phải: Ô màu rồi tới chữ -->
             <div class="d-flex align-items-center gap-3" style="font-size: 0.78rem;">
               <div class="d-flex align-items-center gap-2">
-                <span style="display: inline-block; width: 13px; height: 13px; border-radius: 3px; background-color: #17a2b8;"></span>
+                <span style="display: inline-block; width: 13px; height: 13px; border-radius: 3px; background-color: #696cff;"></span>
                 <span class="text-muted fw-medium">Doanh thu bán</span>
               </div>
               <div class="d-flex align-items-center gap-2">
-                <span style="display: inline-block; width: 13px; height: 13px; border-radius: 3px; background-color: #a1acb8;"></span>
+                <span style="display: inline-block; width: 13px; height: 13px; border-radius: 3px; background-color: #8592a3;"></span>
                 <span class="text-muted fw-medium">Chi phí nhập</span>
               </div>
             </div>
@@ -385,7 +385,7 @@
             <div class="border-top pt-3 mt-2">
               <div class="d-flex justify-content-between align-items-center mb-2" style="font-size: 0.8rem;">
                 <div class="d-flex align-items-center">
-                  <span class="me-2" style="display: inline-block; width: 13px; height: 13px; border-radius: 3px; background-color: #17a2b8;"></span>
+                  <span class="me-2" style="display: inline-block; width: 13px; height: 13px; border-radius: 3px; background-color: #03c3ec;"></span>
                   <span class="text-dark fw-medium">Đơn Hoàn Tất</span>
                 </div>
                 <div class="fw-bold text-dark">
@@ -394,7 +394,7 @@
               </div>
               <div class="d-flex justify-content-between align-items-center mb-2" style="font-size: 0.8rem;">
                 <div class="d-flex align-items-center">
-                  <span class="me-2" style="display: inline-block; width: 13px; height: 13px; border-radius: 3px; background-color: #6fd3e4;"></span>
+                  <span class="me-2" style="display: inline-block; width: 13px; height: 13px; border-radius: 3px; background-color: #696cff;"></span>
                   <span class="text-dark fw-medium">Đơn Đang Xử Lý</span>
                 </div>
                 <div class="fw-bold text-dark">
@@ -403,7 +403,7 @@
               </div>
               <div class="d-flex justify-content-between align-items-center" style="font-size: 0.8rem;">
                 <div class="d-flex align-items-center">
-                  <span class="me-2" style="display: inline-block; width: 13px; height: 13px; border-radius: 3px; background-color: #ffbe42;"></span>
+                  <span class="me-2" style="display: inline-block; width: 13px; height: 13px; border-radius: 3px; background-color: #ffab00;"></span>
                   <span class="text-dark fw-medium">Yêu Cầu Báo Giá</span>
                 </div>
                 <div class="fw-bold text-dark">
@@ -663,7 +663,7 @@ const barChartOptions = computed(() => ({
   },
   dataLabels: { enabled: false },
   stroke: { show: true, width: 2, colors: ['transparent'] },
-  colors: ['#17a2b8', '#a1acb8'],
+  colors: ['#696cff', '#8592a3'],
   xaxis: {
     categories: revenueChartData.value.categories || [],
     labels: {
@@ -716,7 +716,7 @@ const donutChartOptions = computed(() => ({
     fontFamily: 'Inter, sans-serif'
   },
   labels: distributionChartData.value.labels || ['Đơn Hoàn Tất', 'Đơn Đang Xử Lý', 'Yêu Cầu Báo Giá'],
-  colors: ['#17a2b8', '#6fd3e4', '#ffbe42'],
+  colors: ['#03c3ec', '#696cff', '#ffab00'],
   stroke: { width: 3, colors: ['#fff'] },
   legend: { show: false },
   dataLabels: { enabled: false },
@@ -729,7 +729,7 @@ const donutChartOptions = computed(() => ({
           value: {
             fontSize: '1.5rem',
             fontWeight: 700,
-            color: '#566a7f',
+            color: '#233446',
             offsetY: -6,
             formatter: (val) => val
           },
@@ -852,13 +852,13 @@ onUnmounted(() => {
   font-size: 0.78rem;
 }
 
-/* Marine Cyan Active Item styling dịu mắt đồng bộ toàn Admin */
+/* Sneat Active Item styling */
 .active-sneat-item {
-  background-color: rgba(23, 162, 184, 0.1) !important;
-  color: #17a2b8 !important;
+  background-color: rgba(105, 108, 255, 0.12) !important;
+  color: #696cff !important;
   font-weight: 600;
 }
 .dropdown-item:hover:not(.active-sneat-item) {
-  background-color: #f8f9fa;
+  background-color: #f5f5f9;
 }
 </style>

@@ -57,9 +57,9 @@
   --jpm-status-out-text: #B91C1C;
 
   /* 4. Border Radius System (PO Decision 01) */
-  --jpm-radius-card: 12px;
-  --jpm-radius-control: 8px;
-  --jpm-radius-badge: 6px;
+  --jpm-radius-card: 10px;
+  --jpm-radius-control: 7px;
+  --jpm-radius-badge: 5px;
   --jpm-radius-circle: 50%;
 
   /* 5. Spacing Scale */
@@ -83,8 +83,8 @@
   --jpm-font-body: var(--jpm-font-family);
   --jpm-font-mono: 'Roboto Mono', SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 
-  /* 8. Layout Offset (Khớp chính xác 100% với .header height: 70px) */
-  --jpm-header-height: 70px;
+  /* 8. Layout Offset (Khớp chính xác 100% với .header height: 58px) */
+  --jpm-header-height: 58px;
 
   /* ═════════════════════════════════════════════════════════════════
      GLOBAL BRIDGES: Ánh xạ các biến cũ sang Design Tokens 2026
@@ -100,19 +100,11 @@
   --surface-color: var(--jpm-neutral-0, #FFFFFF);
   --contrast-color: #FFFFFF;
 
-  /* Overwrite Bootstrap Default Tokens -> JPM Slate, Navy & Electric Blue */
+  /* Overwrite Bootstrap Default Red & Primary */
   --bs-danger: var(--jpm-color-red-marine, #F82249);
   --bs-danger-rgb: 248, 34, 73;
   --bs-primary: var(--jpm-color-blue-electric, #0284C7);
   --bs-primary-rgb: 2, 132, 199;
-  --bs-body-color: var(--jpm-neutral-700, #334155);
-  --bs-body-color-rgb: 51, 65, 85;
-  --bs-heading-color: var(--jpm-color-navy-dark, #0A1128);
-  --bs-secondary-color: var(--jpm-neutral-500, #64748B);
-  --bs-secondary-color-rgb: 100, 116, 139;
-  --bs-link-color: var(--jpm-color-blue-electric, #0284C7);
-  --bs-link-hover-color: var(--jpm-btn-blue-hover, #0369A1);
-  --bs-border-color: var(--jpm-neutral-200, #E2E8F0);
 
   /* Premium Box Shadows */
   --shadow-sm: var(--jpm-shadow-sm);
@@ -134,12 +126,12 @@
 
 @media (max-width: 1199.98px) {
   :root {
-    --jpm-header-height: 70px;
+    --jpm-header-height: 58px;
   }
 }
 @media (max-width: 767.98px) {
   :root {
-    --jpm-header-height: 70px;
+    --jpm-header-height: 56px;
   }
 }
 
@@ -178,31 +170,58 @@
 }
 
 /* ══════════════════════════════════════════════════════════════
-   GLOBAL CLIENT DESKTOP UI SCALING (15px Root sắc nét, tách biệt Admin)
-   - Giữ nguyên khung Container 1320px/1140px chuẩn rộng rãi
-   - Tăng độ rõ nét cho chữ body, badge, mã SKU trên màn hình Desktop
+   GLOBAL CLIENT DESKTOP UI SCALING (81.25% / 13px Root sắc nét, tách biệt Admin)
+   - Giữ nguyên khung Container 1320px/1140px & khoảng trống 2 bên chuẩn rộng rãi
+   - Co tỉ lệ đồng bộ mọi thành phần bên trong trên màn hình Desktop
    - Không ảnh hưởng giao diện điện thoại/máy tính bảng (< 992px)
    ══════════════════════════════════════════════════════════════ */
 @media (min-width: 992px) {
   html:not(.light-style) {
-    font-size: 93.75%; /* 15px thay vì 14.4px để không bị co kép chữ nhỏ */
+    font-size: 81.25%; /* 13px compact high-craft density */
+  }
+
+  /* Khóa bề rộng & gutter ngoài của Container theo px để giữ nguyên khoảng trống 2 bên */
+  .index-page .container,
+  .index-page .container-fluid {
+    --bs-gutter-x: 24px;
   }
 
   /* Tinh chỉnh nhịp điệu khoảng cách dọc section chuẩn TMĐT hiện đại */
   .section {
-    padding: 48px 0;
+    padding: 38px 0;
   }
 
   .section-title {
-    padding-bottom: 28px;
+    padding-bottom: 22px;
   }
 
   .section-title h2 {
-    font-size: 1.75rem;
+    font-size: 1.62rem;
   }
 
   .sponsors .client-logo {
-    height: 80px;
+    height: 68px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .index-page .container,
+  .index-page .container-sm,
+  .index-page .container-md,
+  .index-page .container-lg,
+  .index-page .container-xl {
+    max-width: 1140px;
+  }
+}
+
+@media (min-width: 1400px) {
+  .index-page .container,
+  .index-page .container-sm,
+  .index-page .container-md,
+  .index-page .container-lg,
+  .index-page .container-xl,
+  .index-page .container-xxl {
+    max-width: 1320px;
   }
 }
 
@@ -247,8 +266,8 @@ body {
   background-color: var(--background-color);
   font-family: var(--default-font);
   font-variant-numeric: lining-nums;
-  font-size: 0.95rem;
-  line-height: 1.62;
+  font-size: 1rem;
+  line-height: 1.58;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
@@ -485,7 +504,7 @@ small,
   --heading-color: #ffffff;
   color: var(--default-color);
   background-color: var(--background-color);
-  height: 70px;
+  height: 58px;
   transition: all 0.5s;
   z-index: 997;
 }
@@ -495,12 +514,12 @@ small,
 }
 
 .header .logo img {
-  max-height: 36px;
-  margin-right: 8px;
+  max-height: 28px;
+  margin-right: 6px;
 }
 
 .header .logo h1 {
-  font-size: 30px;
+  font-size: 24px;
   margin: 0;
   font-weight: 700;
   color: var(--heading-color);
@@ -892,14 +911,14 @@ small,
 .footer {
   color: var(--default-color);
   background-color: var(--background-color);
-  font-size: 14px;
+  font-size: 0.96rem;
   position: relative;
 }
 
 .footer .footer-top {
   background-color: color-mix(in srgb, var(--background-color), white 4%);
-  padding-top: 64px;
-  padding-bottom: 48px;
+  padding-top: 44px;
+  padding-bottom: 32px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
@@ -1055,18 +1074,18 @@ small,
   position: fixed;
   visibility: hidden;
   opacity: 0;
-  right: 15px;
+  right: 14px;
   bottom: -15px;
   z-index: 99999;
   background-color: var(--accent-color);
-  width: 44px;
-  height: 44px;
+  width: 38px;
+  height: 38px;
   border-radius: 50px;
   transition: all 0.4s;
 }
 
 .scroll-top i {
-  font-size: 24px;
+  font-size: 20px;
   color: var(--contrast-color);
   line-height: 0;
 }
@@ -1079,7 +1098,7 @@ small,
 .scroll-top.active {
   visibility: visible;
   opacity: 1;
-  bottom: 15px;
+  bottom: 14px;
 }
 
 /*--------------------------------------------------------------
@@ -2741,7 +2760,7 @@ button.jpm-more-link:hover i {
   outline: 0 !important;
 }
 .index-page .form-control:not(.minimal-input)::placeholder {
-  color: #94a3b8;
+  color: #b4bdc6;
   font-weight: 400;
   opacity: 1;
   transition: all 0.25s ease;
@@ -2929,7 +2948,7 @@ button.jpm-more-link:hover i {
   background: var(--surface-color, #fff);
   border-radius: 12px !important; /* Bo cong 12px mềm mại chuẩn theo yêu cầu */
   box-shadow: 0 4px 20px rgba(0,0,0,0.03) !important;
-  border: 1px solid #e2e8f0 !important;
+  border: 1px solid #e5e7eb !important;
   overflow: hidden;
   transition: all 0.3s ease;
 }
@@ -3038,7 +3057,7 @@ button.jpm-more-link:hover i {
 
 .index-page .input-group-text {
   background-color: #ffffff;
-  color: #475569;
+  color: #697a8d;
 }
 .index-page .input-group-text i {
   transition: color 0.15s ease-in-out;
@@ -3133,20 +3152,20 @@ button.jpm-more-link:hover i {
   display: flex;
   align-items: center;
   gap: 8px;
-  transition: color 0.15s ease;
+  transition: background-color 0.15s ease, color 0.15s ease;
   border-radius: 8px;
 }
 .index-page .main .custom-select-wrapper > .custom-dropdown-list li:hover {
-  background: transparent;
+  background: #f1f5f9;
   color: #0A1128;
 }
 .index-page .main .custom-select-wrapper > .custom-dropdown-list li.active {
-  background: rgba(248, 34, 73, 0.06);
+  background: rgba(248, 34, 73, 0.08);
   color: var(--accent-color, #f82249);
   font-weight: 600;
 }
 .index-page .main .custom-select-wrapper > .custom-dropdown-list li.active:hover {
-  background: rgba(248, 34, 73, 0.06);
+  background: rgba(248, 34, 73, 0.12);
   color: var(--accent-color, #f82249);
 }
 /* 3. Badges / Tags */
@@ -3197,11 +3216,11 @@ input[type="number"] {
 
 /* Category List (Sidebar Menu) */
 .category-list .list-group-item {
-  color: #334155;
+  color: #555;
   border-left: 4px solid transparent;
   border-right: none;
   border-top: none;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid #f1f3f7;
   transition: all 0.25s ease;
   font-weight: 600;
 }
@@ -3209,7 +3228,7 @@ input[type="number"] {
   border-bottom: none;
 }
 .category-list .list-group-item:hover {
-  background-color: #f8fafc;
+  background-color: #f8f9fa;
   color: var(--jpm-color-navy-dark, #0A1128);
 }
 .category-list .list-group-item.active {
@@ -3220,7 +3239,7 @@ input[type="number"] {
   z-index: 1;
 }
 .category-list .list-group-item i {
-  color: #64748b;
+  color: #888;
   transition: all 0.2s;
 }
 .category-list .list-group-item:hover i {
@@ -3243,35 +3262,35 @@ input[type="number"] {
 
 /* Data Table */
 .custom-table {
-  color: #334155;
+  color: #444;
 }
 .custom-table thead th {
   text-transform: uppercase;
   font-size: 0.78rem;
   letter-spacing: 0.04em;
-  color: #475569;
+  color: var(--jpm-color-navy-dark, #0A1128);
   font-weight: 700;
-  border-bottom: 1.5px solid #e2e8f0 !important;
+  border-bottom: 2px solid #e2e8f0 !important;
   padding-top: 12px;
   padding-bottom: 12px;
-  background-color: #f8fafc;
+  background-color: #fff;
 }
 .custom-table tbody tr {
   transition: background-color 0.2s;
 }
 .custom-table tbody tr:hover {
-  background-color: #f8fafc;
+  background-color: #fcfcfc;
 }
 .custom-table td {
   padding-top: 12px;
   padding-bottom: 12px;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid #f1f1f1;
   font-variant-numeric: tabular-nums;
 }
 
 /* Pagination */
 .custom-pagination .page-link {
-  color: #334155;
+  color: #555;
   border: none;
   margin: 0 2px;
   border-radius: var(--jpm-radius-control, 8px);
@@ -3280,7 +3299,7 @@ input[type="number"] {
   transition: all 0.2s;
 }
 .custom-pagination .page-link:hover {
-  background-color: #f1f5f9;
+  background-color: #f1f1f1;
   color: var(--heading-color);
 }
 .custom-pagination .page-item.active .page-link {
@@ -3289,7 +3308,7 @@ input[type="number"] {
   box-shadow: none !important;
 }
 .custom-pagination .page-item.disabled .page-link {
-  color: #94a3b8;
+  color: #bbb;
   background-color: transparent;
 }
 
@@ -3297,20 +3316,20 @@ input[type="number"] {
 .text-danger { color: var(--accent-color, #f82249) !important; }
 .bg-danger { background-color: var(--accent-color, #f82249) !important; }
 
-/* Pastel Badges & WCAG AA Semantic Colors */
-.text-warning { color: #b45309 !important; }
-.bg-pastel-warning { background-color: #fef3c7 !important; color: #b45309 !important; }
-.text-success { color: #15803d !important; }
-.bg-pastel-success { background-color: #dcfce7 !important; color: #15803d !important; }
-.text-info { color: #0284c7 !important; }
-.bg-pastel-info { background-color: #e0f2fe !important; color: #0369a1 !important; }
-.bg-pastel-danger { background-color: #fee2e2 !important; color: #b91c1c !important; }
+/* Pastel Badges */
+.text-warning { color: #f6c000 !important; }
+.bg-pastel-warning { background-color: rgba(246, 192, 0, 0.15) !important; }
+.text-success { color: #198754 !important; }
+.bg-pastel-success { background-color: rgba(25, 135, 84, 0.15) !important; }
+.text-info { color: #0dcaf0 !important; }
+.bg-pastel-info { background-color: rgba(13, 202, 240, 0.15) !important; }
+.bg-pastel-danger { background-color: rgba(248, 34, 73, 0.1) !important; }
 
 /* Sidebar */
 .active-menu { color: var(--accent-color, #f82249) !important; border-left: 3px solid var(--accent-color, #f82249) !important; background: rgba(248, 34, 73, 0.05); }
 
 /* Line Tabs */
-.jpm-line-tabs .nav-link { color: #64748b; font-weight: 600; border-bottom: 2px solid transparent !important; transition: all 0.2s ease; }
+.jpm-line-tabs .nav-link { color: #6c757d; font-weight: 600; border-bottom: 2px solid transparent !important; transition: all 0.2s ease; }
 .jpm-line-tabs .nav-link:hover { color: var(--accent-color, #f82249) !important; }
 .jpm-line-tabs .nav-link.active { color: var(--accent-color, #f82249) !important; border-bottom: 2px solid var(--accent-color, #f82249) !important; }
 
@@ -3398,7 +3417,7 @@ input[type="number"] {
   border-radius: 2px;
 }
 .footer-about-desc {
-  color: rgba(255, 255, 255, 0.74);
+  color: rgba(255, 255, 255, 0.62);
   font-family: var(--default-font);
   font-size: 0.9rem;
   line-height: 1.65;
@@ -3419,12 +3438,12 @@ input[type="number"] {
   flex-shrink: 0;
 }
 .footer-contact-label {
-  color: rgba(255, 255, 255, 0.65);
+  color: rgba(255, 255, 255, 0.5);
   font-weight: 400;
   margin-right: 4px;
 }
 .footer-contact-value {
-  color: rgba(255, 255, 255, 0.9);
+  color: rgba(255, 255, 255, 0.85);
   font-weight: 400;
   text-decoration: none;
   transition: color 0.2s ease;
@@ -3433,7 +3452,7 @@ a.footer-contact-value:hover {
   color: var(--accent-color, #f82249);
 }
 .footer-link {
-  color: rgba(255, 255, 255, 0.76);
+  color: rgba(255, 255, 255, 0.62);
   font-family: var(--default-font);
   font-size: 0.885rem;
   text-decoration: none;
@@ -3552,11 +3571,11 @@ a.footer-contact-value:hover {
 .premium-product-card .text-muted.small.text-uppercase {
   font-family: var(--default-font) !important;
   font-size: 0.75rem !important;
-  letter-spacing: 0.04em !important;
-  color: #64748b !important; /* Slate 500 đạt tương phản rõ nét */
+  letter-spacing: 0.5px !important;
+  color: #8392a5 !important; /* Xám xanh nhạt dịu mắt */
   font-weight: 600 !important;
   text-transform: uppercase !important;
-  line-height: 1.25 !important;
+  line-height: 1.2 !important;
   margin-bottom: 0.25rem !important;
 }
 
@@ -3598,7 +3617,7 @@ a.footer-contact-value:hover {
 .premium-product-card .card-title {
   font-family: var(--default-font) !important; /* Inter: sắc nét, dễ đọc thông số kỹ thuật */
   font-size: 0.95rem !important;
-  color: var(--jpm-neutral-900, #0F172A) !important;
+  color: var(--heading-color, #0A1128) !important;
   font-weight: 600 !important;
   line-height: 1.45 !important;
   letter-spacing: -0.01em !important;
@@ -3714,17 +3733,17 @@ a.footer-contact-value:hover {
 
   /* Top-Level Nav Links (Inter 500 clean typography) */
   .navmenu > ul > li {
-    padding: 15px 14px;
+    padding: 12px 12px;
   }
 
   .navmenu > ul > li:last-child {
-    padding-right: 14px;
+    padding-right: 12px;
   }
 
   .navmenu > ul > li > a,
   .navmenu > ul > li > a:focus {
     font-family: var(--nav-font);
-    font-size: 0.95rem;
+    font-size: 1rem;
     font-weight: 500;
     letter-spacing: 0.005em;
     color: var(--nav-color);
@@ -3836,13 +3855,13 @@ a.footer-contact-value:hover {
     text-transform: none !important;
     color: #475569 !important;
     background: transparent !important;
-    transition: color 0.15s ease !important;
+    transition: background-color 0.15s ease, color 0.15s ease !important;
   }
 
   .navmenu .dropdown ul a:hover,
   .navmenu .dropdown ul li:hover > a {
     color: var(--jpm-color-navy-dark, #0A1128) !important;
-    background: transparent !important;
+    background: #f1f5f9 !important;
   }
 
   .navmenu .dropdown ul a.active,
@@ -3850,7 +3869,7 @@ a.footer-contact-value:hover {
   .navmenu .dropdown ul li:hover > a.active {
     font-weight: 600 !important;
     color: var(--accent-color, #f82249) !important;
-    background: rgba(248, 34, 73, 0.06) !important;
+    background: rgba(248, 34, 73, 0.08) !important;
   }
 
   /* "Xem tất cả ->" CTA Link at bottom of Mega-Dropdown */
@@ -3869,7 +3888,7 @@ a.footer-contact-value:hover {
   .navmenu .dropdown ul a.store-dropdown-more-link:hover,
   .navmenu .dropdown ul li:hover > a.store-dropdown-more-link {
     color: var(--accent-color, #f82249) !important;
-    background: transparent !important;
+    background: rgba(248, 34, 73, 0.08) !important;
   }
 
   .navmenu .dropdown ul a.store-dropdown-more-link:hover i {
@@ -3986,20 +4005,20 @@ a.footer-contact-value:hover {
 
 .modal-body .form-control,
 .modal-body .form-select {
-  height: 40px;
-  font-size: 0.875rem !important;
+  height: 36px;
+  font-size: 0.92rem !important;
   font-weight: 400 !important;
   color: var(--jpm-color-navy-dark, #0A1128) !important;
   border: 1px solid #cbd5e1 !important;
-  border-radius: var(--jpm-radius-control, 8px) !important;
-  padding: 0.5rem 0.875rem !important;
+  border-radius: var(--jpm-radius-control, 7px) !important;
+  padding: 0.45rem 0.8rem !important;
   background-color: #ffffff !important;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .modal-body textarea.form-control {
   height: auto !important;
-  min-height: 80px;
+  min-height: 76px;
 }
 
 .modal-body .form-control:focus,
@@ -4011,13 +4030,13 @@ a.footer-contact-value:hover {
 
 /* Modal Standard Action Buttons */
 .btn-danger-action {
-  height: 40px !important;
-  padding: 0 22px !important;
+  height: 36px !important;
+  padding: 0 18px !important;
   background-color: var(--jpm-color-red-marine, #F82249) !important;
   color: #ffffff !important;
   border: 1px solid var(--jpm-color-red-marine, #F82249) !important;
-  border-radius: var(--jpm-radius-control, 8px) !important;
-  font-size: 0.875rem !important;
+  border-radius: var(--jpm-radius-control, 7px) !important;
+  font-size: 0.92rem !important;
   font-weight: 600 !important;
   display: inline-flex !important;
   align-items: center !important;
@@ -4372,9 +4391,9 @@ a.footer-contact-value:hover {
   font-family: var(--default-font);
   font-size: 0.75rem;
   font-weight: 600;
-  color: #64748b;
+  color: #8392a5;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.5px;
   display: inline-flex;
   align-items: center;
   margin-right: 4px;
@@ -4457,12 +4476,20 @@ a.footer-contact-value:hover {
   letter-spacing: 0.3px;
 }
 
-/* Nút thêm giỏ hàng ở chân card - Hướng 2: Nền xám trung tính, icon Deep Navy, hover Đỏ thương hiệu, bo góc 8px thống nhất Client */
+/* Nút thêm giỏ hàng ở chân card - Hướng 2: Nền xám trung tính, icon Deep Navy, hover Đỏ thương hiệu, bo góc thống nhất Client */
+.product-card .card-body {
+  padding: 0.85rem 0.9rem !important;
+}
+.product-card .product-sku {
+  margin-bottom: 0.6rem !important;
+  min-height: 17px;
+}
+
 .btn-cart-action {
-  width: 36px;
-  height: 36px;
+  width: 31px;
+  height: 31px;
   padding: 0;
-  border-radius: 8px !important;
+  border-radius: var(--jpm-radius-control, 7px) !important;
   color: var(--heading-color, #0A1128) !important;
   border: 1px solid #e2e8f0 !important;
   background-color: #f1f5f9 !important;
@@ -4475,7 +4502,7 @@ a.footer-contact-value:hover {
   letter-spacing: 0 !important;
 }
 .btn-cart-action i {
-  font-size: 1.05rem !important;
+  font-size: 0.96rem !important;
   line-height: 1;
   -webkit-text-stroke: 0.25px currentColor;
 }
@@ -4490,9 +4517,9 @@ a.footer-contact-value:hover {
 
 .skeleton-box-brand {
   width: 120px;
-  height: 40px;
+  height: 36px;
   background: #e2e8f0;
-  border-radius: var(--jpm-radius-control, 8px);
+  border-radius: var(--jpm-radius-control, 7px);
 }
 
 /* ═════════════════════════════════════════════════════════════════
@@ -4501,13 +4528,13 @@ a.footer-contact-value:hover {
 
 /* Nút yêu cầu báo giá ở chân Card (Cân bằng đối xứng với nút Cart) */
 .btn-quote-action {
-  height: 36px;
-  padding: 0 12px;
-  border-radius: var(--jpm-radius-control, 8px) !important;
+  height: 31px;
+  padding: 0 10px;
+  border-radius: var(--jpm-radius-control, 7px) !important;
   color: var(--jpm-status-quote-text, #0284C7) !important;
   border: 1px solid #bfdbfe !important;
   background-color: var(--jpm-status-quote-bg, #DBEAFE) !important;
-  font-size: 0.8125rem;
+  font-size: 0.85rem;
   font-weight: 600;
   transition: all 0.2s ease;
   position: relative;
@@ -6138,47 +6165,7 @@ a.btn-shopee-outline:hover {
   background-color: rgba(248, 34, 73, 0.06);
 }
 
-/* ========================================================================= */
-/* CLIENT GLOBAL TYPOGRAPHY & COLOR HIERARCHY ENFORCEMENT (.index-page)      */
-/* Đồng bộ bảng màu Slate / Deep Navy / Marine Blue trên toàn bộ 20+ trang  */
-/* ========================================================================= */
-.index-page .text-dark {
-  color: var(--jpm-color-navy-dark, #0A1128) !important;
-}
-
-.index-page .text-body {
-  color: var(--jpm-neutral-700, #334155) !important;
-}
-
-.index-page .text-secondary {
-  color: #475569 !important;
-}
-
-.index-page .text-muted {
-  color: var(--jpm-neutral-500, #64748B) !important;
-}
-
-.index-page .text-primary {
-  color: var(--jpm-color-blue-electric, #0284C7) !important;
-}
-
 .index-page .font-monospace {
   font-family: var(--jpm-font-mono, 'Roboto Mono', monospace) !important;
   font-variant-numeric: tabular-nums;
-}
-
-.index-page .table thead th {
-  font-family: var(--default-font, 'Inter', sans-serif);
-  font-size: 0.78rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: #475569;
-  background-color: #f8fafc;
-  border-bottom-color: #e2e8f0;
-}
-
-.index-page .table tbody td {
-  color: var(--jpm-neutral-700, #334155);
-  border-bottom-color: #f1f5f9;
 }

@@ -919,8 +919,8 @@ html:not(.layout-menu-collapsed) .bg-menu-theme .menu-inner .menu-item .menu-lin
 }
 .form-control-sm, .form-select-sm {
   padding: 0.25rem 0.625rem !important;
-  font-size: 0.75rem !important;
-  border-radius: 0.25rem !important;
+  font-size: 0.8125rem !important;
+  border-radius: 0.375rem !important;
 }
 .multiselect-search,
 .multiselect-tags-search {
@@ -934,7 +934,7 @@ html:not(.layout-menu-collapsed) .bg-menu-theme .menu-inner .menu-item .menu-lin
 .multiselect.is-open {
   border-width: 1px !important;
   border-color: #17a2b8 !important;
-  box-shadow: inset 0 0 0 1px #17a2b8, 0 2px 6px 0 rgba(23, 162, 184, 0.3) !important;
+  box-shadow: 0 2px 6px 0 rgba(23, 162, 184, 0.2) !important;
   outline: 0 !important;
 }
 
@@ -953,7 +953,7 @@ html:not(.layout-menu-collapsed) .bg-menu-theme .menu-inner .menu-item .menu-lin
   color: #17a2b8 !important;
 }
 input[type="file"].form-control::file-selector-button { padding: 0.4375rem 0.875rem !important; margin: -0.4375rem -0.875rem !important; margin-inline-end: 0.875rem !important; background-color: #f8f9fa !important; border-right: 1px solid #d9dee3 !important; color: #697a8d !important; transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out !important; }
-input[type="file"].form-control:focus::file-selector-button { border-right-color: #17a2b8 !important; box-shadow: inset 1px 0 0 0 #17a2b8, inset 0 1px 0 0 #17a2b8, inset 0 -1px 0 0 #17a2b8 !important; }
+input[type="file"].form-control:focus::file-selector-button { border-right-color: #17a2b8 !important; box-shadow: none !important; }
 /* Khôi phục nguyên bản Card Sneat 1.00 (Không viền sắc nét, bo góc mềm mại 0.5rem, bóng dịu nhẹ, không hiệu ứng hover) */
 .card {
   background-color: #fff !important;
@@ -1123,32 +1123,14 @@ tr:has(.multiselect.is-open) {
   transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }
 .input-group:focus-within {
-  box-shadow: 0 2px 6px 0 rgba(23, 162, 184, 0.3) !important;
+  box-shadow: 0 2px 6px 0 rgba(23, 162, 184, 0.2) !important;
   border-radius: 0.375rem !important;
 }
 .input-group:focus-within .form-control,
 .input-group:focus-within .form-select,
 .input-group:focus-within .input-group-text {
   border-color: #17a2b8 !important;
-}
-.input-group:focus-within > .form-control:first-child,
-.input-group:focus-within > .form-select:first-child,
-.input-group:focus-within > .input-group-text:first-child {
-  box-shadow: inset 1px 0 0 0 #17a2b8, inset 0 1px 0 0 #17a2b8, inset 0 -1px 0 0 #17a2b8 !important;
-}
-.input-group:focus-within > .form-control:last-child,
-.input-group:focus-within > .form-select:last-child,
-.input-group:focus-within > .input-group-text:last-child {
-  box-shadow: inset -1px 0 0 0 #17a2b8, inset 0 1px 0 0 #17a2b8, inset 0 -1px 0 0 #17a2b8 !important;
-}
-.input-group:focus-within > .form-control:not(:first-child):not(:last-child),
-.input-group:focus-within > .form-select:not(:first-child):not(:last-child),
-.input-group:focus-within > .input-group-text:not(:first-child):not(:last-child) {
-  box-shadow: inset 0 1px 0 0 #17a2b8, inset 0 -1px 0 0 #17a2b8 !important;
-}
-.input-group:focus-within > .form-control:only-child,
-.input-group:focus-within > .form-select:only-child {
-  box-shadow: inset 0 0 0 1px #17a2b8 !important;
+  box-shadow: none !important;
 }
 
 /* Merged inputs: Icon và Text liền mạch thành một khối duy nhất, tuyệt đối không có vạch ngăn */
@@ -1158,7 +1140,7 @@ tr:has(.multiselect.is-open) {
   transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out !important;
 }
 .input-group-merge:focus-within {
-  box-shadow: 0 2px 6px 0 rgba(23, 162, 184, 0.3) !important;
+  box-shadow: 0 2px 6px 0 rgba(23, 162, 184, 0.2) !important;
   border-radius: 0.375rem !important;
 }
 .input-group-merge .input-group-text {
@@ -1166,30 +1148,19 @@ tr:has(.multiselect.is-open) {
   color: #697a8d !important;
   border: 1px solid #d9dee3 !important;
   border-radius: 0.375rem;
-  box-shadow: inset 0 0 0 0 rgba(23, 162, 184, 0) !important;
+  box-shadow: none !important;
   transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out !important;
 }
 .input-group-merge .form-control {
   border: 1px solid #d9dee3 !important;
   border-radius: 0.375rem;
-  box-shadow: inset 0 0 0 0 rgba(23, 162, 184, 0) !important;
+  box-shadow: none !important;
   transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out !important;
 }
 .input-group-merge:focus-within .input-group-text,
 .input-group-merge:focus-within .form-control {
   border-color: #17a2b8 !important;
-}
-.input-group-merge:focus-within > .input-group-text:first-child,
-.input-group-merge:focus-within > .form-control:first-child {
-  box-shadow: inset 1px 0 0 0 #17a2b8, inset 0 1px 0 0 #17a2b8, inset 0 -1px 0 0 #17a2b8 !important;
-}
-.input-group-merge:focus-within > .input-group-text:last-child,
-.input-group-merge:focus-within > .form-control:last-child {
-  box-shadow: inset -1px 0 0 0 #17a2b8, inset 0 1px 0 0 #17a2b8, inset 0 -1px 0 0 #17a2b8 !important;
-}
-.input-group-merge:focus-within > .input-group-text:not(:first-child):not(:last-child),
-.input-group-merge:focus-within > .form-control:not(:first-child):not(:last-child) {
-  box-shadow: inset 0 1px 0 0 #17a2b8, inset 0 -1px 0 0 #17a2b8 !important;
+  box-shadow: none !important;
 }
 
 /* Khử hoàn toàn đường viền và bo góc ở giữa cho Icon đầu / Text sau */

@@ -21,10 +21,10 @@ body,
   min-height: 100%;
 }
 
-/* Global Client Desktop UI Scaling 93.75% (15px root chuẩn sắc nét, tách biệt Admin) */
+/* Global Client Desktop UI Scaling 81.25% (13px root chuẩn gọn sắc nét, tách biệt Admin) */
 @media (min-width: 992px) {
   html:not(.light-style) {
-    font-size: 93.75%;
+    font-size: 81.25%;
   }
 }
 

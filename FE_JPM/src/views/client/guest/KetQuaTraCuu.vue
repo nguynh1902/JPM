@@ -1161,19 +1161,19 @@ export default {
   color: #475569;
   border-radius: 8px;
   cursor: pointer;
-  transition: color 0.15s ease;
+  transition: background-color 0.15s ease, color 0.15s ease;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .custom-dropdown-list li:hover {
-  background: transparent;
+  background: #f1f5f9;
   color: #0A1128;
 }
 
 .custom-dropdown-list li.active {
-  background: rgba(248, 34, 73, 0.06);
+  background: rgba(248, 34, 73, 0.08);
   color: #f82249;
   font-weight: 600;
 }
