@@ -589,16 +589,21 @@ a.contact-item-desc:hover {
   font-family: var(--default-font, 'Roboto', sans-serif);
   background-color: #ffffff;
   border: 1px solid #e2e8f0;
-  border-radius: var(--jpm-radius-control, 8px);
-  padding: 0.7rem 0.95rem;
-  font-size: 0.9rem;
+  border-radius: var(--jpm-radius-control, 7px);
+  padding: 0.55rem 0.85rem;
+  font-size: 0.96rem;
   color: #1e293b;
   transition: all 0.2s ease;
 }
 
+.contact-field-input:not(textarea) {
+  height: var(--jpm-control-height, 37px);
+  padding: 0 12px;
+}
+
 textarea.contact-field-input {
   height: auto !important;
-  min-height: 150px !important;
+  min-height: 120px !important;
   resize: vertical;
 }
 
@@ -612,13 +617,14 @@ textarea.contact-field-input {
 .btn-contact-submit {
   font-family: var(--heading-font, 'Raleway', sans-serif);
   font-weight: 700;
-  font-size: 0.9rem;
+  font-size: 0.92rem;
   letter-spacing: 0.5px;
   background-color: var(--jpm-color-red-marine, #F82249);
   color: #ffffff;
   border: none;
-  border-radius: var(--jpm-radius-control, 8px);
-  padding: 0.78rem 2.2rem;
+  border-radius: var(--jpm-radius-control, 7px);
+  height: var(--jpm-control-height, 37px);
+  padding: 0 22px;
   box-shadow: none;
   transition: all 0.25s ease;
 }

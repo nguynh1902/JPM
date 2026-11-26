@@ -1997,11 +1997,10 @@ const formatDate = (dateStr) => {
   font-size: 0.9rem;
   font-weight: 600;
   color: #0a1128;
-  transition: color 0.15s ease;
 }
 
 .lux-modal-prod-name:hover {
-  color: var(--jpm-color-blue-electric, #0284C7);
+  color: #0a1128;
 }
 
 .lux-ext-icon {

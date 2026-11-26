@@ -269,9 +269,9 @@ export default {
 }
 
 .prefooter-btn {
-  height: 44px;
-  padding: 0 20px !important;
-  font-size: 0.875rem;
+  height: var(--jpm-control-height, 37px);
+  padding: 0 18px !important;
+  font-size: 0.92rem;
 }
 
 @media (max-width: 767.98px) {

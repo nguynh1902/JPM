@@ -437,10 +437,10 @@ export default {
 .auth-submit-btn {
   background-color: var(--jpm-color-red-marine, #F82249) !important;
   border: 1px solid var(--jpm-color-red-marine, #F82249) !important;
-  height: 44px !important;
-  min-height: 44px !important;
-  max-height: 44px !important;
-  padding: 0 16px !important;
+  height: 38px !important;
+  min-height: 38px !important;
+  max-height: 38px !important;
+  padding: 0 14px !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
@@ -517,11 +517,11 @@ input.minimal-input,
 .form-control.minimal-input {
   display: block !important;
   width: 100% !important;
-  height: 44px !important;
-  min-height: 44px !important;
-  max-height: 44px !important;
-  line-height: 42px !important;
-  padding: 0 16px !important;
+  height: 38px !important;
+  min-height: 38px !important;
+  max-height: 38px !important;
+  line-height: 36px !important;
+  padding: 0 14px !important;
   box-sizing: border-box !important;
   background: rgba(255, 255, 255, 0.08) !important;
   border: 1px solid rgba(255, 255, 255, 0.2) !important;
