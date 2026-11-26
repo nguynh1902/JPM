@@ -60,7 +60,7 @@
       <div :class="authStore.hasAnyPermission(['Thêm Phụ tùng', 'Sửa Phụ tùng']) ? 'col-md-8' : 'col-12'" class="mb-4">
         <div class="card">
           <div class="card-header border-bottom d-flex justify-content-between align-items-center">
-            <h5 class="mb-0 fw-bold text-dark">Danh sách Nhóm Phụ Tùng</h5>
+            <h5 class="mb-0 fw-bold text-dark">Danh Sách Nhóm Phụ Tùng</h5>
             <div style="width: 250px;">
               <input type="text" class="form-control form-control-sm" placeholder="Tìm kiếm mã, tên..." v-model="searchKeyword">
             </div>
@@ -68,7 +68,7 @@
 
           <div class="table-responsive text-nowrap custom-scroll " style="height: calc(100vh - 230px); min-height: 400px; overflow-y: auto;">
             <table class="table table-hover mb-0">
-              <thead style="position: sticky; top: 0; z-index: 1; background: #fff;">
+              <thead>
                 <tr>
                   <th class="text-center " style="width: 5%">STT</th>
                   <th class="" style="width: 20%">Mã Nhóm</th>

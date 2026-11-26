@@ -1380,8 +1380,8 @@ export default {
 
 .btn-jpm-submit:hover:not(:disabled) {
   transform: translateY(-1px) !important;
-  background-color: var(--jpm-btn-red-hover, #FF3B5F) !important;
-  border-color: var(--jpm-btn-red-hover, #FF3B5F) !important;
+  background-color: var(--jpm-btn-red-hover, #D9163A) !important;
+  border-color: var(--jpm-btn-red-hover, #D9163A) !important;
   box-shadow: none !important;
 }
 
@@ -1430,7 +1430,6 @@ export default {
 }
 
 .empty-cart-container:hover .empty-cart-img {
-  transform: translateY(-4px) scale(1.03);
   opacity: 1;
 }
 
@@ -1468,8 +1467,8 @@ export default {
 }
 
 .btn-empty-cart-action:hover {
-  background-color: var(--jpm-btn-red-hover, #FF3B5F) !important;
-  border-color: var(--jpm-btn-red-hover, #FF3B5F) !important;
+  background-color: var(--jpm-btn-red-hover, #D9163A) !important;
+  border-color: var(--jpm-btn-red-hover, #D9163A) !important;
   color: #ffffff !important;
   transform: translateY(-1px) !important;
   box-shadow: none !important;

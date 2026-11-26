@@ -96,11 +96,9 @@
               <div class="col-lg-5">
                 <div class="border rounded p-3 bg-light text-center h-100 d-flex flex-column justify-content-between">
                   <div class="d-flex justify-content-between align-items-center mb-2">
-                    <span class="fw-medium text-dark small">
-                      <i class="bx bx-tv me-1 text-primary"></i>Xem trước Video
-                    </span>
-                    <span v-if="previewVideoId" class="badge bg-label-success">Video ID: {{ previewVideoId }}</span>
-                    <span v-else class="badge bg-label-danger">Link không hợp lệ</span>
+                    <span class="fw-medium text-dark small">Xem trước Video</span>
+                    <span v-if="previewVideoId" class="badge badge-custom bg-pastel-success">Video ID: {{ previewVideoId }}</span>
+                    <span v-else class="badge badge-custom bg-pastel-danger">Link không hợp lệ</span>
                   </div>
 
                   <div v-if="previewVideoId" class="ratio ratio-16x9 rounded overflow-hidden shadow-sm border bg-black my-auto">
@@ -273,7 +271,7 @@
       <div class="col-12 mb-4">
         <div class="card">
           <div class="card-header border-bottom">
-            <h5 class="mb-0 fw-bold text-dark">Liên Kết Mạng XÃ Hội</h5>
+            <h5 class="mb-0 fw-bold text-dark">Liên Kết Mạng Xã Hội</h5>
           </div>
 
           <div class="card-body pt-4">
@@ -424,10 +422,8 @@
                 <div class="border rounded p-3 bg-light text-center h-100 d-flex flex-column align-items-center">
                   <!-- Tiêu đề cột xem trước -->
                   <div class="d-flex justify-content-between align-items-center w-100 mb-3 pb-2 border-bottom">
-                    <span class="fw-medium text-dark small">
-                      <i class="bx bx-qr-scan me-1 text-primary"></i>Xem trước Mã VietQR Thực Tế
-                    </span>
-                    <span class="badge bg-label-primary">{{ formData.vietqr_bank_id || 'ICB' }}</span>
+                    <span class="fw-medium text-dark small">Xem trước Mã VietQR Thực Tế</span>
+                    <span class="badge badge-custom bg-pastel-primary">{{ formData.vietqr_bank_id || 'ICB' }}</span>
                   </div>
 
                   <!-- Khung hiển thị ảnh QR tự sinh -->

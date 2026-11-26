@@ -142,6 +142,16 @@
                   v-model="searchKeyword"
                   @keyup.enter="searchParts"
                 />
+                <button
+                  v-if="searchKeyword"
+                  type="button"
+                  class="btn-clear-search"
+                  @click="searchKeyword = ''"
+                  title="Xóa từ khóa"
+                  aria-label="Xóa từ khóa"
+                >
+                  <i class="bi bi-x-circle-fill"></i>
+                </button>
               </div>
             </div>
 
@@ -972,6 +982,21 @@ export default {
 .search-input-field:focus::placeholder {
   transform: translate(5px);
   transition: all 0.25s ease;
+}
+.btn-clear-search {
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  padding: 0;
+  margin-left: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+.btn-clear-search:hover {
+  color: var(--accent-color, #f82249);
 }
 
 /* Đồng bộ chiều cao nút với ô input & JpmSelect 44px trong bộ lọc (Màu sắc, bo góc, font lấy 100% từ .btn trong main.css) */

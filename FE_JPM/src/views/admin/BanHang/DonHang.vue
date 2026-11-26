@@ -5,7 +5,7 @@
     </h4>
 
     <div class="nav-align-top mb-4">
-      <!-- SNEAT ADMIN STANDARD NAV PILLS -->
+      <!-- SNEAT ADMIN STANDARD NAV PILLS (Tinh gọn, hạn chế icon rườm rà) -->
       <ul class="nav nav-pills mb-3 gap-2 flex-wrap pt-2" style="column-gap: 0.75rem !important;" role="tablist">
         <li class="nav-item">
           <button 
@@ -16,7 +16,6 @@
             role="tab"
             title="Yêu cầu báo giá mới từ khách"
           >
-            <i class="bx bx-time-five me-1"></i>
             <span>Chờ Báo Giá</span>
             <span v-if="countPendingQuotes > 0" class="tab-count-badge ms-2">{{ countPendingQuotes }}</span>
           </button>
@@ -31,7 +30,6 @@
             role="tab"
             title="Báo giá đã gửi, đang chờ khách chốt đơn hoặc đặt cọc"
           >
-            <i class="bx bx-send me-1"></i>
             <span>Đã Báo Giá</span>
             <span v-if="countQuotedQuotes > 0" class="tab-count-badge ms-2">{{ countQuotedQuotes }}</span>
           </button>
@@ -46,7 +44,6 @@
             role="tab"
             title="Đơn hàng đã đặt cọc, đang gom phụ tùng hoặc lên đơn Nhật"
           >
-            <i class="bx bx-package me-1"></i>
             <span>Đã Cọc & Xử Lý</span>
             <span v-if="countProcessing > 0" class="tab-count-badge ms-2">{{ countProcessing }}</span>
           </button>
@@ -61,7 +58,6 @@
             role="tab"
             title="Đơn hàng đã bàn giao vận chuyển (ViettelPost / Chành xe), đang trên đường giao"
           >
-            <i class="bx bxs-truck me-1"></i>
             <span>Đang Giao</span>
             <span v-if="countShipping > 0" class="tab-count-badge ms-2">{{ countShipping }}</span>
           </button>
@@ -76,7 +72,6 @@
             role="tab"
             title="Đơn hàng hoàn tất và đối soát 100%"
           >
-            <i class="bx bx-check-circle me-1"></i>
             <span>Hoàn Thành</span>
           </button>
         </li>
@@ -90,7 +85,6 @@
             role="tab"
             title="Yêu cầu hoặc đơn hàng đã bị hủy"
           >
-            <i class="bx bx-x-circle me-1"></i>
             <span>Đã Hủy</span>
           </button>
         </li>
@@ -104,7 +98,6 @@
             role="tab"
             title="Toàn bộ báo giá và đơn hàng"
           >
-            <i class="bx bx-list-ul me-1"></i>
             <span>Tất Cả</span>
           </button>
         </li>
@@ -167,7 +160,7 @@
           <!-- Bảng dữ liệu (Table) chuẩn Admin Sneat -->
           <div class="table-responsive text-nowrap custom-scroll" style="height: calc(100vh - 270px); min-height: 400px; overflow-y: auto;">
             <table class="table table-hover mb-0">
-              <thead style="position: sticky; top: 0; z-index: 1; background: #fff;">
+              <thead>
                 <tr>
                   <th class="text-center text-uppercase" style="width: 5%">STT</th>
                   <th class="text-uppercase" style="width: 16%">Mã Giao Dịch</th>
@@ -184,7 +177,7 @@
                   <td class="text-center"><strong>{{ index + 1 }}</strong></td>
                   <td>
                     <div class="d-flex align-items-center gap-1">
-                      <span class="fw-bold text-dark">{{ item.code }}</span>
+                      <span class="fw-bold text-primary">{{ item.code }}</span>
                       <button type="button" class="btn btn-sm btn-icon p-0 text-muted" @click="copyText(item.code, 'Đã copy mã!')" title="Sao chép mã">
                         <i class="bx bx-copy" style="font-size: 0.85rem;"></i>
                       </button>
@@ -214,7 +207,7 @@
                   <td class="text-end">
                     <!-- Phân loại Đơn Hàng -->
                     <template v-if="item._type === 'order'">
-                      <span v-if="item.paid_amount > 0" class="fw-bold text-primary">{{ formatCurrency(item.paid_amount) }}</span>
+                      <span v-if="item.paid_amount > 0" class="fw-bold text-success">{{ formatCurrency(item.paid_amount) }}</span>
                       <span v-else-if="item.deposit_required > 0" class="fw-bold text-dark">{{ formatCurrency(item.deposit_required) }}</span>
                       <span v-else class="text-muted fw-bold d-block text-center">-</span>
                     </template>
@@ -222,7 +215,7 @@
                     <!-- Phân loại Báo Giá -->
                     <template v-else>
                       <span v-if="item.status === 0" class="text-muted fw-bold d-block text-center">-</span>
-                      <span v-else-if="item.da_thu > 0" class="fw-bold text-primary">{{ formatCurrency(item.da_thu) }}</span>
+                      <span v-else-if="item.da_thu > 0" class="fw-bold text-success">{{ formatCurrency(item.da_thu) }}</span>
                       <span v-else-if="item.deposit_required > 0" class="fw-bold text-dark">{{ formatCurrency(item.deposit_required) }}</span>
                       <span v-else class="text-muted fw-bold d-block text-center">-</span>
                     </template>
@@ -323,12 +316,12 @@
                 <div class="col-lg-3 col-12 mb-3 mb-lg-0 border-end d-flex flex-column">
                   <h6 class="fw-bold mb-3 text-uppercase text-primary" style="font-size: 0.75rem;">Thông tin Khách Hàng</h6>
                   <div class="mb-3">
-                    <p class="mb-1 fw-bold text-dark"><i class="bx bx-user text-primary me-2"></i>{{ selectedQuote.customer_name }}</p>
-                    <p class="mb-1 text-dark"><i class="bx bx-phone text-primary me-2"></i>{{ selectedQuote.customer_phone }}</p>
-                    <p class="mb-2 text-dark" v-if="selectedQuote.customer_email"><i class="bx bx-envelope text-primary me-2"></i>{{ selectedQuote.customer_email }}</p>
+                    <p class="mb-1 fw-bold text-dark">{{ selectedQuote.customer_name }}</p>
+                    <p class="mb-1 text-muted">{{ selectedQuote.customer_phone }}</p>
+                    <p class="mb-2 text-muted small" v-if="selectedQuote.customer_email">{{ selectedQuote.customer_email }}</p>
                     
                     <div class="mt-2">
-                      <label class="form-label text-dark small mb-1 fw-bold"><i class="bx bx-map text-primary me-1"></i>Địa Chỉ Giao Hàng:</label>
+                      <label class="form-label text-dark small mb-1 fw-bold">Địa Chỉ Giao Hàng:</label>
                       <textarea 
                         v-if="!isQuoteReadOnly"
                         class="form-control form-control-sm text-dark" 
@@ -337,7 +330,7 @@
                         placeholder="Số nhà, đường, bến tàu, chành xe..."
                       ></textarea>
                       <p v-else class="mb-0 text-dark small" style="white-space: pre-wrap;">
-                        <i class="bx bx-map text-primary me-1"></i>{{ selectedQuote.address || 'Chưa cung cấp địa chỉ' }}
+                        {{ selectedQuote.address || 'Chưa cung cấp địa chỉ' }}
                       </p>
                     </div>
                   </div>
@@ -345,7 +338,7 @@
                   <!-- Thông Tin Vận Chuyển: Khi Đang Xử Lý (status = 2) hiển thị ô nhập; Khi Đã Giao/Hoàn Thành hiển thị thông tin -->
                   <div class="mb-3 p-2 bg-light border rounded" v-if="selectedQuote.status === 2">
                     <h6 class="fw-bold mb-2 text-uppercase text-primary" style="font-size: 0.72rem;">
-                      <i class="bx bxs-truck me-1"></i>Thông Tin Vận Chuyển
+                      Thông Tin Vận Chuyển
                     </h6>
                     <div class="mb-2">
                       <label class="form-label text-dark small mb-1 fw-semibold">Đơn vị vận chuyển:</label>
@@ -370,7 +363,7 @@
                   <div class="mb-3 p-2 bg-light border rounded" v-else-if="selectedQuote.status >= 3 && (selectedQuote.ten_don_vi_van_chuyen || selectedQuote.ma_van_don)">
                     <div class="d-flex justify-content-between align-items-center mb-1">
                       <h6 class="fw-bold mb-0 text-uppercase text-primary" style="font-size: 0.72rem;">
-                        <i class="bx bxs-truck me-1"></i>Vận Chuyển
+                        Vận Chuyển
                       </h6>
                       <span class="badge bg-label-info" style="font-size: 0.65rem;">
                         {{ selectedQuote.status === 4 ? 'Đã Giao Xong' : 'Đang Vận Chuyển' }}
@@ -561,7 +554,7 @@
 
                       <div class="mb-2">
                         <label class="form-label fw-bold text-dark mb-0 text-uppercase" style="font-size: 0.75rem;">
-                          <i class="bx bx-receipt me-1 text-primary"></i>Biên Lai Chuyển Tiền
+                          Biên Lai Chuyển Tiền
                         </label>
                       </div>
 
@@ -778,11 +771,11 @@
               <div class="col-lg-3 col-12 mb-3 mb-lg-0 border-end d-flex flex-column">
                 <h6 class="fw-bold mb-3 text-uppercase text-primary" style="font-size: 0.75rem;">Thông tin Khách Hàng</h6>
                 <div class="mb-3">
-                  <p class="mb-1 fw-bold text-dark"><i class="bx bx-user text-primary me-2"></i>{{ selectedOrder.customer_name }}</p>
-                  <p class="mb-1 text-dark"><i class="bx bx-phone text-primary me-2"></i>{{ selectedOrder.customer_phone }}</p>
-                  <p class="mb-2 text-dark" v-if="selectedOrder.customer_email"><i class="bx bx-envelope text-primary me-2"></i>{{ selectedOrder.customer_email }}</p>
+                  <p class="mb-1 fw-bold text-dark">{{ selectedOrder.customer_name }}</p>
+                  <p class="mb-1 text-muted">{{ selectedOrder.customer_phone }}</p>
+                  <p class="mb-2 text-muted small" v-if="selectedOrder.customer_email">{{ selectedOrder.customer_email }}</p>
                   <div class="mt-2">
-                    <label class="form-label text-dark small mb-1 fw-bold"><i class="bx bx-map text-primary me-1"></i>Địa Chỉ Giao Hàng:</label>
+                    <label class="form-label text-dark small mb-1 fw-bold">Địa Chỉ Giao Hàng:</label>
                     <textarea 
                       v-if="!isOrderInfoReadOnly"
                       class="form-control form-control-sm text-dark" 
@@ -791,7 +784,7 @@
                       placeholder="Số nhà, đường, phường/xã, bến tàu, chành xe..."
                     ></textarea>
                     <p v-else class="mb-0 text-dark small" style="white-space: pre-wrap;">
-                      <i class="bx bx-map text-primary me-1"></i>{{ selectedOrder.address || 'Chưa có địa chỉ' }}
+                      {{ selectedOrder.address || 'Chưa có địa chỉ' }}
                     </p>
                   </div>
                 </div>
@@ -799,7 +792,7 @@
                 <!-- Thông Tin Vận Chuyển: Khi Đang Xử Lý (status = 1), hiển thị ô nhập; Khi Đang Giao / Hoàn Thành, hiển thị thông tin -->
                 <div class="mb-3 p-2 bg-light border rounded" v-if="selectedOrder.status === 1">
                   <h6 class="fw-bold mb-2 text-uppercase text-primary" style="font-size: 0.72rem;">
-                    <i class="bx bxs-truck me-1"></i>Thông Tin Vận Chuyển
+                    Thông Tin Vận Chuyển
                   </h6>
                   <div class="mb-2">
                     <label class="form-label text-dark small mb-1 fw-semibold">Đơn vị vận chuyển:</label>
@@ -824,7 +817,7 @@
                 <div class="mb-3 p-2 bg-light border rounded" v-else-if="selectedOrder.status >= 2 || selectedOrder.ten_don_vi_van_chuyen || selectedOrder.ma_van_don">
                   <div class="d-flex justify-content-between align-items-center mb-1">
                     <h6 class="fw-bold mb-0 text-uppercase text-primary" style="font-size: 0.72rem;">
-                      <i class="bx bxs-truck me-1"></i>Vận Chuyển
+                      Vận Chuyển
                     </h6>
                     <span class="badge bg-label-info" style="font-size: 0.65rem;">
                       {{ selectedOrder.status === 3 ? 'Đã Giao Xong' : 'Đang Vận Chuyển' }}
@@ -998,7 +991,7 @@
 
                     <div class="mb-2">
                       <label class="form-label fw-bold text-dark mb-0 text-uppercase" style="font-size: 0.75rem;">
-                        <i class="bx bx-receipt me-1 text-primary"></i>Biên Lai Chuyển Tiền
+                        Biên Lai Chuyển Tiền
                       </label>
                     </div>
 
@@ -1241,7 +1234,7 @@
         <div class="modal-content border-0 shadow-lg">
           <div class="modal-header bg-info text-white py-3">
             <h5 class="modal-title fw-bold text-white mb-0">
-              <i class="bx bxs-truck me-2"></i>Gửi Thông Tin Chành Xe & Xuất Bến (Zalo ZNS / SMS)
+              Gửi Thông Tin Chành Xe & Xuất Bến (Zalo ZNS / SMS)
             </h5>
             <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
@@ -1315,7 +1308,7 @@
         <div class="modal-content border-0 shadow-lg">
           <div class="modal-header bg-primary text-white py-3">
             <h5 class="modal-title fw-bold text-white mb-0">
-              <i class="bx bxs-truck me-2"></i>Cập Nhật Vận Đơn Giao Hàng
+              Cập Nhật Vận Đơn Giao Hàng
             </h5>
             <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
@@ -1438,7 +1431,7 @@
 
                     <!-- Tên khách -->
                     <div class="mb-2">
-                      <label class="form-label text-dark small mb-1 fw-bold"><i class="bx bx-user text-primary me-1"></i>Họ Tên Khách Hàng <span class="text-danger">*</span></label>
+                      <label class="form-label text-dark small mb-1 fw-bold">Họ Tên Khách Hàng <span class="text-danger">*</span></label>
                       <input 
                         type="text" 
                         class="form-control form-control-sm text-dark fw-bold" 
@@ -1450,7 +1443,7 @@
 
                     <!-- SĐT -->
                     <div class="mb-2">
-                      <label class="form-label text-dark small mb-1 fw-bold"><i class="bx bx-phone text-primary me-1"></i>Số Điện Thoại <span class="text-danger">*</span></label>
+                      <label class="form-label text-dark small mb-1 fw-bold">Số Điện Thoại <span class="text-danger">*</span></label>
                       <input 
                         type="text" 
                         class="form-control form-control-sm text-dark" 
@@ -1462,7 +1455,7 @@
 
                     <!-- Email -->
                     <div class="mb-2">
-                      <label class="form-label text-dark small mb-1"><i class="bx bx-envelope text-primary me-1"></i>Email (nếu có):</label>
+                      <label class="form-label text-dark small mb-1">Email (nếu có):</label>
                       <input 
                         type="email" 
                         class="form-control form-control-sm text-dark" 
@@ -1472,7 +1465,7 @@
                     </div>
                     
                     <div class="mt-2">
-                      <label class="form-label text-dark small mb-1 fw-bold"><i class="bx bx-map text-primary me-1"></i>Địa Chỉ Giao Hàng:</label>
+                      <label class="form-label text-dark small mb-1 fw-bold">Địa Chỉ Giao Hàng:</label>
                       <textarea 
                         class="form-control form-control-sm text-dark" 
                         rows="2"
@@ -1485,7 +1478,7 @@
                   <!-- Thông Tin Vận Chuyển: Y HỆT quoteModal -->
                   <div class="mb-3 p-2 bg-light border rounded">
                     <h6 class="fw-bold mb-2 text-uppercase text-primary" style="font-size: 0.72rem;">
-                      <i class="bx bxs-truck me-1"></i>Thông Tin Vận Chuyển
+                      Thông Tin Vận Chuyển
                     </h6>
                     <div class="mb-2">
                       <label class="form-label text-dark small mb-1 fw-semibold">Đơn vị vận chuyển:</label>
@@ -1713,7 +1706,7 @@
 
                       <div class="mb-2">
                         <label class="form-label fw-bold text-dark mb-0 text-uppercase" style="font-size: 0.75rem;">
-                          <i class="bx bx-receipt me-1 text-primary"></i>Biên Lai Chuyển Tiền
+                          Biên Lai Chuyển Tiền
                         </label>
                       </div>
 

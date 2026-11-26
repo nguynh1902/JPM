@@ -408,15 +408,14 @@ const addToCart = (item, qty = 1) => {
   user-select: none;
 }
 
-/* Hai nút thao tác dạng icon 36x36px đồng bộ 100% với VatTuThuongMua */
-/* Nút Tra Phụ Tùng: Outline màu xanh Primary (#0d6efd) y hệt btn-cart-icon */
+/* Hai nút thao tác dạng icon 36x36px chuẩn JPM Luxury Outline Navy */
 .btn-search-icon {
   width: 36px;
   height: 36px;
   border-radius: var(--jpm-radius-control, 8px);
   background-color: #ffffff;
-  border: 1.5px solid #0d6efd;
-  color: #0d6efd;
+  border: 1px solid #cbd5e1;
+  color: var(--jpm-color-navy-dark, #0A1128);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -426,8 +425,8 @@ const addToCart = (item, qty = 1) => {
 }
 
 .btn-search-icon:hover {
-  background-color: #0d6efd;
-  border-color: #0d6efd;
+  background-color: var(--jpm-color-navy-dark, #0A1128);
+  border-color: var(--jpm-color-navy-dark, #0A1128);
   color: #ffffff;
   transform: translateY(-1px);
   box-shadow: none !important;

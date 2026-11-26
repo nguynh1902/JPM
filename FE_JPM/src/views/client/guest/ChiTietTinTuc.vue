@@ -173,7 +173,7 @@
               </button>
 
               <!-- Huy hiệu số đếm & ngữ cảnh media (Góc dưới bên phải) -->
-              <div class="hero-counter-badge position-absolute bottom-0 end-0 m-3 px-3 py-1 rounded-pill d-flex align-items-center gap-1 shadow-sm">
+              <div class="hero-counter-badge position-absolute bottom-0 end-0 m-3 px-3 py-1 rounded-2 d-flex align-items-center gap-1 shadow-sm">
                 <template v-if="currentMedia.type === 'video'">
                   <i class="bi bi-play-circle-fill text-danger"></i>
                   <span>Video thực tế (1 / {{ heroMediaList.length }})</span>
@@ -425,10 +425,10 @@
 
         </div>
 
-        <!-- 5. RELATED BLOGS SECTION (CHUẨN HÓA ĐỒNG BỘ 100% THEO THẺ CỬA HÀNG & JPM DESIGN SYSTEM) -->
+        <!-- 5. RELATED BLOGS SECTION (ĐỒNG BỘ 100% EDITORIAL CARD CỦA TINTUC.VUE & TRANGCHU.VUE) -->
         <div v-if="relatedArticles && relatedArticles.length > 0" class="related-blogs-section mt-5 pt-5 border-top bg-white">
           <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-2">
-            <h4 class="fw-bold mb-0 text-capitalize" style="font-size: 1.25rem;">
+            <h4 class="jpm-section-heading">
               Bài viết liên quan
             </h4>
             <router-link
@@ -445,24 +445,22 @@
               v-for="rel in relatedArticles"
               :key="rel.id"
             >
-              <article class="card h-100 related-blog-card product-card jpm-card position-relative overflow-hidden">
-                <!-- 1. Ảnh tràn mép trên (Edge-to-edge), không padding bao quanh -->
-                <div class="card-img-wrapper position-relative overflow-hidden bg-light d-flex align-items-center justify-content-center">
+              <article class="related-editorial-card position-relative d-flex flex-column h-100">
+                <!-- 1. Ảnh Editorial bo tròn đều 4 góc 12px (chuẩn DEC-01 & TinTuc.vue) -->
+                <div class="related-thumb-wrap position-relative overflow-hidden mb-3 bg-light">
                   <router-link :to="`/tin-tuc/${rel.id}`" class="d-block w-100 h-100">
                     <img
                       :src="getImageUrl(rel.thumbnail) || fallback"
                       :alt="rel.title"
-                      class="card-img-top w-100 transition-transform card-img-product"
-                      style="aspect-ratio: 16 / 10; object-fit: cover;"
+                      class="w-100 h-100 related-thumb-img"
                       @error="$event.target.src = fallback"
                       loading="lazy"
                     >
                   </router-link>
                 </div>
 
-                <!-- 2. Thân card (padding p-3) -->
-                <div class="card-body text-start p-3 d-flex flex-column bg-white">
-                  <!-- Tầng 1: Chuyên mục chữ đỏ Marine (#F82249) chuẩn bài viết Tin tức JPM -->
+                <!-- 2. Nội dung Editorial không đóng khung hộp (thoáng, sắc nét) -->
+                <div class="d-flex flex-column flex-grow-1">
                   <div
                     class="news-category-label mb-1 text-truncate"
                     :title="rel.category"
@@ -470,15 +468,13 @@
                     {{ rel.category }}
                   </div>
 
-                  <!-- Tầng 2: Tiêu đề bài viết - Font Raleway, màu Deep Navy #0A1128 -->
-                  <h5 class="card-title mb-2">
+                  <h5 class="related-editorial-title mb-2">
                     <router-link :to="`/tin-tuc/${rel.id}`" class="text-decoration-none stretched-link text-truncate-2">
                       {{ rel.title }}
                     </router-link>
                   </h5>
 
-                  <!-- Tầng 3: Ngày đăng kèm icon lịch sạch sẽ -->
-                  <div class="mt-auto pt-2 news-meta">
+                  <div class="mt-auto pt-1 news-meta">
                     <i class="bi bi-calendar3"></i>
                     <span>{{ formatDate(rel.created_at) }}</span>
                   </div>
@@ -1240,93 +1236,77 @@ export default {
   border-radius: var(--jpm-radius-card, 12px);
 }
 
-/* ── RELATED BLOGS SECTION (CHUẨN HÓA ĐỒNG BỘ THẺ CỬA HÀNG PRODUCT CARD) ── */
+/* ── RELATED BLOGS SECTION (ĐỒNG BỘ 100% EDITORIAL CARD CỦA TINTUC.VUE & TRANGCHU.VUE) ── */
 .related-blogs-section {
   background-color: #ffffff !important;
 }
 
-.related-blog-card {
-  border-radius: var(--jpm-radius-card, 12px) !important;
-  background-color: #ffffff !important;
-  border: 1px solid #e2e8f0 !important;
-  box-shadow: var(--jpm-shadow-sm, 0 1px 3px rgba(10, 17, 40, 0.05)) !important;
-  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s ease !important;
-  padding: 0 !important;
+.related-section-title {
+  font-family: var(--heading-font, 'Inter', sans-serif);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--jpm-color-navy-dark, #0A1128);
+  letter-spacing: -0.015em;
 }
 
-.related-blog-card:hover {
-  transform: translateY(-4px) !important;
-  box-shadow: var(--jpm-shadow-md, 0 4px 12px -2px rgba(10, 17, 40, 0.08)) !important;
-  border-color: var(--jpm-neutral-300, #CBD5E1) !important;
+.related-editorial-card {
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.related-blog-card .card-img-wrapper {
-  background-color: var(--jpm-neutral-50, #F8FAFC);
-  border-top-left-radius: var(--jpm-radius-card, 12px);
-  border-top-right-radius: var(--jpm-radius-card, 12px);
+.related-thumb-wrap {
+  aspect-ratio: 16 / 10;
+  border-radius: var(--jpm-radius-card, 12px);
+  background-color: #f1f5f9;
 }
 
-.related-blog-card .card-img-product {
-  transition: transform 0.35s ease;
+.related-thumb-img {
+  object-fit: cover;
 }
 
-.related-blog-card:hover .card-img-product {
-  transform: scale(1.04);
-}
-
-.related-blog-card .news-category-label,
-.related-blog-card .product-category {
-  font-family: var(--heading-font, 'Raleway', sans-serif) !important;
-  font-size: 0.74rem;
+.related-editorial-card .news-category-label {
+  font-family: var(--heading-font, 'Inter', sans-serif);
+  font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 0.6px;
   text-transform: uppercase;
-  color: var(--jpm-color-red-marine, #F82249) !important;
+  color: var(--jpm-color-red-marine, #F82249);
   line-height: 1.3;
 }
 
-.related-blog-card .news-meta {
-  font-family: var(--default-font, 'Roboto', sans-serif);
+.related-editorial-title {
+  font-family: var(--heading-font, 'Inter', sans-serif);
+  font-size: 0.96rem;
+  font-weight: 700;
+  line-height: 1.45;
+  color: var(--jpm-color-navy-dark, #0A1128);
+  margin: 0;
+}
+
+.related-editorial-title a {
+  color: var(--jpm-color-navy-dark, #0A1128);
+}
+
+.related-editorial-card:hover .related-editorial-title a {
+  color: var(--jpm-color-navy-dark, #0A1128);
+}
+
+.related-editorial-card .news-meta {
+  font-family: var(--default-font, 'Inter', sans-serif);
   font-size: 0.8rem;
   font-weight: 500;
   color: #64748b;
   line-height: 1.3;
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: 5px;
 }
-.related-blog-card .news-meta i {
+
+.related-editorial-card .news-meta i {
   color: inherit;
   font-size: 0.82rem;
 }
 
-.related-blog-card .card-title {
-  font-family: var(--heading-font, 'Raleway', sans-serif);
-  font-size: 0.96rem;
-  font-weight: 700;
-  line-height: 1.45;
-  height: 2.9em;
-  margin-bottom: 0.25rem;
-}
-
-.related-blog-card .card-title a {
-  color: var(--jpm-color-navy-dark, #0A1128);
-  transition: color 0.15s ease;
-}
-
-.related-blog-card:hover .card-title a {
-  color: var(--jpm-color-navy-dark, #0A1128) !important;
-}
-
 /* ── HOVER UTILITIES ── */
-.hover-zoom {
-  transition: transform 0.55s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-.related-blog-card:hover .hover-zoom,
-.gallery-thumb:hover .hover-zoom {
-  transform: scale(1.05);
-}
-
 .hover-title-navy,
 .hover-text-danger {
   color: var(--jpm-color-navy-dark, #0A1128) !important;

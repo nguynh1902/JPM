@@ -191,44 +191,47 @@
                 </div>
 
                 <!-- CẢNH BÁO MÃ THAY THẾ (SUPERSEDED / REPLACED BY) -->
-                <div v-if="phuTung.ma_thay_thes && phuTung.ma_thay_thes.length > 0" class="alert alert-warning border border-warning-subtle rounded-3 p-3 mb-4 shadow-sm">
-                  <div class="d-flex align-items-start gap-2">
-                    <i class="bi bi-arrow-repeat text-warning fs-4 flex-shrink-0"></i>
-                    <div>
-                      <div class="fw-bold text-dark mb-1" style="font-size: 0.95rem;">Lưu ý mã thay thế (Superseded Part):</div>
-                      <div class="small text-secondary mb-2">Mã <strong class="text-dark">{{ phuTung.ma_phu_tung }}</strong> đã được nhà sản xuất nâng cấp và thay thế bằng mã mới:</div>
-                      <div class="d-flex flex-wrap gap-2">
-                        <router-link 
-                          v-for="tt in phuTung.ma_thay_thes" 
-                          :key="tt.id" 
-                          :to="'/chi-tiet-phu-tung/' + (tt.phu_tung_moi?.ma_phu_tung || '')"
-                          class="btn btn-sm btn-outline-danger fw-semibold px-3 py-1 bg-white"
-                        >
-                          <i class="bi bi-box-arrow-up-right me-1"></i>
-                          {{ tt.phu_tung_moi?.ma_phu_tung }} ({{ tt.phu_tung_moi?.ten_phu_tung }})
-                        </router-link>
-                      </div>
+                <div v-if="phuTung.ma_thay_thes && phuTung.ma_thay_thes.length > 0" class="lux-callout callout-amber">
+                  <div class="lux-callout-icon">
+                    <i class="bi bi-arrow-repeat"></i>
+                  </div>
+                  <div class="lux-callout-body">
+                    <strong>Lưu ý mã thay thế (Superseded Part)</strong>
+                    <p class="mb-2">
+                      Mã <code class="lux-inline-code">{{ phuTung.ma_phu_tung }}</code> đã được nhà sản xuất nâng cấp và thay thế bằng mã mới:
+                    </p>
+                    <div class="d-flex flex-wrap gap-2">
+                      <router-link
+                        v-for="tt in phuTung.ma_thay_thes"
+                        :key="tt.id"
+                        :to="'/chi-tiet-phu-tung/' + (tt.phu_tung_moi?.ma_phu_tung || '')"
+                        class="btn btn-outline-secondary lux-btn-sm"
+                      >
+                        <i class="bi bi-box-arrow-up-right"></i>
+                        <span>{{ tt.phu_tung_moi?.ma_phu_tung }} ({{ tt.phu_tung_moi?.ten_phu_tung }})</span>
+                      </router-link>
                     </div>
                   </div>
                 </div>
 
                 <!-- MÃ THAY THẾ CHO CÁC MÃ CŨ (INTERCHANGE / REPLACES) -->
-                <div v-if="phuTung.thay_the_chos && phuTung.thay_the_chos.length > 0" class="alert alert-info border border-info-subtle rounded-3 p-3 mb-4 shadow-sm">
-                  <div class="d-flex align-items-start gap-2">
-                    <i class="bi bi-shield-check text-primary fs-4 flex-shrink-0"></i>
-                    <div>
-                      <div class="fw-bold text-dark mb-1" style="font-size: 0.95rem;">Mã thay thế tương đương cho phụ tùng cũ:</div>
-                      <div class="small text-secondary mb-2">Phụ tùng này thay thế chuẩn OEM cho các mã cũ đã ngưng sản xuất:</div>
-                      <div class="d-flex flex-wrap gap-2">
-                        <span 
-                          v-for="tc in phuTung.thay_the_chos" 
-                          :key="tc.id" 
-                          class="badge bg-white text-dark border px-2 py-1 font-monospace"
-                          style="font-size: 0.85rem;"
-                        >
-                          {{ tc.phu_tung_cu?.ma_phu_tung }} ({{ tc.phu_tung_cu?.ten_phu_tung }})
-                        </span>
-                      </div>
+                <div v-if="phuTung.thay_the_chos && phuTung.thay_the_chos.length > 0" class="lux-callout callout-navy">
+                  <div class="lux-callout-icon">
+                    <i class="bi bi-shield-check"></i>
+                  </div>
+                  <div class="lux-callout-body">
+                    <strong>Mã thay thế tương đương cho phụ tùng cũ</strong>
+                    <p class="mb-2">
+                      Phụ tùng này thay thế chuẩn OEM cho các mã cũ đã ngưng sản xuất:
+                    </p>
+                    <div class="d-flex flex-wrap gap-2">
+                      <code
+                        v-for="tc in phuTung.thay_the_chos"
+                        :key="tc.id"
+                        class="lux-inline-code"
+                      >
+                        {{ tc.phu_tung_cu?.ma_phu_tung }} ({{ tc.phu_tung_cu?.ten_phu_tung }})
+                      </code>
                     </div>
                   </div>
                 </div>
@@ -347,7 +350,7 @@
                                <div class="col-md-6 mb-3" v-for="(model, mIdx) in group.models" :key="mIdx">
                                   <span class="text-uppercase text-secondary fw-bold" style="font-size: 0.85rem;">{{ model.name }}</span>
                                   <span class="mx-2 text-muted">—</span>
-                                  <span class="text-primary fw-medium" style="font-size: 0.9rem;">
+                                  <span class="fw-medium text-dark">
                                     <template v-for="(year, yIdx) in model.years" :key="yIdx">
                                       <span class="badge bg-light text-dark border me-1">{{ year }}</span>
                                     </template>
@@ -391,7 +394,7 @@
         <!-- PHỤ TÙNG LIÊN QUAN -->
         <div class="mb-5" data-aos="fade-up" v-if="relatedParts && relatedParts.length > 0">
           <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-2">
-            <h4 class="fw-bold mb-0 text-capitalize" style="font-size: 1.25rem;">
+            <h4 class="jpm-section-heading">
               Những sản phẩm khác
             </h4>
             <router-link
@@ -411,8 +414,8 @@
         <!-- CÂU HỎI THƯỜNG GẶP -->
         <div class="mb-5" data-aos="fade-up">
           <div class="mb-4 border-bottom pb-2">
-            <h4 class="fw-bold text-uppercase mb-0" style="color: var(--heading-color);">
-              Câu Hỏi Thường Gặp
+            <h4 class="jpm-section-heading">
+              Câu hỏi thường gặp
             </h4>
           </div>
           
@@ -539,8 +542,8 @@
                                 <h6 class="mb-1 fw-bold text-dark">{{ model.name }}</h6>
                                 <small class="text-muted"><span class="badge bg-light text-dark border me-1">{{ model.brand }}</span> Năm: {{ model.years }}</small>
                             </div>
-                            <div class="d-flex align-items-center text-primary fw-bold" style="font-size: 0.85rem;">
-                                TẠO MÁY <i class="bi bi-plus-circle-fill ms-2 fs-5"></i>
+                            <div class="d-flex align-items-center text-danger fw-semibold small">
+                                Tạo máy <i class="bi bi-plus-circle-fill ms-2 fs-5"></i>
                             </div>
                         </button>
                     </div>
@@ -1130,11 +1133,6 @@ watch(compatibleModels, (models) => {
   height: 100%;
   object-fit: cover;
   display: block;
-  transition: transform 0.4s ease;
-}
-
-.canvas-image-wrapper:hover .canvas-img {
-  transform: scale(1.04);
 }
 
 .canvas-placeholder {
@@ -1203,7 +1201,7 @@ watch(compatibleModels, (models) => {
   font-size: 0.75rem;
   font-weight: 600;
   padding: 2px 8px;
-  border-radius: 10px;
+  border-radius: var(--jpm-radius-badge, 6px);
   letter-spacing: 0.05em;
   z-index: 9;
   pointer-events: none;
@@ -1264,7 +1262,7 @@ watch(compatibleModels, (models) => {
 .thumb-film-item {
   width: 52px;
   height: 52px;
-  border-radius: 7px;
+  border-radius: var(--jpm-radius-control, 8px);
   background: #ffffff;
   border: 1.5px solid #e2e8f0;
   box-shadow: none;
@@ -1426,7 +1424,7 @@ watch(compatibleModels, (models) => {
 }
 
 .product-sku-info .sku-code {
-  color: #0d6efd !important;
+  color: var(--jpm-color-blue-electric, #0284C7) !important;
   font-size: 1.15rem !important;
   font-weight: 700 !important;
   letter-spacing: 0.03em;
@@ -1574,8 +1572,8 @@ watch(compatibleModels, (models) => {
 }
 
 .btn-product-cart:hover {
-  background-color: var(--jpm-btn-red-hover, #FF3B5F) !important;
-  border-color: var(--jpm-btn-red-hover, #FF3B5F) !important;
+  background-color: var(--jpm-btn-red-hover, #D9163A) !important;
+  border-color: var(--jpm-btn-red-hover, #D9163A) !important;
   color: #ffffff !important;
   transform: translateY(-1px) !important;
   box-shadow: none !important;
@@ -1588,14 +1586,14 @@ watch(compatibleModels, (models) => {
   box-shadow: none !important;
 }
 
-/* Garage Action Button 44px (Chuẩn Outline Blue #0d6efd Nổi 3D) */
+/* Garage Action Button 44px (Chuẩn JPM Luxury Outline Navy) */
 .btn-product-garage {
   height: 44px;
   min-width: 120px;
   background-color: #ffffff;
-  color: #0d6efd !important;
-  border: 1.5px solid #0d6efd !important;
-  border-radius: 8px;
+  color: var(--jpm-color-navy-dark, #0A1128) !important;
+  border: 1px solid #cbd5e1 !important;
+  border-radius: var(--jpm-radius-control, 8px);
   font-size: 0.88rem;
   font-weight: 600;
   display: inline-flex;
@@ -1609,8 +1607,8 @@ watch(compatibleModels, (models) => {
 }
 
 .btn-product-garage:hover {
-  background-color: #0d6efd !important;
-  border-color: #0d6efd !important;
+  background-color: var(--jpm-color-navy-dark, #0A1128) !important;
+  border-color: var(--jpm-color-navy-dark, #0A1128) !important;
   color: #ffffff !important;
   transform: translateY(-1px) !important;
   box-shadow: none !important;
@@ -1622,7 +1620,7 @@ watch(compatibleModels, (models) => {
 }
 
 .btn-product-garage:active {
-  background-color: #0b5ed7 !important;
+  background-color: #101E42 !important;
   border-color: #0a58ca !important;
   color: #ffffff !important;
   transform: translateY(0) !important;

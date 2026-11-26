@@ -23,12 +23,12 @@
   --jpm-color-gold-marine: #D97706;
 
   /* Button Interaction States: Hover (sáng tươi +6-8%) / Active (đậm khi nhấn) */
-  --jpm-btn-red-hover: #FF3B5F;
-  --jpm-btn-red-active: #D9163A;
+  --jpm-btn-red-hover: #D9163A;
+  --jpm-btn-red-active: #B91230;
   --jpm-btn-navy-hover: #1B2852;
   --jpm-btn-navy-active: #060B1A;
-  --jpm-btn-blue-hover: #267DFF;
-  --jpm-btn-blue-active: #0B5ED7;
+  --jpm-btn-blue-hover: #1B2852;
+  --jpm-btn-blue-active: #060B1A;
   --jpm-btn-green-hover: #1E9E63;
   --jpm-btn-green-active: #146C43;
 
@@ -116,7 +116,7 @@
   --bs-border-radius: var(--jpm-radius-card, 12px);
   --bs-border-radius-sm: var(--jpm-radius-badge, 6px);
   --bs-border-radius-lg: var(--jpm-radius-card, 12px);
-  --bs-border-radius-xl: 16px;
+  --bs-border-radius-xl: var(--jpm-radius-card, 12px);
   --bs-card-border-radius: var(--jpm-radius-card, 12px);
   --bs-card-inner-border-radius: var(--jpm-radius-card, 12px);
   --bs-btn-border-radius: var(--jpm-radius-control, 8px);
@@ -218,10 +218,7 @@
 .list-item-hover:hover {
   transform: translateY(-2px);
 }
-.group-hover:hover .img-zoom-hover img,
-.list-item-hover:hover .img-zoom-hover img {
-  transform: scale(1.05);
-}
+
 .transition-transform {
   transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
 }
@@ -250,14 +247,22 @@ body {
 }
 
 a {
-  color: var(--accent-color);
+  color: inherit;
   text-decoration: none;
-  transition: 0.3s;
+  transition: color 0.2s ease;
 }
 
 a:hover {
-  color: color-mix(in srgb, var(--accent-color), transparent 25%);
+  color: inherit;
   text-decoration: none;
+}
+
+/* Cấm tuyệt đối hiệu ứng đổi chữ tiêu đề/tên thẻ sang màu đỏ khi hover */
+h1 a, h2 a, h3 a, h4 a, h5 a, h6 a,
+h1 a:hover, h2 a:hover, h3 a:hover, h4 a:hover, h5 a:hover, h6 a:hover,
+article:hover h1 a, article:hover h2 a, article:hover h3 a, article:hover h4 a, article:hover h5 a, article:hover h6 a,
+.card:hover .card-title, .card:hover .card-title a {
+  color: var(--heading-color, #0A1128);
 }
 
 h1,
@@ -1448,7 +1453,7 @@ section,
 }
 
 .speakers .member .member-info-content h4 a:hover {
-  color: var(--accent-color);
+  color: inherit;
 }
 
 .speakers .member .member-info-content span {
@@ -1665,9 +1670,7 @@ section,
   transition: all ease-in-out 0.4s;
 }
 
-.venue .venue-gallery:hover img {
-  transform: scale(1.1);
-}
+
 
 /*--------------------------------------------------------------
 # Hotels Section
@@ -1703,7 +1706,7 @@ section,
 }
 
 .hotels .card a:hover {
-  color: var(--accent-color);
+  color: var(--heading-color);
 }
 
 .hotels .card .stars {
@@ -1723,9 +1726,7 @@ section,
   font-size: 15px;
 }
 
-.hotels .card:hover .card-img img {
-  transform: scale(1.1);
-}
+
 
 /*--------------------------------------------------------------
 # Gallery Section
@@ -2147,7 +2148,7 @@ section,
   border: 0;
   padding: 10px 30px;
   transition: 0.4s;
-  border-radius: 50px;
+  border-radius: var(--jpm-radius-control, 8px);
 }
 
 .contact .php-email-form button[type=submit]:hover {
@@ -2229,9 +2230,7 @@ section,
   object-fit: cover;
   transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
-.news-overlay-card:hover img {
-  transform: scale(1.05);
-}
+
 .news-overlay-card .overlay {
   position: absolute;
   bottom: 0; left: 0; right: 0;
@@ -2307,8 +2306,8 @@ section,
   box-shadow: none !important;
 }
 .btn-danger:hover, .btn-jpm:hover {
-  background-color: var(--jpm-btn-red-hover, #FF3B5F) !important;
-  border-color: var(--jpm-btn-red-hover, #FF3B5F) !important;
+  background-color: var(--jpm-btn-red-hover, #D9163A) !important;
+  border-color: var(--jpm-btn-red-hover, #D9163A) !important;
   color: #ffffff !important;
   box-shadow: none !important;
   transform: translateY(-1px) !important;
@@ -2323,8 +2322,8 @@ section,
 /* 2. Primary Blue Button (Thêm mới - Bootstrap Standard Blue #0d6efd / DEC-05) */
 .btn-blue-primary,
 .btn-primary-blue {
-  background-color: #0d6efd !important;
-  border: 1px solid #0d6efd !important;
+  background-color: var(--jpm-color-navy-dark, #0A1128) !important;
+  border: 1px solid var(--jpm-color-navy-dark, #0A1128) !important;
   color: #ffffff !important;
   font-family: var(--default-font, 'Roboto', sans-serif);
   font-weight: 600;
@@ -2427,8 +2426,8 @@ section,
 }
 
 .btn-action-primary:hover:not(:disabled) {
-  background-color: var(--jpm-btn-red-hover, #FF3B5F) !important;
-  border-color: var(--jpm-btn-red-hover, #FF3B5F) !important;
+  background-color: var(--jpm-btn-red-hover, #D9163A) !important;
+  border-color: var(--jpm-btn-red-hover, #D9163A) !important;
   color: #ffffff !important;
   box-shadow: none !important;
   transform: translateY(-1px) !important;
@@ -2942,10 +2941,7 @@ button.jpm-more-link:hover i {
   transform: translateY(-8px);
   box-shadow: 0 16px 40px rgba(0,0,0,0.1) !important;
 }
-.product-card:hover .card-img-wrapper img,
-.premium-product-card:hover .card-img-wrapper img {
-  transform: scale(1.08);
-}
+
 .product-card:hover .card-title a,
 .product-card:hover .card-title span,
 .premium-product-card:hover .card-title a,
@@ -3151,7 +3147,7 @@ button.jpm-more-link:hover i {
   align-items: center;
   padding: 6px 16px;
   background: rgba(248, 34, 73, 0.08);
-  border-radius: 50px;
+  border-radius: var(--jpm-radius-badge, 6px);
   font-size: 13px;
   font-weight: 700;
   color: #f82249;
@@ -3340,13 +3336,13 @@ input[type="number"] {
 .news-list-item { transition: all 0.3s ease; }
 .news-list-item:last-child { border-bottom: none !important; }
 .news-list-item:hover .news-title a { color: var(--heading-color) !important; }
-.news-list-item:hover .flex-shrink-0 img { transform: scale(1.08); transition: transform 0.4s ease; }
+
 
 .hover-danger { transition: color 0.3s ease; }
 .hover-danger:hover { color: var(--accent-color, #f82249) !important; }
 
 .feature-news-item img { transition: transform 0.4s ease; }
-.feature-news-item:hover img { transform: scale(1.05); }
+
 
 .btn-view-all { font-size: 0.8rem; letter-spacing: 1px; transition: all 0.3s ease; }
 
@@ -3533,10 +3529,7 @@ a.footer-contact-value:hover {
   border-radius: 12px 12px 0 0 !important;
   transition: transform 0.5s ease; 
 }
-.product-card:hover .card-img-wrapper img,
-.premium-product-card:hover .card-img-wrapper img { 
-  transform: scale(1.05); 
-}
+
 
 /* Khôi phục padding cho chữ bên trong card có viền */
 .premium-product-card .card-body {
@@ -3577,8 +3570,9 @@ a.footer-contact-value:hover {
 }
 
 .product-sku .sku-code {
+  font-family: var(--jpm-font-mono, 'Roboto Mono', monospace) !important;
   font-weight: 700 !important;
-  color: #0d6efd !important;
+  color: var(--jpm-color-blue-electric, #0284C7) !important;
   letter-spacing: 0.2px !important;
   min-width: 0;
 }
@@ -4022,8 +4016,8 @@ a.footer-contact-value:hover {
 }
 
 .btn-danger-action:hover:not(:disabled) {
-  background-color: var(--jpm-btn-red-hover, #FF3B5F) !important;
-  border-color: var(--jpm-btn-red-hover, #FF3B5F) !important;
+  background-color: var(--jpm-btn-red-hover, #D9163A) !important;
+  border-color: var(--jpm-btn-red-hover, #D9163A) !important;
   color: #ffffff !important;
   transform: translateY(-1px) !important;
   box-shadow: none !important;
@@ -4099,8 +4093,8 @@ a.footer-contact-value:hover {
   transition: all 0.2s ease !important;
 }
 .index-page .btn-danger:hover, .index-page .btn-jpm:hover, .index-page .btn-getstarted:hover {
-  background-color: var(--jpm-btn-red-hover, #FF3B5F) !important;
-  border-color: var(--jpm-btn-red-hover, #FF3B5F) !important;
+  background-color: var(--jpm-btn-red-hover, #D9163A) !important;
+  border-color: var(--jpm-btn-red-hover, #D9163A) !important;
   color: #ffffff !important;
   transform: translateY(-1px) !important;
   box-shadow: none !important;
@@ -4267,8 +4261,8 @@ a.footer-contact-value:hover {
 /* 4. Blue Buttons (Bootstrap Blue #0d6efd) */
 .index-page .btn-blue-primary,
 .index-page .btn-primary-blue {
-  background-color: #0d6efd !important;
-  border: 1px solid #0d6efd !important;
+  background-color: var(--jpm-color-navy-dark, #0A1128) !important;
+  border: 1px solid var(--jpm-color-navy-dark, #0A1128) !important;
   color: #ffffff !important;
   font-weight: 600 !important;
   transition: all 0.2s ease !important;
@@ -4291,14 +4285,14 @@ a.footer-contact-value:hover {
 
 .index-page .btn-outline-blue {
   background-color: #ffffff !important;
-  border: 1.5px solid #0d6efd !important;
-  color: #0d6efd !important;
+  border: 1px solid #cbd5e1 !important;
+  color: var(--jpm-color-navy-dark, #0A1128) !important;
   font-weight: 600 !important;
   transition: all 0.2s ease !important;
 }
 .index-page .btn-outline-blue:hover {
-  background-color: #0d6efd !important;
-  border-color: #0d6efd !important;
+  background-color: var(--jpm-color-navy-dark, #0A1128) !important;
+  border-color: var(--jpm-color-navy-dark, #0A1128) !important;
   color: #ffffff !important;
   transform: translateY(-1px) !important;
   box-shadow: none !important;
@@ -4556,9 +4550,9 @@ a.footer-contact-value:hover {
   gap: 6px;
 }
 .btn-jpm-primary:hover {
-  background-color: var(--jpm-btn-red-hover, #FF3B5F);
+  background-color: var(--jpm-btn-red-hover, #D9163A);
   color: #ffffff;
-  border-color: var(--jpm-btn-red-hover, #FF3B5F);
+  border-color: var(--jpm-btn-red-hover, #D9163A);
   transform: translateY(-1px);
   box-shadow: none !important;
 }
@@ -4684,8 +4678,8 @@ a.footer-contact-value:hover {
   box-shadow: none !important;
 }
 .btn-danger:hover {
-  background-color: var(--jpm-btn-red-hover, #FF3B5F) !important;
-  border-color: var(--jpm-btn-red-hover, #FF3B5F) !important;
+  background-color: var(--jpm-btn-red-hover, #D9163A) !important;
+  border-color: var(--jpm-btn-red-hover, #D9163A) !important;
   color: #ffffff !important;
   box-shadow: none !important;
   transform: translateY(-1px) !important;
@@ -4740,14 +4734,14 @@ a.footer-contact-value:hover {
 }
 
 .btn-outline-blue {
-  color: #0d6efd;
-  border-color: #0d6efd;
+  color: var(--jpm-color-navy-dark, #0A1128);
+  border-color: #cbd5e1;
   background-color: #ffffff;
   transition: all 0.2s ease !important;
 }
 .btn-outline-blue:hover {
-  background-color: #0d6efd !important;
-  border-color: #0d6efd !important;
+  background-color: var(--jpm-color-navy-dark, #0A1128) !important;
+  border-color: var(--jpm-color-navy-dark, #0A1128) !important;
   color: #ffffff !important;
   transform: translateY(-1px) !important;
   box-shadow: none !important;
@@ -4876,8 +4870,8 @@ a.btn-shopee-primary {
 .btn-shopee-primary:hover,
 button.btn-shopee-primary:hover,
 a.btn-shopee-primary:hover {
-  background-color: var(--jpm-btn-red-hover, #FF3B5F) !important;
-  border-color: var(--jpm-btn-red-hover, #FF3B5F) !important;
+  background-color: var(--jpm-btn-red-hover, #D9163A) !important;
+  border-color: var(--jpm-btn-red-hover, #D9163A) !important;
   color: #ffffff !important;
   box-shadow: none !important;
   transform: translateY(-1px) !important;
@@ -5211,7 +5205,7 @@ a.btn-shopee-outline:hover {
 
   /* Compact Filter Sidebar */
   .catalog-sidebar-card {
-    border-radius: 10px !important;
+    border-radius: var(--jpm-radius-card, 12px) !important;
   }
   .catalog-sidebar-header {
     padding: 10px 14px !important;
@@ -5826,4 +5820,16 @@ a.btn-shopee-outline:hover {
     box-shadow: none !important;
     padding: 0 !important;
   }
+}
+
+/* Chuẩn tiêu đề khối nội dung toàn Client (Sentence-case, đồng nhất 20px H3 Inter #0A1128) */
+.jpm-section-heading {
+  font-family: var(--heading-font, 'Inter', sans-serif) !important;
+  font-size: 1.25rem !important;
+  font-weight: 700 !important;
+  color: var(--jpm-color-navy-dark, #0A1128) !important;
+  letter-spacing: -0.015em !important;
+  line-height: 1.35 !important;
+  text-transform: none !important;
+  margin: 0 !important;
 }

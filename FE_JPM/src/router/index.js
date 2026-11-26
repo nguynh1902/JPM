@@ -60,6 +60,12 @@ const routes = [
     meta: { layout: "client" },
   },
   {
+    path: "/dieu-khoan-chinh-sach",
+    alias: ["/dieu-khoan", "/chinh-sach"],
+    component: () => import("../views/client/guest/DieuKhoanChinhSach.vue"),
+    meta: { layout: "client" },
+  },
+  {
     path: "/bao-gia/:token",
     alias: ["/tra-cuu-bao-gia/:token"],
     component: () => import("../views/client/guest/TraCuuBaoGia.vue"),

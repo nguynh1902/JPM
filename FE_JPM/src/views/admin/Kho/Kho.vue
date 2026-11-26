@@ -64,7 +64,7 @@
       <div :class="authStore.hasPermission('Quản lý Danh sách kho') ? 'col-md-8' : 'col-12'" class="mb-4">
         <div class="card">
           <div class="card-header border-bottom d-flex justify-content-between align-items-center">
-            <h5 class="mb-0 fw-bold text-dark">Danh sách Kho Bãi</h5>
+            <h5 class="mb-0 fw-bold text-dark">Danh Sách Kho Bãi</h5>
             <div style="width: 250px;">
               <input type="text" class="form-control form-control-sm" placeholder="Tìm kiếm tên kho, địa chỉ..." v-model="searchKeyword">
             </div>
@@ -72,7 +72,7 @@
 
           <div class="table-responsive text-nowrap custom-scroll" style="height: calc(100vh - 230px); min-height: 400px; overflow-y: auto;">
             <table class="table table-hover mb-0">
-              <thead style="position: sticky; top: 0; z-index: 1; background: #fff;">
+              <thead>
                 <tr>
                   <th class="text-center" style="width: 5%">STT</th>
                   <th style="width: 30%">Tên Kho</th>

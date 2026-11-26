@@ -313,7 +313,7 @@
         <!-- SẢN PHẨM CÙNG DANH MỤC -->
         <div class="mb-5" data-aos="fade-up" v-if="relatedProducts && relatedProducts.length > 0">
           <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-2">
-            <h4 class="fw-bold mb-0 text-capitalize" style="font-size: 1.25rem;">
+            <h4 class="jpm-section-heading">
               Những sản phẩm khác
             </h4>
             <router-link
@@ -333,8 +333,8 @@
         <!-- CÂU HỎI THƯỜNG GẶP -->
         <div class="mb-5" data-aos="fade-up">
           <div class="mb-4 border-bottom pb-2">
-            <h4 class="fw-bold text-uppercase mb-0" style="color: var(--heading-color);">
-              Câu Hỏi Thường Gặp
+            <h4 class="jpm-section-heading">
+              Câu hỏi thường gặp
             </h4>
           </div>
           
@@ -793,11 +793,6 @@ onMounted(() => {
   height: 100%;
   object-fit: cover;
   display: block;
-  transition: transform 0.4s ease;
-}
-
-.canvas-image-wrapper:hover .canvas-img {
-  transform: scale(1.04);
 }
 
 .canvas-placeholder {
@@ -866,7 +861,7 @@ onMounted(() => {
   font-size: 0.75rem;
   font-weight: 600;
   padding: 2px 8px;
-  border-radius: 10px;
+  border-radius: var(--jpm-radius-badge, 6px);
   letter-spacing: 0.05em;
   z-index: 9;
   pointer-events: none;
@@ -927,7 +922,7 @@ onMounted(() => {
 .thumb-film-item {
   width: 52px;
   height: 52px;
-  border-radius: 7px;
+  border-radius: var(--jpm-radius-control, 8px);
   background: #ffffff;
   border: 1.5px solid #e2e8f0;
   box-shadow: none;
@@ -1068,7 +1063,7 @@ onMounted(() => {
 }
 
 .product-sku-info .sku-code {
-  color: #0d6efd !important;
+  color: var(--jpm-color-blue-electric, #0284C7) !important;
   font-size: 1.15rem !important;
   font-weight: 700 !important;
   letter-spacing: 0.03em;
@@ -1216,8 +1211,8 @@ onMounted(() => {
 }
 
 .btn-product-cart:hover {
-  background-color: var(--jpm-btn-red-hover, #FF3B5F) !important;
-  border-color: var(--jpm-btn-red-hover, #FF3B5F) !important;
+  background-color: var(--jpm-btn-red-hover, #D9163A) !important;
+  border-color: var(--jpm-btn-red-hover, #D9163A) !important;
   color: #ffffff !important;
   transform: translateY(-1px) !important;
   box-shadow: none !important;
@@ -1230,14 +1225,14 @@ onMounted(() => {
   box-shadow: none !important;
 }
 
-/* Secondary Wishlist Button 44px (Chuẩn Outline Blue #0d6efd) */
+/* Secondary Wishlist Button 44px (Chuẩn JPM Luxury Outline Navy) */
 .btn-product-garage {
   height: 44px;
   min-width: 120px;
   background-color: #ffffff;
-  color: #0d6efd !important;
-  border: 1.5px solid #0d6efd !important;
-  border-radius: 8px;
+  color: var(--jpm-color-navy-dark, #0A1128) !important;
+  border: 1px solid #cbd5e1 !important;
+  border-radius: var(--jpm-radius-control, 8px);
   font-size: 0.88rem;
   font-weight: 600;
   display: inline-flex;
@@ -1251,8 +1246,8 @@ onMounted(() => {
 }
 
 .btn-product-garage:hover {
-  background-color: #0d6efd !important;
-  border-color: #0d6efd !important;
+  background-color: var(--jpm-color-navy-dark, #0A1128) !important;
+  border-color: var(--jpm-color-navy-dark, #0A1128) !important;
   color: #ffffff !important;
   transform: translateY(-1px) !important;
   box-shadow: none !important;

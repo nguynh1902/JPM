@@ -255,14 +255,6 @@ function handleRequestQuote() {
   border-top-right-radius: var(--jpm-radius-card, 12px);
 }
 
-.card-img-product {
-  transition: transform 0.35s ease;
-}
-
-.product-card:hover .card-img-product {
-  transform: scale(1.04);
-}
-
 .product-category {
   font-size: 0.72rem;
   font-weight: 700;
@@ -307,7 +299,7 @@ function handleRequestQuote() {
 
 .sku-code {
   font-family: var(--jpm-font-mono, 'Roboto Mono', monospace);
-  color: #0d6efd !important;
+  color: var(--jpm-color-blue-electric, #0284C7) !important;
   font-weight: 700;
   min-width: 0;
 }

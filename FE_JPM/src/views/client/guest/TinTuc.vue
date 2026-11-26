@@ -531,7 +531,7 @@ export default {
         excerpt: art.summary || '',
         views: Number(art.views || 0).toLocaleString('vi-VN'),
         avLetter: (art.author || 'J').charAt(0).toUpperCase(),
-        author: art.author || 'Admin JPM',
+        author: art.author || 'JPM Marine',
         youtube_url: ytUrl,
         youtube_id: ytId,
         hasVideo,
@@ -793,7 +793,7 @@ export default {
   font-size: 0.72rem;
   font-weight: 700;
   padding: 1px 7px;
-  border-radius: 999px;
+  border-radius: var(--jpm-radius-badge, 6px);
   background-color: #f1f5f9;
   color: #64748b;
   line-height: 1.2;
@@ -1033,12 +1033,6 @@ a.group-hover,
 a.group-hover:hover {
   color: inherit !important;
   text-decoration: none !important;
-}
-.transition-transform {
-  transition: transform 0.45s ease;
-}
-.group-hover:hover .transition-transform {
-  transform: scale(1.05);
 }
 .hero-title-hover {
   color: var(--heading-color, #0A1128) !important;

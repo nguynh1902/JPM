@@ -67,7 +67,7 @@
         style="height: calc(100vh - 230px); min-height: 400px; overflow-y: auto"
       >
         <table class="table table-hover">
-          <thead style="position: sticky; top: 0; z-index: 1; background: #fff;">
+          <thead>
             <tr>
               <th class="text-center" style="width: 5%">STT</th>
               <th class="text-center" style="width: 8%">Hình ảnh</th>

@@ -298,7 +298,7 @@
                   <th class="text-uppercase" style="width: 22%">Mã & Trạng Thái</th>
                   <th class="text-uppercase" style="width: 30%">Khách Hàng</th>
                   <th class="text-uppercase" style="width: 18%">Thời Gian</th>
-                  <th class="text-center text-uppercase" style="width: 15%">Số Tiền</th>
+                  <th class="text-end text-uppercase" style="width: 15%">Số Tiền</th>
                 </tr>
               </thead>
               <tbody>
@@ -322,7 +322,7 @@
                     </span>
                   </td>
                   <td>
-                    <span class="fw-bold text-dark d-block" style="font-size: 0.85rem;">{{ item.code }}</span>
+                    <span class="fw-bold text-primary d-block" style="font-size: 0.85rem;">{{ item.code }}</span>
                     <span class="badge badge-custom mt-1" :class="item.status_class">
                       {{ item.status_label }}
                     </span>
@@ -330,18 +330,18 @@
                   <td>
                     <span class="fw-bold text-dark d-block mb-1" style="font-size: 0.85rem;">{{ item.customer_name }}</span>
                     <div class="text-muted" style="font-size: 0.8rem;">
-                      <i class="bx bx-phone text-primary me-1"></i>{{ item.customer_phone }}
+                      {{ item.customer_phone }}
                     </div>
                   </td>
                   <td>
                     <span class="d-block text-dark fw-medium mb-1" style="font-size: 0.82rem;">
-                      <i class="bx bx-calendar-alt text-primary me-1"></i>{{ item.created_at }}
+                      {{ item.created_at }}
                     </span>
                     <span class="text-muted" style="font-size: 0.75rem;">
-                      <i class="bx bx-time-five me-1"></i>{{ item.time_ago }}
+                      {{ item.time_ago }}
                     </span>
                   </td>
-                  <td class="text-center">
+                  <td class="text-end">
                     <span class="fw-bold text-danger" style="font-size: 0.9rem;">
                       {{ formatCurrency(item.amount) }}
                     </span>

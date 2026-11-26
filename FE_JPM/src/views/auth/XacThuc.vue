@@ -161,7 +161,7 @@
                 <div class="form-check mb-4 mt-3 ps-0 d-flex align-items-center gap-2">
                   <input class="form-check-input minimal-checkbox m-0" type="checkbox" id="terms" required>
                   <label class="form-check-label text-white m-0" for="terms" style="font-size: 0.85rem; font-weight: 400; opacity: 0.8;">
-                    Tôi đồng ý với <router-link to="/ho-tro" target="_blank" class="text-white text-decoration-underline" style="font-weight: 500;">Điều khoản & Chính sách</router-link>
+                    Tôi đồng ý với <router-link to="/dieu-khoan-chinh-sach" target="_blank" class="text-white text-decoration-underline" style="font-weight: 500;">Điều khoản & Chính sách</router-link>
                   </label>
                 </div>
 
@@ -579,7 +579,7 @@ input.minimal-input:focus::placeholder,
 .minimal-checkbox {
   background-color: rgba(255, 255, 255, 0.08) !important;
   border: 1px solid rgba(255, 255, 255, 0.4) !important;
-  border-radius: 4px !important;
+  border-radius: var(--jpm-radius-badge, 6px) !important;
   cursor: pointer;
   width: 17px !important;
   height: 17px !important;

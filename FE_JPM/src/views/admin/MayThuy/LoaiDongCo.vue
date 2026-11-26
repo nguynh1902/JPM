@@ -52,7 +52,7 @@
       <div :class="showForm ? 'col-md-8' : 'col-md-12'" class="mb-4">
         <div class="card">
           <div class="card-header border-bottom d-flex justify-content-between align-items-center">
-            <h5 class="mb-0 fw-bold text-dark">Danh sách Loại Động Cơ</h5>
+            <h5 class="mb-0 fw-bold text-dark">Danh Sách Loại Động Cơ</h5>
             <div style="width: 250px;">
               <input type="text" class="form-control form-control-sm" placeholder="Tìm kiếm mã, tên..." v-model="searchQuery">
             </div>

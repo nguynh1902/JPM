@@ -964,13 +964,12 @@ const confirmManualPaid = async (order) => {
   const transferContent = vietQrData.value?.transfer_content || ('COC ' + order.code);
   
   const result = await Swal.fire({
-    title: 'Xác Nhận Đã Chuyển Khoản Cọc?',
-    html: `Quý khách đã chuyển cọc số tiền <b>${formatPrice(depositAmt)}₫</b> với nội dung <code>${transferContent}</code>?<br><small class="text-muted">Kỹ thuật viên JPM sẽ kiểm tra thông báo ngân hàng và cập nhật đơn ngay.</small>`,
+    title: 'Xác nhận đã chuyển khoản cọc?',
+    html: `Bạn đã chuyển cọc số tiền <b>${formatPrice(depositAmt)}₫</b> với nội dung <code>${transferContent}</code>?<br><small class="text-muted">Kỹ thuật viên JPM sẽ kiểm tra thông báo ngân hàng và cập nhật đơn ngay.</small>`,
     icon: 'question',
     showCancelButton: true,
     confirmButtonText: 'Tôi đã chuyển cọc',
-    cancelButtonText: 'Đóng',
-    confirmButtonColor: '#16a34a'
+    cancelButtonText: 'Đóng'
   });
 
   if (result.isConfirmed) {
@@ -983,16 +982,15 @@ const confirmManualPaid = async (order) => {
     activeQrOrderCode.value = null;
     vietQrData.value = null;
 
-    const msg = `Chào JPM Marine, tôi vừa chuyển cọc ${formatPrice(depositAmt)}₫ cho đơn #${order.code}. Nhờ Kỹ thuật viên kiểm tra ngân hàng và lên đơn đặt hàng Nhật giúp tôi nhé!`;
+    const msg = `Chào JPM Marine, tôi vừa chuyển cọc ${formatPrice(depositAmt)}₫ cho đơn #${order.code}. Nhờ kỹ thuật viên kiểm tra ngân hàng và lên đơn giúp tôi.`;
 
     Swal.fire({
       icon: 'success',
-      title: 'Đã Tiếp Nhận Thông Tin Cọc!',
-      text: `JPM Marine đã ghi nhận thông báo chuyển cọc của Quý khách cho đơn #${order.code}. Kỹ thuật viên sẽ kiểm tra tài khoản ngân hàng và cập nhật tiến độ đặt hàng Nhật.`,
+      title: 'Đã tiếp nhận thông tin cọc',
+      text: `JPM Marine đã ghi nhận thông báo chuyển cọc cho đơn #${order.code}. Kỹ thuật viên sẽ đối soát ngân hàng và cập nhật tiến độ ngay.`,
       showCancelButton: true,
-      confirmButtonText: '<i class="bi bi-chat-dots me-1"></i> Gửi Biên Lai Qua Zalo',
-      cancelButtonText: 'Đóng',
-      confirmButtonColor: '#0068ff'
+      confirmButtonText: '<i class="bi bi-chat-dots me-1"></i> Gửi biên lai qua Zalo',
+      cancelButtonText: 'Đóng'
     }).then((res) => {
       if (res.isConfirmed) {
         window.open(buildZaloUrl(msg), '_blank', 'noopener,noreferrer');
@@ -1006,13 +1004,12 @@ const confirmManualPaid = async (order) => {
 
 const handleAcceptQuote = async (order) => {
   const result = await Swal.fire({
-    title: 'Đồng Ý Chốt Đơn?',
+    title: 'Đồng ý chốt đơn?',
     text: 'Bạn đồng ý với mức báo giá này và chốt đặt hàng?',
     icon: 'question',
     showCancelButton: true,
     confirmButtonText: 'Đồng ý chốt đơn',
-    cancelButtonText: 'Đóng',
-    confirmButtonColor: '#16a34a'
+    cancelButtonText: 'Đóng'
   });
 
   if (result.isConfirmed && order.token) {
@@ -1604,7 +1601,7 @@ const formatDate = (dateStr) => {
 }
 
 .lux-modal-item-left:hover .lux-modal-prod-name {
-  color: var(--jpm-color-red-marine, #f82249);
+  color: var(--jpm-color-navy-dark, #0A1128);
 }
 
 .lux-ext-icon {

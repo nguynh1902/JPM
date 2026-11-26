@@ -8,7 +8,7 @@
       <div class="col-md-4 mb-4" v-if="authStore.hasAnyPermission(['Thêm Sản phẩm', 'Sửa Sản phẩm'])">
         <div class="card">
           <div class="card-header border-bottom">
-            <h5 class="mb-0 fw-medium text-dark">{{ isEditMode ? "Cập Nhật Danh Mục" : "Thêm Mới Danh Mục" }}</h5>
+            <h5 class="mb-0 fw-bold text-dark">{{ isEditMode ? "Cập Nhật Danh Mục" : "Thêm Mới Danh Mục" }}</h5>
           </div>
           <div class="card-body pt-4">
             <form @submit.prevent="saveData">
@@ -43,14 +43,14 @@
       <div :class="authStore.hasAnyPermission(['Thêm Sản phẩm', 'Sửa Sản phẩm']) ? 'col-md-8' : 'col-12'" class="mb-4">
         <div class="card">
           <div class="card-header border-bottom d-flex justify-content-between align-items-center">
-            <h5 class="mb-0 fw-medium text-dark">Danh Sách Danh Mục</h5>
+            <h5 class="mb-0 fw-bold text-dark">Danh Sách Danh Mục</h5>
             <div style="width: 250px;">
               <input type="text" class="form-control form-control-sm" placeholder="Tìm kiếm mã, tên..." v-model="searchKeyword">
             </div>
           </div>
           <div class="table-responsive text-nowrap custom-scroll" style="height: calc(100vh - 230px); min-height: 400px; overflow-y: auto;">
             <table class="table table-hover mb-0">
-              <thead style="position: sticky; top: 0; z-index: 1; background: #fff;">
+              <thead>
                 <tr>
                   <th class="text-center text-dark fw-bold" style="width: 5%">STT</th>
                   <th class="text-dark fw-bold" style="width: 20%">Mã Danh Mục</th>

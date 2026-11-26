@@ -282,10 +282,10 @@ const addToQuote = (sanPham) => {
   line-height: 1.35;
 }
 
-/* Mã sản phẩm: Màu xanh primary #0d6efd đậm, rõ ràng, nằm trước tên sản phẩm */
+/* Mã sản phẩm: Chuẩn Marine Tech Blue (#0284C7) */
 .vt-sku-code {
   font-family: var(--jpm-font-mono, 'Roboto Mono', monospace);
-  color: #0d6efd !important;
+  color: var(--jpm-color-blue-electric, #0284C7) !important;
   font-size: 0.85rem;
   font-weight: 700;
   letter-spacing: 0.3px;
@@ -296,15 +296,14 @@ const addToQuote = (sanPham) => {
   /* Giá tiền nằm ngay bên trái dưới dòng mã + tên */
 }
 
-/* Hai nút thao tác dạng icon 36x36px đồng bộ 100% - Phương án 1 */
-/* Nút Thêm Giỏ Hàng: Outline màu xanh Primary (#0d6efd) đồng bộ với mã sản phẩm */
+/* Hai nút thao tác dạng icon 36x36px chuẩn JPM Luxury Outline Navy */
 .btn-cart-icon {
   width: 36px;
   height: 36px;
   border-radius: var(--jpm-radius-control, 8px);
   background-color: #ffffff;
-  border: 1.5px solid #0d6efd;
-  color: #0d6efd;
+  border: 1px solid #cbd5e1;
+  color: var(--jpm-color-navy-dark, #0A1128);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -314,8 +313,8 @@ const addToQuote = (sanPham) => {
 }
 
 .btn-cart-icon:hover {
-  background-color: #0d6efd;
-  border-color: #0d6efd;
+  background-color: var(--jpm-color-navy-dark, #0A1128);
+  border-color: var(--jpm-color-navy-dark, #0A1128);
   color: #ffffff;
   transform: translateY(-1px);
   box-shadow: none !important;

@@ -133,7 +133,7 @@
               <div v-else-if="groupedCategories.length > 0">
                 <div v-for="cat in groupedCategories" :key="cat.id" class="mb-5">
                   <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-2">
-                    <h4 class="fw-bold mb-0 text-capitalize" style="font-size: 1.25rem;">{{ cat.ten_danh_muc }}</h4>
+                    <h4 class="jpm-section-heading">{{ cat.ten_danh_muc }}</h4>
                     <button type="button" class="jpm-more-link" @click="viewCategory(cat.slug)">
                       Xem thêm <i class="bi bi-arrow-right"></i>
                     </button>
@@ -159,12 +159,12 @@
             <div v-else>
               <!-- Thanh điều khiển: Tiêu đề + Dropdown Sắp xếp -->
               <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 pb-2 border-bottom gap-2">
-                <h4 class="fw-bold mb-0 text-capitalize" style="font-size: 1.25rem;">
+                <h4 class="jpm-section-heading">
                   <template v-if="selectedCategories.length === 1 && !searchKeyword">
                     {{ getCategoryName(selectedCategories[0]) }}
                   </template>
                   <template v-else-if="selectedCategories.length > 1 && !searchKeyword">
-                    Bộ Lọc ({{ selectedCategories.length }} danh mục)
+                    Bộ lọc ({{ selectedCategories.length }} danh mục)
                   </template>
                   <template v-else-if="searchKeyword">
                     Kết quả: "{{ searchKeyword }}"

@@ -122,8 +122,8 @@
   border-radius: 0.375rem;
   line-height: 1;
   background-color: #ffffff !important;
-  color: #ff0000 !important;
-  border: 1px solid rgba(255, 0, 0, 0.25);
+  color: #ff3e1d !important;
+  border: 1px solid rgba(255, 62, 29, 0.25);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
   transition: all 0.2s ease;
 }
@@ -132,14 +132,14 @@
 .nav-pills .nav-link .tab-count-badge,
 .nav-pills .nav-link:not(.active) .tab-count-badge {
   background-color: #ffffff !important;
-  color: #ff0000 !important;
-  border-color: rgba(255, 0, 0, 0.25) !important;
+  color: #ff3e1d !important;
+  border-color: rgba(255, 62, 29, 0.25) !important;
 }
 
 /* Nổi bật khi Tab Active */
 .nav-pills .nav-link.active .tab-count-badge {
   background-color: #ffffff !important;
-  color: #ff0000 !important;
+  color: #ff3e1d !important;
   border-color: #ffffff !important;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
@@ -432,6 +432,21 @@ html.light-style {
   padding: 0.45rem 0.85rem;
 }
 
+#admin-layout .table > tbody > tr > td {
+  vertical-align: middle;
+}
+
+#admin-layout .table .text-end {
+  font-variant-numeric: tabular-nums;
+}
+
+#admin-layout .table-responsive.custom-scroll thead {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background-color: #ffffff;
+}
+
 #admin-layout .table thead th {
   font-size: 0.72rem !important;
   letter-spacing: 0.5px;
@@ -467,8 +482,7 @@ html.light-style {
 }
 
 /* Chuẩn hóa Input File theo mẫu gốc Sneat 1.0.0 (không vỡ layout, không lệch viền, không gạch chân) */
-#admin-layout .form-control[type="file"],
-.form-control[type="file"] {
+#admin-layout .form-control[type="file"] {
   min-height: auto !important;
   height: auto !important;
   padding: 0 0.875rem 0 0 !important;
@@ -476,9 +490,7 @@ html.light-style {
 }
 
 #admin-layout .form-control[type="file"]::file-selector-button,
-.form-control[type="file"]::file-selector-button,
-#admin-layout .form-control[type="file"]::-webkit-file-upload-button,
-.form-control[type="file"]::-webkit-file-upload-button {
+#admin-layout .form-control[type="file"]::-webkit-file-upload-button {
   padding: 0.4375rem 0.875rem !important;
   margin: 0 !important;
   margin-inline-end: 0.875rem !important;
@@ -494,16 +506,12 @@ html.light-style {
 }
 
 #admin-layout .form-control[type="file"]:hover::file-selector-button,
-.form-control[type="file"]:hover::file-selector-button,
-#admin-layout .form-control[type="file"]:hover::-webkit-file-upload-button,
-.form-control[type="file"]:hover::-webkit-file-upload-button {
+#admin-layout .form-control[type="file"]:hover::-webkit-file-upload-button {
   background-color: #f2f2f2 !important;
 }
 
 #admin-layout .form-control[type="file"]:focus::file-selector-button,
-.form-control[type="file"]:focus::file-selector-button,
-#admin-layout .form-control[type="file"]:focus::-webkit-file-upload-button,
-.form-control[type="file"]:focus::-webkit-file-upload-button {
+#admin-layout .form-control[type="file"]:focus::-webkit-file-upload-button {
   box-shadow: none !important;
   border-color: inherit !important;
 }
@@ -540,7 +548,7 @@ html.light-style {
   box-shadow: none !important;
   transition: all 0.2s ease-in-out !important;
   transform: none !important;
-  margin: 0 !important;
+  margin-left: auto !important;
 }
 
 .modal .btn-close:hover,

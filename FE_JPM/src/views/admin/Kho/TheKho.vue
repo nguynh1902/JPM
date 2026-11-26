@@ -70,7 +70,7 @@
       <!-- Bảng dữ liệu giao dịch cuộn toàn bộ chuẩn TonKho.vue & PhuTung.vue -->
       <div class="table-responsive text-nowrap custom-scroll" style="height: calc(100vh - 270px); min-height: 400px; overflow-y: auto;">
         <table class="table table-hover mb-0">
-          <thead style="position: sticky; top: 0; z-index: 1; background: #fff;">
+          <thead>
             <tr>
               <th class="text-center text-uppercase" style="width: 5%">STT</th>
               <th class="text-uppercase" style="width: 15%">Ngày Giao Dịch</th>

@@ -83,7 +83,7 @@
       <!-- Bảng Dữ Liệu chuẩn DonHang.vue -->
       <div class="table-responsive text-nowrap custom-scroll" style="height: calc(100vh - 290px); min-height: 420px; overflow-y: auto;">
         <table class="table table-hover align-middle mb-0">
-          <thead style="position: sticky; top: 0; z-index: 2; background: #fff;">
+          <thead>
             <tr>
               <th class="text-center text-uppercase" style="width: 5%">STT</th>
               <th class="text-uppercase" style="width: 14%">Thời Gian</th>
@@ -134,13 +134,13 @@
                     </span>
                   </div>
                   <div>
-                    <span class="fw-bold text-primary d-block mb-0" style="font-size: 0.9rem;">{{ item.user_name }}</span>
+                    <span class="fw-bold text-dark d-block mb-0" style="font-size: 0.9rem;">{{ item.user_name }}</span>
                     <span class="text-muted text-capitalize" style="font-size: 0.78rem;">{{ item.role }}</span>
                   </div>
                 </div>
               </td>
               <td class="text-center">
-                <span class="badge" :class="getActionBadgeClass(item.action)" style="width: 105px; display: inline-block; text-align: center; font-weight: 600; font-size: 0.75rem; letter-spacing: 0.5px; padding: 0.45rem 0.5rem;">
+                <span class="badge badge-custom" :class="getActionBadgeClass(item.action)">
                   {{ getActionLabel(item.action) }}
                 </span>
               </td>
@@ -265,11 +265,11 @@ import { getImageUrl } from '../../../utils/imageUrl';
 
 const getActionBadgeClass = (action) => {
   switch (action) {
-    case 'LOGIN': return 'bg-label-primary';
-    case 'CREATE': return 'bg-label-success';
-    case 'UPDATE': return 'bg-label-warning';
-    case 'DELETE': return 'bg-label-danger';
-    default: return 'bg-label-secondary';
+    case 'LOGIN': return 'bg-pastel-primary';
+    case 'CREATE': return 'bg-pastel-success';
+    case 'UPDATE': return 'bg-pastel-warning';
+    case 'DELETE': return 'bg-pastel-danger';
+    default: return 'bg-pastel-secondary';
   }
 };
 
@@ -283,17 +283,3 @@ const getActionLabel = (action) => {
   }
 };
 </script>
-
-<style scoped>
-.custom-scroll::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-.custom-scroll::-webkit-scrollbar-thumb {
-  background: #d9dee3;
-  border-radius: 10px;
-}
-.custom-scroll::-webkit-scrollbar-track {
-  background: transparent;
-}
-</style>

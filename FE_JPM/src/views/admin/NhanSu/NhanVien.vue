@@ -4,7 +4,7 @@
 
     <div class="card">
       <div class="card-header border-bottom">
-        <h5 class="mb-0 fw-bold text-dark">Danh sách Nhân Viên</h5>
+        <h5 class="mb-0 fw-bold text-dark">Danh Sách Nhân Viên</h5>
       </div>
 
       <div class="card-body pt-3 pb-3">

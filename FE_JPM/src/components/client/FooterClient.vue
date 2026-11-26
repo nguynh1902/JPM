@@ -138,8 +138,11 @@
               <li class="mb-3 p-0">
                 <router-link :to="{ path: '/ho-tro', query: { faq: 'bao-hanh' }, hash: '#faq-section' }" @click="scrollToHash('#faq-section')" class="footer-link">Chính sách bảo hành & Đổi trả</router-link>
               </li>
-              <li class="mb-0 p-0">
+              <li class="mb-3 p-0">
                 <router-link :to="{ path: '/ho-tro', query: { faq: 'van-chuyen' }, hash: '#faq-section' }" @click="scrollToHash('#faq-section')" class="footer-link">Vận chuyển & Giao nhận</router-link>
+              </li>
+              <li class="mb-0 p-0">
+                <router-link to="/dieu-khoan-chinh-sach" class="footer-link">Điều khoản & Chính sách</router-link>
               </li>
             </ul>
           </div>

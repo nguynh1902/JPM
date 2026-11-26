@@ -6,11 +6,20 @@
     <section class="catalog-content-section pb-5 inner-page-section">
       <div class="container">
 
-        <!-- Header chuẩn Giỏ Hàng -->
+        <!-- Header chuẩn Giỏ Hàng + Logo hãng chính hãng -->
         <div class="row mb-4">
-          <div class="col-12" data-aos="fade-down">
-            <h2 class="jpm-page-title">Tra Cứu Phụ Tùng <span class="text-danger">{{ brandName }}</span></h2>
-            <p class="text-muted">Lựa chọn loại động cơ, năm sản xuất và mã lực để tìm kiếm phụ tùng chính xác nhất.</p>
+          <div class="col-12 d-flex flex-wrap align-items-center justify-content-between gap-3" data-aos="fade-down">
+            <div>
+              <h2 class="jpm-page-title mb-1">Tra Cứu Phụ Tùng <span class="text-danger">{{ brandName }}</span></h2>
+              <p class="text-muted mb-0">Lựa chọn loại động cơ, năm sản xuất và mã lực để tìm kiếm phụ tùng chính xác nhất.</p>
+            </div>
+            <img
+              v-if="brandLogo"
+              :src="brandLogo"
+              :alt="brandName"
+              class="brand-header-logo d-none d-sm-block"
+              @error="$event.target.style.display = 'none'"
+            />
           </div>
         </div>
         <!-- Skeleton Loading khi đang tải dữ liệu -->
@@ -129,6 +138,7 @@
                       v-model="selectedHp"
                       :options="hpOptions"
                       placeholder="Tất cả Mã Lực (HP)"
+                      all-option-label="Tất cả Mã Lực (HP)"
                       value-key="value"
                       label-key="label"
                     />
@@ -140,6 +150,7 @@
                       v-model="selectedStroke"
                       :options="strokeOptions"
                       placeholder="Tất cả Loại Thì"
+                      all-option-label="Tất cả Loại Thì"
                       value-key="value"
                       label-key="label"
                     />
@@ -151,6 +162,7 @@
                       v-model="selectedNam"
                       :options="yearOptions"
                       placeholder="Tất cả Năm"
+                      all-option-label="Tất cả Năm"
                       value-key="value"
                       label-key="label"
                     />
@@ -215,7 +227,7 @@
                           </router-link>
                         </td>
                         <td class="th-hp text-center">
-                          <span v-if="model.hp" class="spec-text">{{ model.hp }} HP</span>
+                          <span v-if="model.hp" class="spec-text spec-hp">{{ model.hp }} HP</span>
                           <span v-else class="text-muted">-</span>
                         </td>
                         <td class="th-stroke text-center">
@@ -792,8 +804,16 @@ const filteredModels = computed(() => {
   color: #0A1128 !important;
 }
 
+.brand-header-logo {
+  width: clamp(120px, 14vw, 175px);
+  max-height: 60px;
+  height: auto;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
 .model-name {
-  font-family: var(--default-font, 'Roboto', sans-serif);
+  font-family: var(--default-font, 'Inter', sans-serif);
   font-weight: 700;
   color: #0A1128;
   font-size: 0.95rem;
@@ -801,14 +821,19 @@ const filteredModels = computed(() => {
   transition: color 0.15s ease;
 }
 
-/* Thông số kỹ thuật (Mã lực, Loại thì, Năm SX): Màu đen Deep Navy sắc nét, đồng bộ chuẩn kỹ thuật */
+/* Thông số kỹ thuật: Phân cấp nhẹ hơn tên Model để mắt ưu tiên đọc Model trước */
 .spec-text {
   display: inline-block;
-  color: #0A1128;
-  font-weight: 600;
-  font-size: 0.92rem;
+  color: #475569;
+  font-weight: 500;
+  font-size: 0.9rem;
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
+}
+
+.spec-text.spec-hp {
+  color: #1e293b;
+  font-weight: 600;
 }
 
 /* Nút Thao Tác Sơ Đồ: Đồng bộ 100% với nút Thao Tác bên Sơ Đồ Phụ Tùng */

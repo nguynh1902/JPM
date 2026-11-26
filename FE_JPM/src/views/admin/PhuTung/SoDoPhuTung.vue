@@ -7,7 +7,7 @@
     <!-- Card danh sách -->
     <div class="card">
       <div class="card-header border-bottom">
-        <h5 class="mb-0 fw-bold text-dark">Danh sách Sơ Đồ Phụ Tùng</h5>
+        <h5 class="mb-0 fw-bold text-dark">Danh Sách Sơ Đồ Phụ Tùng</h5>
       </div>
       
       <!-- Bộ lọc (Filters) -->
@@ -54,7 +54,7 @@
 
       <div class="table-responsive text-nowrap custom-scroll" style="max-height: calc(100vh - 260px); min-height: 400px; overflow-y: auto;">
         <table class="table table-hover mb-0">
-          <thead style="position: sticky; top: 0; z-index: 1; background: #fff;">
+          <thead>
             <tr>
               <th class="text-center" style="width: 5%">STT</th>
               <th class="text-center" style="width: 10%">Hình Sơ Đồ</th>
@@ -235,7 +235,7 @@
                   
                   <div class="table-responsive custom-scroll border rounded flex-grow-1 bg-white" style="max-height: 550px; overflow-y: auto; padding: 1px;">
                     <table class="table table-hover mb-0">
-                      <thead style="position: sticky; top: 0; z-index: 1; background: #fff;">
+                      <thead>
                         <tr>
                           <th class="text-center bg-white text-nowrap" style="width: 14%; position: sticky; top: 0; z-index: 2; box-shadow: inset 0 -1px 0 #dee2e6;">STT (REF)</th>
                           <th class="bg-white text-nowrap" style="width: 60%; position: sticky; top: 0; z-index: 2; box-shadow: inset 0 -1px 0 #dee2e6;">Mã Phụ Tùng (SKU)</th>

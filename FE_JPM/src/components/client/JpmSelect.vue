@@ -397,7 +397,7 @@ watch(() => props.options, () => {
   font-size: 0.875rem;
   font-weight: 500;
   color: var(--jpm-neutral-900, #0F172A);
-  font-family: var(--jpm-font-body, 'Roboto', sans-serif);
+  font-family: var(--default-font, 'Inter', sans-serif);
   outline: none;
   user-select: none;
 }
@@ -486,7 +486,7 @@ watch(() => props.options, () => {
   background: transparent !important;
   margin: 0 !important;
   padding: 0 !important;
-  max-height: 330px !important; /* Hiển thị ~8 mục cân đối, các mục còn lại cuộn mượt */
+  max-height: 368px !important; /* Hiển thị gọn danh sách thương hiệu không dư thanh cuộn */
   overflow-y: auto !important;
   overflow-x: hidden !important;
   display: block !important;
@@ -587,7 +587,7 @@ watch(() => props.options, () => {
 }
 .custom-scrollbar::-webkit-scrollbar-thumb {
   background: var(--jpm-neutral-300, #CBD5E1);
-  border-radius: 4px;
+  border-radius: var(--jpm-radius-badge, 6px);
 }
 .custom-scrollbar::-webkit-scrollbar-track {
   background: transparent;

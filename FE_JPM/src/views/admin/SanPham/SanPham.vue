@@ -34,7 +34,7 @@
 
       <div class="table-responsive text-nowrap custom-scroll" style="max-height: calc(100vh - 260px); min-height: 400px; overflow-y: auto;">
         <table class="table table-hover mb-0">
-          <thead style="position: sticky; top: 0; z-index: 1; background: #fff;">
+          <thead>
             <tr>
               <th class="text-center" style="width: 5%">STT</th>
               <th class="text-center" style="width: 5%">Hình Ảnh</th>

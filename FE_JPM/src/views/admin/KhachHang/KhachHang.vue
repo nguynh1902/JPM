@@ -7,7 +7,7 @@
     <!-- Card danh sách -->
     <div class="card">
       <div class="card-header border-bottom">
-        <h5 class="mb-0 fw-bold text-dark">Danh sách Khách Hàng</h5>
+        <h5 class="mb-0 fw-bold text-dark">Danh Sách Khách Hàng</h5>
       </div>
 
       <!-- Bộ lọc (Filters) -->

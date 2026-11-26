@@ -221,8 +221,8 @@
 
             <!-- THANH TIÊU ĐỀ KẾT QUẢ TRA CỨU SƠ ĐỒ KỸ THUẬT EPC (ĐỒNG BỘ 100% CỬA HÀNG) -->
             <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-2">
-              <h4 class="fw-bold mb-0 text-capitalize" style="font-size: 1.25rem;">
-                {{ activeTab === 'diagrams' ? 'Sơ Đồ Nhóm Phụ Tùng' : 'Danh Sách Phụ Tùng' }}
+              <h4 class="jpm-section-heading">
+                {{ activeTab === 'diagrams' ? 'Sơ đồ nhóm phụ tùng' : 'Danh sách phụ tùng' }}
               </h4>
             </div>
 
@@ -322,7 +322,7 @@
                   <div v-for="group in groupedProducts" :key="group.id" class="mb-5">
                     <!-- HEADER NHÓM PHỤ TÙNG CHUẨN CỬA HÀNG -->
                     <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-2">
-                      <h4 class="fw-bold mb-0 text-capitalize" style="font-size: 1.25rem;">
+                      <h4 class="jpm-section-heading">
                         {{ group.name }}
                       </h4>
                       <button 
@@ -1344,7 +1344,7 @@ export default {
   font-size: 0.72rem;
   font-weight: 700;
   padding: 2px 7px;
-  border-radius: 999px;
+  border-radius: var(--jpm-radius-badge, 6px);
   transition: all 0.2s ease;
 }
 
@@ -1417,14 +1417,6 @@ export default {
 .card-img-wrapper {
   background: #f8fafc;
   overflow: hidden;
-}
-
-.card-img-product {
-  transition: transform 0.4s ease;
-}
-
-.product-card:hover .card-img-product {
-  transform: scale(1.04);
 }
 
 .product-category {
@@ -1522,7 +1514,7 @@ export default {
 
 .sku-code {
   font-family: var(--jpm-font-mono, 'Roboto Mono', monospace);
-  color: #0d6efd !important;
+  color: var(--jpm-color-blue-electric, #0284C7) !important;
   font-weight: 700;
   letter-spacing: 0.2px;
   min-width: 0;

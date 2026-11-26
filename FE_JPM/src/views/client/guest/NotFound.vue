@@ -2,16 +2,18 @@
   <section class="jpm-not-found d-flex align-items-center justify-content-center py-5">
     <div class="container text-center py-5">
       <div class="nf-code fw-bold mb-2">404</div>
-      <h1 class="h3 fw-bold mb-3" style="color: #0e1b4d;">Không tìm thấy trang bạn yêu cầu</h1>
-      <p class="text-muted mx-auto mb-4" style="max-width: 480px;">
+      <h1 class="nf-title mb-3">Không tìm thấy trang bạn yêu cầu</h1>
+      <p class="nf-desc mx-auto mb-4">
         Đường dẫn có thể đã thay đổi, bị xóa hoặc mã phụ tùng không còn tồn tại trong hệ thống JPM Marine.
       </p>
       <div class="d-flex flex-wrap justify-content-center gap-3">
-        <router-link to="/" class="btn btn-danger px-4">
-          <i class="bi bi-house-door me-1"></i> Về Trang Chủ
+        <router-link to="/" class="btn btn-danger lux-btn">
+          <i class="bi bi-house-door"></i>
+          <span>Về trang chủ</span>
         </router-link>
-        <router-link to="/tra-cuu" class="btn btn-outline-secondary px-4">
-          <i class="bi bi-search me-1"></i> Tra Cứu Phụ Tùng
+        <router-link to="/tra-cuu" class="btn btn-outline-secondary lux-btn">
+          <i class="bi bi-search"></i>
+          <span>Tra cứu phụ tùng</span>
         </router-link>
       </div>
     </div>
@@ -21,12 +23,29 @@
 <style scoped>
 .jpm-not-found {
   min-height: 62vh;
-  background: #f8fafc;
+  background: #f5f6fa;
+  font-family: var(--default-font, 'Inter', sans-serif);
 }
+
 .nf-code {
-  font-size: clamp(4rem, 10vw, 6.5rem);
+  font-family: 'Roboto Mono', monospace;
+  font-size: clamp(4rem, 10vw, 6.25rem);
   line-height: 1;
   letter-spacing: -0.04em;
-  color: #f82249;
+  color: var(--jpm-color-red-marine, #F82249);
+}
+
+.nf-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--jpm-color-navy-dark, #0A1128);
+  letter-spacing: -0.015em;
+}
+
+.nf-desc {
+  max-width: 460px;
+  font-size: 0.92rem;
+  color: #64748b;
+  line-height: 1.6;
 }
 </style>

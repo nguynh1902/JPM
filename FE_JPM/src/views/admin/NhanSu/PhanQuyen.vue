@@ -7,7 +7,7 @@
     <!-- Card danh sách -->
     <div class="card">
       <div class="card-header border-bottom">
-        <h5 class="mb-0 fw-bold text-dark">Danh sách Vai Trò (Roles)</h5>
+        <h5 class="mb-0 fw-bold text-dark">Danh Sách Vai Trò (Roles)</h5>
       </div>
       
       <!-- Bộ lọc (Filters) -->
