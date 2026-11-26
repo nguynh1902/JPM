@@ -48,8 +48,9 @@ Mọi AI Agent (Antigravity, Claude, Copilot, Cursor...) khi làm việc với p
      * Font chữ: 13.5px, màu slate trung tính `#64748b`, font-weight 500.
      * TUYỆT ĐỐI KHÔNG đóng khung vai trò vào card/badge nền đỏ, nền hồng, không có viền bao và không gắn icon khiên/khóa bảo vệ làm rối mắt.
    - **Phân định màu sắc & kích thước nút bấm hành động (Action Button Hierarchy & Standardization):**
-     * **Nút Thêm mới đối tượng (Thêm địa chỉ mới, Thêm sản phẩm mới):** Sử dụng màu **Xanh Primary chuẩn Bootstrap 5 (`#0d6efd`)** thông qua class `.btn-blue-primary` (bo góc 8px). Đã đưa vào CSS template dùng chung (`main.css`), tuyệt đối không khai báo cục bộ trong `<style scoped>`.
-     * **Nút Hành động Chính / Chỉnh sửa / Mua hàng / Lưu:** Sử dụng màu **Đỏ Marine (`#F82249` / `.btn-danger`)**.
+     * **Nút Hành động Chính / Mua hàng / Gửi yêu cầu / Chốt đơn / Lưu:** Sử dụng duy nhất màu **Đỏ Marine (`#F82249` / `.btn-danger`)**, hover **`#D9163A`** (`--jpm-color-red-hover`).
+     * **Nút Hành động Phụ / Hủy / Xem chi tiết / Nhắn Zalo:** Sử dụng nút **viền sáng trung tính** (`#ffffff`, viền `#cbd5e1`, chữ `#334155`, hover `#f8fafc` + `#0A1128`) hoặc **Deep Navy (`#0A1128`)** cho CTA phụ quan trọng.
+     * *(Ghi chú kế thừa)*: Class `.btn-blue-primary` (`#0d6efd`) trong `main.css` chỉ giữ lại cho các nút thêm mới cũ ở nhóm trang Tài khoản để tương thích ngược; các màn hình mới ưu tiên bộ 3 Đỏ Marine / Deep Navy / Trắng viền Slate để giữ trọn tinh thần Luxury.
      * **Quy chuẩn kích thước nút bấm trên Card Header (`.btn-action-header`):**
        - Khóa cứng: `height: 38px !important; min-height: 38px !important; max-height: 38px !important; line-height: 36px !important;`
        - Padding: `0 16px !important;`
@@ -60,7 +61,7 @@ Mọi AI Agent (Antigravity, Claude, Copilot, Cursor...) khi làm việc với p
      * **Bộ ba lớp Component Card chuẩn toàn Client (`main.css`):**
        - `.jpm-card`: Bo góc 12px, viền `#e2e8f0`, đổ bóng mềm `0 4px 16px rgba(10, 17, 40, 0.04)`.
        - `.jpm-card-header`: Padding `16px 24px`, chiều cao khóa `min-height: 70px`, viền đáy `1px solid #e2e8f0`.
-       - `.jpm-card-title`: Font Raleway 700, 18px (`1.125rem`), màu Deep Navy `#0A1128`.
+       - `.jpm-card-title`: Font Inter 700, 18px (`1.125rem`), màu Deep Navy `#0A1128`.
    - **Xóa bỏ lỗi chồng khoảng đệm (Section Padding Stacking Elimination):**
      * Trong các khung trang tài khoản (LayoutTaiKhoan.vue), thẻ `<section>` bắt buộc mang `class="py-0" style="background: transparent;"` để triệt tiêu padding 60px 0 và nền trắng mặc định của template TheEvent, loại bỏ khoảng cách trống 170px và dải trắng vô duyên. Khoảng đệm header chuẩn hóa là `padding-top: 92px` trên thẻ `<main>`.
 
@@ -74,7 +75,7 @@ Toàn bộ giao diện Client được xây dựng theo mô hình **3 Tầng Th�
 ┌────────────────────────────────────────────────────────────────────────┐
 │ TẦNG 1: THIẾT KẾ ĐỊNH DANH (DESIGN SYSTEM & TOKENS 2026)               │
 │ - Tông màu biển sâu Deep Navy (#0A1128), Đỏ Marine (#F82249), Slate.   │
-│ - Typography: Raleway (Heading/Brand) + Roboto (Body, Tabular Numbers).│
+│ - Typography: Inter (Heading & Body) + Roboto Mono (Mã OEM, Tabular).  │
 │ - Hệ bo góc chuẩn hóa 4 cấp (12px, 8px, 6px, 50%).                     │
 ├────────────────────────────────────────────────────────────────────────┤
 │ TẦNG 2: CÚ PHÁP LẬP TRÌNH (100% BOOTSTRAP 5 CHUẨN NGỮ NGHĨA)           │
@@ -123,11 +124,10 @@ Toàn bộ giao diện Client được xây dựng theo mô hình **3 Tầng Th�
 
 ---
 
-## 3. HỆ THỐNG TYPOGRAPHY (ĐỒ HỌA CHỮ CHUẨN HÓA)
+## 3. HỆ THỐNG TYPOGRAPHY (ĐỒ HỌA CHỮ CHUẨN HÓA — ĐỒNG BỘ `style.css`)
 
-- **Font Tiêu đề & Thương hiệu:** `Raleway` (Google Font - Geometric Sans).
-- **Font Thân trang, Biểu mẫu & Bảng:** `Roboto` (Google Font - Legibility tối ưu).
-- **Font Mã OEM & Số liệu kỹ thuật:** `Roboto Mono` kết hợp `font-variant-numeric: tabular-nums;` để triệt tiêu hiện tượng xê dịch pixel chiều ngang khi số nhảy.
+- **Font Tiêu đề, Thương hiệu & Thân trang:** `Inter` (`var(--default-font)` — tối ưu độ sắc nét dấu tiếng Việt ở cả kích thước nhỏ lẫn tiêu đề lớn).
+- **Font Mã OEM & Số liệu kỹ thuật / Tiền tệ:** `Roboto Mono` kết hợp `font-variant-numeric: tabular-nums;` để triệt tiêu hiện tượng xê dịch pixel chiều ngang khi số nhảy và đảm bảo căn cột thẳng hàng trong bảng báo giá.
 
 ### Thang phân cấp chữ (Type Scale):
 - **Display 1:** 44px (Desktop) / 32px (Mobile) - Weight 800 - Line height 1.15.
@@ -230,6 +230,19 @@ Tại màn hình `SoDoPhuTung.vue`:
 
 ---
 
+## 9.5. QUY CHUẨN THÔNG BÁO, MODAL XÁC NHẬN & CHỨNG TỪ BÁO GIÁ (DEC-06)
+
+1. **Phân tách rõ Thông báo hệ thống vs Màn hình xác nhận đặt hàng:**
+   - **Đặt hàng / Gửi yêu cầu báo giá thành công (`GioHang.vue`):** TUYỆT ĐỐI KHÔNG dùng `Swal.fire` mặc định. Bắt buộc dùng **Luxury Order Confirmation Modal** (bo góc `12px`, nền mờ `backdrop-filter: blur(4px)`, hộp mã yêu cầu `Roboto Mono` có nút **Sao chép**, lộ trình 3 bước, cặp nút chuẩn JPM và liên kết Zalo lấy động từ `useSiteSettings()`).
+   - **Popup xác nhận / cảnh báo nhỏ & Toast góc phải:** Sử dụng `SweetAlert2` đã được đồng bộ giao diện toàn cục qua **JPM Luxury Theme** tại `FE_JPM/src/style.css` (scoped `body:not(.layout-admin)` — bo góc `12px`, nút xác nhận `#F82249`, nút hủy viền sáng `#ffffff`, Toast dạng thẻ trắng mảnh).
+2. **Chuẩn Chứng từ Báo giá & Tra cứu (`TraCuuBaoGia.vue`, `TraCuuDonHang.vue`, `LichSuDonHang.vue`):**
+   - **Chấm trạng thái tinh tế:** Dùng 1 chỉ báo duy nhất gồm chấm màu `7px` + nhãn chữ thường tự nhiên (`Chờ báo giá`, `Đã báo giá`, `Đang xử lý`, `Hoàn thành`...), bo góc `6px` (`--jpm-radius-badge`). Tuyệt đối không chồng nhiều badge nội bộ (`Đơn hỗn hợp`, `BÁO GIÁ`) hay emoji.
+   - **Dải thông báo tiến độ (Callout Strip):** Dùng nền trung tính `#f8fafc`, viền `#e2e8f0`, thanh nhấn trái `3px` theo ngữ cảnh. Cấm dùng `alert-info` nền xanh lơ chói mặc định Bootstrap.
+   - **Bảng phụ tùng không kẻ dọc:** Chỉ dùng kẻ ngang mảnh `#f1f5f9`, tổng kết tài chính tách riêng căn phải, hỗ trợ in / xuất PDF sạch đẹp qua `@media print`.
+   - **Ngôn ngữ hiển thị khách hàng:** Tuyệt đối không để lộ thuật ngữ nội bộ như `"Admin"` trên giao diện Client (thay bằng `"Kỹ thuật viên JPM"` hoặc `"JPM Marine"`).
+
+---
+
 ## 10. DANH MỤC 20 MÀN HÌNH CLIENT & ĐỊNH HƯỚNG BỐ CỤC
 
 1. `TrangChu.vue`: Đại sảnh công nghệ, Hero banner tích hợp bộ lọc 4 cấp `JpmSelect.vue`, Lưới phụ tùng `ProductCard.vue`.
@@ -263,7 +276,8 @@ Tại màn hình `SoDoPhuTung.vue`:
 | **DEC-02** | Exploded Diagram Hotspots tương tác 2 chiều (Ghim <--> Bảng) | **ĐÃ PHÊ DUYỆT (Official)** |
 | **DEC-03** | Reusable Shared Components: `ProductCard.vue` & `JpmSelect.vue` | **ĐÃ PHÊ DUYỆT (Official)** |
 | **DEC-04** | Hệ thống Icon: 100% Bootstrap Icons (`bi bi-*`), loại bỏ Boxicons | **ĐÃ PHÊ DUYỆT (Official)** |
-| **DEC-05** | Phân cấp nút Thêm mới (Xanh Bootstrap `#0d6efd`) vs Nút chính (Đỏ Marine `#F82249`), Plain text Role | **ĐÃ PHÊ DUYỆT (Official)** |
+| **DEC-05** | Hệ nút Luxury: CTA chính Đỏ Marine (`#F82249` / hover `#D9163A`), nút phụ Navy/Trắng viền Slate, Plain text Role | **ĐÃ PHÊ DUYỆT (Official)** |
+| **DEC-06** | Chuẩn Thông báo (Luxury Order Modal + Global Swal2 Theme), Chứng từ Báo giá (`@media print`), bỏ từ nội bộ trên Client | **ĐÃ PHÊ DUYỆT (Official)** |
 | **DEC-PENDING-01** | Cho phép thanh toán cọc hàng có sẵn và gửi báo giá hàng hiếm cùng lúc | *Chờ PO phê duyệt* |
 | **DEC-PENDING-02** | Mô hình Tabbed Workspace + Bottom Sheet cho sơ đồ trên Mobile < 400px | *Chờ PO phê duyệt* |
 | **DEC-PENDING-03** | Mở rộng phạm vi tìm kiếm nhanh gồm Mã OEM, Tên phụ tùng và Model máy | *Chờ PO phê duyệt* |

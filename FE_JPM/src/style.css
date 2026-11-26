@@ -131,3 +131,182 @@ body.layout-admin .form-control[type="file"]:focus::-webkit-file-upload-button {
 .swal-shift-up {
     margin-top: -10vh !important;
 }
+
+/* ========================================================================= */
+/* JPM MINIMALIST LUXURY THEME CHO SWEETALERT2 (CLIENT & AUTH)               */
+/* ========================================================================= */
+body:not(.layout-admin) .swal2-container.swal2-backdrop-show {
+  background: rgba(10, 17, 40, 0.48) !important;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+body:not(.layout-admin) .swal2-popup:not(.swal2-toast) {
+  width: 430px !important;
+  max-width: calc(100vw - 32px) !important;
+  padding: 28px 28px 24px !important;
+  border-radius: var(--jpm-radius-card, 12px) !important;
+  border: 1px solid #e2e8f0 !important;
+  background: #ffffff !important;
+  color: #0a1128 !important;
+  font-family: var(--default-font, 'Inter', sans-serif) !important;
+  box-shadow: 0 24px 60px -12px rgba(10, 17, 40, 0.22), 0 4px 16px rgba(10, 17, 40, 0.06) !important;
+}
+
+body:not(.layout-admin) .swal2-popup:not(.swal2-toast) .swal2-icon {
+  transform: scale(0.76);
+  margin: 0 auto 8px !important;
+}
+
+body:not(.layout-admin) .swal2-popup:not(.swal2-toast) .swal2-icon.swal2-success {
+  border-color: rgba(5, 150, 105, 0.28) !important;
+  color: #059669 !important;
+}
+
+body:not(.layout-admin) .swal2-popup:not(.swal2-toast) .swal2-icon.swal2-success .swal2-success-ring {
+  border-color: rgba(5, 150, 105, 0.2) !important;
+}
+
+body:not(.layout-admin) .swal2-popup:not(.swal2-toast) .swal2-icon.swal2-success [class^="swal2-success-line"] {
+  background-color: #059669 !important;
+}
+
+body:not(.layout-admin) .swal2-popup:not(.swal2-toast) .swal2-icon.swal2-warning {
+  border-color: rgba(217, 119, 6, 0.35) !important;
+  color: #d97706 !important;
+}
+
+body:not(.layout-admin) .swal2-popup:not(.swal2-toast) .swal2-icon.swal2-error {
+  border-color: rgba(220, 38, 38, 0.3) !important;
+  color: #dc2626 !important;
+}
+
+body:not(.layout-admin) .swal2-popup:not(.swal2-toast) .swal2-icon.swal2-error [class^="swal2-x-mark-line"] {
+  background-color: #dc2626 !important;
+}
+
+body:not(.layout-admin) .swal2-popup:not(.swal2-toast) .swal2-icon.swal2-info,
+body:not(.layout-admin) .swal2-popup:not(.swal2-toast) .swal2-icon.swal2-question {
+  border-color: rgba(10, 17, 40, 0.22) !important;
+  color: #0a1128 !important;
+}
+
+body:not(.layout-admin) .swal2-popup:not(.swal2-toast) .swal2-title {
+  padding: 0 0 6px !important;
+  font-size: 1.15rem !important;
+  font-weight: 700 !important;
+  color: #0a1128 !important;
+  letter-spacing: -0.015em !important;
+  line-height: 1.35 !important;
+}
+
+body:not(.layout-admin) .swal2-popup:not(.swal2-toast) .swal2-html-container {
+  margin: 4px 0 0 !important;
+  padding: 0 !important;
+  font-size: 0.875rem !important;
+  color: #475569 !important;
+  line-height: 1.6 !important;
+}
+
+body:not(.layout-admin) .swal2-popup:not(.swal2-toast) .swal2-input,
+body:not(.layout-admin) .swal2-popup:not(.swal2-toast) .swal2-textarea {
+  height: 40px !important;
+  margin: 14px 0 0 !important;
+  padding: 0 12px !important;
+  border-radius: 8px !important;
+  border: 1px solid #cbd5e1 !important;
+  font-size: 0.875rem !important;
+  color: #0a1128 !important;
+  box-shadow: none !important;
+}
+
+body:not(.layout-admin) .swal2-popup:not(.swal2-toast) .swal2-input:focus,
+body:not(.layout-admin) .swal2-popup:not(.swal2-toast) .swal2-textarea:focus {
+  border-color: #0a1128 !important;
+  box-shadow: 0 0 0 3px rgba(10, 17, 40, 0.08) !important;
+}
+
+body:not(.layout-admin) .swal2-popup:not(.swal2-toast) .swal2-actions {
+  margin: 22px 0 0 !important;
+  gap: 10px !important;
+  width: 100% !important;
+}
+
+body:not(.layout-admin) .swal2-popup:not(.swal2-toast) .swal2-styled {
+  height: 40px !important;
+  padding: 0 20px !important;
+  margin: 0 !important;
+  border-radius: 8px !important;
+  font-family: var(--default-font, 'Inter', sans-serif) !important;
+  font-size: 0.875rem !important;
+  font-weight: 600 !important;
+  letter-spacing: 0 !important;
+  box-shadow: none !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 6px !important;
+  transition: all 0.2s ease !important;
+}
+
+body:not(.layout-admin) .swal2-popup:not(.swal2-toast) .swal2-styled.swal2-confirm {
+  background-color: #f82249;
+  color: #ffffff !important;
+  border: 1px solid transparent !important;
+}
+
+body:not(.layout-admin) .swal2-popup:not(.swal2-toast) .swal2-styled.swal2-confirm:hover {
+  filter: brightness(1.06);
+  transform: translateY(-1px);
+  background-image: none !important;
+}
+
+body:not(.layout-admin) .swal2-popup:not(.swal2-toast) .swal2-styled.swal2-cancel {
+  background-color: #ffffff !important;
+  color: #334155 !important;
+  border: 1px solid #cbd5e1 !important;
+}
+
+body:not(.layout-admin) .swal2-popup:not(.swal2-toast) .swal2-styled.swal2-cancel:hover {
+  background-color: #f8fafc !important;
+  border-color: #94a3b8 !important;
+  color: #0a1128 !important;
+  background-image: none !important;
+}
+
+body:not(.layout-admin) .swal2-popup:not(.swal2-toast) .swal2-styled:focus {
+  box-shadow: 0 0 0 3px rgba(248, 34, 73, 0.14) !important;
+}
+
+/* Toast thông báo nhanh dạng thanh mảnh sang trọng */
+body:not(.layout-admin) .swal2-popup.swal2-toast {
+  padding: 12px 16px !important;
+  border-radius: var(--jpm-radius-control, 8px) !important;
+  border: 1px solid #e2e8f0 !important;
+  background: #ffffff !important;
+  color: #0a1128 !important;
+  font-family: var(--default-font, 'Inter', sans-serif) !important;
+  box-shadow: 0 12px 32px -4px rgba(10, 17, 40, 0.12), 0 2px 8px rgba(10, 17, 40, 0.05) !important;
+  align-items: center !important;
+}
+
+body:not(.layout-admin) .swal2-popup.swal2-toast .swal2-title {
+  margin: 0 0 0 10px !important;
+  padding: 0 !important;
+  font-size: 0.84rem !important;
+  font-weight: 600 !important;
+  color: #0a1128 !important;
+  line-height: 1.4 !important;
+}
+
+body:not(.layout-admin) .swal2-popup.swal2-toast .swal2-html-container {
+  margin: 2px 0 0 10px !important;
+  padding: 0 !important;
+  font-size: 0.78rem !important;
+  color: #64748b !important;
+}
+
+body:not(.layout-admin) .swal2-popup.swal2-toast .swal2-timer-progress-bar {
+  background: rgba(248, 34, 73, 0.35) !important;
+  height: 2px !important;
+}

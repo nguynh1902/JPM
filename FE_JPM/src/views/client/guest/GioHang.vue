@@ -1576,7 +1576,7 @@ export default {
   max-width: 472px;
   background: #ffffff;
   border: 1px solid #e2e8f0;
-  border-radius: 14px;
+  border-radius: var(--jpm-radius-card, 12px);
   padding: 30px 28px 26px;
   box-shadow: 0 24px 60px -12px rgba(10, 17, 40, 0.24), 0 4px 16px rgba(10, 17, 40, 0.06);
   font-family: var(--default-font, 'Inter', sans-serif);
@@ -1649,7 +1649,7 @@ export default {
   padding: 14px 16px;
   background: #f8fafc;
   border: 1px solid #e2e8f0;
-  border-radius: 10px;
+  border-radius: var(--jpm-radius-control, 8px);
   margin-bottom: 18px;
 }
 
@@ -1675,7 +1675,7 @@ export default {
   flex-shrink: 0;
   height: 32px;
   padding: 0 12px;
-  border-radius: 7px;
+  border-radius: var(--jpm-radius-control, 8px);
   border: 1px solid #cbd5e1;
   background: #ffffff;
   color: #334155;
@@ -1792,8 +1792,8 @@ export default {
 }
 
 .lux-confirm-btn.btn-danger:hover {
-  background: #e11d48 !important;
-  border-color: #e11d48 !important;
+  background: var(--jpm-color-red-hover, #D9163A) !important;
+  border-color: var(--jpm-color-red-hover, #D9163A) !important;
   transform: translateY(-1px);
 }
 

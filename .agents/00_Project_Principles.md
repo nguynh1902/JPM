@@ -28,7 +28,7 @@ Hệ thống vận hành theo mô hình trung chuyển (Cross-docking), không d
 
 ## 5. NO FEATURE CREEP (Nói "KHÔNG" Với Các Tính Năng Thừa)
 Chỉ giữ lại những gì thực sự tạo ra giá trị cho mô hình kinh doanh JPM.
-*   **Kiến trúc sạch:** Tuân thủ triệt để Laravel, Vue 3 (Options API), Bootstrap 5. Sử dụng 100% Template Sneat và TheEvent. Tuyệt đối không tự sáng chế UI hay dùng thư viện thừa.
+*   **Kiến trúc sạch:** Tuân thủ triệt để Laravel, Vue 3 (Options API cho module hiện hữu / `<script setup>` cho module mới), Bootstrap 5. Admin sử dụng 100% Template Sneat; Client sử dụng nền TheEvent kết hợp JPM Design System 2026 (`10_Client_UI_Standard.md`). Không cài framework UI thừa.
 *   **Cắt bỏ tính năng rác:** Không làm module Review/Rating sản phẩm (thợ mua phụ tùng kỹ thuật không cần review), không Affiliate, không Marketplace đa nhà bán. Tập trung toàn lực xử lý mượt mà luồng Catalog và Gom đơn.
 *   **Yêu cầu đối với Developer/AI:** Nếu được yêu cầu làm một tính năng vi phạm nguyên tắc "No Feature Creep", Developer/AI có nghĩa vụ phải cảnh báo và từ chối thực hiện trừ khi có quyết định bắt buộc từ cấp cao nhất.
 

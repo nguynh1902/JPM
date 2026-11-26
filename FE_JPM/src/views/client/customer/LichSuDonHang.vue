@@ -89,7 +89,7 @@
         <i class="bi bi-receipt"></i>
       </div>
       <h5 class="mb-2 order-empty-heading">Chưa có đơn hàng &amp; báo giá</h5>
-      <p class="text-muted mb-4" style="font-size: 14px; max-width: 420px; line-height: 1.6;">
+      <p class="text-muted mb-4 order-empty-desc">
         Bạn chưa có đơn đặt hàng hoặc yêu cầu báo giá nào trong mục này.
       </p>
       <router-link to="/san-pham" class="btn btn-danger px-4 d-inline-flex align-items-center gap-2">
@@ -1116,7 +1116,7 @@ const formatDate = (dateStr) => {
   font-size: 0.72rem;
   font-weight: 600;
   padding: 1px 6px;
-  border-radius: 999px;
+  border-radius: var(--jpm-radius-badge, 6px);
   background-color: #f1f5f9;
   color: #475569;
   line-height: 1.4;
@@ -1160,6 +1160,12 @@ const formatDate = (dateStr) => {
   font-size: 1.05rem;
   font-weight: 700;
   color: #0a1128;
+}
+
+.order-empty-desc {
+  font-size: 0.875rem;
+  max-width: 420px;
+  line-height: 1.6;
 }
 
 /* ========================================================================= */
@@ -1212,70 +1218,6 @@ const formatDate = (dateStr) => {
   font-size: 0.8rem;
   color: #64748b;
 }
-
-/* 1 chấm trạng thái tinh tế — không badge cầu vồng */
-.lux-status-indicator {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  font-size: 0.8rem;
-  font-weight: 600;
-  padding: 4px 10px;
-  border-radius: 999px;
-  background-color: #f8fafc;
-  color: #334155;
-  border: 1px solid #e2e8f0;
-}
-
-.lux-status-indicator .status-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background-color: #64748b;
-  flex-shrink: 0;
-}
-
-.status-stage-1 {
-  color: #92400e;
-  background-color: #fffbeb;
-  border-color: #fde68a;
-}
-.status-stage-1 .status-dot { background-color: #d97706; }
-
-.status-stage-2 {
-  color: #be123c;
-  background-color: #fff1f2;
-  border-color: #fecdd3;
-}
-.status-stage-2 .status-dot { background-color: #f82249; }
-
-.status-stage-3 {
-  color: #1e40af;
-  background-color: #eff6ff;
-  border-color: #bfdbfe;
-}
-.status-stage-3 .status-dot { background-color: #2563eb; }
-
-.status-stage-4 {
-  color: #0f766e;
-  background-color: #f0fdfa;
-  border-color: #99f6e4;
-}
-.status-stage-4 .status-dot { background-color: #0d9488; }
-
-.status-stage-5 {
-  color: #15803d;
-  background-color: #f0fdf4;
-  border-color: #bbf7d0;
-}
-.status-stage-5 .status-dot { background-color: #16a34a; }
-
-.status-stage--1 {
-  color: #64748b;
-  background-color: #f8fafc;
-  border-color: #e2e8f0;
-}
-.status-stage--1 .status-dot { background-color: #94a3b8; }
 
 /* Body: Địa chỉ + Sản phẩm đại diện */
 .lux-card-body {
@@ -1357,8 +1299,8 @@ const formatDate = (dateStr) => {
   font-size: 0.76rem;
   color: #475569;
   background: #f1f5f9;
-  padding: 1px 5px;
-  border-radius: 4px;
+  padding: 1px 6px;
+  border-radius: var(--jpm-radius-badge, 6px);
 }
 
 .lux-more-items {
@@ -1434,7 +1376,7 @@ const formatDate = (dateStr) => {
   font-size: 0.72rem;
   font-weight: 600;
   padding: 1px 7px;
-  border-radius: 999px;
+  border-radius: var(--jpm-radius-badge, 6px);
 }
 .lux-deposit-state.is-paid {
   background: #dcfce7;
@@ -1520,7 +1462,7 @@ const formatDate = (dateStr) => {
   min-width: 260px;
   background-color: #f8fafc;
   padding: 14px 16px;
-  border-radius: 10px;
+  border-radius: var(--jpm-radius-control, 8px);
   border: 1px solid #e2e8f0;
 }
 
@@ -1559,7 +1501,7 @@ const formatDate = (dateStr) => {
 /* ========================================================================= */
 .lux-modal-content {
   border: 1px solid #e2e8f0;
-  border-radius: 14px;
+  border-radius: var(--jpm-radius-card, 12px);
   box-shadow: 0 24px 60px rgba(10, 17, 40, 0.16);
   overflow: hidden;
   background: #ffffff;
@@ -1708,7 +1650,7 @@ const formatDate = (dateStr) => {
 .lux-modal-summary {
   background: #ffffff;
   border: 1px solid #e2e8f0;
-  border-radius: 10px;
+  border-radius: var(--jpm-radius-control, 8px);
   padding: 12px 16px;
   margin-bottom: 16px;
 }

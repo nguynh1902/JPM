@@ -69,10 +69,11 @@ PHẢI đứng từ vị thế của CHUYÊN GIA KỸ THUẬT & THỰC TIỄN KI
    - Mọi URL khi thay đổi BẮT BUỘC phải giữ lại redirect backward-compatible để không bao giờ bị lỗi 404.
 
 5. CHUẨN GIAO DIỆN TOÀN HỆ THỐNG - ADMIN, STAFF & CLIENT (BOOTSTRAP 5 & KIẾN TRÚC CSS RẠCH RÒI):
-   - **Nguyên tắc "Code một thể thống nhất" (Single Unified View - Cấm xé nhỏ):**
-     + Mọi page giao diện (Trang chủ, Chi tiết sản phẩm, Tra cứu catalog, Giỏ hàng, Đơn hàng...) bắt buộc phải được code trọn vẹn (toàn bộ Section, Filter, Lưới Card, Table, Action và Modal) trong **CÙNG MỘT FILE `.vue` DUY NHẤT**.
-     + Tuyệt đối CẤM xé nhỏ thành các sub-component con lắt nhắt (như HeroSection.vue, FilterSection.vue...) gây rối luồng dữ liệu (props/emits) và khó bảo trì.
-   - **Triết lý thống nhất:** Mọi tác nhân (Admin, Staff, Client) đều viết markup bằng **100% Bootstrap 5 chuẩn**, gọn gàng, ngữ nghĩa cao, tối giản.
+   - **Nguyên tắc "Trang thống nhất — Tách tái sử dụng có kiểm soát" (Pragmatic Single View):**
+     + Mỗi page giao diện (Trang chủ, Chi tiết sản phẩm, Tra cứu catalog, Giỏ hàng, Đơn hàng...) đóng vai trò container chính, gom gọn cấu trúc Section, Filter, Table/Card và Action trong file `.vue` của trang để dễ theo dõi luồng nghiệp vụ.
+     + Không xé nhỏ lắt nhắt thành các sub-component quá nhỏ (kiểu 20–30 dòng như `HeroTitle.vue`), **NHƯNG cho phép và khuyến khích tách Shared Component** khi một khối lặp lại từ **≥ 2 trang trở lên** (như `ProductCard.vue`, `JpmSelect.vue`, `VietQrPaymentBox.vue`) hoặc modal nghiệp vụ quá nặng (> 400 dòng) để tránh nợ kỹ thuật và lỗi copy-paste.
+   - **Chuẩn Vue 3 API:** Hỗ trợ duy trì cả Options API (ở các màn hình hiện hữu) và Composition API `<script setup>` (ưu tiên cho các module Client mới); không trộn lẫn hai phong cách trong cùng một component.
+   - **Triết lý thống nhất:** Admin/Staff dùng 100% Bootstrap 5 + Sneat 1.0.0; Client dùng Bootstrap 5 ngữ nghĩa kết hợp **JPM Design System 2026** (`10_Client_UI_Standard.md`) — không dùng Tailwind/Vuetify/Ant Design.
    - **Phân định rạch ròi kiến trúc CSS: Toàn cục (`main.css`/`demo.css`) vs Cục bộ (`<style scoped>`):**
      - **`main.css` (Client) & `demo.css` (Admin):** Đóng vai trò như **Framework CSS dùng chung toàn website** (giống như Bootstrap core).
        + **CHỈ CHỨA:** Token màu sắc/biến CSS toàn cục, tùy biến/ghi đè component Bootstrap chính quy (`.btn-primary`, `.btn-danger`, `.badge`, `.card thống nhất chuẩn bo góc 4 cấp của Design System 2026: Card/Modal 12px, Button/Input 8px, Badge/Tag 6px, Circle 50% theo DEC-01 (triệt tiêu chuẩn 4px cũ) tiện ích dùng chung (`.text-truncate-2`, `.text-truncate-3`), component chung (`.product-card`, `.btn-cart-action`).

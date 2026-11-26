@@ -5270,3 +5270,560 @@ a.btn-shopee-outline:hover {
 
 
 
+
+/* ========================================================================= */
+/* JPM LUXURY DOCUMENT, STATUS, CALLOUT & VIETQR SYSTEM (DEC-01 / DEC-06)    */
+/* Dùng chung cho LichSuDonHang, TraCuuBaoGia, TraCuuDonHang                 */
+/* ========================================================================= */
+.lux-meta-dot {
+  color: #cbd5e1;
+  margin: 0 6px;
+  user-select: none;
+}
+
+.lux-overline,
+.lux-section-label {
+  display: block;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: #64748b;
+  margin-bottom: 6px;
+}
+
+/* Tờ chứng từ chính */
+.lux-doc-sheet {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: var(--jpm-radius-card, 12px);
+  padding: 36px 40px;
+  box-shadow: 0 4px 24px -6px rgba(10, 17, 40, 0.06);
+}
+
+.lux-doc-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid #f1f5f9;
+  margin-bottom: 24px;
+}
+
+/* Chỉ báo trạng thái chấm màu (DEC-01: 6px badge, 50% dot) */
+.lux-status-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 5px 12px;
+  border-radius: var(--jpm-radius-badge, 6px);
+  font-size: 0.8rem;
+  font-weight: 600;
+  border: 1px solid #e2e8f0;
+  background: #f8fafc;
+  color: #334155;
+  flex-shrink: 0;
+}
+
+.lux-status-indicator .status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: var(--jpm-radius-circle, 50%);
+  background: #94a3b8;
+  flex-shrink: 0;
+}
+
+.lux-status-indicator.status-pending,
+.lux-status-indicator.status-stage-1 {
+  background: #fffbeb;
+  border-color: #fde68a;
+  color: #92400e;
+}
+.lux-status-indicator.status-pending .status-dot,
+.lux-status-indicator.status-stage-1 .status-dot {
+  background: #d97706;
+}
+
+.lux-status-indicator.status-quoted,
+.lux-status-indicator.status-stage-2 {
+  background: #fef2f2;
+  border-color: #fecdd3;
+  color: #be123c;
+}
+.lux-status-indicator.status-quoted .status-dot,
+.lux-status-indicator.status-stage-2 .status-dot {
+  background: var(--jpm-color-red-marine, #F82249);
+}
+
+.lux-status-indicator.status-processing,
+.lux-status-indicator.status-shipping,
+.lux-status-indicator.status-stage-3,
+.lux-status-indicator.status-stage-4 {
+  background: #eff6ff;
+  border-color: #bfdbfe;
+  color: #1d4ed8;
+}
+.lux-status-indicator.status-processing .status-dot,
+.lux-status-indicator.status-shipping .status-dot,
+.lux-status-indicator.status-stage-3 .status-dot,
+.lux-status-indicator.status-stage-4 .status-dot {
+  background: #2563eb;
+}
+
+.lux-status-indicator.status-confirmed,
+.lux-status-indicator.status-stage-5 {
+  background: #ecfdf5;
+  border-color: #a7f3d0;
+  color: #065f46;
+}
+.lux-status-indicator.status-confirmed .status-dot,
+.lux-status-indicator.status-stage-5 .status-dot {
+  background: #059669;
+}
+
+.lux-status-indicator.status-expired,
+.lux-status-indicator.status-muted,
+.lux-status-indicator.status-stage--1 {
+  background: #f8fafc;
+  border-color: #e2e8f0;
+  color: #64748b;
+}
+.lux-status-indicator.status-expired .status-dot,
+.lux-status-indicator.status-muted .status-dot,
+.lux-status-indicator.status-stage--1 .status-dot {
+  background: #94a3b8;
+}
+
+/* Khối thông tin khách hàng 2 cột */
+.lux-info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  padding: 18px 20px;
+  background: #f8fafc;
+  border: 1px solid #f1f5f9;
+  border-radius: var(--jpm-radius-control, 8px);
+  margin-bottom: 22px;
+}
+
+.lux-info-primary {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #0A1128;
+  margin-bottom: 3px;
+}
+
+.lux-info-sub,
+.lux-info-address {
+  font-size: 0.86rem;
+  color: #475569;
+  line-height: 1.5;
+}
+
+.lux-info-muted {
+  font-size: 0.85rem;
+  color: #94a3b8;
+}
+
+/* Dải thông báo tiến độ tinh tế (thay alert-info Bootstrap) */
+.lux-callout {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 15px 18px;
+  border-radius: var(--jpm-radius-control, 8px);
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-left: 3px solid #0A1128;
+  margin-bottom: 24px;
+}
+
+.lux-callout.callout-pending,
+.lux-callout.callout-navy {
+  border-left-color: #0A1128;
+}
+
+.lux-callout.callout-active,
+.lux-callout.callout-amber {
+  border-left-color: #d97706;
+  background: #fffdf7;
+}
+
+.lux-callout.callout-confirmed,
+.lux-callout.callout-emerald {
+  border-left-color: #059669;
+  background: #f7fdf9;
+}
+
+.lux-callout.callout-expired,
+.lux-callout.callout-danger {
+  border-left-color: var(--jpm-color-red-marine, #F82249);
+  background: #fffafa;
+}
+
+.lux-callout-icon {
+  font-size: 1.15rem;
+  color: #0A1128;
+  margin-top: 1px;
+  flex-shrink: 0;
+}
+
+.lux-callout.callout-active .lux-callout-icon,
+.lux-callout.callout-amber .lux-callout-icon { color: #d97706; }
+
+.lux-callout.callout-confirmed .lux-callout-icon,
+.lux-callout.callout-emerald .lux-callout-icon { color: #059669; }
+
+.lux-callout.callout-expired .lux-callout-icon,
+.lux-callout.callout-danger .lux-callout-icon { color: var(--jpm-color-red-marine, #F82249); }
+
+.lux-callout-body strong {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #0A1128;
+  margin-bottom: 3px;
+}
+
+.lux-callout-body p {
+  margin: 0;
+  font-size: 0.84rem;
+  color: #475569;
+  line-height: 1.55;
+}
+
+.lux-inline-code {
+  font-family: 'Roboto Mono', monospace;
+  font-weight: 700;
+  color: #0A1128;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  padding: 1px 7px;
+  border-radius: var(--jpm-radius-badge, 6px);
+}
+
+/* Bảng phụ tùng không kẻ dọc */
+.lux-table-section {
+  margin-bottom: 22px;
+}
+
+.lux-parts-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.lux-parts-table thead th {
+  padding: 11px 12px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #64748b;
+  border-bottom: 1px solid #e2e8f0;
+  background: transparent;
+}
+
+.lux-parts-table tbody td {
+  padding: 15px 12px;
+  font-size: 0.875rem;
+  color: #0A1128;
+  border-bottom: 1px solid #f1f5f9;
+  vertical-align: middle;
+}
+
+.lux-parts-table .col-stt { width: 44px; padding-left: 4px; }
+.lux-parts-table .col-qty { width: 64px; }
+.lux-parts-table .col-price,
+.lux-parts-table .col-total { width: 145px; white-space: nowrap; }
+.lux-parts-table .col-total { padding-right: 4px; }
+
+.lux-part-name {
+  font-weight: 600;
+  color: #0A1128;
+  line-height: 1.4;
+}
+
+.lux-part-oem {
+  font-size: 0.78rem;
+  color: #64748b;
+  margin-top: 3px;
+}
+
+.lux-part-oem code {
+  font-family: 'Roboto Mono', monospace;
+  font-size: 0.76rem;
+  color: #334155;
+  background: #f1f5f9;
+  padding: 2px 7px;
+  border-radius: var(--jpm-radius-badge, 6px);
+}
+
+.lux-num { font-variant-numeric: tabular-nums; }
+.lux-pending-txt { font-size: 0.82rem; color: #94a3b8; }
+
+/* Tổng kết tài chính căn phải */
+.lux-summary-section {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 24px;
+}
+
+.lux-summary-box {
+  width: 100%;
+  max-width: 380px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.lux-sum-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  font-size: 0.875rem;
+}
+
+.lux-sum-label {
+  color: #64748b;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.lux-sum-val {
+  text-align: right;
+  color: #0A1128;
+  font-variant-numeric: tabular-nums;
+}
+
+.lux-sum-note {
+  display: block;
+  font-size: 0.74rem;
+  color: #d97706;
+}
+
+.lux-sum-grand {
+  padding-top: 12px;
+  margin-top: 4px;
+  border-top: 1px solid #e2e8f0;
+}
+
+.lux-sum-grand .lux-sum-label {
+  font-weight: 700;
+  color: #0A1128;
+}
+
+.lux-grand-num {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #0A1128;
+}
+
+.lux-sum-deposit {
+  padding-top: 8px;
+  border-top: 1px dashed #e2e8f0;
+}
+
+.lux-deposit-pill {
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: var(--jpm-radius-badge, 6px);
+}
+.lux-deposit-pill.is-paid { background: #ecfdf5; color: #047857; }
+.lux-deposit-pill.is-unpaid { background: #fef2f2; color: #be123c; }
+
+/* VietQR Đặt cọc dùng chung */
+.lux-vietqr-panel {
+  padding: 22px 24px;
+  border-radius: var(--jpm-radius-card, 12px);
+  border: 1px solid #e2e8f0;
+  background: #f8fafc;
+  margin-bottom: 24px;
+}
+
+.lux-vietqr-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 16px;
+  margin-bottom: 18px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.lux-vietqr-title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #0A1128;
+}
+
+.lux-vietqr-amount {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--jpm-color-red-marine, #F82249);
+  font-variant-numeric: tabular-nums;
+}
+
+.lux-vietqr-grid {
+  display: grid;
+  grid-template-columns: 210px 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+.lux-vietqr-img-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.lux-qr-frame {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: var(--jpm-radius-control, 8px);
+  padding: 10px;
+}
+
+.lux-qr-frame img {
+  display: block;
+  width: 180px;
+  height: auto;
+  border-radius: var(--jpm-radius-badge, 6px);
+}
+
+.lux-vietqr-info-col {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: var(--jpm-radius-control, 8px);
+  padding: 14px 18px;
+}
+
+.lux-bank-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 9px 0;
+  border-bottom: 1px solid #f1f5f9;
+  font-size: 0.85rem;
+}
+.lux-bank-row:last-of-type { border-bottom: none; }
+.lux-bank-label { color: #64748b; }
+.lux-bank-val { font-weight: 600; color: #0A1128; text-align: right; }
+
+.lux-transfer-code {
+  font-family: 'Roboto Mono', monospace;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #0A1128;
+  background: #f1f5f9;
+  padding: 2px 8px;
+  border-radius: var(--jpm-radius-badge, 6px);
+}
+
+.lux-inline-copy {
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  color: #334155;
+  font-size: 0.74rem;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: var(--jpm-radius-badge, 6px);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.lux-inline-copy:hover { border-color: #0A1128; color: #0A1128; }
+
+.lux-bank-hint {
+  margin: 12px 0 0;
+  padding-top: 10px;
+  border-top: 1px solid #f1f5f9;
+  font-size: 0.78rem;
+  color: #64748b;
+  line-height: 1.5;
+}
+
+/* Chân chứng từ & Hệ nút Luxury dùng chung */
+.lux-doc-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding-top: 22px;
+  border-top: 1px solid #f1f5f9;
+}
+
+.lux-footer-hint { font-size: 0.84rem; color: #64748b; }
+
+.lux-footer-btns {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.lux-btn,
+.lux-btn-sm {
+  border-radius: var(--jpm-radius-control, 8px) !important;
+  font-weight: 600 !important;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  box-shadow: none !important;
+  transition: all 0.2s ease;
+}
+
+.lux-btn { height: 40px; padding: 0 20px; font-size: 0.875rem !important; }
+.lux-btn-sm { height: 36px; padding: 0 14px; font-size: 0.82rem !important; }
+
+.lux-btn.btn-outline-secondary,
+.lux-btn-sm.btn-outline-secondary {
+  background: #ffffff !important;
+  border: 1px solid #cbd5e1 !important;
+  color: #334155 !important;
+}
+
+.lux-btn.btn-outline-secondary:hover,
+.lux-btn-sm.btn-outline-secondary:hover {
+  background: #f8fafc !important;
+  border-color: #94a3b8 !important;
+  color: #0A1128 !important;
+}
+
+.lux-btn.btn-danger,
+.lux-btn-sm.btn-danger {
+  background: var(--jpm-color-red-marine, #F82249) !important;
+  border: 1px solid var(--jpm-color-red-marine, #F82249) !important;
+  color: #ffffff !important;
+}
+
+.lux-btn.btn-danger:hover,
+.lux-btn-sm.btn-danger:hover {
+  background: var(--jpm-color-red-hover, #D9163A) !important;
+  border-color: var(--jpm-color-red-hover, #D9163A) !important;
+  transform: translateY(-1px);
+}
+
+@media (max-width: 767px) {
+  .lux-doc-sheet { padding: 24px 20px; }
+  .lux-doc-header { flex-direction: column; }
+  .lux-info-grid,
+  .lux-vietqr-grid { grid-template-columns: 1fr; }
+  .lux-doc-footer { flex-direction: column; align-items: stretch; }
+  .lux-footer-btns { flex-direction: column; }
+  .lux-doc-footer .lux-btn { width: 100%; }
+}
+
+@media print {
+  .no-print { display: none !important; }
+  .lux-doc-sheet {
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+  }
+}
