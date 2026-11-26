@@ -1424,7 +1424,7 @@ watch(compatibleModels, (models) => {
 }
 
 .product-sku-info .sku-code {
-  color: var(--jpm-color-blue-electric, #0284C7) !important;
+  color: var(--jpm-color-blue-electric) !important;
   font-size: 1.15rem !important;
   font-weight: 700 !important;
   letter-spacing: 0.03em;
@@ -1586,12 +1586,12 @@ watch(compatibleModels, (models) => {
   box-shadow: none !important;
 }
 
-/* Garage Action Button 44px (Chuẩn JPM Luxury Outline Navy) */
+/* Garage Action Button 44px (Đồng bộ nút xám JPM Design System) */
 .btn-product-garage {
   height: 44px;
   min-width: 120px;
   background-color: #ffffff;
-  color: var(--jpm-color-navy-dark, #0A1128) !important;
+  color: #475569 !important;
   border: 1px solid #cbd5e1 !important;
   border-radius: var(--jpm-radius-control, 8px);
   font-size: 0.88rem;
@@ -1607,22 +1607,22 @@ watch(compatibleModels, (models) => {
 }
 
 .btn-product-garage:hover {
-  background-color: var(--jpm-color-navy-dark, #0A1128) !important;
-  border-color: var(--jpm-color-navy-dark, #0A1128) !important;
-  color: #ffffff !important;
+  background-color: #f1f5f9 !important;
+  border-color: #94a3b8 !important;
+  color: var(--jpm-color-navy-dark, #0A1128) !important;
   transform: translateY(-1px) !important;
   box-shadow: none !important;
 }
 
 .btn-product-garage:hover i,
 .btn-product-garage:hover span {
-  color: #ffffff !important;
+  color: var(--jpm-color-navy-dark, #0A1128) !important;
 }
 
 .btn-product-garage:active {
-  background-color: #101E42 !important;
-  border-color: #0a58ca !important;
-  color: #ffffff !important;
+  background-color: #e2e8f0 !important;
+  border-color: #94a3b8 !important;
+  color: var(--jpm-color-navy-dark, #0A1128) !important;
   transform: translateY(0) !important;
   box-shadow: none !important;
 }

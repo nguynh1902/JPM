@@ -899,7 +899,7 @@ const filteredModels = computed(() => {
   font-weight: 600;
 }
 
-/* Nút Lưu vào Garage chuẩn Marine Tech Blue (#0284C7 / DEC-05) */
+/* Nút Lưu vào Garage kế thừa biến Primary từ main.css */
 .btn-garage-icon {
   display: inline-flex;
   align-items: center;
@@ -908,9 +908,9 @@ const filteredModels = computed(() => {
   height: 32px;
   padding: 0;
   border-radius: var(--jpm-radius-control, 8px);
-  border: 1px solid var(--jpm-color-blue-electric, #0284C7);
+  border: 1px solid var(--jpm-color-blue-electric);
   background-color: #ffffff;
-  color: var(--jpm-color-blue-electric, #0284C7);
+  color: var(--jpm-color-blue-electric);
   font-size: 0.88rem;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -918,21 +918,21 @@ const filteredModels = computed(() => {
 }
 
 .btn-garage-icon:hover:not(:disabled) {
-  background-color: var(--jpm-color-blue-electric, #0284C7);
-  border-color: var(--jpm-color-blue-electric, #0284C7);
+  background-color: var(--jpm-color-blue-electric);
+  border-color: var(--jpm-color-blue-electric);
   color: #ffffff;
   transform: translateY(-1px);
 }
 
 .btn-garage-icon.is-saved {
-  background-color: var(--jpm-color-blue-electric, #0284C7);
-  border-color: var(--jpm-color-blue-electric, #0284C7);
+  background-color: var(--jpm-color-blue-electric);
+  border-color: var(--jpm-color-blue-electric);
   color: #ffffff;
 }
 
 .btn-garage-icon.is-saved:hover:not(:disabled) {
-  background-color: #0369a1;
-  border-color: #0369a1;
+  background-color: var(--jpm-btn-blue-hover);
+  border-color: var(--jpm-btn-blue-hover);
   color: #ffffff;
 }
 

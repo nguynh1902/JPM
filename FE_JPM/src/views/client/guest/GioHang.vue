@@ -1210,7 +1210,7 @@ export default {
 }
 
 .b2b-notice-box i {
-  color: #0284c7 !important;
+  color: var(--jpm-color-blue-electric) !important;
   font-size: 1rem;
   line-height: 1;
   margin-top: 2px;

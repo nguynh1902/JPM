@@ -19,16 +19,16 @@
   --jpm-color-navy-subtle: #101E42;
   --jpm-color-red-marine: #F82249;
   --jpm-color-red-hover: #D9163A;
-  --jpm-color-blue-electric: #0284C7;
+  --jpm-color-blue-electric: #0d6efd;
   --jpm-color-gold-marine: #D97706;
 
-  /* Button Interaction States: Hover (sáng tươi +6-8%) / Active (đậm khi nhấn) */
+  /* Button Interaction States: Hover / Active chuẩn hóa theo từng màu */
   --jpm-btn-red-hover: #D9163A;
   --jpm-btn-red-active: #B91230;
   --jpm-btn-navy-hover: #1B2852;
   --jpm-btn-navy-active: #060B1A;
-  --jpm-btn-blue-hover: #1B2852;
-  --jpm-btn-blue-active: #060B1A;
+  --jpm-btn-blue-hover: #0b5ed7;
+  --jpm-btn-blue-active: #0a58ca;
   --jpm-btn-green-hover: #1E9E63;
   --jpm-btn-green-active: #146C43;
 
@@ -103,8 +103,8 @@
   /* Overwrite Bootstrap Default Red & Primary */
   --bs-danger: var(--jpm-color-red-marine, #F82249);
   --bs-danger-rgb: 248, 34, 73;
-  --bs-primary: var(--jpm-color-navy-dark, #0A1128);
-  --bs-primary-rgb: 10, 17, 40;
+  --bs-primary: var(--jpm-color-blue-electric, #0d6efd);
+  --bs-primary-rgb: 13, 110, 253;
 
   /* Premium Box Shadows */
   --shadow-sm: var(--jpm-shadow-sm);
@@ -2319,13 +2319,13 @@ section,
   box-shadow: none !important;
 }
 
-/* 2. Primary Blue Button (Thêm mới - Bootstrap Standard Blue #0d6efd / DEC-05) */
+/* 2. Primary Blue Button (Thống nhất 1 màu Primary #0d6efd toàn Client) */
 .btn-blue-primary,
 .btn-primary-blue {
-  background-color: var(--jpm-color-navy-dark, #0A1128) !important;
-  border: 1px solid var(--jpm-color-navy-dark, #0A1128) !important;
+  background-color: var(--jpm-color-blue-electric, #0d6efd) !important;
+  border: 1px solid var(--jpm-color-blue-electric, #0d6efd) !important;
   color: #ffffff !important;
-  font-family: var(--default-font, 'Roboto', sans-serif);
+  font-family: var(--default-font, 'Inter', sans-serif);
   font-weight: 600;
   border-radius: var(--jpm-radius-control, 8px) !important;
   box-shadow: none !important;
@@ -2333,16 +2333,16 @@ section,
 }
 .btn-blue-primary:hover,
 .btn-primary-blue:hover {
-  background-color: var(--jpm-btn-blue-hover, #267DFF) !important;
-  border-color: var(--jpm-btn-blue-hover, #267DFF) !important;
+  background-color: var(--jpm-btn-blue-hover, #0b5ed7) !important;
+  border-color: var(--jpm-btn-blue-hover, #0b5ed7) !important;
   color: #ffffff !important;
   box-shadow: none !important;
   transform: translateY(-1px) !important;
 }
 .btn-blue-primary:active,
 .btn-primary-blue:active {
-  background-color: var(--jpm-btn-blue-active, #0B5ED7) !important;
-  border-color: var(--jpm-btn-blue-active, #0B5ED7) !important;
+  background-color: var(--jpm-btn-blue-active, #0a58ca) !important;
+  border-color: var(--jpm-btn-blue-active, #0a58ca) !important;
   transform: translateY(0) !important;
   box-shadow: none !important;
 }
@@ -3551,7 +3551,7 @@ a.footer-contact-value:hover {
   margin-bottom: 0.25rem !important;
 }
 
-/* Kiểu chữ: Mã sản phẩm (SKU) đặt ngay dưới tên sản phẩm - Mã phụ tùng màu xanh Primary Bootstrap #0d6efd */
+/* Kiểu chữ: Mã sản phẩm (SKU) đặt ngay dưới tên sản phẩm - Màu Primary thống nhất (#0d6efd) */
 .product-sku {
   font-family: var(--default-font) !important;
   font-size: 0.8125rem !important; /* ~13px */
@@ -3572,9 +3572,14 @@ a.footer-contact-value:hover {
 .product-sku .sku-code {
   font-family: var(--jpm-font-mono, 'Roboto Mono', monospace) !important;
   font-weight: 700 !important;
-  color: var(--jpm-color-blue-electric, #0284C7) !important;
+  color: var(--jpm-color-blue-electric, #0d6efd) !important;
   letter-spacing: 0.2px !important;
-  min-width: 0; transition: none !important; } .product-card:hover .product-sku .sku-code, .premium-product-card:hover .product-sku .sku-code { color: var(--jpm-color-blue-electric, #0284C7) !important;
+  min-width: 0;
+  transition: none !important;
+}
+.product-card:hover .product-sku .sku-code,
+.premium-product-card:hover .product-sku .sku-code {
+  color: var(--jpm-color-blue-electric, #0d6efd) !important;
 }
 
 /* Kiểu chữ: Tên sản phẩm & Thông tin Card (Chuẩn Typography E-Commerce) */
@@ -4201,8 +4206,7 @@ a.footer-contact-value:hover {
   box-shadow: none !important;
 }
 
-/* 3. Primary / Dark Brand Navy Buttons (#0A1128 Deep Navy đồng bộ nhận diện JPM) */
-.index-page .btn-primary,
+/* 3. Dark Brand Navy Buttons (#0A1128 Deep Navy đồng bộ nhận diện JPM) */
 .index-page .btn-dark {
   background-color: var(--heading-color, #0A1128) !important;
   border-color: var(--heading-color, #0A1128) !important;
@@ -4211,7 +4215,6 @@ a.footer-contact-value:hover {
   box-shadow: none !important;
   transition: all 0.2s ease !important;
 }
-.index-page .btn-primary:hover,
 .index-page .btn-dark:hover {
   background-color: var(--jpm-btn-navy-hover, #1B2852) !important;
   border-color: var(--jpm-btn-navy-hover, #1B2852) !important;
@@ -4219,7 +4222,6 @@ a.footer-contact-value:hover {
   transform: translateY(-1px) !important;
   box-shadow: none !important;
 }
-.index-page .btn-primary:active,
 .index-page .btn-dark:active {
   background-color: var(--jpm-btn-navy-active, #060B1A) !important;
   border-color: var(--jpm-btn-navy-active, #060B1A) !important;
@@ -4227,7 +4229,6 @@ a.footer-contact-value:hover {
   box-shadow: none !important;
 }
 
-.index-page .btn-outline-primary,
 .index-page .btn-outline-dark {
   color: var(--heading-color, #0A1128) !important;
   border-color: var(--heading-color, #0A1128) !important;
@@ -4236,7 +4237,6 @@ a.footer-contact-value:hover {
   box-shadow: none !important;
   transition: all 0.2s ease !important;
 }
-.index-page .btn-outline-primary:hover,
 .index-page .btn-outline-dark:hover {
   background-color: var(--heading-color, #0A1128) !important;
   border-color: var(--heading-color, #0A1128) !important;
@@ -4244,64 +4244,77 @@ a.footer-contact-value:hover {
   transform: translateY(-1px) !important;
   box-shadow: none !important;
 }
-.index-page .btn-outline-primary:active,
 .index-page .btn-outline-dark:active {
   background-color: var(--jpm-btn-navy-active, #060B1A) !important;
   border-color: var(--jpm-btn-navy-active, #060B1A) !important;
   transform: translateY(0) !important;
   box-shadow: none !important;
 }
-.index-page .btn-outline-primary:focus,
 .index-page .btn-outline-dark:focus {
   border-color: var(--heading-color, #0A1128) !important;
   box-shadow: none !important;
   outline: none !important;
 }
 
-/* 4. Blue Buttons (Bootstrap Blue #0d6efd) */
+/* 4. Primary Blue Buttons (Thống nhất 1 màu Primary #0d6efd toàn Client) */
+.index-page .btn-primary,
 .index-page .btn-blue-primary,
 .index-page .btn-primary-blue {
-  background-color: var(--jpm-color-navy-dark, #0A1128) !important;
-  border: 1px solid var(--jpm-color-navy-dark, #0A1128) !important;
+  background-color: var(--jpm-color-blue-electric, #0d6efd) !important;
+  border: 1px solid var(--jpm-color-blue-electric, #0d6efd) !important;
   color: #ffffff !important;
   font-weight: 600 !important;
+  box-shadow: none !important;
   transition: all 0.2s ease !important;
 }
+.index-page .btn-primary:hover,
 .index-page .btn-blue-primary:hover,
 .index-page .btn-primary-blue:hover {
-  background-color: var(--jpm-btn-blue-hover, #267DFF) !important;
-  border-color: var(--jpm-btn-blue-hover, #267DFF) !important;
+  background-color: var(--jpm-btn-blue-hover, #0b5ed7) !important;
+  border-color: var(--jpm-btn-blue-hover, #0b5ed7) !important;
   color: #ffffff !important;
   transform: translateY(-1px) !important;
   box-shadow: none !important;
 }
+.index-page .btn-primary:active,
 .index-page .btn-blue-primary:active,
 .index-page .btn-primary-blue:active {
-  background-color: var(--jpm-btn-blue-active, #0B5ED7) !important;
-  border-color: var(--jpm-btn-blue-active, #0B5ED7) !important;
+  background-color: var(--jpm-btn-blue-active, #0a58ca) !important;
+  border-color: var(--jpm-btn-blue-active, #0a58ca) !important;
   transform: translateY(0) !important;
   box-shadow: none !important;
 }
 
+.index-page .btn-outline-primary,
 .index-page .btn-outline-blue {
   background-color: #ffffff !important;
-  border: 1px solid #cbd5e1 !important;
-  color: var(--jpm-color-navy-dark, #0A1128) !important;
+  border: 1px solid var(--jpm-color-blue-electric, #0d6efd) !important;
+  color: var(--jpm-color-blue-electric, #0d6efd) !important;
   font-weight: 600 !important;
+  box-shadow: none !important;
   transition: all 0.2s ease !important;
 }
+.index-page .btn-outline-primary:hover,
 .index-page .btn-outline-blue:hover {
-  background-color: var(--jpm-color-navy-dark, #0A1128) !important;
-  border-color: var(--jpm-color-navy-dark, #0A1128) !important;
+  background-color: var(--jpm-color-blue-electric, #0d6efd) !important;
+  border-color: var(--jpm-color-blue-electric, #0d6efd) !important;
   color: #ffffff !important;
   transform: translateY(-1px) !important;
   box-shadow: none !important;
 }
+.index-page .btn-outline-primary:active,
 .index-page .btn-outline-blue:active {
-  background-color: var(--jpm-btn-blue-active, #0B5ED7) !important;
-  border-color: var(--jpm-btn-blue-active, #0B5ED7) !important;
+  background-color: var(--jpm-btn-blue-active, #0a58ca) !important;
+  border-color: var(--jpm-btn-blue-active, #0a58ca) !important;
+  color: #ffffff !important;
   transform: translateY(0) !important;
   box-shadow: none !important;
+}
+.index-page .btn-outline-primary:focus,
+.index-page .btn-outline-blue:focus {
+  border-color: var(--jpm-color-blue-electric, #0d6efd) !important;
+  box-shadow: none !important;
+  outline: none !important;
 }
 
 /* 5. Success Buttons (Green #198754) */
@@ -4652,20 +4665,20 @@ a.footer-contact-value:hover {
 }
 
 .btn-primary {
-  background-color: var(--jpm-color-navy-dark, #0A1128);
-  border-color: var(--jpm-color-navy-dark, #0A1128);
-  color: #ffffff;
+  background-color: var(--jpm-color-blue-electric, #0d6efd) !important;
+  border-color: var(--jpm-color-blue-electric, #0d6efd) !important;
+  color: #ffffff !important;
 }
 .btn-primary:hover {
-  background-color: var(--jpm-btn-navy-hover, #1B2852) !important;
-  border-color: var(--jpm-btn-navy-hover, #1B2852) !important;
+  background-color: var(--jpm-btn-blue-hover, #0b5ed7) !important;
+  border-color: var(--jpm-btn-blue-hover, #0b5ed7) !important;
   color: #ffffff !important;
   box-shadow: none !important;
   transform: translateY(-1px) !important;
 }
 .btn-primary:active {
-  background-color: var(--jpm-btn-navy-active, #060B1A) !important;
-  border-color: var(--jpm-btn-navy-active, #060B1A) !important;
+  background-color: var(--jpm-btn-blue-active, #0a58ca) !important;
+  border-color: var(--jpm-btn-blue-active, #0a58ca) !important;
   color: #ffffff !important;
   transform: translateY(0) !important;
   box-shadow: none !important;
@@ -4712,43 +4725,27 @@ a.footer-contact-value:hover {
   box-shadow: none !important;
 }
 
-.btn-outline-primary {
-  background-color: #ffffff !important;
-  color: var(--jpm-color-navy-dark, #0A1128) !important;
-  border-color: var(--jpm-color-navy-dark, #0A1128) !important;
-  box-shadow: none !important;
-  transition: all 0.2s ease !important;
-}
-.btn-outline-primary:hover {
-  background-color: var(--jpm-color-navy-dark, #0A1128) !important;
-  border-color: var(--jpm-color-navy-dark, #0A1128) !important;
-  color: #ffffff !important;
-  transform: translateY(-1px) !important;
-  box-shadow: none !important;
-}
-.btn-outline-primary:active {
-  background-color: var(--jpm-btn-navy-active, #060B1A) !important;
-  border-color: var(--jpm-btn-navy-active, #060B1A) !important;
-  transform: translateY(0) !important;
-  box-shadow: none !important;
-}
-
+.btn-outline-primary,
 .btn-outline-blue {
-  color: var(--jpm-color-navy-dark, #0A1128);
-  border-color: #cbd5e1;
-  background-color: #ffffff;
+  background-color: #ffffff !important;
+  color: var(--jpm-color-blue-electric, #0d6efd) !important;
+  border-color: var(--jpm-color-blue-electric, #0d6efd) !important;
+  box-shadow: none !important;
   transition: all 0.2s ease !important;
 }
+.btn-outline-primary:hover,
 .btn-outline-blue:hover {
-  background-color: var(--jpm-color-navy-dark, #0A1128) !important;
-  border-color: var(--jpm-color-navy-dark, #0A1128) !important;
+  background-color: var(--jpm-color-blue-electric, #0d6efd) !important;
+  border-color: var(--jpm-color-blue-electric, #0d6efd) !important;
   color: #ffffff !important;
   transform: translateY(-1px) !important;
   box-shadow: none !important;
 }
+.btn-outline-primary:active,
 .btn-outline-blue:active {
-  background-color: var(--jpm-btn-blue-active, #0B5ED7) !important;
-  border-color: var(--jpm-btn-blue-active, #0B5ED7) !important;
+  background-color: var(--jpm-btn-blue-active, #0a58ca) !important;
+  border-color: var(--jpm-btn-blue-active, #0a58ca) !important;
+  color: #ffffff !important;
   transform: translateY(0) !important;
   box-shadow: none !important;
 }
@@ -5832,4 +5829,60 @@ a.btn-shopee-outline:hover {
   line-height: 1.35 !important;
   text-transform: none !important;
   margin: 0 !important;
+}
+
+/* Chuẩn Card hàng ngang & Nút thao tác chữ trong nhóm trang Tài khoản
+   - Kích thước card đồng bộ 100% theo Vật tư thường mua (padding 10px 16px, min-height 80px)
+   - Kiểu nút chữ đồng bộ theo Địa chỉ giao hàng (bình thường xám, hover sáng màu ngữ nghĩa) */
+.jpm-account-item-card {
+  border-radius: var(--jpm-radius-card, 12px) !important;
+  background-color: var(--jpm-neutral-0, #FFFFFF);
+  border: 1px solid var(--jpm-neutral-200, #E2E8F0) !important;
+  box-shadow: none !important;
+  padding: 10px 16px !important;
+  min-height: 80px;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.jpm-account-item-card:hover {
+  transform: none !important;
+  box-shadow: none !important;
+  border-color: #cbd5e1 !important;
+  background-color: #fafbfc;
+}
+
+.btn-card-action {
+  height: 34px;
+  padding: 0 12px;
+  font-family: var(--default-font, 'Inter', sans-serif);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  border-radius: var(--jpm-radius-control, 8px);
+  border: 1px solid #e2e8f0;
+  background-color: #ffffff;
+  color: #64748b;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
+  white-space: nowrap;
+  box-shadow: none !important;
+}
+
+.btn-card-action-navy:hover {
+  color: var(--jpm-color-navy-dark, #0A1128);
+  border-color: #94a3b8;
+  background-color: #f8fafc;
+}
+
+.btn-card-action-primary:hover {
+  color: var(--jpm-color-blue-electric, #0d6efd);
+  border-color: var(--jpm-color-blue-electric, #0d6efd);
+  background-color: rgba(13, 110, 253, 0.06);
+}
+
+.btn-card-action-danger:hover {
+  color: var(--jpm-color-red-marine, #F82249);
+  border-color: var(--jpm-color-red-marine, #F82249);
+  background-color: rgba(248, 34, 73, 0.06);
 }

@@ -1,9 +1,14 @@
 <template>
-  <div class="jpm-news-detail main-page inner-page-section">
-    
+  <div class="jpm-news-detail main-page">
+    <section class="section inner-page-section bg-white">
+      <div class="container">
+
     <!-- SKELETON LOADING -->
-    <div v-if="isFetching" class="container py-4" style="max-width: 1120px;">
-      <div class="skeleton-line mb-4" style="width: 120px; height: 16px;"></div>
+    <div v-if="isFetching" class="py-2">
+      <div class="d-flex justify-content-between align-items-center pb-3 mb-4 border-bottom">
+        <div class="skeleton-line" style="width: 280px; height: 18px;"></div>
+        <div class="skeleton-line" style="width: 130px; height: 18px;"></div>
+      </div>
       <div class="skeleton-line mb-2" style="width: 140px; height: 14px;"></div>
       <div class="skeleton-line mb-3" style="width: 75%; height: 42px;"></div>
       <div class="skeleton-line mb-4" style="width: 60%; height: 18px;"></div>
@@ -11,9 +16,9 @@
         <div class="skeleton-line" style="width: 180px; height: 36px;"></div>
         <div class="skeleton-line" style="width: 100px; height: 16px;"></div>
       </div>
-      <div class="skeleton-box mb-5" style="height: 440px; border-radius: 12px;"></div>
-      <div class="row g-5">
+      <div class="row g-4 g-lg-5">
         <div class="col-lg-8">
+          <div class="skeleton-box mb-4" style="height: 440px; border-radius: 12px;"></div>
           <div class="skeleton-line mb-3" style="width: 100%; height: 18px;"></div>
           <div class="skeleton-line mb-3" style="width: 95%; height: 18px;"></div>
           <div class="skeleton-line mb-3" style="width: 90%; height: 18px;"></div>
@@ -25,31 +30,63 @@
     </div>
 
     <!-- ERROR STATE -->
-    <div v-else-if="error" class="container py-5 text-center" style="max-width: 1120px;">
+    <div v-else-if="error" class="py-5 text-center">
       <i class="bi bi-exclamation-triangle text-danger display-1 mb-3"></i>
       <h2 class="fw-bold" style="color: var(--jpm-color-navy-dark, #0A1128);">Không tìm thấy bài viết</h2>
       <p class="text-secondary mb-4">Bài viết này không tồn tại hoặc đã bị xóa.</p>
-      <router-link to="/tin-tuc" class="btn btn-outline-secondary px-4">
-        <i class="bi bi-arrow-left me-2"></i> Quay lại danh sách
+      <router-link to="/tin-tuc" class="btn btn-danger px-4">
+        <i class="bi bi-arrow-left me-2"></i> Quay lại tất cả bài viết
       </router-link>
     </div>
 
-    <!-- ARTICLE CONTENT (WIREFRAME LAYOUT) -->
-    <article v-else-if="article" class="article-wrapper py-3 py-lg-4">
-      <div class="container" style="max-width: 1120px;">
-        
-        <!-- 1. TOP BACK LINK (< All Blog Posts) -->
-        <div class="mb-4">
-          <router-link to="/tin-tuc" class="back-link text-decoration-none d-inline-flex align-items-center gap-2">
-            <i class="bi bi-chevron-left" style="font-size: 0.75rem;"></i>
+    <!-- ARTICLE CONTENT (ĐỒNG BỘ 100% CHUẨN CHI TIẾT CLIENT) -->
+    <article v-else-if="article" class="article-wrapper">
+
+        <!-- 1. TOP BAR: BREADCRUMB & NÚT QUAY LẠI CHUẨN CLIENT -->
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 pb-3 mb-4 border-bottom">
+          <nav aria-label="breadcrumb" class="custom-breadcrumb">
+            <ol class="breadcrumb mb-0 align-items-center">
+              <li class="breadcrumb-item">
+                <router-link to="/" class="text-decoration-none text-muted d-flex align-items-center">
+                  <i class="bi bi-house-door-fill me-1"></i> Trang chủ
+                </router-link>
+              </li>
+              <li class="breadcrumb-item">
+                <router-link to="/tin-tuc" class="text-decoration-none text-muted">Tin tức &amp; Cẩm nang</router-link>
+              </li>
+              <li class="breadcrumb-item" v-if="article.category">
+                <router-link
+                  :to="{ path: '/tin-tuc', query: { category: article.category } }"
+                  class="text-decoration-none text-muted"
+                >
+                  {{ article.category }}
+                </router-link>
+              </li>
+              <li
+                class="breadcrumb-item active fw-bold text-truncate"
+                style="color: var(--heading-color, #0A1128); max-width: 320px;"
+                aria-current="page"
+                :title="article.title"
+              >
+                {{ article.title }}
+              </li>
+            </ol>
+          </nav>
+
+          <router-link
+            to="/tin-tuc"
+            class="btn-back-diagram"
+            title="Quay lại tất cả bài viết"
+          >
+            <i class="bi bi-arrow-left"></i>
             <span>Tất cả bài viết</span>
           </router-link>
         </div>
 
         <!-- 2. ARTICLE HEADER -->
-        <header class="article-header mb-4">
+        <header class="article-header mb-4 pb-2">
           <!-- Category Label -->
-          <div class="mb-2">
+          <div class="mb-2" v-if="article.category">
             <router-link
               :to="{ path: '/tin-tuc', query: { category: article.category } }"
               class="article-category-label text-decoration-none text-danger fw-semibold"
@@ -86,28 +123,22 @@
               </div>
             </div>
 
-            <div class="text-secondary d-flex align-items-center gap-3 flex-wrap" style="font-size: 0.85rem;">
-              <span>{{ formatDate(article.created_at) }}</span>
+            <div class="text-secondary d-flex align-items-center gap-3 flex-wrap" style="font-size: 0.86rem;">
+              <span><i class="bi bi-calendar3 me-1"></i>{{ formatDate(article.created_at) }}</span>
               <span class="text-muted opacity-50">•</span>
               <span><i class="bi bi-eye me-1"></i>{{ Number(article.views || 0).toLocaleString('vi-VN') }} lượt xem</span>
-              <template v-if="hasVideo">
-                <span class="text-muted opacity-50">•</span>
-                <button
-                  type="button"
-                  class="btn btn-sm btn-outline-danger d-inline-flex align-items-center gap-1 py-0 px-2 fw-semibold"
-                  style="font-size: 0.78rem; height: 26px; border-radius: var(--jpm-radius-badge, 6px);"
-                  @click="selectVideoMedia"
-                  title="Chuyển sang xem video thực tế bài viết"
-                >
-                  <i class="bi bi-play-circle-fill"></i> Video thực tế
-                </button>
-              </template>
             </div>
           </div>
         </header>
 
-        <!-- 3. HERO MEDIA HUB (HỢP NHẤT VIDEO THỰC TẾ & SLIDER ĐA ẢNH CHI TIẾT) -->
-        <div class="article-hero-wrapper mb-5">
+        <!-- 3. TWO-COLUMN BODY: LEFT HERO + CONTENT | RIGHT STICKY SIDEBAR -->
+        <div class="row g-4 g-lg-5 align-items-start">
+
+          <!-- LEFT COLUMN: HERO MEDIA + MAIN ARTICLE CONTENT -->
+          <div class="col-lg-8">
+
+            <!-- HERO MEDIA HUB (Nằm gọn trong cột nội dung 8/12 cân đối tỷ lệ 16:9) -->
+            <div class="article-hero-wrapper mb-4 pb-2">
           <div class="article-hero-img rounded-3 overflow-hidden position-relative shadow-sm bg-black">
             
             <!-- A. HIỂN THỊ VIDEO THỰC TẾ (NẰM TRỰC TIẾP TRONG KHUNG HERO KHI ĐANG CHỌN VIDEO) -->
@@ -269,15 +300,10 @@
           </div>
         </div>
 
-        <!-- 4. TWO-COLUMN BODY: LEFT ARTICLE CONTENT + RIGHT SIDEBAR -->
-        <div class="row g-5 align-items-start">
-          
-          <!-- LEFT COLUMN: MAIN ARTICLE CONTENT -->
-          <div class="col-lg-8">
-            <div
-              class="article-html-content"
-              v-html="processedHtmlContent"
-            ></div>
+        <div
+          class="article-html-content"
+          v-html="processedHtmlContent"
+        ></div>
 
 
 
@@ -367,27 +393,12 @@
                 <div class="sidebar-label fw-bold mb-3" style="color: var(--jpm-color-navy-dark, #0A1128);">
                   Chia sẻ bài viết
                 </div>
-                <div class="d-flex align-items-center gap-2">
-                  <button
-                    type="button"
-                    class="social-icon-btn"
-                    title="Chia sẻ LinkedIn"
-                    @click="shareLink('linkedin')"
-                  >
-                    <i class="bi bi-linkedin"></i>
-                  </button>
-                  <button
-                    type="button"
-                    class="social-icon-btn"
-                    title="Chia sẻ X (Twitter)"
-                    @click="shareLink('twitter')"
-                  >
-                    <i class="bi bi-twitter-x"></i>
-                  </button>
+                <div class="d-flex align-items-center flex-wrap gap-2">
                   <button
                     type="button"
                     class="social-icon-btn"
                     title="Chia sẻ Facebook"
+                    aria-label="Chia sẻ Facebook"
                     @click="shareLink('facebook')"
                   >
                     <i class="bi bi-facebook"></i>
@@ -395,10 +406,40 @@
                   <button
                     type="button"
                     class="social-icon-btn"
-                    title="Sao chép liên kết"
+                    title="Chia sẻ Zalo"
+                    aria-label="Chia sẻ Zalo"
+                    @click="shareLink('zalo')"
+                  >
+                    <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" aria-hidden="true">
+                      <path d="M12.49 10.2722v-.4496h1.3467v6.3218h-.7704a.576.576 0 01-.5763-.5729l-.0006.0005a3.273 3.273 0 01-1.9372.6321c-1.8138 0-3.2844-1.4697-3.2844-3.2823 0-1.8125 1.4706-3.2822 3.2844-3.2822a3.273 3.273 0 011.9372.6321l.0006.0005zM6.9188 7.7896v.205c0 .3823-.051.6944-.2995 1.0605l-.03.0343c-.0542.0615-.1815.206-.2421.2843L2.024 14.8h4.8948v.7682a.5764.5764 0 01-.5767.5761H0v-.3622c0-.4436.1102-.6414.2495-.8476L4.8582 9.23H.1922V7.7896h6.7266zm8.5513 8.3548a.4805.4805 0 01-.4803-.4798v-7.875h1.4416v8.3548H15.47zM20.6934 9.6C22.52 9.6 24 11.0807 24 12.9044c0 1.8252-1.4801 3.306-3.3066 3.306-1.8264 0-3.3066-1.4808-3.3066-3.306 0-1.8237 1.4802-3.3044 3.3066-3.3044zm-10.1412 5.253c1.0675 0 1.9324-.8645 1.9324-1.9312 0-1.065-.865-1.9295-1.9324-1.9295s-1.9324.8644-1.9324 1.9295c0 1.0667.865 1.9312 1.9324 1.9312zm10.1412-.0033c1.0737 0 1.945-.8707 1.945-1.9453 0-1.073-.8713-1.9436-1.945-1.9436-1.0753 0-1.945.8706-1.945 1.9453 0 1.0746.8697 1.9453 1.945 1.9453z"/>
+                    </svg>
+                  </button>
+                  <button
+                    type="button"
+                    class="social-icon-btn"
+                    title="Chia sẻ Instagram"
+                    aria-label="Chia sẻ Instagram"
+                    @click="shareLink('instagram')"
+                  >
+                    <i class="bi bi-instagram"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="social-icon-btn"
+                    title="Chia sẻ TikTok"
+                    aria-label="Chia sẻ TikTok"
+                    @click="shareLink('tiktok')"
+                  >
+                    <i class="bi bi-tiktok"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="social-icon-btn"
+                    title="Sao chép liên kết bài viết"
+                    aria-label="Sao chép liên kết bài viết"
                     @click="copyLink"
                   >
-                    <i class="bi bi-globe2"></i>
+                    <i class="bi bi-link-45deg" style="font-size: 1rem;"></i>
                   </button>
                 </div>
               </div>
@@ -414,7 +455,7 @@
                 <router-link
                   to="/tra-cuu"
                   class="btn btn-danger w-100 py-2 fw-semibold"
-                  style="border-radius: var(--jpm-radius-control, 8px); background-color: var(--jpm-color-red-marine, #F82249); font-size: 0.88rem;"
+                  style="border-radius: var(--jpm-radius-control, 8px); font-size: 0.88rem;"
                 >
                   Khám phá ngay
                 </router-link>
@@ -445,22 +486,20 @@
               v-for="rel in relatedArticles"
               :key="rel.id"
             >
-              <article class="related-editorial-card position-relative d-flex flex-column h-100">
-                <!-- 1. Ảnh Editorial bo tròn đều 4 góc 12px (chuẩn DEC-01 & TinTuc.vue) -->
-                <div class="related-thumb-wrap position-relative overflow-hidden mb-3 bg-light">
-                  <router-link :to="`/tin-tuc/${rel.id}`" class="d-block w-100 h-100">
-                    <img
-                      :src="getImageUrl(rel.thumbnail) || fallback"
-                      :alt="rel.title"
-                      class="w-100 h-100 related-thumb-img"
-                      @error="$event.target.src = fallback"
-                      loading="lazy"
-                    >
-                  </router-link>
+              <article class="card h-100 product-card jpm-card related-editorial-card position-relative">
+                <!-- 1. Ảnh Card bo góc trên 12px đồng bộ ProductCard -->
+                <div class="card-img-wrapper related-thumb-wrap position-relative overflow-hidden bg-light">
+                  <img
+                    :src="getImageUrl(rel.thumbnail) || fallback"
+                    :alt="rel.title"
+                    class="w-100 h-100 related-thumb-img"
+                    @error="$event.target.src = fallback"
+                    loading="lazy"
+                  >
                 </div>
 
-                <!-- 2. Nội dung Editorial không đóng khung hộp (thoáng, sắc nét) -->
-                <div class="d-flex flex-column flex-grow-1">
+                <!-- 2. Thân Card chuẩn JPM Client (DEC-01: 12px Card) -->
+                <div class="card-body p-3 d-flex flex-column bg-white text-start">
                   <div
                     class="news-category-label mb-1 text-truncate"
                     :title="rel.category"
@@ -468,25 +507,31 @@
                     {{ rel.category }}
                   </div>
 
-                  <h5 class="related-editorial-title mb-2">
+                  <h5 class="related-editorial-title mb-3">
                     <router-link :to="`/tin-tuc/${rel.id}`" class="text-decoration-none stretched-link text-truncate-2">
                       {{ rel.title }}
                     </router-link>
                   </h5>
 
-                  <div class="mt-auto pt-1 news-meta">
-                    <i class="bi bi-calendar3"></i>
-                    <span>{{ formatDate(rel.created_at) }}</span>
+                  <div class="mt-auto pt-2 d-flex align-items-center justify-content-between gap-2">
+                    <span class="news-meta">
+                      <i class="bi bi-calendar3"></i>
+                      <span>{{ formatDate(rel.created_at) }}</span>
+                    </span>
+                    <span class="related-read-more">
+                      <span>Đọc tiếp</span>
+                      <i class="bi bi-arrow-right"></i>
+                    </span>
                   </div>
                 </div>
               </article>
             </div>
           </div>
         </div>
-
-      </div>
     </article>
 
+      </div>
+    </section>
   </div>
 </template>
 
@@ -745,23 +790,37 @@ export default {
     const formatDate = (d) => {
       if (!d) return '';
       const date = new Date(d);
-      return `${date.getDate().toString().padStart(2, '0')} Th${(date.getMonth() + 1).toString().padStart(2, '0')}, ${date.getFullYear()}`;
+      return `${date.getDate().toString().padStart(2, '0')} Tháng ${(date.getMonth() + 1).toString().padStart(2, '0')}, ${date.getFullYear()}`;
     };
 
-    const copyLink = () => {
-      navigator.clipboard.writeText(window.location.href);
+    const copyCurrentUrl = async () => {
+      try {
+        await navigator.clipboard.writeText(window.location.href);
+        return true;
+      } catch {
+        return false;
+      }
+    };
+
+    const copyLink = async () => {
+      await copyCurrentUrl();
       toaster.success('Đã sao chép đường dẫn bài viết!');
     };
 
-    const shareLink = (platform) => {
+    const shareLink = async (platform) => {
       const url = encodeURIComponent(window.location.href);
-      const title = encodeURIComponent(article.value?.title || '');
       if (platform === 'facebook') {
-        window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, '_blank');
-      } else if (platform === 'twitter') {
-        window.open(`https://twitter.com/intent/tweet?url=${url}&text=${title}`, '_blank');
-      } else if (platform === 'linkedin') {
-        window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${url}`, '_blank');
+        window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, '_blank', 'noopener,noreferrer');
+        return;
+      }
+
+      await copyCurrentUrl();
+      if (platform === 'zalo') {
+        toaster.success('Đã sao chép liên kết bài viết để chia sẻ qua Zalo!');
+      } else if (platform === 'instagram') {
+        toaster.success('Đã sao chép liên kết bài viết để chia sẻ lên Instagram!');
+      } else if (platform === 'tiktok') {
+        toaster.success('Đã sao chép liên kết bài viết để chia sẻ lên TikTok!');
       }
     };
 
@@ -849,12 +908,21 @@ export default {
 
 /* ── ARTICLE HEADER ── */
 .article-category-label {
-  font-size: 0.82rem;
-  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 12px;
+  border-radius: var(--jpm-radius-badge, 6px);
+  background-color: rgba(248, 34, 73, 0.08);
+  border: 1px solid rgba(248, 34, 73, 0.2);
+  font-size: 0.88rem;
+  font-weight: 700;
   letter-spacing: 0.2px;
-  transition: color 0.2s ease;
+  line-height: 1.25;
+  transition: all 0.2s ease;
 }
 .article-category-label:hover {
+  background-color: rgba(248, 34, 73, 0.14);
+  border-color: rgba(248, 34, 73, 0.35);
   color: var(--jpm-color-red-hover, #D9163A) !important;
 }
 
@@ -1236,31 +1304,42 @@ export default {
   border-radius: var(--jpm-radius-card, 12px);
 }
 
-/* ── RELATED BLOGS SECTION (ĐỒNG BỘ 100% EDITORIAL CARD CỦA TINTUC.VUE & TRANGCHU.VUE) ── */
+/* ── RELATED BLOGS SECTION (ĐỒNG BỘ 100% CHUẨN JPM CARD & HOVER LIFT) ── */
 .related-blogs-section {
   background-color: #ffffff !important;
 }
 
-.related-section-title {
-  font-family: var(--heading-font, 'Inter', sans-serif);
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: var(--jpm-color-navy-dark, #0A1128);
-  letter-spacing: -0.015em;
+.related-editorial-card {
+  border-radius: var(--jpm-radius-card, 12px) !important;
+  border: 1px solid #e2e8f0 !important;
+  background-color: #ffffff !important;
+  box-shadow: var(--jpm-shadow-sm, 0 1px 3px rgba(10, 17, 40, 0.05)) !important;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s ease !important;
+  overflow: hidden;
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+  will-change: transform;
 }
 
-.related-editorial-card {
-  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+.related-editorial-card:hover {
+  transform: translate3d(0, -4px, 0) !important;
+  box-shadow: 0 12px 24px rgba(10, 17, 40, 0.08) !important;
+  border-color: #cbd5e1 !important;
 }
 
 .related-thumb-wrap {
   aspect-ratio: 16 / 10;
-  border-radius: var(--jpm-radius-card, 12px);
   background-color: #f1f5f9;
+  border-radius: 12px 12px 0 0 !important;
 }
 
 .related-thumb-img {
   object-fit: cover;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.related-editorial-card:hover .related-thumb-img {
+  transform: scale(1.03);
 }
 
 .related-editorial-card .news-category-label {
@@ -1278,16 +1357,17 @@ export default {
   font-size: 0.96rem;
   font-weight: 700;
   line-height: 1.45;
+  height: 2.9em;
   color: var(--jpm-color-navy-dark, #0A1128);
   margin: 0;
 }
 
 .related-editorial-title a {
-  color: var(--jpm-color-navy-dark, #0A1128);
+  color: var(--jpm-color-navy-dark, #0A1128) !important;
 }
 
 .related-editorial-card:hover .related-editorial-title a {
-  color: var(--jpm-color-navy-dark, #0A1128);
+  color: var(--jpm-color-navy-dark, #0A1128) !important;
 }
 
 .related-editorial-card .news-meta {
@@ -1304,6 +1384,24 @@ export default {
 .related-editorial-card .news-meta i {
   color: inherit;
   font-size: 0.82rem;
+}
+
+.related-read-more {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--jpm-color-red-marine, #F82249);
+  white-space: nowrap;
+}
+
+.related-read-more i {
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.related-editorial-card:hover .related-read-more i {
+  transform: translateX(4px);
 }
 
 /* ── HOVER UTILITIES ── */

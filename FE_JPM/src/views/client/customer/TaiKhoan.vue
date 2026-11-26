@@ -10,16 +10,16 @@
       </div>
       <div class="card-body p-4">
         <form @submit.prevent="saveProfile">
-          <div class="row g-4">
+          <div class="row g-3 g-md-4">
             <!-- Họ và tên -->
             <div class="col-md-6">
               <label class="form-label tk-form-label">Họ và tên</label>
-              <input 
-                type="text" 
-                v-model="profileForm.name" 
-                :class="[isEditingProfile ? 'form-control' : 'form-control-plaintext']" 
-                :readonly="!isEditingProfile" 
-                required 
+              <input
+                type="text"
+                v-model="profileForm.name"
+                :class="[isEditingProfile ? 'form-control' : 'form-control-plaintext']"
+                :readonly="!isEditingProfile"
+                required
                 class="tk-form-input"
               >
             </div>
@@ -27,12 +27,12 @@
             <!-- Tên công ty -->
             <div class="col-md-6">
               <label class="form-label tk-form-label">Tên công ty <span class="fw-normal text-muted">(Nếu B2B)</span></label>
-              <input 
-                type="text" 
-                v-model="profileForm.ten_cong_ty" 
-                :class="[isEditingProfile ? 'form-control' : 'form-control-plaintext']" 
-                :placeholder="isEditingProfile ? 'Nhập tên công ty...' : 'Chưa cập nhật'" 
-                :readonly="!isEditingProfile" 
+              <input
+                type="text"
+                v-model="profileForm.ten_cong_ty"
+                :class="[isEditingProfile ? 'form-control' : 'form-control-plaintext']"
+                :placeholder="isEditingProfile ? 'Nhập tên công ty...' : 'Chưa cập nhật'"
+                :readonly="!isEditingProfile"
                 class="tk-form-input"
               >
             </div>
@@ -40,11 +40,11 @@
             <!-- Số điện thoại -->
             <div class="col-md-6">
               <label class="form-label tk-form-label">Số điện thoại</label>
-              <input 
-                type="tel" 
-                v-model="profileForm.phone" 
-                :class="[isEditingProfile ? 'form-control' : 'form-control-plaintext']" 
-                :readonly="!isEditingProfile" 
+              <input
+                type="tel"
+                v-model="profileForm.phone"
+                :class="[isEditingProfile ? 'form-control' : 'form-control-plaintext']"
+                :readonly="!isEditingProfile"
                 class="tk-form-input tabular-nums"
               >
             </div>
@@ -52,57 +52,56 @@
             <!-- Địa chỉ Email -->
             <div class="col-md-6">
               <label class="form-label tk-form-label">Địa chỉ Email</label>
-              <input 
-                type="email" 
-                v-model="profileForm.email" 
-                :class="[isEditingProfile ? 'form-control' : 'form-control-plaintext']" 
-                :readonly="!isEditingProfile" 
-                required 
+              <input
+                type="email"
+                v-model="profileForm.email"
+                :class="[isEditingProfile ? 'form-control' : 'form-control-plaintext']"
+                :readonly="!isEditingProfile"
+                required
                 class="tk-form-input"
               >
             </div>
-            
-            <!-- Nhóm nút hành động ở đáy form (Đồng bộ 100% chuẩn Client Design System) -->
-            <div class="col-12 mt-4 pt-4 border-top d-flex justify-content-end gap-3">
-              <template v-if="!isEditingProfile">
-                <button 
-                  type="button" 
-                  class="btn btn-action-secondary" 
-                  data-bs-toggle="modal" 
-                  data-bs-target="#changePasswordModal"
-                >
-                  <i class="bi bi-shield-lock"></i>
-                  <span>Đổi mật khẩu</span>
-                </button>
-                <button 
-                  type="button" 
-                  @click="startEditProfile" 
-                  class="btn btn-action-primary"
-                >
-                  <i class="bi bi-pencil"></i>
-                  <span>Chỉnh sửa</span>
-                </button>
-              </template>
-              <template v-else>
-                <button 
-                  type="button" 
-                  class="btn btn-action-secondary" 
-                  @click="cancelEditProfile"
-                >
-                  <i class="bi bi-x-circle"></i>
-                  <span>Hủy bỏ</span>
-                </button>
-                <button 
-                  type="submit" 
-                  class="btn btn-action-primary" 
-                  :disabled="isUpdatingProfile"
-                >
-                  <span v-if="isUpdatingProfile" class="spinner-border spinner-border-sm me-2"></span>
-                  <i class="bi bi-check-circle" v-else></i>
-                  <span>Lưu thay đổi</span>
-                </button>
-              </template>
-            </div>
+          </div>
+
+          <!-- Nhóm nút hành động ở đáy Card (Footer Form) -->
+          <div class="mt-4 pt-3 border-top d-flex justify-content-end gap-2 flex-wrap">
+            <template v-if="!isEditingProfile">
+              <button
+                type="button"
+                class="btn btn-action-secondary"
+                data-bs-toggle="modal"
+                data-bs-target="#changePasswordModal"
+              >
+                <span>Đổi mật khẩu</span>
+              </button>
+              <button
+                type="button"
+                @click="startEditProfile"
+                class="btn btn-action-primary"
+              >
+                <i class="bi bi-pencil"></i>
+                <span>Chỉnh sửa</span>
+              </button>
+            </template>
+            <template v-else>
+              <button
+                type="button"
+                class="btn btn-action-secondary"
+                @click="cancelEditProfile"
+              >
+                <i class="bi bi-x-circle"></i>
+                <span>Hủy bỏ</span>
+              </button>
+              <button
+                type="submit"
+                class="btn btn-action-primary"
+                :disabled="isUpdatingProfile"
+              >
+                <span v-if="isUpdatingProfile" class="spinner-border spinner-border-sm"></span>
+                <i class="bi bi-check-circle" v-else></i>
+                <span>Lưu thay đổi</span>
+              </button>
+            </template>
           </div>
         </form>
       </div>
@@ -112,15 +111,15 @@
          CARD 2: ĐỊA CHỈ GIAO HÀNG (Đồng bộ 100% kích thước & màu sắc)
          ======================================================== -->
     <div class="card border-0 jpm-card">
-      <div class="card-header jpm-card-header">
+      <div class="card-header jpm-card-header flex-wrap gap-2">
         <h5 class="jpm-card-title">Địa chỉ giao hàng</h5>
-        <!-- Nút Thêm mới đối tượng: Đồng bộ kích thước 40px & chuẩn Red Marine toàn Client -->
-        <button class="btn btn-action-primary" @click="openAddAddressModal">
+        <!-- Nút Thêm mới gọn nhẹ màu xanh Primary -->
+        <button type="button" class="btn btn-blue-primary btn-add-address" @click="openAddAddressModal">
           <i class="bi bi-plus-lg"></i>
           <span>Thêm địa chỉ mới</span>
         </button>
       </div>
-      <div class="card-body p-4">
+      <div class="card-body px-4 py-3">
 
         <!-- Empty State -->
         <div class="text-center py-5" v-if="addresses.length === 0">
@@ -131,12 +130,12 @@
           <p class="text-muted small mb-0">Vui lòng thêm địa chỉ để nhận báo giá hoặc giao hàng thuận tiện nhất.</p>
         </div>
 
-        <!-- List địa chỉ: Đồng bộ 100% hình khối & kích thước với Garage và Vật tư thường mua -->
+        <!-- List địa chỉ: Đồng bộ 100% kích thước & hình khối theo Vật tư thường mua -->
         <div class="d-flex flex-column gap-3" v-else>
           <div
             v-for="address in addresses"
             :key="address.id"
-            class="border address-item-card d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3"
+            class="border jpm-account-item-card address-item-card d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3"
             :class="{ 'address-item-default': address.la_mac_dinh }"
           >
             <!-- Bên trái: Thông tin chi tiết địa chỉ -->
@@ -157,41 +156,41 @@
 
               <!-- Dòng dưới: Địa chỉ cụ thể -->
               <p class="mb-0 text-truncate address-text" :title="address.dia_chi_cu_the">
-                {{ address.dia_chi_cu_the }}
+                <i class="bi bi-geo-alt me-1 opacity-75"></i>{{ address.dia_chi_cu_the }}
               </p>
             </div>
 
-            <!-- Bên phải: Các nút thao tác chuẩn 36px đồng bộ 100% với Garage & VatTuThuongMua -->
+            <!-- Bên phải: Các nút thao tác dạng chữ gọn nhẹ (bình thường xám, hover sáng màu ngữ nghĩa) -->
             <div class="d-flex align-items-center gap-2 pe-1 flex-shrink-0 align-self-end align-self-md-center">
-              <!-- Nút Đặt mặc định: Cao 36px, bo góc 8px -->
+              <!-- Nút Đặt mặc định -->
               <button
                 v-if="!address.la_mac_dinh"
                 type="button"
-                class="btn btn-set-default"
+                class="btn btn-card-action btn-card-action-navy"
                 title="Đặt làm địa chỉ nhận hàng mặc định"
                 @click="setDefault(address.id)"
               >
                 Đặt mặc định
               </button>
 
-              <!-- Nút Sửa: 36x36px icon chuẩn -->
+              <!-- Nút Cập nhật -->
               <button
                 type="button"
-                class="btn btn-action-icon btn-edit-icon"
-                title="Sửa địa chỉ"
+                class="btn btn-card-action btn-card-action-primary"
+                title="Cập nhật địa chỉ"
                 @click.prevent="openEditAddressModal(address)"
               >
-                <i class="bi bi-pencil"></i>
+                Cập nhật
               </button>
 
-              <!-- Nút Xóa: 36x36px icon chuẩn -->
+              <!-- Nút Xóa -->
               <button
                 type="button"
-                class="btn btn-action-icon btn-delete-icon"
+                class="btn btn-card-action btn-card-action-danger"
                 title="Xóa địa chỉ"
                 @click.prevent="deleteAddress(address.id)"
               >
-                <i class="bi bi-trash3"></i>
+                Xóa
               </button>
             </div>
           </div>
@@ -227,10 +226,10 @@
                 <input type="password" v-model="passwordForm.new_password_confirmation" class="form-control" placeholder="Xác nhận lại mật khẩu mới..." required>
               </div>
               <div class="d-flex justify-content-end gap-2 pt-3 mt-4 border-top">
-                <button type="button" class="btn btn-secondary-action" data-bs-dismiss="modal">Hủy</button>
-                <button type="submit" class="btn btn-danger-action" :disabled="isChangingPassword">
-                  <span v-if="isChangingPassword" class="spinner-border spinner-border-sm me-2"></span>
-                  Cập nhật mật khẩu
+                <button type="button" class="btn btn-action-secondary" data-bs-dismiss="modal">Hủy</button>
+                <button type="submit" class="btn btn-action-primary" :disabled="isChangingPassword">
+                  <span v-if="isChangingPassword" class="spinner-border spinner-border-sm"></span>
+                  <span>Cập nhật mật khẩu</span>
                 </button>
               </div>
             </form>
@@ -268,10 +267,10 @@
                 <label class="form-check-label fw-medium text-secondary cursor-pointer mb-0" style="font-size: 13.5px;" for="defaultAddress">Đặt làm địa chỉ nhận hàng mặc định</label>
               </div>
               <div class="d-flex justify-content-end gap-2 pt-3 mt-4 border-top">
-                <button type="button" class="btn btn-outline-secondary px-4" data-bs-dismiss="modal">Hủy</button>
-                <button type="submit" class="btn btn-danger px-4" :disabled="isSavingAddress">
-                  <span v-if="isSavingAddress" class="spinner-border spinner-border-sm me-2"></span>
-                  Lưu địa chỉ
+                <button type="button" class="btn btn-action-secondary" data-bs-dismiss="modal">Hủy</button>
+                <button type="submit" class="btn btn-action-primary" :disabled="isSavingAddress">
+                  <span v-if="isSavingAddress" class="spinner-border spinner-border-sm"></span>
+                  <span>Lưu địa chỉ</span>
                 </button>
               </div>
             </form>
@@ -382,8 +381,6 @@ const saveProfile = async () => {
       inputPlaceholder: 'Nhập mật khẩu...',
       inputAttributes: { autocomplete: 'current-password' },
       showCancelButton: true,
-      confirmButtonColor: '#f82249',
-      cancelButtonColor: '#6c757d',
       confirmButtonText: 'Xác nhận',
       cancelButtonText: 'Hủy',
       inputValidator: (value) => {
@@ -516,8 +513,6 @@ const deleteAddress = async (id) => {
     text: "Địa chỉ này sẽ bị xóa vĩnh viễn!",
     icon: 'warning',
     showCancelButton: true,
-    confirmButtonColor: '#f82249',
-    cancelButtonColor: '#6c757d',
     confirmButtonText: 'Đồng ý, xóa!',
     cancelButtonText: 'Hủy'
   });
@@ -587,33 +582,6 @@ const setDefault = (id) => {
   line-height: 1.5;
 }
 
-/* Card địa chỉ: Đồng bộ 100% kích thước & bo góc với Garage & VatTuThuongMua */
-.address-item-card {
-  border-radius: var(--jpm-radius-card, 12px) !important;
-  background-color: var(--jpm-neutral-0, #FFFFFF);
-  border: 1px solid var(--jpm-neutral-200, #E2E8F0) !important;
-  box-shadow: none !important;
-  padding: 10px 16px !important;
-  transition: border-color 0.2s ease, background-color 0.2s ease;
-}
-
-.address-item-card:not(.address-item-default):hover {
-  transform: none !important;
-  box-shadow: none !important;
-  border-color: #cbd5e1 !important;
-  background-color: #fafbfc;
-}
-
-/* Card mặc định: Viền đỏ Marine trang nhã, hover KHÔNG chớp nền, KHÔNG đổi màu */
-.address-item-default,
-.address-item-default:hover {
-  border-color: rgba(248, 34, 73, 0.45) !important;
-  background-color: rgba(248, 34, 73, 0.015) !important;
-  transform: none !important;
-  box-shadow: none !important;
-  cursor: default;
-}
-
 .address-recipient-name {
   color: var(--jpm-color-navy-dark, #0A1128);
   font-size: 0.95rem;
@@ -633,7 +601,8 @@ const setDefault = (id) => {
 }
 
 .address-default-badge {
-  background-color: #ffe2e5;
+  background-color: rgba(248, 34, 73, 0.08);
+  border: 1px solid rgba(248, 34, 73, 0.2);
   color: var(--jpm-color-red-marine, #F82249);
   font-weight: 600;
   font-size: 0.72rem;
@@ -645,67 +614,7 @@ const setDefault = (id) => {
 .address-text {
   font-size: 0.85rem;
   color: #475569;
-  line-height: 1.4;
-}
-
-/* Nút Đặt mặc định: Chiều cao 36px, bo góc 8px đồng bộ với các nút thao tác */
-.btn-set-default {
-  height: 36px;
-  padding: 0 12px;
-  font-size: 0.8rem;
-  font-weight: 500;
-  border-radius: var(--jpm-radius-control, 8px);
-  border: 1px solid #e2e8f0;
-  background-color: #ffffff;
-  color: #64748b;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s ease;
-  white-space: nowrap;
-}
-
-.btn-set-default:hover {
-  border-color: var(--jpm-color-navy-dark, #0A1128);
-  color: var(--jpm-color-navy-dark, #0A1128);
-  background-color: #f8fafc;
-}
-
-/* Hai nút Sửa và Xóa: 36x36px đồng bộ 100% với Garage và VatTuThuongMua */
-.btn-action-icon {
-  width: 36px;
-  height: 36px;
-  border-radius: var(--jpm-radius-control, 8px);
-  background-color: #ffffff;
-  border: 1px solid #e2e8f0;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s ease;
-  font-size: 0.95rem;
-}
-
-.btn-edit-icon {
-  color: #475569;
-}
-
-.btn-edit-icon:hover {
-  background-color: #f1f5f9;
-  border-color: #cbd5e1;
-  color: var(--jpm-color-navy-dark, #0A1128);
-  transform: translateY(-1px);
-}
-
-.btn-delete-icon {
-  color: #94a3b8;
-}
-
-.btn-delete-icon:hover {
-  background-color: var(--jpm-color-red-marine, #F82249);
-  border-color: var(--jpm-color-red-marine, #F82249);
-  color: #ffffff;
-  transform: translateY(-1px);
-  box-shadow: none !important;
+  line-height: 1.45;
 }
 
 /* Empty State Wrap */
@@ -727,145 +636,18 @@ const setDefault = (id) => {
   font-weight: 500 !important;
 }
 
-/* Standard Unified Action Buttons (Đồng bộ 100% kích thước 40px giữa các Card trên trang) */
-.btn-action-primary {
-  height: 40px !important;
-  min-height: 40px !important;
-  max-height: 40px !important;
-  padding: 0 18px !important;
-  background-color: var(--jpm-color-red-marine, #F82249) !important;
-  border: 1px solid var(--jpm-color-red-marine, #F82249) !important;
-  color: #ffffff !important;
-  font-family: var(--heading-font, 'Raleway', 'Montserrat', sans-serif) !important;
-  font-size: 0.875rem !important;
-  font-weight: 600 !important;
-  border-radius: var(--jpm-radius-control, 8px) !important;
+/* Nút Thêm địa chỉ mới: Kích thước nhỏ gọn, màu kế thừa từ .btn-blue-primary trong main.css */
+.btn-add-address {
+  height: 34px !important;
+  min-height: 34px !important;
+  padding: 0 14px !important;
+  font-size: 0.8125rem !important;
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
-  gap: 8px !important;
+  gap: 6px !important;
   white-space: nowrap !important;
-  box-sizing: border-box !important;
-  transition: all 0.2s ease !important;
   line-height: 1 !important;
-  text-decoration: none !important;
-}
-
-.btn-action-primary:hover:not(:disabled) {
-  background-color: var(--jpm-btn-red-hover, #FF3B5F) !important;
-  border-color: var(--jpm-btn-red-hover, #FF3B5F) !important;
-  color: #ffffff !important;
-  box-shadow: none !important;
-  transform: translateY(-1px) !important;
-}
-
-.btn-action-primary:active:not(:disabled) {
-  background-color: var(--jpm-btn-red-active, #D9163A) !important;
-  border-color: var(--jpm-btn-red-active, #D9163A) !important;
-  transform: translateY(0) !important;
-  box-shadow: none !important;
-}
-
-.btn-action-primary:disabled {
-  opacity: 0.65 !important;
-  cursor: not-allowed !important;
-}
-
-.btn-action-secondary {
-  height: 40px !important;
-  min-height: 40px !important;
-  max-height: 40px !important;
-  padding: 0 18px !important;
-  background-color: #ffffff !important;
-  border: 1px solid #cbd5e1 !important;
-  color: #475569 !important;
-  font-family: var(--heading-font, 'Raleway', 'Montserrat', sans-serif) !important;
-  font-size: 0.875rem !important;
-  font-weight: 600 !important;
-  border-radius: var(--jpm-radius-control, 8px) !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  gap: 8px !important;
-  white-space: nowrap !important;
-  box-sizing: border-box !important;
-  transition: all 0.2s ease !important;
-  line-height: 1 !important;
-  text-decoration: none !important;
-}
-
-.btn-action-secondary:hover {
-  background-color: #f1f5f9 !important;
-  border-color: #94a3b8 !important;
-  color: var(--jpm-color-navy-dark, #0A1128) !important;
-  transform: translateY(-1px) !important;
-}
-
-.btn-action-primary i,
-.btn-action-secondary i {
-  font-size: 15px !important;
-  line-height: 1 !important;
-}
-
-/* Standard Modal Action Buttons */
-.btn-danger-action {
-  height: 40px;
-  padding: 0 22px;
-  background-color: var(--jpm-color-red-marine, #F82249);
-  color: #ffffff;
-  border: 1px solid var(--jpm-color-red-marine, #F82249);
-  border-radius: var(--jpm-radius-control, 8px);
-  font-size: 0.875rem;
-  font-weight: 600;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s ease;
-  cursor: pointer;
-}
-
-.btn-danger-action:hover:not(:disabled) {
-  background-color: var(--jpm-btn-red-hover, #FF3B5F) !important;
-  border-color: var(--jpm-btn-red-hover, #FF3B5F) !important;
-  color: #ffffff;
-  transform: translateY(-1px) !important;
-  box-shadow: none !important;
-}
-
-.btn-danger-action:active:not(:disabled) {
-  background-color: var(--jpm-btn-red-active, #D9163A) !important;
-  border-color: var(--jpm-btn-red-active, #D9163A) !important;
-  transform: translateY(0) !important;
-  box-shadow: none !important;
-}
-
-.btn-danger-action:disabled {
-  opacity: 0.65;
-  cursor: not-allowed;
-}
-
-.btn-secondary-action {
-  height: 40px;
-  padding: 0 18px;
-  background-color: #ffffff;
-  color: #475569;
-  border: 1px solid #cbd5e1;
-  border-radius: var(--jpm-radius-control, 8px);
-  font-size: 0.875rem;
-  font-weight: 600;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s ease;
-  cursor: pointer;
-  box-shadow: none !important;
-}
-
-.btn-secondary-action:hover {
-  background-color: #f1f5f9;
-  border-color: #94a3b8;
-  color: var(--jpm-color-navy-dark, #0A1128);
-  transform: translateY(-1px);
 }
 
 .tk-modal-check-row {

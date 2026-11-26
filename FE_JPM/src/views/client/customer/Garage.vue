@@ -53,7 +53,7 @@
               <div
                 v-for="may in brand.items"
                 :key="may.id"
-                class="border garage-item-card d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3"
+                class="border jpm-account-item-card garage-item-card d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3"
                 @click="router.push(`/garage/${may.id}`)"
               >
                 <!-- Bên trái: Thông tin chi tiết động cơ -->
@@ -104,26 +104,26 @@
                   </div>
                 </div>
 
-                <!-- Bên phải: Hai nút thao tác dạng icon đồng bộ 36x36px -->
+                <!-- Bên phải: Các nút thao tác dạng chữ gọn nhẹ đồng bộ với Địa chỉ giao hàng -->
                 <div class="d-flex align-items-center gap-2 pe-1 flex-shrink-0 align-self-end align-self-md-center">
-                  <!-- Sơ đồ / Tra phụ tùng: Outline Primary Blue #0d6efd -->
+                  <!-- Tra sơ đồ: Bình thường xám, hover sáng màu Primary -->
                   <button
                     type="button"
-                    class="btn btn-search-icon"
+                    class="btn btn-card-action btn-card-action-primary"
                     title="Tra cứu sơ đồ phụ tùng cho động cơ này"
                     @click.stop="router.push('/tra-cuu?brand=' + may.dong_co_model?.thuong_hieu_id + '&engineType=' + may.dong_co_model?.loai_dong_co_id + '&model=' + may.dong_co_model_id + '&year=' + (may.dong_co_model?.nam_san_xuat || ''))"
                   >
-                    <i class="bi bi-search"></i>
+                    Tra sơ đồ
                   </button>
 
-                  <!-- Delete: Outline xám hover Đỏ Marine #F82249 -->
+                  <!-- Xóa: Bình thường xám, hover sáng Đỏ Marine -->
                   <button
                     type="button"
-                    class="btn btn-delete-icon"
+                    class="btn btn-card-action btn-card-action-danger"
                     title="Xóa máy khỏi Garage"
                     @click.stop="deleteMay(may.id)"
                   >
-                    <i class="bi bi-trash3"></i>
+                    Xóa
                   </button>
                 </div>
               </div>
@@ -365,22 +365,9 @@ const addToCart = (item, qty = 1) => {
   letter-spacing: -0.01em;
 }
 
-/* Card động cơ: Đồng bộ 100% với vt-product-card của VatTuThuongMua */
+/* Card động cơ: kế thừa kích thước chuẩn từ .jpm-account-item-card */
 .garage-item-card {
-  border-radius: var(--jpm-radius-card, 12px) !important;
-  background-color: var(--jpm-neutral-0, #FFFFFF);
-  border: 1px solid var(--jpm-neutral-200, #E2E8F0) !important;
-  box-shadow: none !important;
-  padding: 10px 16px !important;
-  transition: border-color 0.2s ease, background-color 0.2s ease;
   cursor: pointer;
-}
-
-.garage-item-card:hover {
-  transform: none !important;
-  box-shadow: none !important;
-  border-color: #cbd5e1 !important;
-  background-color: #fafbfc;
 }
 
 .garage-model-title {
@@ -408,52 +395,6 @@ const addToCart = (item, qty = 1) => {
   user-select: none;
 }
 
-/* Hai nút thao tác dạng icon 36x36px chuẩn JPM Luxury Outline Navy */
-.btn-search-icon {
-  width: 36px;
-  height: 36px;
-  border-radius: var(--jpm-radius-control, 8px);
-  background-color: #ffffff;
-  border: 1px solid #cbd5e1;
-  color: var(--jpm-color-navy-dark, #0A1128);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1rem;
-  transition: all 0.2s ease;
-  box-shadow: none !important;
-}
-
-.btn-search-icon:hover {
-  background-color: var(--jpm-color-navy-dark, #0A1128);
-  border-color: var(--jpm-color-navy-dark, #0A1128);
-  color: #ffffff;
-  transform: translateY(-1px);
-  box-shadow: none !important;
-}
-
-/* Nút Xóa: Bình thường xám trung tính tinh tế, khi hover chuyển sang ĐỎ rực rỡ y hệt btn-delete-icon */
-.btn-delete-icon {
-  width: 36px;
-  height: 36px;
-  border-radius: var(--jpm-radius-control, 8px);
-  background-color: #ffffff;
-  border: 1px solid #e2e8f0;
-  color: #94a3b8;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s ease;
-  font-size: 1.05rem;
-}
-
-.btn-delete-icon:hover {
-  background-color: var(--jpm-color-red-marine, #F82249);
-  border-color: var(--jpm-color-red-marine, #F82249);
-  color: #ffffff;
-  transform: translateY(-1px);
-  box-shadow: none !important;
-}
 .empty-icon-wrap {
   width: 72px;
   height: 72px;

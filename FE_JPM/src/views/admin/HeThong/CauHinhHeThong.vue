@@ -321,7 +321,7 @@
               <!-- Instagram -->
               <div class="col-md-6 mb-3">
                 <label for="social_instagram" class="form-label fw-medium text-dark">
-                  Instagram <span class="text-danger">*</span>
+                  Instagram
                 </label>
                 <input 
                   type="url" 
@@ -329,6 +329,20 @@
                   class="form-control" 
                   placeholder="https://instagram.com/..." 
                   v-model="formData.social_instagram"
+                />
+              </div>
+
+              <!-- TikTok -->
+              <div class="col-md-6 mb-3">
+                <label for="social_tiktok" class="form-label fw-medium text-dark">
+                  TikTok
+                </label>
+                <input 
+                  type="url" 
+                  id="social_tiktok" 
+                  class="form-control" 
+                  placeholder="https://tiktok.com/@..." 
+                  v-model="formData.social_tiktok"
                 />
               </div>
             </div>
@@ -644,6 +658,7 @@ export default {
       social_youtube: 'https://youtube.com/@jpmmarine',
       social_zalo: 'https://zalo.me/0909123456',
       social_instagram: 'https://instagram.com/jpmmarine',
+      social_tiktok: 'https://tiktok.com/@jpmmarine',
       vietqr_bank_id: 'ICB',
       vietqr_bank_name: 'VietinBank',
       vietqr_account_no: '108876543210',

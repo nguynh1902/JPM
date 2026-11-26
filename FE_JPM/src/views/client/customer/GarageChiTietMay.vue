@@ -117,7 +117,7 @@
               <div
                 v-for="item in group.items"
                 :key="item.id"
-                class="border part-item-card d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3"
+                class="border jpm-account-item-card part-item-card d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3"
                 @click="router.push('/chi-tiet-phu-tung/' + (item.phu_tung?.ma_phu_tung || item.phu_tung?.id))"
               >
                 <!-- Bên trái: Hình ảnh (58x58px) + Thông tin phụ tùng -->
@@ -135,7 +135,7 @@
 
                   <!-- Thông tin chi tiết: Mã phụ tùng (xanh primary) + Tên phụ tùng, Dòng dưới: Tiền căn trái -->
                   <div class="flex-grow-1 min-w-0">
-                    <!-- Dòng trên: Mã xong đến Tên phụ tùng (Mã màu xanh primary #0d6efd) -->
+                    <!-- Dòng trên: Mã xong đến Tên phụ tùng (kế thừa màu Primary từ main.css) -->
                     <div class="d-flex align-items-center mb-1 min-w-0 flex-wrap" style="column-gap: 8px;">
                       <span class="part-sku-code">{{ item.phu_tung?.ma_phu_tung }}</span>
                       <h6 class="fw-bold mb-0 text-truncate part-product-title" :title="item.phu_tung?.ten_phu_tung">
@@ -162,26 +162,26 @@
                   </div>
                 </div>
 
-                <!-- Bên phải: Hai nút thao tác dạng icon 36x36px đồng bộ 100% -->
+                <!-- Bên phải: Các nút thao tác dạng chữ gọn nhẹ đồng bộ với Địa chỉ giao hàng -->
                 <div class="d-flex align-items-center gap-2 flex-shrink-0 pe-1 align-self-end align-self-md-center">
-                  <!-- Nút Thêm giỏ: 36x36px outline Primary Blue #0d6efd -->
+                  <!-- Nút Thêm giỏ: Bình thường xám, hover sáng màu Primary -->
                   <button
                     type="button"
-                    class="btn btn-cart-icon"
+                    class="btn btn-card-action btn-card-action-primary"
                     title="Thêm vào giỏ hàng"
                     @click.stop="addOneToCart(item)"
                   >
-                    <i class="bi bi-cart-plus"></i>
+                    Thêm giỏ
                   </button>
 
-                  <!-- Nút Xóa: 36x36px outline xám hover Đỏ Marine #F82249 -->
+                  <!-- Nút Xóa: Bình thường xám, hover sáng Đỏ Marine -->
                   <button
                     type="button"
-                    class="btn btn-delete-icon"
+                    class="btn btn-card-action btn-card-action-danger"
                     title="Xóa phụ tùng khỏi danh sách"
                     @click.stop="removeItem(item.id)"
                   >
-                    <i class="bi bi-trash3"></i>
+                    Xóa
                   </button>
                 </div>
               </div>
@@ -293,30 +293,17 @@ const addOneToCart = (item) => {
 
 .garage-model-code {
   font-family: var(--jpm-font-mono, 'Roboto Mono', monospace);
-  color: var(--jpm-color-blue-electric, #0284C7) !important;
+  color: var(--jpm-color-blue-electric) !important;
   font-size: 0.85rem;
   font-weight: 700;
   letter-spacing: 0.3px;
   flex-shrink: 0;
 }
 
-/* Card phụ tùng phẳng, không hiệu ứng nổi, giảm chiều cao đồng bộ 100% với VatTuThuongMua */
+/* Card phụ tùng: kế thừa kích thước chuẩn từ .jpm-account-item-card */
 .part-item-card {
-  border-radius: var(--jpm-radius-card, 12px) !important;
-  border: 1px solid var(--jpm-neutral-200, #E2E8F0) !important;
-  box-shadow: none !important;
-  background-color: var(--jpm-neutral-0, #FFFFFF);
   overflow: hidden;
   cursor: pointer;
-  padding: 10px 16px !important;
-  transition: border-color 0.2s ease, background-color 0.2s ease;
-}
-
-.part-item-card:hover {
-  transform: none !important;
-  box-shadow: none !important;
-  border-color: #cbd5e1 !important;
-  background-color: #fafbfc;
 }
 
 .part-img-wrap {
@@ -341,10 +328,10 @@ const addOneToCart = (item) => {
   line-height: 1.35;
 }
 
-/* Mã phụ tùng: Chuẩn Marine Tech Blue (#0284C7) */
+/* Mã phụ tùng: kế thừa biến Primary từ main.css */
 .part-sku-code {
   font-family: var(--jpm-font-mono, 'Roboto Mono', monospace);
-  color: var(--jpm-color-blue-electric, #0284C7) !important;
+  color: var(--jpm-color-blue-electric) !important;
   font-size: 0.85rem;
   font-weight: 700;
   letter-spacing: 0.3px;
@@ -353,52 +340,6 @@ const addOneToCart = (item) => {
 
 .part-price-box {
   /* Căn lề trái */
-}
-
-/* Hai nút thao tác dạng icon 36x36px chuẩn JPM Luxury Outline Navy */
-.btn-cart-icon {
-  width: 36px;
-  height: 36px;
-  border-radius: var(--jpm-radius-control, 8px);
-  background-color: #ffffff;
-  border: 1px solid #cbd5e1;
-  color: var(--jpm-color-navy-dark, #0A1128);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.1rem;
-  transition: all 0.2s ease;
-  box-shadow: none !important;
-}
-
-.btn-cart-icon:hover {
-  background-color: var(--jpm-color-navy-dark, #0A1128);
-  border-color: var(--jpm-color-navy-dark, #0A1128);
-  color: #ffffff;
-  transform: translateY(-1px);
-  box-shadow: none !important;
-}
-
-.btn-delete-icon {
-  width: 36px;
-  height: 36px;
-  border-radius: var(--jpm-radius-control, 8px);
-  background-color: #ffffff;
-  border: 1px solid #e2e8f0;
-  color: #94a3b8;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s ease;
-  font-size: 1.05rem;
-}
-
-.btn-delete-icon:hover {
-  background-color: var(--jpm-color-red-marine, #F82249);
-  border-color: var(--jpm-color-red-marine, #F82249);
-  color: #ffffff;
-  transform: translateY(-1px);
-  box-shadow: none !important;
 }
 
 .empty-icon-wrap {

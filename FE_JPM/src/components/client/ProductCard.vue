@@ -302,14 +302,14 @@ function handleRequestQuote() {
 
 .sku-code {
   font-family: var(--jpm-font-mono, 'Roboto Mono', monospace);
-  color: var(--jpm-color-blue-electric, #0284C7) !important;
+  color: var(--jpm-color-blue-electric) !important;
   font-weight: 700;
   min-width: 0;
   transition: none !important;
 }
 
 .product-card:hover .sku-code {
-  color: var(--jpm-color-blue-electric, #0284C7) !important;
+  color: var(--jpm-color-blue-electric) !important;
 }
 
 .price-value {

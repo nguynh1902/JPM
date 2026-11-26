@@ -1576,7 +1576,7 @@ export default {
 
 .sku-code {
   font-family: var(--jpm-font-mono, 'Roboto Mono', monospace);
-  color: var(--jpm-color-blue-electric, #0284C7) !important;
+  color: var(--jpm-color-blue-electric) !important;
   font-weight: 700;
   letter-spacing: 0.2px;
   min-width: 0;
@@ -1584,7 +1584,7 @@ export default {
 }
 
 .product-card:hover .sku-code {
-  color: var(--jpm-color-blue-electric, #0284C7) !important;
+  color: var(--jpm-color-blue-electric) !important;
 }
 
 .price-value {
