@@ -1,71 +1,80 @@
 <template>
-  <div class="shopee-orders-wrapper">
-    
+  <div class="lux-orders-wrapper">
     <!-- ========================================================================= -->
-    <!-- THANH TAB ĐƠN HÀNG CHUẨN SHOPEE (FLAT, MINIMALIST, KHÔNG MÀU MÈ) -->
+    <!-- THANH TAB LỌC TRẠNG THÁI (MINIMALIST LUXURY) -->
     <!-- ========================================================================= -->
-    <div class="shopee-tabs-container">
-      <div 
-        class="shopee-tab-item" 
-        :class="{ active: currentTab === 'all' }" 
+    <div class="lux-tabs-bar" role="tablist">
+      <button
+        type="button"
+        class="lux-tab-btn"
+        :class="{ active: currentTab === 'all' }"
         @click="currentTab = 'all'"
       >
         Tất cả
-      </div>
-      <div 
-        class="shopee-tab-item" 
-        :class="{ active: currentTab === '1' }" 
+      </button>
+      <button
+        type="button"
+        class="lux-tab-btn"
+        :class="{ active: currentTab === '1' }"
         @click="currentTab = '1'"
       >
-        Đợi báo giá <span v-if="countByStage(1) > 0" class="tab-badge">({{ countByStage(1) }})</span>
-      </div>
-      <div 
-        class="shopee-tab-item" 
-        :class="{ active: currentTab === '2' }" 
+        Đợi báo giá
+        <span v-if="countByStage(1) > 0" class="lux-tab-count">{{ countByStage(1) }}</span>
+      </button>
+      <button
+        type="button"
+        class="lux-tab-btn"
+        :class="{ active: currentTab === '2' }"
         @click="currentTab = '2'"
       >
-        Báo giá & Cọc <span v-if="countByStage(2) > 0" class="tab-badge">({{ countByStage(2) }})</span>
-      </div>
-      <div 
-        class="shopee-tab-item" 
-        :class="{ active: currentTab === '3' }" 
+        Báo giá &amp; Cọc
+        <span v-if="countByStage(2) > 0" class="lux-tab-count">{{ countByStage(2) }}</span>
+      </button>
+      <button
+        type="button"
+        class="lux-tab-btn"
+        :class="{ active: currentTab === '3' }"
         @click="currentTab = '3'"
       >
-        Đang xử lý <span v-if="countByStage(3) > 0" class="tab-badge">({{ countByStage(3) }})</span>
-      </div>
-      <div 
-        class="shopee-tab-item" 
-        :class="{ active: currentTab === '4' }" 
+        Đang xử lý
+        <span v-if="countByStage(3) > 0" class="lux-tab-count">{{ countByStage(3) }}</span>
+      </button>
+      <button
+        type="button"
+        class="lux-tab-btn"
+        :class="{ active: currentTab === '4' }"
         @click="currentTab = '4'"
       >
-        Đang giao <span v-if="countByStage(4) > 0" class="tab-badge">({{ countByStage(4) }})</span>
-      </div>
-      <div 
-        class="shopee-tab-item" 
-        :class="{ active: currentTab === '5' }" 
+        Đang giao
+        <span v-if="countByStage(4) > 0" class="lux-tab-count">{{ countByStage(4) }}</span>
+      </button>
+      <button
+        type="button"
+        class="lux-tab-btn"
+        :class="{ active: currentTab === '5' }"
         @click="currentTab = '5'"
       >
         Hoàn thành
-      </div>
-      <div 
-        class="shopee-tab-item" 
-        :class="{ active: currentTab === '-1' }" 
+      </button>
+      <button
+        type="button"
+        class="lux-tab-btn"
+        :class="{ active: currentTab === '-1' }"
         @click="currentTab = '-1'"
       >
         Đã hủy
-      </div>
+      </button>
     </div>
-
-    <!-- ========================================================================= -->
-    <!-- NỘI DUNG ĐƠN HÀNG DẠNG THẺ ĐƠN CHUẨN SHOPEE -->
-    <!-- ========================================================================= -->
 
     <!-- Loading Skeleton -->
     <div class="d-flex flex-column gap-3 mt-3" v-if="isLoading">
-      <div class="shopee-order-card placeholder-glow p-4 bg-white" v-for="i in 2" :key="i">
-        <div class="placeholder col-4 rounded bg-secondary mb-3"></div>
+      <div class="lux-order-card placeholder-glow p-4" v-for="i in 2" :key="i">
+        <div class="d-flex justify-content-between mb-3">
+          <span class="placeholder col-3 rounded bg-secondary"></span>
+          <span class="placeholder col-2 rounded bg-secondary"></span>
+        </div>
         <div class="d-flex gap-3">
-          <div class="placeholder bg-secondary rounded" style="width: 80px; height: 80px;"></div>
+          <div class="placeholder bg-secondary rounded" style="width: 56px; height: 56px;"></div>
           <div class="flex-grow-1">
             <span class="placeholder col-6 mb-2 rounded bg-secondary"></span><br>
             <span class="placeholder col-3 rounded bg-secondary"></span>
@@ -75,127 +84,89 @@
     </div>
 
     <!-- Empty State -->
-    <div class="shopee-empty-state text-center py-5" v-else-if="displayedOrders.length === 0">
+    <div class="lux-empty-state text-center py-5" v-else-if="displayedOrders.length === 0">
       <div class="empty-icon-wrap mb-3">
         <i class="bi bi-receipt"></i>
       </div>
       <h5 class="mb-2 order-empty-heading">Chưa có đơn hàng &amp; báo giá</h5>
-      <p class="text-muted mb-4" style="font-size: 14.5px; max-width: 440px; line-height: 1.6;">
+      <p class="text-muted mb-4" style="font-size: 14px; max-width: 420px; line-height: 1.6;">
         Bạn chưa có đơn đặt hàng hoặc yêu cầu báo giá nào trong mục này.
       </p>
-      <router-link to="/san-pham" class="btn btn-danger px-4 py-2 fw-semibold d-inline-flex align-items-center gap-2">
+      <router-link to="/san-pham" class="btn btn-danger px-4 d-inline-flex align-items-center gap-2">
         <i class="bi bi-cart3"></i>
         <span>Khám phá sản phẩm</span>
       </router-link>
     </div>
 
-    <!-- DANH SÁCH THẺ ĐƠN HÀNG -->
+    <!-- DANH SÁCH THẺ ĐƠN HÀNG (GỌN GÀNG - ĐỦ NGHIỆP VỤ) -->
     <div class="d-flex flex-column gap-3 mt-3" v-else>
-      <div 
-        v-for="order in displayedOrders" 
-        :key="order._type + order.id" 
-        class="shopee-order-card"
+      <article
+        v-for="order in displayedOrders"
+        :key="order._type + order.id"
+        class="lux-order-card"
       >
-        <!-- Card Header: Tag + Mã đơn + Trạng thái -->
-        <div class="card-head">
-          <div class="head-left flex-wrap gap-2">
-            <span class="type-tag" :class="order._type === 'quote' ? 'quote-tag' : 'order-tag'">
-              {{ order._type === 'quote' ? 'BÁO GIÁ' : 'ĐƠN HÀNG' }}
-            </span>
-            <span class="order-id">#{{ order.code }}</span>
-            <span class="order-date text-muted">{{ formatDate(order.created_at) }}</span>
-
-            <!-- Tag phân loại hàng rõ ràng -->
-            <template v-if="getStage(order) === 1">
-              <span v-if="getOrderPricingType(order) === 1" class="badge rounded-pill bg-info-subtle text-info-emphasis border border-info-subtle fw-medium" style="font-size: 11px;">
-                <i class="bi bi-tag-fill me-1"></i> Có sẵn giá
-              </span>
-              <span v-else-if="getOrderPricingType(order) === 2" class="badge rounded-pill bg-warning-subtle text-warning-emphasis border border-warning-subtle fw-medium" style="font-size: 11px;">
-                <i class="bi bi-layers-half me-1"></i> Đơn hỗn hợp
-              </span>
-              <span v-else class="badge rounded-pill bg-secondary-subtle text-secondary border border-secondary-subtle fw-medium" style="font-size: 11px;">
-                <i class="bi bi-chat-quote me-1"></i> Cần tra thông số
-              </span>
-            </template>
+        <!-- 1. Header: Mã đơn + Ngày bên trái | 1 Trạng thái tinh tế bên phải -->
+        <div class="lux-card-head">
+          <div class="lux-head-meta">
+            <span class="lux-order-code">#{{ order.code }}</span>
+            <span class="lux-meta-dot" aria-hidden="true">·</span>
+            <span class="lux-order-date">{{ formatDate(order.created_at) }}</span>
           </div>
 
-          <div class="head-right">
-            <span class="status-badge-pill" :class="'stage-status-' + getStage(order) + (getStage(order) === 1 ? '-p' + getOrderPricingType(order) : '')">
-              <i v-if="getStage(order) === 1 && getOrderPricingType(order) === 1" class="bi bi-clock-history me-1"></i>
-              <i v-else-if="getStage(order) === 1 && getOrderPricingType(order) === 2" class="bi bi-hourglass-split me-1"></i>
-              <i v-else-if="getStage(order) === 1" class="bi bi-search me-1"></i>
-              <i v-else-if="getStage(order) === 2" class="bi bi-qr-scan me-1"></i>
-              <i v-else-if="getStage(order) === 3" class="bi bi-box-seam me-1"></i>
-              <i v-else-if="getStage(order) === 4" class="bi bi-truck me-1"></i>
-              <i v-else-if="getStage(order) === 5" class="bi bi-check-circle me-1"></i>
-              <i v-else class="bi bi-x-circle me-1"></i>
-              {{ getStatusText(order) }}
-            </span>
-          </div>
+          <span class="lux-status-indicator" :class="'status-stage-' + getStage(order)">
+            <span class="status-dot"></span>
+            <span>{{ getStatusText(order) }}</span>
+          </span>
         </div>
 
-        <!-- Banner thông báo vận chuyển (Khi ở bước 4: Đang giao) -->
-        <div class="logistics-notice" v-if="getStage(order) === 4">
-          <i class="bi bi-truck text-danger me-2"></i>
-          <span>{{ getLogisticsStatus(order) }}</span>
-        </div>
-        <!-- Banner thông báo gom hàng / xuất kho (Khi ở bước 3: Đang xử lý) -->
-        <div class="logistics-notice bg-info-subtle border-info-subtle text-primary" v-else-if="getStage(order) === 3">
-          <i class="bi bi-box-seam me-2"></i>
-          <span>{{ getLogisticsStatus(order) }}</span>
-        </div>
-
-        <!-- Địa chỉ giao hàng tóm tắt -->
-        <div class="px-3 pt-2 pb-0 d-flex align-items-center text-muted" style="font-size: 12px;" v-if="getOrderAddress(order)">
-          <i class="bi bi-geo-alt me-1 text-danger"></i>
-          <span class="text-truncate">{{ getOrderAddress(order) }}</span>
-        </div>
-
-        <!-- THẺ ĐƠN TÓM TẮT: KÍCH VÀO MỞ MODAL XEM TẤT CẢ SẢN PHẨM -->
-        <div 
-          class="card-summary-row cursor-pointer" 
+        <!-- 2. Sản phẩm đại diện + Địa chỉ giao hàng mảnh -->
+        <div
+          class="lux-card-body"
+          role="button"
+          tabindex="0"
           @click="openProductModal(order)"
-          title="Nhấp để xem danh sách chi tiết các sản phẩm trong đơn"
+          @keydown.enter="openProductModal(order)"
         >
-          <div class="item-thumb rounded-3 overflow-hidden border">
-            <img v-if="getItemProducts(order)[0]?.image" :src="getImageUrl(getItemProducts(order)[0].image)" :alt="getItemProducts(order)[0]?.name" class="img-fluid" style="width: 100%; height: 100%; object-fit: contain; padding: 4px;">
-            <div v-else class="w-100 h-100 d-flex align-items-center justify-content-center bg-light">
-              <i class="bi bi-box-seam text-secondary fs-4"></i>
-            </div>
+          <div class="lux-address-line" v-if="getOrderAddress(order)">
+            <i class="bi bi-geo-alt"></i>
+            <span class="text-truncate">{{ getOrderAddress(order) }}</span>
           </div>
-          
-          <div class="item-details">
-            <div class="item-name fw-bold">
-              {{ getItemProducts(order)[0]?.name || 'Phụ tùng máy thủy' }}
+
+          <div class="lux-product-row">
+            <div class="lux-item-thumb">
+              <img
+                v-if="getItemProducts(order)[0]?.image"
+                :src="getImageUrl(getItemProducts(order)[0].image)"
+                :alt="getItemProducts(order)[0]?.name"
+              >
+              <i v-else class="bi bi-box-seam"></i>
             </div>
-            <div class="item-oem text-muted mt-1">
-              <span>Mã OEM: <code class="text-secondary">{{ getItemProducts(order)[0]?.code || 'N/A' }}</code></span>
+
+            <div class="lux-item-info">
+              <div class="lux-item-name">
+                {{ getItemProducts(order)[0]?.name || 'Phụ tùng máy thủy' }}
+              </div>
+              <div class="lux-item-sub">
+                <span>Mã OEM: <code>{{ getItemProducts(order)[0]?.code || 'N/A' }}</code></span>
+                <span class="lux-meta-dot">·</span>
+                <span>SL: <strong>{{ getItemProducts(order)[0]?.qty || 1 }}</strong></span>
+                <template v-if="getItemProducts(order).length > 1">
+                  <span class="lux-meta-dot">·</span>
+                  <span class="lux-more-items">+{{ getItemProducts(order).length - 1 }} phụ tùng khác</span>
+                </template>
+              </div>
             </div>
-            <div class="item-qty mt-1">
-              Số lượng: <strong>x{{ getItemProducts(order)[0]?.qty || 1 }}</strong>
-              <span v-if="getItemProducts(order).length > 1" class="text-danger ms-2 fw-medium">
-                (+{{ getItemProducts(order).length - 1 }} phụ tùng khác)
+
+            <div class="lux-item-price">
+              <span v-if="getItemProducts(order)[0]?.price > 0" class="lux-price-value">
+                {{ formatPrice(getItemProducts(order)[0].price) }}₫
               </span>
-            </div>
-          </div>
-
-          <!-- Đơn giá: Hiển thị giá nếu có, nếu chưa có giá thì hiển thị 'Chờ tra giá' -->
-          <div class="item-price text-end">
-            <template v-if="getItemProducts(order)[0]?.price > 0">
-              <span class="price-num">{{ formatPrice(getItemProducts(order)[0]?.price) }}₫</span>
-            </template>
-            <template v-else>
-              <span class="badge bg-light text-secondary border fw-medium px-2 py-1">Chờ tra giá</span>
-            </template>
-
-            <div class="view-detail-hint mt-1">
-              <span>Xem chi tiết</span>
-              <i class="bi bi-chevron-right ms-1"></i>
+              <span v-else class="lux-price-pending">Chờ báo giá</span>
             </div>
           </div>
         </div>
 
-        <!-- Khung VietQR cọc nếu bấm mở (Ở bước 2) -->
+        <!-- 3. Khung VietQR cọc (chỉ bung ra khi khách bấm Quét QR cọc ở bước 2) -->
         <div v-if="activeQrOrderCode === order.code" class="qr-deposit-box">
           <div v-if="isLoadingQr" class="text-center py-4 text-muted small">
             <span class="spinner-border spinner-border-sm text-danger me-2"></span>
@@ -212,40 +183,40 @@
           </div>
           <div v-else class="qr-inner">
             <div class="text-center qr-img-col">
-              <img :src="vietQrData.qr_url" alt="VietQR" class="img-fluid rounded border p-1" style="max-width: 190px;">
+              <img :src="vietQrData.qr_url" alt="VietQR" class="img-fluid rounded border p-1 bg-white" style="max-width: 175px;">
               <div class="mt-2 text-muted small d-flex align-items-center justify-content-center gap-1">
-                <span class="spinner-grow spinner-grow-sm text-danger me-1"></span>
-                <span>Chờ thanh toán...</span>
+                <span class="spinner-grow spinner-grow-sm text-danger"></span>
+                <span>Đang chờ chuyển khoản...</span>
               </div>
             </div>
             <div class="qr-info-col">
               <div class="info-row">
-                <span class="text-muted">Ngân hàng:</span>
+                <span class="text-muted">Ngân hàng</span>
                 <strong>{{ `${vietQrData.bank_name} (${vietQrData.bank_id})` }}</strong>
               </div>
               <div class="info-row">
-                <span class="text-muted">Số tài khoản:</span>
+                <span class="text-muted">Số tài khoản</span>
                 <div>
                   <strong class="font-monospace">{{ vietQrData.account_no }}</strong>
                   <button type="button" class="btn-copy" @click="copyText(vietQrData.account_no, 'Đã copy STK')">Copy</button>
                 </div>
               </div>
               <div class="info-row">
-                <span class="text-muted">Chủ tài khoản:</span>
+                <span class="text-muted">Chủ tài khoản</span>
                 <strong>{{ vietQrData.account_name }}</strong>
               </div>
               <div class="info-row">
-                <span class="text-muted">Số tiền cọc:</span>
-                <strong class="text-danger fs-6">{{ vietQrData.amount_formatted || (formatPrice(order.tien_coc_yeu_cau || 0) + '₫') }}</strong>
+                <span class="text-muted">Số tiền cọc</span>
+                <strong class="text-danger">{{ vietQrData.amount_formatted || (formatPrice(order.tien_coc_yeu_cau || 0) + '₫') }}</strong>
               </div>
               <div class="info-row">
-                <span class="text-muted">Nội dung CK:</span>
+                <span class="text-muted">Nội dung CK</span>
                 <div>
                   <strong class="font-monospace text-danger">{{ vietQrData.transfer_content || order.code }}</strong>
                   <button type="button" class="btn-copy" @click="copyText(vietQrData.transfer_content || order.code, 'Đã copy nội dung')">Copy</button>
                 </div>
               </div>
-              <div class="mt-2 text-end">
+              <div class="mt-3 text-end">
                 <button type="button" class="btn btn-sm btn-outline-success" @click="confirmManualPaid(order)">
                   <i class="bi bi-check-lg me-1"></i> Tôi đã chuyển khoản cọc
                 </button>
@@ -254,368 +225,312 @@
           </div>
         </div>
 
-        <!-- BẢNG PHÂN TÍCH TÀI CHÍNH & VẬN CHUYỂN CHUẨN DOANH NGHIỆP -->
-        <div class="order-finance-card">
-          <div class="finance-grid">
-            <!-- 1. Tiền hàng tạm tính -->
-            <div class="finance-col">
-              <span class="finance-label">Tiền hàng (Tạm tính)</span>
-              <div class="finance-value">
-                <template v-if="getItemSubtotal(order) > 0">
-                  <span class="fw-bold text-dark">{{ formatPrice(getItemSubtotal(order)) }}₫</span>
-                  <span v-if="getOrderPricingType(order) === 2 && getStage(order) === 1" class="d-block text-warning small" style="font-size: 11px;">
-                    (+ {{ getUnquotedCount(order) }} món chờ tra giá)
-                  </span>
-                </template>
-                <template v-else>
-                  <span class="badge bg-light text-secondary border">Đang định giá</span>
-                </template>
-              </div>
-            </div>
-
-            <!-- 2. Cước chành xe / vận chuyển -->
-            <div class="finance-col">
-              <span class="finance-label">Cước vận chuyển</span>
-              <div class="finance-value">
-                <template v-if="order.khach_tu_tra_cuoc">
-                  <span class="badge bg-light text-dark border fw-medium" title="Khách tự thanh toán cước với nhà xe khi nhận hàng">
-                    <i class="bi bi-truck me-1 text-primary"></i> Khách tự trả chành xe
-                  </span>
-                </template>
-                <template v-else-if="Number(order.phi_van_chuyen) > 0">
-                  <span class="fw-bold text-dark">{{ formatPrice(order.phi_van_chuyen) }}₫</span>
-                  <span class="text-muted d-block small" style="font-size: 11px;">(Giao tận nơi/chành)</span>
-                </template>
-                <template v-else-if="getStage(order) === 1">
-                  <span class="text-muted small fst-italic">Chờ Admin liên hệ xe</span>
-                </template>
-                <template v-else>
-                  <span class="badge bg-success-subtle text-success border border-success-subtle">Miễn phí ship</span>
-                </template>
-              </div>
-            </div>
-
-            <!-- 3. Tổng giá trị đơn hàng -->
-            <div class="finance-col">
-              <span class="finance-label">Tổng đơn hàng</span>
-              <div class="finance-value">
-                <template v-if="getGrandTotal(order) !== null && getGrandTotal(order) > 0">
-                  <span class="fw-bold text-danger fs-6">{{ formatPrice(getGrandTotal(order)) }}₫</span>
-                  <span class="text-muted d-block small" style="font-size: 11px;">(Đã gồm tiền hàng + ship)</span>
-                </template>
-                <template v-else>
-                  <span class="badge bg-light text-secondary border">Chờ hoàn tất giá</span>
-                </template>
-              </div>
-            </div>
-
-            <!-- 4. Tiền cọc yêu cầu & Tình trạng cọc -->
-            <div class="finance-col finance-col-deposit">
-              <span class="finance-label">Tiền cọc cam kết</span>
-              <div class="finance-value">
-                <template v-if="getDepositRequired(order) > 0">
-                  <div class="d-flex align-items-center gap-1">
-                    <span class="fw-bold text-primary">{{ formatPrice(getDepositRequired(order)) }}₫</span>
-                  </div>
-                  <div class="mt-1">
-                    <span v-if="getDepositStatus(order) === 'paid'" class="badge bg-success-subtle text-success border border-success-subtle" style="font-size: 11px;">
-                      <i class="bi bi-check-circle-fill me-1"></i> Đã cọc {{ formatPrice(getRealPaidAmount(order)) }}₫
-                    </span>
-                    <span v-else class="badge bg-danger-subtle text-danger border border-danger-subtle" style="font-size: 11px;">
-                      <i class="bi bi-exclamation-circle-fill me-1"></i> Chưa thanh toán cọc
-                    </span>
-                  </div>
-                </template>
-                <template v-else-if="getStage(order) === 1">
-                  <span class="text-muted small fst-italic">Admin đang ấn định mức cọc</span>
-                </template>
-                <template v-else>
-                  <span class="text-muted small">Không yêu cầu cọc</span>
-                </template>
-              </div>
-            </div>
+        <!-- 4. Dải Tổng Kết Tài Chính Mỏng 1 Dòng (Chỉ hiện số liệu thực tế đã có) -->
+        <div class="lux-summary-strip">
+          <div class="lux-metric">
+            <span class="lux-metric-label">
+              {{ getGrandTotal(order) !== null && getGrandTotal(order) > 0 ? 'Tổng đơn hàng' : 'Tạm tính' }}
+            </span>
+            <span class="lux-metric-val">
+              <template v-if="getGrandTotal(order) !== null && getGrandTotal(order) > 0">
+                <strong class="text-navy">{{ formatPrice(getGrandTotal(order)) }}₫</strong>
+              </template>
+              <template v-else-if="getItemSubtotal(order) > 0">
+                <strong class="text-navy">{{ formatPrice(getItemSubtotal(order)) }}₫</strong>
+                <span v-if="getUnquotedCount(order) > 0" class="lux-metric-note">
+                  (+{{ getUnquotedCount(order) }} món chờ giá)
+                </span>
+              </template>
+              <template v-else>
+                <span class="lux-metric-muted">Đang báo giá</span>
+              </template>
+            </span>
           </div>
 
-          <!-- DÒNG CÒN LẠI THANH TOÁN KHI NHẬN HÀNG (COD) -->
-          <div v-if="getGrandTotal(order) > 0 && (getStage(order) >= 2 || getDepositRequired(order) > 0)" class="finance-remaining-bar">
-            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
-              <div class="d-flex align-items-center gap-2 text-secondary small">
-                <i class="bi bi-shield-check text-success fs-6"></i>
-                <span class="fw-medium">Còn lại thanh toán khi nhận hàng từ chành xe (COD):</span>
-              </div>
-              <div class="fs-6 fw-bold text-dark font-monospace">
-                {{ formatPrice(getRemainingAmount(order)) }}₫
-              </div>
-            </div>
+          <div class="lux-metric">
+            <span class="lux-metric-label">Vận chuyển</span>
+            <span class="lux-metric-val">
+              <template v-if="order.khach_tu_tra_cuoc">Khách tự trả chành xe</template>
+              <template v-else-if="Number(order.phi_van_chuyen) > 0">{{ formatPrice(order.phi_van_chuyen) }}₫</template>
+              <template v-else-if="getStage(order) === 1"><span class="lux-metric-muted">Đang tính cước</span></template>
+              <template v-else><span class="text-success fw-medium">Miễn phí</span></template>
+            </span>
+          </div>
+
+          <div class="lux-metric" v-if="getDepositRequired(order) > 0">
+            <span class="lux-metric-label">Tiền cọc</span>
+            <span class="lux-metric-val">
+              <strong class="text-navy">{{ formatPrice(getDepositRequired(order)) }}₫</strong>
+              <span
+                class="lux-deposit-state"
+                :class="getDepositStatus(order) === 'paid' ? 'is-paid' : 'is-unpaid'"
+              >
+                {{ getDepositStatus(order) === 'paid' ? 'Đã cọc' : 'Chưa cọc' }}
+              </span>
+            </span>
+          </div>
+
+          <div
+            class="lux-metric"
+            v-if="getGrandTotal(order) > 0 && (getStage(order) >= 2 || getDepositRequired(order) > 0)"
+          >
+            <span class="lux-metric-label">Còn lại (COD)</span>
+            <span class="lux-metric-val">
+              <strong class="text-danger">{{ formatPrice(getRemainingAmount(order)) }}₫</strong>
+            </span>
           </div>
         </div>
 
-        <!-- Card Footer: Ghi chú quy trình & Nút thao tác -->
-        <div class="card-bottom">
-          <div class="process-hint-col">
-            <!-- Thông điệp hướng dẫn theo giai đoạn -->
-            <template v-if="getStage(order) === 1">
-              <div v-if="getOrderPricingType(order) === 1" class="text-muted small d-flex align-items-center gap-1">
-                <i class="bi bi-truck text-primary"></i>
-                <span>Admin đang xác nhận cước vận chuyển (chành xe) & số tiền cọc cho quý khách.</span>
-              </div>
-              <div v-else-if="getOrderPricingType(order) === 2" class="text-muted small d-flex align-items-center gap-1">
-                <i class="bi bi-hourglass-split text-warning"></i>
-                <span>Kỹ thuật viên đang tra cứu giá phụ tùng đặc thù & cước chành xe liên tỉnh.</span>
-              </div>
-              <div v-else class="text-muted small d-flex align-items-center gap-1">
-                <i class="bi bi-search text-secondary"></i>
-                <span>Kỹ thuật viên đang đối soát thông số động cơ & tính cước chành xe.</span>
-              </div>
-            </template>
-
-            <template v-else-if="getStage(order) === 2">
-              <div class="text-danger small d-flex align-items-center gap-1 fw-medium">
-                <i class="bi bi-clock-history"></i>
-                <span>Báo giá hiệu lực 72 giờ. Quý khách vui lòng đặt cọc để hệ thống xuất kho hoặc đặt hàng từ Nhật.</span>
-              </div>
-            </template>
-
-            <template v-else-if="getStage(order) === 3">
-              <div class="text-primary small d-flex align-items-center gap-1 fw-medium">
-                <i class="bi bi-box-seam"></i>
-                <span>Đã ghi nhận cọc. Đang chuẩn bị & gom phụ tùng đóng kiện xuất kho.</span>
-              </div>
-            </template>
-
-            <template v-else-if="getStage(order) === 4">
-              <div class="text-primary small d-flex align-items-center gap-1 fw-medium">
-                <i class="bi bi-truck"></i>
-                <span>Đơn hàng đang trên đường vận chuyển qua chành xe / bưu tá đến quý khách.</span>
-              </div>
-            </template>
-
-            <template v-else-if="getStage(order) === 5">
-              <div class="text-success small d-flex align-items-center gap-1 fw-medium">
-                <i class="bi bi-check-circle-fill"></i>
-                <span>Giao dịch hoàn tất thành công. Cảm ơn quý khách đã tin dùng phụ tùng JPM!</span>
-              </div>
-            </template>
-
-            <template v-else>
-              <div class="text-muted small d-flex align-items-center gap-1">
-                <i class="bi bi-x-circle"></i>
-                <span>Yêu cầu đã đóng hoặc hết thời hạn hiệu lực.</span>
-              </div>
-            </template>
+        <!-- 5. Footer: Ghi chú ngắn bên trái | Tối đa 2-3 nút gọn bên phải -->
+        <div class="lux-card-footer">
+          <div class="lux-footer-note">
+            {{ getProcessNote(order) }}
           </div>
 
-          <div class="action-buttons">
-            <!-- Nút xem sản phẩm (Mở Modal) -->
-            <button type="button" class="btn btn-outline-secondary btn-order-action" @click="openProductModal(order)">
-              <i class="bi bi-list-ul me-1"></i> Xem Sản Phẩm ({{ getItemProducts(order).length }})
+          <div class="lux-footer-actions">
+            <button
+              type="button"
+              class="btn btn-outline-secondary lux-action-btn"
+              @click="openProductModal(order)"
+            >
+              Xem chi tiết ({{ getItemProducts(order).length }})
             </button>
 
-            <!-- Nếu có token báo giá: Cho phép mở xem trang Báo giá chi tiết -->
-            <router-link v-if="order.token" :to="'/bao-gia/' + order.token" class="btn btn-outline-secondary btn-order-action">
-              <i class="bi bi-receipt me-1"></i> Bảng Báo Giá Chi Tiết
+            <!-- Chỉ hiện link Bảng báo giá khi báo giá ĐÃ được gửi giá chính thức (giai đoạn >= 2) -->
+            <router-link
+              v-if="order.token && getStage(order) >= 2"
+              :to="'/bao-gia/' + order.token"
+              class="btn btn-outline-secondary lux-action-btn"
+            >
+              Bảng báo giá
             </router-link>
 
-            <!-- Bước 1: Liên hệ hỗ trợ -->
+            <!-- CTA chính theo từng giai đoạn -->
             <template v-if="getStage(order) === 1">
-              <a :href="buildZaloUrl('Chào JPM, tôi muốn hỏi về đơn hàng mã #' + order.code)" target="_blank" rel="noopener noreferrer" class="btn btn-danger btn-order-action">
-                <i class="bi bi-chat-dots me-1"></i> Chat Kỹ Thuật
+              <a
+                :href="buildZaloUrl('Chào JPM Marine, tôi muốn hỏi về đơn mã #' + order.code)"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="btn btn-danger lux-action-btn"
+              >
+                <i class="bi bi-chat-dots me-1"></i> Liên hệ kỹ thuật
               </a>
             </template>
 
-            <!-- Bước 2: Từ chối hoặc Quét QR Cọc -->
             <template v-else-if="getStage(order) === 2">
-              <button type="button" class="btn btn-outline-danger btn-order-action" @click="handleRejectQuote(order)">
+              <button
+                v-if="order._type === 'quote' && order.token"
+                type="button"
+                class="btn btn-outline-secondary lux-action-btn"
+                @click="handleRejectQuote(order)"
+              >
                 Từ chối
               </button>
-              <button 
-                type="button" 
-                class="btn btn-danger btn-order-action fw-bold"
+              <button
+                v-if="getDepositRequired(order) > 0"
+                type="button"
+                class="btn btn-danger lux-action-btn"
                 @click="toggleVietQR(order)"
               >
-                <i class="bi bi-qr-scan me-1"></i> {{ activeQrOrderCode === order.code ? 'Đóng Mã QR' : `Quét QR Cọc (${formatPrice(getDepositRequired(order))}₫)` }}
+                <i class="bi bi-qr-scan me-1"></i>
+                {{ activeQrOrderCode === order.code ? 'Đóng mã QR' : `Quét QR cọc (${formatPrice(getDepositRequired(order))}₫)` }}
+              </button>
+              <button
+                v-else-if="order._type === 'quote' && order.token"
+                type="button"
+                class="btn btn-danger lux-action-btn"
+                @click="handleAcceptQuote(order)"
+              >
+                <i class="bi bi-check2-circle me-1"></i> Đồng ý chốt đơn
               </button>
             </template>
 
-            <!-- Bước 3: Đang xử lý / gom hàng -->
             <template v-else-if="getStage(order) === 3">
-              <a :href="buildZaloUrl('Hỏi tiến độ chuẩn bị gom hàng cho đơn #' + order.code)" target="_blank" rel="noopener noreferrer" class="btn btn-outline-secondary btn-order-action">
-                <i class="bi bi-box-seam me-1"></i> Tiến Độ Chuẩn Bị
+              <a
+                :href="buildZaloUrl('Hỏi tiến độ chuẩn bị hàng cho đơn #' + order.code)"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="btn btn-outline-secondary lux-action-btn"
+              >
+                Hỏi tiến độ
               </a>
             </template>
 
-            <!-- Bước 4: Đang giao -->
             <template v-else-if="getStage(order) === 4">
-              <a :href="buildZaloUrl('Hỏi tiến độ vận chuyển chành xe cho đơn #' + order.code)" target="_blank" rel="noopener noreferrer" class="btn btn-danger btn-order-action">
-                <i class="bi bi-truck me-1"></i> Tiến Độ Vận Chuyển
+              <a
+                :href="buildZaloUrl('Hỏi tiến độ giao hàng cho đơn #' + order.code)"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="btn btn-danger lux-action-btn"
+              >
+                <i class="bi bi-truck me-1"></i> Theo dõi giao hàng
               </a>
             </template>
 
-            <!-- Bước 5: Hoàn thành -->
             <template v-else-if="getStage(order) === 5">
-              <router-link to="/san-pham" class="btn btn-danger btn-order-action">
-                Mua Lại
-              </router-link>
+              <button
+                type="button"
+                class="btn btn-danger lux-action-btn"
+                @click="handleReorderAll(order)"
+              >
+                Mua lại đơn này
+              </button>
             </template>
           </div>
         </div>
-
-      </div>
+      </article>
     </div>
 
     <!-- ========================================================================= -->
-    <!-- MODAL DANH SÁCH SẢN PHẨM CỦA ĐƠN HÀNG (KÍCH VÀO CHI TIẾT & CÓ THÊM GIỎ HÀNG) -->
+    <!-- MODAL CHI TIẾT ĐƠN HÀNG (ĐỒNG BỘ CHUẨN MODAL LUXURY CỦA JPM) -->
     <!-- ========================================================================= -->
     <div v-if="selectedOrderForModal" class="modal-backdrop fade show" style="z-index: 1050;" @click="closeProductModal"></div>
     <div v-if="selectedOrderForModal" class="modal fade show d-block" tabindex="-1" style="z-index: 1055;" @click.self="closeProductModal">
       <div class="modal-dialog modal-dialog-centered modal-lg">
-        <div class="modal-content border-0 shadow-lg" style="border-radius: 8px; overflow: hidden;">
-          
-          <!-- Modal Header -->
-          <div class="modal-header border-bottom py-3 px-4 bg-white d-flex justify-content-between align-items-center">
-            <div>
-              <h5 class="modal-title fw-bold mb-1" style="color: var(--heading-color); font-size: 16px;">
-                <i class="bi bi-box-seam text-danger me-2"></i>DANH SÁCH SẢN PHẨM - ĐƠN #{{ selectedOrderForModal.code }}
-              </h5>
-              <div class="text-muted small">
-                Trạng thái: <strong class="text-danger text-uppercase">{{ getStatusText(selectedOrderForModal) }}</strong>
-                <span class="mx-2">|</span>
-                <span>Nhấp vào tên để xem chi tiết hoặc bấm icon thêm vào giỏ hàng</span>
-              </div>
+        <div class="modal-content lux-modal-content">
+          <!-- Header gọn gàng, sentence-case -->
+          <div class="lux-modal-header">
+            <div class="d-flex align-items-center flex-wrap gap-2">
+              <h5 class="lux-modal-title mb-0">Chi tiết đơn #{{ selectedOrderForModal.code }}</h5>
+              <span class="lux-status-indicator" :class="'status-stage-' + getStage(selectedOrderForModal)">
+                <span class="status-dot"></span>
+                <span>{{ getStatusText(selectedOrderForModal) }}</span>
+              </span>
             </div>
-            <button type="button" class="btn-close" @click="closeProductModal"></button>
+            <button type="button" class="btn-close" aria-label="Đóng" @click="closeProductModal"></button>
           </div>
 
-          <!-- Thanh Thông tin Địa chỉ nhận hàng -->
-          <div class="px-4 py-2 bg-light border-bottom d-flex align-items-center gap-2" style="font-size: 13px;">
-            <i class="bi bi-geo-alt-fill text-danger fs-6"></i>
-            <span class="text-secondary fw-semibold">Địa chỉ nhận hàng:</span>
-            <span class="text-dark fw-medium">{{ getOrderAddress(selectedOrderForModal) || 'Chưa cung cấp địa chỉ nhận hàng' }}</span>
+          <!-- Địa chỉ nhận hàng -->
+          <div class="lux-modal-address" v-if="getOrderAddress(selectedOrderForModal)">
+            <i class="bi bi-geo-alt"></i>
+            <span>{{ getOrderAddress(selectedOrderForModal) }}</span>
           </div>
 
-          <!-- Modal Body: Danh sách phụ tùng -->
-          <div class="modal-body p-0" style="max-height: 60vh; overflow-y: auto;">
-            <div class="list-group list-group-flush">
-              <div 
-                v-for="(prod, idx) in getItemProducts(selectedOrderForModal)" 
-                :key="idx"
-                class="list-group-item p-3 d-flex align-items-center justify-content-between gap-3 border-bottom modal-item-row"
-              >
-                <!-- Bên trái: Hình ảnh + Tên (Click mở trang chi tiết) -->
-                <div class="d-flex align-items-center gap-3 flex-grow-1" style="cursor: pointer;" @click="goToProductDetail(prod)" title="Bấm để xem trang chi tiết sản phẩm này">
-                  <div class="modal-thumb rounded-2 overflow-hidden border">
-                    <img v-if="prod.image" :src="getImageUrl(prod.image)" :alt="prod.name" class="img-fluid" style="width: 100%; height: 100%; object-fit: contain; padding: 2px;">
-                    <div v-else class="w-100 h-100 d-flex align-items-center justify-content-center bg-light">
-                      <i class="bi bi-box-seam text-secondary fs-4"></i>
-                    </div>
+          <!-- Danh sách sản phẩm -->
+          <div class="lux-modal-body">
+            <div
+              v-for="(prod, idx) in getItemProducts(selectedOrderForModal)"
+              :key="idx"
+              class="lux-modal-item"
+            >
+              <div class="lux-modal-item-left" @click="goToProductDetail(prod)">
+                <div class="lux-modal-thumb">
+                  <img v-if="prod.image" :src="getImageUrl(prod.image)" :alt="prod.name">
+                  <i v-else class="bi bi-box-seam"></i>
+                </div>
+                <div class="min-w-0">
+                  <div class="lux-modal-prod-name">
+                    <span>{{ prod.name }}</span>
+                    <i class="bi bi-arrow-up-right lux-ext-icon"></i>
                   </div>
-                  <div>
-                    <div class="fw-bold text-dark d-flex align-items-center gap-1 product-link" style="font-size: 14.5px;">
-                      <span>{{ prod.name }}</span>
-                      <i class="bi bi-box-arrow-up-right small text-muted" style="font-size: 11px;"></i>
-                    </div>
-                    <div class="text-muted small mt-1">
-                      <span>Mã OEM: <code class="text-secondary">{{ prod.code || 'N/A' }}</code></span>
-                      <span class="mx-2">|</span>
-                      <span>Số lượng: <strong class="text-dark">x{{ prod.qty }}</strong></span>
-                    </div>
+                  <div class="lux-item-sub mt-1">
+                    <span>Mã OEM: <code>{{ prod.code || 'N/A' }}</code></span>
+                    <span class="lux-meta-dot">·</span>
+                    <span>SL: <strong>{{ prod.qty }}</strong></span>
                   </div>
                 </div>
+              </div>
 
-                <!-- Bên phải: Giá (Liên hệ nếu bước 1) + Icon Thêm Giỏ Hàng -->
-                <div class="d-flex align-items-center gap-3">
-                  <div class="text-end">
-                    <template v-if="prod.price > 0">
-                      <span class="price-num">{{ formatPrice(prod.price) }}₫</span>
-                    </template>
-                    <template v-else>
-                      <span class="price-contact">Liên hệ</span>
-                    </template>
-                  </div>
+              <div class="lux-modal-item-right">
+                <span v-if="prod.price > 0" class="lux-price-value">
+                  {{ formatPrice(prod.price) }}₫
+                </span>
+                <span v-else class="lux-price-pending">Chờ báo giá</span>
 
-                  <!-- ICON / NÚT THÊM VÀO GIỎ HÀNG -->
-                  <button 
-                    type="button" 
-                    class="btn btn-outline-danger btn-sm d-inline-flex align-items-center gap-1 px-3 py-1 btn-add-cart"
-                    title="Thêm phụ tùng này vào giỏ hàng"
-                    @click.stop="handleAddToCart(prod)"
-                  >
-                    <i class="bi bi-cart-plus fs-6"></i>
-                    <span class="small fw-semibold">Thêm giỏ</span>
-                  </button>
-                </div>
+                <button
+                  type="button"
+                  class="lux-icon-cart-btn"
+                  title="Thêm vào giỏ hàng"
+                  aria-label="Thêm vào giỏ hàng"
+                  @click.stop="handleAddToCart(prod)"
+                >
+                  <i class="bi bi-cart-plus"></i>
+                </button>
               </div>
             </div>
           </div>
 
-          <!-- Modal Footer: Bảng phân tích tài chính chi tiết chuẩn doanh nghiệp -->
-          <div class="modal-footer bg-light p-3 d-flex flex-column gap-2" v-if="selectedOrderForModal">
-            <div class="w-100 bg-white p-3 rounded-3 border">
-              <div class="d-flex justify-content-between align-items-center py-1 border-bottom">
-                <span class="text-muted small">Tiền hàng (Tạm tính):</span>
-                <span class="fw-bold text-dark">
+          <!-- Tổng kết tài chính & Footer -->
+          <div class="lux-modal-footer" v-if="selectedOrderForModal">
+            <div class="lux-modal-summary">
+              <div class="lux-sum-row">
+                <span class="text-muted">Tạm tính tiền hàng</span>
+                <span class="fw-semibold text-navy">
                   <template v-if="getItemSubtotal(selectedOrderForModal) > 0">
                     {{ formatPrice(getItemSubtotal(selectedOrderForModal)) }}₫
-                    <span v-if="getOrderPricingType(selectedOrderForModal) === 2 && getStage(selectedOrderForModal) === 1" class="text-warning-emphasis small fw-normal ms-1">
-                      (+ {{ getUnquotedCount(selectedOrderForModal) }} món chờ tra giá)
+                    <span v-if="getUnquotedCount(selectedOrderForModal) > 0 && getStage(selectedOrderForModal) === 1" class="lux-metric-note">
+                      (+{{ getUnquotedCount(selectedOrderForModal) }} món chờ giá)
                     </span>
                   </template>
-                  <template v-else>
-                    <span class="badge bg-light text-secondary border">Đang định giá</span>
-                  </template>
+                  <template v-else>Đang báo giá</template>
                 </span>
               </div>
-              <div class="d-flex justify-content-between align-items-center py-1 border-bottom">
-                <span class="text-muted small">Cước vận chuyển:</span>
-                <span class="fw-medium text-dark">
-                  {{ selectedOrderForModal.khach_tu_tra_cuoc ? 'Khách tự trả chành xe' : (Number(selectedOrderForModal.phi_van_chuyen) > 0 ? formatPrice(selectedOrderForModal.phi_van_chuyen) + '₫' : 'Chờ xác nhận') }}
+
+              <div class="lux-sum-row">
+                <span class="text-muted">Cước vận chuyển</span>
+                <span class="fw-medium text-navy">
+                  <template v-if="selectedOrderForModal.khach_tu_tra_cuoc">Khách tự trả chành xe</template>
+                  <template v-else-if="Number(selectedOrderForModal.phi_van_chuyen) > 0">{{ formatPrice(selectedOrderForModal.phi_van_chuyen) }}₫</template>
+                  <template v-else-if="getStage(selectedOrderForModal) === 1">Đang tính cước</template>
+                  <template v-else>Miễn phí</template>
                 </span>
               </div>
-              <div class="d-flex justify-content-between align-items-center py-1 border-bottom">
-                <span class="text-dark fw-bold small text-uppercase">Tổng Giá Trị Đơn Hàng:</span>
-                <span class="fw-bold text-danger fs-6">
+
+              <div class="lux-sum-row" v-if="getDepositRequired(selectedOrderForModal) > 0">
+                <span class="text-muted">Tiền cọc yêu cầu</span>
+                <span class="fw-semibold text-navy">
+                  {{ formatPrice(getDepositRequired(selectedOrderForModal)) }}₫
+                  <span
+                    class="lux-deposit-state ms-1"
+                    :class="getDepositStatus(selectedOrderForModal) === 'paid' ? 'is-paid' : 'is-unpaid'"
+                  >
+                    {{ getDepositStatus(selectedOrderForModal) === 'paid' ? 'Đã cọc' : 'Chưa cọc' }}
+                  </span>
+                </span>
+              </div>
+
+              <div class="lux-sum-row lux-sum-total">
+                <span>
+                  {{ getGrandTotal(selectedOrderForModal) > 0 && (getStage(selectedOrderForModal) >= 2 || getDepositRequired(selectedOrderForModal) > 0) ? 'Còn lại thanh toán (COD)' : 'Tổng giá trị đơn hàng' }}
+                </span>
+                <span class="lux-total-num">
                   <template v-if="getGrandTotal(selectedOrderForModal) !== null && getGrandTotal(selectedOrderForModal) > 0">
-                    {{ formatPrice(getGrandTotal(selectedOrderForModal)) }}₫
+                    {{ formatPrice(getStage(selectedOrderForModal) >= 2 || getDepositRequired(selectedOrderForModal) > 0 ? getRemainingAmount(selectedOrderForModal) : getGrandTotal(selectedOrderForModal)) }}₫
                   </template>
                   <template v-else>
-                    <span class="text-secondary small">Chờ định giá xong</span>
+                    <span class="lux-metric-muted fw-normal">Chờ hoàn tất báo giá</span>
                   </template>
-                </span>
-              </div>
-              <div v-if="getDepositRequired(selectedOrderForModal) > 0" class="d-flex justify-content-between align-items-center py-1 border-bottom">
-                <span class="text-muted small">Tiền Cọc Cam Kết:</span>
-                <div class="text-end">
-                  <span class="fw-bold text-primary">{{ formatPrice(getDepositRequired(selectedOrderForModal)) }}₫</span>
-                  <div class="small">
-                    <span v-if="getDepositStatus(selectedOrderForModal) === 'paid'" class="text-success fw-semibold">
-                      <i class="bi bi-check-circle-fill me-1"></i>Đã thanh toán cọc
-                    </span>
-                    <span v-else class="text-danger fw-semibold">
-                      <i class="bi bi-exclamation-circle-fill me-1"></i>Chưa thanh toán cọc
-                    </span>
-                  </div>
-                </div>
-              </div>
-              <div v-if="getGrandTotal(selectedOrderForModal) > 0 && (getStage(selectedOrderForModal) >= 2 || getDepositRequired(selectedOrderForModal) > 0)" class="d-flex justify-content-between align-items-center pt-2">
-                <span class="text-secondary fw-semibold small">Còn lại thu khi nhận hàng từ chành xe (COD):</span>
-                <span class="fw-bold text-dark font-monospace fs-6">
-                  {{ formatPrice(getRemainingAmount(selectedOrderForModal)) }}₫
                 </span>
               </div>
             </div>
 
-            <div class="w-100 d-flex justify-content-end gap-2 mt-1">
-              <router-link v-if="selectedOrderForModal.token" :to="'/bao-gia/' + selectedOrderForModal.token" class="btn btn-outline-primary btn-sm px-3" @click="closeProductModal">
-                <i class="bi bi-receipt me-1"></i> Bảng Báo Giá Chi Tiết
-              </router-link>
-              <button type="button" class="btn btn-outline-secondary btn-sm px-3" @click="closeProductModal">Đóng</button>
+            <div class="lux-modal-actions">
+              <button
+                type="button"
+                class="btn btn-outline-secondary lux-action-btn"
+                @click="handleReorderAll(selectedOrderForModal)"
+              >
+                <i class="bi bi-cart-plus me-1"></i> Thêm tất cả vào giỏ
+              </button>
+
+              <div class="d-flex align-items-center gap-2">
+                <router-link
+                  v-if="selectedOrderForModal.token && getStage(selectedOrderForModal) >= 2"
+                  :to="'/bao-gia/' + selectedOrderForModal.token"
+                  class="btn btn-outline-secondary lux-action-btn"
+                  @click="closeProductModal"
+                >
+                  Bảng báo giá
+                </router-link>
+                <button type="button" class="btn btn-danger lux-action-btn px-4" @click="closeProductModal">
+                  Đóng
+                </button>
+              </div>
             </div>
           </div>
-
         </div>
       </div>
     </div>
-
   </div>
 </template>
 
@@ -774,30 +689,44 @@ const getStatusText = (order) => {
   if (order._type === 'order') {
     const st = Number(order.trang_thai);
     const paySt = Number(order.trang_thai_thanh_toan);
-    if (st === 4) return 'ĐÃ HỦY';
-    if (st === 3) return 'HOÀN THÀNH';
-    if (st === 2) return 'ĐANG GIAO HÀNG';
-    if (st === 1) return 'ĐANG XỬ LÝ (GOM HÀNG)';
-    if (st === 0) return paySt === 0 ? 'CHỜ DUYỆT & CỌC' : 'ĐÃ THANH TOÁN';
+    if (st === 4) return 'Đã hủy';
+    if (st === 3) return 'Hoàn thành';
+    if (st === 2) return 'Đang giao hàng';
+    if (st === 1) return 'Đang xử lý';
+    if (st === 0) return paySt === 0 ? 'Chờ đặt cọc' : 'Đã thanh toán';
   }
   const stage = getStage(order);
   switch (stage) {
-    case 1: {
-      const pType = getOrderPricingType(order);
-      if (pType === 1) return 'CHỜ BÁO PHÍ SHIP & CỌC';
-      if (pType === 2) return 'CHỜ BÁO GIÁ & PHÍ SHIP';
-      return 'CHỜ KỸ THUẬT BÁO GIÁ';
-    }
+    case 1:
+      return 'Chờ báo giá';
     case 2:
-      return 'ĐÃ BÁO GIÁ - CHỜ ĐẶT CỌC';
+      return 'Chờ đặt cọc';
     case 3:
-      return 'ĐANG XỬ LÝ (GOM HÀNG)';
+      return 'Đang xử lý';
     case 4:
-      return 'ĐANG GIAO HÀNG';
+      return 'Đang giao hàng';
     case 5:
-      return 'HOÀN THÀNH';
+      return 'Hoàn thành';
     default:
-      return 'ĐÃ HỦY';
+      return 'Đã hủy';
+  }
+};
+
+const getProcessNote = (order) => {
+  const stage = getStage(order);
+  switch (stage) {
+    case 1:
+      return 'JPM Marine đang kiểm tra giá phụ tùng & cước vận chuyển.';
+    case 2:
+      return 'Báo giá hiệu lực 72 giờ. Vui lòng đặt cọc để tiến hành xuất kho hoặc đặt hàng Nhật.';
+    case 3:
+      return getLogisticsStatus(order);
+    case 4:
+      return getLogisticsStatus(order);
+    case 5:
+      return 'Đơn hàng đã hoàn thành. Cảm ơn quý khách đã tin dùng phụ tùng JPM Marine.';
+    default:
+      return 'Yêu cầu đã đóng hoặc hết thời hạn hiệu lực.';
   }
 };
 
@@ -955,6 +884,32 @@ const handleAddToCart = (prod) => {
   });
 };
 
+const handleReorderAll = (order) => {
+  const prods = getItemProducts(order);
+  if (!prods.length) return;
+  prods.forEach((prod) => {
+    cartStore.addItem({
+      id: prod.id,
+      loai_san_pham: prod.loai_san_pham || 'phu_tung',
+      slug: prod.slug || null,
+      ma_phu_tung: prod.code,
+      ten_phu_tung: prod.name,
+      hinh_anh: prod.image,
+      gia_ban: prod.price > 0 ? prod.price : 0,
+      is_gia_lien_he: prod.price <= 0,
+    }, prod.qty || 1);
+  });
+  closeProductModal();
+  Swal.fire({
+    toast: true,
+    position: 'top-end',
+    icon: 'success',
+    title: `Đã thêm ${prods.length} phụ tùng vào giỏ hàng`,
+    showConfirmButton: false,
+    timer: 2200,
+  });
+};
+
 // ===================== VIETQR & ACTIONS =====================
 const loadVietQR = async (order) => {
   vietQrData.value = null;
@@ -1107,331 +1062,394 @@ const formatDate = (dateStr) => {
 </script>
 
 <style scoped>
-.shopee-orders-wrapper {
+.lux-orders-wrapper {
   width: 100%;
+  font-family: var(--default-font, 'Inter', sans-serif);
 }
 
-.cursor-pointer {
-  cursor: pointer;
+.text-navy {
+  color: var(--jpm-color-navy-deep, #0a1128);
 }
 
 /* ========================================================================= */
-/* SHOPEE TAB BAR CHUẨN (GIỐNG HÌNH ẢNH) */
+/* 1. THANH TAB LỌC TRẠNG THÁI (SẠCH, CHỈ 1 TAB ACTIVE CÓ MÀU ĐỎ) */
 /* ========================================================================= */
-.shopee-tabs-container {
+.lux-tabs-bar {
   display: flex;
   background-color: #ffffff;
   border: 1px solid #e2e8f0;
-  box-shadow: 0 4px 20px rgba(10, 17, 40, 0.04);
   border-radius: var(--jpm-radius-card, 12px);
+  box-shadow: 0 2px 12px rgba(10, 17, 40, 0.03);
   overflow-x: auto;
   white-space: nowrap;
 }
 
-.shopee-tab-item {
+.lux-tab-btn {
   flex: 1;
-  min-width: 110px;
-  text-align: center;
-  padding: 16px 8px;
-  font-size: 0.875rem;
-  color: rgba(0, 0, 0, 0.8);
-  cursor: pointer;
-  user-select: none;
-  transition: color 0.2s;
+  min-width: 108px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 15px 10px;
+  background: transparent;
+  border: none;
   border-bottom: 2px solid transparent;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #475569;
+  cursor: pointer;
+  transition: color 0.18s ease, border-color 0.18s ease;
 }
 
-.shopee-tab-item:hover {
-  color: var(--jpm-color-red-marine, #f82249);
+.lux-tab-btn:hover {
+  color: #0a1128;
 }
 
-.shopee-tab-item.active {
+.lux-tab-btn.active {
   color: var(--jpm-color-red-marine, #f82249);
-  border-bottom: 2px solid var(--jpm-color-red-marine, #f82249);
+  border-bottom-color: var(--jpm-color-red-marine, #f82249);
   font-weight: 600;
 }
 
-.tab-badge {
-  font-size: 0.75rem;
-  opacity: 0.85;
+.lux-tab-count {
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background-color: #f1f5f9;
+  color: #475569;
+  line-height: 1.4;
+}
+
+.lux-tab-btn.active .lux-tab-count {
+  background-color: rgba(248, 34, 73, 0.1);
+  color: var(--jpm-color-red-marine, #f82249);
 }
 
 /* ========================================================================= */
-/* EMPTY STATE */
+/* 2. EMPTY STATE */
 /* ========================================================================= */
-.shopee-empty-state {
+.lux-empty-state {
   background-color: #ffffff;
-  min-height: 400px;
+  min-height: 360px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  margin-top: 12px;
-  box-shadow: 0 4px 20px rgba(10, 17, 40, 0.04);
+  margin-top: 16px;
   border: 1px solid #e2e8f0;
   border-radius: var(--jpm-radius-card, 12px);
+  box-shadow: 0 2px 12px rgba(10, 17, 40, 0.03);
 }
 
 .empty-icon-wrap {
-  width: 72px;
-  height: 72px;
+  width: 64px;
+  height: 64px;
   border-radius: 50%;
-  background-color: rgba(248, 34, 73, 0.06);
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--jpm-color-red-marine, #F82249);
-  font-size: 2rem;
+  color: #64748b;
+  font-size: 1.75rem;
 }
 
 .order-empty-heading {
-  font-size: 1.1rem;
+  font-size: 1.05rem;
   font-weight: 700;
-  color: var(--jpm-color-navy-deep, #0A1128);
-  font-family: var(--jpm-font-heading, inherit);
+  color: #0a1128;
 }
 
 /* ========================================================================= */
-/* ORDER CARD CHUẨN SHOPEE */
+/* 3. ORDER CARD (MINIMALIST LUXURY) */
 /* ========================================================================= */
-.shopee-order-card {
+.lux-order-card {
   background: #ffffff;
-  box-shadow: 0 4px 20px rgba(10, 17, 40, 0.04);
-  border-radius: var(--jpm-radius-card, 12px);
-  overflow: hidden;
   border: 1px solid #e2e8f0;
+  border-radius: var(--jpm-radius-card, 12px);
+  box-shadow: 0 2px 12px rgba(10, 17, 40, 0.03);
+  overflow: hidden;
+  transition: border-color 0.2s ease;
 }
 
-/* Head */
-.card-head {
-  padding: 14px 20px;
+.lux-order-card:hover {
+  border-color: #cbd5e1;
+}
+
+/* Header 1 dòng gọn */
+.lux-card-head {
+  padding: 13px 20px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  gap: 12px;
+  flex-wrap: wrap;
+  border-bottom: 1px solid #f1f5f9;
 }
 
-.head-left {
+.lux-head-meta {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
 }
 
-.type-tag {
-  font-size: 0.7rem;
-  font-weight: 700;
-  padding: 3px 8px;
-  border-radius: var(--jpm-radius-badge, 6px);
-}
-.quote-tag {
-  background-color: #e0f2fe;
-  color: #0369a1;
-}
-.order-tag {
-  background-color: #fef3c7;
-  color: #b45309;
-}
-
-.order-id {
-  font-weight: 700;
-  color: #222;
+.lux-order-code {
+  font-family: 'Roboto Mono', monospace;
   font-size: 0.875rem;
+  font-weight: 600;
+  color: #0a1128;
+  letter-spacing: -0.01em;
 }
 
-.order-date {
-  font-size: 0.75rem;
+.lux-meta-dot {
+  color: #cbd5e1;
+  user-select: none;
 }
 
-.status-badge-pill {
+.lux-order-date {
+  font-size: 0.8rem;
+  color: #64748b;
+}
+
+/* 1 chấm trạng thái tinh tế — không badge cầu vồng */
+.lux-status-indicator {
   display: inline-flex;
   align-items: center;
-  padding: 5px 12px;
-  border-radius: var(--jpm-radius-badge, 6px);
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.3px;
-  text-transform: uppercase;
-}
-.stage-status-1-p1 {
-  background-color: #e0f2fe;
-  color: #0284c7;
-  border: 1px solid rgba(2, 132, 199, 0.25);
-}
-.stage-status-1-p2 {
-  background-color: #fef3c7;
-  color: #d97706;
-  border: 1px solid rgba(217, 119, 6, 0.25);
-}
-.stage-status-1-p3 {
-  background-color: #f1f5f9;
-  color: #475569;
-  border: 1px solid rgba(71, 85, 105, 0.25);
-}
-.stage-status-2 {
-  background-color: #ffe4e6;
-  color: #e11d48;
-  border: 1px solid rgba(225, 29, 72, 0.25);
-}
-.stage-status-3 {
-  background-color: #fef3c7;
-  color: #b45309;
-  border: 1px solid rgba(180, 83, 9, 0.25);
-}
-.stage-status-4 {
-  background-color: #dbeafe;
-  color: #2563eb;
-  border: 1px solid rgba(37, 99, 235, 0.25);
-}
-.stage-status-5 {
-  background-color: #dcfce7;
-  color: #16a34a;
-  border: 1px solid rgba(22, 163, 74, 0.25);
-}
-.stage-status--1 {
-  background-color: #fee2e2;
-  color: #dc2626;
-  border: 1px solid rgba(220, 38, 38, 0.25);
-}
-
-/* Logistics Notice */
-.logistics-notice {
-  padding: 10px 20px;
-  background-color: #fbfbfb;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  gap: 7px;
   font-size: 0.8rem;
-  color: rgba(0, 0, 0, 0.7);
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background-color: #f8fafc;
+  color: #334155;
+  border: 1px solid #e2e8f0;
 }
 
-/* Card Summary Row */
-.card-summary-row {
-  padding: 14px 20px;
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
-  transition: background-color 0.2s;
+.lux-status-indicator .status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background-color: #64748b;
+  flex-shrink: 0;
 }
-.card-summary-row:hover {
+
+.status-stage-1 {
+  color: #92400e;
+  background-color: #fffbeb;
+  border-color: #fde68a;
+}
+.status-stage-1 .status-dot { background-color: #d97706; }
+
+.status-stage-2 {
+  color: #be123c;
+  background-color: #fff1f2;
+  border-color: #fecdd3;
+}
+.status-stage-2 .status-dot { background-color: #f82249; }
+
+.status-stage-3 {
+  color: #1e40af;
+  background-color: #eff6ff;
+  border-color: #bfdbfe;
+}
+.status-stage-3 .status-dot { background-color: #2563eb; }
+
+.status-stage-4 {
+  color: #0f766e;
+  background-color: #f0fdfa;
+  border-color: #99f6e4;
+}
+.status-stage-4 .status-dot { background-color: #0d9488; }
+
+.status-stage-5 {
+  color: #15803d;
+  background-color: #f0fdf4;
+  border-color: #bbf7d0;
+}
+.status-stage-5 .status-dot { background-color: #16a34a; }
+
+.status-stage--1 {
+  color: #64748b;
+  background-color: #f8fafc;
+  border-color: #e2e8f0;
+}
+.status-stage--1 .status-dot { background-color: #94a3b8; }
+
+/* Body: Địa chỉ + Sản phẩm đại diện */
+.lux-card-body {
+  padding: 14px 20px 16px;
+  cursor: pointer;
+  transition: background-color 0.18s ease;
+}
+
+.lux-card-body:hover {
   background-color: #fafbfc;
 }
 
-.item-thumb {
-  width: 65px;
-  height: 65px;
-  background-color: #f8f9fa;
-  border: 1px solid #e9ecef;
-  border-radius: var(--jpm-radius-control, 8px);
+.lux-address-line {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.78rem;
+  color: #64748b;
+  margin-bottom: 12px;
+}
+
+.lux-address-line i {
+  color: #94a3b8;
+  font-size: 0.85rem;
+}
+
+.lux-product-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.lux-item-thumb {
+  width: 56px;
+  height: 56px;
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.5rem;
-  color: #6c757d;
+  color: #94a3b8;
+  font-size: 1.35rem;
   flex-shrink: 0;
   overflow: hidden;
 }
 
-.item-details {
-  flex-grow: 1;
+.lux-item-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 4px;
 }
 
-.item-name {
-  font-size: 0.875rem;
-  color: rgba(0, 0, 0, 0.87);
+.lux-item-info {
+  flex: 1;
+  min-width: 0;
 }
 
-.item-oem {
-  font-size: 0.75rem;
-}
-
-.item-qty {
-  font-size: 0.75rem;
-  color: rgba(0, 0, 0, 0.6);
-}
-
-.item-price {
-  min-width: 120px;
-}
-
-.price-contact {
-  font-size: 0.875rem;
-  font-weight: 700;
-  color: var(--accent-color, #f82249);
-}
-
-.price-num {
-  font-size: 0.875rem;
+.lux-item-name {
+  font-size: 0.92rem;
   font-weight: 600;
-  color: var(--accent-color, #f82249);
+  color: #0a1128;
+  line-height: 1.35;
 }
 
-.view-detail-hint {
-  font-size: 0.72rem;
-  color: #888;
+.lux-item-sub {
   display: flex;
   align-items: center;
-  justify-content: flex-end;
-}
-.card-summary-row:hover .view-detail-hint {
-  color: var(--accent-color, #f82249);
-}
-
-/* Order Finance Card - Enterprise Breakdown Bar */
-.order-finance-card {
-  margin: 12px 20px;
-  background-color: #f8fafc;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  overflow: hidden;
-}
-
-.finance-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 14px;
-  padding: 14px 18px;
-}
-
-@media (max-width: 991px) {
-  .finance-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 14px;
-  }
-}
-
-@media (max-width: 575px) {
-  .finance-grid {
-    grid-template-columns: 1fr;
-    gap: 10px;
-  }
-}
-
-.finance-col {
-  display: flex;
-  flex-direction: column;
-}
-
-.finance-label {
-  font-size: 0.72rem;
-  font-weight: 700;
-  text-transform: uppercase;
+  flex-wrap: wrap;
+  gap: 6px;
+  font-size: 0.78rem;
   color: #64748b;
-  margin-bottom: 5px;
-  letter-spacing: 0.3px;
+  margin-top: 4px;
 }
 
-.finance-value {
-  font-size: 0.875rem;
+.lux-item-sub code {
+  font-family: 'Roboto Mono', monospace;
+  font-size: 0.76rem;
+  color: #475569;
+  background: #f1f5f9;
+  padding: 1px 5px;
+  border-radius: 4px;
 }
 
-.finance-remaining-bar {
-  padding: 8px 18px;
-  background-color: #f1f5f9;
-  border-top: 1px dashed #cbd5e1;
+.lux-more-items {
+  color: #0e1b4d;
+  font-weight: 500;
 }
 
-/* Card Bottom */
-.card-bottom {
-  padding: 14px 20px;
+.lux-item-price {
+  text-align: right;
+  flex-shrink: 0;
+  padding-left: 12px;
+}
+
+.lux-price-value {
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: #0a1128;
+  font-variant-numeric: tabular-nums;
+}
+
+.lux-price-pending {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #64748b;
+}
+
+/* ========================================================================= */
+/* 4. DẢI TỔNG KẾT TÀI CHÍNH MỎNG 1 DÒNG */
+/* ========================================================================= */
+.lux-summary-strip {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 28px;
+  padding: 11px 20px;
+  background-color: #f8fafc;
+  border-top: 1px solid #f1f5f9;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.lux-metric {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 8px;
+  font-size: 0.82rem;
+}
+
+.lux-metric-label {
+  color: #64748b;
+  font-weight: 400;
+}
+
+.lux-metric-val {
+  color: #0a1128;
+  font-variant-numeric: tabular-nums;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.lux-metric-note {
+  font-size: 0.75rem;
+  color: #64748b;
+  font-weight: 400;
+}
+
+.lux-metric-muted {
+  color: #64748b;
+  font-size: 0.8rem;
+}
+
+.lux-deposit-state {
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 1px 7px;
+  border-radius: 999px;
+}
+.lux-deposit-state.is-paid {
+  background: #dcfce7;
+  color: #15803d;
+}
+.lux-deposit-state.is-unpaid {
+  background: #ffe4e6;
+  color: #be123c;
+}
+
+/* ========================================================================= */
+/* 5. FOOTER THẺ ĐƠN: GHI CHÚ TRÁI — HÀNH ĐỘNG PHẢI */
+/* ========================================================================= */
+.lux-card-footer {
+  padding: 13px 20px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -1440,39 +1458,50 @@ const formatDate = (dateStr) => {
   background-color: #ffffff;
 }
 
-.process-hint-col {
-  max-width: 55%;
+.lux-footer-note {
+  font-size: 0.8rem;
+  color: #64748b;
+  max-width: 48%;
+  line-height: 1.45;
 }
 
-@media (max-width: 768px) {
-  .process-hint-col {
-    max-width: 100%;
-  }
-}
-
-.action-buttons {
+.lux-footer-actions {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   flex-wrap: wrap;
+  margin-left: auto;
 }
 
-.btn-order-action {
-  padding: 8px 16px;
-  font-size: 0.85rem;
-  font-weight: 600;
-  border-radius: var(--jpm-radius-control, 8px);
+.lux-action-btn {
+  height: 38px;
+  padding: 0 16px !important;
+  font-size: 0.84rem !important;
+  font-weight: 600 !important;
+  border-radius: 8px !important;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.2s ease;
+  white-space: nowrap;
 }
 
-/* QR Deposit Box */
+@media (max-width: 768px) {
+  .lux-footer-note {
+    max-width: 100%;
+  }
+  .lux-footer-actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+}
+
+/* ========================================================================= */
+/* 6. VIETQR DEPOSIT BOX */
+/* ========================================================================= */
 .qr-deposit-box {
   padding: 16px 20px;
   background-color: #fffdfd;
-  border-bottom: 1px dashed rgba(248, 34, 73, 0.3);
+  border-top: 1px dashed rgba(248, 34, 73, 0.25);
 }
 
 .qr-inner {
@@ -1483,25 +1512,15 @@ const formatDate = (dateStr) => {
 }
 
 .qr-img-col {
-  width: 140px;
-}
-.qr-img {
-  width: 100%;
-  border: 1px solid #e2e8f0;
-  border-radius: var(--jpm-radius-control, 8px);
-  padding: 4px;
-}
-.qr-subtext {
-  font-size: 0.72rem;
-  margin-top: 4px;
+  width: 175px;
 }
 
 .qr-info-col {
   flex: 1;
   min-width: 260px;
   background-color: #f8fafc;
-  padding: 12px 16px;
-  border-radius: var(--jpm-radius-control, 8px);
+  padding: 14px 16px;
+  border-radius: 10px;
   border: 1px solid #e2e8f0;
 }
 
@@ -1509,58 +1528,220 @@ const formatDate = (dateStr) => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 0.8rem;
-  padding: 3px 0;
+  font-size: 0.82rem;
+  padding: 4px 0;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.info-row:last-of-type {
+  border-bottom: none;
 }
 
 .btn-copy {
   margin-left: 8px;
   border: 1px solid #cbd5e1;
   background: #ffffff;
+  color: #334155;
   font-size: 0.72rem;
+  font-weight: 600;
   padding: 2px 8px;
-  border-radius: var(--jpm-radius-badge, 6px);
+  border-radius: 6px;
   cursor: pointer;
+  transition: background-color 0.15s ease;
 }
+
 .btn-copy:hover {
   background-color: #f1f5f9;
 }
 
-/* Modal Styling */
-.modal-thumb {
-  width: 50px;
-  height: 50px;
-  background-color: #f8f9fa;
-  border: 1px solid #e9ecef;
-  border-radius: var(--jpm-radius-control, 8px);
+/* ========================================================================= */
+/* 7. MODAL CHI TIẾT ĐƠN HÀNG (MINIMALIST LUXURY) */
+/* ========================================================================= */
+.lux-modal-content {
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  box-shadow: 0 24px 60px rgba(10, 17, 40, 0.16);
+  overflow: hidden;
+  background: #ffffff;
+}
+
+.lux-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 18px 24px;
+  border-bottom: 1px solid #f1f5f9;
+  background: #ffffff;
+}
+
+.lux-modal-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #0a1128;
+  letter-spacing: -0.01em;
+}
+
+.lux-modal-address {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 24px;
+  background: #f8fafc;
+  border-bottom: 1px solid #f1f5f9;
+  font-size: 0.82rem;
+  color: #475569;
+}
+
+.lux-modal-address i {
+  color: #94a3b8;
+}
+
+.lux-modal-body {
+  max-height: 52vh;
+  overflow-y: auto;
+}
+
+.lux-modal-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 24px;
+  border-bottom: 1px solid #f1f5f9;
+  transition: background-color 0.15s ease;
+}
+
+.lux-modal-item:last-child {
+  border-bottom: none;
+}
+
+.lux-modal-item:hover {
+  background-color: #fafbfc;
+}
+
+.lux-modal-item-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex: 1;
+  min-width: 0;
+  cursor: pointer;
+}
+
+.lux-modal-thumb {
+  width: 48px;
+  height: 48px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  background: #f8fafc;
   display: flex;
   align-items: center;
   justify-content: center;
+  color: #94a3b8;
+  font-size: 1.2rem;
   flex-shrink: 0;
   overflow: hidden;
 }
 
-.modal-item-row:hover {
-  background-color: #fcfcfc;
+.lux-modal-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 3px;
 }
 
-.product-link {
-  transition: color 0.2s;
+.lux-modal-prod-name {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #0a1128;
+  transition: color 0.15s ease;
 }
 
-.btn-add-cart {
-  box-shadow: none !important;
-  transition: all 0.2s ease !important;
+.lux-modal-item-left:hover .lux-modal-prod-name {
+  color: var(--jpm-color-red-marine, #f82249);
 }
-.btn-add-cart:hover {
-  background-color: var(--accent-color, #f82249) !important;
-  border-color: var(--accent-color, #f82249) !important;
-  color: #ffffff !important;
-  transform: translateY(-1px) !important;
-  box-shadow: none !important;
+
+.lux-ext-icon {
+  font-size: 0.72rem;
+  color: #94a3b8;
 }
-.btn-add-cart:active {
-  transform: translateY(0) !important;
-  box-shadow: none !important;
+
+.lux-modal-item-right {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-shrink: 0;
+}
+
+.lux-icon-cart-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
+  color: #475569;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.lux-icon-cart-btn:hover {
+  border-color: var(--jpm-color-red-marine, #f82249);
+  background: var(--jpm-color-red-marine, #f82249);
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+.lux-modal-footer {
+  padding: 18px 24px 20px;
+  background: #f8fafc;
+  border-top: 1px solid #e2e8f0;
+}
+
+.lux-modal-summary {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+}
+
+.lux-sum-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  font-size: 0.84rem;
+  padding: 5px 0;
+}
+
+.lux-sum-total {
+  margin-top: 6px;
+  padding-top: 10px;
+  border-top: 1px solid #f1f5f9;
+  font-weight: 700;
+  color: #0a1128;
+}
+
+.lux-total-num {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--jpm-color-red-marine, #f82249);
+  font-variant-numeric: tabular-nums;
+}
+
+.lux-modal-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
 }
 </style>

@@ -363,6 +363,96 @@
           </div>
         </div>
       </div>
+
+      <!-- MODAL XÁC NHẬN ĐÃ GỬI YÊU CẦU BÁO GIÁ (JPM MINIMALIST LUXURY) -->
+      <div
+        v-if="orderConfirmModal.show"
+        class="lux-confirm-backdrop"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="luxConfirmTitle"
+        @click.self="closeConfirmModal"
+      >
+        <div class="lux-confirm-card">
+          <button
+            type="button"
+            class="lux-confirm-close"
+            aria-label="Đóng"
+            @click="closeConfirmModal"
+          >
+            <i class="bi bi-x-lg"></i>
+          </button>
+
+          <div class="lux-confirm-head">
+            <div class="lux-confirm-icon">
+              <i class="bi bi-check-lg"></i>
+            </div>
+            <h4 id="luxConfirmTitle" class="lux-confirm-title">Đã tiếp nhận yêu cầu báo giá</h4>
+            <p class="lux-confirm-sub">
+              Kỹ thuật viên JPM Marine sẽ kiểm tra mã phụ tùng, cước vận chuyển và gửi bảng báo giá chi tiết qua Zalo cho bạn.
+            </p>
+          </div>
+
+          <div class="lux-confirm-code-box">
+            <div class="min-w-0">
+              <span class="lux-confirm-code-label">MÃ YÊU CẦU</span>
+              <div class="lux-confirm-code-val">#{{ orderConfirmModal.code }}</div>
+            </div>
+            <button
+              type="button"
+              class="lux-copy-code-btn"
+              :class="{ copied: orderConfirmModal.copied }"
+              @click="copyConfirmCode"
+            >
+              <i :class="orderConfirmModal.copied ? 'bi bi-check2' : 'bi bi-copy'"></i>
+              <span>{{ orderConfirmModal.copied ? 'Đã chép' : 'Sao chép' }}</span>
+            </button>
+          </div>
+
+          <div class="lux-confirm-steps">
+            <div class="lux-step is-done">
+              <span class="lux-step-dot"></span>
+              <div class="lux-step-text">
+                <strong>Đã ghi nhận yêu cầu</strong>
+                <span>{{ orderConfirmModal.itemCount }} sản phẩm đã được chuyển tới bộ phận kỹ thuật</span>
+              </div>
+            </div>
+            <div class="lux-step is-next">
+              <span class="lux-step-dot"></span>
+              <div class="lux-step-text">
+                <strong>Kiểm tra mã OEM &amp; cước chành xe</strong>
+                <span>Xác nhận tồn kho, thời gian giao và mức đặt cọc (nếu có)</span>
+              </div>
+            </div>
+            <div class="lux-step">
+              <span class="lux-step-dot"></span>
+              <div class="lux-step-text">
+                <strong>Gửi link báo giá qua Zalo</strong>
+                <span>Bạn duyệt báo giá và theo dõi tiến độ trực tiếp trên hệ thống</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="lux-confirm-actions">
+            <button
+              type="button"
+              class="btn btn-outline-secondary lux-confirm-btn"
+              @click="openConfirmZalo"
+            >
+              <i class="bi bi-chat-dots"></i>
+              <span>Nhắn Zalo kỹ thuật</span>
+            </button>
+            <button
+              type="button"
+              class="btn btn-danger lux-confirm-btn"
+              @click="goToConfirmTarget"
+            >
+              <span>{{ orderConfirmModal.token ? 'Theo dõi báo giá' : (isAuthenticated ? 'Xem lịch sử đơn' : 'Về trang chủ') }}</span>
+              <i class="bi bi-arrow-right"></i>
+            </button>
+          </div>
+        </div>
+      </div>
     </Teleport>
 
   </div>
@@ -370,6 +460,7 @@
 
 <script>
 import { useCartStore } from '../../../stores/cartStore'
+import { useSiteSettings } from '../../../composables/useSiteSettings'
 import axiosClient from '../../../api/axiosClient'
 import { getImageUrl as resolveImageUrl } from '../../../utils/imageUrl'
 import Swal from 'sweetalert2'
@@ -378,7 +469,8 @@ export default {
   name: 'GioHang',
   setup() {
     const cartStore = useCartStore()
-    return { cartStore }
+    const { settings: siteSettings } = useSiteSettings()
+    return { cartStore, siteSettings }
   },
   data() {
     return {
@@ -394,6 +486,13 @@ export default {
       hasAutoSelected: false,
       isSubmitting: false,
       pendingOrderId: '',
+      orderConfirmModal: {
+        show: false,
+        code: '',
+        token: null,
+        itemCount: 0,
+        copied: false
+      },
 
       // Thông tin khách đã đăng nhập (Member)
       isAuthenticated: false,
@@ -702,46 +801,23 @@ export default {
           return
         }
 
+        const submittedCount = selectedCartItems.reduce((sum, item) => sum + (item.quantity || 1), 0)
         const res = await axiosClient.post('/public/yeu-cau-bao-gia', payload)
         if (res.success || (res.data && res.data.success)) {
           const responseData = res.success ? res.data : res.data.data
           this.pendingOrderId = responseData.code || responseData.ma_yeu_cau || ('YCBG-' + Date.now())
-          const token = responseData.token
-          
+          const token = responseData.token || null
+
           this.cartStore.removeItems(this.selectedItems)
           this.selectedItems = []
-          
-          const descText = `Hệ thống đã tiếp nhận đơn yêu cầu #${this.pendingOrderId}. Đội ngũ JPM Marine sẽ kiểm tra phụ tùng, tính cước vận chuyển và tiền cọc, sau đó gửi link báo giá qua Zalo cho Quý khách.`
-          const chatMsg = `Chào JPM Marine, tôi vừa gửi đơn hàng #${this.pendingOrderId}. Nhờ Kỹ thuật viên kiểm tra và báo giá giúp tôi nhé!`
-            
-          Swal.fire({
-            icon: 'success',
-            title: 'Gửi Đơn Thành Công!',
-            html: `
-              <p class="text-muted mb-2">Mã Đơn / Yêu Cầu của bạn:</p>
-              <div class="fw-bold fs-3 mb-3 text-primary">#${this.pendingOrderId}</div>
-              <p style="font-size: 0.95rem;">${descText}</p>
-            `,
-            showCancelButton: true,
-            confirmButtonText: '<i class="bi bi-chat-dots me-1"></i> Nhắn Zalo Cho JPM',
-            cancelButtonText: token ? 'Xem Trang Đợi Báo Giá' : (this.isAuthenticated ? 'Lịch Sử Đơn Hàng' : 'Về Trang Chủ'),
-            confirmButtonColor: '#0068ff',
-            cancelButtonColor: '#6c757d'
-          }).then((result) => {
-            if (result.isConfirmed) {
-              const zaloPhone = '0909123456'
-              window.open(`https://zalo.me/${zaloPhone}?text=${encodeURIComponent(chatMsg)}`, '_blank')
-              if (token) {
-                this.$router.push(`/bao-gia/${token}`)
-              }
-            } else if (token) {
-              this.$router.push(`/bao-gia/${token}`)
-            } else if (this.isAuthenticated) {
-              this.$router.push('/lich-su-don-hang')
-            } else {
-              this.$router.push('/')
-            }
-          })
+
+          this.orderConfirmModal = {
+            show: true,
+            code: this.pendingOrderId,
+            token,
+            itemCount: submittedCount || selectedCartItems.length,
+            copied: false
+          }
         }
       } catch (err) {
         const msg = err.response?.data?.message || 'Đã có lỗi xảy ra. Vui lòng thử lại!'
@@ -749,6 +825,52 @@ export default {
       } finally {
         this.isSubmitting = false
       }
+    },
+    buildZaloUrl(message = '') {
+      const rawZalo = this.siteSettings?.social_zalo || ''
+      const digits = (rawZalo.match(/\d{8,15}/)?.[0]) || (this.siteSettings?.company_hotline || '0909123456').replace(/\D/g, '')
+      const base = rawZalo.startsWith('http') ? rawZalo.split('?')[0] : `https://zalo.me/${digits}`
+      return message ? `${base}?text=${encodeURIComponent(message)}` : base
+    },
+    async copyConfirmCode() {
+      const text = this.orderConfirmModal.code
+      if (!text) return
+      try {
+        if (navigator.clipboard) {
+          await navigator.clipboard.writeText(text)
+        }
+        this.orderConfirmModal.copied = true
+        setTimeout(() => {
+          this.orderConfirmModal.copied = false
+        }, 2000)
+      } catch (_) {
+        Swal.fire({
+          toast: true,
+          position: 'top-end',
+          icon: 'success',
+          title: `Mã yêu cầu: #${text}`,
+          showConfirmButton: false,
+          timer: 2000
+        })
+      }
+    },
+    openConfirmZalo() {
+      const chatMsg = `Chào JPM Marine, tôi vừa gửi yêu cầu báo giá #${this.orderConfirmModal.code}. Nhờ kỹ thuật viên kiểm tra và báo giá giúp tôi.`
+      window.open(this.buildZaloUrl(chatMsg), '_blank', 'noopener,noreferrer')
+    },
+    goToConfirmTarget() {
+      const token = this.orderConfirmModal.token
+      this.orderConfirmModal.show = false
+      if (token) {
+        this.$router.push(`/bao-gia/${token}`)
+      } else if (this.isAuthenticated) {
+        this.$router.push('/lich-su-don-hang')
+      } else {
+        this.$router.push('/')
+      }
+    },
+    closeConfirmModal() {
+      this.orderConfirmModal.show = false
     }
   }
 }
@@ -1431,5 +1553,273 @@ export default {
 
 .cursor-pointer {
   cursor: pointer;
+}
+
+/* ===== LUXURY ORDER CONFIRMATION MODAL ===== */
+.lux-confirm-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1090;
+  background: rgba(10, 17, 40, 0.5);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: luxConfirmFade 0.2s ease-out;
+}
+
+.lux-confirm-card {
+  position: relative;
+  width: 100%;
+  max-width: 472px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 30px 28px 26px;
+  box-shadow: 0 24px 60px -12px rgba(10, 17, 40, 0.24), 0 4px 16px rgba(10, 17, 40, 0.06);
+  font-family: var(--default-font, 'Inter', sans-serif);
+  animation: luxConfirmPop 0.24s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.lux-confirm-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  color: #64748b;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background-color 0.18s ease, color 0.18s ease;
+}
+
+.lux-confirm-close:hover {
+  background: #f1f5f9;
+  color: #0a1128;
+}
+
+.lux-confirm-head {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.lux-confirm-icon {
+  width: 50px;
+  height: 50px;
+  margin: 0 auto 14px;
+  border-radius: 50%;
+  background: #ecfdf5;
+  border: 1px solid #d1fae5;
+  color: #059669;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.55rem;
+}
+
+.lux-confirm-title {
+  margin: 0 0 8px;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #0a1128;
+  letter-spacing: -0.015em;
+  line-height: 1.3;
+}
+
+.lux-confirm-sub {
+  margin: 0;
+  font-size: 0.875rem;
+  color: #64748b;
+  line-height: 1.55;
+}
+
+.lux-confirm-code-box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 16px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  margin-bottom: 18px;
+}
+
+.lux-confirm-code-label {
+  display: block;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #64748b;
+  margin-bottom: 2px;
+}
+
+.lux-confirm-code-val {
+  font-family: 'Roboto Mono', monospace;
+  font-size: 1.08rem;
+  font-weight: 700;
+  color: #0a1128;
+  letter-spacing: -0.01em;
+  word-break: break-all;
+}
+
+.lux-copy-code-btn {
+  flex-shrink: 0;
+  height: 32px;
+  padding: 0 12px;
+  border-radius: 7px;
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  color: #334155;
+  font-size: 0.8rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.lux-copy-code-btn:hover {
+  border-color: #0a1128;
+  color: #0a1128;
+}
+
+.lux-copy-code-btn.copied {
+  border-color: #10b981;
+  background: #ecfdf5;
+  color: #047857;
+}
+
+.lux-confirm-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px 0 20px;
+  border-top: 1px solid #f1f5f9;
+  border-bottom: 1px solid #f1f5f9;
+  margin-bottom: 20px;
+}
+
+.lux-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.lux-step-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  margin-top: 5px;
+  flex-shrink: 0;
+  background: #cbd5e1;
+}
+
+.lux-step.is-done .lux-step-dot {
+  background: #059669;
+  box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.14);
+}
+
+.lux-step.is-next .lux-step-dot {
+  background: #ffffff;
+  border: 2px solid #0a1128;
+}
+
+.lux-step-text {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.lux-step-text strong {
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: #0a1128;
+  line-height: 1.35;
+}
+
+.lux-step-text span {
+  font-size: 0.78rem;
+  color: #64748b;
+  line-height: 1.45;
+}
+
+.lux-confirm-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.lux-confirm-btn {
+  height: 42px;
+  padding: 0 16px;
+  border-radius: 8px !important;
+  font-size: 0.875rem !important;
+  font-weight: 600 !important;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  box-shadow: none !important;
+  transition: all 0.2s ease;
+}
+
+.lux-confirm-btn.btn-outline-secondary {
+  background: #ffffff !important;
+  border: 1px solid #cbd5e1 !important;
+  color: #334155 !important;
+}
+
+.lux-confirm-btn.btn-outline-secondary:hover {
+  background: #f8fafc !important;
+  border-color: #94a3b8 !important;
+  color: #0a1128 !important;
+}
+
+.lux-confirm-btn.btn-danger {
+  background: #f82249 !important;
+  border: 1px solid #f82249 !important;
+  color: #ffffff !important;
+}
+
+.lux-confirm-btn.btn-danger:hover {
+  background: #e11d48 !important;
+  border-color: #e11d48 !important;
+  transform: translateY(-1px);
+}
+
+@keyframes luxConfirmFade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes luxConfirmPop {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (max-width: 520px) {
+  .lux-confirm-card {
+    padding: 24px 20px 20px;
+  }
+
+  .lux-confirm-actions {
+    grid-template-columns: 1fr;
+  }
 }
 </style>
