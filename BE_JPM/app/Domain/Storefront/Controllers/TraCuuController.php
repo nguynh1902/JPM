@@ -12,9 +12,27 @@ use App\Domain\PIM\Models\PhuTung;
 use App\Domain\PIM\Models\SoDoPhuTung;
 use App\Domain\CMS\Models\Faq;
 use App\Domain\CMS\Models\LienHe;
+use App\Domain\MarineCatalog\Services\CatalogCacheService;
 
 class TraCuuController extends Controller
 {
+    private function applyLoaiNhipFilter($query, $loaiNhip): void
+    {
+        if ($loaiNhip === null || trim((string) $loaiNhip) === '') {
+            return;
+        }
+        $val = trim((string) $loaiNhip);
+        $num = preg_replace('/[^0-9]/', '', $val);
+        if ($num !== '') {
+            $query->where(function ($q) use ($val, $num) {
+                $q->where('loai_nhip', $val)
+                  ->orWhere('loai_nhip', $num)
+                  ->orWhere('loai_nhip', $num . ' Thì');
+            });
+        } else {
+            $query->where('loai_nhip', $val);
+        }
+    }
     public function submitLienHe(Request $request)
     {
         $data = $request->validate([
@@ -206,38 +224,50 @@ class TraCuuController extends Controller
         $loaiDongCoId = $request->get('loai_dong_co_id');
         $dongCoModelId = $request->get('dong_co_model_id');
         $namSx = $request->get('nam_sx');
-        
-        $cacheKey = 'public_nhom_phu_tung_' . ($thuongHieuId ?? 'all') . '_' . ($loaiDongCoId ?? 'all') . '_' . ($dongCoModelId ?? 'all') . '_' . ($namSx ?? 'all');
-        
-        $groups = Cache::remember($cacheKey, 86400, function () use ($thuongHieuId, $loaiDongCoId, $dongCoModelId, $namSx) {
+        $loaiNhip = $request->get('loai_nhip');
+        $ver = CatalogCacheService::getVersion();
+
+        $cacheKey = "public_nhom_phu_tung_v{$ver}_" . ($thuongHieuId ?? 'all') . '_' . ($loaiDongCoId ?? 'all') . '_' . ($dongCoModelId ?? 'all') . '_' . ($namSx ?? 'all') . '_' . ($loaiNhip ?? 'all');
+
+        $groups = Cache::remember($cacheKey, 86400, function () use ($thuongHieuId, $loaiDongCoId, $dongCoModelId, $namSx, $loaiNhip) {
             $query = NhomPhuTung::where('trang_thai', 1);
-            
-            if ($thuongHieuId || $loaiDongCoId || $dongCoModelId || $namSx) {
-                $query->whereHas('phuTungs', function($q) use ($thuongHieuId, $loaiDongCoId, $dongCoModelId, $namSx) {
+
+            if ($thuongHieuId || $loaiDongCoId || $dongCoModelId || $namSx || $loaiNhip) {
+                $query->whereHas('phuTungs', function($q) use ($thuongHieuId, $loaiDongCoId, $dongCoModelId, $namSx, $loaiNhip) {
                     $q->where('trang_thai', 1);
                     if ($thuongHieuId) {
                         $q->where('thuong_hieu_id', $thuongHieuId);
                     }
-                    if ($loaiDongCoId || $dongCoModelId || $namSx) {
-                        $q->where(function($q3) use ($loaiDongCoId, $dongCoModelId, $namSx) {
-                            $q3->whereHas('dongCoModels', function($q2) use ($loaiDongCoId, $dongCoModelId, $namSx) {
+                    if ($loaiDongCoId || $dongCoModelId || $namSx || $loaiNhip) {
+                        $q->where(function($q3) use ($loaiDongCoId, $dongCoModelId, $namSx, $loaiNhip) {
+                            $q3->whereHas('dongCoModels', function($q2) use ($loaiDongCoId, $dongCoModelId, $namSx, $loaiNhip) {
                                 if ($dongCoModelId) {
                                     $q2->where('dong_co_models.id', $dongCoModelId);
                                 } else {
                                     if ($loaiDongCoId) {
                                         $q2->where('dong_co_models.loai_dong_co_id', $loaiDongCoId);
                                     }
+                                    if ($loaiNhip) {
+                                        $this->applyLoaiNhipFilter($q2, $loaiNhip);
+                                    }
                                 }
                                 if ($namSx) {
                                     $q2->where('nam_san_xuat', $namSx);
                                 }
                             });
-                            
-                            if ($dongCoModelId || $namSx) {
-                                $q3->orWhereHas('soDoPhuTungs', function($q4) use ($dongCoModelId, $namSx) {
-                                    $q4->whereHas('model', function($q5) use ($dongCoModelId, $namSx) {
+
+                            if ($loaiDongCoId || $dongCoModelId || $namSx || $loaiNhip) {
+                                $q3->orWhereHas('soDoPhuTungs', function($q4) use ($loaiDongCoId, $dongCoModelId, $namSx, $loaiNhip) {
+                                    $q4->whereHas('model', function($q5) use ($loaiDongCoId, $dongCoModelId, $namSx, $loaiNhip) {
                                         if ($dongCoModelId) {
                                             $q5->where('id', $dongCoModelId);
+                                        } else {
+                                            if ($loaiDongCoId) {
+                                                $q5->where('loai_dong_co_id', $loaiDongCoId);
+                                            }
+                                            if ($loaiNhip) {
+                                                $this->applyLoaiNhipFilter($q5, $loaiNhip);
+                                            }
                                         }
                                         if ($namSx) {
                                             $q5->where('nam_san_xuat', $namSx);
@@ -281,8 +311,10 @@ class TraCuuController extends Controller
 
     public function dongCoModel(Request $request)
     {
-        $cacheKey = 'public_dong_co_model_' . ($request->thuong_hieu_id ?? 'all') . '_' . ($request->loai_dong_co_id ?? 'all') . '_' . ($request->nam_sx ?? 'all');
-        $models = Cache::remember($cacheKey, 86400, function () use ($request) {
+        $loaiNhip = $request->get('loai_nhip');
+        $ver = CatalogCacheService::getVersion();
+        $cacheKey = "public_dong_co_model_v{$ver}_" . ($request->thuong_hieu_id ?? 'all') . '_' . ($request->loai_dong_co_id ?? 'all') . '_' . ($request->nam_sx ?? 'all') . '_' . ($loaiNhip ?? 'all');
+        $models = Cache::remember($cacheKey, 86400, function () use ($request, $loaiNhip) {
             $query = DongCoModel::where('trang_thai', 1);
             
             if ($request->has('thuong_hieu_id') && $request->thuong_hieu_id != '') {
@@ -293,6 +325,9 @@ class TraCuuController extends Controller
             }
             if ($request->has('nam_sx') && $request->nam_sx != '') {
                 $query->where('nam_san_xuat', (int)$request->nam_sx);
+            }
+            if ($loaiNhip !== null && $loaiNhip !== '') {
+                $this->applyLoaiNhipFilter($query, $loaiNhip);
             }
             return $query->get();
         });
@@ -306,9 +341,39 @@ class TraCuuController extends Controller
     // Lấy danh sách năm sản xuất dựa trên dữ liệu model (hoặc range tĩnh)
     public function namSanXuat(Request $request)
     {
-        $cacheKey = 'public_nam_san_xuat_' . ($request->thuong_hieu_id ?? 'all') . '_' . ($request->loai_dong_co_id ?? 'all');
+        $loaiNhip = $request->get('loai_nhip');
+        $ver = CatalogCacheService::getVersion();
+        $cacheKey = "public_nam_san_xuat_v{$ver}_" . ($request->thuong_hieu_id ?? 'all') . '_' . ($request->loai_dong_co_id ?? 'all') . '_' . ($loaiNhip ?? 'all');
         
-        $years = Cache::remember($cacheKey, 86400, function () use ($request) {
+        $years = Cache::remember($cacheKey, 86400, function () use ($request, $loaiNhip) {
+            $query = DongCoModel::where('trang_thai', 1);
+
+            if ($request->has('thuong_hieu_id') && $request->thuong_hieu_id != '') {
+                $query->where('thuong_hieu_id', $request->thuong_hieu_id);
+            }
+            if ($request->has('loai_dong_co_id') && $request->loai_dong_co_id != '') {
+                $query->where('loai_dong_co_id', $request->loai_dong_co_id);
+            }
+            if ($loaiNhip !== null && $loaiNhip !== '') {
+                $this->applyLoaiNhipFilter($query, $loaiNhip);
+            }
+
+            return $query->select('nam_san_xuat')->whereNotNull('nam_san_xuat')->distinct()->orderBy('nam_san_xuat', 'desc')->pluck('nam_san_xuat')->toArray();
+        });
+
+        return response()->json([
+            'success' => true,
+            'data' => $years
+        ]);
+    }
+
+    // Lấy danh sách loại thì (Stroke: 2 Thì / 4 Thì) dựa trên dữ liệu model
+    public function loaiNhip(Request $request)
+    {
+        $ver = CatalogCacheService::getVersion();
+        $cacheKey = "public_loai_nhip_v{$ver}_" . ($request->thuong_hieu_id ?? 'all') . '_' . ($request->loai_dong_co_id ?? 'all');
+
+        $strokes = Cache::remember($cacheKey, 86400, function () use ($request) {
             $query = DongCoModel::where('trang_thai', 1);
 
             if ($request->has('thuong_hieu_id') && $request->thuong_hieu_id != '') {
@@ -318,12 +383,18 @@ class TraCuuController extends Controller
                 $query->where('loai_dong_co_id', $request->loai_dong_co_id);
             }
 
-            return $query->select('nam_san_xuat')->whereNotNull('nam_san_xuat')->distinct()->orderBy('nam_san_xuat', 'desc')->pluck('nam_san_xuat')->toArray();
+            return $query->select('loai_nhip')
+                ->whereNotNull('loai_nhip')
+                ->where('loai_nhip', '!=', '')
+                ->distinct()
+                ->orderBy('loai_nhip', 'asc')
+                ->pluck('loai_nhip')
+                ->toArray();
         });
 
         return response()->json([
             'success' => true,
-            'data' => $years
+            'data' => $strokes
         ]);
     }
 
@@ -339,6 +410,9 @@ class TraCuuController extends Controller
             }
             if ($request->has('loai_dong_co_id') && $request->loai_dong_co_id != '') {
                 $q->where('loai_dong_co_id', $request->loai_dong_co_id);
+            }
+            if ($request->has('loai_nhip') && $request->loai_nhip != '') {
+                $this->applyLoaiNhipFilter($q, $request->loai_nhip);
             }
             if ($request->has('nam_sx') && $request->nam_sx != '') {
                 $q->where('nam_san_xuat', $request->nam_sx);
@@ -421,6 +495,7 @@ class TraCuuController extends Controller
         $keyword = trim($request->keyword ?? '');
         $thuongHieuId = $request->thuong_hieu_id;
         $loaiDongCoId = $request->loai_dong_co_id;
+        $loaiNhip = trim($request->loai_nhip ?? '');
         $dongCoModelId = $request->dong_co_model_id;
         $namSx = $request->nam_sx;
         $nhomPhuTungId = $request->nhom_phu_tung_id;
@@ -535,6 +610,30 @@ class TraCuuController extends Controller
                 })->orWhereHas('soDoPhuTungs', function($q3) use ($namSx) {
                     $q3->whereHas('model', function($q4) use ($namSx) {
                         $q4->where('nam_san_xuat', $namSx);
+                    });
+                });
+            });
+        }
+
+        if (!empty($loaiDongCoId)) {
+            $query->where(function($q) use ($loaiDongCoId) {
+                $q->whereHas('dongCoModels', function($q2) use ($loaiDongCoId) {
+                    $q2->where('loai_dong_co_id', $loaiDongCoId);
+                })->orWhereHas('soDoPhuTungs', function($q3) use ($loaiDongCoId) {
+                    $q3->whereHas('model', function($q4) use ($loaiDongCoId) {
+                        $q4->where('loai_dong_co_id', $loaiDongCoId);
+                    });
+                });
+            });
+        }
+
+        if (!empty($loaiNhip)) {
+            $query->where(function($q) use ($loaiNhip) {
+                $q->whereHas('dongCoModels', function($q2) use ($loaiNhip) {
+                    $this->applyLoaiNhipFilter($q2, $loaiNhip);
+                })->orWhereHas('soDoPhuTungs', function($q3) use ($loaiNhip) {
+                    $q3->whereHas('model', function($q4) use ($loaiNhip) {
+                        $this->applyLoaiNhipFilter($q4, $loaiNhip);
                     });
                 });
             });

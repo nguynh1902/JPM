@@ -29,6 +29,7 @@ Route::prefix('public')->middleware(['throttle:public-api', 'cache.public'])->gr
     Route::get('/so-do-model/{modelCode}', [\App\Domain\Storefront\Controllers\TraCuuController::class, 'soDoModel']);
     Route::get('/so-do-by-id/{modelId}', [\App\Domain\Storefront\Controllers\TraCuuController::class, 'soDoByModelId']);
     Route::get('/nam-san-xuat', [\App\Domain\Storefront\Controllers\TraCuuController::class, 'namSanXuat']);
+    Route::get('/loai-nhip', [\App\Domain\Storefront\Controllers\TraCuuController::class, 'loaiNhip']);
     Route::get('/tra-cuu', [\App\Domain\Storefront\Controllers\TraCuuController::class, 'traCuu']);
     Route::get('/tra-cuu-so-do', [\App\Domain\Storefront\Controllers\TraCuuController::class, 'traCuuSoDo']);
     Route::post('/tra-cuu-nhanh', [\App\Domain\Storefront\Controllers\TraCuuController::class, 'traCuuNhanh']);

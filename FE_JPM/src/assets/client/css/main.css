@@ -3508,12 +3508,12 @@ a.footer-contact-value:hover {
   border-radius: 12px !important;
   background: #ffffff !important; 
   overflow: hidden !important; 
-  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s ease !important; transform: translate3d(0, 0, 0); backface-visibility: hidden; will-change: transform;
   box-shadow: 0 4px 12px rgba(0,0,0,0.04) !important; 
 }
 .product-card:hover,
 .premium-product-card:hover { 
-  transform: translateY(-5px); 
+  transform: translate3d(0, -4px, 0);
   box-shadow: 0 12px 24px rgba(14,27,77,0.08) !important; 
   border-color: #cbd5e1 !important;
 }
@@ -3574,7 +3574,7 @@ a.footer-contact-value:hover {
   font-weight: 700 !important;
   color: var(--jpm-color-blue-electric, #0284C7) !important;
   letter-spacing: 0.2px !important;
-  min-width: 0;
+  min-width: 0; transition: none !important; } .product-card:hover .product-sku .sku-code, .premium-product-card:hover .product-sku .sku-code { color: var(--jpm-color-blue-electric, #0284C7) !important;
 }
 
 /* Kiểu chữ: Tên sản phẩm & Thông tin Card (Chuẩn Typography E-Commerce) */

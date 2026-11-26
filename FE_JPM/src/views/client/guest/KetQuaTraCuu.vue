@@ -143,6 +143,18 @@
                     @update:modelValue="onEngineTypeChange"
                   />
 
+                  <!-- Loại thì (2 Thì / 4 Thì) -->
+                  <JpmSelect
+                    class="mb-2"
+                    v-model="filters.loai_nhip"
+                    :options="strokeOptions"
+                    valueKey="value"
+                    labelKey="label"
+                    placeholder="Tất cả loại thì"
+                    allOptionLabel="Tất cả loại thì"
+                    @update:modelValue="onStrokeChange"
+                  />
+
                   <!-- Năm sản xuất -->
                   <JpmSelect
                     class="mb-2"
@@ -150,7 +162,7 @@
                     :options="years || []"
                     placeholder="Tất cả các năm"
                     allOptionLabel="Tất cả các năm"
-                    @update:modelValue="() => filters.page = 1"
+                    @update:modelValue="onYearChange"
                   />
 
                   <!-- Model -->
@@ -278,7 +290,7 @@
 
                         <!-- Tầng 2: Chữ đen là Tên nhóm phụ tùng -->
                         <h5 class="diagram-card-title mb-1">
-                          <span class="stretched-link text-truncate-2" :title="getDiagramGroupName(diag)">
+                          <span class="text-truncate-2" :title="getDiagramGroupName(diag)">
                             {{ getDiagramGroupName(diag) }}
                           </span>
                         </h5>
@@ -461,6 +473,7 @@ export default {
       keyword: route.query.keyword || "",
       thuong_hieu_id: route.query.brand ? Number(route.query.brand) : '',
       loai_dong_co_id: route.query.engineType ? Number(route.query.engineType) : '',
+      loai_nhip: route.query.stroke || "",
       nhom_phu_tung_id: route.query.part ? Number(route.query.part) : '',
       dong_co_model_id: route.query.model ? Number(route.query.model) : '',
       nam_sx: route.query.year ? Number(route.query.year) : "",
@@ -475,6 +488,7 @@ export default {
       }
       if (newQuery.brand !== undefined) filters.thuong_hieu_id = newQuery.brand ? Number(newQuery.brand) : '';
       if (newQuery.engineType !== undefined) filters.loai_dong_co_id = newQuery.engineType ? Number(newQuery.engineType) : '';
+      if (newQuery.stroke !== undefined) filters.loai_nhip = newQuery.stroke || '';
       if (newQuery.part !== undefined) filters.nhom_phu_tung_id = newQuery.part ? Number(newQuery.part) : '';
       if (newQuery.model !== undefined) filters.dong_co_model_id = newQuery.model ? Number(newQuery.model) : '';
       if (newQuery.year !== undefined) filters.nam_sx = newQuery.year ? Number(newQuery.year) : '';
@@ -482,7 +496,7 @@ export default {
     }, { deep: true });
 
     const isFilterEmpty = computed(() => {
-      return !filters.keyword && !filters.thuong_hieu_id && !filters.loai_dong_co_id && !filters.dong_co_model_id && !filters.nhom_phu_tung_id && !filters.nam_sx;
+      return !filters.keyword && !filters.thuong_hieu_id && !filters.loai_dong_co_id && !filters.loai_nhip && !filters.dong_co_model_id && !filters.nhom_phu_tung_id && !filters.nam_sx;
     });
 
     const { data: brands } = useQuery({
@@ -492,12 +506,12 @@ export default {
     });
 
     const hasEngineSelected = computed(() => {
-      return !!(filters.thuong_hieu_id || filters.loai_dong_co_id || filters.dong_co_model_id || filters.nam_sx);
+      return !!(filters.thuong_hieu_id || filters.loai_dong_co_id || filters.loai_nhip || filters.dong_co_model_id || filters.nam_sx);
     });
 
     const { data: partGroups, isFetching: isFetchingPartGroups } = useQuery({
-      queryKey: computed(() => ['public-part-groups', filters.thuong_hieu_id, filters.loai_dong_co_id, filters.dong_co_model_id, filters.nam_sx]),
-      queryFn: () => axiosClient.get('/public/nhom-phu-tung', { params: { thuong_hieu_id: filters.thuong_hieu_id, loai_dong_co_id: filters.loai_dong_co_id, dong_co_model_id: filters.dong_co_model_id, nam_sx: filters.nam_sx } }).then(res => res.data?.data || res.data || res),
+      queryKey: computed(() => ['public-part-groups', filters.thuong_hieu_id, filters.loai_dong_co_id, filters.loai_nhip, filters.dong_co_model_id, filters.nam_sx]),
+      queryFn: () => axiosClient.get('/public/nhom-phu-tung', { params: { thuong_hieu_id: filters.thuong_hieu_id, loai_dong_co_id: filters.loai_dong_co_id, loai_nhip: filters.loai_nhip || undefined, dong_co_model_id: filters.dong_co_model_id, nam_sx: filters.nam_sx } }).then(res => res.data?.data || res.data || res),
       staleTime: 1000 * 60 * 5,
       enabled: hasEngineSelected
     });
@@ -508,15 +522,42 @@ export default {
       staleTime: 1000 * 60 * 30
     });
 
+    const { data: rawStrokes } = useQuery({
+      queryKey: computed(() => ['public-strokes-v1', filters.thuong_hieu_id || 'all', filters.loai_dong_co_id || 'all']),
+      queryFn: () => axiosClient.get('/public/loai-nhip', { params: { thuong_hieu_id: filters.thuong_hieu_id || undefined, loai_dong_co_id: filters.loai_dong_co_id || undefined } }).then(res => res.data?.data || res.data || res),
+      staleTime: 1000 * 60 * 30
+    });
+
+    const formatStrokeLabel = (stroke) => {
+      if (!stroke) return '';
+      const num = String(stroke).replace(/[^0-9]/g, '');
+      return num ? `${num} Thì` : String(stroke);
+    };
+
+    const strokeOptions = computed(() => {
+      const list = Array.isArray(rawStrokes.value) ? rawStrokes.value : [];
+      const seen = new Set();
+      const opts = [];
+      list.forEach((s) => {
+        const val = String(s).trim();
+        const label = formatStrokeLabel(val);
+        if (val && !seen.has(label)) {
+          seen.add(label);
+          opts.push({ value: val, label });
+        }
+      });
+      return opts;
+    });
+
     const { data: engineModels } = useQuery({
-      queryKey: computed(() => ['public-models-v6', filters.thuong_hieu_id || 'all', filters.loai_dong_co_id || 'all', filters.nam_sx || 'all']),
-      queryFn: () => axiosClient.get('/public/dong-co-model', { params: { thuong_hieu_id: filters.thuong_hieu_id || undefined, loai_dong_co_id: filters.loai_dong_co_id || undefined, nam_sx: filters.nam_sx || undefined } }).then(res => res.data?.data || res.data || res),
+      queryKey: computed(() => ['public-models-v6', filters.thuong_hieu_id || 'all', filters.loai_dong_co_id || 'all', filters.loai_nhip || 'all', filters.nam_sx || 'all']),
+      queryFn: () => axiosClient.get('/public/dong-co-model', { params: { thuong_hieu_id: filters.thuong_hieu_id || undefined, loai_dong_co_id: filters.loai_dong_co_id || undefined, loai_nhip: filters.loai_nhip || undefined, nam_sx: filters.nam_sx || undefined } }).then(res => res.data?.data || res.data || res),
       staleTime: 1000 * 60 * 30
     });
 
     const { data: years } = useQuery({
-      queryKey: computed(() => ['public-years-v6', filters.thuong_hieu_id || 'all', filters.loai_dong_co_id || 'all']),
-      queryFn: () => axiosClient.get('/public/nam-san-xuat', { params: { thuong_hieu_id: filters.thuong_hieu_id || undefined, loai_dong_co_id: filters.loai_dong_co_id || undefined } }).then(res => res.data?.data || res.data || res),
+      queryKey: computed(() => ['public-years-v6', filters.thuong_hieu_id || 'all', filters.loai_dong_co_id || 'all', filters.loai_nhip || 'all']),
+      queryFn: () => axiosClient.get('/public/nam-san-xuat', { params: { thuong_hieu_id: filters.thuong_hieu_id || undefined, loai_dong_co_id: filters.loai_dong_co_id || undefined, loai_nhip: filters.loai_nhip || undefined } }).then(res => res.data?.data || res.data || res),
       staleTime: 1000 * 60 * 30
     });
 
@@ -657,6 +698,9 @@ export default {
         const l = engineTypes.value.find(x => x.id === filters.loai_dong_co_id);
         if (l) active.push({ type: 'engineType', label: l.ten_loai_dong_co, value: filters.loai_dong_co_id });
       }
+      if (filters.loai_nhip) {
+        active.push({ type: 'stroke', label: formatStrokeLabel(filters.loai_nhip), value: filters.loai_nhip });
+      }
       if (filters.dong_co_model_id && engineModels.value) {
         const m = engineModels.value.find(x => x.id === filters.dong_co_model_id);
         if (m) active.push({ type: 'model', label: m.ten_model, value: filters.dong_co_model_id });
@@ -677,6 +721,7 @@ export default {
     const onBrandChange = (val) => {
       filters.thuong_hieu_id = val ? Number(val) : '';
       filters.loai_dong_co_id = '';
+      filters.loai_nhip = '';
       filters.dong_co_model_id = '';
       filters.nam_sx = '';
       filters.page = 1;
@@ -684,6 +729,18 @@ export default {
 
     const onEngineTypeChange = (val) => {
       filters.loai_dong_co_id = val ? Number(val) : '';
+      filters.loai_nhip = '';
+      filters.dong_co_model_id = '';
+      filters.page = 1;
+    };
+
+    const onStrokeChange = (val) => {
+      filters.loai_nhip = val || '';
+      filters.dong_co_model_id = '';
+      filters.page = 1;
+    };
+
+    const onYearChange = () => {
       filters.dong_co_model_id = '';
       filters.page = 1;
     };
@@ -726,8 +783,9 @@ export default {
 
     const removeFilter = (type) => {
       if (type === 'keyword') { filters.keyword = ''; localKeyword.value = ''; }
-      else if (type === 'brand') { filters.thuong_hieu_id = ''; filters.loai_dong_co_id = ''; filters.dong_co_model_id = ''; filters.nam_sx = ''; }
-      else if (type === 'engineType') { filters.loai_dong_co_id = ''; filters.dong_co_model_id = ''; }
+      else if (type === 'brand') { filters.thuong_hieu_id = ''; filters.loai_dong_co_id = ''; filters.loai_nhip = ''; filters.dong_co_model_id = ''; filters.nam_sx = ''; }
+      else if (type === 'engineType') { filters.loai_dong_co_id = ''; filters.loai_nhip = ''; filters.dong_co_model_id = ''; }
+      else if (type === 'stroke') { filters.loai_nhip = ''; filters.dong_co_model_id = ''; }
       else if (type === 'model') filters.dong_co_model_id = '';
       else if (type === 'year') filters.nam_sx = '';
       else if (type === 'part') filters.nhom_phu_tung_id = '';
@@ -735,7 +793,7 @@ export default {
 
     const resetFilters = () => {
       localKeyword.value = ""; filters.keyword = ""; filters.thuong_hieu_id = ""; filters.loai_dong_co_id = "";
-      filters.nhom_phu_tung_id = ''; filters.dong_co_model_id = ""; filters.nam_sx = ""; filters.page = 1;
+      filters.loai_nhip = ""; filters.nhom_phu_tung_id = ''; filters.dong_co_model_id = ""; filters.nam_sx = ""; filters.page = 1;
       router.replace({ path: route.path, query: {} });
     };
 
@@ -751,6 +809,7 @@ export default {
       if (newFilters.keyword) query.keyword = newFilters.keyword;
       if (newFilters.thuong_hieu_id) query.brand = newFilters.thuong_hieu_id;
       if (newFilters.loai_dong_co_id) query.engineType = newFilters.loai_dong_co_id;
+      if (newFilters.loai_nhip) query.stroke = newFilters.loai_nhip;
       if (newFilters.dong_co_model_id) query.model = newFilters.dong_co_model_id;
       if (newFilters.nam_sx) query.year = newFilters.nam_sx;
       if (newFilters.nhom_phu_tung_id) query.part = newFilters.nhom_phu_tung_id;
@@ -883,12 +942,12 @@ export default {
       currentLookupBannerImg,
       lookupBannerStyle,
       localKeyword,
-      filters, brands, partGroups, engineTypes, engineModels, products, filteredProducts, diagramsList, pagination, isFetchingGlobal,
+      filters, brands, partGroups, engineTypes, strokeOptions, engineModels, products, filteredProducts, diagramsList, pagination, isFetchingGlobal,
       groupedProducts, selectPartGroup,
       activeTab, searchResult, searchDiagrams,
       sortBy, sortLabel, selectSort, cartStore,
       goToDiagram, prefetchDiagram, getDiagramImage, getDiagramGroupName, getDiagramBrandName,
-      resetFilters, changePage, openDropdown, toggleDropdown, selectOption, onBrandChange, onEngineTypeChange,
+      resetFilters, changePage, openDropdown, toggleDropdown, selectOption, onBrandChange, onEngineTypeChange, onStrokeChange, onYearChange,
       brandLabel, engineTypeLabel, modelLabel, yearLabel, years, activeFilters, removeFilter, toggleCategory, isFilterEmpty,
       hasEngineSelected, isFetchingPartGroups
     };
@@ -1403,13 +1462,16 @@ export default {
   border-radius: 12px;
   border: 1px solid #edf2f7;
   box-shadow: 0 4px 14px rgba(10, 17, 40, 0.03);
-  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s ease;
   overflow: hidden;
   background: #ffffff;
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+  will-change: transform;
 }
 
 .product-card:hover {
-  transform: translateY(-4px);
+  transform: translate3d(0, -4px, 0);
   box-shadow: 0 12px 24px rgba(10, 17, 40, 0.08);
   border-color: #cbd5e1;
 }
@@ -1518,6 +1580,11 @@ export default {
   font-weight: 700;
   letter-spacing: 0.2px;
   min-width: 0;
+  transition: none !important;
+}
+
+.product-card:hover .sku-code {
+  color: var(--jpm-color-blue-electric, #0284C7) !important;
 }
 
 .price-value {
