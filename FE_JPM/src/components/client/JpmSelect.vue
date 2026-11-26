@@ -387,14 +387,14 @@ watch(() => props.options, () => {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 14px;
-  height: 44px;
-  border-radius: var(--jpm-radius-control, 8px);
+  padding: 0 12px;
+  height: var(--jpm-control-height, 37px);
+  border-radius: var(--jpm-radius-control, 7px);
   border: 1px solid var(--jpm-neutral-200, #E2E8F0);
   background-color: var(--jpm-neutral-0, #FFFFFF);
   cursor: pointer;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
-  font-size: 0.875rem;
+  font-size: 0.96rem;
   font-weight: 500;
   color: var(--jpm-neutral-900, #0F172A);
   font-family: var(--default-font, 'Inter', sans-serif);

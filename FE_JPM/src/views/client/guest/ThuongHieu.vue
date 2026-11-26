@@ -543,12 +543,12 @@ const filteredModels = computed(() => {
 .search-input-box {
   display: flex;
   align-items: center;
-  height: 44px;
-  border-radius: 8px;
+  height: var(--jpm-control-height, 37px);
+  border-radius: var(--jpm-radius-control, 7px);
   border: 1px solid #e2e8f0;
   background: #ffffff;
   box-shadow: none;
-  padding: 0 14px;
+  padding: 0 12px;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
   width: 100%;
 }
@@ -622,11 +622,11 @@ const filteredModels = computed(() => {
 }
 
 .btn-reset-filter {
-  height: 44px;
-  padding: 0 16px;
-  font-size: 0.85rem;
+  height: var(--jpm-control-height, 37px);
+  padding: 0 14px;
+  font-size: 0.92rem;
   font-weight: 600;
-  border-radius: 8px;
+  border-radius: var(--jpm-radius-control, 7px);
   transition: all 0.2s ease;
 }
 

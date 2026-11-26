@@ -590,13 +590,13 @@ export default {
 
 .lux-input {
   width: 100%;
-  height: 44px;
-  padding: 0 14px;
-  border-radius: var(--jpm-radius-control, 8px);
+  height: var(--jpm-control-height, 37px);
+  padding: 0 12px;
+  border-radius: var(--jpm-radius-control, 7px);
   border: 1px solid #cbd5e1;
   background: #ffffff;
   color: #0A1128;
-  font-size: 0.9rem;
+  font-size: 0.96rem;
   transition: border-color 0.18s ease, box-shadow 0.18s ease;
 }
 
@@ -613,8 +613,8 @@ export default {
 
 .lux-submit-btn {
   width: 100%;
-  height: 44px;
-  border-radius: var(--jpm-radius-control, 8px) !important;
+  height: var(--jpm-control-height, 37px);
+  border-radius: var(--jpm-radius-control, 7px) !important;
   background: var(--jpm-color-red-marine, #F82249) !important;
   border: 1px solid var(--jpm-color-red-marine, #F82249) !important;
   color: #ffffff !important;

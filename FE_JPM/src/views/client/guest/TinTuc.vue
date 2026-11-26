@@ -719,10 +719,10 @@ export default {
   background-color: #ffffff;
   color: #334155;
   border: 1px solid #cbd5e1;
-  border-radius: var(--jpm-radius-control, 8px);
-  height: 40px;
-  padding: 0 16px;
-  font-size: 0.85rem;
+  border-radius: var(--jpm-radius-control, 7px);
+  height: 35px;
+  padding: 0 14px;
+  font-size: 0.92rem;
   font-weight: 600;
   white-space: nowrap;
   display: inline-flex;

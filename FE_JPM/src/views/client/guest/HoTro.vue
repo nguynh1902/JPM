@@ -644,11 +644,11 @@ textarea.contact-field-input {
 .search-input-box {
   display: flex;
   align-items: center;
-  height: 44px;
-  border-radius: var(--jpm-radius-control, 8px);
+  height: var(--jpm-control-height, 37px);
+  border-radius: var(--jpm-radius-control, 7px);
   border: 1px solid #e2e8f0;
   background: #ffffff;
-  padding: 0 14px;
+  padding: 0 12px;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
   width: 100%;
 }

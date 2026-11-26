@@ -1038,14 +1038,14 @@ export default {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 14px;
-  height: 40px;
-  border-radius: 8px;
+  padding: 0 12px;
+  height: 35px;
+  border-radius: var(--jpm-radius-control, 7px);
   border: 1px solid #e2e8f0;
   background: #ffffff;
   cursor: pointer;
   transition: all 0.2s ease;
-  font-size: 0.86rem;
+  font-size: 0.92rem;
   font-weight: 500;
   color: #1e293b;
   user-select: none;

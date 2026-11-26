@@ -937,12 +937,12 @@ export default {
 .search-input-box {
   display: flex;
   align-items: center;
-  height: 44px;
-  border-radius: 8px;
+  height: var(--jpm-control-height, 37px);
+  border-radius: var(--jpm-radius-control, 7px);
   border: 1px solid #e2e8f0;
   background: #ffffff;
   box-shadow: none;
-  padding: 0 16px;
+  padding: 0 13px;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 .search-input-box:focus-within {
@@ -999,9 +999,9 @@ export default {
   color: var(--accent-color, #f82249);
 }
 
-/* Đồng bộ chiều cao nút với ô input & JpmSelect 44px trong bộ lọc (Màu sắc, bo góc, font lấy 100% từ .btn trong main.css) */
+/* Đồng bộ chiều cao nút với ô input & JpmSelect trong bộ lọc (Màu sắc, bo góc, font lấy 100% từ .btn trong main.css) */
 .filter-control-h {
-  height: 44px;
+  height: var(--jpm-control-height, 37px);
 }
 
 /* Bố cục hàng Từ Khóa Gợi Ý (Style .popular-tags-label & .quick-pill-tag dùng chung tại main.css) */

@@ -83,8 +83,9 @@
   --jpm-font-body: var(--jpm-font-family);
   --jpm-font-mono: 'Roboto Mono', SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 
-  /* 8. Layout Offset (Khớp chính xác 100% với .header height: 58px) */
+  /* 8. Layout Offset & Control Sizing */
   --jpm-header-height: 58px;
+  --jpm-control-height: 37px;
 
   /* ═════════════════════════════════════════════════════════════════
      GLOBAL BRIDGES: Ánh xạ các biến cũ sang Design Tokens 2026
@@ -3086,15 +3087,15 @@ button.jpm-more-link:hover i {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 14px;
-  height: 44px;
-  border-radius: 8px;
+  padding: 0 12px;
+  height: var(--jpm-control-height, 37px);
+  border-radius: var(--jpm-radius-control, 7px);
   border: 1px solid #e2e8f0;
   background: #ffffff;
   box-shadow: none;
   cursor: pointer;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
-  font-size: 0.875rem;
+  font-size: 0.96rem;
   font-weight: 400;
   color: #64748b;
   font-family: var(--default-font);
@@ -5270,12 +5271,12 @@ a.btn-shopee-outline:hover {
 .catalog-sidebar-card .search-input-box {
   display: flex;
   align-items: center;
-  height: 42px;
-  border-radius: var(--jpm-radius-control, 8px);
+  height: 36px;
+  border-radius: var(--jpm-radius-control, 7px);
   border: 1px solid #e2e8f0;
   background: #ffffff;
   box-shadow: none;
-  padding: 0 12px;
+  padding: 0 11px;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
   width: 100%;
 }

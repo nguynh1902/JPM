@@ -1245,7 +1245,7 @@ export default {
 }
 
 .custom-form-input:not(textarea) {
-  height: 40px;
+  height: 36px;
 }
 
 .custom-form-input:hover {
@@ -1360,8 +1360,8 @@ export default {
 
 /* PHÂN VÙNG 3: NÚT GỬI BÁO GIÁ & BẢO ĐẢM */
 .btn-jpm-submit {
-  height: 48px;
-  border-radius: var(--jpm-radius-control, 8px) !important;
+  height: 40px;
+  border-radius: var(--jpm-radius-control, 7px) !important;
   font-weight: 600;
   font-size: 0.95rem;
   letter-spacing: 0.2px;
