@@ -33,11 +33,11 @@
             </router-link>
 
             <a
-              :href="'tel:' + (settings.company_hotline || '0909123456').replace(/\s+/g, '')"
+              :href="'tel:' + (settings.company_hotline || '0357993134').replace(/\s+/g, '')"
               class="btn prefooter-btn prefooter-btn-navy-outline d-inline-flex align-items-center justify-content-center gap-2 text-nowrap"
             >
               <i class="bi bi-telephone"></i>
-              <span>{{ settings.company_hotline || '0909 123 456' }}</span>
+              <span>{{ settings.company_hotline || '0357 993 134' }}</span>
             </a>
           </div>
         </div>
@@ -67,7 +67,7 @@
                 <i class="bi bi-telephone footer-contact-icon"></i>
                 <div>
                   <span class="footer-contact-label">Hotline:</span>
-                  <a :href="'tel:' + (settings.company_hotline || '').replace(/\s+/g, '')" class="footer-contact-value">{{ settings.company_hotline || '0909 123 456' }}</a>
+                  <a :href="'tel:' + (settings.company_hotline || '0357993134').replace(/\s+/g, '')" class="footer-contact-value">{{ settings.company_hotline || '0357 993 134' }}</a>
                 </div>
               </div>
               <div class="footer-contact-item">

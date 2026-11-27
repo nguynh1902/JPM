@@ -828,7 +828,7 @@ export default {
     },
     buildZaloUrl(message = '') {
       const rawZalo = this.siteSettings?.social_zalo || ''
-      const digits = (rawZalo.match(/\d{8,15}/)?.[0]) || (this.siteSettings?.company_hotline || '0909123456').replace(/\D/g, '')
+      const digits = (rawZalo.match(/\d{8,15}/)?.[0]) || (this.siteSettings?.company_hotline || '0357993134').replace(/\D/g, '')
       const base = rawZalo.startsWith('http') ? rawZalo.split('?')[0] : `https://zalo.me/${digits}`
       return message ? `${base}?text=${encodeURIComponent(message)}` : base
     },

@@ -74,8 +74,8 @@ class CauHinhSeeder extends Seeder
             ],
             [
                 'khoa_cau_hinh' => 'company_hotline',
-                'gia_tri'       => '0909 123 456',
-                'mo_ta'         => 'Hotline hỗ trợ kỹ thuật và mua hàng 24/7',
+                'gia_tri'       => '0357 993 134',
+                'mo_ta'         => 'Hotline hỗ trợ kỹ thuật và mua hàng',
                 'loai_gia_tri'  => 'text',
                 'trang_thai'    => 1,
             ],
@@ -97,7 +97,7 @@ class CauHinhSeeder extends Seeder
             // 3. Mạng xã hội & Kênh kết nối
             [
                 'khoa_cau_hinh' => 'social_facebook',
-                'gia_tri'       => 'https://facebook.com/jpmmarine',
+                'gia_tri'       => 'https://www.facebook.com/profile.php?id=61551777271332&mibextid=wwXIfr&rdid=9hcdbYOTV77YdCgO&share_url=https%3A%2F%2Fwww.facebook.com%2Fshare%2F18WWmNL1nX%2F%3Fmibextid%3DwwXIfr',
                 'mo_ta'         => 'Liên kết Fanpage Facebook',
                 'loai_gia_tri'  => 'url',
                 'trang_thai'    => 1,
@@ -111,15 +111,22 @@ class CauHinhSeeder extends Seeder
             ],
             [
                 'khoa_cau_hinh' => 'social_zalo',
-                'gia_tri'       => 'https://zalo.me/0909123456',
+                'gia_tri'       => 'https://zalo.me/0357993134',
                 'mo_ta'         => 'Liên kết tư vấn qua Zalo',
                 'loai_gia_tri'  => 'url',
                 'trang_thai'    => 1,
             ],
             [
                 'khoa_cau_hinh' => 'social_instagram',
-                'gia_tri'       => 'https://instagram.com/jpmmarine',
+                'gia_tri'       => 'https://www.instagram.com/linhkiencano_tauthuynhatban?cnvx=MW82ODJuNnEwc3Z6NQ%3D%3D',
                 'mo_ta'         => 'Liên kết Instagram',
+                'loai_gia_tri'  => 'url',
+                'trang_thai'    => 1,
+            ],
+            [
+                'khoa_cau_hinh' => 'social_tiktok',
+                'gia_tri'       => 'https://www.tiktok.com/@tauthuyennhatban',
+                'mo_ta'         => 'Liên kết TikTok',
                 'loai_gia_tri'  => 'url',
                 'trang_thai'    => 1,
             ],

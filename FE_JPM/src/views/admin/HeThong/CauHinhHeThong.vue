@@ -216,7 +216,7 @@
                   type="text" 
                   id="company_hotline" 
                   class="form-control" 
-                  placeholder="0909 123 456" 
+                  placeholder="0357 993 134" 
                   v-model="formData.company_hotline"
                 />
               </div>
@@ -651,14 +651,14 @@ export default {
       support_banner_subtitle: 'Đồng hành cùng mọi hải trình của bạn. Đội ngũ kỹ sư và chuyên viên JPM Marine luôn sẵn sàng tư vấn tra cứu mã phụ tùng OEM và hỗ trợ 24/7.',
       company_name: 'JPM Marine',
       company_address: '123 Đường Bạch Đằng, Q. Bình Thạnh, TP. Hồ Chí Minh, Việt Nam',
-      company_hotline: '0909 123 456',
+      company_hotline: '0357 993 134',
       company_email: 'contact@jpm-marine.vn',
       business_hours: 'Thứ 2 - Thứ 7: 08:00 - 17:30 (Chủ nhật nghỉ)',
-      social_facebook: 'https://facebook.com/jpmmarine',
+      social_facebook: 'https://www.facebook.com/profile.php?id=61551777271332&mibextid=wwXIfr&rdid=9hcdbYOTV77YdCgO&share_url=https%3A%2F%2Fwww.facebook.com%2Fshare%2F18WWmNL1nX%2F%3Fmibextid%3DwwXIfr',
       social_youtube: 'https://youtube.com/@jpmmarine',
-      social_zalo: 'https://zalo.me/0909123456',
-      social_instagram: 'https://instagram.com/jpmmarine',
-      social_tiktok: 'https://tiktok.com/@jpmmarine',
+      social_zalo: 'https://zalo.me/0357993134',
+      social_instagram: 'https://www.instagram.com/linhkiencano_tauthuynhatban?cnvx=MW82ODJuNnEwc3Z6NQ%3D%3D',
+      social_tiktok: 'https://www.tiktok.com/@tauthuyennhatban',
       vietqr_bank_id: 'ICB',
       vietqr_bank_name: 'VietinBank',
       vietqr_account_no: '108876543210',
