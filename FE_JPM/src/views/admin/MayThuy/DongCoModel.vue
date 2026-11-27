@@ -184,9 +184,13 @@
                 </div>
 
                 <div class="row">
-                  <div class="col-md-12 mb-3">
+                  <div class="col-md-7 mb-3">
                     <label for="ten_model" class="form-label fw-medium text-dark">Tên Model Động Cơ <span class="text-danger">*</span></label>
                     <input type="text" class="form-control" id="ten_model" v-model="formData.ten_model" placeholder="VD: Yamaha F150" required>
+                  </div>
+                  <div class="col-md-5 mb-3">
+                    <label for="ma_model" class="form-label fw-medium text-dark">Mã Model (Code) <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control text-uppercase" id="ma_model" v-model="formData.ma_model" placeholder="VD: YAMAHA-F150-2024" required>
                   </div>
                 </div>
 
@@ -199,11 +203,13 @@
                   <div class="col-md-4 mb-3">
                     <label for="ma_luc" class="form-label fw-medium text-dark">Mã Lực (HP)</label>
                     <input
-                      type="text"
+                      type="number"
                       id="ma_luc"
                       class="form-control"
                       placeholder="VD: 150"
                       v-model="formData.ma_luc"
+                      min="0"
+                      step="1"
                     />
                   </div>
                   
@@ -285,7 +291,7 @@ export default {
     });
 
     const { data: equipmentTypes, isFetching: isFetchingTypes , isPending: isPendingequipmentTypes } = useQuery({
-      queryKey: ['equipmentTypes'],
+      queryKey: ['engineTypes'],
       queryFn: async () => {
         const res = await axiosClient.get('/admin/loai-dong-co?all=true');
         return res.data;
@@ -298,7 +304,10 @@ export default {
         toaster.error(err.response?.data?.message || "Lỗi khi xóa model");
       },
       onSuccess: () => toaster.success("Đã xóa model!"),
-      onSettled: () => queryClient.invalidateQueries({ queryKey: ['engineModels'] })
+      onSettled: () => {
+        queryClient.invalidateQueries({ queryKey: ['engineModels'] });
+        queryClient.invalidateQueries({ queryKey: ['so-do'] });
+      }
     });
 
     const saveMutation = useMutation({
@@ -314,7 +323,10 @@ export default {
       onSuccess: (data, vars) => {
         toaster.success(vars.id ? "Cập nhật model thành công!" : "Đã thêm model mới!");
       },
-      onSettled: () => queryClient.invalidateQueries({ queryKey: ['engineModels'] })
+      onSettled: () => {
+        queryClient.invalidateQueries({ queryKey: ['engineModels'] });
+        queryClient.invalidateQueries({ queryKey: ['so-do'] });
+      }
     });
 
     const isPending = computed(() => isPendingmodels.value || isPendingbrands.value || isPendingequipmentTypes.value);
@@ -376,7 +388,7 @@ export default {
     },
     typeOptions() {
       return (this.equipmentTypes || [])
-        .filter(t => t.trang_thai === 1 || t.id === this.formData.loai_dong_co_id || t.id === this.filterType)
+        .filter(t => t.trang_thai === 1 || t.id === this.formData.loai_dong_co_id)
         .map(t => ({ value: t.id, label: t.ten_loai_dong_co }));
     },
     yearOptions() {
@@ -487,7 +499,11 @@ export default {
 
       this.isSubmitting = true;
       try {
-        const payload = { ...this.formData };
+        const payload = {
+          ...this.formData,
+          nam_san_xuat: this.formData.nam_san_xuat === "" ? null : this.formData.nam_san_xuat,
+          ma_luc: this.formData.ma_luc === "" ? null : this.formData.ma_luc,
+        };
         delete payload.hinh_anh;
         delete payload.hinh_anh_url;
         
@@ -500,7 +516,7 @@ export default {
         document.getElementById('btnCloseModal')?.click();
         this.resetForm();
       } catch (error) {
-        this.toaster.error("Có lỗi xảy ra khi lưu dữ liệu");
+        // Error toast already handled by saveMutation.onError
       } finally {
         this.isSubmitting = false;
       }

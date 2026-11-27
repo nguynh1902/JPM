@@ -7,7 +7,7 @@
 
     <div class="row">
       <!-- Cột Form (Thêm/Sửa) -->
-      <div class="col-md-4 mb-4" v-if="authStore.hasAnyPermission(['Thêm Phụ tùng', 'Sửa Phụ tùng'])">
+      <div class="col-md-4 mb-4" v-if="canAdd || (canEdit && isEditMode)">
         <div class="card border-0 shadow-sm">
           <div class="card-header border-bottom pb-3">
             <h5 class="card-title mb-0 fw-bold text-dark">
@@ -82,7 +82,7 @@
       </div>
 
       <!-- Cột Danh Sách -->
-      <div :class="authStore.hasAnyPermission(['Thêm Phụ tùng', 'Sửa Phụ tùng']) ? 'col-md-8' : 'col-12'" class="mb-4">
+      <div :class="(canAdd || (canEdit && isEditMode)) ? 'col-md-8' : 'col-12'" class="mb-4">
         <div class="card border-0 shadow-sm">
           <div class="card-header border-bottom pb-3 d-flex justify-content-between align-items-center">
             <h5 class="card-title mb-0 fw-bold text-dark">Danh Sách Mã Thay Thế</h5>
@@ -129,10 +129,10 @@
                     </td>
                     <td class="text-center align-middle">
                       <div class="d-flex justify-content-center">
-                        <button v-if="authStore.hasPermission('Sửa Phụ tùng')" class="btn btn-sm btn-icon action-btn text-primary me-1" @click="editItem(item)" title="Sửa">
+                        <button v-if="canEdit" class="btn btn-sm btn-icon action-btn text-primary me-1" @click="editItem(item)" title="Sửa">
                           <i class="bx bx-edit-alt"></i>
                         </button>
-                        <button v-if="authStore.hasPermission('Xóa Phụ tùng')" class="btn btn-sm btn-icon action-btn text-danger" @click="confirmDelete(item.id)" title="Xóa">
+                        <button v-if="canDelete" class="btn btn-sm btn-icon action-btn text-danger" @click="confirmDelete(item.id)" title="Xóa">
                           <i class="bx bx-trash"></i>
                         </button>
                       </div>
@@ -164,6 +164,10 @@ import { createToaster } from "@meforma/vue-toaster";
 const toaster = createToaster({ position: "top-right", duration: 3000 });
 const queryClient = useQueryClient();
 
+const canAdd = computed(() => authStore.isAdmin || authStore.hasAnyPermission(['Nhân viên PIM', 'Thêm Phụ tùng']));
+const canEdit = computed(() => authStore.isAdmin || authStore.hasAnyPermission(['Nhân viên PIM', 'Sửa Phụ tùng']));
+const canDelete = computed(() => authStore.isAdmin || authStore.hasPermission('Xóa Phụ tùng'));
+
 // State
 const activeTab = ref('MARINE');
 const searchQuery = ref("");
@@ -193,12 +197,12 @@ const fetchApi = async (url) => {
 // Queries
 const { data: rawPhuTungList } = useQuery({
   queryKey: ['phu-tung'],
-  queryFn: () => fetchApi('/admin/phu-tung')
+  queryFn: () => fetchApi('/admin/phu-tung?all=true')
 });
 
 const { data: rawSupersessionList, isFetching, isPending } = useQuery({
   queryKey: ['ma-thay-the'],
-  queryFn: () => fetchApi('/admin/ma-thay-the')
+  queryFn: () => fetchApi('/admin/ma-thay-the?all=true')
 });
 
 // Computed
@@ -226,10 +230,12 @@ const filteredList = computed(() => {
 
     if (!searchQuery.value) return true;
     
-    const q = searchQuery.value.toLowerCase();
+    const q = searchQuery.value.toLowerCase().trim();
     const maCu = (item.phu_tung_cu?.ma_phu_tung || '').toLowerCase();
+    const tenCu = (item.phu_tung_cu?.ten_phu_tung || '').toLowerCase();
     const maMoi = (item.phu_tung_moi?.ma_phu_tung || '').toLowerCase();
-    return maCu.includes(q) || maMoi.includes(q);
+    const tenMoi = (item.phu_tung_moi?.ten_phu_tung || '').toLowerCase();
+    return maCu.includes(q) || tenCu.includes(q) || maMoi.includes(q) || tenMoi.includes(q);
   });
 });
 
@@ -296,6 +302,10 @@ const mutationSave = useMutation({
 });
 
 const saveData = () => {
+  if (!formData.value.phu_tung_cu_id || !formData.value.phu_tung_moi_id) {
+    toaster.error("Vui lòng chọn đầy đủ Phụ tùng cũ và Phụ tùng mới!");
+    return;
+  }
   if (formData.value.phu_tung_cu_id === formData.value.phu_tung_moi_id) {
     toaster.error("Phụ tùng thay thế không được trùng với phụ tùng cũ!");
     return;
@@ -308,7 +318,11 @@ const mutationDelete = useMutation({
   onMutate: async (id) => {
     await queryClient.cancelQueries({ queryKey: ['ma-thay-the'] });
     const previousItems = queryClient.getQueryData(['ma-thay-the']);
-    queryClient.setQueryData(['ma-thay-the'], old => (old || []).filter(item => item.id !== id));
+    queryClient.setQueryData(['ma-thay-the'], old => {
+      if (Array.isArray(old)) return old.filter(item => item.id !== id);
+      if (old && Array.isArray(old.data)) return { ...old, data: old.data.filter(item => item.id !== id) };
+      return old;
+    });
     return { previousItems };
   },
   onSuccess: () => {
@@ -316,7 +330,7 @@ const mutationDelete = useMutation({
   },
   onError: (err, id, context) => {
     queryClient.setQueryData(['ma-thay-the'], context.previousItems);
-    toaster.error("Có lỗi xảy ra khi xóa!");
+    toaster.error(err.response?.data?.message || "Có lỗi xảy ra khi xóa!");
   },
   onSettled: () => {
     queryClient.invalidateQueries({ queryKey: ['ma-thay-the'] });

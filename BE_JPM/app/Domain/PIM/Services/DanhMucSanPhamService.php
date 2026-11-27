@@ -16,6 +16,13 @@ class DanhMucSanPhamService
     public function create(array $data)
     {
         try {
+            if (!empty($data['parent_id'])) {
+                $parent = DanhMucSanPham::find((int) $data['parent_id']);
+                if ($parent && $parent->parent_id !== null) {
+                    throw new Exception("Hệ thống chỉ hỗ trợ danh mục tối đa 2 cấp (Cha -> Con). Không thể chọn danh mục con làm danh mục cha.");
+                }
+            }
+
             // Tự sinh mã dựa trên số lớn nhất hiện có trong ma_danh_muc
             if (empty($data['ma_danh_muc'])) {
                 $lastCode = DanhMucSanPham::where('ma_danh_muc', 'like', 'DM%')
@@ -46,11 +53,17 @@ class DanhMucSanPhamService
             if (!empty($data['parent_id'])) {
                 $parentId = (int) $data['parent_id'];
                 if ($parentId === (int) $id) {
-                    throw new Exception("Danh mục không thể là cha của chính nó.");
+                    throw new Exception("Không thể chọn chính danh mục này làm danh mục cha.");
+                }
+                if ($danhMuc->children()->exists()) {
+                    throw new Exception("Không thể chuyển danh mục đang có danh mục con thành cấp con (tối đa 2 cấp).");
+                }
+                $currentParent = DanhMucSanPham::find($parentId);
+                if ($currentParent && $currentParent->parent_id !== null) {
+                    throw new Exception("Không thể chọn danh mục cấp 2 làm danh mục cha (tối đa 2 cấp).");
                 }
                 // Kiểm tra chống vòng lặp cha-con (Circular Reference)
                 $visited = [(int) $id];
-                $currentParent = DanhMucSanPham::find($parentId);
                 while ($currentParent) {
                     if (in_array((int) $currentParent->id, $visited, true)) {
                         throw new Exception("Không thể chọn danh mục con/cháu làm danh mục cha (lỗi vòng lặp phân cấp).");

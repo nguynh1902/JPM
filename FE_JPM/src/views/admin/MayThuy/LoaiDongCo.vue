@@ -180,7 +180,7 @@ const openEditModal = (item) => {
 const { data: loaiDongCos, isFetching, isPending } = useQuery({
   queryKey: ['engineTypes'],
   queryFn: async () => {
-    const response = await axiosClient.get('/admin/loai-dong-co');
+    const response = await axiosClient.get('/admin/loai-dong-co?all=true');
     return response.data || response;
   }
 });
@@ -213,8 +213,9 @@ const saveMutation = useMutation({
     resetForm();
   },
   onSettled: () => {
-    // Luôn fetch lại data thật từ DB
+    // Luôn fetch lại data thật từ DB và đồng bộ các trang phụ thuộc
     queryClient.invalidateQueries({ queryKey: ['engineTypes'] });
+    queryClient.invalidateQueries({ queryKey: ['engineModels'] });
   }
 });
 

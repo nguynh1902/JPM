@@ -67,10 +67,12 @@ class KhachHangController extends Controller
     {
         try {
             $kh = $this->khachHangService->create($request->validated());
+            $tempPassword = $kh->temporary_password ?? null;
             return response()->json([
                 'success' => true,
                 'message' => 'Thêm khách hàng thành công',
-                'data' => new KhachHangResource($kh)
+                'data' => new KhachHangResource($kh),
+                'temporary_password' => $tempPassword,
             ], 201);
         } catch (Exception $e) {
             return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
@@ -90,8 +92,11 @@ class KhachHangController extends Controller
                 'message' => 'Cập nhật khách hàng thành công',
                 'data' => new KhachHangResource($kh)
             ]);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json(['success' => false, 'message' => 'Không tìm thấy khách hàng.'], 404);
         } catch (Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+            $code = str_contains($e->getMessage(), 'Không tìm thấy') ? 404 : 500;
+            return response()->json(['success' => false, 'message' => $e->getMessage()], $code);
         }
     }
 

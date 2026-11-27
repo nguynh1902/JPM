@@ -38,7 +38,10 @@ class TinTucController extends Controller
                     'news',
                     1600
                 );
+            } elseif ($request->boolean('remove_thumbnail')) {
+                $data['thumbnail'] = null;
             }
+            unset($data['remove_thumbnail']);
 
             $galleryPaths = [];
             if ($request->has('existing_gallery')) {
@@ -96,7 +99,10 @@ class TinTucController extends Controller
                     'news',
                     1600
                 );
+            } elseif ($request->boolean('remove_thumbnail')) {
+                $data['thumbnail'] = null;
             }
+            unset($data['remove_thumbnail']);
 
             $galleryPaths = [];
             if ($request->has('existing_gallery')) {
@@ -118,8 +124,8 @@ class TinTucController extends Controller
 
             $item->update($data);
 
-            // Dọn ảnh thumbnail cũ nếu thay mới & ảnh gallery đã bị gỡ
-            if ($request->hasFile('thumbnail') && $oldThumb && $oldThumb !== $item->thumbnail) {
+            // Dọn ảnh thumbnail cũ nếu thay mới hoặc xóa & ảnh gallery đã bị gỡ
+            if (($request->hasFile('thumbnail') || $request->boolean('remove_thumbnail')) && $oldThumb && $oldThumb !== $item->thumbnail) {
                 ImageUploadService::delete($oldThumb);
             }
             foreach (array_diff($oldGallery, $galleryPaths) as $removedPath) {

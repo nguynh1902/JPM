@@ -261,7 +261,7 @@ export default {
     
     const { data: sanPhams, isPending: isPendingSanPhams, isFetching: isFetchingSanPhams } = useQuery({
       queryKey: ['san-pham'],
-      queryFn: () => axiosClient.get('/admin/san-pham').then(res => res.data)
+      queryFn: () => axiosClient.get('/admin/san-pham?all=true').then(res => res.data)
     });
 
     const { data: categories, isPending: isPendingCategories, isFetching: isFetchingCategories } = useQuery({
@@ -289,19 +289,6 @@ export default {
         return await axiosClient.post('/admin/san-pham', payload, {
           headers: { 'Content-Type': 'multipart/form-data' }
         });
-      },
-      onMutate: async (vars) => {
-        await queryClient.cancelQueries({ queryKey: ['san-pham'] });
-        const previousData = queryClient.getQueryData(['san-pham']);
-        queryClient.setQueryData(['san-pham'], (old) => {
-          const list = Array.isArray(old) ? old : (old?.data || []);
-          const updatedData = vars.data || {};
-          if (vars.id) {
-            return list.map(item => item.id === vars.id ? { ...item, ...updatedData } : item);
-          }
-          return [...list, { ...updatedData, id: Date.now() }];
-        });
-        return { previousData };
       },
       onError: (err, vars, context) => {
         toaster.error(err.response?.data?.message || "Lỗi khi lưu sản phẩm");
@@ -353,10 +340,10 @@ export default {
   },
   computed: {
     canAddProduct() {
-      return this.authStore?.isAdmin || this.authStore?.hasPermission('Thêm Sản phẩm');
+      return this.authStore?.isAdmin || this.authStore?.hasAnyPermission(['Nhân viên PIM', 'Thêm Sản phẩm']);
     },
     canEditProduct() {
-      return this.authStore?.isAdmin || this.authStore?.hasPermission('Sửa Sản phẩm');
+      return this.authStore?.isAdmin || this.authStore?.hasAnyPermission(['Nhân viên PIM', 'Sửa Sản phẩm']);
     },
     canDeleteProduct() {
       return this.authStore?.isAdmin || this.authStore?.hasPermission('Xóa Sản phẩm');
@@ -371,17 +358,20 @@ export default {
       return this.isFetchingCategories || this.isFetchingSanPhams;
     },
     danhMucListOptions() {
-      const all = this.categories || [];
-      const buildTree = (parentId, prefix = '') => {
-        let result = [];
-        const children = all.filter(c => c.parent_id === parentId);
-        for (const child of children) {
-          result.push({ ...child, display_name: prefix + child.ten_danh_muc });
-          result = result.concat(buildTree(child.id, prefix + '— '));
+      const all = [...(this.categories || [])].sort((a, b) => b.id - a.id);
+      const parents = all.filter(c => !c.parent_id);
+      const parentIds = new Set(parents.map(p => p.id));
+      const tree = [];
+      for (const p of parents) {
+        tree.push({ ...p, display_name: p.ten_danh_muc });
+        const children = all.filter(c => c.parent_id === p.id);
+        for (const ch of children) {
+          tree.push({ ...ch, display_name: '└─ ' + ch.ten_danh_muc });
         }
-        return result;
-      };
-      const tree = buildTree(null);
+      }
+      for (const orphan of all.filter(c => c.parent_id && !parentIds.has(c.parent_id))) {
+        tree.push({ ...orphan, display_name: '└─ ' + orphan.ten_danh_muc });
+      }
       
       return tree
         .filter(dm => dm.trang_thai === 1 || dm.id === this.formData.danh_muc_san_pham_id || dm.id === this.filters.danh_muc_san_pham_id)
@@ -389,6 +379,15 @@ export default {
     },
     filteredSanPhams() {
       const list = Array.isArray(this.sanPhams) ? this.sanPhams : (this.sanPhams?.data || []);
+      let targetCatIds = null;
+      if (this.filters.danh_muc_san_pham_id) {
+        const selectedId = this.filters.danh_muc_san_pham_id;
+        const childIds = (this.categories || [])
+          .filter(c => c.parent_id === selectedId)
+          .map(c => c.id);
+        targetCatIds = new Set([selectedId, ...childIds]);
+      }
+
       return list.filter(item => {
         let match = true;
 
@@ -399,8 +398,8 @@ export default {
             (item.ma_san_pham && String(item.ma_san_pham).toLowerCase().includes(s))
           );
         }
-        if (this.filters.danh_muc_san_pham_id) {
-          match = match && item.danh_muc_san_pham_id === this.filters.danh_muc_san_pham_id;
+        if (targetCatIds) {
+          match = match && targetCatIds.has(item.danh_muc_san_pham_id);
         }
         return match;
       });
@@ -450,10 +449,12 @@ export default {
       if (this.formData.ten_san_pham && !this.isEditMode) {
         this.formData.slug = this.formData.ten_san_pham
           .toLowerCase()
+          .replace(/[đĐ]/g, "d")
           .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
           .replace(/[^a-z0-9\s-]/g, "")
           .replace(/\s+/g, "-")
-          .replace(/-+/g, "-");
+          .replace(/-+/g, "-")
+          .replace(/^-|-$/g, "");
       }
     },
     formatCurrency(value) {
@@ -475,7 +476,12 @@ export default {
     },
     getDanhMucName(id) {
       const dm = (this.categories || []).find(d => d.id === id);
-      return dm ? dm.ten_danh_muc : 'N/A';
+      if (!dm) return 'N/A';
+      if (dm.parent_id) {
+        const parent = (this.categories || []).find(p => p.id === dm.parent_id);
+        if (parent) return `${parent.ten_danh_muc} › ${dm.ten_danh_muc}`;
+      }
+      return dm.ten_danh_muc;
     },
     removeMainImage() {
         this.mainImageFile = null;
@@ -542,13 +548,13 @@ export default {
     },
     async saveData() {
       if (!this.formData.ma_san_pham || !this.formData.ten_san_pham || !this.formData.danh_muc_san_pham_id) {
-        this.$toast?.error("Vui lòng nhập đầy đủ thông tin bắt buộc!");
+        this.toaster.error("Vui lòng nhập đầy đủ thông tin bắt buộc!");
         return;
       }
 
       if (!this.formData.is_gia_lien_he) {
         if (this.formData.gia_ban === null || this.formData.gia_ban === undefined || this.formData.gia_ban === "" || Number(this.formData.gia_ban) <= 0) {
-          this.$toast?.error("Vui lòng nhập giá bán lớn hơn 0 hoặc tích chọn 'Liên hệ'!");
+          this.toaster.error("Vui lòng nhập giá bán lớn hơn 0 hoặc tích chọn 'Liên hệ'!");
           return;
         }
       }
@@ -560,12 +566,14 @@ export default {
         payload.append('ma_san_pham', this.formData.ma_san_pham);
         payload.append('ten_san_pham', this.formData.ten_san_pham);
         payload.append('slug', this.formData.slug);
-        if (this.formData.mo_ta_chi_tiet) payload.append('mo_ta_chi_tiet', this.formData.mo_ta_chi_tiet);
-        if (this.formData.thong_so_ky_thuat) payload.append('thong_so_ky_thuat', this.formData.thong_so_ky_thuat);
-        if (this.formData.video_url) payload.append('video_url', this.formData.video_url);
+        payload.append('mo_ta_chi_tiet', this.formData.mo_ta_chi_tiet || '');
+        payload.append('thong_so_ky_thuat', this.formData.thong_so_ky_thuat || '');
+        payload.append('video_url', this.formData.video_url || '');
         payload.append('gia_ban', this.formData.gia_ban);
         payload.append('is_gia_lien_he', this.formData.is_gia_lien_he ? 1 : 0);
-        payload.append('so_luong_ton', this.formData.so_luong_ton);
+        if (!this.isEditMode) {
+          payload.append('so_luong_ton', this.formData.so_luong_ton || 0);
+        }
         
         payload.append('trang_thai', this.formData.trang_thai);
 
@@ -583,14 +591,13 @@ export default {
 
         
         const id = this.isEditMode ? this.formData.id : null;
-        await this.saveMutation.mutateAsync({ id, payload, data: { ...this.formData } });
+        await this.saveMutation.mutateAsync({ id, payload });
         
         document.getElementById('btnCloseModal')?.click();
         this.resetForm();
 
       } catch (error) {
-        const msg = error.response?.data?.message || "Có lỗi xảy ra khi lưu dữ liệu";
-        this.$toast?.error(msg);
+        // Error toast already handled by saveMutation.onError
       } finally {
         this.isSubmitting = false;
       }

@@ -103,8 +103,14 @@ class TinTucController extends Controller
      */
     public function chiTiet($id)
     {
-        $news = TinTuc::where('status', 'PUBLISHED')
-            ->where(function ($q) use ($id) {
+        $excluded = $this->getExcludedCategories();
+
+        $query = TinTuc::where('status', 'PUBLISHED');
+        if ($excluded->isNotEmpty()) {
+            $query->whereNotIn('category', $excluded);
+        }
+
+        $news = $query->where(function ($q) use ($id) {
                 if (is_numeric($id)) {
                     $q->where('id', (int) $id);
                 } else {

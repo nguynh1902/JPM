@@ -42,7 +42,6 @@ Route::prefix('public')->middleware(['throttle:public-api', 'cache.public'])->gr
     Route::get('/tin-tuc-moi-nhat', [\App\Domain\Storefront\Controllers\TinTucController::class, 'moiNhat']);
     Route::get('/tin-tuc', [\App\Domain\Storefront\Controllers\TinTucController::class, 'danhSach']);
     Route::get('/tin-tuc-categories', [\App\Domain\Storefront\Controllers\TinTucController::class, 'categories']);
-    Route::get('/tin-tuc/{id}', [\App\Domain\Storefront\Controllers\TinTucController::class, 'chiTiet']);
 
     // Public: Garage Dropdowns
     Route::get('/garage/thuong-hieu', [\App\Domain\Storefront\Controllers\GarageController::class, 'getThuongHieu']);
@@ -57,6 +56,7 @@ Route::prefix('public')->middleware(['throttle:public-api', 'cache.public'])->gr
 
 // Public PII / Dynamic Quote & Order Routes (NEVER cached by cache.public!)
 Route::prefix('public')->middleware(['throttle:public-api'])->group(function () {
+    Route::get('/tin-tuc/{id}', [\App\Domain\Storefront\Controllers\TinTucController::class, 'chiTiet']);
     Route::post('/yeu-cau-bao-gia', [\App\Domain\Sales\Controllers\YeuCauBaoGiaController::class, 'publicStore']);
     Route::get('/yeu-cau-bao-gia/{token}', [\App\Domain\Sales\Controllers\YeuCauBaoGiaController::class, 'showByToken']);
     Route::post('/yeu-cau-bao-gia/{token}/action', [\App\Domain\Sales\Controllers\YeuCauBaoGiaController::class, 'customerAction']);
@@ -329,7 +329,7 @@ Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
     // =========================================================================
     // 7. READ-ONLY OPERATIONS ROUTES (Dành cho nhân sự nội bộ có quyền Xem)
     // =========================================================================
-    Route::middleware(['role_or_permission:admin|Super Admin|staff|Nhân viên PIM|Quản lý Model & Động cơ|Xem Phụ tùng|Thêm Phụ tùng|Sửa Phụ tùng|Xóa Phụ tùng|Xem Động cơ & Thương hiệu|Thêm Động cơ & Thương hiệu|Sửa Động cơ & Thương hiệu|Xóa Động cơ & Thương hiệu|Xem Đơn hàng|Duyệt Đơn hàng|Sửa Đơn hàng|Xem Khách hàng|Xem Tồn kho|Xem Thẻ kho|Quản lý Danh sách kho|Xem Sản phẩm|Xem Tin tức & CMS|Quản lý Nhân sự|Quản lý Vai trò|Cấu hình chung,sanctum'])->group(function () {
+    Route::middleware(['role_or_permission:admin|Super Admin|staff|Nhân viên PIM|Quản lý Model & Động cơ|Xem Phụ tùng|Thêm Phụ tùng|Sửa Phụ tùng|Xóa Phụ tùng|Xem Động cơ & Thương hiệu|Thêm Động cơ & Thương hiệu|Sửa Động cơ & Thương hiệu|Xóa Động cơ & Thương hiệu|Xem Đơn hàng|Duyệt Đơn hàng|Sửa Đơn hàng|Xem Khách hàng|Xem Tồn kho|Xem Thẻ kho|Quản lý Danh sách kho|Xem Sản phẩm|Thêm Sản phẩm|Sửa Sản phẩm|Xóa Sản phẩm|Xem Tin tức & CMS|Quản lý Nhân sự|Quản lý Vai trò|Cấu hình chung,sanctum'])->group(function () {
         // Dashboard Stats
         Route::get('admin/dashboard/stats', [\App\Domain\Analytics\Controllers\DashboardController::class, 'stats']);
 

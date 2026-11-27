@@ -632,11 +632,10 @@ export default {
           hasVideo: true,
         };
       }
-      // Fallback: nếu chưa có bài nào có video thì gắn video mẫu cho bài đầu tiên
+      // Nếu chưa có bài viết nào gắn YouTube URL thì vẫn hiển thị bài mới nhất (không gắn link demo)
       return {
         ...latestNews.value[0],
-        youtube_url: 'https://www.youtube.com/watch?v=Y7f98aduVJ8',
-        hasVideo: true,
+        hasVideo: false,
       };
     });
 

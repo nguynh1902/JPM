@@ -17,6 +17,8 @@ class VaiTroRequest extends FormRequest
         
         return [
             'name' => 'required|string|max:100|unique:roles,name,' . $roleId,
+            'description' => 'nullable|string|max:255',
+            'status' => 'nullable|integer|in:0,1',
             'permissions' => 'nullable|array',
             'permissions.*' => 'integer|exists:permissions,id',
         ];

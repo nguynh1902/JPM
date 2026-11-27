@@ -27,10 +27,10 @@ class NhanVienRequest extends FormRequest
         
         if ($isUpdate) {
             $emailRule .= '|unique:users,email,' . $userId;
-            $phoneRule .= '|unique:nhan_viens,so_dien_thoai,' . $id;
+            $phoneRule .= '|unique:nhan_viens,so_dien_thoai,' . $id . '|unique:users,phone,' . $userId;
         } else {
             $emailRule .= '|unique:users,email';
-            $phoneRule .= '|unique:nhan_viens,so_dien_thoai';
+            $phoneRule .= '|unique:nhan_viens,so_dien_thoai|unique:users,phone';
         }
 
         return [

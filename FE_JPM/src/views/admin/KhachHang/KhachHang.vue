@@ -191,6 +191,15 @@
                   <button
                     v-if="canLockCustomer"
                     type="button"
+                    class="action-btn text-warning me-2"
+                    @click="resetPassword(item.id)"
+                    title="Đặt lại mật khẩu"
+                  >
+                    <i class="bx bx-key"></i>
+                  </button>
+                  <button
+                    v-if="canLockCustomer"
+                    type="button"
                     class="action-btn text-danger"
                     @click="confirmDelete(item)"
                     title="Khóa/Xóa"
@@ -325,7 +334,7 @@
                         <input
                           :type="showPassword ? 'text' : 'password'"
                           class="form-control"
-                          placeholder="Mặc định: Jpm@2026"
+                          placeholder="Để trống để tự sinh ngẫu nhiên"
                           v-model="formData.password"
                           minlength="8"
                           maxlength="25"
@@ -343,17 +352,20 @@
                       <small
                         v-if="!isEditMode"
                         class="form-text text-muted mt-1"
-                        >Mặc định: <strong>Jpm@2026</strong></small
+                        >Để trống hệ thống sẽ tự tạo mật khẩu ngẫu nhiên an toàn.</small
                       >
-                      <div v-else>
+                      <div v-else-if="canLockCustomer">
                         <button
                           type="button"
                           class="btn btn-outline-warning w-100 shadow-sm"
                           @click="resetPassword(formData.id)"
                           style="font-size: 0.85rem"
                         >
-                          <i class="bx bx-reset me-1"></i> Đặt lại về Jpm@2026
+                          <i class="bx bx-reset me-1"></i> Đặt lại mật khẩu mới
                         </button>
+                      </div>
+                      <div v-else>
+                        <small class="text-muted">Cần quyền "Khóa Khách hàng" để đặt lại mật khẩu.</small>
                       </div>
                     </div>
                   </div>
@@ -385,7 +397,7 @@
                         type="file"
                         id="avatar"
                         class="form-control mb-2"
-                        accept="image/*,.jpg,.jpeg,.png,.webp,.gif,.svg,.bmp,.avif,.heic,.heif,.tiff,.tif,.ico,.jfif"
+                        accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
                         @change="handleAvatarUpload"
                       />
                       <div
@@ -442,7 +454,7 @@
                 </div>
 
                 <!-- Form Thêm / Sửa Địa Chỉ Inline -->
-                <div v-if="showAddressForm" class="card border bg-light-subtle mb-3">
+                <div v-if="showAddressForm" class="card border bg-light-subtle mb-3" @keydown.enter.prevent="submitAddressForm">
                   <div class="card-body p-3">
                     <div class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom">
                       <span class="fw-bold text-dark small">
@@ -451,17 +463,13 @@
                       <button type="button" class="btn-close" @click="cancelAddressForm" aria-label="Close"></button>
                     </div>
                     <div class="row g-2">
-                      <div class="col-md-4">
+                      <div class="col-md-6">
                         <label class="form-label small fw-semibold mb-1">Tên người nhận <span class="text-danger">*</span></label>
                         <input type="text" class="form-control" v-model="addressForm.ten_nguoi_nhan" placeholder="Tên người nhận" />
                       </div>
-                      <div class="col-md-4">
+                      <div class="col-md-6">
                         <label class="form-label small fw-semibold mb-1">Số điện thoại <span class="text-danger">*</span></label>
                         <input type="text" class="form-control" v-model="addressForm.so_dien_thoai" placeholder="Số điện thoại" />
-                      </div>
-                      <div class="col-md-4">
-                        <label class="form-label small fw-semibold mb-1">Phân loại</label>
-                        <input type="text" class="form-control" v-model="addressForm.loai_dia_chi" placeholder="VD: Xưởng / Cảng / Chành xe" maxlength="20" />
                       </div>
                       <div class="col-12 mt-2">
                         <label class="form-label small fw-semibold mb-1">Địa chỉ cụ thể <span class="text-danger">*</span></label>
@@ -501,9 +509,6 @@
                         <span class="fw-bold text-dark">{{ addr.ten_nguoi_nhan }}</span>
                         <span class="text-muted small">|</span>
                         <span class="text-secondary small fw-semibold">{{ addr.so_dien_thoai }}</span>
-                        <span v-if="addr.loai_dia_chi" class="badge bg-pastel-secondary" style="font-size: 0.7rem; padding: 0.22rem 0.5rem;">
-                          {{ addr.loai_dia_chi }}
-                        </span>
                         <span v-if="addr.la_mac_dinh" class="badge bg-pastel-danger" style="font-size: 0.7rem; padding: 0.22rem 0.5rem;">
                           Mặc định
                         </span>
@@ -596,7 +601,7 @@ export default {
     const { data: customers, isFetching } = useQuery({
       queryKey: ["khach-hang"],
       queryFn: async () => {
-        const response = await axiosClient.get("/admin/khach-hang");
+        const response = await axiosClient.get("/admin/khach-hang?all=true");
         if (
           response.data &&
           response.data.data &&
@@ -669,7 +674,6 @@ export default {
         ten_nguoi_nhan: "",
         so_dien_thoai: "",
         dia_chi_cu_the: "",
-        loai_dia_chi: "",
         la_mac_dinh: false,
       },
       formData: {
@@ -753,7 +757,6 @@ export default {
         ten_nguoi_nhan: this.formData.name || "",
         so_dien_thoai: this.formData.phone || "",
         dia_chi_cu_the: "",
-        loai_dia_chi: "",
         la_mac_dinh: this.customerAddresses.length === 0,
       };
       this.showAddressForm = true;
@@ -764,7 +767,6 @@ export default {
         ten_nguoi_nhan: addr.ten_nguoi_nhan || "",
         so_dien_thoai: addr.so_dien_thoai || "",
         dia_chi_cu_the: addr.dia_chi_cu_the || "",
-        loai_dia_chi: addr.loai_dia_chi || "",
         la_mac_dinh: !!addr.la_mac_dinh,
       };
       this.showAddressForm = true;
@@ -879,11 +881,20 @@ export default {
           },
         },
         {
-          onSuccess: () => {
-            if (this.$toast)
+          onSuccess: (res) => {
+            const tempPw = res?.temporary_password || res?.data?.temporary_password;
+            if (!this.isEditMode && tempPw) {
+              Swal.fire({
+                icon: "success",
+                title: "Đã tạo khách hàng mới!",
+                html: `Mật khẩu tạm thời: <code class="fs-5 fw-bold text-primary">${tempPw}</code><br><small class="text-muted">Vui lòng sao chép gửi cho khách hàng.</small>`,
+                confirmButtonText: "Đã lưu",
+              });
+            } else if (this.$toast) {
               this.$toast.success(
                 this.isEditMode ? "Cập nhật thành công!" : "Đã thêm mới!",
               );
+            }
             this.closeModal();
           },
           onError: (err) => {
@@ -907,7 +918,7 @@ export default {
     async resetPassword(id) {
       const result = await Swal.fire({
         title: "Xác nhận Reset Mật Khẩu",
-        text: "Mật khẩu của khách hàng này sẽ được đặt lại thành Jpm@2026.",
+        text: "Hệ thống sẽ tạo mật khẩu tạm thời mới ngẫu nhiên và đăng xuất khách hàng khỏi thiết bị hiện tại.",
         icon: 'warning',
           iconColor: '#f82249',
         showCancelButton: true,
@@ -927,12 +938,21 @@ export default {
           const res = await axiosClient.post(
             `/admin/khach-hang/${id}/reset-password`,
           );
-          if (this.$toast)
+          const tempPw = res?.temporary_password || res?.data?.temporary_password;
+          if (tempPw) {
+            Swal.fire({
+              icon: "success",
+              title: "Đã đặt lại mật khẩu!",
+              html: `Mật khẩu tạm thời mới: <code class="fs-5 fw-bold text-primary">${tempPw}</code><br><small class="text-muted">Vui lòng sao chép và gửi cho khách hàng.</small>`,
+              confirmButtonText: "Đóng",
+            });
+          } else if (this.$toast) {
             this.$toast.success(
               res.data?.message ||
                 res.message ||
                 "Đã reset mật khẩu thành công!",
             );
+          }
         } catch (error) {
           if (this.$toast)
             this.$toast.error(

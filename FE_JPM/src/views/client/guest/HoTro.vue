@@ -327,7 +327,7 @@
                   </button>
                 </h2>
                 <div :id="'collapse' + index" class="accordion-collapse collapse" :aria-labelledby="'heading' + index" data-bs-parent="#faqAccordion">
-                  <div class="accordion-body px-0 pt-0 pb-4 faq-answer-content" v-html="faq.answer">
+                  <div class="accordion-body px-0 pt-0 pb-4 faq-answer-content" v-html="sanitizeHtml(faq.answer)">
                   </div>
                 </div>
               </div>
@@ -399,10 +399,18 @@ export default {
       return `https://maps.google.com/maps?q=${encodeURIComponent(address)}&t=&z=15&ie=UTF8&iwloc=&output=embed`;
     });
 
+    const sanitizeHtml = (raw) => {
+      return String(raw || '')
+        .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+        .replace(/<(iframe|object|embed|form)\b[^>]*>[\s\S]*?<\/\1>/gi, '')
+        .replace(/\son\w+\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/gi, '')
+        .replace(/javascript\s*:/gi, '');
+    };
+
     const { data: faqsData } = useQuery({
       queryKey: ['client-faqs'],
       queryFn: async () => {
-        const res = await axiosClient.get('/public/faqs');
+        const res = await axiosClient.get('/public/faqs', { params: { limit: 100 } });
         return res.data?.data || res.data || [];
       }
     });
@@ -523,6 +531,7 @@ export default {
       faqs, 
       faqSearchQuery, 
       filteredFaqs, 
+      sanitizeHtml,
       scrollToContact,
       scrollToMap,
       scrollToFaq,

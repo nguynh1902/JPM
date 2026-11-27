@@ -585,7 +585,6 @@ export default {
       activeTocId.value = '';
       currentHeroIndex.value = 0;
       window.scrollTo({ top: 0, behavior: 'smooth' });
-      refetch();
     });
 
     const article = computed(() => fetchResult.value?.data ?? null);
@@ -595,10 +594,11 @@ export default {
     const contentAndToc = computed(() => {
       if (!article.value) return { html: '', toc: [] };
 
-      let raw = String(article.value.content || '').replace(
-        /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi,
-        ''
-      );
+      let raw = String(article.value.content || '')
+        .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+        .replace(/<(iframe|object|embed|form)\b[^>]*>[\s\S]*?<\/\1>/gi, '')
+        .replace(/\son\w+\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/gi, '')
+        .replace(/javascript\s*:/gi, '');
 
       // Chỉ bổ sung nội dung mẫu nếu bài viết trong DB hoàn toàn rỗng
       if (!raw || raw.trim().length === 0) {

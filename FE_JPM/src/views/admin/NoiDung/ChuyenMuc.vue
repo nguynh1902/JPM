@@ -6,7 +6,7 @@
 
     <div class="row">
       <!-- Cột trái: Form nhập liệu (Layout 1) -->
-      <div class="col-md-4 mb-4" v-if="authStore.hasPermission('Soạn thảo Tin tức & CMS')">
+      <div class="col-md-4 mb-4" v-if="canWrite">
         <div class="card">
           <div class="card-header border-bottom">
             <h5 class="mb-0 fw-bold text-dark">
@@ -68,7 +68,7 @@
       </div>
 
       <!-- Cột phải: Bảng dữ liệu -->
-      <div :class="authStore.hasPermission('Soạn thảo Tin tức & CMS') ? 'col-md-8' : 'col-12'" class="mb-4">
+      <div :class="canWrite ? 'col-md-8' : 'col-12'" class="mb-4">
         <div class="card">
           <div class="card-header border-bottom d-flex justify-content-between align-items-center flex-wrap gap-2">
             <h5 class="mb-0 fw-bold text-dark">Danh Sách Chuyên Mục</h5>
@@ -130,10 +130,10 @@
                   </td>
                   <td class="text-center">
                     <div class="d-flex align-items-center justify-content-center">
-                      <button v-if="authStore.hasPermission('Soạn thảo Tin tức & CMS')" type="button" class="action-btn text-primary me-2" @click="editItem(item)" title="Sửa">
+                      <button v-if="canWrite" type="button" class="action-btn text-primary me-2" @click="editItem(item)" title="Sửa">
                         <i class="bx bx-edit-alt"></i>
                       </button>
-                      <button v-if="authStore.hasPermission('Xóa Tin tức & CMS')" type="button" class="action-btn text-danger" @click="confirmDelete(item)" title="Xóa">
+                      <button v-if="canDelete" type="button" class="action-btn text-danger" @click="confirmDelete(item)" title="Xóa">
                         <i class="bx bx-trash"></i>
                       </button>
                     </div>
@@ -186,8 +186,13 @@ export default {
       },
       onSettled: () => {
         queryClient.invalidateQueries({ queryKey: ['chuyen-muc'] });
+        queryClient.invalidateQueries({ queryKey: ['tin-tuc'] });
+        queryClient.invalidateQueries({ queryKey: ['faq'] });
         queryClient.invalidateQueries({ queryKey: ['client-tin-tuc-categories'] });
-        queryClient.invalidateQueries({ queryKey: ['client-tin-tuc'] });
+        queryClient.invalidateQueries({ queryKey: ['client-tin-tuc-all'] });
+        queryClient.invalidateQueries({ queryKey: ['public-latest-news'] });
+        queryClient.invalidateQueries({ queryKey: ['public-news-detail'] });
+        queryClient.invalidateQueries({ queryKey: ['client-faqs'] });
       }
     });
 
@@ -203,8 +208,12 @@ export default {
       onSettled: () => {
         queryClient.invalidateQueries({ queryKey: ['chuyen-muc'] });
         queryClient.invalidateQueries({ queryKey: ['tin-tuc'] });
+        queryClient.invalidateQueries({ queryKey: ['faq'] });
         queryClient.invalidateQueries({ queryKey: ['client-tin-tuc-categories'] });
-        queryClient.invalidateQueries({ queryKey: ['client-tin-tuc'] });
+        queryClient.invalidateQueries({ queryKey: ['client-tin-tuc-all'] });
+        queryClient.invalidateQueries({ queryKey: ['public-latest-news'] });
+        queryClient.invalidateQueries({ queryKey: ['public-news-detail'] });
+        queryClient.invalidateQueries({ queryKey: ['client-faqs'] });
       }
     });
 
@@ -220,6 +229,12 @@ export default {
     };
   },
   computed: {
+    canWrite() {
+      return this.authStore.isAdmin || this.authStore.hasAnyPermission(['Soạn thảo Tin tức & CMS', 'Cấu hình chung']);
+    },
+    canDelete() {
+      return this.authStore.isAdmin || this.authStore.hasAnyPermission(['Xóa Tin tức & CMS', 'Cấu hình chung']);
+    },
     filteredCategories() {
       let list = this.categories || [];
       if (this.filterType) {
@@ -251,22 +266,29 @@ export default {
       this.formData = this.getInitialFormData();
     },
     async saveData() {
+      if (!this.formData.name || !this.formData.type) {
+        this.$toast?.error('Vui lòng nhập đầy đủ Tên chuyên mục và Loại ứng dụng!');
+        return;
+      }
       this.isSubmitting = true;
       try {
         await this.saveMutation.mutateAsync(this.formData);
         this.$toast?.success(this.isEditMode ? 'Cập nhật thành công!' : 'Thêm mới thành công!');
         this.resetForm();
       } catch (error) {
-        console.error(error);
-        this.$toast?.error('Lỗi khi lưu chuyên mục!');
+        const msg = error.response?.data?.message
+          || (error.response?.data?.errors && Object.values(error.response.data.errors)[0]?.[0])
+          || 'Lỗi khi lưu chuyên mục!';
+        this.$toast?.error(msg);
       } finally {
         this.isSubmitting = false;
       }
     },
     async confirmDelete(item) {
+        const safeName = String(item.name || '').replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
         const result = await Swal.fire({
           title: "Xác nhận xóa",
-          html: `Bạn có chắc chắn muốn xóa chuyên mục <b>"${item.name}"</b>?<br><br><small class="text-danger">Lưu ý: Dữ liệu sau khi xóa sẽ không thể khôi phục.</small>`,
+          html: `Bạn có chắc chắn muốn xóa chuyên mục <b>"${safeName}"</b>?<br><br><small class="text-danger">Lưu ý: Dữ liệu sau khi xóa sẽ không thể khôi phục.</small>`,
           icon: "warning",
           iconColor: "#f82249",
           showCancelButton: true,
@@ -284,9 +306,12 @@ export default {
         if (result.isConfirmed) {
           try {
             await this.deleteMutation.mutateAsync(item.id);
+            if (this.isEditMode && this.formData.id === item.id) {
+              this.resetForm();
+            }
             this.$toast?.success('Đã xóa chuyên mục!');
           } catch(error) {
-            this.$toast?.error('Xóa thất bại!');
+            this.$toast?.error(error.response?.data?.message || 'Xóa thất bại!');
           }
         }
       }

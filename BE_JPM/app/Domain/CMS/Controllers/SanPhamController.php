@@ -119,7 +119,10 @@ class SanPhamController extends Controller
                     'sp',
                     1600
                 );
+            } elseif ($request->boolean('remove_main_image')) {
+                $data['hinh_anh_chinh'] = null;
             }
+            unset($data['remove_main_image']);
 
             $gallery = [];
             if (!empty($data['thu_vien_anh_kept'])) {
@@ -141,7 +144,7 @@ class SanPhamController extends Controller
             $sanPham = $this->sanPhamService->update($id, $data);
 
             // Dọn ảnh cũ bị thay thế/gỡ bỏ
-            if ($request->hasFile('hinh_anh_chinh_file') && $oldMain && $oldMain !== $sanPham->hinh_anh_chinh) {
+            if (($request->hasFile('hinh_anh_chinh_file') || $request->boolean('remove_main_image')) && $oldMain && $oldMain !== $sanPham->hinh_anh_chinh) {
                 ImageUploadService::delete($oldMain);
             }
             foreach (array_diff($oldGallery, $gallery) as $removedPath) {
@@ -172,13 +175,34 @@ class SanPhamController extends Controller
 
     public function publicIndex(\Illuminate\Http\Request $request): JsonResponse
     {
-        $query = \App\Domain\CMS\Models\SanPham::with('danhMuc')->where('trang_thai', 1);
+        $query = \App\Domain\CMS\Models\SanPham::with('danhMuc.parent')
+            ->where('trang_thai', 1)
+            ->whereHas('danhMuc', function ($d) {
+                $d->where('trang_thai', 1)
+                  ->where(function ($p) {
+                      $p->whereNull('parent_id')
+                        ->orWhereHas('parent', fn($gp) => $gp->where('trang_thai', 1));
+                  });
+            });
 
         if ($request->has('danh_muc') && !empty($request->danh_muc)) {
-            $slugs = explode(',', $request->danh_muc);
-            $query->whereHas('danhMuc', function($q) use ($slugs) {
-                $q->whereIn('slug', $slugs);
-            });
+            $slugs = array_filter(array_map('trim', explode(',', (string) $request->danh_muc)));
+            $matchedIds = \App\Domain\CMS\Models\DanhMucSanPham::where('trang_thai', 1)
+                ->whereIn('slug', $slugs)
+                ->pluck('id')
+                ->all();
+            $childIds = !empty($matchedIds)
+                ? \App\Domain\CMS\Models\DanhMucSanPham::where('trang_thai', 1)
+                    ->whereIn('parent_id', $matchedIds)
+                    ->pluck('id')
+                    ->all()
+                : [];
+            $targetIds = array_values(array_unique(array_merge($matchedIds, $childIds)));
+            if (!empty($targetIds)) {
+                $query->whereIn('danh_muc_san_pham_id', $targetIds);
+            } else {
+                $query->whereRaw('1 = 0');
+            }
         }
 
         if ($request->has('keyword') && !empty($request->keyword)) {
@@ -191,9 +215,9 @@ class SanPhamController extends Controller
 
         $sort = $request->get('sort', 'newest');
         if ($sort === 'price_asc') {
-            $query->orderBy('gia_ban', 'asc');
+            $query->orderBy('is_gia_lien_he', 'asc')->orderBy('gia_ban', 'asc');
         } elseif ($sort === 'price_desc') {
-            $query->orderBy('gia_ban', 'desc');
+            $query->orderBy('is_gia_lien_he', 'asc')->orderBy('gia_ban', 'desc');
         } else {
             $query->orderBy('id', 'desc');
         }
@@ -209,9 +233,16 @@ class SanPhamController extends Controller
 
     public function publicShow($slug): JsonResponse
     {
-        $sanPham = \App\Domain\CMS\Models\SanPham::with('danhMuc')
+        $sanPham = \App\Domain\CMS\Models\SanPham::with('danhMuc.parent')
             ->where('slug', $slug)
             ->where('trang_thai', 1)
+            ->whereHas('danhMuc', function ($d) {
+                $d->where('trang_thai', 1)
+                  ->where(function ($p) {
+                      $p->whereNull('parent_id')
+                        ->orWhereHas('parent', fn($gp) => $gp->where('trang_thai', 1));
+                  });
+            })
             ->first();
 
         if (!$sanPham) {

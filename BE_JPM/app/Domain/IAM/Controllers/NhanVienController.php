@@ -31,7 +31,7 @@ class NhanVienController extends Controller
                     'phone' => $nv->so_dien_thoai,
                     'email' => $nv->user->email ?? '',
                     'avatar' => !empty($nv->user->avatar) ? (str_starts_with($nv->user->avatar, 'http') ? $nv->user->avatar : asset($nv->user->avatar)) : '',
-                    'role' => $nv->user->roles->first()?->name ?? 'N/A',
+                    'role' => $nv->user?->roles->first()?->name ?? '',
                     'status' => $nv->user->status ?? 1,
                 ]
             ]);
@@ -52,17 +52,22 @@ class NhanVienController extends Controller
                     'phone' => $nv->so_dien_thoai,
                     'email' => $nv->user->email ?? '',
                     'avatar' => !empty($nv->user->avatar) ? (str_starts_with($nv->user->avatar, 'http') ? $nv->user->avatar : asset($nv->user->avatar)) : '',
-                    'role' => $nv->user->roles->first()?->name ?? 'N/A',
+                    'role' => $nv->user?->roles->first()?->name ?? '',
                     'status' => $nv->user->status ?? 1,
                 ];
             });
             
-            $roles = Role::where('name', '!=', 'customer')->pluck('name')->map(function($role) {
-                return [
-                    'value' => $role,
-                    'label' => $role
-                ];
-            });
+            $roles = Role::where('name', '!=', 'customer')
+                ->where(function ($q) {
+                    $q->where('status', 1)->orWhereNull('status');
+                })
+                ->pluck('name')
+                ->map(function($role) {
+                    return [
+                        'value' => $role,
+                        'label' => $role
+                    ];
+                });
 
             return response()->json([
                 'success' => true,
@@ -81,7 +86,7 @@ class NhanVienController extends Controller
 
     private function isPrivilegedRole(?string $roleName): bool
     {
-        return in_array(strtolower(trim((string) $roleName)), ['admin', 'super admin'], true);
+        return in_array(strtolower(trim((string) $roleName)), ['admin', 'super admin', 'quản trị viên'], true);
     }
 
     public function store(NhanVienRequest $request): JsonResponse
@@ -164,6 +169,41 @@ class NhanVienController extends Controller
             ], 403);
         }
 
+        // Chống tự nâng vai trò hoặc tự khóa chính mình
+        if ($actor && (int) $nv->id_tai_khoan === (int) $actor->id) {
+            $currentPrimaryRole = $nv->user?->roles->first()?->name;
+            if ($request->filled('role') && $currentPrimaryRole !== $request->role && !$this->isSuperAdminUser($actor)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Bạn không thể tự thay đổi vai trò của chính mình.'
+                ], 403);
+            }
+            if ($request->has('status') && (int) $request->status === 0) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Bạn không thể tự khóa tài khoản của chính mình.'
+                ], 400);
+            }
+        }
+
+        // Bảo vệ Quản trị viên tối cao cuối cùng khỏi bị khóa hoặc hạ quyền
+        if ($nv->user && $this->isSuperAdminUser($nv->user)) {
+            $willLock = $request->has('status') && (int) $request->status === 0;
+            $willDemote = $request->filled('role') && !$this->isPrivilegedRole($request->role);
+            if ($willLock || $willDemote) {
+                $otherActiveAdmins = User::role(['admin', 'Super Admin'])
+                    ->where('id', '!=', $nv->user->id)
+                    ->where('status', 1)
+                    ->count();
+                if ($otherActiveAdmins === 0) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Không thể khóa hoặc hạ quyền Quản trị viên tối cao cuối cùng đang hoạt động.'
+                    ], 400);
+                }
+            }
+        }
+
         DB::beginTransaction();
         try {
             $nv->update([
@@ -174,6 +214,7 @@ class NhanVienController extends Controller
             if ($nv->user) {
                 $oldStatus = (int) $nv->user->status;
                 $newStatus = $request->has('status') ? (int) $request->status : $oldStatus;
+                $oldPrimaryRole = $nv->user->roles->first()?->name;
 
                 $updateData = [
                     'name' => $request->name,
@@ -198,8 +239,24 @@ class NhanVienController extends Controller
 
                 $nv->user->update($updateData);
                 
-                if ($request->role) {
+                // Chỉ sync role khi thực sự đổi vai trò (giữ nguyên multi-role như 'staff' nếu không đổi)
+                if ($request->filled('role') && $request->role !== 'N/A' && $request->role !== $oldPrimaryRole) {
                     $nv->user->syncRoles([$request->role]);
+                    \App\Domain\IAM\Models\SystemLog::create([
+                        'user_id' => auth()->id(),
+                        'action' => 'UPDATE',
+                        'description' => "Đổi vai trò Nhân Viên ({$nv->ho_ten}) từ {$oldPrimaryRole} sang {$request->role}",
+                        'ip_address' => request()->ip(),
+                    ]);
+                }
+
+                if ($oldStatus !== $newStatus) {
+                    \App\Domain\IAM\Models\SystemLog::create([
+                        'user_id' => auth()->id(),
+                        'action' => 'UPDATE',
+                        'description' => ($newStatus === 0 ? 'Khóa' : 'Mở khóa') . " tài khoản Nhân Viên ({$nv->ho_ten})",
+                        'ip_address' => request()->ip(),
+                    ]);
                 }
 
                 if ($newStatus === 0) {
@@ -291,6 +348,12 @@ class NhanVienController extends Controller
                 // Revoke tokens + invalidate Redis token cache to force immediate logout
                 $nv->user->tokens()->delete();
                 CachedSanctumPersonalAccessToken::invalidateUserTokens($nv->user->id);
+                \App\Domain\IAM\Models\SystemLog::create([
+                    'user_id' => auth()->id(),
+                    'action' => 'UPDATE',
+                    'description' => "Đặt lại mật khẩu Nhân Viên ({$nv->ho_ten})",
+                    'ip_address' => request()->ip(),
+                ]);
             }
             return response()->json([
                 'success' => true,

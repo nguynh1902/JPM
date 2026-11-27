@@ -263,7 +263,7 @@ const openEditModal = (item) => {
 const { data: brands, isFetching, isPending } = useQuery({
   queryKey: ['brands'],
   queryFn: async () => {
-    const response = await axiosClient.get('/admin/thuong-hieu');
+    const response = await axiosClient.get('/admin/thuong-hieu?all=true');
     return response.data || response;
   }
 });

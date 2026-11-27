@@ -50,7 +50,7 @@ class TraCuuController extends Controller
 
     public function faqs(Request $request)
     {
-        $limit = (int) $request->get('limit', 4);
+        $limit = min(max((int) $request->get('limit', 50), 1), 100);
         $excludedFaqCats = \App\Domain\CMS\Models\ChuyenMuc::where('type', 'FAQ')
             ->where('status', '!=', 'ACTIVE')
             ->pluck('name');
@@ -78,7 +78,7 @@ class TraCuuController extends Controller
 
     public function sanPhamBanChay(Request $request)
     {
-        $limit = (int) $request->get('limit', 4);
+        $limit = min(max((int) $request->get('limit', 4), 1), 100);
         $products = \App\Domain\CMS\Models\SanPham::with('danhMuc')
             ->where('trang_thai', 1)
                         ->orderBy('id', 'desc') // TODO: Implement real order counting logic later
@@ -139,7 +139,7 @@ class TraCuuController extends Controller
     // Lấy sản phẩm ngẫu nhiên cho trang chủ
     public function phuTungNoiBat(Request $request)
     {
-        $limit = (int) $request->get('limit', 4);
+        $limit = min(max((int) $request->get('limit', 4), 1), 100);
         $products = PhuTung::with(['thuongHieu', 'nhomPhuTung'])
             ->where('trang_thai', 1)
                         ->orderBy('id', 'desc')

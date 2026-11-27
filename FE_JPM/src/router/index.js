@@ -258,13 +258,13 @@ const routes = [
     path: "/portal/khach-hang",
     name: "PortalKhachHang",
     component: () => import("../views/admin/KhachHang/KhachHang.vue"),
-    meta: { layout: "admin", requiresAuth: true, permission: "Xem Khách hàng" },
+    meta: { layout: "admin", requiresAuth: true, permissions: ["Xem Khách hàng", "Thêm Khách hàng", "Sửa Khách hàng", "Khóa Khách hàng"] },
   },
   {
     path: "/portal/lich-su-mua",
     name: "PortalLichSuMua",
     redirect: "/portal/don-hang",
-    meta: { layout: "admin", requiresAuth: true, permission: "Xem Khách hàng" },
+    meta: { layout: "admin", requiresAuth: true, permissions: ["Xem Khách hàng", "Xem Đơn hàng"] },
   },
 
   // NHÂN SỰ & PHÂN QUYỀN
@@ -286,19 +286,19 @@ const routes = [
     path: "/portal/chuyen-muc",
     name: "PortalChuyenMuc",
     component: () => import("../views/admin/NoiDung/ChuyenMuc.vue"),
-    meta: { layout: "admin", requiresAuth: true, permission: "Xem Tin tức & CMS" },
+    meta: { layout: "admin", requiresAuth: true, permissions: ["Xem Tin tức & CMS", "Soạn thảo Tin tức & CMS", "Xóa Tin tức & CMS", "Cấu hình chung"] },
   },
   {
     path: "/portal/tin-tuc",
     name: "PortalTinTuc",
     component: () => import("../views/admin/NoiDung/TinTuc.vue"),
-    meta: { layout: "admin", requiresAuth: true, permission: "Xem Tin tức & CMS" },
+    meta: { layout: "admin", requiresAuth: true, permissions: ["Xem Tin tức & CMS", "Soạn thảo Tin tức & CMS", "Xóa Tin tức & CMS", "Cấu hình chung"] },
   },
   {
     path: "/portal/faq",
     name: "PortalFaq",
     component: () => import("../views/admin/NoiDung/Faq.vue"),
-    meta: { layout: "admin", requiresAuth: true, permission: "Xem Tin tức & CMS" },
+    meta: { layout: "admin", requiresAuth: true, permissions: ["Xem Tin tức & CMS", "Soạn thảo Tin tức & CMS", "Xóa Tin tức & CMS", "Cấu hình chung"] },
   },
 
   // HỆ THỐNG
@@ -312,7 +312,7 @@ const routes = [
     path: "/portal/lich-su-hoat-dong",
     name: "PortalLichSuHoatDong",
     component: () => import("../views/admin/HeThong/LichSuHoatDong.vue"),
-    meta: { layout: "admin", requiresAuth: true, permission: "Cấu hình chung" },
+    meta: { layout: "admin", requiresAuth: true, permissions: ["Cấu hình chung", "Quản lý Nhân sự", "Quản lý Vai trò"] },
   },
 
   // TÀI KHOẢN
@@ -483,14 +483,18 @@ router.beforeEach((to, from, next) => {
         return next("/");
       }
 
-      // Kiểm tra quyền hạn cụ thể của Route (nếu Route có khai báo meta.permission)
+      // Kiểm tra quyền hạn cụ thể của Route (hỗ trợ cả meta.permission lẫn meta.permissions[])
       // Super Admin luôn được bypass
-      if (to.meta.permission && !authStore.isAdmin) {
-        if (!authStore.hasPermission(to.meta.permission)) {
+      if ((to.meta.permission || (Array.isArray(to.meta.permissions) && to.meta.permissions.length > 0)) && !authStore.isAdmin) {
+        const allowed = to.meta.permissions
+          ? authStore.hasAnyPermission(to.meta.permissions)
+          : authStore.hasPermission(to.meta.permission);
+        if (!allowed) {
+          const permLabel = to.meta.permissions ? to.meta.permissions.join(' / ') : to.meta.permission;
           Swal.fire({
             icon: 'warning',
             title: 'Quyền truy cập bị giới hạn',
-            text: `Bạn cần quyền "${to.meta.permission}" để truy cập trang này. Vui lòng liên hệ Quản trị viên.`,
+            text: `Bạn cần quyền "${permLabel}" để truy cập trang này. Vui lòng liên hệ Quản trị viên.`,
             confirmButtonColor: '#696cff',
             confirmButtonText: 'Quay lại Bảng điều khiển'
           });

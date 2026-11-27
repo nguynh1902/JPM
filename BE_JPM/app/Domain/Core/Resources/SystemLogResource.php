@@ -23,7 +23,7 @@ class SystemLogResource extends JsonResource
             'action' => $this->action,
             'description' => $this->description,
             'ip_address' => $this->ip_address,
-            'created_at' => $this->created_at->format('Y-m-d H:i:s')
+            'created_at' => $this->created_at?->format('Y-m-d H:i:s')
         ];
     }
 }

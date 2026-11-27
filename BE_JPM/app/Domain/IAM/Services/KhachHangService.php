@@ -42,6 +42,10 @@ class KhachHangService
             return $query->paginate($perPage);
         }
 
+        if (request()->boolean('all', false)) {
+            return $query->get();
+        }
+
         return $query->limit(500)->get();
     }
 
@@ -85,13 +89,15 @@ class KhachHangService
                     'ten_nguoi_nhan' => $data['name'],
                     'so_dien_thoai' => $data['phone'],
                     'dia_chi_cu_the' => trim($data['initial_address']),
-                    'loai_dia_chi' => 'Xưởng / Nhà riêng',
+                    'loai_dia_chi' => null,
                     'la_mac_dinh' => true,
                 ]);
             }
             
             DB::commit();
-            return clone $kh->load(['user.diaChis']);
+            $result = clone $kh->load(['user.diaChis']);
+            $result->temporary_password = empty($data['password']) ? $plainPassword : null;
+            return $result;
         } catch (Exception $e) {
             DB::rollBack();
             throw $e;
@@ -106,7 +112,8 @@ class KhachHangService
             
             // Update User properties (Name, Email, Phone, Status, Avatar)
             if ($kh->user) {
-                $newStatus = isset($data['status']) ? (int) $data['status'] : (int) $kh->user->status;
+                $oldStatus = (int) $kh->user->status;
+                $newStatus = isset($data['status']) ? (int) $data['status'] : $oldStatus;
                 $kh->user->update([
                     'name' => $data['name'],
                     'email' => $data['email'],
@@ -128,6 +135,15 @@ class KhachHangService
                     $kh->user->avatar = null;
                 }
                 $kh->user->save();
+
+                if ($oldStatus !== $newStatus) {
+                    \App\Domain\IAM\Models\SystemLog::create([
+                        'user_id' => auth()->id(),
+                        'action' => 'UPDATE',
+                        'description' => ($newStatus === 0 ? 'Khóa' : 'Mở khóa') . " tài khoản Khách Hàng ({$kh->ho_ten})",
+                        'ip_address' => request()->ip(),
+                    ]);
+                }
 
                 if ($newStatus === 0) {
                     $kh->user->tokens()->delete();
@@ -161,6 +177,12 @@ class KhachHangService
                 $kh->user->tokens()->delete();
                 CachedSanctumPersonalAccessToken::invalidateUserTokens($kh->user->id);
                 $kh->user->save();
+                \App\Domain\IAM\Models\SystemLog::create([
+                    'user_id' => auth()->id(),
+                    'action' => 'UPDATE',
+                    'description' => "Đặt lại mật khẩu Khách Hàng ({$kh->ho_ten})",
+                    'ip_address' => request()->ip(),
+                ]);
             } else {
                 throw new Exception("Không tìm thấy tài khoản người dùng.");
             }

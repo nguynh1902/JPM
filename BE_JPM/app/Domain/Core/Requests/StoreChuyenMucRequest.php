@@ -13,8 +13,8 @@ class StoreChuyenMucRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|max:255',
-            'type' => 'required|string|in:NEWS,FAQ,TUTORIAL',
+            'name' => 'required|string|max:255|unique:chuyen_mucs,name',
+            'type' => 'required|string|in:NEWS,FAQ',
             'status' => 'required|string|in:ACTIVE,HIDDEN',
         ];
     }

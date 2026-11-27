@@ -18,13 +18,14 @@ class VaiTroController extends Controller
     {
         try {
             $role = Role::with('permissions')->findOrFail($id);
+            $isSystem = in_array(strtolower($role->name), ['admin', 'super admin', 'quản trị viên'], true);
             return response()->json([
                 'success' => true,
                 'data' => [
                     'id' => $role->id,
                     'name' => $role->name,
                     'description' => $role->description,
-                    'is_system' => strtolower($role->name) === 'admin',
+                    'is_system' => $isSystem,
                     'permissions' => $role->permissions->pluck('id')->toArray(),
                     'status' => $role->status ?? 1,
                 ]
@@ -37,17 +38,22 @@ class VaiTroController extends Controller
     public function index(): JsonResponse
     {
         try {
+            $userCounts = DB::table(config('permission.table_names.model_has_roles'))
+                ->select('role_id', DB::raw('COUNT(*) as total'))
+                ->groupBy('role_id')
+                ->pluck('total', 'role_id');
+
             $roles = Role::with('permissions')
                 ->where('name', '!=', 'customer')
                 ->orderBy('id', 'asc')
                 ->get()
-                ->map(function($role) {
+                ->map(function($role) use ($userCounts) {
                     return [
                         'id' => $role->id,
                         'name' => $role->name,
                         'description' => $role->description,
-                        'is_system' => strtolower($role->name) === 'admin',
-                        'user_count' => DB::table(config('permission.table_names.model_has_roles'))->where('role_id', $role->id)->count(),
+                        'is_system' => in_array(strtolower($role->name), ['admin', 'super admin', 'quản trị viên'], true),
+                        'user_count' => (int) ($userCounts[$role->id] ?? 0),
                         'permissions' => $role->permissions->pluck('id')->toArray(),
                         'status' => $role->status ?? 1,
                     ];
@@ -147,6 +153,26 @@ class VaiTroController extends Controller
 
     public function store(VaiTroRequest $request): JsonResponse
     {
+        $actor = auth()->user();
+        $isSuperAdmin = $actor && ($actor->hasRole('admin') || $actor->hasRole('Super Admin'));
+        $isReservedName = in_array(strtolower(trim((string) $request->name)), ['admin', 'super admin', 'quản trị viên', 'customer'], true);
+
+        if ($isReservedName) {
+            return response()->json(['success' => false, 'message' => 'Tên vai trò này được dành riêng cho hệ thống.'], 422);
+        }
+
+        if ($request->permissions && is_array($request->permissions) && !$isSuperAdmin) {
+            $requestedPerms = Permission::whereIn('id', $request->permissions)->pluck('name');
+            foreach ($requestedPerms as $permName) {
+                if (!$actor || !$actor->hasPermissionTo($permName)) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => "Bạn không thể cấp quyền \"{$permName}\" mà tài khoản của bạn không sở hữu."
+                    ], 403);
+                }
+            }
+        }
+
         DB::beginTransaction();
         try {
             $role = Role::create([
@@ -161,6 +187,13 @@ class VaiTroController extends Controller
                 $role->syncPermissions($permissions);
             }
             app()->make(\Spatie\Permission\PermissionRegistrar::class)->forgetCachedPermissions();
+
+            SystemLog::create([
+                'user_id' => $actor?->id,
+                'action' => 'CREATE',
+                'description' => 'Thêm mới Vai Trò (' . $role->name . ')',
+                'ip_address' => request()->ip(),
+            ]);
             
             DB::commit();
             return response()->json([
@@ -173,7 +206,7 @@ class VaiTroController extends Controller
                     'is_system' => false,
                     'user_count' => 0,
                     'permissions' => $role->permissions->pluck('id')->toArray(),
-                    'status' => 1
+                    'status' => (int) ($role->status ?? 1)
                 ]
             ], 201);
         } catch (Exception $e) {
@@ -187,7 +220,7 @@ class VaiTroController extends Controller
         DB::beginTransaction();
         try {
             $role = Role::findOrFail($id);
-            $isSystemRole = in_array(strtolower($role->name), ['admin', 'super admin'], true);
+            $isSystemRole = in_array(strtolower($role->name), ['admin', 'super admin', 'quản trị viên'], true);
             $actor = auth()->user();
             $isSuperAdmin = $actor && ($actor->hasRole('admin') || $actor->hasRole('Super Admin'));
 
@@ -195,6 +228,26 @@ class VaiTroController extends Controller
             if ($isSystemRole && !$isSuperAdmin) {
                 DB::rollBack();
                 return response()->json(['success' => false, 'message' => 'Chỉ Quản trị viên tối cao mới được chỉnh sửa vai trò hệ thống.'], 403);
+            }
+
+            // Chống tự nâng quyền cho vai trò của chính mình nếu không phải Super Admin
+            if (!$isSuperAdmin && $actor && $actor->hasRole($role->name)) {
+                DB::rollBack();
+                return response()->json(['success' => false, 'message' => 'Bạn không thể tự chỉnh sửa quyền hạn của vai trò mình đang nắm giữ.'], 403);
+            }
+
+            // Chống leo thang quyền: không thể cấp quyền mình không sở hữu
+            if (isset($request->permissions) && is_array($request->permissions) && !$isSuperAdmin) {
+                $requestedPerms = Permission::whereIn('id', $request->permissions)->pluck('name');
+                foreach ($requestedPerms as $permName) {
+                    if (!$actor || !$actor->hasPermissionTo($permName)) {
+                        DB::rollBack();
+                        return response()->json([
+                            'success' => false,
+                            'message' => "Bạn không thể cấp quyền \"{$permName}\" mà tài khoản của bạn không sở hữu."
+                        ], 403);
+                    }
+                }
             }
 
             // Bảo vệ vai trò Admin / Super Admin: không cho đổi tên hoặc khóa trạng thái
@@ -216,6 +269,23 @@ class VaiTroController extends Controller
                 $role->syncPermissions($permissions);
             }
             app()->make(\Spatie\Permission\PermissionRegistrar::class)->forgetCachedPermissions();
+
+            // Nếu vai trò bị khóa (status = 0), thu hồi token các user đang giữ vai trò đó (nếu không phải Admin)
+            if ((int) ($role->status ?? 1) === 0) {
+                $userIds = DB::table(config('permission.table_names.model_has_roles'))
+                    ->where('role_id', $role->id)
+                    ->pluck('model_id');
+                foreach ($userIds as $uid) {
+                    \App\Domain\IAM\Services\CachedSanctumPersonalAccessToken::invalidateUserTokens((int) $uid);
+                }
+            }
+
+            SystemLog::create([
+                'user_id' => $actor?->id,
+                'action' => 'UPDATE',
+                'description' => 'Cập nhật Vai Trò (' . $role->name . ')',
+                'ip_address' => request()->ip(),
+            ]);
             
             DB::commit();
             return response()->json([
@@ -228,7 +298,7 @@ class VaiTroController extends Controller
                     'is_system' => $isSystemRole,
                     'user_count' => DB::table(config('permission.table_names.model_has_roles'))->where('role_id', $role->id)->count(),
                     'permissions' => $role->permissions->pluck('id')->toArray(),
-                    'status' => $role->status ?? 1
+                    'status' => (int) ($role->status ?? 1)
                 ]
             ]);
         } catch (Exception $e) {
@@ -241,17 +311,25 @@ class VaiTroController extends Controller
     {
         try {
             $role = Role::findOrFail($id);
-            if (in_array(strtolower($role->name), ['admin', 'super admin'], true)) {
+            if (in_array(strtolower($role->name), ['admin', 'super admin', 'quản trị viên'], true)) {
                 return response()->json(['success' => false, 'message' => 'Không thể xóa vai trò Quản trị viên hệ thống'], 400);
             }
 
             if (DB::table(config('permission.table_names.model_has_roles'))->where('role_id', $role->id)->count() > 0) {
                 return response()->json(['success' => false, 'message' => 'Không thể xóa vai trò đang có người dùng gán'], 400);
             }
-            
-            DB::table(config('permission.table_names.role_has_permissions'))->where('role_id', $role->id)->delete();
-            DB::table(config('permission.table_names.roles'))->where('id', $role->id)->delete();
+
+            $roleName = $role->name;
+            $role->syncPermissions([]);
+            $role->delete();
             app()->make(\Spatie\Permission\PermissionRegistrar::class)->forgetCachedPermissions();
+
+            SystemLog::create([
+                'user_id' => auth()->id(),
+                'action' => 'DELETE',
+                'description' => 'Xóa Vai Trò (' . $roleName . ')',
+                'ip_address' => request()->ip(),
+            ]);
             
             return response()->json([
                 'success' => true,

@@ -77,8 +77,14 @@ class AuthService
         }
 
         // Validate account status
-        if ($user->status !== 1) {
+        if ((int) $user->status !== 1) {
             throw new Exception('Tài khoản của bạn đã bị khóa hoặc chưa kích hoạt.', 403);
+        }
+
+        // Chặn đăng nhập nếu toàn bộ vai trò được gán đều đang bị khóa (status = 0)
+        $roles = $user->roles()->get();
+        if ($roles->isNotEmpty() && !$roles->contains(fn($r) => (int) ($r->status ?? 1) === 1)) {
+            throw new Exception('Vai trò của bạn hiện đang bị tạm khóa. Vui lòng liên hệ Quản trị viên.', 403);
         }
 
         // Xóa token cũ (không giữ nhiều token, tiết kiệm bộ nhớ DB)
@@ -107,6 +113,17 @@ class AuthService
         \Illuminate\Support\Facades\DB::table('users')
             ->where('id', $user->id)
             ->update(['last_login_at' => now()]);
+
+        try {
+            \App\Domain\IAM\Models\SystemLog::create([
+                'user_id' => $user->id,
+                'action' => 'LOGIN',
+                'description' => 'Đăng nhập hệ thống (' . $user->email . ')',
+                'ip_address' => request()->ip(),
+            ]);
+        } catch (\Throwable $e) {
+            // Non-blocking audit log
+        }
 
         return [
             'user'  => $user,

@@ -5,7 +5,7 @@
     </h4>
 
     <div class="row">
-      <div class="col-md-4 mb-4" v-if="authStore.hasAnyPermission(['Thêm Sản phẩm', 'Sửa Sản phẩm'])">
+      <div class="col-md-4 mb-4" v-if="canAdd || (canEdit && isEditMode)">
         <div class="card">
           <div class="card-header border-bottom">
             <h5 class="mb-0 fw-bold text-dark">{{ isEditMode ? "Cập Nhật Danh Mục" : "Thêm Mới Danh Mục" }}</h5>
@@ -14,7 +14,17 @@
             <form @submit.prevent="saveData">
               <div class="mb-4">
                 <label class="form-label fw-medium text-dark">Danh Mục Cha (Tùy Chọn)</label>
-                <v-select v-model="formData.parent_id" :options="parentOptions" placeholder="-- Không có (cấp cao nhất) --" :searchable="true" :can-clear="true" />
+                <v-select
+                  v-model="formData.parent_id"
+                  :options="parentOptions"
+                  placeholder="-- Không có (Cấp 1 - Nhóm chính) --"
+                  :searchable="true"
+                  :can-clear="true"
+                  :disabled="isEditMode && currentEditingHasChildren"
+                />
+                <small v-if="isEditMode && currentEditingHasChildren" class="text-muted d-block mt-1">
+                  Danh mục này đang có danh mục con nên giữ cố định ở Cấp 1 (tối đa 2 cấp).
+                </small>
               </div>
               <div class="mb-4">
                 <label for="name" class="form-label fw-medium text-dark">Tên Danh Mục <span class="text-danger">*</span></label>
@@ -40,7 +50,7 @@
         </div>
       </div>
 
-      <div :class="authStore.hasAnyPermission(['Thêm Sản phẩm', 'Sửa Sản phẩm']) ? 'col-md-8' : 'col-12'" class="mb-4">
+      <div :class="(canAdd || (canEdit && isEditMode)) ? 'col-md-8' : 'col-12'" class="mb-4">
         <div class="card">
           <div class="card-header border-bottom d-flex justify-content-between align-items-center">
             <h5 class="mb-0 fw-bold text-dark">Danh Sách Danh Mục</h5>
@@ -74,15 +84,25 @@
                 <tr v-for="(item, index) in filteredCategories" :key="item.id" v-else>
                   <td class="text-center"><strong>{{ index + 1 }}</strong></td>
                   <td><span class="fw-bold text-primary">{{ item.ma_danh_muc || "N/A" }}</span></td>
-                  <td><span class="fw-bold text-dark">{{ item.display_name }}</span></td>
+                  <td>
+                    <div v-if="!item.parent_id" class="d-flex align-items-center gap-2">
+                      <span class="fw-bold text-dark">{{ item.ten_danh_muc }}</span>
+                      <span class="badge bg-label-primary" style="font-size: 0.7rem;">Cấp 1</span>
+                    </div>
+                    <div v-else class="ps-3 d-flex align-items-center gap-2">
+                      <span class="text-muted">└─</span>
+                      <span class="fw-medium text-dark">{{ item.ten_danh_muc }}</span>
+                      <span v-if="item.parent_name" class="text-muted small">({{ item.parent_name }})</span>
+                    </div>
+                  </td>
                   <td class="text-center">
                     <span v-if="item.trang_thai === 1 || item.trang_thai === true" class="badge badge-custom bg-pastel-success">HOẠT ĐỘNG</span>
                     <span v-else class="badge badge-custom bg-pastel-danger">TẠM KHÓA</span>
                   </td>
                   <td class="text-center">
                     <div class="d-flex align-items-center justify-content-center">
-                      <button v-if="authStore.hasPermission('Sửa Sản phẩm')" type="button" class="action-btn text-primary me-1" @click="openEditModal(item)" title="Sửa"><i class="bx bx-edit-alt"></i></button>
-                      <button v-if="authStore.hasPermission('Xóa Sản phẩm')" type="button" class="action-btn text-danger" @click="confirmDelete(item)" title="Xóa"><i class="bx bx-trash"></i></button>
+                      <button v-if="canEdit" type="button" class="action-btn text-primary me-1" @click="openEditModal(item)" title="Sửa"><i class="bx bx-edit-alt"></i></button>
+                      <button v-if="canDelete" type="button" class="action-btn text-danger" @click="confirmDelete(item)" title="Xóa"><i class="bx bx-trash"></i></button>
                     </div>
                   </td>
                 </tr>
@@ -125,6 +145,7 @@ export default {
       },
       onSettled: () => {
         queryClient.invalidateQueries({ queryKey: ["categories"] });
+        queryClient.invalidateQueries({ queryKey: ["san-pham"] });
       }
     });
 
@@ -140,6 +161,7 @@ export default {
       },
       onSettled: () => {
         queryClient.invalidateQueries({ queryKey: ["categories"] });
+        queryClient.invalidateQueries({ queryKey: ["san-pham"] });
       }
     });
 
@@ -154,32 +176,51 @@ export default {
     };
   },
   computed: {
+    canAdd() {
+      return this.authStore.isAdmin || this.authStore.hasAnyPermission(['Nhân viên PIM', 'Thêm Sản phẩm']);
+    },
+    canEdit() {
+      return this.authStore.isAdmin || this.authStore.hasAnyPermission(['Nhân viên PIM', 'Sửa Sản phẩm']);
+    },
+    canDelete() {
+      return this.authStore.isAdmin || this.authStore.hasPermission('Xóa Sản phẩm');
+    },
+    currentEditingHasChildren() {
+      if (!this.formData.id) return false;
+      return (this.categories || []).some(c => c.parent_id === this.formData.id);
+    },
     treeCategories() {
       const all = [...(this.categories || [])].sort((a, b) => b.id - a.id);
-      const buildTree = (parentId, prefix) => {
-        if (prefix === undefined) prefix = "";
-        let result = [];
-        const children = all.filter(c => c.parent_id === parentId);
-        for (const child of children) {
-          result.push(Object.assign({}, child, { display_name: prefix + child.ten_danh_muc }));
-          result = result.concat(buildTree(child.id, prefix + "— "));
+      const parents = all.filter(c => !c.parent_id);
+      const parentIds = new Set(parents.map(p => p.id));
+      const result = [];
+      for (const p of parents) {
+        result.push(Object.assign({}, p, { display_name: p.ten_danh_muc, parent_name: null }));
+        const children = all.filter(c => c.parent_id === p.id);
+        for (const ch of children) {
+          result.push(Object.assign({}, ch, { display_name: '— ' + ch.ten_danh_muc, parent_name: p.ten_danh_muc }));
         }
-        return result;
-      };
-      return buildTree(null);
+      }
+      // Fallback cho dữ liệu cũ nếu có
+      for (const orphan of all.filter(c => c.parent_id && !parentIds.has(c.parent_id))) {
+        result.push(Object.assign({}, orphan, { display_name: '— ' + orphan.ten_danh_muc, parent_name: null }));
+      }
+      return result;
     },
     filteredCategories() {
       if (!this.searchKeyword) return this.treeCategories;
       const q = this.searchKeyword.toLowerCase().trim();
       return this.treeCategories.filter(c =>
         String(c.ma_danh_muc || '').toLowerCase().includes(q) ||
-        String(c.ten_danh_muc || '').toLowerCase().includes(q)
+        String(c.ten_danh_muc || '').toLowerCase().includes(q) ||
+        String(c.parent_name || '').toLowerCase().includes(q)
       );
     },
     parentOptions() {
-      return this.treeCategories
-        .filter(c => c.id !== this.formData.id)
-        .map(c => ({ value: c.id, label: c.display_name }));
+      return (this.categories || [])
+        .filter(c => !c.parent_id && c.id !== this.formData.id)
+        .sort((a, b) => b.id - a.id)
+        .map(c => ({ value: c.id, label: c.ten_danh_muc }));
     }
   },
   methods: {
@@ -187,10 +228,12 @@ export default {
       if (this.formData.ten_danh_muc && !this.isEditMode) {
         this.formData.slug = this.formData.ten_danh_muc
           .toLowerCase()
+          .replace(/[đĐ]/g, "d")
           .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
           .replace(/[^a-z0-9\s-]/g, "")
           .replace(/\s+/g, "-")
-          .replace(/-+/g, "-");
+          .replace(/-+/g, "-")
+          .replace(/^-|-$/g, "");
       }
     },
     resetForm() {
@@ -233,6 +276,9 @@ export default {
         buttonsStyling: false
       });
       if (result.isConfirmed) {
+        if (this.isEditMode && this.formData.id === item.id) {
+          this.resetForm();
+        }
         try {
           await this.deleteMutation.mutateAsync(item.id);
           this.$toast && this.$toast.success("Đã xóa danh mục!");

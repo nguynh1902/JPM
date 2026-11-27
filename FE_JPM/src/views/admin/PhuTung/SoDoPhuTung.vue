@@ -452,12 +452,12 @@ export default {
     
     const fetchApi = async (url) => (await axiosClient.get(url)).data;
     
-    const { data: brands, isFetching: isFetchingBrands } = useQuery({ queryKey: ['brands'], queryFn: () => fetchApi('/admin/thuong-hieu') });
-    const { data: equipmentTypes, isFetching: isFetchingTypes } = useQuery({ queryKey: ['engineTypes'], queryFn: () => fetchApi('/admin/loai-dong-co') });
-    const { data: engineModels, isFetching: isFetchingModels } = useQuery({ queryKey: ['engineModels'], queryFn: () => fetchApi('/admin/dong-co-model') });
-    const { data: nhomPhuTungs, isFetching: isFetchingNhom } = useQuery({ queryKey: ['nhom-phu-tung'], queryFn: () => fetchApi('/admin/nhom-phu-tung?all=1') });
-    const { data: phuTungs, isFetching: isFetchingPhuTungs } = useQuery({ queryKey: ['phu-tung'], queryFn: () => fetchApi('/admin/phu-tung') });
-    const { data: diagrams, isFetching: isFetchingDiagrams } = useQuery({ queryKey: ['so-do'], queryFn: () => fetchApi('/admin/so-do') });
+    const { data: brands, isFetching: isFetchingBrands } = useQuery({ queryKey: ['brands'], queryFn: () => fetchApi('/admin/thuong-hieu?all=true') });
+    const { data: equipmentTypes, isFetching: isFetchingTypes } = useQuery({ queryKey: ['engineTypes'], queryFn: () => fetchApi('/admin/loai-dong-co?all=true') });
+    const { data: engineModels, isFetching: isFetchingModels } = useQuery({ queryKey: ['engineModels'], queryFn: () => fetchApi('/admin/dong-co-model?all=true') });
+    const { data: nhomPhuTungs, isFetching: isFetchingNhom } = useQuery({ queryKey: ['nhom-phu-tung'], queryFn: () => fetchApi('/admin/nhom-phu-tung?all=true') });
+    const { data: phuTungs, isFetching: isFetchingPhuTungs } = useQuery({ queryKey: ['phu-tung'], queryFn: () => fetchApi('/admin/phu-tung?all=true') });
+    const { data: diagrams, isFetching: isFetchingDiagrams } = useQuery({ queryKey: ['so-do'], queryFn: () => fetchApi('/admin/so-do?all=true') });
     
     
     const toaster = createToaster({ position: "top-right", duration: 3000 });
@@ -489,9 +489,6 @@ export default {
             headers: { 'Content-Type': 'multipart/form-data' }
           });
         }
-      },
-      onError: (err, variables, context) => {
-        toaster.error(err.response?.data?.message || "Lỗi lưu dữ liệu sơ đồ!");
       },
       onSettled: () => {
         queryClient.invalidateQueries({ queryKey: ['so-do'] });
@@ -615,7 +612,11 @@ export default {
       this.formData.chiTiet.push({
         ref_number: "",
         phu_tung_id: null,
-        qty: 1
+        qty: 1,
+        x: null,
+        y: null,
+        width: null,
+        height: null
       });
     },
     removeChiTiet(index) {
@@ -655,6 +656,10 @@ export default {
             if (ct.phu_tung_id) formDataToSend.append(`chiTiet[${index}][phu_tung_id]`, ct.phu_tung_id);
             if (ct.ref_number) formDataToSend.append(`chiTiet[${index}][ref_number]`, ct.ref_number);
             formDataToSend.append(`chiTiet[${index}][qty]`, ct.qty || 1);
+            if (ct.x !== null && ct.x !== undefined) formDataToSend.append(`chiTiet[${index}][x]`, ct.x);
+            if (ct.y !== null && ct.y !== undefined) formDataToSend.append(`chiTiet[${index}][y]`, ct.y);
+            if (ct.width !== null && ct.width !== undefined) formDataToSend.append(`chiTiet[${index}][width]`, ct.width);
+            if (ct.height !== null && ct.height !== undefined) formDataToSend.append(`chiTiet[${index}][height]`, ct.height);
           });
         }
 

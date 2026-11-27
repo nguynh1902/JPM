@@ -44,7 +44,7 @@
           <button class="btn btn-secondary text-nowrap" @click="resetFilters">
             Đặt lại
           </button>
-          <button v-if="authStore.hasPermission('Soạn thảo Tin tức & CMS')" class="btn btn-primary text-nowrap" @click="openAddModal" data-bs-toggle="modal" data-bs-target="#modalNews">
+          <button v-if="authStore.isAdmin || authStore.hasAnyPermission(['Soạn thảo Tin tức & CMS', 'Cấu hình chung'])" class="btn btn-primary text-nowrap" @click="openAddModal" data-bs-toggle="modal" data-bs-target="#modalNews">
             <i class="bx bx-plus me-1"></i> Thêm Mới
           </button>
         </div>
@@ -104,7 +104,7 @@
               <td class="text-center align-middle">
                 <div class="d-flex align-items-center justify-content-center">
                   <button
-                    v-if="authStore.hasPermission('Soạn thảo Tin tức & CMS')"
+                    v-if="authStore.isAdmin || authStore.hasAnyPermission(['Soạn thảo Tin tức & CMS', 'Cấu hình chung'])"
                     type="button" 
                     class="action-btn text-primary me-1" 
                     @click="openEditModal(item)"
@@ -115,7 +115,7 @@
                     <i class="bx bx-edit-alt"></i>
                   </button>
                   <button
-                    v-if="authStore.hasPermission('Xóa Tin tức & CMS')"
+                    v-if="authStore.isAdmin || authStore.hasAnyPermission(['Xóa Tin tức & CMS', 'Cấu hình chung'])"
                     type="button" 
                     class="action-btn text-danger" 
                     @click="confirmDelete(item)"
@@ -218,9 +218,10 @@
                 <div class="mb-3">
                   <label class="form-label fw-medium text-dark">Ảnh Đại Diện</label>
                   <input
+                    ref="thumbnailInput"
                     type="file"
                     class="form-control mb-2"
-                    accept="image/*,.jpg,.jpeg,.png,.webp,.gif,.svg,.bmp,.avif,.heic,.heif,.tiff,.tif,.ico,.jfif"
+                    accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
                     @change="handleThumbnailUpload"
                   />
                   <div class="d-flex justify-content-center align-items-center border rounded bg-light mt-2 position-relative" style="height: 180px;">
@@ -238,7 +239,7 @@
                             <i class="bx bx-upload"></i> Chọn nhiều ảnh
                           </label>
                         </div>
-                        <input type="file" id="gallery_upload" class="d-none" accept="image/*,.jpg,.jpeg,.png,.webp,.gif,.svg,.bmp,.avif,.heic,.heif,.tiff,.tif,.ico,.jfif" multiple @change="handleGalleryUpload" />
+                        <input type="file" id="gallery_upload" class="d-none" accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp" multiple @change="handleGalleryUpload" />
                   
                   <!-- Existing Gallery -->
                   <div v-if="formData.gallery && formData.gallery.length > 0" class="mb-2">
@@ -339,8 +340,10 @@ export default {
       },
       onSettled: () => {
         queryClient.invalidateQueries({ queryKey: ["tin-tuc"] });
-        queryClient.invalidateQueries({ queryKey: ["client-tin-tuc"] });
+        queryClient.invalidateQueries({ queryKey: ["client-tin-tuc-all"] });
         queryClient.invalidateQueries({ queryKey: ["client-tin-tuc-categories"] });
+        queryClient.invalidateQueries({ queryKey: ["public-news-detail"] });
+        queryClient.invalidateQueries({ queryKey: ["public-latest-news"] });
       }
     });
 
@@ -355,7 +358,7 @@ export default {
       },
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ["tin-tuc"] });
-        queryClient.invalidateQueries({ queryKey: ["client-tin-tuc"] });
+        queryClient.invalidateQueries({ queryKey: ["client-tin-tuc-all"] });
         queryClient.invalidateQueries({ queryKey: ["client-tin-tuc-categories"] });
         queryClient.invalidateQueries({ queryKey: ["public-news-detail"] });
         queryClient.invalidateQueries({ queryKey: ["public-latest-news"] });
@@ -489,13 +492,21 @@ export default {
       this.thumbnailFile = null;
       this.galleryFiles = [];
       this.formData = this.getInitialFormData();
+      if (this.$refs.thumbnailInput) this.$refs.thumbnailInput.value = '';
+      const gu = document.getElementById('gallery_upload');
+      if (gu) gu.value = '';
     },
     openEditModal(item) {
       this.isEditMode = true;
       this.formData = { ...item };
-      this.formData.gallery = item.gallery ? (Array.isArray(item.gallery) ? [...item.gallery] : JSON.parse(item.gallery)) : [];
+      try {
+        this.formData.gallery = item.gallery ? (Array.isArray(item.gallery) ? [...item.gallery] : JSON.parse(item.gallery)) : [];
+      } catch (e) {
+        this.formData.gallery = [];
+      }
       this.thumbnailFile = null;
       this.galleryFiles = [];
+      if (this.$refs.thumbnailInput) this.$refs.thumbnailInput.value = '';
       const gu = document.getElementById('gallery_upload');
       if (gu) gu.value = '';
     },
@@ -504,6 +515,9 @@ export default {
       this.thumbnailFile = null;
       this.galleryFiles = [];
       this.formData = this.getInitialFormData();
+      if (this.$refs.thumbnailInput) this.$refs.thumbnailInput.value = '';
+      const gu = document.getElementById('gallery_upload');
+      if (gu) gu.value = '';
     },
     async handleThumbnailUpload(event) {
       const file = event.target.files[0];
@@ -522,18 +536,25 @@ export default {
     removeThumbnail() {
       this.thumbnailFile = null;
       this.formData.thumbnail = '';
+      if (this.$refs.thumbnailInput) this.$refs.thumbnailInput.value = '';
     },
     async saveData() {
+      if (!this.formData.title || !this.formData.category || !this.formData.content) {
+        this.$toast?.error('Vui lòng nhập đầy đủ Tiêu đề, Chuyên mục và Nội dung!');
+        return;
+      }
       this.isSubmitting = true;
       try {
         const payload = new FormData();
         Object.keys(this.formData).forEach(key => {
-          if (key !== 'gallery' && (key !== 'thumbnail' || !this.thumbnailFile)) {
+          if (key !== 'gallery' && key !== 'thumbnail') {
             payload.append(key, this.formData[key] || '');
           }
         });
         if (this.thumbnailFile) {
           payload.append('thumbnail', this.thumbnailFile);
+        } else if (this.isEditMode && !this.formData.thumbnail) {
+          payload.append('remove_thumbnail', '1');
         }
         payload.append('existing_gallery', JSON.stringify(this.formData.gallery || []));
         if (this.galleryFiles && this.galleryFiles.length > 0) {
@@ -548,15 +569,19 @@ export default {
         const closeBtn = document.querySelector("#modalNews .btn-close");
         if (closeBtn) closeBtn.click();
       } catch (error) {
-        this.$toast?.error('Lỗi khi lưu bài viết!');
+        const msg = error.response?.data?.message
+          || (error.response?.data?.errors && Object.values(error.response.data.errors)[0]?.[0])
+          || 'Lỗi khi lưu bài viết!';
+        this.$toast?.error(msg);
       } finally {
         this.isSubmitting = false;
       }
     },
     async confirmDelete(item) {
+      const safeTitle = String(item.title || '').replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
       const result = await Swal.fire({
         title: "Xác nhận xóa",
-        html: "Bạn có chắc chắn muốn xóa bài viết <b>\"" + item.title + "\"</b>?<br><br><small class=\"text-danger\">Lưu ý: Hành động này không thể hoàn tác.</small>",
+        html: "Bạn có chắc chắn muốn xóa bài viết <b>\"" + safeTitle + "\"</b>?<br><br><small class=\"text-danger\">Lưu ý: Hành động này không thể hoàn tác.</small>",
         icon: "warning",
         iconColor: "#f82249",
         showCancelButton: true,

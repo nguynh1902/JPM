@@ -100,18 +100,47 @@
                       <i class="bi bi-chevron-right catalog-nav-arrow ms-auto"></i>
                     </button>
 
-                    <!-- Danh mục lấy từ API -->
-                    <button 
-                      v-for="cat in categories" 
-                      :key="cat.id"
-                      type="button"
-                      class="catalog-nav-btn"
-                      :class="{ active: selectedCategories.includes(cat.slug) }"
-                      @click="selectCategory(cat.slug)"
-                    >
-                      <span class="catalog-nav-text" :title="cat.ten_danh_muc">{{ cat.ten_danh_muc }}</span>
-                      <i class="bi bi-chevron-right catalog-nav-arrow ms-auto"></i>
-                    </button>
+                    <!-- Danh mục 2 cấp lấy từ API -->
+                    <div v-for="parent in parentCategories" :key="parent.id" class="catalog-parent-group">
+                      <div class="catalog-parent-row d-flex align-items-center">
+                        <button
+                          type="button"
+                          class="catalog-nav-btn flex-grow-1"
+                          :class="{
+                            active: selectedCategories.includes(parent.slug),
+                            'is-parent-active': !selectedCategories.includes(parent.slug) && isParentOrChildActive(parent)
+                          }"
+                          @click="selectParentCategory(parent)"
+                        >
+                          <span class="catalog-nav-text" :title="parent.ten_danh_muc">{{ parent.ten_danh_muc }}</span>
+                          <i v-if="parent.children.length === 0" class="bi bi-chevron-right catalog-nav-arrow ms-auto"></i>
+                        </button>
+                        <button
+                          v-if="parent.children.length > 0"
+                          type="button"
+                          class="catalog-expand-btn"
+                          :class="{ expanded: isParentExpanded(parent) }"
+                          @click.stop="toggleParentExpand(parent.id)"
+                          :title="isParentExpanded(parent) ? 'Thu gọn danh mục con' : 'Mở rộng danh mục con'"
+                        >
+                          <i class="bi bi-chevron-down"></i>
+                        </button>
+                      </div>
+
+                      <div v-if="parent.children.length > 0 && isParentExpanded(parent)" class="catalog-child-list">
+                        <button
+                          v-for="child in parent.children"
+                          :key="child.id"
+                          type="button"
+                          class="catalog-child-btn"
+                          :class="{ active: selectedCategories.includes(child.slug) }"
+                          @click="selectCategory(child.slug)"
+                        >
+                          <span class="catalog-child-dot"></span>
+                          <span class="catalog-nav-text" :title="child.ten_danh_muc">{{ child.ten_danh_muc }}</span>
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -322,6 +351,39 @@ const { data: categoriesData, isLoading: isLoadingCategories } = useQuery({
 });
 const categories = computed(() => categoriesData.value || []);
 
+const parentCategories = computed(() => {
+  const list = categories.value || [];
+  const parents = list.filter(c => !c.parent_id);
+  const parentIds = new Set(parents.map(p => p.id));
+  const tree = parents.map(p => ({
+    ...p,
+    children: list.filter(ch => ch.parent_id === p.id)
+  }));
+  const orphans = list.filter(c => c.parent_id && !parentIds.has(c.parent_id));
+  orphans.forEach(o => tree.push({ ...o, children: [] }));
+  return tree;
+});
+
+const expandedParents = ref({});
+const toggleParentExpand = (parentId) => {
+  expandedParents.value[parentId] = !isParentExpandedById(parentId);
+};
+const isParentExpandedById = (parentId) => {
+  const parent = parentCategories.value.find(p => p.id === parentId);
+  return parent ? isParentExpanded(parent) : false;
+};
+const isParentExpanded = (parent) => {
+  if (expandedParents.value[parent.id] !== undefined) {
+    return expandedParents.value[parent.id];
+  }
+  return selectedCategories.value.includes(parent.slug) ||
+    parent.children.some(ch => selectedCategories.value.includes(ch.slug));
+};
+const isParentOrChildActive = (parent) => {
+  return selectedCategories.value.includes(parent.slug) ||
+    parent.children.some(ch => selectedCategories.value.includes(ch.slug));
+};
+
 // Fetch Grouped Data (when no filter is applied)
 const { data: groupedData, isLoading: isLoadingGrouped } = useQuery({
   queryKey: ['publicGroupedProducts'],
@@ -432,9 +494,25 @@ const selectCategory = (slug) => {
   }
 };
 
+const selectParentCategory = (parent) => {
+  if (selectedCategories.value.includes(parent.slug)) {
+    selectedCategories.value = [];
+  } else {
+    selectedCategories.value = [parent.slug];
+    if (parent.children && parent.children.length > 0) {
+      expandedParents.value[parent.id] = true;
+    }
+  }
+};
+
 const getCategoryName = (catIdOrSlug) => {
   const cat = categories.value.find(c => c.id == catIdOrSlug || c.slug === catIdOrSlug);
-  return cat ? cat.ten_danh_muc : '';
+  if (!cat) return '';
+  if (cat.parent_id) {
+    const parent = categories.value.find(p => p.id === cat.parent_id);
+    if (parent) return `${parent.ten_danh_muc} › ${cat.ten_danh_muc}`;
+  }
+  return cat.ten_danh_muc;
 };
 
 // Auto-search when typing (debounced)
@@ -625,6 +703,94 @@ const scrollToProducts = () => {
 /* ── SIDEBAR LUXURY STYLING (Kế thừa từ main.css, chỉ giữ giới hạn chiều cao cuộn riêng trang Cửa Hàng) ── */
 .catalog-sidebar-card {
   max-height: calc(100vh - 106px);
+}
+
+.catalog-parent-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.catalog-parent-row {
+  gap: 4px;
+}
+
+.catalog-nav-btn.is-parent-active {
+  color: #f82249;
+  font-weight: 600;
+  background: rgba(248, 34, 73, 0.05);
+}
+
+.catalog-expand-btn {
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: transparent;
+  color: #64748b;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: transform 0.2s ease, background-color 0.15s ease, color 0.15s ease;
+}
+
+.catalog-expand-btn:hover {
+  background: #f1f5f9;
+  color: #0A1128;
+}
+
+.catalog-expand-btn.expanded i {
+  transform: rotate(180deg);
+}
+
+.catalog-expand-btn i {
+  font-size: 0.78rem;
+  transition: transform 0.2s ease;
+}
+
+.catalog-child-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 2px 0 6px 14px;
+  padding-left: 10px;
+  border-left: 1.5px solid #e2e8f0;
+}
+
+.catalog-child-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  border: none;
+  border-radius: 7px;
+  padding: 6px 10px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #475569;
+  transition: all 0.15s ease;
+}
+
+.catalog-child-btn:hover {
+  background: #f8fafc;
+  color: #0A1128;
+}
+
+.catalog-child-btn.active {
+  background: rgba(248, 34, 73, 0.08);
+  color: #f82249;
+  font-weight: 600;
+}
+
+.catalog-child-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.55;
+  flex-shrink: 0;
 }
 
 /* ── LUXURY EMPTY STATE ── */

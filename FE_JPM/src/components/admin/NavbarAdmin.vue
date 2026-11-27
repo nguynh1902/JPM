@@ -75,7 +75,7 @@ export default {
           title: "Khách Hàng",
           icon: "bx-group",
           path: "/portal/khach-hang",
-          permission: "Xem Khách hàng",
+          permissions: ["Xem Khách hàng", "Thêm Khách hàng", "Sửa Khách hàng", "Khóa Khách hàng"],
           type: "item"
         },
         {
@@ -96,7 +96,7 @@ export default {
           title: "Lịch Sử Hoạt Động",
           icon: "bx-history",
           path: "/portal/lich-su-hoat-dong",
-          permission: "Cấu hình chung",
+          permissions: ["Cấu hình chung", "Quản lý Nhân sự", "Quản lý Vai trò"],
           type: "item"
         },
         {
@@ -210,21 +210,21 @@ export default {
           title: "Chuyên Mục",
           icon: "bx-folder",
           path: "/portal/chuyen-muc",
-          permission: "Xem Tin tức & CMS",
+          permissions: ["Xem Tin tức & CMS", "Soạn thảo Tin tức & CMS", "Xóa Tin tức & CMS", "Cấu hình chung"],
           type: "item"
         },
         {
           title: "Tin Tức",
           icon: "bx-news",
           path: "/portal/tin-tuc",
-          permission: "Xem Tin tức & CMS",
+          permissions: ["Xem Tin tức & CMS", "Soạn thảo Tin tức & CMS", "Xóa Tin tức & CMS", "Cấu hình chung"],
           type: "item"
         },
         {
           title: "FAQ",
           icon: "bx-help-circle",
           path: "/portal/faq",
-          permission: "Xem Tin tức & CMS",
+          permissions: ["Xem Tin tức & CMS", "Soạn thảo Tin tức & CMS", "Xóa Tin tức & CMS", "Cấu hình chung"],
           type: "item"
         }
       ]

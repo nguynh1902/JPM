@@ -26,6 +26,7 @@ class UpdateSanPhamRequest extends FormRequest
             'so_luong_ton' => 'nullable|integer|min:0',
             'hinh_anh_chinh' => 'nullable|string',
             'hinh_anh_chinh_file' => 'nullable|image|mimes:jpeg,png,jpg,webp|extensions:jpg,jpeg,png,webp|max:5120',
+            'remove_main_image' => 'nullable|boolean',
             'thu_vien_anh_kept' => 'nullable|string',
             'thu_vien_anh_files' => 'nullable|array|max:20',
             'thu_vien_anh_files.*' => 'nullable|image|mimes:jpeg,png,jpg,webp|extensions:jpg,jpeg,png,webp|max:5120',

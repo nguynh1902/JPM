@@ -552,7 +552,7 @@ export default {
 
     const { data: rawPhuTungList, isFetching: isFetchingPhuTungs , isPending: isPendingrawPhuTungList } = useQuery({
       queryKey: ["phu-tung"],
-      queryFn: () => fetchApi("/admin/phu-tung"),
+      queryFn: () => fetchApi("/admin/phu-tung?all=true"),
     });
     const { data: rawThuongHieuList, isFetching: isFetchingBrands , isPending: isPendingrawThuongHieuList } = useQuery({
       queryKey: ["brands"],
@@ -570,8 +570,11 @@ export default {
         toaster.error(err.response?.data?.message || "Lỗi khi xóa phụ tùng");
       },
       onSuccess: () => toaster.success("Đã xóa phụ tùng!"),
-      onSettled: () =>
-        queryClient.invalidateQueries({ queryKey: ["phu-tung"] }),
+      onSettled: () => {
+        queryClient.invalidateQueries({ queryKey: ["phu-tung"] });
+        queryClient.invalidateQueries({ queryKey: ["so-do"] });
+        queryClient.invalidateQueries({ queryKey: ["ma-thay-the"] });
+      },
     });
 
     const saveMutation = useMutation({
@@ -593,8 +596,11 @@ export default {
         toaster.success(
           vars.id ? "Cập nhật phụ tùng thành công!" : "Đã thêm phụ tùng mới!",
         ),
-      onSettled: () =>
-        queryClient.invalidateQueries({ queryKey: ["phu-tung"] }),
+      onSettled: () => {
+        queryClient.invalidateQueries({ queryKey: ["phu-tung"] });
+        queryClient.invalidateQueries({ queryKey: ["so-do"] });
+        queryClient.invalidateQueries({ queryKey: ["ma-thay-the"] });
+      },
     });
 
     const isPending = computed(
@@ -839,7 +845,7 @@ export default {
       } else {
         this.formData.gia_ban = item.gia_ban ? Number(item.gia_ban) : null;
       }
-      this.formData.thu_vien_anh = item.thu_vien_anh || [];
+      this.formData.thu_vien_anh = Array.isArray(item.thu_vien_anh) ? [...item.thu_vien_anh] : [];
       this.mainImageFile = null;
       this.mainImagePreview = item.hinh_anh
         ? this.getImageUrl(item.hinh_anh)
@@ -878,13 +884,10 @@ export default {
         payload.append("is_gia_lien_he", this.formData.is_gia_lien_he ? 1 : 0);
 
         payload.append("trang_thai", this.formData.trang_thai);
-        if (this.formData.don_vi_tinh)
-          payload.append("don_vi_tinh", this.formData.don_vi_tinh);
-        if (this.formData.mo_ta) payload.append("mo_ta", this.formData.mo_ta);
-        if (this.formData.thong_so_ky_thuat)
-          payload.append("thong_so_ky_thuat", this.formData.thong_so_ky_thuat);
-        if (this.formData.video_url)
-          payload.append("video_url", this.formData.video_url);
+        payload.append("don_vi_tinh", this.formData.don_vi_tinh || "");
+        payload.append("mo_ta", this.formData.mo_ta || "");
+        payload.append("thong_so_ky_thuat", this.formData.thong_so_ky_thuat || "");
+        payload.append("video_url", this.formData.video_url || "");
 
         if (this.mainImageFile) {
           payload.append("hinh_anh_file", this.mainImageFile);
@@ -914,8 +917,7 @@ export default {
         const closeBtn = document.querySelector("#modalPhuTung .btn-close");
         if (closeBtn) closeBtn.click();
       } catch (error) {
-        console.error("Lỗi chuẩn bị dữ liệu phụ tùng:", error);
-        this.toaster.error("Lỗi chuẩn bị dữ liệu!");
+        console.error("Lỗi lưu phụ tùng:", error);
       } finally {
         this.isSubmitting = false;
       }

@@ -55,6 +55,9 @@ class AppServiceProvider extends ServiceProvider
         \App\Domain\PIM\Models\MaThayThe::observe(\App\Domain\MarineCatalog\Observers\CatalogModelObserver::class);
         \App\Domain\CMS\Models\DanhMucSanPham::observe(\App\Domain\MarineCatalog\Observers\CatalogModelObserver::class);
         \App\Domain\CMS\Models\SanPham::observe(\App\Domain\MarineCatalog\Observers\CatalogModelObserver::class);
+        \App\Domain\CMS\Models\ChuyenMuc::observe(\App\Domain\MarineCatalog\Observers\CatalogModelObserver::class);
+        \App\Domain\CMS\Models\TinTuc::observe(\App\Domain\MarineCatalog\Observers\CatalogModelObserver::class);
+        \App\Domain\CMS\Models\Faq::observe(\App\Domain\MarineCatalog\Observers\CatalogModelObserver::class);
     }
 
     /**

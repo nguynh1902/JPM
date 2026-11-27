@@ -208,7 +208,7 @@
                         <td class="th-stt text-center text-muted fw-medium">{{ index + 1 }}</td>
                         <td class="th-model text-start">
                           <router-link
-                            :to="`/thuong-hieu/${brandRoute}/${model.loai}/${model.year}/${model.code}/so-do`"
+                            :to="(model.loai && model.year) ? `/thuong-hieu/${brandRoute}/${model.loai}/${model.year}/${model.code}/so-do` : `/so-do/${model.code}`"
                             class="model-name-link text-decoration-none"
                             title="Xem sơ đồ phụ tùng rã máy"
                           >
@@ -247,7 +247,7 @@
                             </button>
 
                             <router-link
-                              :to="`/thuong-hieu/${brandRoute}/${model.loai}/${model.year}/${model.code}/so-do`"
+                              :to="(model.loai && model.year) ? `/thuong-hieu/${brandRoute}/${model.loai}/${model.year}/${model.code}/so-do` : `/so-do/${model.code}`"
                               class="btn btn-view-diagram"
                               title="Xem sơ đồ phụ tùng rã máy"
                             >

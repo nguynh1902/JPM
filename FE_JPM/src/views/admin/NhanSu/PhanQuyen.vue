@@ -68,7 +68,7 @@
               <td>
                 <span 
                   class="fw-bold text-capitalize"
-                  :class="(item.is_system || item.name.toLowerCase() === 'admin') ? 'text-primary' : 'text-dark'"
+                  :class="isSystemRoleItem(item) ? 'text-primary' : 'text-dark'"
                 >
                   {{ item.name }}
                 </span>
@@ -84,6 +84,7 @@
               <td class="text-center">
                 <div class="d-flex align-items-center justify-content-center">
                   <button 
+                    v-if="!isSystemRoleItem(item) || authStore.isAdmin"
                     type="button"
                     class="action-btn text-primary me-1" 
                     @click="openEditModal(item)" 
@@ -94,7 +95,7 @@
                     <i class="bx bx-edit-alt"></i>
                   </button>
                   <button 
-                    v-if="!item.is_system && item.name.toLowerCase() !== 'admin'"
+                    v-if="!isSystemRoleItem(item)"
                     type="button"
                     class="action-btn text-danger" 
                     @click="confirmDelete(item)" 
@@ -117,9 +118,9 @@
       </div>
     </div>
 
-    <!-- Modal Form -->
+    <!-- Modal Form (2 Columns) -->
     <div class="modal fade" id="modalRole" tabindex="-1" aria-hidden="true" ref="modalRole">
-      <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+      <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
         <div class="modal-content border-0 shadow-lg">
           <div class="modal-header border-bottom pb-3">
             <h4 class="modal-title fw-bold text-dark mb-0 fs-4" id="modalRoleTitle">
@@ -128,119 +129,134 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <form @submit.prevent="saveData">
-            <div class="modal-body pb-2">
-              <div class="row">
-                <div class="col-md-7 mb-3">
+            <div class="modal-body py-3">
+              <div class="row g-4">
+                <!-- Cột Trái: Thông tin vai trò -->
+                <div class="col-lg-4 role-left-col">
+                  <div class="mb-3">
                     <label class="form-label fw-medium text-dark">Tên Vai Trò <span class="text-danger">*</span></label>
                     <input
                       type="text"
                       class="form-control"
                       placeholder="VD: Quản lý Kho"
                       v-model="formData.name"
-                      :disabled="isEditMode && (formData.is_system || (formData.name && formData.name.toLowerCase() === 'admin'))"
+                      :disabled="isEditMode && isSystemRoleItem(formData)"
                       required
                     />
-                    <small v-if="isEditMode && (formData.is_system || (formData.name && formData.name.toLowerCase() === 'admin'))" class="text-primary mt-1 d-block fw-semibold">
+                    <small v-if="isEditMode && isSystemRoleItem(formData)" class="text-primary mt-1 d-block fw-semibold">
                       <i class="bx bx-shield-quarter me-1"></i> Vai trò Quản trị viên hệ thống (Super Admin).
                     </small>
                   </div>
-                  <div class="col-md-5 mb-3">
+
+                  <div class="mb-3">
                     <label class="form-label fw-medium text-dark">Trạng Thái <span class="text-danger">*</span></label>
                     <v-select
                       v-model="formData.status"
                       :options="statusOptions"
                       :can-clear="false"
-                      :disabled="isEditMode && (formData.is_system || (formData.name && formData.name.toLowerCase() === 'admin'))"
+                      :disabled="isEditMode && isSystemRoleItem(formData)"
                     />
                   </div>
-                </div>
 
-              <div class="row">
-                <div class="col-md-12 mb-3">
-                  <label class="form-label fw-medium text-dark">Mô tả</label>
-                  <input
-                    type="text"
-                    class="form-control"
-                    placeholder="Mô tả chức năng của vai trò này..."
-                    v-model="formData.description"
-                  />
-                </div>
-              </div>
-
-              
-
-              <!-- Danh sách quyền hạn -->
-              <div class="d-flex align-items-center justify-content-between mt-3 mb-2 flex-wrap gap-2">
-                <div class="d-flex align-items-center gap-2">
-                  <h6 class="fw-bold text-dark text-uppercase fs-6 mb-0">Thiết lập Quyền Hạn (Permissions)</h6>
-                  <span class="badge bg-label-primary px-2 py-1">
-                    Đã chọn: {{ selectedPermissionsCount }}/{{ totalPermissionsCount }} quyền
-                  </span>
-                </div>
-                <div class="d-flex align-items-center gap-2">
-                  <button 
-                    type="button" 
-                    class="btn btn-sm btn-outline-primary py-1 px-2" 
-                    @click="selectAllPermissions"
-                  >
-                    <i class="bx bx-check-double me-1"></i> Chọn tất cả
-                  </button>
-                  <button 
-                    type="button" 
-                    class="btn btn-sm btn-outline-secondary py-1 px-2" 
-                    @click="deselectAllPermissions"
-                  >
-                    <i class="bx bx-x me-1"></i> Bỏ chọn tất cả
-                  </button>
-                </div>
-              </div>
-
-              <div class="border rounded-3 p-3 bg-light custom-scroll" style="max-height: 480px; overflow-y: auto;">
-                <div class="card border mb-3 shadow-none bg-white rounded-3 overflow-hidden" v-for="module in permissionModules" :key="module.id">
-                  <div class="card-header bg-light py-2 px-3 d-flex align-items-center justify-content-between border-bottom">
-                    <div class="form-check mb-0 d-flex align-items-center">
-                      <input 
-                        class="form-check-input me-2 mt-0" 
-                        type="checkbox" 
-                        :id="'module_' + module.id" 
-                        :checked="isModuleFullyChecked(module)"
-                        @change="toggleModule(module, $event.target.checked)"
-                      >
-                      <label class="fw-bold text-primary mb-0 user-select-none" :for="'module_' + module.id" style="cursor: pointer;">
-                        {{ module.name }}
-                      </label>
-                    </div>
-                    <span 
-                      class="badge" 
-                      :class="isModuleFullyChecked(module) ? 'bg-success' : (getModuleCheckedCount(module) > 0 ? 'bg-primary' : 'bg-secondary')"
-                    >
-                      {{ getModuleCheckedCount(module) }}/{{ module.permissions ? module.permissions.length : 0 }}
-                    </span>
+                  <div class="mb-3">
+                    <label class="form-label fw-medium text-dark">Mô tả</label>
+                    <textarea
+                      rows="4"
+                      class="form-control"
+                      placeholder="Mô tả chức năng của vai trò này..."
+                      v-model="formData.description"
+                    ></textarea>
                   </div>
-                  <div class="card-body p-3">
-                    <div class="row g-2">
-                      <div class="col-md-3 col-6" v-for="perm in module.permissions" :key="perm.id">
-                        <div class="form-check mb-1">
-                          <input 
-                            class="form-check-input" 
-                            type="checkbox" 
-                            :value="perm.id" 
-                            :id="'perm_' + perm.id" 
-                            v-model="formData.permissions"
-                          >
-                          <label class="form-check-label text-dark small" :for="'perm_' + perm.id" style="cursor: pointer;">
-                            {{ perm.name }}
-                          </label>
+
+                  <div class="p-3 rounded-3 border bg-light-subtle">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                      <span class="small fw-semibold text-dark">Tổng quyền đã cấp</span>
+                      <span class="badge bg-label-primary">{{ selectedPermissionsCount }}/{{ totalPermissionsCount }}</span>
+                    </div>
+                    <div class="progress" style="height: 6px;">
+                      <div
+                        class="progress-bar bg-primary"
+                        role="progressbar"
+                        :style="{ width: totalPermissionsCount ? Math.round((selectedPermissionsCount / totalPermissionsCount) * 100) + '%' : '0%' }"
+                      ></div>
+                    </div>
+                    <small class="text-muted d-block mt-2" style="font-size: 0.78rem;">
+                      Tích chọn ở cột bên phải để cấp quyền theo từng nhóm chức năng.
+                    </small>
+                  </div>
+                </div>
+
+                <!-- Cột Phải: Thiết lập quyền hạn -->
+                <div class="col-lg-8 d-flex flex-column">
+                  <div class="d-flex align-items-center justify-content-between mb-2 flex-wrap gap-2">
+                    <h6 class="fw-bold text-dark text-uppercase fs-6 mb-0">Thiết Lập Quyền Hạn (Permissions)</h6>
+                    <div class="d-flex align-items-center gap-2">
+                      <button 
+                        type="button" 
+                        class="btn btn-sm btn-outline-primary py-1 px-2" 
+                        @click="selectAllPermissions"
+                      >
+                        <i class="bx bx-check-double me-1"></i> Chọn tất cả
+                      </button>
+                      <button 
+                        type="button" 
+                        class="btn btn-sm btn-outline-secondary py-1 px-2" 
+                        @click="deselectAllPermissions"
+                      >
+                        <i class="bx bx-x me-1"></i> Bỏ chọn tất cả
+                      </button>
+                    </div>
+                  </div>
+
+                  <div class="border rounded-3 p-3 bg-light custom-scroll flex-grow-1" style="max-height: 60vh; overflow-y: auto;">
+                    <div class="row g-3">
+                      <div class="col-md-6" v-for="module in permissionModules" :key="module.id">
+                        <div class="card border h-100 shadow-none bg-white rounded-3 overflow-hidden">
+                          <div class="card-header bg-light py-2 px-3 d-flex align-items-center justify-content-between border-bottom">
+                            <div class="form-check mb-0 d-flex align-items-center">
+                              <input 
+                                class="form-check-input me-2 mt-0" 
+                                type="checkbox" 
+                                :id="'module_' + module.id" 
+                                :checked="isModuleFullyChecked(module)"
+                                @change="toggleModule(module, $event.target.checked)"
+                              >
+                              <label class="fw-bold text-primary mb-0 user-select-none" :for="'module_' + module.id" style="cursor: pointer; font-size: 0.9rem;">
+                                {{ module.name }}
+                              </label>
+                            </div>
+                            <span 
+                              class="badge" 
+                              :class="isModuleFullyChecked(module) ? 'bg-success' : (getModuleCheckedCount(module) > 0 ? 'bg-primary' : 'bg-secondary')"
+                            >
+                              {{ getModuleCheckedCount(module) }}/{{ module.permissions ? module.permissions.length : 0 }}
+                            </span>
+                          </div>
+                          <div class="card-body p-3">
+                            <div class="d-flex flex-column gap-2">
+                              <div class="form-check mb-0" v-for="perm in module.permissions" :key="perm.id">
+                                <input 
+                                  class="form-check-input" 
+                                  type="checkbox" 
+                                  :value="perm.id" 
+                                  :id="'perm_' + perm.id" 
+                                  v-model="formData.permissions"
+                                >
+                                <label class="form-check-label text-dark small" :for="'perm_' + perm.id" style="cursor: pointer;">
+                                  {{ perm.name }}
+                                </label>
+                              </div>
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
-
             </div>
 
-            <div class="modal-footer border-top py-3 mt-2">
+            <div class="modal-footer border-top py-3 bg-light">
               <button type="button" class="btn btn-outline-secondary px-4" data-bs-dismiss="modal">
                 Hủy
               </button>
@@ -315,6 +331,7 @@ export default {
     });
 
     return {
+      authStore,
       queryData, isFetching, isPending,
       deleteMutation,
       saveMutation
@@ -410,6 +427,10 @@ export default {
         }
       });
     },
+    isSystemRoleItem(item) {
+      const n = String(item?.name || '').toLowerCase().trim();
+      return Boolean(item?.is_system || ['admin', 'super admin', 'quản trị viên'].includes(n));
+    },
     openAddModal() {
       this.isEditMode = false;
       this.resetForm();
@@ -418,7 +439,7 @@ export default {
       this.isEditMode = true;
       this.formData = { 
         ...item,
-        permissions: [...item.permissions]
+        permissions: Array.isArray(item.permissions) ? [...item.permissions] : []
       };
       if (this.formData.status === true) this.formData.status = 1;
       else if (this.formData.status === false) this.formData.status = 0;
@@ -438,7 +459,8 @@ export default {
       this.saveMutation.mutate(
         { isEditMode: this.isEditMode, id: this.formData.id, data: this.formData },
         {
-          onSuccess: () => {
+          onSuccess: async () => {
+            await this.authStore.fetchProfile();
             if (this.$toast) {
               this.$toast.success(this.isEditMode ? 'Cập nhật Vai trò thành công!' : 'Đã thêm Vai trò mới!');
             }
@@ -526,6 +548,12 @@ export default {
 .card-header {
   border-top-left-radius: inherit;
   border-top-right-radius: inherit;
+}
+@media (min-width: 992px) {
+  .role-left-col {
+    border-right: 1px solid #e7e7ec;
+    padding-right: 1.5rem;
+  }
 }
 </style>
 

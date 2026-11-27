@@ -89,6 +89,7 @@
               <td class="text-center">
                 <div class="d-flex justify-content-center">
                   <button 
+                    v-if="!isRestrictedAdminRow(item)"
                     type="button"
                     class="action-btn text-primary me-2" 
                     data-bs-toggle="modal" 
@@ -99,6 +100,7 @@
                     <i class="bx bx-edit-alt"></i>
                   </button>
                   <button 
+                    v-if="!isSelfRow(item) && !isPrivilegedItem(item)"
                     type="button"
                     class="action-btn text-danger" 
                     @click="confirmDelete(item)" 
@@ -106,6 +108,9 @@
                   >
                     <i class="bx bx-trash"></i>
                   </button>
+                  <span v-else class="text-muted ms-1" :title="isSelfRow(item) ? 'Tài khoản đang đăng nhập' : 'Tài khoản Quản trị viên được bảo vệ'">
+                    <i class="bx bx-lock-alt text-secondary" style="font-size: 1.1rem;"></i>
+                  </span>
                 </div>
               </td>
             </tr>
@@ -182,7 +187,7 @@
                           <input
                             :type="showPassword ? 'text' : 'password'"
                             class="form-control"
-                            placeholder="Mặc định: Jpm@2026"
+                            placeholder="Để trống để tự sinh ngẫu nhiên"
                             v-model="formData.password"
                             minlength="8"
                             maxlength="25"
@@ -191,10 +196,10 @@
                             <i class="bx" :class="showPassword ? 'bx-show' : 'bx-hide'"></i>
                           </span>
                         </div>
-                        <small v-if="!isEditMode" class="form-text text-muted mt-1">Mặc định: <strong>Jpm@2026</strong></small>
+                        <small v-if="!isEditMode" class="form-text text-muted mt-1">Để trống hệ thống sẽ tự tạo mật khẩu ngẫu nhiên an toàn.</small>
                         <div v-else>
                           <button type="button" class="btn btn-outline-warning w-100 shadow-sm" @click="resetPassword(formData.id)" style="font-size: 0.85rem;">
-                            <i class="bx bx-reset me-1"></i> Đặt lại về Jpm@2026
+                            <i class="bx bx-reset me-1"></i> Đặt lại mật khẩu mới
                           </button>
                         </div>
                       </div>
@@ -206,6 +211,7 @@
                           placeholder="Chọn vai trò..."
                           searchable
                           required
+                          :disabled="isEditMode && isSelfRow(formData)"
                           :can-clear="false"
                         />
                       </div>
@@ -221,7 +227,7 @@
                           type="file"
                           id="avatar"
                           class="form-control mb-2"
-                          accept="image/*,.jpg,.jpeg,.png,.webp,.gif,.svg,.bmp,.avif,.heic,.heif,.tiff,.tif,.ico,.jfif"
+                          accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
                           @change="handleAvatarUpload"
                         />
                         <div class="d-flex justify-content-center align-items-center border rounded bg-light mb-3 position-relative" style="height: 180px;">
@@ -240,6 +246,7 @@
                         <v-select
                           v-model="formData.status"
                           :options="statusOptions"
+                          :disabled="isEditMode && isSelfRow(formData)"
                           :can-clear="false"
                         />
                       </div>
@@ -319,7 +326,7 @@ export default {
       onSettled: () => queryClient.invalidateQueries({ queryKey: ['nhan-vien'] }),
     });
 
-    return { queryData, isFetching, queryClient, deleteMutation, saveMutation };
+    return { authStore, queryData, isFetching, queryClient, deleteMutation, saveMutation };
   },
   data() {
     return {
@@ -381,6 +388,16 @@ export default {
     }
   },
   methods: {
+    isSelfRow(item) {
+      return Boolean(this.authStore?.user?.id && item?.id_tai_khoan === this.authStore.user.id);
+    },
+    isPrivilegedItem(item) {
+      const r = String(item?.role || '').toLowerCase().trim();
+      return ['admin', 'super admin', 'quản trị viên'].includes(r);
+    },
+    isRestrictedAdminRow(item) {
+      return this.isPrivilegedItem(item) && !this.authStore?.isAdmin;
+    },
     resetFilters() {
       this.filters = {
         search: "",
@@ -395,7 +412,10 @@ export default {
     openEditModal(item) {
       this.isEditMode = true;
       this.resetForm();
-      this.formData = { ...item };
+      this.formData = {
+        ...item,
+        role: (item.role && item.role !== 'N/A') ? item.role : '',
+      };
       if (this.formData.status === true) this.formData.status = 1;
       else if (this.formData.status === false) this.formData.status = 0;
     },
@@ -462,14 +482,28 @@ export default {
           avatar: this.avatarPreview || this.formData.avatar
         };
 
-        await this.saveMutation.mutateAsync({
+        const res = await this.saveMutation.mutateAsync({
           id: this.formData.id,
           payload,
           rawData,
           isEditMode: this.isEditMode
         });
+
+        if (this.isEditMode && this.isSelfRow(this.formData)) {
+          await this.authStore.fetchProfile();
+        }
         
-        if (this.$toast) this.$toast.success(this.isEditMode ? "Cập nhật thành công!" : "Đã thêm mới!");
+        const tempPw = res?.temporary_password || res?.data?.temporary_password;
+        if (!this.isEditMode && tempPw) {
+          Swal.fire({
+            icon: 'success',
+            title: 'Đã thêm nhân viên mới!',
+            html: `Mật khẩu tạm thời: <code class="fs-5 fw-bold text-primary">${tempPw}</code><br><small class="text-muted">Vui lòng sao chép gửi cho nhân viên.</small>`,
+            confirmButtonText: 'Đã lưu'
+          });
+        } else if (this.$toast) {
+          this.$toast.success(this.isEditMode ? "Cập nhật thành công!" : "Đã thêm mới!");
+        }
         this.closeModal();
       } catch (error) {
         if (this.$toast) this.$toast.error(error.response?.data?.message || "Đã có lỗi xảy ra!");
@@ -506,7 +540,7 @@ export default {
     async resetPassword(id) {
       const result = await Swal.fire({
         title: 'Xác nhận Reset Mật Khẩu',
-          text: "Mật khẩu của nhân viên này sẽ được đặt lại thành Jpm@2026. Nhân viên sẽ bị đăng xuất ngay lập tức.",
+          text: "Hệ thống sẽ tạo mật khẩu tạm thời mới ngẫu nhiên. Nhân viên sẽ bị đăng xuất ngay lập tức.",
           icon: 'warning',
           iconColor: '#f82249',
           showCancelButton: true,
@@ -524,7 +558,18 @@ export default {
       if (result.isConfirmed) {
         try {
           const res = await axiosClient.post(`/admin/nhan-vien/${id}/reset-password`);
-          if (this.$toast) this.$toast.success(res.data?.message || res.message || "Đã reset mật khẩu thành công!");
+          this.queryClient.invalidateQueries({ queryKey: ['nhan-vien'] });
+          const tempPw = res?.temporary_password || res?.data?.temporary_password;
+          if (tempPw) {
+            Swal.fire({
+              icon: 'success',
+              title: 'Đã đặt lại mật khẩu!',
+              html: `Mật khẩu tạm thời mới: <code class="fs-5 fw-bold text-primary">${tempPw}</code><br><small class="text-muted">Vui lòng sao chép và gửi cho nhân viên.</small>`,
+              confirmButtonText: 'Đóng'
+            });
+          } else if (this.$toast) {
+            this.$toast.success(res.data?.message || res.message || "Đã reset mật khẩu thành công!");
+          }
         } catch (error) {
           if (this.$toast) this.$toast.error(error.response?.data?.message || "Đã có lỗi xảy ra!");
         }

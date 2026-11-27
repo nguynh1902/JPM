@@ -23,6 +23,11 @@
               <li class="breadcrumb-item">
                 <router-link to="/san-pham" class="text-decoration-none text-muted">Cửa hàng</router-link>
                   </li>
+                  <li v-if="sanPham.danh_muc?.parent" class="breadcrumb-item">
+                    <router-link :to="{ path: '/san-pham', query: { danh_muc: sanPham.danh_muc.parent.slug } }" class="text-decoration-none text-muted">
+                      {{ sanPham.danh_muc.parent.ten_danh_muc }}
+                    </router-link>
+                  </li>
                   <li class="breadcrumb-item active fw-bold" style="color: var(--heading-color);" aria-current="page">
                     {{ sanPham.danh_muc ? sanPham.danh_muc.ten_danh_muc : 'Sản phẩm' }}
                   </li>
@@ -206,7 +211,9 @@
                 <div class="product-meta-row mb-3 text-muted small">
                   <div v-if="sanPham.danh_muc" class="mb-2">
                     <span>Danh mục: </span>
-                    <strong class="text-dark">{{ sanPham.danh_muc.ten_danh_muc }}</strong>
+                    <strong class="text-dark">
+                      <template v-if="sanPham.danh_muc.parent">{{ sanPham.danh_muc.parent.ten_danh_muc }} › </template>{{ sanPham.danh_muc.ten_danh_muc }}
+                    </strong>
                   </div>
                   <div>
                     <a href="#product-tabs" class="link-view-specs d-inline-flex align-items-center gap-1" @click.prevent="scrollToTabs">

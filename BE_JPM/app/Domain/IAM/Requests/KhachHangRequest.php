@@ -27,10 +27,10 @@ class KhachHangRequest extends FormRequest
         
         if ($isUpdate) {
             $emailRule .= '|unique:users,email,' . $userId;
-            $phoneRule .= '|unique:khach_hangs,so_dien_thoai,' . $id;
+            $phoneRule .= '|unique:khach_hangs,so_dien_thoai,' . $id . '|unique:users,phone,' . $userId;
         } else {
             $emailRule .= '|unique:users,email';
-            $phoneRule .= '|unique:khach_hangs,so_dien_thoai';
+            $phoneRule .= '|unique:khach_hangs,so_dien_thoai|unique:users,phone';
         }
 
         return [

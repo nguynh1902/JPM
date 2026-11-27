@@ -10,6 +10,7 @@ use App\Domain\PIM\Resources\DanhMucSanPhamResource;
 use App\Domain\PIM\Services\DanhMucSanPhamService;
 use Exception;
 use Illuminate\Http\JsonResponse;
+
 class DanhMucSanPhamController extends Controller
 {
     protected $danhMucService;
@@ -22,28 +23,41 @@ class DanhMucSanPhamController extends Controller
     public function publicIndex(): JsonResponse
     {
         $data = \App\Domain\CMS\Models\DanhMucSanPham::where('trang_thai', 1)
-                    
-                    ->orderBy('id', 'desc')
-                    ->get();
+            ->where(function ($q) {
+                $q->whereNull('parent_id')
+                  ->orWhereHas('parent', fn($p) => $p->where('trang_thai', 1));
+            })
+            ->orderByRaw('CASE WHEN parent_id IS NULL THEN 0 ELSE 1 END')
+            ->orderBy('id', 'desc')
+            ->get();
         return response()->json(['success' => true, 'data' => $data]);
     }
 
     public function publicGrouped(): JsonResponse
     {
-        $categories = \App\Domain\CMS\Models\DanhMucSanPham::where('trang_thai', 1)
-                    
-                    ->orderBy('id', 'desc')
-                    ->get();
-        
+        $topCategories = \App\Domain\CMS\Models\DanhMucSanPham::with(['children' => function ($q) {
+                $q->where('trang_thai', 1)->orderBy('id', 'desc');
+            }])
+            ->whereNull('parent_id')
+            ->where('trang_thai', 1)
+            ->orderBy('id', 'desc')
+            ->get();
+
         $data = [];
-        foreach ($categories as $cat) {
-            $products = \App\Domain\CMS\Models\SanPham::with('danhMuc')
-                ->where('danh_muc_san_pham_id', $cat->id)
+        foreach ($topCategories as $cat) {
+            $categoryIds = collect([$cat->id])
+                ->merge($cat->children->pluck('id'))
+                ->unique()
+                ->values()
+                ->all();
+
+            $products = \App\Domain\CMS\Models\SanPham::with('danhMuc.parent')
+                ->whereIn('danh_muc_san_pham_id', $categoryIds)
                 ->where('trang_thai', 1)
                 ->orderBy('id', 'desc')
-                ->limit(5)
+                ->limit(4)
                 ->get();
-            
+
             if ($products->count() > 0) {
                 $cat->setAttribute('products', $products);
                 $data[] = $cat;
@@ -119,9 +133,3 @@ class DanhMucSanPhamController extends Controller
         }
     }
 }
-
-
-
-
-
-

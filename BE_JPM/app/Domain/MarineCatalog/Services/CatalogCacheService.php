@@ -59,6 +59,7 @@ class CatalogCacheService
             Cache::forget('public_nam_san_xuat_all_all');
             Cache::forget('public_nhom_phu_tung_all_all_all_all');
             Cache::forget('public_site_settings');
+            Cache::forget('sitemap_chung_xml');
 
             Log::info("[CATALOG CACHE] Bumped catalog cache version to v{$newVersion} (safe invalidation).");
             return true;

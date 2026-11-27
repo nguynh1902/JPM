@@ -45,7 +45,7 @@
           <button class="btn btn-secondary text-nowrap" @click="resetFilters">
             Đặt lại
           </button>
-          <button v-if="authStore.hasPermission('Soạn thảo Tin tức & CMS')" class="btn btn-primary text-nowrap" @click="openAddModal" data-bs-toggle="modal" data-bs-target="#modalFAQ">
+          <button v-if="authStore.isAdmin || authStore.hasAnyPermission(['Soạn thảo Tin tức & CMS', 'Cấu hình chung'])" class="btn btn-primary text-nowrap" @click="openAddModal" data-bs-toggle="modal" data-bs-target="#modalFAQ">
             <i class="bx bx-plus me-1"></i> Thêm Mới
           </button>
         </div>
@@ -63,7 +63,14 @@
             </tr>
           </thead>
           <tbody class="table-border-bottom-0">
-            <tr v-if="filteredFaqs.length === 0">
+            <tr v-if="isPendingFaqs">
+              <td colspan="5" class="text-center py-5">
+                <div class="spinner-border text-primary" role="status">
+                  <span class="visually-hidden">Loading...</span>
+                </div>
+              </td>
+            </tr>
+            <tr v-else-if="filteredFaqs.length === 0">
               <td colspan="5" class="text-center py-5 text-muted">
                 <i class="bx bx-folder-open text-secondary fs-1 d-block mb-2"></i>
                 Không có dữ liệu
@@ -88,10 +95,10 @@
               </td>
               <td class="text-center">
                 <div class="d-flex align-items-center justify-content-center">
-                  <button v-if="authStore.hasPermission('Soạn thảo Tin tức & CMS')" type="button" class="action-btn text-primary me-2" @click="openEditModal(item)" data-bs-toggle="modal" data-bs-target="#modalFAQ" title="Sửa">
+                  <button v-if="authStore.isAdmin || authStore.hasAnyPermission(['Soạn thảo Tin tức & CMS', 'Cấu hình chung'])" type="button" class="action-btn text-primary me-2" @click="openEditModal(item)" data-bs-toggle="modal" data-bs-target="#modalFAQ" title="Sửa">
                     <i class="bx bx-edit-alt"></i>
                   </button>
-                  <button v-if="authStore.hasPermission('Xóa Tin tức & CMS')" type="button" class="action-btn text-danger" @click="confirmDelete(item)" title="Xóa">
+                  <button v-if="authStore.isAdmin || authStore.hasAnyPermission(['Xóa Tin tức & CMS', 'Cấu hình chung'])" type="button" class="action-btn text-danger" @click="confirmDelete(item)" title="Xóa">
                     <i class="bx bx-trash"></i>
                   </button>
                 </div>
@@ -208,7 +215,7 @@ export default {
       }
     });
 
-    const { data: faqs, isFetching: isFetchingFaqs } = useQuery({
+    const { data: faqs, isFetching: isFetchingFaqs, isPending: isPendingFaqs } = useQuery({
       queryKey: ['faq'],
       queryFn: () => axiosClient.get('/admin/faq').then(res => res.data || [])
     });
@@ -231,6 +238,7 @@ export default {
       },
       onSettled: () => {
         queryClient.invalidateQueries({ queryKey: ['faq'] });
+        queryClient.invalidateQueries({ queryKey: ['client-faqs'] });
       }
     });
 
@@ -259,10 +267,11 @@ export default {
       },
       onSettled: () => {
         queryClient.invalidateQueries({ queryKey: ['faq'] });
+        queryClient.invalidateQueries({ queryKey: ['client-faqs'] });
       }
     });
 
-    return { authStore, faqs, isFetchingFaqs, isFetchingCategories, rawCategories, queryClient, deleteMutation, saveMutation };
+    return { authStore, faqs, isFetchingFaqs, isPendingFaqs, isFetchingCategories, rawCategories, queryClient, deleteMutation, saveMutation };
   },
   data() {
     return {
@@ -335,6 +344,10 @@ export default {
       this.formData = this.getInitialFormData();
     },
     async saveData() {
+      if (!this.formData.question || !this.formData.category || !this.formData.answer) {
+        this.$toast?.error('Vui lòng nhập đầy đủ Câu hỏi, Chuyên mục và Nội dung trả lời!');
+        return;
+      }
       this.isSubmitting = true;
       this.saveMutation.mutate(this.formData, {
         onSuccess: () => {
@@ -343,8 +356,11 @@ export default {
           const closeBtn = document.querySelector("#modalFAQ .btn-close");
           if (closeBtn) closeBtn.click();
         },
-        onError: () => {
-          this.$toast?.error('Lỗi khi lưu FAQ!');
+        onError: (err) => {
+          const msg = err?.response?.data?.message
+            || (err?.response?.data?.errors && Object.values(err.response.data.errors)[0]?.[0])
+            || 'Lỗi khi lưu FAQ!';
+          this.$toast?.error(msg);
         },
         onSettled: () => {
           this.isSubmitting = false;
@@ -352,9 +368,10 @@ export default {
       });
     },
     async confirmDelete(item) {
+      const safeQuestion = String(item.question || '').replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
       const result = await Swal.fire({
         title: 'Xóa FAQ này?',
-        html: `Dữ liệu sau khi xóa sẽ không thể khôi phục!<br><br><small class="text-danger">Câu hỏi: ${item.question}</small>`,
+        html: `Dữ liệu sau khi xóa sẽ không thể khôi phục!<br><br><small class="text-danger">Câu hỏi: ${safeQuestion}</small>`,
         icon: 'warning',
         showCancelButton: true,
         confirmButtonText: 'Đồng ý xóa',

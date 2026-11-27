@@ -59,13 +59,24 @@ class ChuyenMucController extends Controller
             $oldType = $item->type;
 
             $validated = $request->validated();
+
+            if ($oldType !== $validated['type']) {
+                $inUse = ($oldType === 'NEWS' && \App\Domain\CMS\Models\TinTuc::where('category', $oldName)->exists())
+                    || ($oldType === 'FAQ' && \App\Domain\CMS\Models\Faq::where('category', $oldName)->exists());
+                if ($inUse) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Không thể đổi loại chuyên mục vì đang có bài viết/câu hỏi sử dụng chuyên mục này.'
+                    ], 422);
+                }
+            }
+
             $item->update($validated);
 
             if ($oldName && $oldName !== $item->name) {
-                if ($oldType === 'NEWS' || $item->type === 'NEWS') {
+                if ($item->type === 'NEWS') {
                     \App\Domain\CMS\Models\TinTuc::where('category', $oldName)->update(['category' => $item->name]);
-                }
-                if ($oldType === 'FAQ' || $item->type === 'FAQ') {
+                } elseif ($item->type === 'FAQ') {
                     \App\Domain\CMS\Models\Faq::where('category', $oldName)->update(['category' => $item->name]);
                 }
             }
@@ -82,7 +93,16 @@ class ChuyenMucController extends Controller
     public function destroy($id): JsonResponse
     {
         try {
-            ChuyenMuc::destroy($id);
+            $item = ChuyenMuc::findOrFail($id);
+            $inUse = ($item->type === 'NEWS' && \App\Domain\CMS\Models\TinTuc::where('category', $item->name)->exists())
+                || ($item->type === 'FAQ' && \App\Domain\CMS\Models\Faq::where('category', $item->name)->exists());
+            if ($inUse) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Không thể xóa! Chuyên mục này đang có bài viết hoặc câu hỏi sử dụng.'
+                ], 409);
+            }
+            $item->delete();
             return response()->json([
                 'success' => true,
                 'message' => 'Xóa thành công'

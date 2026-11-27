@@ -181,7 +181,7 @@ export default {
         return await axiosClient.post('/admin/nhom-phu-tung', payload);
       },
       onError: (err, payload, context) => {
-        toaster.error("Lỗi lưu dữ liệu!");
+        toaster.error(err.response?.data?.message || "Lỗi lưu dữ liệu!");
       },
       onSuccess: (data, payload) => {
         toaster.success(payload.id ? "Cập nhật danh mục thành công!" : "Đã thêm danh mục mới!");
