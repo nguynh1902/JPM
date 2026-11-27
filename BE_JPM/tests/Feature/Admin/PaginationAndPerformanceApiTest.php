@@ -95,7 +95,6 @@ it('can paginate don hang with meta', function () {
             'ma_don_hang' => "DH-TEST-{$i}",
             'id_khach_hang' => 1,
             'id_dia_chi_giao_hang' => 1,
-            'id_phuong_thuc_thanh_toan' => 1,
             'tong_tien' => 1000000 * $i,
             'trang_thai' => 1,
             'trang_thai_thanh_toan' => 0
