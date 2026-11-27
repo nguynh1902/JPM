@@ -96,8 +96,8 @@
                   <div>
                     <div class="contact-item-title">Hòm Thư Hỗ Trợ</div>
                     <div>
-                      <a :href="'mailto:' + (settings.company_email || 'contact@jpm-marine.vn')" class="contact-item-desc text-decoration-none">
-                        {{ settings.company_email || 'contact@jpm-marine.vn' }}
+                      <a :href="'mailto:' + (settings.company_email || 'tauthuyennhatbanjpvn@gmail.com')" class="contact-item-desc text-decoration-none">
+                        {{ settings.company_email || 'tauthuyennhatbanjpvn@gmail.com' }}
                       </a>
                     </div>
                   </div>

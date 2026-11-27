@@ -74,7 +74,7 @@
                 <i class="bi bi-envelope footer-contact-icon"></i>
                 <div>
                   <span class="footer-contact-label">Email:</span>
-                  <a :href="'mailto:' + (settings.company_email || 'contact@jpm-marine.vn')" class="footer-contact-value">{{ settings.company_email || 'contact@jpm-marine.vn' }}</a>
+                  <a :href="'mailto:' + (settings.company_email || 'tauthuyennhatbanjpvn@gmail.com')" class="footer-contact-value">{{ settings.company_email || 'tauthuyennhatbanjpvn@gmail.com' }}</a>
                 </div>
               </div>
               <div v-if="settings.business_hours" class="footer-contact-item mb-0">

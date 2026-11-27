@@ -101,8 +101,9 @@ export default {
   --ms-max-height: 400px !important;
 }
 
-/* Tắt hoàn toàn tính năng ẩn thanh cuộn và bù padding của Bootstrap Modal */
-body.modal-open {
+/* Tắt hoàn toàn tính năng ẩn thanh cuộn và bù padding của Bootstrap Modal / SweetAlert */
+body.modal-open,
+body.swal2-shown {
   overflow: auto !important;
   padding-right: 0 !important;
 }

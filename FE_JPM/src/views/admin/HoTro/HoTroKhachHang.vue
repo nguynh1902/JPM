@@ -106,11 +106,11 @@
               <td>
                 <div class="fw-medium text-dark">
                   <i class="bx bx-phone me-1 text-primary"></i>
-                  <a :href="'tel:' + item.so_dien_thoai" class="text-dark text-decoration-none">{{ item.so_dien_thoai }}</a>
+                  <span>{{ item.so_dien_thoai }}</span>
                 </div>
                 <div class="small text-muted text-truncate" style="max-width: 220px;">
                   <i class="bx bx-envelope me-1"></i>
-                  <a :href="'mailto:' + item.email" class="text-muted text-decoration-none">{{ item.email }}</a>
+                  <span>{{ item.email }}</span>
                 </div>
               </td>
               <td>
@@ -182,21 +182,11 @@
                 </div>
                 <div class="col-md-6">
                   <label class="form-label fw-medium text-dark">Số Điện Thoại <span class="text-danger">*</span></label>
-                  <div class="input-group">
-                    <input type="text" class="form-control bg-light" :value="selectedItem.so_dien_thoai" readonly />
-                    <a :href="'tel:' + selectedItem.so_dien_thoai" class="btn btn-outline-primary" title="Gọi ngay">
-                      <i class="bx bx-phone-call"></i>
-                    </a>
-                  </div>
+                  <input type="text" class="form-control bg-light" :value="selectedItem.so_dien_thoai" readonly />
                 </div>
                 <div class="col-md-6">
                   <label class="form-label fw-medium text-dark">Email <span class="text-danger">*</span></label>
-                  <div class="input-group">
-                    <input type="text" class="form-control bg-light" :value="selectedItem.email" readonly />
-                    <a :href="'mailto:' + selectedItem.email + '?subject=' + encodeURIComponent('[JPM Marine] Phản hồi yêu cầu hỗ trợ')" class="btn btn-outline-primary" title="Gửi email">
-                      <i class="bx bx-mail-send"></i>
-                    </a>
-                  </div>
+                  <input type="text" class="form-control bg-light" :value="selectedItem.email" readonly />
                 </div>
                 <div class="col-12">
                   <label class="form-label fw-medium text-dark">Nội Dung Lời Nhắn <span class="text-danger">*</span></label>

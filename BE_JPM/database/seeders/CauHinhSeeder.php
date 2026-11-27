@@ -81,7 +81,7 @@ class CauHinhSeeder extends Seeder
             ],
             [
                 'khoa_cau_hinh' => 'company_email',
-                'gia_tri'       => 'contact@jpm-marine.vn',
+                'gia_tri'       => 'tauthuyennhatbanjpvn@gmail.com',
                 'mo_ta'         => 'Địa chỉ hòm thư điện tử liên hệ',
                 'loai_gia_tri'  => 'text',
                 'trang_thai'    => 1,
@@ -104,7 +104,7 @@ class CauHinhSeeder extends Seeder
             ],
             [
                 'khoa_cau_hinh' => 'social_youtube',
-                'gia_tri'       => 'https://youtube.com/@jpmmarine',
+                'gia_tri'       => 'https://www.youtube.com/@linhkien-cano-tauthuynhatban?app=desktop',
                 'mo_ta'         => 'Liên kết Kênh YouTube',
                 'loai_gia_tri'  => 'url',
                 'trang_thai'    => 1,

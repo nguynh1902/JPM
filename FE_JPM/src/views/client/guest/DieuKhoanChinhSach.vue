@@ -222,10 +222,10 @@
                     <div>
                       <div class="policy-contact-title">Hòm Thư Hỗ Trợ</div>
                       <a
-                        :href="'mailto:' + (settings.company_email || 'contact@jpm-marine.vn')"
+                        :href="'mailto:' + (settings.company_email || 'tauthuyennhatbanjpvn@gmail.com')"
                         class="policy-contact-desc text-decoration-none"
                       >
-                        {{ settings.company_email || 'contact@jpm-marine.vn' }}
+                        {{ settings.company_email || 'tauthuyennhatbanjpvn@gmail.com' }}
                       </a>
                     </div>
                   </div>

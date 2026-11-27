@@ -260,17 +260,17 @@
     <!-- ========================================================
          KHỐI 4: GIỚI THIỆU & TẠI SAO CHỌN JPM MARINE (Split + KPI + Quy trình 01→04)
          ======================================================== -->
-    <section class="home-about-section bg-white">
+    <section class="home-about-section">
       <div class="container">
-        <!-- Tầng trên: Trái thông tin + 4 chỉ số | Phải ảnh chuẩn 2:1 căn trục 1320px -->
-        <div class="row align-items-center g-4 g-lg-5" data-aos="fade-up">
-          <div class="col-lg-6 pe-lg-4">
+        <!-- Tầng trên: Trái thông tin + 4 chỉ số | Phải ảnh lớn mở rộng sang trái chuẩn 16:10 -->
+        <div class="row align-items-center g-4" data-aos="fade-up">
+          <div class="col-lg-5">
             <span class="banner-eyebrow">Về JPM Marine</span>
             <h2 class="home-about-title mb-3">
               Tại sao chọn <span class="banner-title-accent">JPM Marine</span>
             </h2>
             <p class="home-about-desc mb-4">
-              JPM Marine là đơn vị chuyên cung ứng phụ tùng động cơ thủy chính hãng OEM từ Nhật Bản, đồng hành cùng xưởng sửa chữa, cảng tàu và chủ phương tiện trên toàn quốc.
+              JPM Marine là đơn vị chuyên cung ứng phụ tùng tàu thuyền Nhật Bản chính hãng OEM, đồng hành cùng xưởng sửa chữa, cảng tàu và chủ phương tiện trên toàn quốc.
             </p>
 
             <!-- 4 Chỉ số nổi bật -->
@@ -304,7 +304,7 @@
             </div>
           </div>
 
-          <div class="col-lg-6">
+          <div class="col-lg-7">
             <div class="about-media-card">
               <img
                 src="/client/image/home1_banner.png"
@@ -317,7 +317,7 @@
         </div>
 
         <!-- Tầng dưới: Dải Quy trình 01 -> 02 -> 03 -> 04 (Đường nối ngang giữa các bước) -->
-        <div class="about-process-wrapper mt-5 pt-4" data-aos="fade-up" data-aos-delay="100">
+        <div class="about-process-wrapper mt-4 pt-4" data-aos="fade-up" data-aos-delay="100">
           <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-4">
             <h3 class="about-process-heading mb-0">Quy trình tra cứu &amp; cung ứng</h3>
             <span class="about-process-sub">Chính xác theo dải số serial &amp; model động cơ</span>
@@ -956,7 +956,7 @@ export default {
    Thống nhất 100% phong cách TheEvent, màu Navy & Red thương hiệu
    ============================================================== */
 .jpm-homepage .section:not(.hero) {
-  padding: 64px 0;
+  padding: 50px 0;
 }
 
 .home-section-slate {
@@ -1089,12 +1089,17 @@ export default {
 }
 
 /* ==============================================================
-   Khối 4: Giới thiệu & Quy trình JPM Marine (Split 50/50 + KPI + Stepper 01->04)
+   Khối 4: Giới thiệu & Quy trình JPM Marine (Deep Marine Navy Showcase)
    ============================================================== */
 .home-about-section {
-  padding: 52px 0;
-  border-top: 1px solid #e2e8f0;
-  border-bottom: 1px solid #e2e8f0;
+  position: relative;
+  overflow: hidden;
+  padding: 56px 0;
+  background:
+    radial-gradient(68% 90% at 78% 36%, rgba(2, 132, 199, 0.18) 0%, rgba(10, 17, 40, 0) 68%),
+    linear-gradient(155deg, #060D1E 0%, #0A1128 52%, #0D1B3E 100%);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .banner-eyebrow {
@@ -1107,7 +1112,7 @@ export default {
   font-weight: 700;
   letter-spacing: 1.8px;
   text-transform: uppercase;
-  color: var(--jpm-color-red-marine, #F82249);
+  color: #FF4D6D;
 }
 
 .banner-eyebrow::before {
@@ -1115,14 +1120,14 @@ export default {
   display: inline-block;
   width: 18px;
   height: 1.5px;
-  background: var(--jpm-color-red-marine, #F82249);
+  background: #FF4D6D;
 }
 
 .home-about-title {
   font-family: var(--heading-font, 'Inter', sans-serif);
   font-size: clamp(1.65rem, 2.25vw, 2.05rem);
   font-weight: 800;
-  color: var(--jpm-color-navy-dark, #0A1128);
+  color: #ffffff;
   letter-spacing: -0.02em;
   line-height: 1.22;
 }
@@ -1134,8 +1139,8 @@ export default {
 .home-about-desc {
   font-family: var(--default-font, 'Inter', sans-serif);
   font-size: 0.98rem;
-  color: #334155;
-  line-height: 1.62;
+  color: #CBD5E1;
+  line-height: 1.65;
   max-width: 520px;
 }
 
@@ -1143,23 +1148,23 @@ export default {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 12px 18px;
-  padding: 16px 0;
-  border-top: 1px solid #e2e8f0;
-  border-bottom: 1px solid #e2e8f0;
+  padding: 18px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
 }
 
 .about-metric-val {
   font-family: var(--jpm-font-mono, 'Roboto Mono', monospace);
   font-size: 1.68rem;
   font-weight: 700;
-  color: var(--jpm-color-navy-dark, #0A1128);
+  color: #ffffff;
   line-height: 1.12;
   letter-spacing: -0.02em;
 }
 
 .about-metric-label {
   font-size: 0.84rem;
-  color: #475569;
+  color: #94A3B8;
   font-weight: 500;
   margin-top: 4px;
   line-height: 1.3;
@@ -1167,52 +1172,62 @@ export default {
 
 .btn-about-primary {
   height: var(--jpm-control-height, 37px);
-  padding: 0 20px;
+  padding: 0 22px;
   border-radius: var(--jpm-radius-control, 7px) !important;
-  border: 1px solid var(--jpm-color-navy-dark, #0A1128) !important;
-  background-color: var(--jpm-color-navy-dark, #0A1128) !important;
-  color: #ffffff !important;
+  border: 1px solid #ffffff !important;
+  background-color: #ffffff !important;
+  color: var(--jpm-color-navy-dark, #0A1128) !important;
   font-size: 0.92rem;
-  font-weight: 600;
+  font-weight: 700;
   display: inline-flex;
   align-items: center;
-  box-shadow: none !important;
+  box-shadow: 0 8px 24px -8px rgba(255, 255, 255, 0.25) !important;
   transition: all 0.2s ease;
 }
 
 .btn-about-primary:hover {
-  border-color: var(--jpm-btn-navy-hover, #1B2852) !important;
-  background-color: var(--jpm-btn-navy-hover, #1B2852) !important;
-  color: #ffffff !important;
+  border-color: #e2e8f0 !important;
+  background-color: #f1f5f9 !important;
+  color: var(--jpm-color-navy-dark, #0A1128) !important;
   transform: translateY(-1px);
 }
 
 .btn-about-link {
   height: var(--jpm-control-height, 37px);
-  padding: 0 14px;
+  padding: 0 16px;
   font-size: 0.92rem;
   font-weight: 600;
-  color: #475569 !important;
+  color: #CBD5E1 !important;
   display: inline-flex;
   align-items: center;
   box-shadow: none !important;
+  transition: color 0.2s ease;
 }
 
 .btn-about-link:hover {
-  color: var(--jpm-color-red-marine, #F82249) !important;
+  color: #ffffff !important;
 }
 
-/* Card hiển thị ảnh động cơ thủy JPM Marine (Tỉ lệ 2:1 giữ trọn lá cờ & chân vịt) */
+/* Card hiển thị ảnh động cơ thủy JPM Marine (Tỉ lệ 16:10 mở rộng sang trái cân khối chữ) */
 .about-media-card {
   width: 100%;
-  aspect-ratio: 2 / 1;
+  aspect-ratio: 16 / 10;
   min-height: 250px;
   border-radius: 14px;
   overflow: hidden;
-  border: 1px solid #dbe4ef;
-  background-color: #f8fafc;
-  box-shadow: 0 14px 34px -12px rgba(10, 17, 40, 0.16);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background-color: #07122B;
+  box-shadow: 0 24px 56px -14px rgba(0, 0, 0, 0.65), 0 0 0 1px rgba(56, 189, 248, 0.08);
   position: relative;
+}
+
+.about-media-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 14px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18);
+  pointer-events: none;
 }
 
 .about-media-img {
@@ -1225,19 +1240,19 @@ export default {
 
 /* Tầng dưới: Dải Stepper 01 -> 04 nối mạch ngang */
 .about-process-wrapper {
-  border-top: 1px solid #e2e8f0;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
 }
 
 .about-process-heading {
   font-family: var(--heading-font, 'Inter', sans-serif);
   font-size: 1.25rem;
   font-weight: 700;
-  color: var(--jpm-color-navy-dark, #0A1128);
+  color: #ffffff;
 }
 
 .about-process-sub {
   font-size: 0.88rem;
-  color: #64748b;
+  color: #94A3B8;
   font-weight: 500;
 }
 
@@ -1256,9 +1271,9 @@ export default {
   width: 30px;
   height: 30px;
   border-radius: 50%;
-  border: 1px solid #cbd5e1;
-  background: #f8fafc;
-  color: var(--jpm-color-navy-dark, #0A1128);
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  background: rgba(255, 255, 255, 0.06);
+  color: #ffffff;
   font-family: var(--jpm-font-mono, 'Roboto Mono', monospace);
   font-size: 0.8rem;
   font-weight: 700;
@@ -1277,11 +1292,11 @@ export default {
 .about-step-line {
   flex: 1;
   height: 1px;
-  background-color: #dbe4ef;
+  background-color: rgba(255, 255, 255, 0.16);
 }
 
 .about-step-arrow {
-  color: #94a3b8;
+  color: rgba(255, 255, 255, 0.45);
   font-size: 0.78rem;
   line-height: 1;
 }
@@ -1289,13 +1304,13 @@ export default {
 .about-step-title {
   font-size: 1rem;
   font-weight: 700;
-  color: var(--jpm-color-navy-dark, #0A1128);
+  color: #ffffff;
   margin-bottom: 6px;
 }
 
 .about-step-desc {
   font-size: 0.9rem;
-  color: #475569;
+  color: #94A3B8;
   line-height: 1.55;
   margin-bottom: 0;
 }
