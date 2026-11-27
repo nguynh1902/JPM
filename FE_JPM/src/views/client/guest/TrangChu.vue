@@ -311,17 +311,13 @@
           </div>
 
           <div class="col-lg-7">
-            <!-- Card chờ ảnh Showroom / Kho phụ tùng (Khi có ảnh chỉ cần thay vào thẻ img bên trong) -->
             <div class="about-media-card">
-              <!-- <img src="/client/image/showroom_jpm.jpg" alt="Kho phụ tùng JPM Marine" class="w-100 h-100 object-fit-cover" /> -->
-              <div class="about-media-placeholder">
-                <div class="about-media-badge">JPM MARINE SHOWROOM &amp; KHO VẬN</div>
-                <div class="about-media-icon-wrap">
-                  <i class="bi bi-image"></i>
-                </div>
-                <div class="about-media-title">Khung Ảnh Giới Thiệu Doanh Nghiệp / Kho Phụ Tùng</div>
-                <div class="about-media-hint">Tỉ lệ chuẩn 16:10 (khuyến nghị ảnh ngang 1280×800px)</div>
-              </div>
+              <img
+                src="/client/image/home1_banner.png"
+                alt="Động cơ thủy và phụ tùng chính hãng tại JPM Marine"
+                class="about-media-img"
+                loading="lazy"
+              />
             </div>
           </div>
         </div>
@@ -1210,69 +1206,26 @@ export default {
   color: var(--jpm-color-red-marine, #F82249) !important;
 }
 
-/* Card khung chờ ảnh (Tỉ lệ ngang cân đối, thay <img> là khớp ngay) */
+/* Card hiển thị ảnh động cơ thủy JPM Marine */
 .about-media-card {
   width: 100%;
   aspect-ratio: 16 / 9;
   min-height: 270px;
-  max-height: 400px;
+  max-height: 410px;
   border-radius: 14px;
   overflow: hidden;
   border: 1px solid #dbe4ef;
-  background: linear-gradient(145deg, #ffffff 0%, #f1f5f9 55%, #e6eef7 100%);
-  box-shadow: 0 12px 32px -12px rgba(10, 17, 40, 0.12);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  background-color: #f8fafc;
+  box-shadow: 0 14px 34px -12px rgba(10, 17, 40, 0.16);
   position: relative;
 }
 
-.about-media-placeholder {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  padding: 28px 24px;
-  max-width: 460px;
-}
-
-.about-media-badge {
-  display: inline-block;
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 1.4px;
-  color: var(--jpm-color-blue-electric, #0284C7);
-  background: rgba(2, 132, 199, 0.1);
-  border: 1px solid rgba(2, 132, 199, 0.2);
-  padding: 4px 10px;
-  border-radius: 50px;
-  margin-bottom: 14px;
-}
-
-.about-media-icon-wrap {
-  width: 52px;
-  height: 52px;
-  border-radius: 12px;
-  background: #ffffff;
-  border: 1px dashed #cbd5e1;
-  color: #64748b;
-  font-size: 1.5rem;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 12px;
-}
-
-.about-media-title {
-  font-size: 1rem;
-  font-weight: 700;
-  color: var(--jpm-color-navy-dark, #0A1128);
-  margin-bottom: 4px;
-}
-
-.about-media-hint {
-  font-size: 0.82rem;
-  color: #64748b;
+.about-media-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center center;
+  display: block;
 }
 
 /* Tầng dưới: Quy trình 01 -> 04 */
