@@ -297,8 +297,6 @@ class DonHangVaBaoGiaSeeder extends Seeder
                 'khach_tu_tra_cuoc'        => false,
                 'tien_coc_yeu_cau'         => 5000000,
                 'da_thu'                   => 0,
-                'id_phuong_thuc_thanh_toan'=> 1, // VietQR
-                'id_don_vi_van_chuyen'     => 1, // ViettelPost
                 'ma_van_don'               => null,
                 'ten_don_vi_van_chuyen'    => 'ViettelPost',
                 'tien_thu_ho_cod'          => 16150000,
@@ -330,8 +328,6 @@ class DonHangVaBaoGiaSeeder extends Seeder
                 'khach_tu_tra_cuoc'        => false,
                 'tien_coc_yeu_cau'         => 12000000,
                 'da_thu'                   => 12000000, // Đã cọc 12tr
-                'id_phuong_thuc_thanh_toan'=> 1,
-                'id_don_vi_van_chuyen'     => 1,
                 'ma_van_don'               => null,
                 'ten_don_vi_van_chuyen'    => 'ViettelPost',
                 'tien_thu_ho_cod'          => 10604000,
@@ -362,11 +358,8 @@ class DonHangVaBaoGiaSeeder extends Seeder
                 'khach_tu_tra_cuoc'        => false,
                 'tien_coc_yeu_cau'         => 5000000,
                 'da_thu'                   => 5000000,
-                'id_phuong_thuc_thanh_toan'=> 2, // COD
-                'id_don_vi_van_chuyen'     => 1, // ViettelPost
                 'ma_van_don'               => 'VP772918239VN',
                 'ten_don_vi_van_chuyen'    => 'ViettelPost',
-                'don_vi_van_chuyen'        => 'ViettelPost',
                 'tien_thu_ho_cod'          => 6383000,
                 'created_at'               => $now->copy()->subDays(2)->setHour(15),
                 'items'                    => [
@@ -392,11 +385,8 @@ class DonHangVaBaoGiaSeeder extends Seeder
                 'khach_tu_tra_cuoc'        => false,
                 'tien_coc_yeu_cau'         => 10000000,
                 'da_thu'                   => 10000000,
-                'id_phuong_thuc_thanh_toan'=> 2,
-                'id_don_vi_van_chuyen'     => 1,
                 'ma_van_don'               => 'VP882194821VN',
                 'ten_don_vi_van_chuyen'    => 'ViettelPost',
-                'don_vi_van_chuyen'        => 'ViettelPost',
                 'tien_thu_ho_cod'          => 14949000,
                 'created_at'               => $now->copy()->subDays(3)->setHour(8),
                 'items'                    => [
@@ -426,11 +416,8 @@ class DonHangVaBaoGiaSeeder extends Seeder
                 'khach_tu_tra_cuoc'        => false,
                 'tien_coc_yeu_cau'         => 30000000,
                 'da_thu'                   => 60624000, // Thu đủ cả ship
-                'id_phuong_thuc_thanh_toan'=> 1,
-                'id_don_vi_van_chuyen'     => 1,
                 'ma_van_don'               => 'VP661928472VN',
                 'ten_don_vi_van_chuyen'    => 'ViettelPost',
-                'don_vi_van_chuyen'        => 'ViettelPost',
                 'tien_thu_ho_cod'          => 0,
                 'created_at'               => $now->copy()->subDays(7)->setHour(14),
                 'items'                    => [
@@ -454,11 +441,8 @@ class DonHangVaBaoGiaSeeder extends Seeder
                 'khach_tu_tra_cuoc'        => false,
                 'tien_coc_yeu_cau'         => 3000000,
                 'da_thu'                   => 7604000,
-                'id_phuong_thuc_thanh_toan'=> 2,
-                'id_don_vi_van_chuyen'     => 1,
                 'ma_van_don'               => 'VP551829301VN',
                 'ten_don_vi_van_chuyen'    => 'ViettelPost',
-                'don_vi_van_chuyen'        => 'ViettelPost',
                 'tien_thu_ho_cod'          => 0,
                 'created_at'               => $now->copy()->subDays(9)->setHour(11),
                 'items'                    => [
@@ -484,11 +468,8 @@ class DonHangVaBaoGiaSeeder extends Seeder
                 'khach_tu_tra_cuoc'        => false,
                 'tien_coc_yeu_cau'         => 2000000,
                 'da_thu'                   => 5060000,
-                'id_phuong_thuc_thanh_toan'=> 1,
-                'id_don_vi_van_chuyen'     => 1,
                 'ma_van_don'               => 'VP449102941VN',
                 'ten_don_vi_van_chuyen'    => 'ViettelPost',
-                'don_vi_van_chuyen'        => 'ViettelPost',
                 'tien_thu_ho_cod'          => 0,
                 'created_at'               => $now->copy()->subDays(12)->setHour(9),
                 'items'                    => [
@@ -516,8 +497,6 @@ class DonHangVaBaoGiaSeeder extends Seeder
                 'khach_tu_tra_cuoc'        => false,
                 'tien_coc_yeu_cau'         => 0,
                 'da_thu'                   => 0,
-                'id_phuong_thuc_thanh_toan'=> 1,
-                'id_don_vi_van_chuyen'     => 1,
                 'ma_van_don'               => null,
                 'ten_don_vi_van_chuyen'    => 'ViettelPost',
                 'tien_thu_ho_cod'          => 0,
@@ -547,11 +526,8 @@ class DonHangVaBaoGiaSeeder extends Seeder
                 'khach_tu_tra_cuoc'        => false,
                 'tien_coc_yeu_cau'         => 10000000,
                 'da_thu'                   => 28620000,
-                'id_phuong_thuc_thanh_toan'=> 1,
-                'id_don_vi_van_chuyen'     => 1,
                 'ma_van_don'               => 'VP260515091VN',
                 'ten_don_vi_van_chuyen'    => 'ViettelPost',
-                'don_vi_van_chuyen'        => 'ViettelPost',
                 'tien_thu_ho_cod'          => 0,
                 'created_at'               => $now->copy()->subMonths(5)->setDay(15),
                 'items'                    => [
@@ -575,11 +551,8 @@ class DonHangVaBaoGiaSeeder extends Seeder
                 'khach_tu_tra_cuoc'        => false,
                 'tien_coc_yeu_cau'         => 15000000,
                 'da_thu'                   => 45100000,
-                'id_phuong_thuc_thanh_toan'=> 1,
-                'id_don_vi_van_chuyen'     => 1,
                 'ma_van_don'               => 'VP260620101VN',
                 'ten_don_vi_van_chuyen'    => 'ViettelPost',
-                'don_vi_van_chuyen'        => 'ViettelPost',
                 'tien_thu_ho_cod'          => 0,
                 'created_at'               => $now->copy()->subMonths(4)->setDay(20),
                 'items'                    => [
@@ -604,11 +577,8 @@ class DonHangVaBaoGiaSeeder extends Seeder
                 'khach_tu_tra_cuoc'        => false,
                 'tien_coc_yeu_cau'         => 20000000,
                 'da_thu'                   => 62150000,
-                'id_phuong_thuc_thanh_toan'=> 1,
-                'id_don_vi_van_chuyen'     => 1,
                 'ma_van_don'               => 'VP260722111VN',
                 'ten_don_vi_van_chuyen'    => 'ViettelPost',
-                'don_vi_van_chuyen'        => 'ViettelPost',
                 'tien_thu_ho_cod'          => 0,
                 'created_at'               => $now->copy()->subMonths(3)->setDay(22),
                 'items'                    => [
@@ -633,11 +603,8 @@ class DonHangVaBaoGiaSeeder extends Seeder
                 'khach_tu_tra_cuoc'        => false,
                 'tien_coc_yeu_cau'         => 25000000,
                 'da_thu'                   => 78180000,
-                'id_phuong_thuc_thanh_toan'=> 1,
-                'id_don_vi_van_chuyen'     => 1,
                 'ma_van_don'               => 'VP260818121VN',
                 'ten_don_vi_van_chuyen'    => 'ViettelPost',
-                'don_vi_van_chuyen'        => 'ViettelPost',
                 'tien_thu_ho_cod'          => 0,
                 'created_at'               => $now->copy()->subMonths(2)->setDay(18),
                 'items'                    => [
@@ -663,11 +630,8 @@ class DonHangVaBaoGiaSeeder extends Seeder
                 'khach_tu_tra_cuoc'        => false,
                 'tien_coc_yeu_cau'         => 30000000,
                 'da_thu'                   => 92700000,
-                'id_phuong_thuc_thanh_toan'=> 1,
-                'id_don_vi_van_chuyen'     => 1,
                 'ma_van_don'               => 'VP260910131VN',
                 'ten_don_vi_van_chuyen'    => 'ViettelPost',
-                'don_vi_van_chuyen'        => 'ViettelPost',
                 'tien_thu_ho_cod'          => 0,
                 'created_at'               => $now->copy()->subMonth()->setDay(10),
                 'items'                    => [
@@ -695,7 +659,6 @@ class DonHangVaBaoGiaSeeder extends Seeder
                     'thanh_tien'    => $item['thanh_tien'],
                     'ten_phu_tung'  => $item['ten_phu_tung'],
                     'ma_phu_tung'   => $item['ma_phu_tung'],
-                    'ghi_chu'       => null,
                     'created_at'    => $order->created_at,
                     'updated_at'    => $order->updated_at,
                 ]);

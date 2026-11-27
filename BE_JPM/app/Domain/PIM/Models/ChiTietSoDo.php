@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class ChiTietSoDo extends Model
 {
     protected $table = 'chi_tiet_so_dos';
-    protected $fillable = ['so_do_phu_tung_id', 'phu_tung_id', 'ref_number', 'qty', 'x', 'y', 'width', 'height'];
+    protected $fillable = ['so_do_phu_tung_id', 'phu_tung_id', 'ref_number', 'qty', 'x', 'y'];
 
     public function phuTung()
     {

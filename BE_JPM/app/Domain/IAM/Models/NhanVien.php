@@ -11,7 +11,7 @@ class NhanVien extends Model
     use SoftDeletes;
 
     protected $table = 'nhan_viens';
-    protected $fillable = ['id_tai_khoan', 'ma_nhan_vien', 'ho_ten', 'so_dien_thoai', 'ngay_sinh', 'ngay_vao_lam', 'phong_ban', 'chuc_vu', 'trang_thai_lam_viec'];
+    protected $fillable = ['id_tai_khoan', 'ma_nhan_vien', 'ho_ten', 'so_dien_thoai'];
 
     public function user()
     {

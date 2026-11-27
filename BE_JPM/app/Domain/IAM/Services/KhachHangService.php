@@ -89,7 +89,6 @@ class KhachHangService
                     'ten_nguoi_nhan' => $data['name'],
                     'so_dien_thoai' => $data['phone'],
                     'dia_chi_cu_the' => trim($data['initial_address']),
-                    'loai_dia_chi' => null,
                     'la_mac_dinh' => true,
                 ]);
             }
@@ -245,7 +244,6 @@ class KhachHangService
                 'ten_nguoi_nhan' => $data['ten_nguoi_nhan'],
                 'so_dien_thoai' => $data['so_dien_thoai'],
                 'dia_chi_cu_the' => $data['dia_chi_cu_the'],
-                'loai_dia_chi' => $data['loai_dia_chi'] ?? null,
                 'la_mac_dinh' => $isDefault,
             ]);
 
@@ -279,7 +277,6 @@ class KhachHangService
                 'ten_nguoi_nhan' => $data['ten_nguoi_nhan'],
                 'so_dien_thoai' => $data['so_dien_thoai'],
                 'dia_chi_cu_the' => $data['dia_chi_cu_the'],
-                'loai_dia_chi' => $data['loai_dia_chi'] ?? $address->loai_dia_chi,
                 'la_mac_dinh' => $isDefault,
             ]);
 

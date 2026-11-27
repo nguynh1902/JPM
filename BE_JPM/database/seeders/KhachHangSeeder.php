@@ -19,9 +19,6 @@ class KhachHangSeeder extends Seeder
                 [
                     'ho_ten' => 'Nguyễn Hải Dương',
                     'so_dien_thoai' => '0988123456',
-                    'hang_thanh_vien' => 'Platinum',
-                    'diem_thuong' => 1500,
-                    'ghi_chu' => 'Đại lý cấp 1'
                 ]
             );
         }
@@ -33,9 +30,6 @@ class KhachHangSeeder extends Seeder
                 [
                     'ho_ten' => 'Trần Quang Minh',
                     'so_dien_thoai' => '0905987654',
-                    'hang_thanh_vien' => 'Gold',
-                    'diem_thuong' => 300,
-                    'ghi_chu' => 'Khách lẻ'
                 ]
             );
         }

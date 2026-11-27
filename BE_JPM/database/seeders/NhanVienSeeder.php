@@ -20,9 +20,6 @@ class NhanVienSeeder extends Seeder
                     'ma_nhan_vien' => 'NV_ADMIN',
                     'ho_ten' => 'Admin Manager',
                     'so_dien_thoai' => '0901234567',
-                    'chuc_vu' => 'Giám đốc',
-                    'phong_ban' => 'Ban Giám Đốc',
-                    'trang_thai_lam_viec' => 'Đang làm việc'
                 ]
             );
         }
@@ -35,9 +32,6 @@ class NhanVienSeeder extends Seeder
                     'ma_nhan_vien' => 'NV001',
                     'ho_ten' => 'Nhân Viên Sale',
                     'so_dien_thoai' => '0909876543',
-                    'chuc_vu' => 'Nhân viên',
-                    'phong_ban' => 'Phòng Kinh Doanh',
-                    'trang_thai_lam_viec' => 'Đang làm việc'
                 ]
             );
         }

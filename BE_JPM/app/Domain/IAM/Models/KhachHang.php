@@ -11,7 +11,7 @@ class KhachHang extends Model
     use SoftDeletes;
 
     protected $table = 'khach_hangs';
-    protected $fillable = ['id_tai_khoan', 'ho_ten', 'ten_cong_ty', 'so_dien_thoai', 'ngay_sinh', 'gioi_tinh', 'hang_thanh_vien', 'diem_thuong', 'ghi_chu'];
+    protected $fillable = ['id_tai_khoan', 'ho_ten', 'so_dien_thoai'];
 
     public function user()
     {

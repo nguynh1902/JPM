@@ -19,7 +19,6 @@ class DonHangController extends Controller
         $data = $request->validate([
             'id_khach_hang' => 'required|integer',
             'id_dia_chi_giao_hang' => 'required|integer',
-            'id_phuong_thuc_thanh_toan' => 'required|integer',
             'items' => 'required|array',
         ]);
 
@@ -56,7 +55,6 @@ class DonHangController extends Controller
                 'ma_don_hang' => $maCode,
                 'id_khach_hang' => $data['id_khach_hang'],
                 'id_dia_chi_giao_hang' => $data['id_dia_chi_giao_hang'],
-                'id_phuong_thuc_thanh_toan' => $data['id_phuong_thuc_thanh_toan'],
                 'ghi_chu_khach_hang' => $request->ghi_chu_khach_hang,
                 'tong_tien' => 0,
             ]);

@@ -599,9 +599,7 @@ export default {
             phu_tung_id: ct.phu_tung_id,
             qty: ct.qty || 1,
             x: ct.x,
-            y: ct.y,
-            width: ct.width,
-            height: ct.height
+            y: ct.y
           }));
         }
       } catch (error) {
@@ -614,9 +612,7 @@ export default {
         phu_tung_id: null,
         qty: 1,
         x: null,
-        y: null,
-        width: null,
-        height: null
+        y: null
       });
     },
     removeChiTiet(index) {
@@ -658,8 +654,6 @@ export default {
             formDataToSend.append(`chiTiet[${index}][qty]`, ct.qty || 1);
             if (ct.x !== null && ct.x !== undefined) formDataToSend.append(`chiTiet[${index}][x]`, ct.x);
             if (ct.y !== null && ct.y !== undefined) formDataToSend.append(`chiTiet[${index}][y]`, ct.y);
-            if (ct.width !== null && ct.width !== undefined) formDataToSend.append(`chiTiet[${index}][width]`, ct.width);
-            if (ct.height !== null && ct.height !== undefined) formDataToSend.append(`chiTiet[${index}][height]`, ct.height);
           });
         }
 

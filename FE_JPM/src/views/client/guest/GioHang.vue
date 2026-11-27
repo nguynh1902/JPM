@@ -571,7 +571,7 @@ export default {
         const s = typeof r === 'string' ? r.toLowerCase() : (r.name || '').toLowerCase()
         return s.includes('đại lý') || s.includes('b2b')
       })
-      return hasB2BRole || Boolean(this.userProfile.ten_cong_ty)
+      return hasB2BRole
     }
   },
   watch: {

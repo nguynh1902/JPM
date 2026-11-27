@@ -34,7 +34,6 @@ class ProfileController extends Controller
             'name'         => 'required|string|max:255',
             'phone'        => 'nullable|string|max:20|unique:users,phone,' . $user->id,
             'email'        => 'required|string|email|max:255|unique:users,email,' . $user->id,
-            'ten_cong_ty'  => 'nullable|string|max:255',
         ];
 
         if ($emailChanged) {
@@ -66,7 +65,6 @@ class ProfileController extends Controller
             if ($user->khachHang) {
                 $user->khachHang->ho_ten        = $request->name;
                 $user->khachHang->so_dien_thoai = $request->phone;
-                $user->khachHang->ten_cong_ty   = $request->ten_cong_ty;
                 $user->khachHang->save();
             }
 

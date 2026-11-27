@@ -34,8 +34,6 @@ class DatabaseSeeder extends Seeder
             NhaCungCapSeeder::class,
             KhoSeeder::class,
             CauHinhSeeder::class,
-            PhuongThucThanhToanSeeder::class,
-            DonViVanChuyenSeeder::class,
             DiaChiSeeder::class,
             DashboardSeeder::class,
             DonHangVaBaoGiaSeeder::class,

@@ -139,7 +139,6 @@ class KhachHangController extends Controller
             'ten_nguoi_nhan' => 'required|string|max:100',
             'so_dien_thoai'  => 'required|string|max:20',
             'dia_chi_cu_the' => 'required|string|max:255',
-            'loai_dia_chi'   => 'nullable|string|max:20',
             'la_mac_dinh'    => 'nullable|boolean',
         ], [
             'ten_nguoi_nhan.required' => 'Vui lòng nhập tên người nhận.',
@@ -165,7 +164,6 @@ class KhachHangController extends Controller
             'ten_nguoi_nhan' => 'required|string|max:100',
             'so_dien_thoai'  => 'required|string|max:20',
             'dia_chi_cu_the' => 'required|string|max:255',
-            'loai_dia_chi'   => 'nullable|string|max:20',
             'la_mac_dinh'    => 'nullable|boolean',
         ], [
             'ten_nguoi_nhan.required' => 'Vui lòng nhập tên người nhận.',

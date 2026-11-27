@@ -33,7 +33,6 @@ class KhachHangResource extends JsonResource
                     'ten_nguoi_nhan' => $addr->ten_nguoi_nhan,
                     'so_dien_thoai' => $addr->so_dien_thoai,
                     'dia_chi_cu_the' => $addr->dia_chi_cu_the,
-                    'loai_dia_chi' => $addr->loai_dia_chi,
                     'la_mac_dinh' => (bool) $addr->la_mac_dinh,
                 ])->values();
             }

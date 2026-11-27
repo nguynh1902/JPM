@@ -37,7 +37,7 @@ class ChiTietSoDoSeeder extends Seeder
                         'phu_tung_id' => $part->id,
                         'ref_number' => (string) $ref,
                         'qty' => 1,
-                        'x' => null, 'y' => null, 'width' => null, 'height' => null,
+                        'x' => null, 'y' => null,
                         'created_at' => $now, 'updated_at' => $now
                     ];
                     $ref++;
@@ -69,7 +69,7 @@ class ChiTietSoDoSeeder extends Seeder
                         'phu_tung_id' => $part->id,
                         'ref_number' => $refNumber,
                         'qty' => 1,
-                        'x' => null, 'y' => null, 'width' => null, 'height' => null,
+                        'x' => null, 'y' => null,
                         'created_at' => $now, 'updated_at' => $now
                     ];
                 }

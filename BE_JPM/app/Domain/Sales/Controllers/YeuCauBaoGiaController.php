@@ -9,6 +9,7 @@ use App\Domain\Sales\Models\ChiTietBaoGia;
 use App\Domain\Sales\Models\DonHang;
 use App\Domain\Sales\Models\ChiTietDonHang;
 use App\Domain\IAM\Models\KhachHang;
+use App\Domain\IAM\Models\User;
 use App\Domain\Core\Services\ImageUploadService;
 use App\Domain\Sales\Services\OrderService;
 use Illuminate\Support\Facades\DB;
@@ -16,6 +17,20 @@ use Illuminate\Support\Str;
 
 class YeuCauBaoGiaController extends Controller
 {
+    private function isB2BUser(?int $userId): bool
+    {
+        if (!$userId) {
+            return false;
+        }
+        $user = User::with('roles')->find($userId);
+        if (!$user) {
+            return false;
+        }
+        return $user->roles->contains(function ($role) {
+            $name = mb_strtolower((string) ($role->name ?? ''), 'UTF-8');
+            return str_contains($name, 'đại lý') || str_contains($name, 'b2b');
+        });
+    }
     /**
      * API gửi yêu cầu báo giá hoặc tạo đơn trực tiếp từ Client (Public & Guest & Member)
      */
@@ -207,10 +222,10 @@ class YeuCauBaoGiaController extends Controller
                 $kh = KhachHang::where('id_tai_khoan', $verifiedUserId)->first();
                 if ($kh) {
                     $idKhachHang = $kh->id;
-                    if (!empty($kh->ten_cong_ty)) {
-                        $loaiDon = 'b2b';
-                        $khachTuTraCuoc = 0; // Khách B2B: JPM tài trợ miễn phí cước nội địa
-                    }
+                }
+                if ($this->isB2BUser($verifiedUserId)) {
+                    $loaiDon = 'b2b';
+                    $khachTuTraCuoc = 0; // Khách B2B: JPM tài trợ miễn phí cước nội địa
                 }
             }
 
@@ -660,9 +675,9 @@ class YeuCauBaoGiaController extends Controller
                 $kh = KhachHang::where('id_tai_khoan', $quote->user_id)->first();
                 if ($kh) {
                     $idKhachHang = $kh->id;
-                    if (!empty($kh->ten_cong_ty)) {
-                        $loaiDon = 'b2b';
-                    }
+                }
+                if ($this->isB2BUser((int) $quote->user_id)) {
+                    $loaiDon = 'b2b';
                 }
             }
 
@@ -827,9 +842,9 @@ class YeuCauBaoGiaController extends Controller
                     $kh = KhachHang::where('id_tai_khoan', $quote->user_id)->first();
                     if ($kh) {
                         $idKhachHang = $kh->id;
-                        if (!empty($kh->ten_cong_ty)) {
-                            $loaiDon = 'b2b';
-                        }
+                    }
+                    if ($this->isB2BUser((int) $quote->user_id)) {
+                        $loaiDon = 'b2b';
                     }
                 }
 

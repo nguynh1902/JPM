@@ -85,8 +85,6 @@ class SoDoPhuTungController extends Controller
                         'qty' => $item['qty'] ?? 1,
                         'x' => $item['x'] ?? null,
                         'y' => $item['y'] ?? null,
-                        'width' => $item['width'] ?? null,
-                        'height' => $item['height'] ?? null,
                     ]);
                 }
             }
@@ -156,8 +154,6 @@ class SoDoPhuTungController extends Controller
                             'qty' => $item['qty'] ?? 1,
                             'x' => $item['x'] ?? null,
                             'y' => $item['y'] ?? null,
-                            'width' => $item['width'] ?? null,
-                            'height' => $item['height'] ?? null,
                         ]);
                     }
                 }
