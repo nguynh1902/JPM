@@ -1,20 +1,20 @@
 <template>
-  <div class="account-portal-layout flex-grow-1 inner-page-section" style="background-color: #f8fafc; min-height: 100vh; padding-bottom: 60px;">
-    <section class="py-0" style="background: transparent;">
+  <div class="account-portal-layout flex-grow-1" style="background-color: #f8fafc; min-height: 100vh; padding-bottom: 60px;">
+    <!-- HEADER BAND EDITORIAL CHUẨN CLIENT -->
+    <div class="jpm-page-header-band">
       <div class="container">
-        
-        <!-- Header chuẩn 100% Client Design System -->
-        <div class="row mb-4">
-          <div class="col-12" data-aos="fade-down">
-            <h2 class="jpm-page-title">
-              {{ titleParts.title }}
-            </h2>
-            <p class="text-muted jpm-page-subtitle mb-0">
-              {{ titleParts.desc }}
-            </p>
-          </div>
-        </div>
+        <span class="jpm-eyebrow">Tài khoản JPM Marine</span>
+        <h1 class="jpm-page-title">
+          {{ titleParts.title }}
+        </h1>
+        <p class="jpm-page-subtitle">
+          {{ titleParts.desc }}
+        </p>
+      </div>
+    </div>
 
+    <section class="py-4" style="background: transparent;">
+      <div class="container">
         <div class="row g-4">
           <!-- SIDEBAR -->
           <AccountSidebar :show-camera="isProfilePage" :custom-name="profileData?.name" :preview-avatar="avatarPreview" @change-avatar="triggerFileInput" />

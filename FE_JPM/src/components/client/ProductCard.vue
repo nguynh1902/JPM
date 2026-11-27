@@ -267,7 +267,7 @@ function handleRequestQuote() {
 }
 
 .product-card .card-title {
-  font-family: var(--jpm-font-heading, 'Raleway', sans-serif);
+  font-family: var(--jpm-font-heading, var(--jpm-font-family));
   font-size: 0.95rem;
   font-weight: 700;
   line-height: 1.4;

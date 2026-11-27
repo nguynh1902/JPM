@@ -5,22 +5,14 @@
       <div class="container prefooter-marine-container">
         <div class="prefooter-marine-content">
           <span class="prefooter-eyebrow">Tư vấn kỹ thuật OEM</span>
-          <h2 class="home-banner-title mb-2">
+          <h2 class="prefooter-banner-title mb-2">
             Chưa tìm đúng <span class="text-danger">mã phụ tùng</span><br class="d-none d-sm-inline" /> cho đời máy của bạn?
           </h2>
-          <p class="home-banner-desc mb-3">
+          <p class="prefooter-banner-desc mb-3">
             Gửi số máy (Serial), model động cơ hoặc ảnh linh kiện — kỹ thuật viên JPM đối chiếu sơ đồ rã máy và phản hồi báo giá minh bạch trong vòng 24 giờ.
           </p>
 
           <div class="prefooter-actions d-flex flex-wrap align-items-center gap-2">
-            <a
-              :href="'tel:' + (settings.company_hotline || '0909123456').replace(/\s+/g, '')"
-              class="btn prefooter-btn prefooter-btn-navy-outline d-inline-flex align-items-center justify-content-center gap-2 text-nowrap"
-            >
-              <i class="bi bi-telephone"></i>
-              <span>{{ settings.company_hotline || '0909 123 456' }}</span>
-            </a>
-
             <a
               v-if="settings.social_zalo"
               :href="settings.social_zalo"
@@ -39,6 +31,14 @@
               <span>Liên hệ kỹ thuật</span>
               <i class="bi bi-arrow-right"></i>
             </router-link>
+
+            <a
+              :href="'tel:' + (settings.company_hotline || '0909123456').replace(/\s+/g, '')"
+              class="btn prefooter-btn prefooter-btn-navy-outline d-inline-flex align-items-center justify-content-center gap-2 text-nowrap"
+            >
+              <i class="bi bi-telephone"></i>
+              <span>{{ settings.company_hotline || '0909 123 456' }}</span>
+            </a>
           </div>
         </div>
       </div>
@@ -219,9 +219,13 @@ export default {
 }
 
 /* Banner Tàu Thuyền Full-Width Dính Liền Footer (Dùng chung toàn Client) */
-.prefooter-marine-banner {
+.footer-wrapper .prefooter-marine-banner {
   background-color: #ffffff;
   background-position: center bottom;
+  min-height: 360px;
+  max-height: 460px;
+  aspect-ratio: 3.6 / 1;
+  padding: 0;
   margin-bottom: 0;
   border-bottom: none;
   position: relative;
@@ -240,7 +244,7 @@ export default {
 }
 
 .prefooter-marine-container {
-  padding-top: clamp(22px, 3vw, 44px);
+  padding-top: clamp(30px, 3.6vw, 48px);
   padding-bottom: 0;
   position: relative;
   z-index: 3;
@@ -253,9 +257,9 @@ export default {
 .prefooter-eyebrow {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   font-family: var(--heading-font, 'Inter', sans-serif);
-  font-size: 0.74rem;
+  font-size: 0.76rem;
   font-weight: 700;
   letter-spacing: 1.8px;
   text-transform: uppercase;
@@ -266,33 +270,57 @@ export default {
 .prefooter-eyebrow::before {
   content: "";
   display: inline-block;
-  width: 16px;
+  width: 18px;
   height: 1.5px;
   background-color: var(--jpm-color-red-marine, #F82249);
 }
 
-.prefooter-btn {
+.prefooter-banner-title {
+  font-family: var(--heading-font, 'Inter', sans-serif);
+  font-size: clamp(1.65rem, 2.25vw, 2.05rem);
+  font-weight: 800;
+  line-height: 1.22;
+  color: var(--jpm-color-navy-dark, #0A1128);
+  letter-spacing: -0.02em;
+}
+
+.prefooter-banner-desc {
+  font-family: var(--default-font, 'Inter', sans-serif);
+  font-size: 0.98rem;
+  font-weight: 400;
+  line-height: 1.62;
+  color: #334155;
+  max-width: 520px;
+}
+
+.footer-wrapper .prefooter-btn {
   height: var(--jpm-control-height, 37px);
-  padding: 0 18px !important;
+  padding: 0 20px !important;
   font-size: 0.92rem;
   font-weight: 600;
-  border-radius: 50px !important;
+  border-radius: var(--jpm-radius-control, 7px) !important;
   box-shadow: none !important;
 }
 
-.prefooter-btn-navy-outline {
+.footer-wrapper .prefooter-btn-navy-outline {
   background-color: #ffffff !important;
   border: 1px solid #cbd5e1 !important;
   color: var(--jpm-color-navy-dark, #0A1128) !important;
 }
 
-.prefooter-btn-navy-outline:hover {
+.footer-wrapper .prefooter-btn-navy-outline:hover {
   background-color: var(--jpm-color-navy-dark, #0A1128) !important;
   border-color: var(--jpm-color-navy-dark, #0A1128) !important;
   color: #ffffff !important;
 }
 
 @media (max-width: 991.98px) {
+  .footer-wrapper .prefooter-marine-banner {
+    min-height: 320px;
+    max-height: none;
+    aspect-ratio: auto;
+    padding: 36px 0;
+  }
   .prefooter-marine-container {
     padding-top: 0;
   }
@@ -307,10 +335,13 @@ export default {
 }
 
 @media (max-width: 767.98px) {
+  .prefooter-banner-title {
+    font-size: 1.35rem;
+  }
   .prefooter-actions {
     width: 100%;
   }
-  .prefooter-btn {
+  .footer-wrapper .prefooter-btn {
     flex: 1 1 auto;
   }
 }
@@ -321,7 +352,7 @@ export default {
 }
 
 .footer-brand-title {
-  font-family: var(--heading-font, var(--jpm-font-heading, 'Raleway', 'Montserrat', 'Roboto', sans-serif));
+  font-family: var(--heading-font, var(--jpm-font-heading, 'Inter', sans-serif));
   font-size: 1.625rem; /* ~26px - Rõ ràng, uy lực, chuẩn nhận diện thương hiệu cao cấp */
   font-weight: 800;
   color: #ffffff;

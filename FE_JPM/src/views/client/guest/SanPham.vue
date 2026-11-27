@@ -24,7 +24,7 @@
                 {{ settings.store_banner_title }}
               </template>
               <template v-else>
-                Cửa Hàng <span class="text-danger">Phụ Tùng</span>
+                Cửa hàng <span class="text-danger">phụ tùng</span>
               </template>
             </h1>
 
@@ -45,9 +45,9 @@
           
           <!-- SIDEBAR -->
           <div class="jpm-split-sidebar mb-4 mb-lg-0">
-            <div class="card sticky-sidebar catalog-sidebar-card shadow-sm">
+            <div class="card sticky-sidebar catalog-sidebar-card">
               <div class="catalog-sidebar-header">
-                <h3 class="catalog-sidebar-title mb-0">Bộ Lọc</h3>
+                <h3 class="catalog-sidebar-title mb-0">Bộ lọc</h3>
                 <button 
                   type="button"
                   class="btn-reset-sidebar-filter" 
@@ -83,7 +83,7 @@
                 <!-- DANH MỤC THIẾT BỊ -->
                 <div class="sidebar-category-section">
                   <div class="sidebar-section-title mb-2">
-                    Danh Mục Thiết Bị
+                    Danh mục thiết bị
                   </div>
                   <div v-if="isLoadingCategories" class="text-center py-4">
                     <div class="spinner-border spinner-border-sm text-danger"></div>
@@ -170,7 +170,7 @@
                     Kết quả: "{{ searchKeyword }}"
                   </template>
                   <template v-else>
-                    Tất Cả Sản Phẩm
+                    Tất cả sản phẩm
                   </template>
                 </h4>
 
@@ -207,7 +207,7 @@
                 <div class="empty-icon-circle mb-3">
                   <i class="bi bi-box-seam"></i>
                 </div>
-                <h5 class="empty-state-title mb-2">Chưa Có Sản Phẩm Phù Hợp</h5>
+                <h5 class="empty-state-title mb-2">Chưa có sản phẩm phù hợp</h5>
                 <p class="empty-state-desc mb-4 mx-auto">Rất tiếc, hiện chưa có sản phẩm nào phù hợp với bộ lọc bạn đã chọn.</p>
                 <div>
                   <button 
@@ -515,7 +515,7 @@ const scrollToProducts = () => {
 
 /* ── PAGE TITLE (MATCHING GIO HANG) ── */
 .jpm-page-title {
-  font-family: var(--heading-font, 'Raleway', 'Montserrat', sans-serif);
+  font-family: var(--heading-font, var(--jpm-font-family));
   font-size: 1.5rem;
   font-weight: 700;
   color: var(--heading-color, #0A1128);
@@ -537,7 +537,7 @@ const scrollToProducts = () => {
   align-items: center;
   justify-content: space-between;
   padding: 0 12px;
-  height: 34px;
+  height: var(--jpm-control-height, 37px);
   min-width: 145px;
   border-radius: var(--jpm-radius-control, 7px);
   border: 1px solid #e2e8f0;
@@ -642,7 +642,7 @@ const scrollToProducts = () => {
 }
 
 .empty-state-title {
-  font-family: var(--heading-font, 'Raleway', sans-serif);
+  font-family: var(--heading-font, var(--jpm-font-family));
   font-weight: 700;
   font-size: 1.15rem;
   color: #0A1128;

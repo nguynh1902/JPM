@@ -113,8 +113,8 @@
     <div class="card border-0 jpm-card">
       <div class="card-header jpm-card-header flex-wrap gap-2">
         <h5 class="jpm-card-title">Địa chỉ giao hàng</h5>
-        <!-- Nút Thêm mới gọn nhẹ màu xanh Primary -->
-        <button type="button" class="btn btn-blue-primary btn-add-address" @click="openAddAddressModal">
+        <!-- Nút Thêm mới chuẩn Deep Navy đồng bộ Editorial UI -->
+        <button type="button" class="btn btn-navy-primary btn-add-address" @click="openAddAddressModal">
           <i class="bi bi-plus-lg"></i>
           <span>Thêm địa chỉ mới</span>
         </button>
@@ -557,7 +557,7 @@ const setDefault = (id) => {
 
 <style scoped>
 .tk-heading {
-  font-family: var(--heading-font, 'Raleway', sans-serif);
+  font-family: var(--heading-font, var(--jpm-font-family));
   color: var(--jpm-color-navy-dark, #0A1128);
   font-weight: 700;
   letter-spacing: -0.01em;
@@ -617,37 +617,17 @@ const setDefault = (id) => {
   line-height: 1.45;
 }
 
-/* Empty State Wrap */
-.empty-icon-wrap {
-  width: 72px;
-  height: 72px;
-  border-radius: 50%;
-  background-color: rgba(248, 34, 73, 0.06);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--jpm-color-red-marine, #F82249);
-  font-size: 2rem;
-}
-
 .form-control-plaintext::placeholder {
-  color: var(--jpm-color-navy-deep, #0A1128) !important;
-  opacity: 0.4 !important;
-  font-weight: 500 !important;
+  color: #94a3b8 !important;
+  opacity: 1 !important;
+  font-weight: 400 !important;
 }
 
-/* Nút Thêm địa chỉ mới: Kích thước nhỏ gọn, màu kế thừa từ .btn-blue-primary trong main.css */
+/* Nút Thêm địa chỉ mới kế thừa chiều cao 37px & màu Deep Navy từ .btn-navy-primary */
 .btn-add-address {
-  height: 34px !important;
-  min-height: 34px !important;
+  font-size: 0.85rem !important;
   padding: 0 14px !important;
-  font-size: 0.8125rem !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
   gap: 6px !important;
-  white-space: nowrap !important;
-  line-height: 1 !important;
 }
 
 .tk-modal-check-row {

@@ -24,15 +24,9 @@
               <span class="hero-title-white">{{ settings.homepage_hero_subtitle || 'PHỤ TÙNG TÀU THUYỀN NHẬT BẢN' }}</span>
             </h1>
 
-            <p data-aos="fade-up" data-aos-delay="150" class="hero-subtitle">
+            <p data-aos="fade-up" data-aos-delay="150" class="hero-subtitle mb-0">
               Đồng hành cùng mọi chuyến ra khơi. Cung cấp động cơ, hệ thống lái & thiết bị tàu thủy đạt chuẩn quốc tế.
             </p>
-
-            <div data-aos="fade-up" data-aos-delay="200">
-              <router-link to="/tra-cuu" class="btn btn-hero-cta text-white d-inline-flex align-items-center justify-content-center">
-                Tra Cứu Phụ Tùng
-              </router-link>
-            </div>
           </div>
         </div>
       </div>
@@ -267,16 +261,16 @@
          KHỐI 4: GIỚI THIỆU & TẠI SAO CHỌN JPM MARINE (Split + KPI + Quy trình 01→04)
          ======================================================== -->
     <section class="home-about-section bg-white">
-      <div class="container-fluid about-wide-container">
-        <!-- Tầng trên: Trái thông tin + 4 chỉ số | Phải Card khung ảnh bo góc -->
+      <div class="container">
+        <!-- Tầng trên: Trái thông tin + 4 chỉ số | Phải ảnh chuẩn 2:1 căn trục 1320px -->
         <div class="row align-items-center g-4 g-lg-5" data-aos="fade-up">
-          <div class="col-lg-5">
+          <div class="col-lg-6 pe-lg-4">
             <span class="banner-eyebrow">Về JPM Marine</span>
             <h2 class="home-about-title mb-3">
               Tại sao chọn <span class="banner-title-accent">JPM Marine</span>
             </h2>
             <p class="home-about-desc mb-4">
-              JPM Marine là đơn vị chuyên cung ứng phụ tùng động cơ thủy chính hãng OEM từ Nhật Bản và Âu Mỹ, đồng hành cùng xưởng sửa chữa, cảng tàu và chủ phương tiện trên toàn quốc.
+              JPM Marine là đơn vị chuyên cung ứng phụ tùng động cơ thủy chính hãng OEM từ Nhật Bản, đồng hành cùng xưởng sửa chữa, cảng tàu và chủ phương tiện trên toàn quốc.
             </p>
 
             <!-- 4 Chỉ số nổi bật -->
@@ -300,7 +294,7 @@
             </div>
 
             <div class="d-flex flex-wrap align-items-center gap-2">
-              <router-link to="/san-pham" class="btn btn-about-outline">
+              <router-link to="/san-pham" class="btn btn-about-primary">
                 <span>Khám phá cửa hàng</span>
                 <i class="bi bi-arrow-right ms-2"></i>
               </router-link>
@@ -310,7 +304,7 @@
             </div>
           </div>
 
-          <div class="col-lg-7">
+          <div class="col-lg-6">
             <div class="about-media-card">
               <img
                 src="/client/image/home1_banner.png"
@@ -322,49 +316,58 @@
           </div>
         </div>
 
-        <!-- Tầng dưới: Quy trình đặt hàng & tra cứu kỹ thuật 01 → 04 -->
+        <!-- Tầng dưới: Dải Quy trình 01 -> 02 -> 03 -> 04 (Đường nối ngang giữa các bước) -->
         <div class="about-process-wrapper mt-5 pt-4" data-aos="fade-up" data-aos-delay="100">
           <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-4">
             <h3 class="about-process-heading mb-0">Quy trình tra cứu &amp; cung ứng</h3>
             <span class="about-process-sub">Chính xác theo dải số serial &amp; model động cơ</span>
           </div>
 
-          <div class="row g-3 g-lg-4 about-process-grid">
-            <div class="col-12 col-sm-6 col-lg-3 about-process-col">
-              <div class="about-step-card">
+          <div class="row g-4 about-process-grid">
+            <div class="col-12 col-sm-6 col-lg-3">
+              <div class="about-step-item">
                 <div class="about-step-top">
                   <span class="about-step-num">01</span>
-                  <i class="bi bi-arrow-right about-step-arrow d-none d-lg-inline-flex"></i>
+                  <div class="about-step-connector d-none d-lg-flex">
+                    <span class="about-step-line"></span>
+                    <i class="bi bi-chevron-right about-step-arrow"></i>
+                  </div>
                 </div>
                 <h6 class="about-step-title">Chọn hãng &amp; Model</h6>
                 <p class="about-step-desc">Lọc nhanh theo thương hiệu, loại động cơ, công suất và năm sản xuất.</p>
               </div>
             </div>
 
-            <div class="col-12 col-sm-6 col-lg-3 about-process-col">
-              <div class="about-step-card">
+            <div class="col-12 col-sm-6 col-lg-3">
+              <div class="about-step-item">
                 <div class="about-step-top">
                   <span class="about-step-num">02</span>
-                  <i class="bi bi-arrow-right about-step-arrow d-none d-lg-inline-flex"></i>
+                  <div class="about-step-connector d-none d-lg-flex">
+                    <span class="about-step-line"></span>
+                    <i class="bi bi-chevron-right about-step-arrow"></i>
+                  </div>
                 </div>
                 <h6 class="about-step-title">Đối chiếu sơ đồ máy</h6>
                 <p class="about-step-desc">Kiểm tra trực tiếp vị trí linh kiện và mã thay thế Supersession chuẩn OEM.</p>
               </div>
             </div>
 
-            <div class="col-12 col-sm-6 col-lg-3 about-process-col">
-              <div class="about-step-card">
+            <div class="col-12 col-sm-6 col-lg-3">
+              <div class="about-step-item">
                 <div class="about-step-top">
                   <span class="about-step-num">03</span>
-                  <i class="bi bi-arrow-right about-step-arrow d-none d-lg-inline-flex"></i>
+                  <div class="about-step-connector d-none d-lg-flex">
+                    <span class="about-step-line"></span>
+                    <i class="bi bi-chevron-right about-step-arrow"></i>
+                  </div>
                 </div>
                 <h6 class="about-step-title">Đặt hàng &amp; Báo giá</h6>
                 <p class="about-step-desc">Thanh toán linh hoạt sản phẩm có sẵn hoặc gửi yêu cầu báo giá minh bạch.</p>
               </div>
             </div>
 
-            <div class="col-12 col-sm-6 col-lg-3 about-process-col">
-              <div class="about-step-card">
+            <div class="col-12 col-sm-6 col-lg-3">
+              <div class="about-step-item">
                 <div class="about-step-top">
                   <span class="about-step-num">04</span>
                 </div>
@@ -787,7 +790,7 @@ export default {
    Đồng bộ bảng màu Luxury (Deep Navy #0A1128 & Cool Slate) với các phần trên
    ============================================================== */
 .news-category {
-  font-family: var(--heading-font, 'Raleway', sans-serif);
+  font-family: var(--heading-font, var(--jpm-font-family));
   color: var(--jpm-color-red-marine, #F82249); /* Chuẩn Đỏ Red Marine đồng bộ Tin Tức & Chi Tiết Tin Tức */
   font-weight: 700;
   font-size: 0.74rem;
@@ -797,7 +800,7 @@ export default {
 }
 
 .news-hero-title {
-  font-family: var(--heading-font, 'Raleway', sans-serif) !important;
+  font-family: var(--heading-font, var(--jpm-font-family)) !important;
   font-size: 1.35rem;
   color: var(--heading-color, #0A1128);
   font-weight: 700 !important;
@@ -806,7 +809,7 @@ export default {
 }
 
 .news-card-title {
-  font-family: var(--heading-font, 'Raleway', sans-serif) !important;
+  font-family: var(--heading-font, var(--jpm-font-family)) !important;
   font-size: 1.05rem;
   color: var(--heading-color, #0A1128);
   font-weight: 700 !important;
@@ -855,7 +858,7 @@ export default {
 
 .section-more-link {
   color: var(--heading-color, #0A1128);
-  font-family: var(--heading-font, 'Raleway', sans-serif);
+  font-family: var(--heading-font, var(--jpm-font-family));
   font-size: 0.95rem;
   font-weight: 600;
   text-decoration: none;
@@ -916,7 +919,7 @@ export default {
   aspect-ratio: 16/10;
 }
 .video-badge {
-  font-family: var(--heading-font, 'Raleway', sans-serif);
+  font-family: var(--heading-font, var(--jpm-font-family));
   font-size: 0.7rem;
   font-weight: 600;
   letter-spacing: 0.6px;
@@ -980,7 +983,7 @@ export default {
 .filter-console-card .filter-label {
   display: inline-flex;
   align-items: center;
-  font-family: var(--heading-font, 'Raleway', sans-serif);
+  font-family: var(--heading-font, var(--jpm-font-family));
   font-size: 0.8125rem;
   font-weight: 600;
   color: var(--heading-color, #0A1128);
@@ -1087,20 +1090,12 @@ export default {
 }
 
 /* ==============================================================
-   Khối 4: Giới thiệu & Quy trình JPM Marine (Split + KPI + Card ảnh)
+   Khối 4: Giới thiệu & Quy trình JPM Marine (Split 50/50 + KPI + Stepper 01->04)
    ============================================================== */
 .home-about-section {
-  padding: 56px 0;
+  padding: 52px 0;
   border-top: 1px solid #e2e8f0;
   border-bottom: 1px solid #e2e8f0;
-}
-
-.about-wide-container {
-  width: 100%;
-  max-width: 1720px;
-  padding-left: clamp(20px, 3vw, 48px) !important;
-  padding-right: clamp(20px, 3vw, 48px) !important;
-  margin: 0 auto;
 }
 
 .banner-eyebrow {
@@ -1109,7 +1104,7 @@ export default {
   gap: 10px;
   margin-bottom: 8px;
   font-family: var(--heading-font, 'Inter', sans-serif);
-  font-size: 0.74rem;
+  font-size: 0.76rem;
   font-weight: 700;
   letter-spacing: 1.8px;
   text-transform: uppercase;
@@ -1126,11 +1121,11 @@ export default {
 
 .home-about-title {
   font-family: var(--heading-font, 'Inter', sans-serif);
-  font-size: clamp(1.55rem, 2.2vw, 1.95rem);
+  font-size: clamp(1.65rem, 2.25vw, 2.05rem);
   font-weight: 800;
   color: var(--jpm-color-navy-dark, #0A1128);
   letter-spacing: -0.02em;
-  line-height: 1.25;
+  line-height: 1.22;
 }
 
 .banner-title-accent {
@@ -1139,44 +1134,45 @@ export default {
 
 .home-about-desc {
   font-family: var(--default-font, 'Inter', sans-serif);
-  font-size: 0.96rem;
-  color: #475569;
-  line-height: 1.65;
-  max-width: 560px;
+  font-size: 0.98rem;
+  color: #334155;
+  line-height: 1.62;
+  max-width: 520px;
 }
 
 .about-metrics-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 12px 16px;
-  padding: 14px 0;
+  gap: 12px 18px;
+  padding: 16px 0;
   border-top: 1px solid #e2e8f0;
   border-bottom: 1px solid #e2e8f0;
 }
 
 .about-metric-val {
   font-family: var(--jpm-font-mono, 'Roboto Mono', monospace);
-  font-size: 1.45rem;
+  font-size: 1.68rem;
   font-weight: 700;
   color: var(--jpm-color-navy-dark, #0A1128);
-  line-height: 1.15;
+  line-height: 1.12;
   letter-spacing: -0.02em;
 }
 
 .about-metric-label {
-  font-size: 0.78rem;
-  color: #64748b;
-  margin-top: 3px;
+  font-size: 0.84rem;
+  color: #475569;
+  font-weight: 500;
+  margin-top: 4px;
   line-height: 1.3;
 }
 
-.btn-about-outline {
+.btn-about-primary {
   height: var(--jpm-control-height, 37px);
-  padding: 0 18px;
-  border-radius: 50px !important;
-  border: 1px solid #cbd5e1 !important;
-  background-color: #ffffff !important;
-  color: var(--jpm-color-navy-dark, #0A1128) !important;
+  padding: 0 20px;
+  border-radius: var(--jpm-radius-control, 7px) !important;
+  border: 1px solid var(--jpm-color-navy-dark, #0A1128) !important;
+  background-color: var(--jpm-color-navy-dark, #0A1128) !important;
+  color: #ffffff !important;
   font-size: 0.92rem;
   font-weight: 600;
   display: inline-flex;
@@ -1185,10 +1181,11 @@ export default {
   transition: all 0.2s ease;
 }
 
-.btn-about-outline:hover {
-  border-color: var(--jpm-color-navy-dark, #0A1128) !important;
-  background-color: var(--jpm-color-navy-dark, #0A1128) !important;
+.btn-about-primary:hover {
+  border-color: var(--jpm-btn-navy-hover, #1B2852) !important;
+  background-color: var(--jpm-btn-navy-hover, #1B2852) !important;
   color: #ffffff !important;
+  transform: translateY(-1px);
 }
 
 .btn-about-link {
@@ -1206,12 +1203,11 @@ export default {
   color: var(--jpm-color-red-marine, #F82249) !important;
 }
 
-/* Card hiển thị ảnh động cơ thủy JPM Marine */
+/* Card hiển thị ảnh động cơ thủy JPM Marine (Tỉ lệ 2:1 giữ trọn lá cờ & chân vịt) */
 .about-media-card {
   width: 100%;
-  aspect-ratio: 16 / 9;
-  min-height: 270px;
-  max-height: 410px;
+  aspect-ratio: 2 / 1;
+  min-height: 250px;
   border-radius: 14px;
   overflow: hidden;
   border: 1px solid #dbe4ef;
@@ -1224,11 +1220,11 @@ export default {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center center;
+  object-position: center 45%;
   display: block;
 }
 
-/* Tầng dưới: Quy trình 01 -> 04 */
+/* Tầng dưới: Dải Stepper 01 -> 04 nối mạch ngang */
 .about-process-wrapper {
   border-top: 1px solid #e2e8f0;
 }
@@ -1241,57 +1237,67 @@ export default {
 }
 
 .about-process-sub {
-  font-size: 0.85rem;
+  font-size: 0.88rem;
   color: #64748b;
   font-weight: 500;
 }
 
-.about-step-card {
+.about-step-item {
   height: 100%;
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
-  border-radius: var(--jpm-radius-card, 10px);
-  padding: 16px 18px;
 }
 
 .about-step-top {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  margin-bottom: 10px;
+  gap: 10px;
+  margin-bottom: 12px;
 }
 
 .about-step-num {
-  width: 28px;
-  height: 28px;
+  width: 30px;
+  height: 30px;
   border-radius: 50%;
   border: 1px solid #cbd5e1;
-  background: #ffffff;
+  background: #f8fafc;
   color: var(--jpm-color-navy-dark, #0A1128);
   font-family: var(--jpm-font-mono, 'Roboto Mono', monospace);
-  font-size: 0.78rem;
+  font-size: 0.8rem;
   font-weight: 700;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
+}
+
+.about-step-connector {
+  flex: 1;
+  align-items: center;
+  gap: 4px;
+}
+
+.about-step-line {
+  flex: 1;
+  height: 1px;
+  background-color: #dbe4ef;
 }
 
 .about-step-arrow {
   color: #94a3b8;
-  font-size: 0.95rem;
+  font-size: 0.78rem;
+  line-height: 1;
 }
 
 .about-step-title {
-  font-size: 0.96rem;
+  font-size: 1rem;
   font-weight: 700;
   color: var(--jpm-color-navy-dark, #0A1128);
-  margin-bottom: 5px;
+  margin-bottom: 6px;
 }
 
 .about-step-desc {
-  font-size: 0.86rem;
-  color: #64748b;
-  line-height: 1.5;
+  font-size: 0.9rem;
+  color: #475569;
+  line-height: 1.55;
   margin-bottom: 0;
 }
 
@@ -1300,7 +1306,7 @@ export default {
     padding: 40px 0;
   }
   .about-media-card {
-    min-height: 220px;
+    min-height: 210px;
   }
 }
 

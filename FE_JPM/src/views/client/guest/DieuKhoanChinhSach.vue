@@ -24,7 +24,7 @@
             </div>
 
             <h1 class="store-banner-title mb-2">
-              Điều Khoản <span class="text-danger">&amp; Chính Sách</span>
+              Điều khoản <span class="text-danger">&amp; chính sách</span>
             </h1>
 
             <p class="store-banner-subtitle mb-0">

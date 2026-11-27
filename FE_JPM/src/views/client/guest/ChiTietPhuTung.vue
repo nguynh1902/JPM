@@ -1,6 +1,52 @@
 <template>
   <div class="main-page">
-    <section class="section inner-page-section product-detail-section bg-white">
+    <!-- HEADER BAND EDITORIAL CHUẨN CLIENT -->
+    <div v-if="!isLoading && !isError && phuTung" class="jpm-page-header-band">
+      <div class="container">
+        <span class="jpm-eyebrow">Tra cứu kỹ thuật OEM</span>
+        <h1 class="jpm-page-title">
+          Chi tiết <span class="text-danger">phụ tùng</span>
+        </h1>
+        <p class="jpm-page-subtitle">
+          Tra cứu thông số, sơ đồ lắp ráp và mã phụ tùng động cơ thủy chính hãng.
+        </p>
+
+        <!-- Breadcrumb & Back to Diagram -->
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 pt-3 mt-2 border-top" style="border-color: #f1f5f9 !important;">
+          <nav aria-label="breadcrumb" class="custom-breadcrumb">
+            <ol class="breadcrumb mb-0 align-items-center">
+              <li class="breadcrumb-item">
+                <router-link to="/" class="text-decoration-none text-muted d-flex align-items-center">
+                  <i class="bi bi-house-door-fill me-1"></i> Trang chủ
+                </router-link>
+              </li>
+              <li class="breadcrumb-item"><span class="text-muted">Danh mục</span></li>
+              <li class="breadcrumb-item" v-if="phuTung.thuong_hieu">
+                <router-link v-if="phuTung.thuong_hieu?.code" :to="`/thuong-hieu/${phuTung.thuong_hieu.code.toLowerCase()}`" class="text-decoration-none text-muted text-uppercase">
+                  {{ phuTung.thuong_hieu.name }}
+                </router-link>
+                <span v-else class="text-muted text-uppercase">{{ phuTung.thuong_hieu.name }}</span>
+              </li>
+              <li class="breadcrumb-item active fw-bold" style="color: var(--heading-color);" aria-current="page">
+                {{ phuTung.nhom_phu_tung ? phuTung.nhom_phu_tung.ten_nhom : 'Phụ tùng' }}
+              </li>
+            </ol>
+          </nav>
+
+          <button 
+            type="button"
+            @click="goBack" 
+            class="btn-back-diagram"
+            :title="fromModelId ? 'Quay lại sơ đồ' : 'Quay lại tra cứu'"
+          >
+            <i class="bi bi-arrow-left"></i>
+            <span>{{ fromModelId ? 'Quay lại sơ đồ' : 'Quay lại tra cứu' }}</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <section class="section py-4 product-detail-section bg-white">
       <div class="container">
         
         <!-- SKELETON LOADING -->
@@ -20,56 +66,10 @@
         </div>
 
         <template v-else>
-          <!-- HEADER & BREADCRUMB -->
-          <div class="mb-4" data-aos="fade-down">
-            <!-- Title chuẩn hóa đồng bộ với các trang khác -->
-            <div class="page-title-box mb-2">
-              <h2 class="jpm-page-title">
-                Chi Tiết <span style="color: var(--jpm-color-red-marine, #F82249);">Phụ Tùng</span>
-              </h2>
-              <p class="text-muted mb-0">
-                Tra cứu thông số, sơ đồ lắp ráp và mã phụ tùng động cơ thủy chính hãng.
-              </p>
-            </div>
-
-            <!-- Modern Breadcrumb & Back to Diagram -->
-            <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 pt-2">
-              <nav aria-label="breadcrumb" class="custom-breadcrumb">
-                <ol class="breadcrumb mb-0 align-items-center">
-                  <li class="breadcrumb-item">
-                    <router-link to="/" class="text-decoration-none text-muted d-flex align-items-center">
-                      <i class="bi bi-house-door-fill me-1"></i> Trang chủ
-                    </router-link>
-                  </li>
-                  <li class="breadcrumb-item"><span class="text-muted">Danh mục</span></li>
-                  <li class="breadcrumb-item" v-if="phuTung.thuong_hieu">
-                    <router-link v-if="phuTung.thuong_hieu?.code" :to="`/thuong-hieu/${phuTung.thuong_hieu.code.toLowerCase()}`" class="text-decoration-none text-muted text-uppercase">
-                      {{ phuTung.thuong_hieu.name }}
-                    </router-link>
-                    <span v-else class="text-muted text-uppercase">{{ phuTung.thuong_hieu.name }}</span>
-                  </li>
-                  <li class="breadcrumb-item active fw-bold" style="color: var(--heading-color);" aria-current="page">
-                    {{ phuTung.nhom_phu_tung ? phuTung.nhom_phu_tung.ten_nhom : 'Phụ tùng' }}
-                  </li>
-                </ol>
-              </nav>
-
-              <button 
-                type="button"
-                @click="goBack" 
-                class="btn-back-diagram"
-                :title="fromModelId ? 'Quay lại sơ đồ' : 'Quay lại tra cứu'"
-              >
-                <i class="bi bi-arrow-left"></i>
-                <span>{{ fromModelId ? 'Quay lại sơ đồ' : 'Quay lại tra cứu' }}</span>
-              </button>
-            </div>
-          </div>
-
           <div class="row g-4 mb-3">
             
             <!-- LEFT: IMAGE GALLERY (col-lg-5) -->
-            <div class="col-lg-5" data-aos="fade-right">
+            <div class="col-lg-5">
               <div class="product-gallery">
                 
                 <!-- Main Image Card (Luxury Marine Canvas) -->
@@ -1392,7 +1392,7 @@ watch(compatibleModels, (models) => {
 }
 
 .product-main-title {
-  font-family: var(--heading-font, 'Raleway', sans-serif);
+  font-family: var(--heading-font, var(--jpm-font-family));
   font-size: 1.45rem;
   font-weight: 700;
   color: var(--heading-color, #0A1128);

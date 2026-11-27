@@ -29,7 +29,7 @@
                 {{ settings.support_banner_title }}
               </template>
               <template v-else>
-                Trung Tâm <span class="text-danger">Hỗ Trợ &amp; Kỹ Thuật</span>
+                Trung tâm <span class="text-danger">hỗ trợ &amp; kỹ thuật</span>
               </template>
             </h1>
 
@@ -55,7 +55,7 @@
               <span class="contact-overline-text">LIÊN HỆ</span>
             </div>
 
-            <h2 class="contact-heading mb-3">Giữ Kết Nối</h2>
+            <h2 class="contact-heading mb-3">Giữ kết nối</h2>
 
             <p class="contact-desc text-muted mb-4">
               JPM luôn sẵn sàng lắng nghe và hỗ trợ bạn trong mọi vấn đề liên quan đến phụ tùng, dịch vụ kỹ thuật và chính sách bảo hành. Đừng ngần ngại liên hệ với chúng tôi.
@@ -137,7 +137,7 @@
 
           <!-- CỘT PHẢI: FORM GỬI LỜI NHẮN ("Your Details" EQUIVALENT) -->
           <div class="col-lg-6 ps-lg-4">
-            <h2 class="contact-form-heading mb-1">Gửi Lời Nhắn</h2>
+            <h2 class="contact-form-heading mb-1">Gửi lời nhắn</h2>
             <p class="text-muted mb-4" style="font-size: 0.9rem;">
               Nếu bạn cần hỗ trợ kỹ thuật hoặc kiểm tra đơn hàng, vui lòng để lại thông tin bên dưới.
             </p>
@@ -219,25 +219,28 @@
         </div>
       </section>
 
-      <!-- 4.5. QUY TRÌNH TIẾP NHẬN & HỖ TRỢ KỸ THUẬT 01 -> 04 (Kiểu Ảnh 1) -->
-      <section class="support-process-band mb-5 pb-4 border-bottom">
+      <!-- 4.5. QUY TRÌNH TIẾP NHẬN & HỖ TRỢ KỸ THUẬT 01 -> 04 (Đồng bộ stepper Trang chủ) -->
+      <section class="support-process-band pt-0 mb-5 pb-5 border-bottom">
         <div class="d-flex flex-wrap align-items-end justify-content-between gap-2 mb-4">
           <div>
             <div class="d-flex align-items-center gap-3 mb-2">
               <span class="contact-overline-line"></span>
               <span class="contact-overline-text">QUY TRÌNH HỖ TRỢ</span>
             </div>
-            <h2 class="contact-heading mb-0">Cách Chúng Tôi Xử Lý Yêu Cầu</h2>
+            <h2 class="contact-heading mb-0">Cách chúng tôi xử lý yêu cầu</h2>
           </div>
-          <span class="text-muted" style="font-size: 0.88rem;">Phản hồi kỹ thuật &amp; báo giá trong vòng 24 giờ</span>
+          <span class="support-process-sub">Phản hồi kỹ thuật &amp; báo giá trong vòng 24 giờ</span>
         </div>
 
-        <div class="row g-3 g-lg-4">
+        <div class="row g-4">
           <div class="col-12 col-sm-6 col-lg-3">
-            <div class="support-step-card">
-              <div class="support-step-head">
+            <div class="support-step-item">
+              <div class="support-step-top">
                 <span class="support-step-num">01</span>
-                <i class="bi bi-arrow-right support-step-arrow d-none d-lg-inline-flex"></i>
+                <div class="support-step-connector d-none d-lg-flex">
+                  <span class="support-step-line"></span>
+                  <i class="bi bi-chevron-right support-step-arrow"></i>
+                </div>
               </div>
               <h6 class="support-step-title">Tiếp nhận thông tin</h6>
               <p class="support-step-desc">Gửi mã phụ tùng, số máy (Serial), model hoặc ảnh chụp chi tiết qua form / Zalo.</p>
@@ -245,10 +248,13 @@
           </div>
 
           <div class="col-12 col-sm-6 col-lg-3">
-            <div class="support-step-card">
-              <div class="support-step-head">
+            <div class="support-step-item">
+              <div class="support-step-top">
                 <span class="support-step-num">02</span>
-                <i class="bi bi-arrow-right support-step-arrow d-none d-lg-inline-flex"></i>
+                <div class="support-step-connector d-none d-lg-flex">
+                  <span class="support-step-line"></span>
+                  <i class="bi bi-chevron-right support-step-arrow"></i>
+                </div>
               </div>
               <h6 class="support-step-title">Đối chiếu kỹ thuật</h6>
               <p class="support-step-desc">Kỹ sư JPM kiểm tra sơ đồ rã máy chính hãng và mã thay thế mới nhất.</p>
@@ -256,10 +262,13 @@
           </div>
 
           <div class="col-12 col-sm-6 col-lg-3">
-            <div class="support-step-card">
-              <div class="support-step-head">
+            <div class="support-step-item">
+              <div class="support-step-top">
                 <span class="support-step-num">03</span>
-                <i class="bi bi-arrow-right support-step-arrow d-none d-lg-inline-flex"></i>
+                <div class="support-step-connector d-none d-lg-flex">
+                  <span class="support-step-line"></span>
+                  <i class="bi bi-chevron-right support-step-arrow"></i>
+                </div>
               </div>
               <h6 class="support-step-title">Xác nhận &amp; Bảo hành</h6>
               <p class="support-step-desc">Báo giá minh bạch, thông báo tiến độ kho hàng và chính sách bảo hành OEM.</p>
@@ -267,8 +276,8 @@
           </div>
 
           <div class="col-12 col-sm-6 col-lg-3">
-            <div class="support-step-card">
-              <div class="support-step-head">
+            <div class="support-step-item">
+              <div class="support-step-top">
                 <span class="support-step-num">04</span>
               </div>
               <h6 class="support-step-title">Bàn giao &amp; Đồng hành</h6>
@@ -286,7 +295,7 @@
               <span class="contact-overline-line"></span>
               <span class="contact-overline-text">FAQS</span>
             </div>
-            <h2 class="contact-heading mb-3">Câu Hỏi<br>Thường Gặp</h2>
+            <h2 class="contact-heading mb-3">Câu hỏi<br>thường gặp</h2>
             <p class="contact-desc text-muted mb-0">Tổng hợp các câu hỏi và giải đáp chi tiết nhất về dịch vụ, sản phẩm và chính sách của JPM.</p>
             
             <!-- Search Bar for FAQs (Chuẩn Hóa theo search-input-box Client 2026) -->
@@ -544,7 +553,7 @@ export default {
 }
 
 .contact-overline-text {
-  font-family: var(--heading-font, 'Raleway', sans-serif);
+  font-family: var(--heading-font, var(--jpm-font-family));
   font-size: 0.8rem;
   font-weight: 700;
   letter-spacing: 1px;
@@ -552,7 +561,7 @@ export default {
 }
 
 .contact-heading {
-  font-family: var(--heading-font, 'Raleway', sans-serif);
+  font-family: var(--heading-font, var(--jpm-font-family));
   font-size: clamp(1.25rem, 1.8vw, 1.45rem);
   font-weight: 700;
   color: var(--jpm-color-navy-dark, #0A1128);
@@ -575,7 +584,7 @@ export default {
 }
 
 .contact-item-title {
-  font-family: var(--heading-font, 'Raleway', sans-serif);
+  font-family: var(--heading-font, var(--jpm-font-family));
   font-size: 0.92rem;
   font-weight: 700;
   color: var(--jpm-color-navy-dark, #0A1128);
@@ -595,7 +604,7 @@ a.contact-item-desc:hover {
 }
 
 .contact-social-label {
-  font-family: var(--heading-font, 'Raleway', sans-serif);
+  font-family: var(--heading-font, var(--jpm-font-family));
   font-size: 0.78rem;
   font-weight: 700;
   letter-spacing: 1.5px;
@@ -625,7 +634,7 @@ a.contact-item-desc:hover {
 
 /* ── 3. RIGHT COLUMN: YOUR DETAILS FORM ── */
 .contact-form-heading {
-  font-family: var(--heading-font, 'Raleway', sans-serif);
+  font-family: var(--heading-font, var(--jpm-font-family));
   font-size: clamp(1.25rem, 1.8vw, 1.45rem);
   font-weight: 700;
   color: var(--jpm-color-navy-dark, #0A1128);
@@ -635,7 +644,7 @@ a.contact-item-desc:hover {
 
 .contact-field-label {
   display: block;
-  font-family: var(--heading-font, 'Raleway', sans-serif);
+  font-family: var(--heading-font, var(--jpm-font-family));
   font-size: 0.8rem;
   font-weight: 700;
   letter-spacing: 0.5px;
@@ -674,7 +683,7 @@ textarea.contact-field-input {
 }
 
 .btn-contact-submit {
-  font-family: var(--heading-font, 'Raleway', sans-serif);
+  font-family: var(--heading-font, var(--jpm-font-family));
   font-weight: 700;
   font-size: 0.92rem;
   letter-spacing: 0.5px;
@@ -774,53 +783,69 @@ textarea.contact-field-input {
   color: #f82249;
 }
 
-/* ── 4.5. QUY TRÌNH HỖ TRỢ 01 -> 04 ── */
-.support-step-card {
-  height: 100%;
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
-  border-radius: var(--jpm-radius-card, 10px);
-  padding: 16px 18px;
+/* ── 4.5. QUY TRÌNH HỖ TRỢ 01 -> 04 (Đồng bộ Stepper nối mạch Trang chủ) ── */
+.support-process-sub {
+  font-size: 0.88rem;
+  color: #64748b;
+  font-weight: 500;
 }
 
-.support-step-head {
+.support-step-item {
+  height: 100%;
+}
+
+.support-step-top {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  margin-bottom: 10px;
+  gap: 10px;
+  margin-bottom: 12px;
 }
 
 .support-step-num {
-  width: 28px;
-  height: 28px;
+  width: 30px;
+  height: 30px;
   border-radius: 50%;
   background: #ffffff;
   border: 1px solid #cbd5e1;
   color: var(--jpm-color-navy-dark, #0A1128);
   font-family: var(--jpm-font-mono, 'Roboto Mono', monospace);
-  font-size: 0.78rem;
+  font-size: 0.8rem;
   font-weight: 700;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
+}
+
+.support-step-connector {
+  flex: 1;
+  align-items: center;
+  gap: 4px;
+}
+
+.support-step-line {
+  flex: 1;
+  height: 1px;
+  background-color: #dbe4ef;
 }
 
 .support-step-arrow {
   color: #94a3b8;
-  font-size: 0.95rem;
+  font-size: 0.78rem;
+  line-height: 1;
 }
 
 .support-step-title {
-  font-size: 0.96rem;
+  font-size: 1rem;
   font-weight: 700;
   color: var(--jpm-color-navy-dark, #0A1128);
-  margin-bottom: 5px;
+  margin-bottom: 6px;
 }
 
 .support-step-desc {
-  font-size: 0.86rem;
-  color: #64748b;
-  line-height: 1.5;
+  font-size: 0.9rem;
+  color: #475569;
+  line-height: 1.55;
   margin-bottom: 0;
 }
 
@@ -830,7 +855,7 @@ textarea.contact-field-input {
 }
 
 .client-faq-accordion .accordion-button {
-  font-family: var(--heading-font, 'Raleway', sans-serif);
+  font-family: var(--heading-font, var(--jpm-font-family));
   color: var(--jpm-color-navy-dark, #0A1128);
   font-size: 1.05rem;
   font-weight: 700;

@@ -1320,21 +1320,8 @@ const formatDate = (dateStr) => {
   justify-content: center;
   margin-top: 16px;
   border: 1px solid #e2e8f0;
-  border-radius: var(--jpm-radius-card, 12px);
-  box-shadow: 0 4px 16px rgba(10, 17, 40, 0.04);
-}
-
-.empty-icon-wrap {
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  background-color: #f8fafc;
-  border: 1px solid #e2e8f0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #64748b;
-  font-size: 1.75rem;
+  border-radius: var(--jpm-radius-card, 10px);
+  box-shadow: 0 1px 3px rgba(10, 17, 40, 0.04);
 }
 
 .order-empty-heading {
@@ -1355,8 +1342,8 @@ const formatDate = (dateStr) => {
 .lux-order-card {
   background: #ffffff;
   border: 1px solid #e2e8f0;
-  border-radius: var(--jpm-radius-card, 12px);
-  box-shadow: 0 4px 16px rgba(10, 17, 40, 0.04);
+  border-radius: var(--jpm-radius-card, 10px);
+  box-shadow: 0 1px 3px rgba(10, 17, 40, 0.04);
   overflow: hidden;
   transition: border-color 0.2s ease;
 }

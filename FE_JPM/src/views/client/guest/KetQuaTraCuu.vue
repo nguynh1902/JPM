@@ -29,7 +29,7 @@
                 {{ settings.lookup_banner_title }}
               </template>
               <template v-else>
-                Tra Cứu <span class="text-danger">Phụ Tùng</span>
+                Tra cứu <span class="text-danger">phụ tùng</span>
               </template>
             </h1>
 
@@ -46,11 +46,11 @@
       <div class="container">
 
         <!-- SUB HEADER KHI CÓ BỘ LỌC ĐANG CHỌN -->
-        <div v-if="!isFilterEmpty" class="row mb-4" data-aos="fade-down">
+        <div v-if="!isFilterEmpty" class="row mb-4">
           <div class="col-12">
             <template v-if="filters.dong_co_model_id && !filters.nhom_phu_tung_id && !filters.keyword">
               <h2 class="jpm-page-title">
-                Sơ Đồ Phụ Tùng <span class="text-danger">Model {{ modelLabel }}</span>
+                Sơ đồ phụ tùng <span class="text-danger">Model {{ modelLabel }}</span>
               </h2>
               <p class="text-muted">
                 Hiển thị danh sách các nhóm sơ đồ phụ tùng chi tiết cho model này.
@@ -58,7 +58,7 @@
             </template>
             <template v-else>
               <h2 class="jpm-page-title">
-                Kết Quả Tra Cứu <span class="text-danger">Phụ Tùng</span>
+                Kết quả tra cứu <span class="text-danger">phụ tùng</span>
               </h2>
               <p class="text-muted">
                 Tìm thấy <strong class="text-danger">{{ pagination.total }}</strong> kết quả phù hợp cho tìm kiếm của bạn.
@@ -72,11 +72,11 @@
 
           <!-- BÊN TRÁI: BỘ LỌC SIDEBAR -->
           <div class="jpm-split-sidebar mb-4 mb-lg-0">
-            <div class="card sticky-sidebar catalog-sidebar-card shadow-sm">
+            <div class="card sticky-sidebar catalog-sidebar-card">
               
               <!-- 1. HEADER BỘ LỌC CHUẨN LUXURY MINIMALISM -->
               <div class="catalog-sidebar-header">
-                <h3 class="catalog-sidebar-title mb-0">Bộ Lọc</h3>
+                <h3 class="catalog-sidebar-title mb-0">Bộ lọc</h3>
                 <button 
                   type="button"
                   class="btn-reset-sidebar-filter" 
@@ -995,7 +995,7 @@ export default {
 
 /* ── TIÊU ĐỀ TRANG & BỐ CỤC ── */
 .jpm-page-title {
-  font-family: var(--heading-font, 'Raleway', 'Montserrat', sans-serif);
+  font-family: var(--heading-font, var(--jpm-font-family));
   font-size: 1.5rem;
   font-weight: 700;
   color: var(--heading-color, #0A1128);
@@ -1081,7 +1081,7 @@ export default {
 
 /* Tab switcher pills for EPC results */
 .btn-tab-pill {
-  font-family: var(--heading-font, 'Raleway', sans-serif);
+  font-family: var(--heading-font, var(--jpm-font-family));
   font-weight: 700;
   font-size: 0.88rem;
   padding: 6px 16px;
@@ -1190,7 +1190,7 @@ export default {
   border: 1px solid #e2e8f0;
   background: #ffffff;
   color: #475569;
-  font-family: var(--heading-font, 'Raleway', sans-serif);
+  font-family: var(--heading-font, var(--jpm-font-family));
   font-size: 0.9rem;
   font-weight: 600;
   cursor: pointer;
@@ -1302,7 +1302,7 @@ export default {
 }
 
 .product-card .card-title {
-  font-family: var(--heading-font, 'Raleway', sans-serif);
+  font-family: var(--heading-font, var(--jpm-font-family));
   font-size: 0.95rem;
   font-weight: 700;
   line-height: 1.4;
@@ -1325,7 +1325,7 @@ export default {
 
 /* ── DIAGRAM CARD TYPOGRAPHY & ACTION (ĐỒNG BỘ 100% PRODUCT CARD) ── */
 .diagram-card-title {
-  font-family: var(--heading-font, 'Raleway', sans-serif);
+  font-family: var(--heading-font, var(--jpm-font-family));
   font-size: 0.95rem;
   font-weight: 700;
   line-height: 1.4;
@@ -1402,7 +1402,7 @@ export default {
 }
 
 .price-value {
-  font-family: var(--heading-font, 'Raleway', sans-serif);
+  font-family: var(--heading-font, var(--jpm-font-family));
   font-size: 1.15rem;
   font-weight: 800;
 }

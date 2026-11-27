@@ -1,6 +1,48 @@
 <template>
   <div class="main-page">
-    <section class="section inner-page-section product-detail-section bg-white">
+    <!-- HEADER BAND EDITORIAL CHUẨN CLIENT -->
+    <div v-if="!isLoading && !isError && sanPham" class="jpm-page-header-band">
+      <div class="container">
+        <span class="jpm-eyebrow">Cửa hàng phụ tùng</span>
+        <h1 class="jpm-page-title">
+          Chi tiết <span class="text-danger">sản phẩm</span>
+        </h1>
+        <p class="jpm-page-subtitle">
+          Thông tin chi tiết, thông số kỹ thuật và báo giá vật tư hàng hải chính hãng.
+        </p>
+
+        <!-- Breadcrumb & Back to Shop -->
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 pt-3 mt-2 border-top" style="border-color: #f1f5f9 !important;">
+          <nav aria-label="breadcrumb" class="custom-breadcrumb">
+            <ol class="breadcrumb mb-0 align-items-center">
+              <li class="breadcrumb-item">
+                <router-link to="/" class="text-decoration-none text-muted d-flex align-items-center">
+                  <i class="bi bi-house-door-fill me-1"></i> Trang chủ
+                </router-link>
+              </li>
+              <li class="breadcrumb-item">
+                <router-link to="/san-pham" class="text-decoration-none text-muted">Cửa hàng</router-link>
+                  </li>
+                  <li class="breadcrumb-item active fw-bold" style="color: var(--heading-color);" aria-current="page">
+                    {{ sanPham.danh_muc ? sanPham.danh_muc.ten_danh_muc : 'Sản phẩm' }}
+                  </li>
+                </ol>
+              </nav>
+
+              <button 
+                type="button"
+                @click="goBackStore" 
+                class="btn-back-diagram"
+                title="Quay lại cửa hàng"
+              >
+                <i class="bi bi-arrow-left"></i>
+                <span>Quay lại cửa hàng</span>
+              </button>
+            </div>
+      </div>
+    </div>
+
+    <section class="section py-4 product-detail-section bg-white">
       <div class="container">
         
         <!-- SKELETON LOADING -->
@@ -20,52 +62,10 @@
         </div>
 
         <template v-else>
-          <!-- HEADER & BREADCRUMB -->
-          <div class="mb-4" data-aos="fade-down">
-            <!-- Title chuẩn hóa đồng bộ với các trang khác -->
-            <div class="page-title-box mb-2">
-              <h2 class="jpm-page-title">
-                Chi Tiết <span style="color: var(--jpm-color-red-marine, #F82249);">Sản Phẩm</span>
-              </h2>
-              <p class="text-muted mb-0">
-                Thông tin chi tiết, thông số kỹ thuật và báo giá vật tư hàng hải chính hãng.
-              </p>
-            </div>
-
-            <!-- Modern Breadcrumb & Back to Shop -->
-            <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 pt-2">
-              <nav aria-label="breadcrumb" class="custom-breadcrumb">
-                <ol class="breadcrumb mb-0 align-items-center">
-                  <li class="breadcrumb-item">
-                    <router-link to="/" class="text-decoration-none text-muted d-flex align-items-center">
-                      <i class="bi bi-house-door-fill me-1"></i> Trang chủ
-                    </router-link>
-                  </li>
-                  <li class="breadcrumb-item">
-                    <router-link to="/san-pham" class="text-decoration-none text-muted">Cửa hàng</router-link>
-                  </li>
-                  <li class="breadcrumb-item active fw-bold" style="color: var(--heading-color);" aria-current="page">
-                    {{ sanPham.danh_muc ? sanPham.danh_muc.ten_danh_muc : 'Sản phẩm' }}
-                  </li>
-                </ol>
-              </nav>
-
-              <button 
-                type="button"
-                @click="goBackStore" 
-                class="btn-back-diagram"
-                title="Quay lại cửa hàng"
-              >
-                <i class="bi bi-arrow-left"></i>
-                <span>Quay lại cửa hàng</span>
-              </button>
-            </div>
-          </div>
-
           <div class="row g-4 mb-3">
             
             <!-- LEFT: IMAGE GALLERY (col-lg-5) -->
-            <div class="col-lg-5" data-aos="fade-right">
+            <div class="col-lg-5">
               <div class="product-gallery">
                 
                 <!-- Main Image Card (Luxury Marine Canvas) -->
@@ -993,7 +993,7 @@ onMounted(() => {
 /* ── SECTION TITLE LUXURY ── */
 .section-catalog-title {
   color: var(--heading-color, #0A1128);
-  font-family: var(--heading-font, 'Raleway', sans-serif);
+  font-family: var(--heading-font, var(--jpm-font-family));
   font-size: 1.25rem;
   letter-spacing: -0.2px;
 }
@@ -1031,7 +1031,7 @@ onMounted(() => {
 }
 
 .product-main-title {
-  font-family: var(--heading-font, 'Raleway', sans-serif);
+  font-family: var(--heading-font, var(--jpm-font-family));
   font-size: 1.45rem;
   font-weight: 700;
   color: var(--heading-color, #0A1128);

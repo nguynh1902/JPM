@@ -1,20 +1,17 @@
 <template>
   <div class="interactive-diagram-page main-page">
-    <section class="section inner-page-section">
+    <!-- HEADER BAND EDITORIAL CHUẨN CLIENT -->
+    <div class="jpm-page-header-band">
       <div class="container-fluid px-3 px-lg-4 px-xxl-5">
-      
-      <!-- PAGE TITLE & BREADCRUMB -->
-      <div class="mb-4" data-aos="fade-down">
-        <div class="page-title-box mb-2">
-          <h2 class="jpm-page-title">
-            Sơ đồ chi tiết <span class="text-danger">{{ modelName }}</span>
-          </h2>
-          <p class="text-muted mb-0">
-            Chọn cụm chi tiết trên sơ đồ để xem danh sách phụ tùng tương ứng.
-          </p>
-        </div>
+        <span class="jpm-eyebrow">Sơ đồ phân rã phụ tùng</span>
+        <h1 class="jpm-page-title">
+          Sơ đồ chi tiết <span class="text-danger">{{ modelName }}</span>
+        </h1>
+        <p class="jpm-page-subtitle">
+          Chọn cụm chi tiết trên sơ đồ để xem danh sách phụ tùng tương ứng.
+        </p>
 
-        <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 pt-2">
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 pt-3 mt-2 border-top" style="border-color: #f1f5f9 !important;">
           <nav aria-label="breadcrumb" class="custom-breadcrumb">
             <ol class="breadcrumb mb-0 align-items-center">
               <li class="breadcrumb-item">
@@ -47,6 +44,10 @@
           </button>
         </div>
       </div>
+    </div>
+
+    <section class="section py-4">
+      <div class="container-fluid px-3 px-lg-4 px-xxl-5">
 
       
       
@@ -63,29 +64,31 @@
       <!-- EMPTY STATE -->
       <template v-else-if="diagramsList.length === 0">
 
-        <div class="p-5 text-center my-5" data-aos="fade-up">
+        <div class="p-5 text-center my-5">
           <div class="py-5">
-            <i class="bi bi-diagram-3 text-muted mb-3" style="font-size: 5rem; opacity: 0.3;"></i>
+            <div class="empty-icon-wrap mx-auto mb-3">
+              <i class="bi bi-diagram-3"></i>
+            </div>
             <h3 class="fw-bold text-dark mb-3">Sơ đồ đang được cập nhật</h3>
             <p class="text-muted mb-4" style="max-width: 600px; margin: 0 auto; font-size: 1.05rem; line-height: 1.6;">
               Model <strong class="text-danger">{{ modelName }}</strong> hiện tại chưa có dữ liệu sơ đồ phân rã phụ tùng nào. Vui lòng quay lại sau hoặc liên hệ với bộ phận kỹ thuật của JPM Marine để được hỗ trợ tra cứu trực tiếp.
             </p>
-            <router-link to="/san-pham" class="btn btn-danger px-4 py-2 fw-bold text-uppercase mt-2 btn-back-shop">
-              <i class="bi bi-cart-dash me-2"></i> Trở về Cửa Hàng
+            <router-link to="/san-pham" class="btn btn-danger px-4 fw-semibold mt-2 btn-back-shop">
+              <i class="bi bi-cart-dash me-2"></i> Trở về cửa hàng
             </router-link>
           </div>
         </div>
       </template>
 
       <!-- SPLIT VIEW AREA -->
-      <div v-else class="jpm-split-layout" id="main-split-container" style="gap: 0;" data-aos="fade-up" data-aos-delay="100">
+      <div v-else class="jpm-split-layout" id="main-split-container" style="gap: 0;">
 
         
         <!-- CỘT TRÁI: Cụm Chi Tiết -->
         <div class="jpm-split-sidebar dynamic-sidebar mb-4 mb-lg-0 pe-lg-2" :style="{ width: sidebarRatio + '%' }">
-          <div class="card sticky-sidebar catalog-sidebar-card shadow-sm" style="height: 660px;">
+          <div class="card sticky-sidebar catalog-sidebar-card" style="height: 660px;">
             <div class="catalog-sidebar-header">
-              <h3 class="catalog-sidebar-title mb-0">Cụm Chi Tiết</h3>
+              <h3 class="catalog-sidebar-title mb-0">Cụm chi tiết</h3>
             </div>
             <div class="catalog-sidebar-body">
               <div class="catalog-nav-list custom-scrollbar" style="max-height: calc(660px - 80px); overflow-y: auto; overflow-x: hidden;">
@@ -886,15 +889,15 @@ const startSidebarDrag = () => {
    1. UNIFIED CARD PANELS (DEC-01 STANDARD)
    ======================================================== */
 .diagram-panel-card {
-  border-radius: var(--jpm-radius-card, 12px) !important;
+  border-radius: var(--jpm-radius-card, 10px) !important;
   border: 1px solid #e2e8f0 !important;
   background: #ffffff;
-  box-shadow: 0 4px 14px rgba(10, 17, 40, 0.03);
+  box-shadow: 0 1px 3px rgba(10, 17, 40, 0.04);
   overflow: hidden;
 }
 
 .jpm-card-title {
-  font-family: var(--heading-font, 'Raleway', sans-serif);
+  font-family: var(--heading-font, var(--jpm-font-family));
   font-weight: 700;
   font-size: 0.95rem;
   color: #0A1128;
@@ -1144,7 +1147,7 @@ const startSidebarDrag = () => {
 }
 
 .modal-title {
-  font-family: var(--heading-font, 'Raleway', sans-serif);
+  font-family: var(--heading-font, var(--jpm-font-family));
   font-weight: 700;
   font-size: 1.1rem;
   color: #0A1128;

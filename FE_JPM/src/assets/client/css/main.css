@@ -2297,26 +2297,109 @@ section,
 
 
 /* =========================================
-   GLOBAL PAGE TITLE STYLES (JPM KIT)
+   GLOBAL EDITORIAL PAGE HEADER & TITLE STYLES (JPM 2026)
 ========================================== */
+.jpm-page-header-band {
+  background: #ffffff;
+  border-bottom: 1px solid #e2e8f0;
+  padding: 24px 0 22px;
+  margin-bottom: 0;
+}
+
+.jpm-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--heading-font, 'Inter', sans-serif);
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 1.6px;
+  text-transform: uppercase;
+  color: var(--jpm-color-red-marine, #F82249);
+  margin-bottom: 8px;
+}
+
+.jpm-eyebrow::before {
+  content: "";
+  display: inline-block;
+  width: 18px;
+  height: 1.5px;
+  background-color: var(--jpm-color-red-marine, #F82249);
+  flex-shrink: 0;
+}
+
 .jpm-page-title {
   font-family: var(--heading-font) !important;
-  font-size: 1.5rem !important; /* Chuẩn 24px Desktop theo 10_Client_UI_Standard.md */
-  font-weight: 700 !important; /* Chuẩn H2 Weight 700 sang trọng, dứt khoát */
+  font-size: clamp(1.45rem, 1.9vw, 1.8rem) !important;
+  font-weight: 800 !important;
   color: var(--heading-color, #0A1128) !important;
   text-transform: none !important;
-  letter-spacing: -0.3px !important;
-  line-height: 1.3 !important;
+  letter-spacing: -0.025em !important;
+  line-height: 1.24 !important;
   margin-bottom: 0.35rem !important;
 }
 
 .jpm-page-subtitle {
   font-family: var(--default-font) !important;
-  font-size: 0.875rem !important; /* 14px chuẩn Body Standard */
+  font-size: 0.94rem !important;
   font-weight: 400 !important;
-  color: var(--jpm-neutral-500, #64748B) !important;
-  line-height: 1.5 !important;
+  color: var(--jpm-neutral-600, #475569) !important;
+  line-height: 1.55 !important;
   margin-bottom: 0 !important;
+}
+
+/* Deep Navy Solid Primary Button (Đồng bộ Khám phá cửa hàng & Editorial UI) */
+.btn-navy-primary {
+  height: var(--jpm-control-height, 37px) !important;
+  min-height: var(--jpm-control-height, 37px) !important;
+  padding: 0 18px !important;
+  background-color: var(--jpm-color-navy-dark, #0A1128) !important;
+  border: 1px solid var(--jpm-color-navy-dark, #0A1128) !important;
+  color: #ffffff !important;
+  font-family: var(--default-font, 'Inter', sans-serif) !important;
+  font-size: 0.875rem !important;
+  font-weight: 600 !important;
+  border-radius: var(--jpm-radius-control, 7px) !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  white-space: nowrap !important;
+  box-shadow: none !important;
+  transition: all 0.2s ease !important;
+  line-height: 1 !important;
+  text-decoration: none !important;
+}
+
+.btn-navy-primary:hover:not(:disabled) {
+  background-color: var(--jpm-btn-navy-hover, #1B2852) !important;
+  border-color: var(--jpm-btn-navy-hover, #1B2852) !important;
+  color: #ffffff !important;
+  transform: translateY(-1px) !important;
+  box-shadow: none !important;
+}
+
+.btn-navy-primary:active:not(:disabled) {
+  background-color: var(--jpm-btn-navy-active, #060B1A) !important;
+  border-color: var(--jpm-btn-navy-active, #060B1A) !important;
+  transform: translateY(0) !important;
+}
+
+/* Clean Architectural Empty State Box (Đồng bộ toàn Client) */
+.jpm-empty-icon-box,
+.empty-icon-wrap,
+.empty-icon-circle {
+  width: 56px;
+  height: 56px;
+  border-radius: var(--jpm-radius-card, 10px) !important;
+  background-color: #f8fafc !important;
+  border: 1px solid #e2e8f0 !important;
+  color: var(--jpm-color-navy-dark, #0A1128) !important;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.45rem !important;
+  box-shadow: 0 1px 3px rgba(10, 17, 40, 0.04);
 }
 
 /* =========================================
@@ -2429,11 +2512,11 @@ section,
   transform: translateY(0) !important;
 }
 
-/* 4. Unified Action Buttons (Thống nhất 100% kích thước 40px & chuẩn Red Marine toàn Client) */
+/* 4. Unified Action Buttons (Thống nhất 100% kích thước --jpm-control-height: 37px toàn Client) */
 .btn-action-primary {
-  height: 40px !important;
-  min-height: 40px !important;
-  max-height: 40px !important;
+  height: var(--jpm-control-height, 37px) !important;
+  min-height: var(--jpm-control-height, 37px) !important;
+  max-height: var(--jpm-control-height, 37px) !important;
   padding: 0 18px !important;
   background-color: var(--jpm-color-red-marine, #F82249) !important;
   border: 1px solid var(--jpm-color-red-marine, #F82249) !important;
@@ -2441,7 +2524,7 @@ section,
   font-family: var(--default-font) !important;
   font-size: 0.875rem !important;
   font-weight: 600 !important;
-  border-radius: var(--jpm-radius-control, 8px) !important;
+  border-radius: var(--jpm-radius-control, 7px) !important;
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
@@ -2474,9 +2557,9 @@ section,
 }
 
 .btn-action-secondary {
-  height: 40px !important;
-  min-height: 40px !important;
-  max-height: 40px !important;
+  height: var(--jpm-control-height, 37px) !important;
+  min-height: var(--jpm-control-height, 37px) !important;
+  max-height: var(--jpm-control-height, 37px) !important;
   padding: 0 18px !important;
   background-color: #ffffff !important;
   border: 1px solid #cbd5e1 !important;
@@ -2484,7 +2567,7 @@ section,
   font-family: var(--default-font) !important;
   font-size: 0.875rem !important;
   font-weight: 600 !important;
-  border-radius: var(--jpm-radius-control, 8px) !important;
+  border-radius: var(--jpm-radius-control, 7px) !important;
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
@@ -2510,14 +2593,14 @@ section,
 }
 
 .btn-action-header {
-  height: 40px !important;
-  min-height: 40px !important;
-  max-height: 40px !important;
+  height: var(--jpm-control-height, 37px) !important;
+  min-height: var(--jpm-control-height, 37px) !important;
+  max-height: var(--jpm-control-height, 37px) !important;
   padding: 0 18px !important;
   font-size: 0.875rem !important;
   font-weight: 600 !important;
-  line-height: 38px !important;
-  border-radius: var(--jpm-radius-control, 8px) !important;
+  line-height: 1 !important;
+  border-radius: var(--jpm-radius-control, 7px) !important;
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
@@ -2531,17 +2614,17 @@ section,
   line-height: 1 !important;
 }
 
-/* 5. Unified JPM Card & Header Component (Đồng bộ khung Card toàn Client) */
+/* 5. Unified JPM Card & Header Component (Đồng bộ Editorial Luxury viền mảnh) */
 .jpm-card {
-  box-shadow: 0 4px 16px rgba(10, 17, 40, 0.04) !important;
+  box-shadow: 0 1px 3px rgba(10, 17, 40, 0.04) !important;
   border: 1px solid #e2e8f0 !important;
-  border-radius: var(--jpm-radius-card, 12px) !important;
+  border-radius: var(--jpm-radius-card, 10px) !important;
   background-color: #ffffff !important;
 }
 
 .jpm-card-header {
-  padding: 16px 24px !important;
-  min-height: 70px !important;
+  padding: 14px 24px !important;
+  min-height: 58px !important;
   background-color: transparent !important;
   border-bottom: 1px solid #e2e8f0 !important;
   display: flex !important;
@@ -4961,14 +5044,14 @@ a.btn-shopee-outline:hover {
 }
 
 /* ═════════════════════════════════════════════════════════════════
-   STANDARDIZED INNER PAGE HERO BANNER (~250px)
-   Áp dụng đồng bộ cho: Cửa Hàng, Tra Cứu, Tin Tức, Hỗ Trợ
+   STANDARDIZED INNER PAGE HERO BANNER (Editorial Marine 2026)
+   Đồng bộ 100% ngôn ngữ Trang chủ (Eyebrow gạch đỏ + Surface phẳng sắc nét)
    ═════════════════════════════════════════════════════════════════ */
 .store-hero-banner {
   width: 100%;
-  height: clamp(178px, 14vw, 206px);
-  min-height: 174px;
-  max-height: 206px;
+  height: clamp(164px, 12.5vw, 192px);
+  min-height: 160px;
+  max-height: 192px;
   background-color: #ffffff;
   background-size: cover;
   background-position: right center;
@@ -4985,7 +5068,7 @@ a.btn-shopee-outline:hover {
 }
 
 .store-hero-banner.banner-no-img {
-  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 40%, #eef4f9 75%, #e2eaf4 100%);
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 70%, #f1f5f9 100%);
 }
 
 .store-banner-overlay {
@@ -4998,11 +5081,11 @@ a.btn-shopee-outline:hover {
   background: linear-gradient(
     90deg,
     #ffffff 0%,
-    #ffffff 19%,
-    rgba(255, 255, 255, 0.94) 31%,
-    rgba(255, 255, 255, 0.72) 42%,
-    rgba(255, 255, 255, 0.22) 53%,
-    transparent 64%,
+    #ffffff 22%,
+    rgba(255, 255, 255, 0.94) 34%,
+    rgba(255, 255, 255, 0.72) 45%,
+    rgba(255, 255, 255, 0.22) 56%,
+    transparent 68%,
     transparent 100%
   );
   pointer-events: none;
@@ -5010,12 +5093,12 @@ a.btn-shopee-outline:hover {
 
 .banner-placeholder-pattern {
   position: absolute;
-  right: 6%;
+  right: 7%;
   top: 50%;
   transform: translateY(-50%);
-  font-size: clamp(84px, 11vw, 136px);
+  font-size: clamp(80px, 9.5vw, 118px);
   color: #0a1128;
-  opacity: 0.05;
+  opacity: 0.032;
   pointer-events: none;
   z-index: 1;
   line-height: 1;
@@ -5023,37 +5106,28 @@ a.btn-shopee-outline:hover {
 }
 
 .store-banner-content {
-  animation: bannerFadeInLeft 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-@keyframes bannerFadeInLeft {
-  from {
-    opacity: 0;
-    transform: translateX(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
+  position: relative;
 }
 
 .store-banner-badge {
   font-family: var(--default-font);
-  font-size: 0.78rem;
+  font-size: 0.74rem;
   font-weight: 700;
-  letter-spacing: 1.4px;
+  letter-spacing: 1.6px;
   text-transform: uppercase;
   color: var(--accent-color, #F82249);
   line-height: 1.2;
 }
 
+/* Chuyển dấu chấm tròn cũ thành nét gạch đỏ Editorial đồng bộ Trang chủ */
 .store-banner-badge .badge-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
+  width: 18px;
+  height: 1.5px;
+  border-radius: 1px;
   background-color: var(--accent-color, #F82249);
   display: inline-block;
-  box-shadow: 0 0 6px rgba(248, 34, 73, 0.45);
+  box-shadow: none;
+  flex-shrink: 0;
 }
 
 .store-banner-badge .badge-divider {
@@ -5063,24 +5137,24 @@ a.btn-shopee-outline:hover {
 .store-banner-badge .badge-sub {
   color: #64748b;
   font-weight: 600;
-  letter-spacing: 1px;
+  letter-spacing: 1.1px;
 }
 
 .store-banner-title {
   font-family: var(--heading-font);
-  font-size: clamp(1.75rem, 2.35vw, 2.15rem);
+  font-size: clamp(1.6rem, 2.2vw, 2.02rem);
   font-weight: 800;
   color: #0a1128;
-  line-height: 1.18;
+  line-height: 1.2;
   letter-spacing: -0.025em;
 }
 
 .store-banner-subtitle {
-  font-size: 0.98rem;
+  font-size: 0.96rem;
   font-weight: 400;
-  color: #334155;
+  color: #475569;
   line-height: 1.58;
-  max-width: 520px;
+  max-width: 540px;
 }
 
 @media (max-width: 991.98px) {
@@ -5196,10 +5270,10 @@ a.btn-shopee-outline:hover {
 .catalog-sidebar-card,
 .index-page .account-sidebar-card,
 .account-sidebar-card {
-  border-radius: var(--jpm-radius-card, 12px) !important;
+  border-radius: var(--jpm-radius-card, 10px) !important;
   border: 1px solid var(--jpm-neutral-200, #E2E8F0) !important;
   background: #ffffff;
-  box-shadow: 0 4px 14px rgba(10, 17, 40, 0.03) !important;
+  box-shadow: 0 1px 3px rgba(10, 17, 40, 0.04) !important;
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -5208,19 +5282,19 @@ a.btn-shopee-outline:hover {
 @media (min-width: 992px) {
   .sticky-sidebar {
     position: sticky;
-    top: 86px;
+    top: 82px;
     z-index: 100;
   }
 }
 
 .catalog-sidebar-header {
-  height: 54px;
-  min-height: 54px;
-  padding: 0 20px;
+  height: 50px;
+  min-height: 50px;
+  padding: 0 18px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid #e2e8f0;
   background: #ffffff;
   box-sizing: border-box;
   flex-shrink: 0;
@@ -6046,7 +6120,7 @@ a.btn-shopee-outline:hover {
 
 .lux-btn,
 .lux-btn-sm {
-  border-radius: var(--jpm-radius-control, 8px) !important;
+  border-radius: var(--jpm-radius-control, 7px) !important;
   font-weight: 600 !important;
   display: inline-flex;
   align-items: center;
@@ -6056,8 +6130,8 @@ a.btn-shopee-outline:hover {
   transition: all 0.2s ease;
 }
 
-.lux-btn { height: 40px; padding: 0 20px; font-size: 0.875rem !important; }
-.lux-btn-sm { height: 36px; padding: 0 14px; font-size: 0.82rem !important; }
+.lux-btn { height: var(--jpm-control-height, 37px); padding: 0 20px; font-size: 0.875rem !important; }
+.lux-btn-sm { height: 34px; padding: 0 14px; font-size: 0.82rem !important; }
 
 .lux-btn.btn-outline-secondary,
 .lux-btn-sm.btn-outline-secondary {
@@ -6146,7 +6220,7 @@ a.btn-shopee-outline:hover {
   font-family: var(--default-font, 'Inter', sans-serif);
   font-size: 0.78rem !important;
   font-weight: 600;
-  border-radius: var(--jpm-radius-control, 8px);
+  border-radius: var(--jpm-radius-control, 7px);
   border: 1px solid #e2e8f0;
   background-color: #ffffff;
   color: #64748b;
@@ -6165,9 +6239,9 @@ a.btn-shopee-outline:hover {
 }
 
 .btn-card-action-primary:hover {
-  color: var(--jpm-color-blue-electric, #0284C7);
-  border-color: var(--jpm-color-blue-electric, #0284C7);
-  background-color: rgba(2, 132, 199, 0.06);
+  color: var(--jpm-color-navy-dark, #0A1128);
+  border-color: var(--jpm-color-navy-dark, #0A1128);
+  background-color: rgba(10, 17, 40, 0.05);
 }
 
 .btn-card-action-danger:hover {

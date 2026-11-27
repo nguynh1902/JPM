@@ -223,22 +223,10 @@ const addToQuote = (sanPham) => {
 
 <style scoped>
 .vt-heading {
-  font-family: var(--heading-font, 'Raleway', sans-serif);
+  font-family: var(--heading-font, var(--jpm-font-family));
   color: var(--jpm-color-navy-dark, #0A1128);
   font-weight: 700;
   letter-spacing: -0.01em;
-}
-
-.empty-icon-wrap {
-  width: 72px;
-  height: 72px;
-  border-radius: 50%;
-  background-color: rgba(248, 34, 73, 0.06);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--jpm-color-red-marine, #F82249);
-  font-size: 2rem;
 }
 
 /* Card sản phẩm: kế thừa kích thước chuẩn từ .jpm-account-item-card */

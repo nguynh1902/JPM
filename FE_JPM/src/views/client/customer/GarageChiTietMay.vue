@@ -285,7 +285,7 @@ const addOneToCart = (item) => {
 
 <style scoped>
 .garage-detail-title {
-  font-family: var(--heading-font, 'Raleway', sans-serif);
+  font-family: var(--heading-font, var(--jpm-font-family));
   color: var(--jpm-color-navy-dark, #0A1128);
   font-weight: 700;
   letter-spacing: -0.01em;

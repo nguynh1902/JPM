@@ -927,7 +927,7 @@ export default {
 }
 
 .article-main-title {
-  font-family: var(--heading-font, 'Raleway', sans-serif);
+  font-family: var(--heading-font, var(--jpm-font-family));
   font-size: clamp(1.6rem, 2.6vw, 2.1rem);
   font-weight: 700;
   line-height: 1.25;

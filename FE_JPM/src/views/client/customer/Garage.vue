@@ -353,13 +353,13 @@ const addToCart = (item, qty = 1) => {
 
 <style scoped>
 .garage-main-card {
-  box-shadow: 0 4px 16px rgba(10, 17, 40, 0.04) !important;
+  box-shadow: 0 1px 3px rgba(10, 17, 40, 0.04) !important;
   border: 1px solid #e2e8f0 !important;
-  border-radius: var(--jpm-radius-card, 12px) !important;
+  border-radius: var(--jpm-radius-card, 10px) !important;
   background-color: #ffffff;
 }
 .garage-heading {
-  font-family: var(--heading-font, 'Raleway', sans-serif);
+  font-family: var(--heading-font, var(--jpm-font-family));
   color: var(--jpm-color-navy-dark, #0A1128);
   font-weight: 700;
   letter-spacing: -0.01em;
@@ -393,18 +393,6 @@ const addToCart = (item, qty = 1) => {
   font-size: 0.75rem;
   margin: 0 8px;
   user-select: none;
-}
-
-.empty-icon-wrap {
-  width: 72px;
-  height: 72px;
-  border-radius: 50%;
-  background-color: rgba(248, 34, 73, 0.06);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--jpm-color-red-marine, #F82249);
-  font-size: 2rem;
 }
 </style>
 

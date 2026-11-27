@@ -23,8 +23,8 @@
 <style scoped>
 .jpm-not-found {
   min-height: 62vh;
-  background: #f5f6fa;
-  font-family: var(--default-font, 'Inter', sans-serif);
+  background: #f8fafc;
+  font-family: var(--default-font, var(--jpm-font-family));
 }
 
 .nf-code {

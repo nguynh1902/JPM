@@ -29,7 +29,7 @@
                 {{ settings.news_banner_title }}
               </template>
               <template v-else>
-                Tin Tức <span class="text-danger">&amp; Cẩm Nang</span>
+                Tin tức <span class="text-danger">&amp; cẩm nang</span>
               </template>
             </h1>
 
@@ -51,7 +51,7 @@
         <!-- Header Row -->
         <div class="d-flex align-items-center justify-content-between mb-4">
           <div>
-            <h2 class="section-editorial-title m-0">Tiêu Điểm &amp; Bài Viết Mới Nhất</h2>
+            <h2 class="section-editorial-title m-0">Tiêu điểm &amp; bài viết mới nhất</h2>
             <p class="section-editorial-subtitle mt-1 mb-0">Cập nhật tin tức, xu hướng công nghệ hàng hải và kiến thức vận hành mới nhất</p>
           </div>
         </div>
@@ -680,7 +680,7 @@ export default {
 
 /* ── PAGE TITLE & SUBTITLE (ĐỒNG BỘ 100% CỬA HÀNG & TRA CỨU) ── */
 .jpm-page-title {
-  font-family: var(--heading-font, 'Raleway', 'Montserrat', sans-serif);
+  font-family: var(--heading-font, var(--jpm-font-family));
   font-size: 1.5rem !important;
   font-weight: 700;
   color: var(--heading-color, #0A1128) !important;
@@ -689,7 +689,7 @@ export default {
 }
 .jpm-page-subtitle,
 .inner-page-section p.text-muted {
-  font-family: var(--default-font, 'Roboto', sans-serif);
+  font-family: var(--default-font, var(--jpm-font-family));
   font-size: 0.85rem;
   font-weight: 400;
   color: #64748b !important;
@@ -698,7 +698,7 @@ export default {
 
 /* ── TYPOGRAPHY & BUTTONS (DESIGN SYSTEM 2026 - ĐỒNG BỘ TRANG CHỦ) ── */
 .section-editorial-title {
-  font-family: var(--heading-font, 'Raleway', sans-serif);
+  font-family: var(--heading-font, var(--jpm-font-family));
   font-size: 1.75rem;
   font-weight: 700;
   line-height: 1.28;
@@ -707,7 +707,7 @@ export default {
 }
 
 .section-editorial-subtitle {
-  font-family: var(--default-font, 'Roboto', sans-serif);
+  font-family: var(--default-font, var(--jpm-font-family));
   font-size: 0.85rem;
   font-weight: 400;
   line-height: 1.55;
@@ -763,7 +763,7 @@ export default {
   display: none;
 }
 .wireframe-tab-btn {
-  font-family: var(--heading-font, 'Raleway', sans-serif);
+  font-family: var(--heading-font, var(--jpm-font-family));
   background: none;
   border: none;
   border-bottom: 2px solid transparent;
@@ -814,7 +814,7 @@ export default {
   color: var(--jpm-color-red-marine, #F82249);
   border: 1.5px solid var(--jpm-color-red-marine, #F82249);
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-  font-family: var(--heading-font, 'Raleway', sans-serif);
+  font-family: var(--heading-font, var(--jpm-font-family));
   font-size: 0.92rem;
   letter-spacing: -0.1px;
 }
@@ -830,7 +830,7 @@ export default {
   color: #64748b;
   border: 1.5px solid #cbd5e1;
   transition: all 0.2s ease;
-  font-family: var(--heading-font, 'Raleway', sans-serif);
+  font-family: var(--heading-font, var(--jpm-font-family));
   font-size: 0.92rem;
 }
 .btn-load-more-outline {
@@ -852,7 +852,7 @@ export default {
 
 /* ── DANH MỤC DẠNG THANH CHỮ ĐỎ MARINE NỔI BẬT (CHUẨN RALWAY UPPERCASE) ── */
 .news-category-label {
-  font-family: var(--heading-font, 'Raleway', sans-serif) !important;
+  font-family: var(--heading-font, var(--jpm-font-family)) !important;
   font-size: 0.74rem;
   font-weight: 700;
   letter-spacing: 0.6px;
@@ -863,7 +863,7 @@ export default {
 
 /* ── TIÊU ĐỀ & TÓM TẮT BÀI VIẾT (ARTICLE TITLES & EXCERPTS) ── */
 .hero-main-title {
-  font-family: var(--heading-font, 'Raleway', sans-serif);
+  font-family: var(--heading-font, var(--jpm-font-family));
   font-size: 1.35rem;
   font-weight: 700;
   line-height: 1.35;
@@ -878,7 +878,7 @@ export default {
 }
 
 .landscape-card-title {
-  font-family: var(--heading-font, 'Raleway', sans-serif);
+  font-family: var(--heading-font, var(--jpm-font-family));
   font-size: 0.96rem;
   font-weight: 700;
   line-height: 1.45;
@@ -903,7 +903,7 @@ export default {
 }
 
 .middle-card-title {
-  font-family: var(--heading-font, 'Raleway', sans-serif);
+  font-family: var(--heading-font, var(--jpm-font-family));
   font-size: 1.25rem;
   font-weight: 700;
   line-height: 1.35;
@@ -955,7 +955,7 @@ export default {
 }
 
 .other-side-title {
-  font-family: var(--heading-font, 'Raleway', sans-serif);
+  font-family: var(--heading-font, var(--jpm-font-family));
   font-size: 1.05rem;
   font-weight: 700;
   line-height: 1.38;

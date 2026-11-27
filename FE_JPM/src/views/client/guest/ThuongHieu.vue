@@ -1,18 +1,19 @@
 <template>
   <div class="brand-catalog-page main-page">
-    <!-- ========================================================
-         MAIN CATALOG AREA (ĐỒNG BỘ 100% VỚI GIỎ HÀNG)
-         ======================================================== -->
-    <section class="catalog-content-section pb-5 inner-page-section">
+    <!-- HEADER BAND EDITORIAL CHUẨN CLIENT -->
+    <div class="jpm-page-header-band">
       <div class="container">
+        <span class="jpm-eyebrow">Phụ tùng chính hãng</span>
+        <h1 class="jpm-page-title">Tra cứu phụ tùng <span class="text-danger">{{ brandName }}</span></h1>
+        <p class="jpm-page-subtitle">Lựa chọn loại động cơ, năm sản xuất và mã lực để tìm kiếm phụ tùng chính xác nhất.</p>
+      </div>
+    </div>
 
-        <!-- Header chuẩn Giỏ Hàng -->
-        <div class="row mb-4">
-          <div class="col-12" data-aos="fade-down">
-            <h2 class="jpm-page-title">Tra Cứu Phụ Tùng <span class="text-danger">{{ brandName }}</span></h2>
-            <p class="text-muted">Lựa chọn loại động cơ, năm sản xuất và mã lực để tìm kiếm phụ tùng chính xác nhất.</p>
-          </div>
-        </div>
+    <!-- ========================================================
+         MAIN CATALOG AREA
+         ======================================================== -->
+    <section class="catalog-content-section py-4 pb-5">
+      <div class="container">
         <!-- Skeleton Loading khi đang tải dữ liệu -->
         <div v-if="isLoading" class="row g-4">
           <div class="col-lg-3">
@@ -35,13 +36,13 @@
         </div>
 
         <!-- Dữ liệu thật -->
-        <div v-else class="row g-4" data-aos="fade-up" data-aos-delay="100">
+        <div v-else class="row g-4">
           <!-- ================= BÊN TRÁI: LOẠI ĐỘNG CƠ ================= -->
           <div class="col-lg-3">
-            <div class="card catalog-sidebar-card sticky-sidebar shadow-sm">
+            <div class="card catalog-sidebar-card sticky-sidebar">
               <div class="catalog-sidebar-header">
                 <h3 class="catalog-sidebar-title mb-0">
-                  Loại Động Cơ
+                  Loại động cơ
                 </h3>
                 <button 
                   type="button"
@@ -86,11 +87,11 @@
           <!-- ================= BÊN PHẢI: BẢNG MODEL & BỘ LỌC ================= -->
           <div class="col-lg-9">
             <div class="card catalog-content-card">
-              <!-- 1. Header của Card: Đồng bộ 100% Giỏ Hàng -->
-              <div class="card-header bg-white px-4 py-3 border-bottom d-flex flex-wrap justify-content-between align-items-center gap-2" style="min-height: 60px;">
+              <!-- 1. Header của Card -->
+              <div class="card-header bg-white px-4 py-3 border-bottom d-flex flex-wrap justify-content-between align-items-center gap-2" style="min-height: 56px;">
                 <div class="d-flex align-items-center">
                   <h5 class="mb-0 jpm-card-title">
-                    Danh Sách Model — <span class="text-danger">{{ activeLoaiLabel }}</span>
+                    Danh sách model — <span class="text-danger">{{ activeLoaiLabel }}</span>
                   </h5>
                 </div>
                 <div class="d-flex align-items-center gap-2 ms-auto">
@@ -178,11 +179,11 @@
                     <thead>
                       <tr>
                         <th class="th-stt text-center">STT</th>
-                        <th class="th-model text-start">Model Động Cơ</th>
-                        <th class="th-hp text-center">Mã Lực</th>
-                        <th class="th-stroke text-center">Loại Thì</th>
+                        <th class="th-model text-start">Model động cơ</th>
+                        <th class="th-hp text-center">Mã lực</th>
+                        <th class="th-stroke text-center">Loại thì</th>
                         <th class="th-year text-center">Năm SX</th>
-                        <th class="th-action text-center">Thao Tác</th>
+                        <th class="th-action text-center">Thao tác</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -190,12 +191,12 @@
                       <tr v-if="filteredModels.length === 0">
                         <td colspan="6" class="p-0 border-0">
                           <div class="empty-state text-center py-5">
-                            <div class="empty-icon-wrap mb-2">
-                              <i class="bi bi-search fs-2 text-muted"></i>
+                            <div class="empty-icon-wrap mb-3 mx-auto">
+                              <i class="bi bi-search"></i>
                             </div>
                             <h6 class="fw-bold text-dark mb-1">Không tìm thấy model phù hợp</h6>
                             <p class="text-muted small mb-3">Vui lòng điều chỉnh hoặc xóa bớt tiêu chí lọc</p>
-                            <button class="btn btn-outline-primary btn-sm px-3 py-1" @click="clearFilters">
+                            <button class="btn btn-outline-secondary btn-sm px-3 py-1" @click="clearFilters">
                               <i class="bi bi-arrow-counterclockwise me-1"></i> Xóa tất cả bộ lọc
                             </button>
                           </div>
@@ -485,7 +486,7 @@ const filteredModels = computed(() => {
    1. PAGE HEADER (MATCHING GIO HANG)
    ======================================================== */
 .jpm-page-title {
-  font-family: var(--heading-font, 'Raleway', 'Montserrat', sans-serif);
+  font-family: var(--heading-font, var(--jpm-font-family));
   font-size: 1.5rem;
   font-weight: 700;
   color: var(--heading-color, #0A1128);
@@ -510,17 +511,17 @@ const filteredModels = computed(() => {
    3. CONTENT CARD (BẢNG MODEL & BỘ LỌC)
    ======================================================== */
 .catalog-content-card {
-  border-radius: 12px !important;
+  border-radius: var(--jpm-radius-card, 10px) !important;
   border: 1px solid #e2e8f0 !important;
   background: #ffffff;
-  box-shadow: 0 4px 20px rgba(10, 17, 40, 0.04);
+  box-shadow: 0 1px 3px rgba(10, 17, 40, 0.04);
   overflow: hidden;
 }
 
 .jpm-card-title {
-  font-family: var(--heading-font, 'Raleway', 'Montserrat', sans-serif);
+  font-family: var(--heading-font, var(--jpm-font-family));
   font-weight: 700;
-  font-size: 1.125rem;
+  font-size: 1.08rem;
   color: var(--heading-color, #0A1128);
 }
 

@@ -1,37 +1,35 @@
 <template>
   <div class="cart-page-bg main-page">
-    
-    <!-- ========================================================
-         HEADER SECTION (Khôi phục nguyên bản 2 hôm trước)
-         ======================================================== -->
-    <section id="cart" class="section pb-5 inner-page-section">
+    <!-- HEADER BAND EDITORIAL CHUẨN CLIENT -->
+    <div class="jpm-page-header-band">
       <div class="container">
-        
-        <!-- Header -->
-        <div class="row mb-4">
-          <div class="col-12 d-flex flex-wrap justify-content-between align-items-end gap-3" data-aos="fade-down">
-            <div>
-              <h2 class="jpm-page-title mb-1">Giỏ Hàng <span style="color: var(--jpm-color-red-marine, #F82249);">Báo Giá</span></h2>
-              <p class="text-muted mb-0">Kiểm tra phụ tùng và gửi yêu cầu để nhận mức chiết khấu tốt nhất từ JPM Marine.</p>
-            </div>
-            <router-link to="/san-pham" class="btn-back-diagram" title="Tiếp tục mua sắm">
-              <i class="bi bi-arrow-left"></i>
-              <span>Tiếp tục mua sắm</span>
-            </router-link>
+        <div class="d-flex flex-wrap justify-content-between align-items-end gap-3">
+          <div>
+            <span class="jpm-eyebrow">Giỏ hàng &amp; báo giá</span>
+            <h1 class="jpm-page-title mb-1">Giỏ hàng <span class="text-danger">báo giá</span></h1>
+            <p class="jpm-page-subtitle">Kiểm tra phụ tùng và gửi yêu cầu để nhận báo giá minh bạch từ JPM Marine.</p>
           </div>
+          <router-link to="/san-pham" class="btn-back-diagram" title="Tiếp tục mua sắm">
+            <i class="bi bi-arrow-left"></i>
+            <span>Tiếp tục mua sắm</span>
+          </router-link>
         </div>
-        
+      </div>
+    </div>
+
+    <section id="cart" class="section py-4 pb-5">
+      <div class="container">
         <!-- TRƯỜNG HỢP 1: GIỎ HÀNG CÓ SẢN PHẨM -->
         <div class="row gy-4" v-if="cartItems.length > 0">
           
           <!-- CỘT TRÁI (COL-LG-7 COL-XL-8): DANH SÁCH PHỤ TÙNG & QUY TRÌNH TIẾP NHẬN -->
           <div class="col-lg-7 col-xl-8">
             
-            <!-- 1. Thẻ Bảng Danh Sách Phụ Tùng Đã Chọn (Card chuẩn 12px bo góc theo Trang Chủ) -->
-            <div class="card catalog-cart-card mb-4" data-aos="fade-up">
+            <!-- 1. Thẻ Bảng Danh Sách Phụ Tùng Đã Chọn -->
+            <div class="card catalog-cart-card mb-4">
               <div class="card-header bg-white px-4 py-3 border-bottom d-flex flex-wrap justify-content-between align-items-center gap-2">
                 <div class="d-flex align-items-center">
-                  <h5 class="mb-0 jpm-card-title">Danh Sách Phụ Tùng Đã Chọn</h5>
+                  <h5 class="mb-0 jpm-card-title">Danh sách phụ tùng đã chọn</h5>
                 </div>
                 <div class="d-flex align-items-center gap-2 ms-auto">
                   <span class="badge-item-count">{{ cartItems.length }} phụ tùng</span>
@@ -50,10 +48,10 @@
                           <input class="form-check-input custom-checkbox" type="checkbox" v-model="selectAll" title="Chọn tất cả">
                         </th>
                         <th class="text-center th-thumb">Ảnh</th>
-                        <th class="text-start">Mã & Tên Phụ Tùng</th>
-                        <th class="text-center th-price">Đơn Giá</th>
-                        <th class="text-center th-qty">Số Lượng</th>
-                        <th class="text-center th-action">Thao Tác</th>
+                        <th class="text-start">Mã &amp; tên phụ tùng</th>
+                        <th class="text-center th-price">Đơn giá</th>
+                        <th class="text-center th-qty">Số lượng</th>
+                        <th class="text-center th-action">Thao tác</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -885,25 +883,25 @@ export default {
 
 /* ===== HEADER TITLE (ĐỒNG BỘ DESIGN SYSTEM 2026) ===== */
 .jpm-page-title {
-  font-family: var(--heading-font, 'Raleway', 'Montserrat', sans-serif);
+  font-family: var(--heading-font, var(--jpm-font-family));
   font-size: 1.5rem;
   font-weight: 700;
   color: var(--heading-color, #0A1128);
   letter-spacing: -0.3px;
 }
 
-/* ===== SHARED 12PX CARDS (CHUẨN PRODUCT-CARD VÀ FILTER CONSOLE TRANG CHỦ) ===== */
+/* ===== SHARED CARDS (ĐỒNG BỘ EDITORIAL LUXURY) ===== */
 .catalog-cart-card {
-  border-radius: var(--jpm-radius-card, 12px) !important;
+  border-radius: var(--jpm-radius-card, 10px) !important;
   border: 1px solid #e2e8f0 !important;
   background: #ffffff;
-  box-shadow: 0 4px 16px rgba(10, 17, 40, 0.04) !important;
+  box-shadow: 0 1px 3px rgba(10, 17, 40, 0.04) !important;
   overflow: hidden;
 }
 
 .jpm-card-title {
-  font-family: var(--heading-font, 'Raleway', 'Montserrat', sans-serif);
-  font-size: 1.125rem;
+  font-family: var(--heading-font, var(--jpm-font-family));
+  font-size: 1.08rem;
   font-weight: 700;
   color: var(--jpm-color-navy-deep, #0A1128);
   letter-spacing: -0.2px;
@@ -1037,7 +1035,7 @@ export default {
 }
 
 .part-code {
-  font-family: var(--heading-font, 'Raleway', sans-serif);
+  font-family: var(--heading-font, var(--jpm-font-family));
   font-weight: 700;
   color: var(--jpm-color-navy-deep, #0A1128);
   font-size: 0.95rem;
@@ -1338,7 +1336,7 @@ export default {
 }
 
 .no-address-box .btn-outline-danger {
-  font-family: var(--heading-font, 'Raleway', 'Montserrat', var(--default-font)) !important;
+  font-family: var(--heading-font, var(--jpm-font-family)) !important;
   font-weight: 600 !important;
   border-radius: var(--jpm-radius-control, 8px) !important;
   box-shadow: none !important;
@@ -1360,10 +1358,10 @@ export default {
 
 /* PHÂN VÙNG 3: NÚT GỬI BÁO GIÁ & BẢO ĐẢM */
 .btn-jpm-submit {
-  height: 40px;
+  height: var(--jpm-control-height, 37px);
   border-radius: var(--jpm-radius-control, 7px) !important;
   font-weight: 600;
-  font-size: 0.95rem;
+  font-size: 0.92rem;
   letter-spacing: 0.2px;
   transition: all 0.2s ease;
   box-shadow: none !important;
@@ -1425,7 +1423,7 @@ export default {
 }
 
 .empty-cart-title {
-  font-family: var(--heading-font, 'Raleway', sans-serif);
+  font-family: var(--heading-font, var(--jpm-font-family));
   font-size: 1.6rem;
   font-weight: 700;
   color: var(--heading-color, #0A1128);
