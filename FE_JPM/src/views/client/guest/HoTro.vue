@@ -240,7 +240,7 @@
                 <i class="bi bi-arrow-right support-step-arrow d-none d-lg-inline-flex"></i>
               </div>
               <h6 class="support-step-title">Tiếp nhận thông tin</h6>
-              <p class="support-step-desc">Gửi mã phụ tùng, số khung (VIN) hoặc ảnh chụp chi tiết qua form / Zalo.</p>
+              <p class="support-step-desc">Gửi mã phụ tùng, số máy (Serial), model hoặc ảnh chụp chi tiết qua form / Zalo.</p>
             </div>
           </div>
 

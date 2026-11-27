@@ -330,7 +330,7 @@
         <div class="about-process-wrapper mt-5 pt-4" data-aos="fade-up" data-aos-delay="100">
           <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-4">
             <h3 class="about-process-heading mb-0">Quy trình tra cứu &amp; cung ứng</h3>
-            <span class="about-process-sub">Chính xác theo dải số khung &amp; model động cơ</span>
+            <span class="about-process-sub">Chính xác theo dải số serial &amp; model động cơ</span>
           </div>
 
           <div class="row g-3 g-lg-4 about-process-grid">

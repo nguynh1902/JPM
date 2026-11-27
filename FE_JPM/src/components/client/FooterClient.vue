@@ -9,7 +9,7 @@
             Chưa tìm đúng <span class="text-danger">mã phụ tùng</span><br class="d-none d-sm-inline" /> cho đời máy của bạn?
           </h2>
           <p class="home-banner-desc mb-3">
-            Gửi số khung (VIN) hoặc ảnh linh kiện — kỹ thuật viên JPM đối chiếu sơ đồ rã máy và phản hồi báo giá minh bạch trong vòng 24 giờ.
+            Gửi số máy (Serial), model động cơ hoặc ảnh linh kiện — kỹ thuật viên JPM đối chiếu sơ đồ rã máy và phản hồi báo giá minh bạch trong vòng 24 giờ.
           </p>
 
           <div class="prefooter-actions d-flex flex-wrap align-items-center gap-2">
