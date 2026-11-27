@@ -75,7 +75,7 @@
                     </div>
                     
                     <div class="mb-5 col-12">
-                      <label class="form-label fw-bold text-dark" for="phoneNumber">Số điện thoại</label>
+                      <label class="form-label fw-bold text-dark" for="phoneNumber">Số điện thoại <span v-if="isEditing" class="text-danger">*</span></label>
                       <div v-if="!isEditing" class="d-flex align-items-center">
   <span class="text-dark me-2 text-nowrap">VN (+84)</span>
   <input type="text" class="form-control-plaintext text-dark px-0" :value="profile.phone" readonly />

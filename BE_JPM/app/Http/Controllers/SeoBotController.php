@@ -69,8 +69,8 @@ class SeoBotController extends Controller
         }
 
         $brandName = $phuTung->thuongHieu?->name ?? 'Marine OEM';
-        $title = "{$phuTung->ma_phu_tung} - {$phuTung->ten_phu_tung} | Phụ tùng máy thủy {$brandName} chính hãng - JPM Marine";
-        $description = "Tra cứu và mua phụ tùng máy thủy chính hãng mã {$phuTung->ma_phu_tung} ({$phuTung->ten_phu_tung}) dùng cho động cơ {$brandName}. Sơ đồ rã máy, mã thay thế tương đương tại JPM Marine.";
+        $title = "{$phuTung->ma_phu_tung} - {$phuTung->ten_phu_tung} | Phụ tùng tàu thuyền {$brandName} chính hãng - JPM Marine";
+        $description = "Tra cứu và mua phụ tùng tàu thuyền Nhật Bản chính hãng mã {$phuTung->ma_phu_tung} ({$phuTung->ten_phu_tung}) dùng cho động cơ {$brandName}. Sơ đồ rã máy, mã thay thế tương đương tại JPM Marine.";
         $canonical = $targetUrl;
 
         $schema = [
@@ -219,10 +219,10 @@ class SeoBotController extends Controller
             return redirect($targetUrl);
         }
 
-        $categoryName = $sanPham->danhMuc?->ten_danh_muc ?? 'Vật tư máy thủy';
+        $categoryName = $sanPham->danhMuc?->ten_danh_muc ?? 'Vật tư tàu thuyền';
         $brandName = 'JPM Marine';
         $title = "{$sanPham->ten_san_pham} - Giá tốt chính hãng | JPM Marine";
-        $description = "Mua {$sanPham->ten_san_pham} thuộc danh mục {$categoryName} tại JPM Marine. Phụ tùng và vật tư máy thủy chất lượng cao, giao hàng nhanh toàn quốc.";
+        $description = "Mua {$sanPham->ten_san_pham} thuộc danh mục {$categoryName} tại JPM Marine. Phụ tùng và vật tư tàu thuyền Nhật Bản chất lượng cao, giao hàng nhanh toàn quốc.";
         $canonical = $targetUrl;
 
         $schema = [

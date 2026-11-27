@@ -145,19 +145,19 @@
                 </div>
                 <div class="row">
                   <div class="col-md-12 mb-3">
-                    <label class="form-label fw-medium text-dark">Mô tả chi tiết</label>
+                    <label class="form-label fw-medium text-dark">Mô tả chi tiết <span class="text-danger">*</span></label>
                     <textarea class="form-control" rows="5" v-model="formData.mo_ta_chi_tiet" placeholder="Nhập mô tả chi tiết sản phẩm..."></textarea>
                   </div>
                 </div>
                 <div class="row">
                   <div class="col-md-12 mb-3">
-                    <label class="form-label fw-medium text-dark">Thông số kỹ thuật</label>
+                    <label class="form-label fw-medium text-dark">Thông số kỹ thuật <span class="text-danger">*</span></label>
                     <textarea class="form-control" rows="5" v-model="formData.thong_so_ky_thuat" placeholder="Nhập thông số kỹ thuật sản phẩm..."></textarea>
                   </div>
                 </div>
                 <div class="row mt-2">
                   <div class="col-md-12 mb-3">
-                    <label class="form-label fw-medium text-dark">Video Youtube URL (Tùy chọn)</label>
+                    <label class="form-label fw-medium text-dark">Video Youtube URL (Tùy chọn) <span class="text-danger">*</span></label>
                     <input type="text" class="form-control" v-model="formData.video_url" placeholder="VD: https://www.youtube.com/embed/...">
                   </div>
                 </div>
@@ -166,7 +166,7 @@
               <div class="col-md-5 border-start ps-md-4">
                 <div class="row">
                   <div class="col-md-12 mb-3">
-                    <label class="form-label fw-medium text-dark">Hình Ảnh Chính</label>
+                    <label class="form-label fw-medium text-dark">Hình Ảnh Chính <span class="text-danger">*</span></label>
                     <input type="file" id="hinh_anh_chinh" class="form-control mb-2" accept="image/*,.jpg,.jpeg,.png,.webp,.gif,.svg,.bmp,.avif,.heic,.heif,.tiff,.tif,.ico,.jfif" @change="handleMainImageUpload">
                     <div class="d-flex justify-content-center align-items-center border rounded bg-light mb-3 position-relative" style="height: 180px;">
                       <img v-if="mainImagePreview || formData.hinh_anh_chinh" :src="mainImagePreview || getImageUrl(formData.hinh_anh_chinh)" style="max-height: 160px; max-width: 100%; object-fit: contain;" @error="$event.target.style.display='none'; $event.target.nextElementSibling.style.display='inline-block'">
@@ -175,7 +175,7 @@
                     </div>
                     <div class="mt-2">
                         <div class="d-flex justify-content-between align-items-center mb-2">
-                          <label class="form-label fw-medium text-dark mb-0">Thư Viện Ảnh Phụ</label>
+                          <label class="form-label fw-medium text-dark mb-0">Thư Viện Ảnh Phụ <span class="text-danger">*</span></label>
                           <label for="thu_vien_anh" class="btn btn-sm btn-primary py-1 px-2 mb-0 d-inline-flex align-items-center gap-1" style="cursor: pointer; box-shadow: none;">
                             <i class="bx bx-upload"></i> Chọn nhiều ảnh
                           </label>

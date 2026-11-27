@@ -42,7 +42,7 @@
               </div>
 
               <div class="mb-4">
-                <label for="logo" class="form-label fw-medium text-dark">Logo Linh Kiện</label>
+                <label for="logo" class="form-label fw-medium text-dark">Logo Linh Kiện <span class="text-danger">*</span></label>
                 <input
                   type="file"
                   id="logo"

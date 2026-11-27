@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ $title }}</title>
     <meta name="description" content="{{ $description }}">
-    <meta name="keywords" content="{{ $phuTung->ma_phu_tung }}, phụ tùng {{ $phuTung->ma_phu_tung }}, {{ $phuTung->ten_phu_tung }}, phụ tùng {{ $brandName }}, máy thủy, tra mã oem, sơ đồ rã máy, JPM Marine">
+    <meta name="keywords" content="{{ $phuTung->ma_phu_tung }}, phụ tùng {{ $phuTung->ma_phu_tung }}, {{ $phuTung->ten_phu_tung }}, phụ tùng {{ $brandName }}, phụ tùng tàu thuyền Nhật Bản, tra mã oem, sơ đồ rã máy, JPM Marine">
     <link rel="canonical" href="{{ $canonical }}">
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
 
@@ -49,7 +49,7 @@
 </head>
 <body>
     <article>
-        <h1>Phụ Tùng Máy Thủy {{ $brandName }}: {{ $phuTung->ma_phu_tung }} - {{ $phuTung->ten_phu_tung }}</h1>
+        <h1>Phụ Tùng Tàu Thuyền {{ $brandName }}: {{ $phuTung->ma_phu_tung }} - {{ $phuTung->ten_phu_tung }}</h1>
         <p>Tra cứu thông số kỹ thuật, bản vẽ sơ đồ phân rã linh kiện và mua hàng chính hãng tại đại lý <strong>JPM Marine</strong>.</p>
 
         <table>
@@ -67,7 +67,7 @@
             </tr>
             <tr>
                 <th>Nhóm linh kiện:</th>
-                <td>{{ $phuTung->nhomPhuTung?->ten_nhom ?? 'Phụ tùng máy thủy' }}</td>
+                <td>{{ $phuTung->nhomPhuTung?->ten_nhom ?? 'Phụ tùng tàu thuyền' }}</td>
             </tr>
             <tr>
                 <th>Giá bán niêm yết:</th>

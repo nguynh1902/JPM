@@ -23,7 +23,7 @@
             <form id="formAccountSettings" method="POST" @submit.prevent="changePassword">
               <div class="row">
                 <div class="mb-3 col-md-6">
-                  <label class="form-label" for="currentPassword">Mật khẩu hiện tại</label>
+                  <label class="form-label" for="currentPassword">Mật khẩu hiện tại <span class="text-danger">*</span></label>
                   <div class="input-group input-group-merge">
                     <input 
                       class="form-control" 
@@ -42,7 +42,7 @@
               </div>
               <div class="row">
                 <div class="mb-3 col-md-6">
-                  <label class="form-label" for="newPassword">Mật khẩu mới</label>
+                  <label class="form-label" for="newPassword">Mật khẩu mới <span class="text-danger">*</span></label>
                   <div class="input-group input-group-merge">
                     <input 
                       class="form-control" 
@@ -60,7 +60,7 @@
                   </div>
                 </div>
                 <div class="mb-3 col-md-6">
-                  <label class="form-label" for="confirmPassword">Xác nhận mật khẩu mới</label>
+                  <label class="form-label" for="confirmPassword">Xác nhận mật khẩu mới <span class="text-danger">*</span></label>
                   <div class="input-group input-group-merge">
                     <input 
                       class="form-control" 

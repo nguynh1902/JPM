@@ -18,7 +18,7 @@
               
               
                               <div class="mb-4" v-if="isEditMode">
-                <label for="ma_nhom" class="form-label fw-medium text-dark">MÃ NHÓM</label>
+                <label for="ma_nhom" class="form-label fw-medium text-dark">MÃ NHÓM <span class="text-danger">*</span></label>
                 <input type="text" id="ma_nhom" class="form-control bg-light" v-model="formData.ma_nhom" readonly />
               </div>
 <div class="mb-4">

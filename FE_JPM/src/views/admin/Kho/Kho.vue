@@ -27,7 +27,7 @@
               </div>
 
               <div class="mb-4">
-                <label for="address" class="form-label fw-medium text-dark">Địa Chỉ</label>
+                <label for="address" class="form-label fw-medium text-dark">Địa Chỉ <span class="text-danger">*</span></label>
                 <textarea
                   id="address"
                   class="form-control"

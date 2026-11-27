@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <!-- Hai cánh buồm JPM (Trắng thuần, nền trong suốt) -->
+  <path d="M29.5 4 L29.5 38 L5 38 Z" fill="#FFFFFF" />
+  <path d="M34.5 4 L59 38 L34.5 38 Z" fill="#FFFFFF" />
+  <!-- Chữ JPM sắc nét bằng vector path (không phụ thuộc font hệ thống) -->
+  <path
+    fill="#FFFFFF"
+    d="M13.6 44 H18 V54.2 C18 57.9 15.6 60.2 12.2 60.2 C8.8 60.2 6.8 58 6.8 54.4 H11 C11 55.8 11.5 56.5 12.4 56.5 C13.2 56.5 13.6 55.8 13.6 54.3 V44 Z"
+  />
+  <path
+    fill="#FFFFFF"
+    fill-rule="evenodd"
+    d="M23.5 44 H31.2 C34.8 44 37 46.2 37 49.5 C37 52.8 34.8 55 31.2 55 H27.9 V60 H23.5 V44 Z M27.9 47.6 V51.4 H30.7 C32.1 51.4 32.8 50.7 32.8 49.5 C32.8 48.3 32.1 47.6 30.7 47.6 H27.9 Z"
+  />
+  <path
+    fill="#FFFFFF"
+    d="M41.5 60 V44 H46.2 L49.5 53.2 L52.8 44 H57.5 V60 H53.4 V50.3 L50.8 57.6 H48.2 L45.6 50.3 V60 H41.5 Z"
+  />
+</svg>

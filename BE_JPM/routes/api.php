@@ -321,6 +321,13 @@ Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
         Route::post('admin/thong-bao/gui-chanh-xe/{orderId}', [\App\Domain\Communication\Controllers\NotificationController::class, 'sendOrderShippingNotice']);
     });
 
+    // Hỗ trợ / Liên hệ từ khách hàng (Write)
+    Route::middleware(['role_or_permission:admin|Super Admin|Duyệt Đơn hàng|Sửa Đơn hàng|Soạn thảo Tin tức & CMS|Cấu hình chung,sanctum'])->group(function () {
+        Route::put('admin/lien-he/{id}', [\App\Domain\CMS\Controllers\LienHeController::class, 'update']);
+        Route::patch('admin/lien-he/{id}', [\App\Domain\CMS\Controllers\LienHeController::class, 'update']);
+        Route::delete('admin/lien-he/{id}', [\App\Domain\CMS\Controllers\LienHeController::class, 'destroy']);
+    });
+
     Route::middleware(['role_or_permission:admin|Super Admin|Xóa Đơn hàng,sanctum'])->group(function () {
         Route::delete('admin/don-hang/{id}', [\App\Domain\Sales\Controllers\DonHangController::class, 'destroy']);
         Route::delete('admin/yeu-cau-bao-gia/{id}', [\App\Domain\Sales\Controllers\YeuCauBaoGiaController::class, 'destroy']);
@@ -364,8 +371,9 @@ Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
         Route::get('admin/don-hang', [\App\Domain\Sales\Controllers\DonHangController::class, 'index']);
         Route::get('admin/don-hang/{id}', [\App\Domain\Sales\Controllers\DonHangController::class, 'show']);
 
-        // Xem Lịch sử Thông báo & Giao dịch thanh toán
+        // Xem Lịch sử Thông báo & Giao dịch thanh toán & Hỗ trợ khách hàng
         Route::get('admin/thong-bao/lich-su', [\App\Domain\Communication\Controllers\NotificationController::class, 'adminNotifications']);
         Route::get('admin/thanh-toan/giao-dich', [\App\Domain\Sales\Controllers\PaymentController::class, 'adminTransactions']);
+        Route::get('admin/lien-he', [\App\Domain\CMS\Controllers\LienHeController::class, 'index']);
     });
 });

@@ -306,7 +306,7 @@
                   <div class="row">
                     <div class="col-md-12 mb-3">
                       <label class="form-label fw-medium text-dark"
-                        >Đơn Vị Tính</label
+                        >Đơn Vị Tính <span class="text-danger">*</span></label
                       >
                       <input
                         type="text"
@@ -320,7 +320,7 @@
                   <div class="row">
                     <div class="col-md-12 mb-3">
                       <label class="form-label fw-medium text-dark"
-                        >Mô tả chi tiết</label
+                        >Mô tả chi tiết <span class="text-danger">*</span></label
                       >
                       <textarea
                         class="form-control"
@@ -334,7 +334,7 @@
                   <div class="row">
                     <div class="col-md-12 mb-3">
                       <label class="form-label fw-medium text-dark"
-                        >Thông số kỹ thuật</label
+                        >Thông số kỹ thuật <span class="text-danger">*</span></label
                       >
                       <textarea
                         class="form-control"
@@ -348,7 +348,7 @@
                   <div class="row mt-2">
                     <div class="col-md-12 mb-3">
                       <label class="form-label fw-medium text-dark"
-                        >Video Youtube URL (Tùy chọn)</label
+                        >Video Youtube URL (Tùy chọn) <span class="text-danger">*</span></label
                       >
                       <input
                         type="text"
@@ -365,7 +365,7 @@
                   <div class="row">
                     <div class="col-md-12 mb-3">
                       <label class="form-label fw-medium text-dark"
-                        >Hình Ảnh Chính</label
+                        >Hình Ảnh Chính <span class="text-danger">*</span></label
                       >
                       <input
                         type="file"
@@ -407,7 +407,7 @@
 
                       <div class="mt-2">
                           <div class="d-flex justify-content-between align-items-center mb-2">
-                          <label class="form-label fw-medium text-dark mb-0">Thư Viện Ảnh Phụ</label>
+                          <label class="form-label fw-medium text-dark mb-0">Thư Viện Ảnh Phụ <span class="text-danger">*</span></label>
                           <label for="thu_vien_anh" class="btn btn-sm btn-primary py-1 px-2 mb-0 d-inline-flex align-items-center gap-1" style="cursor: pointer; box-shadow: none;">
                             <i class="bx bx-upload"></i> Chọn nhiều ảnh
                           </label>

@@ -269,7 +269,7 @@
             to="/san-pham" 
             class="btn btn-empty-cart-action text-decoration-none"
           >
-            <span>Khám phá phụ tùng máy thủy</span>
+            <span>Khám phá phụ tùng tàu thuyền</span>
             <i class="bi bi-arrow-right"></i>
           </router-link>
         </div>

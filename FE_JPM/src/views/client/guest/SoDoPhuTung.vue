@@ -555,7 +555,7 @@ watch([modelName, brandName, diagramResponse], () => {
     
     let metaDesc = document.querySelector('meta[name="description"]');
     if (metaDesc) {
-      metaDesc.setAttribute('content', `Tra cứu sơ đồ phụ tùng máy thủy chính hãng ${brandName.value} model ${modelName.value}. Bản vẽ kỹ thuật phân rã cụm máy, tra mã OEM chuẩn xác tại JPM Marine.`);
+      metaDesc.setAttribute('content', `Tra cứu sơ đồ phụ tùng tàu thuyền Nhật Bản chính hãng ${brandName.value} model ${modelName.value}. Bản vẽ kỹ thuật phân rã cụm máy, tra mã OEM chuẩn xác tại JPM Marine.`);
     }
 
     let script = document.getElementById('schema-diagram-ld');
@@ -569,7 +569,7 @@ watch([modelName, brandName, diagramResponse], () => {
       "@context": "https://schema.org",
       "@type": "ItemPage",
       "name": `Sơ đồ phân rã phụ tùng ${modelName.value}`,
-      "description": `Tra cứu sơ đồ phụ tùng máy thủy chính hãng ${brandName.value} model ${modelName.value}. Bản vẽ kỹ thuật phân rã cụm máy, mã OEM chuẩn xác.`,
+      "description": `Tra cứu sơ đồ phụ tùng tàu thuyền Nhật Bản chính hãng ${brandName.value} model ${modelName.value}. Bản vẽ kỹ thuật phân rã cụm máy, mã OEM chuẩn xác.`,
       "breadcrumb": {
         "@type": "BreadcrumbList",
         "itemListElement": [

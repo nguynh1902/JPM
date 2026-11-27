@@ -166,7 +166,7 @@
                 </div>
 
                 <div class="mb-3">
-                  <label class="form-label fw-medium text-dark">Trích Dẫn Ngắn</label>
+                  <label class="form-label fw-medium text-dark">Trích Dẫn Ngắn <span class="text-danger">*</span></label>
                   <textarea class="form-control" v-model="formData.summary" rows="3" placeholder="Đoạn văn ngắn tóm tắt nội dung..."></textarea>
                 </div>
 
@@ -208,7 +208,7 @@
                 </div>
 
                 <div class="mb-3">
-                  <label class="form-label fw-medium text-dark">Đường dẫn Video (YouTube URL)</label>
+                  <label class="form-label fw-medium text-dark">Đường dẫn Video (YouTube URL) <span class="text-danger">*</span></label>
                   <div class="input-group">
                     <span class="input-group-text bg-light text-danger"><i class="bx bxl-youtube"></i></span>
                     <input type="url" class="form-control" v-model="formData.youtube_url" placeholder="VD: https://www.youtube.com/watch?v=..." />
@@ -216,7 +216,7 @@
                 </div>
 
                 <div class="mb-3">
-                  <label class="form-label fw-medium text-dark">Ảnh Đại Diện</label>
+                  <label class="form-label fw-medium text-dark">Ảnh Đại Diện <span class="text-danger">*</span></label>
                   <input
                     ref="thumbnailInput"
                     type="file"
@@ -234,7 +234,7 @@
                 </div>
                 <div class="mb-3">
                   <div class="d-flex justify-content-between align-items-center mb-2">
-                          <label class="form-label fw-medium text-dark mb-0">Thư Viện Ảnh Phụ</label>
+                          <label class="form-label fw-medium text-dark mb-0">Thư Viện Ảnh Phụ <span class="text-danger">*</span></label>
                           <label for="gallery_upload" class="btn btn-sm btn-primary py-1 px-2 mb-0 d-inline-flex align-items-center gap-1" style="cursor: pointer; box-shadow: none;">
                             <i class="bx bx-upload"></i> Chọn nhiều ảnh
                           </label>

@@ -321,7 +321,7 @@
               <!-- Instagram -->
               <div class="col-md-6 mb-3">
                 <label for="social_instagram" class="form-label fw-medium text-dark">
-                  Instagram
+                  Instagram <span class="text-danger">*</span>
                 </label>
                 <input 
                   type="url" 
@@ -335,7 +335,7 @@
               <!-- TikTok -->
               <div class="col-md-6 mb-3">
                 <label for="social_tiktok" class="form-label fw-medium text-dark">
-                  TikTok
+                  TikTok <span class="text-danger">*</span>
                 </label>
                 <input 
                   type="url" 

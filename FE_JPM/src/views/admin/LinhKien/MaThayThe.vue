@@ -55,7 +55,7 @@
               </div>
 
               <div class="mb-3">
-                <label class="form-label fw-medium text-dark">Ghi Chú (Nếu có)</label>
+                <label class="form-label fw-medium text-dark">Ghi Chú (Nếu có) <span class="text-danger">*</span></label>
                 <textarea class="form-control" rows="3" v-model="formData.ghi_chu" placeholder="Nhập ghi chú kỹ thuật..."></textarea>
               </div>
 

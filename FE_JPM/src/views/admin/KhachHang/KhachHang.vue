@@ -374,7 +374,7 @@
                   <div v-if="!isEditMode" class="row">
                     <div class="col-md-12 mb-3">
                       <label class="form-label fw-medium text-dark">
-                        Địa Chỉ Giao Hàng Mặc Định <span class="text-muted fw-normal">(Tùy chọn)</span>
+                        Địa Chỉ Giao Hàng Mặc Định <span class="text-muted fw-normal">(Tùy chọn)</span> <span class="text-danger">*</span>
                       </label>
                       <input
                         type="text"
@@ -391,7 +391,7 @@
                   <div class="row">
                     <div class="col-md-12 mb-3">
                       <label for="avatar" class="form-label fw-medium text-dark"
-                        >Ảnh Đại Diện</label
+                        >Ảnh Đại Diện <span class="text-danger">*</span></label
                       >
                       <input
                         type="file"

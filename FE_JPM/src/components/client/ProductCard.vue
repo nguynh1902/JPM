@@ -149,7 +149,7 @@ const FALLBACK_IMAGE = 'https://placehold.co/400x300/f8f9fa/a1acb8?text=JPM+Mari
 
 // ─── COMPUTED LOGIC ──────────────────────────────────────────
 const productName = computed(() => {
-  return props.product?.ten_san_pham || props.product?.ten_phu_tung || 'Phụ Tùng Máy Thủy';
+  return props.product?.ten_san_pham || props.product?.ten_phu_tung || 'Phụ Tùng Tàu Thuyền';
 });
 
 const productSku = computed(() => {

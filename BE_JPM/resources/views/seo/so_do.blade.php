@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ $title }}</title>
     <meta name="description" content="{{ $description }}">
-    <meta name="keywords" content="sơ đồ phụ tùng {{ $modelName }}, bản vẽ rã máy {{ $modelName }}, phụ tùng động cơ {{ $brandName }} {{ $modelName }}, tra mã máy thủy, JPM Marine">
+    <meta name="keywords" content="sơ đồ phụ tùng {{ $modelName }}, bản vẽ rã máy {{ $modelName }}, phụ tùng động cơ {{ $brandName }} {{ $modelName }}, phụ tùng tàu thuyền Nhật Bản, JPM Marine">
     <link rel="canonical" href="{{ $canonical }}">
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
 

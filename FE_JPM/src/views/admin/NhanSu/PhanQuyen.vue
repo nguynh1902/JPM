@@ -159,7 +159,7 @@
                   </div>
 
                   <div class="mb-3">
-                    <label class="form-label fw-medium text-dark">Mô tả</label>
+                    <label class="form-label fw-medium text-dark">Mô tả <span class="text-danger">*</span></label>
                     <textarea
                       rows="4"
                       class="form-control"

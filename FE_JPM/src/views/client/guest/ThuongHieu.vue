@@ -422,7 +422,7 @@ const selectLoai = (loai) => {
 // Tiêu đề trang động (SEO & User Experience)
 watch(brandName, (name) => {
   if (name) {
-    document.title = `Tra Cứu Phụ Tùng ${name} | Sơ Đồ Máy Thủy JPM Marine`;
+    document.title = `Tra Cứu Phụ Tùng ${name} | Phụ Tùng Tàu Thuyền Nhật Bản - JPM Marine`;
   }
 }, { immediate: true });
 

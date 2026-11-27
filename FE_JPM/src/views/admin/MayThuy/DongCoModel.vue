@@ -196,12 +196,12 @@
 
                 <div class="row">
                   <div class="col-md-4 mb-3">
-                    <label for="nam_san_xuat" class="form-label fw-medium text-dark">Năm Sản Xuất</label>
+                    <label for="nam_san_xuat" class="form-label fw-medium text-dark">Năm Sản Xuất <span class="text-danger">*</span></label>
                     <input type="number" id="nam_san_xuat" class="form-control" placeholder="YYYY" v-model="formData.nam_san_xuat" min="1900" max="2100"/>
                   </div>
                   
                   <div class="col-md-4 mb-3">
-                    <label for="ma_luc" class="form-label fw-medium text-dark">Mã Lực (HP)</label>
+                    <label for="ma_luc" class="form-label fw-medium text-dark">Mã Lực (HP) <span class="text-danger">*</span></label>
                     <input
                       type="number"
                       id="ma_luc"
@@ -214,7 +214,7 @@
                   </div>
                   
                   <div class="col-md-4 mb-3">
-                    <label for="loai_nhip" class="form-label fw-medium text-dark">Thì</label>
+                    <label for="loai_nhip" class="form-label fw-medium text-dark">Thì <span class="text-danger">*</span></label>
                       <v-select
                         v-model="formData.loai_nhip"
                         :options="[{value: '2 Thì', label: '2 Thì'}, {value: '4 Thì', label: '4 Thì'}]"

@@ -61,6 +61,13 @@ export default {
           // Không yêu cầu permission -> Mọi nhân sự nội bộ đều truy cập được
         },
         {
+          title: "Hỗ Trợ Khách Hàng",
+          icon: "bx-support",
+          path: "/portal/ho-tro",
+          permissions: ["Xem Đơn hàng", "Duyệt Đơn hàng", "Sửa Đơn hàng", "Xem Khách hàng", "Xem Tin tức & CMS", "Soạn thảo Tin tức & CMS", "Cấu hình chung"],
+          type: "item"
+        },
+        {
           title: "Cấu Hình Hệ Thống",
           icon: "bx-cog",
           path: "/portal/cau-hinh-he-thong",

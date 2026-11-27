@@ -20,7 +20,7 @@
               <span class="badge-dot"></span>
               <span>JPM MARINE SUPPORT</span>
               <span class="badge-divider">•</span>
-              <span class="badge-sub">TƯ VẤN & BẢO HÀNH 24/7</span>
+              <span class="badge-sub">TƯ VẤN KỸ THUẬT &amp; BẢO HÀNH CHÍNH HÃNG</span>
             </div>
             
             <!-- Tiêu đề lớn -->
@@ -35,7 +35,7 @@
 
             <!-- Dòng chữ nhỏ mô tả bên dưới -->
             <p class="store-banner-subtitle mb-0">
-              {{ settings?.support_banner_subtitle || 'Đồng hành cùng mọi hải trình của bạn. Đội ngũ kỹ sư và chuyên viên JPM Marine luôn sẵn sàng tư vấn tra cứu mã phụ tùng OEM và hỗ trợ 24/7.' }}
+              {{ settings?.support_banner_subtitle || 'Đồng hành cùng mọi hải trình của bạn. Đội ngũ kỹ sư và chuyên viên JPM Marine luôn sẵn sàng tư vấn tra cứu mã phụ tùng OEM và hỗ trợ kỹ thuật tận tâm.' }}
             </p>
           </div>
         </div>
@@ -116,28 +116,32 @@
               </div>
             </div>
 
-            <!-- Follow Us (Đồng bộ Link Mạng Xã Hội từ Cấu Hình) -->
-            <div>
+            <!-- Follow Us (Chỉ hiển thị kênh đã cấu hình link hợp lệ) -->
+            <div v-if="settings.social_facebook || settings.social_youtube || settings.social_zalo || settings.social_instagram || settings.social_tiktok">
               <div class="contact-social-label mb-3">
                 Theo Dõi Chúng Tôi
               </div>
               <div class="d-flex align-items-center flex-wrap gap-3">
-                <a :href="settings.social_facebook || '#'" :target="settings.social_facebook ? '_blank' : '_self'" rel="noopener noreferrer" class="contact-social-link" title="Facebook" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
-                <a :href="settings.social_youtube || '#'" :target="settings.social_youtube ? '_blank' : '_self'" rel="noopener noreferrer" class="contact-social-link" title="YouTube" aria-label="YouTube"><i class="bi bi-youtube"></i></a>
-                <a :href="settings.social_zalo || '#'" :target="settings.social_zalo ? '_blank' : '_self'" rel="noopener noreferrer" class="contact-social-link" title="Zalo" aria-label="Zalo">
+                <a v-if="settings.social_facebook" :href="settings.social_facebook" target="_blank" rel="noopener noreferrer" class="contact-social-link" title="Facebook" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
+                <a v-if="settings.social_youtube" :href="settings.social_youtube" target="_blank" rel="noopener noreferrer" class="contact-social-link" title="YouTube" aria-label="YouTube"><i class="bi bi-youtube"></i></a>
+                <a v-if="settings.social_zalo" :href="settings.social_zalo" target="_blank" rel="noopener noreferrer" class="contact-social-link" title="Zalo" aria-label="Zalo">
                   <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" aria-hidden="true">
                     <path d="M12.49 10.2722v-.4496h1.3467v6.3218h-.7704a.576.576 0 01-.5763-.5729l-.0006.0005a3.273 3.273 0 01-1.9372.6321c-1.8138 0-3.2844-1.4697-3.2844-3.2823 0-1.8125 1.4706-3.2822 3.2844-3.2822a3.273 3.273 0 011.9372.6321l.0006.0005zM6.9188 7.7896v.205c0 .3823-.051.6944-.2995 1.0605l-.03.0343c-.0542.0615-.1815.206-.2421.2843L2.024 14.8h4.8948v.7682a.5764.5764 0 01-.5767.5761H0v-.3622c0-.4436.1102-.6414.2495-.8476L4.8582 9.23H.1922V7.7896h6.7266zm8.5513 8.3548a.4805.4805 0 01-.4803-.4798v-7.875h1.4416v8.3548H15.47zM20.6934 9.6C22.52 9.6 24 11.0807 24 12.9044c0 1.8252-1.4801 3.306-3.3066 3.306-1.8264 0-3.3066-1.4808-3.3066-3.306 0-1.8237 1.4802-3.3044 3.3066-3.3044zm-10.1412 5.253c1.0675 0 1.9324-.8645 1.9324-1.9312 0-1.065-.865-1.9295-1.9324-1.9295s-1.9324.8644-1.9324 1.9295c0 1.0667.865 1.9312 1.9324 1.9312zm10.1412-.0033c1.0737 0 1.945-.8707 1.945-1.9453 0-1.073-.8713-1.9436-1.945-1.9436-1.0753 0-1.945.8706-1.945 1.9453 0 1.0746.8697 1.9453 1.945 1.9453z"/>
                   </svg>
                 </a>
-                <a :href="settings.social_instagram || '#'" :target="settings.social_instagram ? '_blank' : '_self'" rel="noopener noreferrer" class="contact-social-link" title="Instagram" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
-                <a :href="settings.social_tiktok || '#'" :target="settings.social_tiktok ? '_blank' : '_self'" rel="noopener noreferrer" class="contact-social-link" title="TikTok" aria-label="TikTok"><i class="bi bi-tiktok"></i></a>
+                <a v-if="settings.social_instagram" :href="settings.social_instagram" target="_blank" rel="noopener noreferrer" class="contact-social-link" title="Instagram" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
+                <a v-if="settings.social_tiktok" :href="settings.social_tiktok" target="_blank" rel="noopener noreferrer" class="contact-social-link" title="TikTok" aria-label="TikTok"><i class="bi bi-tiktok"></i></a>
               </div>
             </div>
           </div>
 
           <!-- CỘT PHẢI: FORM GỬI LỜI NHẮN ("Your Details" EQUIVALENT) -->
           <div class="col-lg-6 ps-lg-4">
-            <h2 class="contact-form-heading mb-1">Gửi lời nhắn</h2>
+            <div class="d-flex align-items-center gap-3 mb-2">
+              <span class="contact-overline-line"></span>
+              <span class="contact-overline-text">GỬI YÊU CẦU</span>
+            </div>
+            <h2 class="contact-form-heading mb-3">Gửi lời nhắn</h2>
             <p class="text-muted mb-4" style="font-size: 0.9rem;">
               Nếu bạn cần hỗ trợ kỹ thuật hoặc kiểm tra đơn hàng, vui lòng để lại thông tin bên dưới.
             </p>
@@ -207,7 +211,7 @@
 
       <!-- 4. MAP SECTION (TỰ ĐỘNG CHỈ ĐỊNH ĐỊA CHỈ TRÊN BẢN ĐỒ THEO CẤU HÌNH ADMIN) -->
       <section id="map-section" class="mb-5 pb-5 border-bottom">
-        <div class="w-100 shadow-sm rounded-3 overflow-hidden border" style="height: 450px; border-radius: var(--jpm-radius-card, 12px);">
+        <div class="w-100 shadow-sm rounded-3 overflow-hidden border" style="height: 360px; border-radius: var(--jpm-radius-card, 12px);">
           <iframe 
             :src="mapEmbedUrl" 
             frameborder="0" 
@@ -320,7 +324,7 @@
           </div>
           <div class="col-lg-8">
             <div v-if="filteredFaqs.length > 0" class="accordion accordion-flush client-faq-accordion" id="faqAccordion">
-              <div class="accordion-item bg-transparent border-0 border-bottom mb-2" v-for="(faq, index) in filteredFaqs" :key="index">
+              <div class="accordion-item bg-transparent border-0 border-bottom mb-2" v-for="(faq, index) in filteredFaqs" :key="faq.id || index">
                 <h2 class="accordion-header" :id="'heading' + index">
                   <button class="accordion-button collapsed bg-transparent shadow-none px-0 py-4 fw-bold" type="button" data-bs-toggle="collapse" :data-bs-target="'#collapse' + index" aria-expanded="false" :aria-controls="'collapse' + index">
                     {{ faq.question }}
@@ -418,13 +422,15 @@ export default {
     const faqs = computed(() => faqsData.value || []);
 
     const filteredFaqs = computed(() => {
-      const query = faqSearchQuery.value.toLowerCase();
-      if (!query) return faqs.value;
-      
-      return faqs.value.filter(faq => 
-        (faq.question && faq.question.toLowerCase().includes(query)) || 
-        (faq.answer && faq.answer.toLowerCase().includes(query))
-      );
+      const query = faqSearchQuery.value.trim().toLowerCase();
+      if (!query) return faqs.value.slice(0, 4);
+
+      return faqs.value
+        .filter(faq =>
+          (faq.question && faq.question.toLowerCase().includes(query)) ||
+          (faq.answer && faq.answer.toLowerCase().includes(query))
+        )
+        .slice(0, 4);
     });
 
     const scrollToContact = () => {

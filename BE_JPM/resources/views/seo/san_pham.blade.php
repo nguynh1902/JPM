@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ $title }}</title>
     <meta name="description" content="{{ $description }}">
-    <meta name="keywords" content="{{ $sanPham->ten_san_pham }}, {{ $categoryName }}, {{ $sanPham->ma_san_pham }}, vật tư máy thủy, phụ tùng máy thủy, JPM Marine">
+    <meta name="keywords" content="{{ $sanPham->ten_san_pham }}, {{ $categoryName }}, {{ $sanPham->ma_san_pham }}, vật tư tàu thuyền, phụ tùng tàu thuyền Nhật Bản, JPM Marine">
     <link rel="canonical" href="{{ $canonical }}">
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
 
@@ -36,8 +36,8 @@
 </head>
 <body>
     <article>
-        <h1>{{ $sanPham->ten_san_pham }} - Phụ Kiện Máy Thủy JPM Marine</h1>
-        <p>Sản phẩm và vật tư máy thủy chính hãng phân phối bởi <strong>JPM Marine</strong>.</p>
+        <h1>{{ $sanPham->ten_san_pham }} - Phụ Tùng Tàu Thuyền JPM Marine</h1>
+        <p>Sản phẩm và vật tư tàu thuyền Nhật Bản chính hãng phân phối bởi <strong>JPM Marine</strong>.</p>
 
         <table>
             <tr>

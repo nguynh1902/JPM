@@ -321,7 +321,7 @@
                     <p class="mb-2 text-muted small" v-if="selectedQuote.customer_email">{{ selectedQuote.customer_email }}</p>
                     
                     <div class="mt-2">
-                      <label class="form-label text-dark small mb-1 fw-bold">Địa Chỉ Giao Hàng:</label>
+                      <label class="form-label text-dark small mb-1 fw-bold">Địa Chỉ Giao Hàng: <span class="text-danger">*</span></label>
                       <textarea 
                         v-if="!isQuoteReadOnly"
                         class="form-control form-control-sm text-dark" 
@@ -341,7 +341,7 @@
                       Thông Tin Vận Chuyển
                     </h6>
                     <div class="mb-2">
-                      <label class="form-label text-dark small mb-1 fw-semibold">Đơn vị vận chuyển:</label>
+                      <label class="form-label text-dark small mb-1 fw-semibold">Đơn vị vận chuyển: <span class="text-danger">*</span></label>
                       <input 
                         type="text" 
                         class="form-control form-control-sm text-dark bg-white" 
@@ -350,7 +350,7 @@
                       />
                     </div>
                     <div class="mb-1">
-                      <label class="form-label text-dark small mb-1 fw-semibold">Mã vận đơn:</label>
+                      <label class="form-label text-dark small mb-1 fw-semibold">Mã vận đơn: <span class="text-danger">*</span></label>
                       <input 
                         type="text" 
                         class="form-control form-control-sm text-danger fw-bold bg-white" 
@@ -775,7 +775,7 @@
                   <p class="mb-1 text-muted">{{ selectedOrder.customer_phone }}</p>
                   <p class="mb-2 text-muted small" v-if="selectedOrder.customer_email">{{ selectedOrder.customer_email }}</p>
                   <div class="mt-2">
-                    <label class="form-label text-dark small mb-1 fw-bold">Địa Chỉ Giao Hàng:</label>
+                    <label class="form-label text-dark small mb-1 fw-bold">Địa Chỉ Giao Hàng: <span class="text-danger">*</span></label>
                     <textarea 
                       v-if="!isOrderInfoReadOnly"
                       class="form-control form-control-sm text-dark" 
@@ -795,7 +795,7 @@
                     Thông Tin Vận Chuyển
                   </h6>
                   <div class="mb-2">
-                    <label class="form-label text-dark small mb-1 fw-semibold">Đơn vị vận chuyển:</label>
+                    <label class="form-label text-dark small mb-1 fw-semibold">Đơn vị vận chuyển: <span class="text-danger">*</span></label>
                     <input 
                       type="text" 
                       class="form-control form-control-sm text-dark bg-white" 
@@ -804,7 +804,7 @@
                     />
                   </div>
                   <div class="mb-1">
-                    <label class="form-label text-dark small mb-1 fw-semibold">Mã vận đơn:</label>
+                    <label class="form-label text-dark small mb-1 fw-semibold">Mã vận đơn: <span class="text-danger">*</span></label>
                     <input 
                       type="text" 
                       class="form-control form-control-sm text-danger fw-bold bg-white" 
@@ -1250,23 +1250,23 @@
                   <input type="text" class="form-control" v-model="shippingForm.ten_nha_xe" placeholder="VD: Chành xe Tô Châu, Phương Trang..." required>
                 </div>
                 <div class="col-md-6">
-                  <label class="form-label fw-bold">Biển Số Xe</label>
+                  <label class="form-label fw-bold">Biển Số Xe <span class="text-danger">*</span></label>
                   <input type="text" class="form-control" v-model="shippingForm.bien_so_xe" placeholder="VD: 68C-123.45">
                 </div>
                 <div class="col-md-6">
-                  <label class="form-label fw-bold">Tên Tài Xế</label>
+                  <label class="form-label fw-bold">Tên Tài Xế <span class="text-danger">*</span></label>
                   <input type="text" class="form-control" v-model="shippingForm.ten_tai_xe" placeholder="VD: Bác tài Nguyễn Văn Hùng">
                 </div>
                 <div class="col-md-6">
-                  <label class="form-label fw-bold">Số Điện Thoại Tài Xế</label>
+                  <label class="form-label fw-bold">Số Điện Thoại Tài Xế <span class="text-danger">*</span></label>
                   <input type="tel" class="form-control" v-model="shippingForm.sdt_tai_xe" placeholder="VD: 0918123456">
                 </div>
                 <div class="col-md-4">
-                  <label class="form-label fw-bold">Số Kiện Hàng</label>
+                  <label class="form-label fw-bold">Số Kiện Hàng <span class="text-danger">*</span></label>
                   <input type="number" class="form-control" v-model.number="shippingForm.so_kien_hang" min="1" required>
                 </div>
                 <div class="col-md-8">
-                  <label class="form-label fw-bold">Địa Điểm / Bến Trả Hàng</label>
+                  <label class="form-label fw-bold">Địa Điểm / Bến Trả Hàng <span class="text-danger">*</span></label>
                   <input type="text" class="form-control" v-model="shippingForm.dia_diem_tra_hang" placeholder="VD: Cảng cá Tắc Cậu, Rạch Giá, Kiên Giang">
                 </div>
               </div>
@@ -1320,12 +1320,12 @@
               </div>
 
               <div class="mb-3">
-                <label class="form-label fw-bold">Đơn Vị Vận Chuyển</label>
+                <label class="form-label fw-bold">Đơn Vị Vận Chuyển <span class="text-danger">*</span></label>
                 <input type="text" class="form-control" v-model="viettelPostForm.ten_don_vi_van_chuyen" placeholder="VD: ViettelPost, Giao Hàng Nhanh, Chành xe...">
               </div>
 
               <div class="mb-3">
-                <label class="form-label fw-bold">Mã Vận Đơn / Ghi Chú Chành Xe</label>
+                <label class="form-label fw-bold">Mã Vận Đơn / Ghi Chú Chành Xe <span class="text-danger">*</span></label>
                 <input type="text" class="form-control" v-model="viettelPostForm.ma_van_don" placeholder="VD: VP123456789VN, GHN987654, Chành xe Tô Châu...">
                 <small class="text-muted">Nhập mã vận đơn hoặc số xe/chành xe (hoặc để trống nếu tự giao).</small>
               </div>
@@ -1455,7 +1455,7 @@
 
                     <!-- Email -->
                     <div class="mb-2">
-                      <label class="form-label text-dark small mb-1">Email (nếu có):</label>
+                      <label class="form-label text-dark small mb-1">Email (nếu có): <span class="text-danger">*</span></label>
                       <input 
                         type="email" 
                         class="form-control form-control-sm text-dark" 
@@ -1465,7 +1465,7 @@
                     </div>
                     
                     <div class="mt-2">
-                      <label class="form-label text-dark small mb-1 fw-bold">Địa Chỉ Giao Hàng:</label>
+                      <label class="form-label text-dark small mb-1 fw-bold">Địa Chỉ Giao Hàng: <span class="text-danger">*</span></label>
                       <textarea 
                         class="form-control form-control-sm text-dark" 
                         rows="2"
@@ -1481,7 +1481,7 @@
                       Thông Tin Vận Chuyển
                     </h6>
                     <div class="mb-2">
-                      <label class="form-label text-dark small mb-1 fw-semibold">Đơn vị vận chuyển:</label>
+                      <label class="form-label text-dark small mb-1 fw-semibold">Đơn vị vận chuyển: <span class="text-danger">*</span></label>
                       <input 
                         type="text" 
                         class="form-control form-control-sm text-dark bg-white" 
@@ -1490,7 +1490,7 @@
                       />
                     </div>
                     <div class="mb-1">
-                      <label class="form-label text-dark small mb-1 fw-semibold">Mã vận đơn:</label>
+                      <label class="form-label text-dark small mb-1 fw-semibold">Mã vận đơn: <span class="text-danger">*</span></label>
                       <input 
                         type="text" 
                         class="form-control form-control-sm text-danger fw-bold bg-white" 

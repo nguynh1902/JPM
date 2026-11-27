@@ -204,7 +204,7 @@
 
                   <div class="row">
                     <div class="col-md-6 mb-4">
-                      <label for="thu_tu" class="form-label fw-medium text-dark">Thứ tự hiển thị</label>
+                      <label for="thu_tu" class="form-label fw-medium text-dark">Thứ tự hiển thị <span class="text-danger">*</span></label>
                       <input
                         type="number"
                         id="thu_tu"

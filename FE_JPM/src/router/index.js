@@ -303,6 +303,12 @@ const routes = [
 
   // HỆ THỐNG
   {
+    path: "/portal/ho-tro",
+    name: "PortalHoTro",
+    component: () => import("../views/admin/HoTro/HoTroKhachHang.vue"),
+    meta: { layout: "admin", requiresAuth: true, permissions: ["Xem Đơn hàng", "Duyệt Đơn hàng", "Sửa Đơn hàng", "Xem Khách hàng", "Xem Tin tức & CMS", "Soạn thảo Tin tức & CMS", "Cấu hình chung"] },
+  },
+  {
     path: "/portal/cau-hinh-he-thong",
     name: "PortalCauHinhHeThong",
     component: () => import("../views/admin/HeThong/CauHinhHeThong.vue"),
@@ -356,6 +362,7 @@ const routes = [
   { path: "/admin/tin-tuc", redirect: "/portal/tin-tuc" },
   { path: "/admin/faq", redirect: "/portal/faq" },
   { path: "/admin/cau-hinh-he-thong", redirect: "/portal/cau-hinh-he-thong" },
+  { path: "/admin/ho-tro", redirect: "/portal/ho-tro" },
   { path: "/admin/lich-su-hoat-dong", redirect: "/portal/lich-su-hoat-dong" },
   { path: "/admin/thong-bao", redirect: "/portal/dashboard" },
   { path: "/admin/ho-so", redirect: "/portal/ho-so" },

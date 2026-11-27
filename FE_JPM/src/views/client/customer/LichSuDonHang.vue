@@ -144,7 +144,7 @@
 
             <div class="lux-item-info">
               <div class="lux-item-name">
-                {{ getItemProducts(order)[0]?.name || 'Phụ tùng máy thủy' }}
+                {{ getItemProducts(order)[0]?.name || 'Phụ tùng tàu thuyền' }}
               </div>
               <div class="lux-item-sub">
                 <span class="lux-sub-label">Mã:</span>
@@ -895,7 +895,7 @@ const getItemProducts = (order) => {
     _uid: `${p.id || idx}-${idx}`,
     id: p.id_san_pham || p.id_phu_tung || p.san_pham_id || p.phu_tung_id || p.id,
     loai_san_pham: p.loai_san_pham || (p.slug || p.san_pham?.slug ? 'san_pham' : 'phu_tung'),
-    name: p.ten_phu_tung || p.ten_san_pham || 'Phụ tùng máy thủy',
+    name: p.ten_phu_tung || p.ten_san_pham || 'Phụ tùng tàu thuyền',
     code: p.ma_phu_tung || p.ma_san_pham || '',
     slug: p.slug || p.san_pham?.slug || '',
     image: p.hinh_anh || p.hinh_anh_chinh || p.san_pham?.hinh_anh_chinh || p.san_pham?.hinh_anh || null,

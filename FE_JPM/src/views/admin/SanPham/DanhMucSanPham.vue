@@ -13,7 +13,7 @@
           <div class="card-body pt-4">
             <form @submit.prevent="saveData">
               <div class="mb-4">
-                <label class="form-label fw-medium text-dark">Danh Mục Cha (Tùy Chọn)</label>
+                <label class="form-label fw-medium text-dark">Danh Mục Cha (Tùy Chọn) <span class="text-danger">*</span></label>
                 <v-select
                   v-model="formData.parent_id"
                   :options="parentOptions"

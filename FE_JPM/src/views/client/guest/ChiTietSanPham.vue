@@ -585,11 +585,11 @@ watch(sanPham, (newProduct) => {
     }
 
     // Dynamic Title & Structured Data (SEO JSON-LD & Buyer Intent)
-    const catName = newProduct.danh_muc?.ten_danh_muc || 'Vật tư máy thủy';
+    const catName = newProduct.danh_muc?.ten_danh_muc || 'Vật tư tàu thuyền';
     document.title = `${newProduct.ten_san_pham} - Giá tốt chính hãng | JPM Marine`;
     let metaDesc = document.querySelector('meta[name="description"]');
     if (metaDesc) {
-      metaDesc.setAttribute('content', `Mua ${newProduct.ten_san_pham} thuộc danh mục ${catName} tại JPM Marine. Phụ tùng và vật tư máy thủy chất lượng cao, giao hàng nhanh toàn quốc.`);
+      metaDesc.setAttribute('content', `Mua ${newProduct.ten_san_pham} thuộc danh mục ${catName} tại JPM Marine. Phụ tùng và vật tư tàu thuyền Nhật Bản chất lượng cao, giao hàng nhanh toàn quốc.`);
     }
 
     let script = document.getElementById('schema-product-ld');
@@ -628,7 +628,7 @@ onUnmounted(() => {
   if (script) script.remove();
   let metaDesc = document.querySelector('meta[name="description"]');
   if (metaDesc) {
-    metaDesc.setAttribute('content', 'JPM Marine - Đại lý phân phối phụ tùng máy thủy chính hãng Mercury, Yamaha, Honda Marine, Yanmar. Tra cứu mã OEM, sơ đồ bản vẽ rã máy chi tiết toàn quốc.');
+    metaDesc.setAttribute('content', 'JPM Marine - Đại lý phân phối phụ tùng tàu thuyền Nhật Bản chính hãng Yamaha, Yanmar, Honda Marine, Suzuki, Tohatsu. Tra cứu mã OEM, sơ đồ bản vẽ rã máy chi tiết toàn quốc.');
   }
 });
 
