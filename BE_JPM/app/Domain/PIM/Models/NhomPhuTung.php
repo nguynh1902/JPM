@@ -13,5 +13,10 @@ class NhomPhuTung extends Model
     {
         return $this->hasMany(PhuTung::class, 'nhom_phu_tung_id');
     }
+
+    public function soDoPhuTungs()
+    {
+        return $this->hasMany(SoDoPhuTung::class, 'nhom_phu_tung_id');
+    }
 }
 

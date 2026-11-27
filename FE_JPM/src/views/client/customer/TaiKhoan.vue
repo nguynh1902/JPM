@@ -12,7 +12,7 @@
         <form @submit.prevent="saveProfile">
           <div class="row g-3 g-md-4">
             <!-- Họ và tên -->
-            <div class="col-md-6">
+            <div class="col-md-4">
               <label class="form-label tk-form-label">Họ và tên</label>
               <input
                 type="text"
@@ -24,21 +24,8 @@
               >
             </div>
 
-            <!-- Tên công ty -->
-            <div class="col-md-6">
-              <label class="form-label tk-form-label">Tên công ty <span class="fw-normal text-muted">(Nếu B2B)</span></label>
-              <input
-                type="text"
-                v-model="profileForm.ten_cong_ty"
-                :class="[isEditingProfile ? 'form-control' : 'form-control-plaintext']"
-                :placeholder="isEditingProfile ? 'Nhập tên công ty...' : 'Chưa cập nhật'"
-                :readonly="!isEditingProfile"
-                class="tk-form-input"
-              >
-            </div>
-
             <!-- Số điện thoại -->
-            <div class="col-md-6">
+            <div class="col-md-4">
               <label class="form-label tk-form-label">Số điện thoại</label>
               <input
                 type="tel"
@@ -50,7 +37,7 @@
             </div>
 
             <!-- Địa chỉ Email -->
-            <div class="col-md-6">
+            <div class="col-md-4">
               <label class="form-label tk-form-label">Địa chỉ Email</label>
               <input
                 type="email"
@@ -312,14 +299,13 @@ const addresses = computed(() => addressesData.value || []);
 
 // Local States
 const isEditingProfile = ref(false);
-const profileForm = ref({ name: '', phone: '', email: '', ten_cong_ty: '' });
+const profileForm = ref({ name: '', phone: '', email: '' });
 
 watch(profileData, (newData) => {
   if (newData) {
     profileForm.value.name = newData.name || '';
     profileForm.value.phone = newData.khach_hang?.so_dien_thoai || newData.phone || '';
     profileForm.value.email = newData.email || '';
-    profileForm.value.ten_cong_ty = newData.khach_hang?.ten_cong_ty || '';
   }
 }, { immediate: true });
 
@@ -333,7 +319,6 @@ const startEditProfile = () => {
   profileForm.value.name = profileData.value?.name || '';
   profileForm.value.phone = profileData.value?.khach_hang?.so_dien_thoai || profileData.value?.phone || '';
   profileForm.value.email = profileData.value?.email || '';
-  profileForm.value.ten_cong_ty = profileData.value?.khach_hang?.ten_cong_ty || '';
   isEditingProfile.value = true;
 };
 
@@ -342,7 +327,6 @@ const cancelEditProfile = () => {
     profileForm.value.name = profileData.value.name || '';
     profileForm.value.phone = profileData.value.khach_hang?.so_dien_thoai || profileData.value.phone || '';
     profileForm.value.email = profileData.value.email || '';
-    profileForm.value.ten_cong_ty = profileData.value.khach_hang?.ten_cong_ty || '';
   }
   isEditingProfile.value = false;
 };

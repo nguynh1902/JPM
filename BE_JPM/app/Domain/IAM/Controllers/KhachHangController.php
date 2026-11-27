@@ -127,5 +127,85 @@ class KhachHangController extends Controller
             return response()->json(['success' => false, 'message' => $e->getMessage()], $code);
         }
     }
+
+    public function addAddress(Request $request, $id): JsonResponse
+    {
+        $validated = $request->validate([
+            'ten_nguoi_nhan' => 'required|string|max:100',
+            'so_dien_thoai'  => 'required|string|max:20',
+            'dia_chi_cu_the' => 'required|string|max:255',
+            'loai_dia_chi'   => 'nullable|string|max:20',
+            'la_mac_dinh'    => 'nullable|boolean',
+        ], [
+            'ten_nguoi_nhan.required' => 'Vui lòng nhập tên người nhận.',
+            'so_dien_thoai.required'  => 'Vui lòng nhập số điện thoại nhận hàng.',
+            'dia_chi_cu_the.required' => 'Vui lòng nhập địa chỉ giao hàng.',
+        ]);
+
+        try {
+            $kh = $this->khachHangService->addAddress((int) $id, $validated);
+            return response()->json([
+                'success' => true,
+                'message' => 'Đã thêm địa chỉ giao hàng',
+                'data' => new KhachHangResource($kh),
+            ]);
+        } catch (Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+        }
+    }
+
+    public function updateAddress(Request $request, $id, $addressId): JsonResponse
+    {
+        $validated = $request->validate([
+            'ten_nguoi_nhan' => 'required|string|max:100',
+            'so_dien_thoai'  => 'required|string|max:20',
+            'dia_chi_cu_the' => 'required|string|max:255',
+            'loai_dia_chi'   => 'nullable|string|max:20',
+            'la_mac_dinh'    => 'nullable|boolean',
+        ], [
+            'ten_nguoi_nhan.required' => 'Vui lòng nhập tên người nhận.',
+            'so_dien_thoai.required'  => 'Vui lòng nhập số điện thoại nhận hàng.',
+            'dia_chi_cu_the.required' => 'Vui lòng nhập địa chỉ giao hàng.',
+        ]);
+
+        try {
+            $kh = $this->khachHangService->updateAddress((int) $id, (int) $addressId, $validated);
+            return response()->json([
+                'success' => true,
+                'message' => 'Đã cập nhật địa chỉ giao hàng',
+                'data' => new KhachHangResource($kh),
+            ]);
+        } catch (Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+        }
+    }
+
+    public function setDefaultAddress($id, $addressId): JsonResponse
+    {
+        try {
+            $kh = $this->khachHangService->setDefaultAddress((int) $id, (int) $addressId);
+            return response()->json([
+                'success' => true,
+                'message' => 'Đã đặt làm địa chỉ mặc định',
+                'data' => new KhachHangResource($kh),
+            ]);
+        } catch (Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+        }
+    }
+
+    public function deleteAddress($id, $addressId): JsonResponse
+    {
+        try {
+            $kh = $this->khachHangService->deleteAddress((int) $id, (int) $addressId);
+            return response()->json([
+                'success' => true,
+                'message' => 'Đã xóa địa chỉ giao hàng',
+                'data' => new KhachHangResource($kh),
+            ]);
+        } catch (Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+        }
+    }
 }
 

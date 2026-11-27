@@ -236,7 +236,7 @@ Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
     // =========================================================================
     // 4. CATALOG, PIM & SẢN PHẨM — Tách bạch Thêm / Sửa / Xóa
     // =========================================================================
-    Route::middleware(['role_or_permission:admin|Super Admin|Nhân viên PIM|Thêm Động cơ & Thương hiệu|Sửa Động cơ & Thương hiệu,sanctum'])->group(function () {
+    Route::middleware(['role_or_permission:admin|Super Admin|Nhân viên PIM|Quản lý Model & Động cơ|Thêm Động cơ & Thương hiệu|Sửa Động cơ & Thương hiệu,sanctum'])->group(function () {
         Route::post('admin/thuong-hieu', [ThuongHieuController::class, 'store']);
         Route::put('admin/thuong-hieu/{id}', [ThuongHieuController::class, 'update']);
         Route::post('admin/loai-dong-co', [\App\Domain\MarineCatalog\Controllers\LoaiDongCoController::class, 'store']);
@@ -245,7 +245,7 @@ Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
         Route::put('admin/dong-co-model/{id}', [\App\Domain\MarineCatalog\Controllers\DongCoModelController::class, 'update']);
     });
 
-    Route::middleware(['role_or_permission:admin|Super Admin|Xóa Động cơ & Thương hiệu,sanctum'])->group(function () {
+    Route::middleware(['role_or_permission:admin|Super Admin|Quản lý Model & Động cơ|Xóa Động cơ & Thương hiệu,sanctum'])->group(function () {
         Route::delete('admin/thuong-hieu/{id}', [ThuongHieuController::class, 'destroy']);
         Route::delete('admin/loai-dong-co/{id}', [\App\Domain\MarineCatalog\Controllers\LoaiDongCoController::class, 'destroy']);
         Route::delete('admin/dong-co-model/{id}', [\App\Domain\MarineCatalog\Controllers\DongCoModelController::class, 'destroy']);
@@ -288,6 +288,10 @@ Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
         Route::post('admin/khach-hang', [\App\Domain\IAM\Controllers\KhachHangController::class, 'store']);
         Route::put('admin/khach-hang/{id}', [\App\Domain\IAM\Controllers\KhachHangController::class, 'update']);
         Route::patch('admin/khach-hang/{id}', [\App\Domain\IAM\Controllers\KhachHangController::class, 'update']);
+        Route::post('admin/khach-hang/{id}/dia-chi', [\App\Domain\IAM\Controllers\KhachHangController::class, 'addAddress']);
+        Route::put('admin/khach-hang/{id}/dia-chi/{addressId}', [\App\Domain\IAM\Controllers\KhachHangController::class, 'updateAddress']);
+        Route::put('admin/khach-hang/{id}/dia-chi/{addressId}/mac-dinh', [\App\Domain\IAM\Controllers\KhachHangController::class, 'setDefaultAddress']);
+        Route::delete('admin/khach-hang/{id}/dia-chi/{addressId}', [\App\Domain\IAM\Controllers\KhachHangController::class, 'deleteAddress']);
     });
 
     Route::middleware(['role_or_permission:admin|Super Admin|Khóa Khách hàng,sanctum'])->group(function () {
@@ -325,7 +329,7 @@ Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
     // =========================================================================
     // 7. READ-ONLY OPERATIONS ROUTES (Dành cho nhân sự nội bộ có quyền Xem)
     // =========================================================================
-    Route::middleware(['role_or_permission:admin|Super Admin|staff|Nhân viên PIM|Xem Phụ tùng|Thêm Phụ tùng|Sửa Phụ tùng|Xem Động cơ & Thương hiệu|Xem Đơn hàng|Duyệt Đơn hàng|Sửa Đơn hàng|Xem Khách hàng|Xem Tồn kho|Xem Thẻ kho|Quản lý Danh sách kho|Xem Sản phẩm|Xem Tin tức & CMS|Quản lý Nhân sự|Quản lý Vai trò|Cấu hình chung,sanctum'])->group(function () {
+    Route::middleware(['role_or_permission:admin|Super Admin|staff|Nhân viên PIM|Quản lý Model & Động cơ|Xem Phụ tùng|Thêm Phụ tùng|Sửa Phụ tùng|Xóa Phụ tùng|Xem Động cơ & Thương hiệu|Thêm Động cơ & Thương hiệu|Sửa Động cơ & Thương hiệu|Xóa Động cơ & Thương hiệu|Xem Đơn hàng|Duyệt Đơn hàng|Sửa Đơn hàng|Xem Khách hàng|Xem Tồn kho|Xem Thẻ kho|Quản lý Danh sách kho|Xem Sản phẩm|Xem Tin tức & CMS|Quản lý Nhân sự|Quản lý Vai trò|Cấu hình chung,sanctum'])->group(function () {
         // Dashboard Stats
         Route::get('admin/dashboard/stats', [\App\Domain\Analytics\Controllers\DashboardController::class, 'stats']);
 

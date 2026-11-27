@@ -33,8 +33,8 @@ class CachePublicApiResponse
     protected array $allowedQueryParams = [
         'page', 'per_page', 'limit', 'sort', 'sort_by', 'keyword', 'q', 'search',
         'category', 'danh_muc', 'danh_muc_id', 'thuong_hieu_id', 'loai_dong_co_id',
-        'dong_co_model_id', 'nam_sx', 'nhom_phu_tung_id', 'min_price', 'max_price',
-        'brand_id', 'type',
+        'dong_co_model_id', 'nam_sx', 'loai_nhip', 'nhom_phu_tung_id', 'min_price',
+        'max_price', 'brand_id', 'type', 'all', 'code',
     ];
 
     public function handle(Request $request, Closure $next, int $ttl = 300): Response

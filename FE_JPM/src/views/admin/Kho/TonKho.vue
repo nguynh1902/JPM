@@ -436,7 +436,7 @@ export default {
         title: 'Xác nhận xóa',
         html: 'Bạn có chắc chắn muốn xóa mã <b>"' + item.ma_san_pham + '"</b> khỏi kho?<br><br><small class="text-danger">CẢNH BÁO: Dữ liệu sau khi xóa sẽ không thể khôi phục.</small>',
         icon: 'warning',
-        iconColor: '#ff3e1d',
+        iconColor: '#f82249',
         showCancelButton: true,
         confirmButtonText: 'Xóa Tồn kho',
         cancelButtonText: 'Hủy',

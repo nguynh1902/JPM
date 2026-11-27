@@ -2,6 +2,7 @@
 
 namespace App\Domain\IAM\Services;
 
+use App\Domain\IAM\Models\DiaChi;
 use App\Domain\IAM\Models\KhachHang;
 use App\Domain\IAM\Models\User;
 use App\Domain\Core\Services\ImageUploadService;
@@ -27,8 +28,9 @@ class KhachHangService
                 $q->whereHas('user', function ($sub) use ($s) {
                     $sub->where('name', 'like', "%{$s}%")
                         ->orWhere('email', 'like', "%{$s}%")
-                        ->orWhere('phone', 'like', "%{$s}%");
-                })->orWhere('ten_cong_ty', 'like', "%{$s}%");
+                        ->orWhere('phone', 'like', "%{$s}%")
+                        ->orWhereHas('diaChis', fn ($d) => $d->where('dia_chi_cu_the', 'like', "%{$s}%"));
+                });
             });
         }
 
@@ -76,6 +78,17 @@ class KhachHangService
                 'ho_ten' => $data['name'],
                 'so_dien_thoai' => $data['phone'],
             ]);
+
+            if (!empty($data['initial_address'])) {
+                DiaChi::create([
+                    'id_tai_khoan' => $user->id,
+                    'ten_nguoi_nhan' => $data['name'],
+                    'so_dien_thoai' => $data['phone'],
+                    'dia_chi_cu_the' => trim($data['initial_address']),
+                    'loai_dia_chi' => 'Xưởng / Nhà riêng',
+                    'la_mac_dinh' => true,
+                ]);
+            }
             
             DB::commit();
             return clone $kh->load(['user.diaChis']);
@@ -189,5 +202,101 @@ class KhachHangService
             DB::rollBack();
             throw $e;
         }
+    }
+
+    public function addAddress(int $khachHangId, array $data): KhachHang
+    {
+        return DB::transaction(function () use ($khachHangId, $data) {
+            $kh = KhachHang::findOrFail($khachHangId);
+            $userId = (int) $kh->id_tai_khoan;
+
+            $isDefault = !empty($data['la_mac_dinh']);
+            if (DiaChi::where('id_tai_khoan', $userId)->lockForUpdate()->count() === 0) {
+                $isDefault = true;
+            }
+            if ($isDefault) {
+                DiaChi::where('id_tai_khoan', $userId)->update(['la_mac_dinh' => false]);
+            }
+
+            DiaChi::create([
+                'id_tai_khoan' => $userId,
+                'ten_nguoi_nhan' => $data['ten_nguoi_nhan'],
+                'so_dien_thoai' => $data['so_dien_thoai'],
+                'dia_chi_cu_the' => $data['dia_chi_cu_the'],
+                'loai_dia_chi' => $data['loai_dia_chi'] ?? null,
+                'la_mac_dinh' => $isDefault,
+            ]);
+
+            return $kh->load(['user.diaChis']);
+        });
+    }
+
+    public function updateAddress(int $khachHangId, int $addressId, array $data): KhachHang
+    {
+        return DB::transaction(function () use ($khachHangId, $addressId, $data) {
+            $kh = KhachHang::findOrFail($khachHangId);
+            $userId = (int) $kh->id_tai_khoan;
+
+            $address = DiaChi::where('id_tai_khoan', $userId)->lockForUpdate()->findOrFail($addressId);
+            $isDefault = !empty($data['la_mac_dinh']);
+
+            if ($isDefault && !$address->la_mac_dinh) {
+                DiaChi::where('id_tai_khoan', $userId)->update(['la_mac_dinh' => false]);
+            } elseif (!$isDefault && $address->la_mac_dinh) {
+                if (DiaChi::where('id_tai_khoan', $userId)->count() <= 1) {
+                    $isDefault = true;
+                } else {
+                    $another = DiaChi::where('id_tai_khoan', $userId)->where('id', '!=', $addressId)->first();
+                    if ($another) {
+                        $another->update(['la_mac_dinh' => true]);
+                    }
+                }
+            }
+
+            $address->update([
+                'ten_nguoi_nhan' => $data['ten_nguoi_nhan'],
+                'so_dien_thoai' => $data['so_dien_thoai'],
+                'dia_chi_cu_the' => $data['dia_chi_cu_the'],
+                'loai_dia_chi' => $data['loai_dia_chi'] ?? $address->loai_dia_chi,
+                'la_mac_dinh' => $isDefault,
+            ]);
+
+            return $kh->load(['user.diaChis']);
+        });
+    }
+
+    public function setDefaultAddress(int $khachHangId, int $addressId): KhachHang
+    {
+        return DB::transaction(function () use ($khachHangId, $addressId) {
+            $kh = KhachHang::findOrFail($khachHangId);
+            $userId = (int) $kh->id_tai_khoan;
+
+            $address = DiaChi::where('id_tai_khoan', $userId)->lockForUpdate()->findOrFail($addressId);
+            DiaChi::where('id_tai_khoan', $userId)->update(['la_mac_dinh' => false]);
+            $address->update(['la_mac_dinh' => true]);
+
+            return $kh->load(['user.diaChis']);
+        });
+    }
+
+    public function deleteAddress(int $khachHangId, int $addressId): KhachHang
+    {
+        return DB::transaction(function () use ($khachHangId, $addressId) {
+            $kh = KhachHang::findOrFail($khachHangId);
+            $userId = (int) $kh->id_tai_khoan;
+
+            $address = DiaChi::where('id_tai_khoan', $userId)->lockForUpdate()->findOrFail($addressId);
+            $wasDefault = (bool) $address->la_mac_dinh;
+            $address->delete();
+
+            if ($wasDefault) {
+                $firstRemaining = DiaChi::where('id_tai_khoan', $userId)->first();
+                if ($firstRemaining) {
+                    $firstRemaining->update(['la_mac_dinh' => true]);
+                }
+            }
+
+            return $kh->load(['user.diaChis']);
+        });
     }
 }

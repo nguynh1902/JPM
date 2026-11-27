@@ -40,7 +40,8 @@ class KhachHangRequest extends FormRequest
             'avatar' => 'nullable|image|mimes:jpeg,png,jpg,webp|extensions:jpg,jpeg,png,webp|max:5120',
             'remove_avatar' => 'nullable|boolean',
             'status' => 'nullable|integer|in:0,1',
-            'password' => ['nullable', 'string', 'min:8', 'max:25', 'regex:/^[\x20-\x7E]+$/']
+            'password' => ['nullable', 'string', 'min:8', 'max:25', 'regex:/^[\x20-\x7E]+$/'],
+            'initial_address' => 'nullable|string|max:255',
         ];
     }
 

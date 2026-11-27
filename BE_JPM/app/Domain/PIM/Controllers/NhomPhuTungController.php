@@ -85,7 +85,14 @@ class NhomPhuTungController extends Controller
             if ($item->phuTungs()->exists()) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Không thể xóa! Nhóm phụ tùng này đang được sử dụng.'
+                    'message' => 'Không thể xóa! Nhóm phụ tùng này đang được sử dụng bởi các phụ tùng.'
+                ], 400);
+            }
+
+            if ($item->soDoPhuTungs()->exists()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Không thể xóa! Nhóm phụ tùng này đang được sử dụng trong Sơ đồ phụ tùng.'
                 ], 400);
             }
             

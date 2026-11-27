@@ -15,15 +15,27 @@ class KhachHangResource extends JsonResource
     public function toArray(Request $request): array
     {
         $addressText = 'Chưa cập nhật';
+        $addressesList = collect();
+
         if ($this->user) {
             $diaChis = $this->user->relationLoaded('diaChis')
                 ? $this->user->diaChis
                 : \App\Domain\IAM\Models\DiaChi::where('id_tai_khoan', $this->id_tai_khoan)->get();
+
             if ($diaChis && $diaChis->isNotEmpty()) {
-                $defaultAddr = $diaChis->firstWhere('la_mac_dinh', 1) ?? $diaChis->first();
+                $sorted = $diaChis->sortByDesc(fn ($a) => (int) ($a->la_mac_dinh ?? 0))->values();
+                $defaultAddr = $sorted->first();
                 if ($defaultAddr && !empty($defaultAddr->dia_chi_cu_the)) {
                     $addressText = $defaultAddr->dia_chi_cu_the;
                 }
+                $addressesList = $sorted->map(fn ($addr) => [
+                    'id' => $addr->id,
+                    'ten_nguoi_nhan' => $addr->ten_nguoi_nhan,
+                    'so_dien_thoai' => $addr->so_dien_thoai,
+                    'dia_chi_cu_the' => $addr->dia_chi_cu_the,
+                    'loai_dia_chi' => $addr->loai_dia_chi,
+                    'la_mac_dinh' => (bool) $addr->la_mac_dinh,
+                ])->values();
             }
         }
 
@@ -34,6 +46,8 @@ class KhachHangResource extends JsonResource
             'name' => $this->ho_ten,
             'phone' => $this->so_dien_thoai,
             'address' => $addressText,
+            'addresses_count' => $addressesList->count(),
+            'addresses' => $addressesList,
             'email' => $this->user ? $this->user->email : '',
             'avatar' => ($this->user && !empty($this->user->avatar)) ? (str_starts_with($this->user->avatar, 'http') ? $this->user->avatar : asset($this->user->avatar)) : '',
             'status' => $this->user ? $this->user->status : 1,

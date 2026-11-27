@@ -268,7 +268,7 @@ export default {
           title: "Xác nhận xóa",
           html: `Bạn có chắc chắn muốn xóa chuyên mục <b>"${item.name}"</b>?<br><br><small class="text-danger">Lưu ý: Dữ liệu sau khi xóa sẽ không thể khôi phục.</small>`,
           icon: "warning",
-          iconColor: "#ff3e1d",
+          iconColor: "#f82249",
           showCancelButton: true,
           confirmButtonText: "Đồng ý xóa",
           cancelButtonText: "Hủy",

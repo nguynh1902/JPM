@@ -139,7 +139,32 @@
               <td class="fw-bold text-dark">{{ item.name }}</td>
               <td>{{ item.phone }}</td>
               <td class="fw-semibold text-secondary">{{ item.email }}</td>
-              <td class="fw-semibold text-secondary">{{ item.address || "N/A" }}</td>
+              <td style="max-width: 260px;">
+                <div class="d-flex align-items-center gap-2">
+                  <span class="fw-semibold text-secondary text-truncate d-inline-block" style="max-width: 210px;" :title="item.address || 'Chưa cập nhật'">
+                    {{ item.address || "Chưa cập nhật" }}
+                  </span>
+                  <button
+                    v-if="(item.addresses_count || 0) > 1 && canEditCustomer"
+                    type="button"
+                    class="badge bg-pastel-info border-0 flex-shrink-0 cursor-pointer"
+                    style="font-size: 0.72rem; padding: 0.25rem 0.5rem;"
+                    @click="openEditModal(item, 'addresses')"
+                    data-bs-toggle="modal"
+                    data-bs-target="#modalCustomer"
+                    :title="`Xem tất cả ${item.addresses_count} địa chỉ giao nhận`"
+                  >
+                    +{{ item.addresses_count - 1 }} địa chỉ
+                  </button>
+                  <span
+                    v-else-if="(item.addresses_count || 0) > 1"
+                    class="badge bg-pastel-info flex-shrink-0"
+                    style="font-size: 0.72rem; padding: 0.25rem 0.5rem;"
+                  >
+                    +{{ item.addresses_count - 1 }} địa chỉ
+                  </span>
+                </div>
+              </td>
               <td class="text-center">
                 <span
                   class="badge badge-custom"
@@ -209,8 +234,35 @@
             ></button>
           </div>
           <form @submit.prevent="saveData">
-            <div class="modal-body pb-2 pt-4">
-              <div class="row">
+            <div class="modal-body pb-2 pt-3">
+              <!-- Tabs chuyển nhanh giữa Thông tin tài khoản & Sổ địa chỉ (khi Sửa khách hàng) -->
+              <ul v-if="isEditMode" class="nav nav-pills mb-4 border-bottom pb-3 gap-2" role="tablist">
+                <li class="nav-item">
+                  <button
+                    type="button"
+                    class="nav-link px-3 py-2"
+                    :class="{ active: modalTab === 'info' }"
+                    @click="modalTab = 'info'"
+                  >
+                    <i class="bx bx-user me-1"></i> Thông tin tài khoản
+                  </button>
+                </li>
+                <li class="nav-item">
+                  <button
+                    type="button"
+                    class="nav-link px-3 py-2 d-inline-flex align-items-center gap-2"
+                    :class="{ active: modalTab === 'addresses' }"
+                    @click="modalTab = 'addresses'"
+                  >
+                    <i class="bx bx-map-pin"></i>
+                    <span>Sổ địa chỉ giao nhận</span>
+                    <span class="tab-count-badge">{{ customerAddresses.length }}</span>
+                  </button>
+                </li>
+              </ul>
+
+              <!-- TAB 1: THÔNG TIN TÀI KHOẢN -->
+              <div v-show="!isEditMode || modalTab === 'info'" class="row">
                 <!-- Cột trái: Thông tin cơ bản -->
                 <div class="col-md-7 pe-md-4">
                   <div class="row">
@@ -224,7 +276,7 @@
                         class="form-control"
                         placeholder="VD: Nguyễn Văn A"
                         v-model="formData.name"
-                        required
+                        :required="!isEditMode || modalTab === 'info'"
                       />
                     </div>
                   </div>
@@ -238,11 +290,9 @@
                       <input
                         type="email"
                         class="form-control"
-                        
                         placeholder="VD: a@gmail.com"
                         v-model="formData.email"
-                        required
-                        
+                        :required="!isEditMode || modalTab === 'info'"
                       />
                     </div>
                     <div class="col-md-6 mb-3">
@@ -253,11 +303,9 @@
                       <input
                         type="text"
                         class="form-control"
-                        
                         placeholder="VD: 0901234567"
                         v-model="formData.phone"
-                        required
-                        
+                        :required="!isEditMode || modalTab === 'info'"
                         pattern="^[0-9]{9,15}$"
                         title="Số điện thoại phải từ 9-15 chữ số"
                       />
@@ -307,6 +355,21 @@
                           <i class="bx bx-reset me-1"></i> Đặt lại về Jpm@2026
                         </button>
                       </div>
+                    </div>
+                  </div>
+
+                  <!-- Địa chỉ mặc định ban đầu khi Thêm Khách Hàng Mới -->
+                  <div v-if="!isEditMode" class="row">
+                    <div class="col-md-12 mb-3">
+                      <label class="form-label fw-medium text-dark">
+                        Địa Chỉ Giao Hàng Mặc Định <span class="text-muted fw-normal">(Tùy chọn)</span>
+                      </label>
+                      <input
+                        type="text"
+                        class="form-control"
+                        placeholder="VD: Xưởng tàu Marina, 128 Nguyễn Hữu Cảnh, TP.HCM"
+                        v-model="formData.initial_address"
+                      />
                     </div>
                   </div>
                 </div>
@@ -360,6 +423,125 @@
                   </div>
                 </div>
               </div>
+
+              <!-- TAB 2: SỔ ĐỊA CHỈ GIAO NHẬN (1-N CHUẨN DOANH NGHIỆP) -->
+              <div v-if="isEditMode" v-show="modalTab === 'addresses'" class="pb-2">
+                <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+                  <div>
+                    <h6 class="mb-0 fw-bold text-dark">Danh sách địa chỉ giao hàng ({{ customerAddresses.length }})</h6>
+                    <small class="text-muted">Mỗi khách hàng có thể lưu nhiều xưởng sửa chữa, bến tàu hoặc chành xe khác nhau.</small>
+                  </div>
+                  <button
+                    v-if="!showAddressForm"
+                    type="button"
+                    class="btn btn-primary btn-sm px-3"
+                    @click="openNewAddressForm"
+                  >
+                    <i class="bx bx-plus me-1"></i> Thêm địa chỉ
+                  </button>
+                </div>
+
+                <!-- Form Thêm / Sửa Địa Chỉ Inline -->
+                <div v-if="showAddressForm" class="card border bg-light-subtle mb-3">
+                  <div class="card-body p-3">
+                    <div class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom">
+                      <span class="fw-bold text-dark small">
+                        {{ editingAddressId ? 'Cập nhật địa chỉ' : 'Thêm địa chỉ giao hàng mới' }}
+                      </span>
+                      <button type="button" class="btn-close" @click="cancelAddressForm" aria-label="Close"></button>
+                    </div>
+                    <div class="row g-2">
+                      <div class="col-md-4">
+                        <label class="form-label small fw-semibold mb-1">Tên người nhận <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" v-model="addressForm.ten_nguoi_nhan" placeholder="Tên người nhận" />
+                      </div>
+                      <div class="col-md-4">
+                        <label class="form-label small fw-semibold mb-1">Số điện thoại <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" v-model="addressForm.so_dien_thoai" placeholder="Số điện thoại" />
+                      </div>
+                      <div class="col-md-4">
+                        <label class="form-label small fw-semibold mb-1">Phân loại</label>
+                        <input type="text" class="form-control" v-model="addressForm.loai_dia_chi" placeholder="VD: Xưởng / Cảng / Chành xe" maxlength="20" />
+                      </div>
+                      <div class="col-12 mt-2">
+                        <label class="form-label small fw-semibold mb-1">Địa chỉ cụ thể <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" v-model="addressForm.dia_chi_cu_the" placeholder="Số nhà, đường, bến cảng, chành xe..." maxlength="255" />
+                      </div>
+                      <div class="col-12 d-flex flex-wrap justify-content-between align-items-center gap-2 mt-2 pt-1">
+                        <div class="form-check mb-0">
+                          <input class="form-check-input" type="checkbox" id="adminDefaultAddr" v-model="addressForm.la_mac_dinh" />
+                          <label class="form-check-label small fw-medium" for="adminDefaultAddr">Đặt làm địa chỉ mặc định</label>
+                        </div>
+                        <div class="d-flex gap-2">
+                          <button type="button" class="btn btn-outline-secondary btn-sm px-3" @click="cancelAddressForm">Hủy</button>
+                          <button type="button" class="btn btn-primary btn-sm px-3" :disabled="isSavingAddress" @click="submitAddressForm">
+                            <span v-if="isSavingAddress" class="spinner-border spinner-border-sm me-1"></span>
+                            {{ editingAddressId ? 'Lưu cập nhật' : 'Lưu địa chỉ' }}
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Danh sách địa chỉ hiện có -->
+                <div v-if="customerAddresses.length === 0" class="text-center py-4 border rounded bg-light">
+                  <i class="bx bx-map text-muted fs-2 d-block mb-1"></i>
+                  <p class="text-muted small mb-0">Khách hàng chưa có địa chỉ nào trong sổ địa chỉ.</p>
+                </div>
+
+                <div v-else class="d-flex flex-column gap-2" style="max-height: 290px; overflow-y: auto;">
+                  <div
+                    v-for="addr in customerAddresses"
+                    :key="addr.id"
+                    class="border rounded p-3 d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2 bg-white"
+                  >
+                    <div class="min-w-0">
+                      <div class="d-flex align-items-center flex-wrap gap-2 mb-1">
+                        <span class="fw-bold text-dark">{{ addr.ten_nguoi_nhan }}</span>
+                        <span class="text-muted small">|</span>
+                        <span class="text-secondary small fw-semibold">{{ addr.so_dien_thoai }}</span>
+                        <span v-if="addr.loai_dia_chi" class="badge bg-pastel-secondary" style="font-size: 0.7rem; padding: 0.22rem 0.5rem;">
+                          {{ addr.loai_dia_chi }}
+                        </span>
+                        <span v-if="addr.la_mac_dinh" class="badge bg-pastel-danger" style="font-size: 0.7rem; padding: 0.22rem 0.5rem;">
+                          Mặc định
+                        </span>
+                      </div>
+                      <div class="text-secondary small">
+                        <i class="bx bx-map-pin me-1"></i>{{ addr.dia_chi_cu_the }}
+                      </div>
+                    </div>
+                    <div class="d-flex align-items-center gap-1 flex-shrink-0">
+                      <button
+                        v-if="!addr.la_mac_dinh"
+                        type="button"
+                        class="btn btn-sm btn-outline-secondary"
+                        @click="setDefaultAddress(addr.id)"
+                        title="Đặt làm mặc định"
+                      >
+                        Mặc định
+                      </button>
+                      <button
+                        type="button"
+                        class="action-btn text-primary"
+                        @click="openEditAddressForm(addr)"
+                        title="Sửa địa chỉ"
+                      >
+                        <i class="bx bx-edit-alt"></i>
+                      </button>
+                      <button
+                        type="button"
+                        class="action-btn text-danger"
+                        @click="deleteCustomerAddress(addr.id)"
+                        title="Xóa địa chỉ"
+                      >
+                        <i class="bx bx-trash"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
 
             <div class="modal-footer border-top py-3 mt-2 bg-light">
@@ -368,9 +550,10 @@
                 class="btn btn-outline-secondary px-4"
                 data-bs-dismiss="modal"
               >
-                Hủy
+                {{ isEditMode && modalTab === 'addresses' ? 'Đóng' : 'Hủy' }}
               </button>
               <button
+                v-if="!isEditMode || modalTab === 'info'"
                 type="submit"
                 class="btn btn-primary px-4 shadow-sm"
                 :disabled="isSubmitting"
@@ -474,9 +657,21 @@ export default {
       },
       isSubmitting: false,
       isEditMode: false,
+      modalTab: "info",
       showPassword: false,
       avatarFile: null,
       avatarPreview: null,
+      customerAddresses: [],
+      showAddressForm: false,
+      isSavingAddress: false,
+      editingAddressId: null,
+      addressForm: {
+        ten_nguoi_nhan: "",
+        so_dien_thoai: "",
+        dia_chi_cu_the: "",
+        loai_dia_chi: "",
+        la_mac_dinh: false,
+      },
       formData: {
         id: null,
         user_code: "",
@@ -485,6 +680,7 @@ export default {
         email: "",
         phone: "",
         address: "",
+        initial_address: "",
         password: "",
         status: 1,
       },
@@ -518,7 +714,9 @@ export default {
             (String(m.name || '').toLowerCase().includes(s) ||
               String(m.email || '').toLowerCase().includes(s) ||
               String(m.phone || '').includes(s) ||
-              String(m.user_code || '').toLowerCase().includes(s));
+              String(m.user_code || '').toLowerCase().includes(s) ||
+              String(m.address || '').toLowerCase().includes(s) ||
+              (Array.isArray(m.addresses) && m.addresses.some((a) => String(a.dia_chi_cu_the || '').toLowerCase().includes(s))));
         }
         if (this.filters.status !== null && this.filters.status !== undefined && this.filters.status !== '') {
           match = match && Number(m.status) === Number(this.filters.status);
@@ -536,15 +734,109 @@ export default {
     },
     openAddModal() {
       this.isEditMode = false;
+      this.modalTab = "info";
       this.resetForm();
     },
-    openEditModal(item) {
+    openEditModal(item, tab = "info") {
       this.isEditMode = true;
       this.resetForm();
-      this.formData = { ...item };
+      this.modalTab = tab;
+      this.formData = { ...item, initial_address: "" };
+      this.customerAddresses = Array.isArray(item.addresses) ? [...item.addresses] : [];
       this.formData.password = ""; // Clear password field
       if (this.formData.status === true) this.formData.status = 1;
       else if (this.formData.status === false) this.formData.status = 0;
+    },
+    openNewAddressForm() {
+      this.editingAddressId = null;
+      this.addressForm = {
+        ten_nguoi_nhan: this.formData.name || "",
+        so_dien_thoai: this.formData.phone || "",
+        dia_chi_cu_the: "",
+        loai_dia_chi: "",
+        la_mac_dinh: this.customerAddresses.length === 0,
+      };
+      this.showAddressForm = true;
+    },
+    openEditAddressForm(addr) {
+      this.editingAddressId = addr.id;
+      this.addressForm = {
+        ten_nguoi_nhan: addr.ten_nguoi_nhan || "",
+        so_dien_thoai: addr.so_dien_thoai || "",
+        dia_chi_cu_the: addr.dia_chi_cu_the || "",
+        loai_dia_chi: addr.loai_dia_chi || "",
+        la_mac_dinh: !!addr.la_mac_dinh,
+      };
+      this.showAddressForm = true;
+    },
+    cancelAddressForm() {
+      this.showAddressForm = false;
+      this.editingAddressId = null;
+    },
+    syncUpdatedCustomer(res) {
+      const updated = res?.data?.data || res?.data || res;
+      if (updated && Array.isArray(updated.addresses)) {
+        this.customerAddresses = [...updated.addresses];
+        this.formData.address = updated.address || "";
+      }
+      this.queryClient.invalidateQueries({ queryKey: ["khach-hang"] });
+    },
+    async submitAddressForm() {
+      if (!this.addressForm.ten_nguoi_nhan || !this.addressForm.so_dien_thoai || !this.addressForm.dia_chi_cu_the) {
+        if (this.$toast) this.$toast.error("Vui lòng nhập đầy đủ tên người nhận, số điện thoại và địa chỉ!");
+        return;
+      }
+      this.isSavingAddress = true;
+      try {
+        let res;
+        if (this.editingAddressId) {
+          res = await axiosClient.put(`/admin/khach-hang/${this.formData.id}/dia-chi/${this.editingAddressId}`, this.addressForm);
+        } else {
+          res = await axiosClient.post(`/admin/khach-hang/${this.formData.id}/dia-chi`, this.addressForm);
+        }
+        this.syncUpdatedCustomer(res);
+        this.cancelAddressForm();
+        if (this.$toast) this.$toast.success(res?.data?.message || res?.message || "Đã lưu địa chỉ giao hàng!");
+      } catch (err) {
+        if (this.$toast) this.$toast.error(err.response?.data?.message || "Không thể lưu địa chỉ lúc này!");
+      } finally {
+        this.isSavingAddress = false;
+      }
+    },
+    async setDefaultAddress(addressId) {
+      try {
+        const res = await axiosClient.put(`/admin/khach-hang/${this.formData.id}/dia-chi/${addressId}/mac-dinh`);
+        this.syncUpdatedCustomer(res);
+        if (this.$toast) this.$toast.success("Đã đặt làm địa chỉ mặc định!");
+      } catch (err) {
+        if (this.$toast) this.$toast.error(err.response?.data?.message || "Không thể cập nhật mặc định!");
+      }
+    },
+    async deleteCustomerAddress(addressId) {
+      const result = await Swal.fire({
+        title: "Xóa địa chỉ này?",
+        text: "Các đơn hàng trước đây vẫn giữ nguyên địa chỉ đã đặt.",
+        icon: "warning",
+        iconColor: "#f82249",
+        showCancelButton: true,
+        confirmButtonText: "Xóa địa chỉ",
+        cancelButtonText: "Hủy",
+        reverseButtons: true,
+        animation: false,
+        customClass: {
+          confirmButton: "btn btn-danger px-4 shadow-sm",
+          cancelButton: "btn btn-outline-secondary px-4 me-3",
+        },
+        buttonsStyling: false,
+      });
+      if (!result.isConfirmed) return;
+      try {
+        const res = await axiosClient.delete(`/admin/khach-hang/${this.formData.id}/dia-chi/${addressId}`);
+        this.syncUpdatedCustomer(res);
+        if (this.$toast) this.$toast.success("Đã xóa địa chỉ!");
+      } catch (err) {
+        if (this.$toast) this.$toast.error(err.response?.data?.message || "Không thể xóa địa chỉ!");
+      }
     },
     async saveData() {
       if (!this.formData.name || !this.formData.email || !this.formData.phone) {
@@ -560,6 +852,10 @@ export default {
       payload.append("email", this.formData.email);
       payload.append("phone", this.formData.phone);
       payload.append("status", this.formData.status);
+
+      if (!this.isEditMode && this.formData.initial_address) {
+        payload.append("initial_address", this.formData.initial_address.trim());
+      }
 
       if (this.formData.password) {
         payload.append("password", this.formData.password);
@@ -613,7 +909,7 @@ export default {
         title: "Xác nhận Reset Mật Khẩu",
         text: "Mật khẩu của khách hàng này sẽ được đặt lại thành Jpm@2026.",
         icon: 'warning',
-          iconColor: '#ff3e1d',
+          iconColor: '#f82249',
         showCancelButton: true,
         confirmButtonText: "Xác nhận Reset",
         cancelButtonText: "Hủy",
@@ -651,7 +947,7 @@ export default {
         title: "Xác nhận xóa tài khoản",
         html: `Bạn có chắc chắn muốn XÓA tài khoản khách hàng <b>"${item.name}"</b>?<br><br><small class="text-danger">CẢNH BÁO: Dữ liệu liên kết có thể bị ảnh hưởng.</small>` ,
         icon: 'warning',
-          iconColor: '#ff3e1d',
+          iconColor: '#f82249',
         showCancelButton: true,
         confirmButtonText: "XÓA tài khoản",
         cancelButtonText: "Hủy",
@@ -690,6 +986,10 @@ export default {
     },
     resetForm() {
       this.showPassword = false;
+      this.modalTab = "info";
+      this.customerAddresses = [];
+      this.showAddressForm = false;
+      this.editingAddressId = null;
       this.formData = {
         id: null,
         user_code: "",
@@ -698,6 +998,7 @@ export default {
         email: "",
         phone: "",
         address: "",
+        initial_address: "",
         password: "",
         status: 1,
       };

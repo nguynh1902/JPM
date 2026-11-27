@@ -341,7 +341,7 @@ const deactivateAccount = async () => {
     input: 'password',
     inputPlaceholder: 'Nhập mật khẩu của bạn',
     icon: 'warning',
-    iconColor: '#ff3e1d',
+    iconColor: '#f82249',
     showCancelButton: true,
     confirmButtonText: 'Vô hiệu hóa',
     cancelButtonText: 'Hủy',

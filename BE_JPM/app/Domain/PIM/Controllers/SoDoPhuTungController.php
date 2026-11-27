@@ -92,6 +92,7 @@ class SoDoPhuTungController extends Controller
             }
 
             DB::commit();
+            app(\App\Domain\MarineCatalog\Services\CatalogCacheService::class)->clearAllCatalogCache();
             return response()->json([
                 'success' => true,
                 'message' => 'Tạo sơ đồ thành công',
@@ -137,6 +138,9 @@ class SoDoPhuTungController extends Controller
                     2000
                 );
                 ImageUploadService::delete($oldImg);
+            } elseif (array_key_exists('hinh_anh', $data) && empty($data['hinh_anh'])) {
+                ImageUploadService::delete($soDo->hinh_anh);
+                $data['hinh_anh'] = null;
             }
             $soDo->update($data);
 
@@ -159,6 +163,7 @@ class SoDoPhuTungController extends Controller
                 }
             }
             DB::commit();
+            app(\App\Domain\MarineCatalog\Services\CatalogCacheService::class)->clearAllCatalogCache();
             return response()->json([
                 'success' => true,
                 'message' => 'Cập nhật sơ đồ thành công',
@@ -181,6 +186,7 @@ class SoDoPhuTungController extends Controller
             $soDo->delete();
             DB::commit();
             ImageUploadService::delete($oldImg);
+            app(\App\Domain\MarineCatalog\Services\CatalogCacheService::class)->clearAllCatalogCache();
 
             return response()->json([
                 'success' => true,

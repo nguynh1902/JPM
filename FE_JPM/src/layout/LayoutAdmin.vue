@@ -30,13 +30,47 @@ import NavbarAdmin from "../components/admin/NavbarAdmin.vue";
 import FooterAdmin from "../components/admin/FooterAdmin.vue";
 import { unloadClientCSS } from "../utils/clientCssLoader";
 
-// CSS URLs
+// CSS URLs & Inline Stylesheets (core.css & demo.css dùng ?inline để hỗ trợ Vite HMR tức thì như Client)
 import boxiconsCss from "../assets/admin/template/vendor/fonts/boxicons.css?url";
-import coreCss from "../assets/admin/template/vendor/css/core.css?url";
+import coreCssContent from "../assets/admin/template/vendor/css/core.css?inline";
 import themeDefaultCss from "../assets/admin/template/vendor/css/theme-default.css?url";
-import demoCss from "../assets/admin/template/css/demo.css?url";
+import demoCssContent from "../assets/admin/template/css/demo.css?inline";
 import perfectScrollbarCss from "../assets/admin/template/vendor/libs/perfect-scrollbar/perfect-scrollbar.css?url";
 import apexChartsCss from "../assets/admin/template/vendor/libs/apex-charts/apex-charts.css?url";
+
+let currentCoreCss = coreCssContent;
+let currentDemoCss = demoCssContent;
+
+const syncAdminInlineStyle = (id, cssText, extraClass = "") => {
+  if (typeof document === "undefined") return null;
+  let styleEl = document.getElementById(id);
+  if (!styleEl) {
+    styleEl = document.createElement("style");
+    styleEl.id = id;
+    if (extraClass) styleEl.classList.add(extraClass);
+    styleEl.setAttribute("data-layout", "admin");
+  }
+  styleEl.textContent = cssText;
+  document.head.appendChild(styleEl);
+  return styleEl;
+};
+
+if (import.meta.hot) {
+  import.meta.hot.accept("../assets/admin/template/vendor/css/core.css?inline", (mod) => {
+    if (mod && typeof mod.default === "string") {
+      currentCoreCss = mod.default;
+      const el = typeof document !== "undefined" ? document.getElementById("admin-core-css") : null;
+      if (el) el.textContent = currentCoreCss;
+    }
+  });
+  import.meta.hot.accept("../assets/admin/template/css/demo.css?inline", (mod) => {
+    if (mod && typeof mod.default === "string") {
+      currentDemoCss = mod.default;
+      const el = typeof document !== "undefined" ? document.getElementById("admin-demo-css") : null;
+      if (el) el.textContent = currentDemoCss;
+    }
+  });
+}
 
 // JS URLs
 import helpersJs from "../assets/admin/template/vendor/js/helpers.js?url";
@@ -72,30 +106,32 @@ export default {
     document.documentElement.setAttribute("data-theme", "theme-default");
     document.documentElement.setAttribute("data-template", "vertical-menu-template-free");
 
-    // CSS
-    const cssFiles = [
-      { href: boxiconsCss, class: "" },
-      { href: coreCss, class: "template-customizer-core-css" },
-      { href: themeDefaultCss, class: "template-customizer-theme-css" },
-      { href: demoCss, class: "" },
-      { href: perfectScrollbarCss, class: "" },
-      { href: apexChartsCss, class: "" },
-    ];
-
-    const loadCSS = (file) => {
+    // CSS theo đúng thứ tự ưu tiên: boxicons -> core -> theme-default -> demo -> libs
+    const loadCSS = (href, className = "") => {
       return new Promise((resolve, reject) => {
-        if (document.querySelector(`link[href="${file.href}"]`)) {
+        const existing = document.querySelector(`link[href="${href}"]`);
+        if (existing) {
+          document.head.appendChild(existing);
           return resolve();
         }
         const link = document.createElement("link");
         link.rel = "stylesheet";
-        link.href = file.href;
-        if (file.class) link.classList.add(file.class);
+        link.href = href;
+        if (className) link.classList.add(className);
         link.setAttribute("data-layout", "admin");
         link.onload = resolve;
         link.onerror = reject;
         document.head.appendChild(link);
       });
+    };
+
+    const loadAdminStyles = async () => {
+      await loadCSS(boxiconsCss);
+      syncAdminInlineStyle("admin-core-css", currentCoreCss, "template-customizer-core-css");
+      await loadCSS(themeDefaultCss, "template-customizer-theme-css");
+      syncAdminInlineStyle("admin-demo-css", currentDemoCss);
+      await loadCSS(perfectScrollbarCss);
+      await loadCSS(apexChartsCss);
     };
 
     // Load JS Sequentially
@@ -115,7 +151,7 @@ export default {
     };
 
     // Chain the loading process: First all CSS, then all JS
-    Promise.all(cssFiles.map(loadCSS))
+    loadAdminStyles()
       .then(() => {
         // If JS vendor files are already loaded in memory, avoid reloading
         if (window.Helpers && window.bootstrap && window.Menu) {
@@ -165,7 +201,7 @@ export default {
     document.documentElement.removeAttribute("data-template");
 
     // Cleanup Admin CSS only (keep scripts in memory for instant SPA transitions)
-    document.querySelectorAll('link[data-layout="admin"]').forEach(el => el.remove());
+    document.querySelectorAll('link[data-layout="admin"], style[data-layout="admin"]').forEach(el => el.remove());
   },
 };
 </script>

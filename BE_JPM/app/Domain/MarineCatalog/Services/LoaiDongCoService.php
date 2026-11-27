@@ -10,14 +10,7 @@ class LoaiDongCoService
 {
     private function clearPublicCache()
     {
-        // Flush specific cache keys related to Loai Dong Co
-        // Since TraCuuController caches with dynamic IDs (e.g., public_loai_dong_co_1), 
-        // the safest way to ensure data mapping to Client is fully flushing it or clearing known keys.
-        // For standard small systems, we can clear the common keys.
-        Cache::forget('public_loai_dong_co_all');
-        Cache::forget('public_loai_dong_co_'); // For empty ID requests
-        // A full cache clear for Client might be required if it's heavily dynamic without tags
-        \Illuminate\Support\Facades\Artisan::call('cache:clear');
+        app(CatalogCacheService::class)->clearAllCatalogCache();
     }
 
     public function getAll()

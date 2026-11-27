@@ -291,13 +291,14 @@ class TraCuuController extends Controller
     // Lấy danh sách model động cơ (có thể lọc theo brand)
     public function loaiDongCo(Request $request)
     {
-        $cacheKey = 'public_loai_dong_co_' . ($request->thuong_hieu_id ?? 'all');
+        $ver = CatalogCacheService::getVersion();
+        $cacheKey = "public_loai_dong_co_v{$ver}_" . ($request->thuong_hieu_id ?? 'all');
         $types = \Illuminate\Support\Facades\Cache::remember($cacheKey, 86400, function () use ($request) {
             $query = \App\Domain\MarineCatalog\Models\LoaiDongCo::where('trang_thai', 1);
             if ($request->has('thuong_hieu_id') && $request->thuong_hieu_id != '') {
                 $brandId = $request->thuong_hieu_id;
                 $query->whereHas('dongCoModels', function($q) use ($brandId) {
-                    $q->where('thuong_hieu_id', $brandId);
+                    $q->where('thuong_hieu_id', $brandId)->where('trang_thai', 1);
                 });
             }
             return $query->get();
