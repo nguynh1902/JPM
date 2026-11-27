@@ -219,6 +219,65 @@
         </div>
       </section>
 
+      <!-- 4.5. QUY TRÌNH TIẾP NHẬN & HỖ TRỢ KỸ THUẬT 01 -> 04 (Kiểu Ảnh 1) -->
+      <section class="support-process-band mb-5 pb-4 border-bottom">
+        <div class="d-flex flex-wrap align-items-end justify-content-between gap-2 mb-4">
+          <div>
+            <div class="d-flex align-items-center gap-3 mb-2">
+              <span class="contact-overline-line"></span>
+              <span class="contact-overline-text">QUY TRÌNH HỖ TRỢ</span>
+            </div>
+            <h2 class="contact-heading mb-0">Cách Chúng Tôi Xử Lý Yêu Cầu</h2>
+          </div>
+          <span class="text-muted" style="font-size: 0.88rem;">Phản hồi kỹ thuật &amp; báo giá trong vòng 24 giờ</span>
+        </div>
+
+        <div class="row g-3 g-lg-4">
+          <div class="col-12 col-sm-6 col-lg-3">
+            <div class="support-step-card">
+              <div class="support-step-head">
+                <span class="support-step-num">01</span>
+                <i class="bi bi-arrow-right support-step-arrow d-none d-lg-inline-flex"></i>
+              </div>
+              <h6 class="support-step-title">Tiếp nhận thông tin</h6>
+              <p class="support-step-desc">Gửi mã phụ tùng, số khung (VIN) hoặc ảnh chụp chi tiết qua form / Zalo.</p>
+            </div>
+          </div>
+
+          <div class="col-12 col-sm-6 col-lg-3">
+            <div class="support-step-card">
+              <div class="support-step-head">
+                <span class="support-step-num">02</span>
+                <i class="bi bi-arrow-right support-step-arrow d-none d-lg-inline-flex"></i>
+              </div>
+              <h6 class="support-step-title">Đối chiếu kỹ thuật</h6>
+              <p class="support-step-desc">Kỹ sư JPM kiểm tra sơ đồ rã máy chính hãng và mã thay thế mới nhất.</p>
+            </div>
+          </div>
+
+          <div class="col-12 col-sm-6 col-lg-3">
+            <div class="support-step-card">
+              <div class="support-step-head">
+                <span class="support-step-num">03</span>
+                <i class="bi bi-arrow-right support-step-arrow d-none d-lg-inline-flex"></i>
+              </div>
+              <h6 class="support-step-title">Xác nhận &amp; Bảo hành</h6>
+              <p class="support-step-desc">Báo giá minh bạch, thông báo tiến độ kho hàng và chính sách bảo hành OEM.</p>
+            </div>
+          </div>
+
+          <div class="col-12 col-sm-6 col-lg-3">
+            <div class="support-step-card">
+              <div class="support-step-head">
+                <span class="support-step-num">04</span>
+              </div>
+              <h6 class="support-step-title">Bàn giao &amp; Đồng hành</h6>
+              <p class="support-step-desc">Vận chuyển hỏa tốc tận xưởng, tiếp tục hỗ trợ kỹ thuật sau khi lắp đặt.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <!-- 5. FAQS SECTION with Search -->
       <section id="faq-section" class="mb-5">
         <div class="row gx-lg-5">
@@ -713,6 +772,56 @@ textarea.contact-field-input {
 
 .btn-clear-search:hover {
   color: #f82249;
+}
+
+/* ── 4.5. QUY TRÌNH HỖ TRỢ 01 -> 04 ── */
+.support-step-card {
+  height: 100%;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: var(--jpm-radius-card, 10px);
+  padding: 16px 18px;
+}
+
+.support-step-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.support-step-num {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  color: var(--jpm-color-navy-dark, #0A1128);
+  font-family: var(--jpm-font-mono, 'Roboto Mono', monospace);
+  font-size: 0.78rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.support-step-arrow {
+  color: #94a3b8;
+  font-size: 0.95rem;
+}
+
+.support-step-title {
+  font-size: 0.96rem;
+  font-weight: 700;
+  color: var(--jpm-color-navy-dark, #0A1128);
+  margin-bottom: 5px;
+}
+
+.support-step-desc {
+  font-size: 0.86rem;
+  color: #64748b;
+  line-height: 1.5;
+  margin-bottom: 0;
 }
 
 /* ── FAQ ACCORDION BRAND TWEAKS (CHUẨN HÓA NATIVE CLIENT STYLE) ── */

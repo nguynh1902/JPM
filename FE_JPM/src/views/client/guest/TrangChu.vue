@@ -264,52 +264,116 @@
     </section>
 
     <!-- ========================================================
-         KHỐI 4: BANNER QUẢNG BÁ TẠI SAO CHỌN JPM MARINE (Editorial Luxury)
+         KHỐI 4: GIỚI THIỆU & TẠI SAO CHỌN JPM MARINE (Split + KPI + Quy trình 01→04)
          ======================================================== -->
-    <section class="home-full-banner">
-      <div class="container banner-container">
-        <div class="banner-content">
-          <!-- Nhãn dẫn Editorial -->
-          <span class="banner-eyebrow">
-            Thế mạnh vượt trội
-          </span>
+    <section class="home-about-section bg-white">
+      <div class="container-fluid about-wide-container">
+        <!-- Tầng trên: Trái thông tin + 4 chỉ số | Phải Card khung ảnh bo góc -->
+        <div class="row align-items-center g-4 g-lg-5" data-aos="fade-up">
+          <div class="col-lg-5">
+            <span class="banner-eyebrow">Về JPM Marine</span>
+            <h2 class="home-about-title mb-3">
+              Tại sao chọn <span class="banner-title-accent">JPM Marine</span>
+            </h2>
+            <p class="home-about-desc mb-4">
+              JPM Marine là đơn vị chuyên cung ứng phụ tùng động cơ thủy chính hãng OEM từ Nhật Bản và Âu Mỹ, đồng hành cùng xưởng sửa chữa, cảng tàu và chủ phương tiện trên toàn quốc.
+            </p>
 
-          <!-- Tiêu đề tối giản, thoáng rộng -->
-          <h2 class="home-banner-title">
-            Tại sao chọn <span class="banner-title-accent">JPM Marine</span>
-          </h2>
-
-          <!-- Lưới 2x2 Editorial Minimal (01 - 04) -->
-          <div class="banner-reasons-grid">
-            <div class="reason-item">
-              <span class="reason-index">01</span>
-              <div class="reason-body">
-                <h6 class="reason-title">Chuẩn mã OEM chính hãng</h6>
-                <p class="reason-desc">Yamaha · Mercury · Honda · Suzuki · Yanmar</p>
+            <!-- 4 Chỉ số nổi bật -->
+            <div class="about-metrics-grid mb-4">
+              <div class="about-metric-item">
+                <div class="about-metric-val">12+</div>
+                <div class="about-metric-label">Năm kinh nghiệm</div>
+              </div>
+              <div class="about-metric-item">
+                <div class="about-metric-val">8+</div>
+                <div class="about-metric-label">Thương hiệu OEM</div>
+              </div>
+              <div class="about-metric-item">
+                <div class="about-metric-val">100%</div>
+                <div class="about-metric-label">Chuẩn sơ đồ máy</div>
+              </div>
+              <div class="about-metric-item">
+                <div class="about-metric-val">24h</div>
+                <div class="about-metric-label">Phản hồi báo giá</div>
               </div>
             </div>
 
-            <div class="reason-item">
-              <span class="reason-index">02</span>
-              <div class="reason-body">
-                <h6 class="reason-title">Chính xác theo sơ đồ rã máy</h6>
-                <p class="reason-desc">Đối chiếu trực tiếp từng dải số khung</p>
+            <div class="d-flex flex-wrap align-items-center gap-2">
+              <router-link to="/san-pham" class="btn btn-about-outline">
+                <span>Khám phá cửa hàng</span>
+                <i class="bi bi-arrow-right ms-2"></i>
+              </router-link>
+              <router-link to="/ho-tro" class="btn btn-about-link">
+                <span>Tìm hiểu hỗ trợ</span>
+              </router-link>
+            </div>
+          </div>
+
+          <div class="col-lg-7">
+            <!-- Card chờ ảnh Showroom / Kho phụ tùng (Khi có ảnh chỉ cần thay vào thẻ img bên trong) -->
+            <div class="about-media-card">
+              <!-- <img src="/client/image/showroom_jpm.jpg" alt="Kho phụ tùng JPM Marine" class="w-100 h-100 object-fit-cover" /> -->
+              <div class="about-media-placeholder">
+                <div class="about-media-badge">JPM MARINE SHOWROOM &amp; KHO VẬN</div>
+                <div class="about-media-icon-wrap">
+                  <i class="bi bi-image"></i>
+                </div>
+                <div class="about-media-title">Khung Ảnh Giới Thiệu Doanh Nghiệp / Kho Phụ Tùng</div>
+                <div class="about-media-hint">Tỉ lệ chuẩn 16:10 (khuyến nghị ảnh ngang 1280×800px)</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tầng dưới: Quy trình đặt hàng & tra cứu kỹ thuật 01 → 04 -->
+        <div class="about-process-wrapper mt-5 pt-4" data-aos="fade-up" data-aos-delay="100">
+          <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-4">
+            <h3 class="about-process-heading mb-0">Quy trình tra cứu &amp; cung ứng</h3>
+            <span class="about-process-sub">Chính xác theo dải số khung &amp; model động cơ</span>
+          </div>
+
+          <div class="row g-3 g-lg-4 about-process-grid">
+            <div class="col-12 col-sm-6 col-lg-3 about-process-col">
+              <div class="about-step-card">
+                <div class="about-step-top">
+                  <span class="about-step-num">01</span>
+                  <i class="bi bi-arrow-right about-step-arrow d-none d-lg-inline-flex"></i>
+                </div>
+                <h6 class="about-step-title">Chọn hãng &amp; Model</h6>
+                <p class="about-step-desc">Lọc nhanh theo thương hiệu, loại động cơ, công suất và năm sản xuất.</p>
               </div>
             </div>
 
-            <div class="reason-item">
-              <span class="reason-index">03</span>
-              <div class="reason-body">
-                <h6 class="reason-title">Hỏa tốc toàn quốc &amp; chành xe</h6>
-                <p class="reason-desc">Giao tận xưởng, cảng và bến tàu</p>
+            <div class="col-12 col-sm-6 col-lg-3 about-process-col">
+              <div class="about-step-card">
+                <div class="about-step-top">
+                  <span class="about-step-num">02</span>
+                  <i class="bi bi-arrow-right about-step-arrow d-none d-lg-inline-flex"></i>
+                </div>
+                <h6 class="about-step-title">Đối chiếu sơ đồ máy</h6>
+                <p class="about-step-desc">Kiểm tra trực tiếp vị trí linh kiện và mã thay thế Supersession chuẩn OEM.</p>
               </div>
             </div>
 
-            <div class="reason-item">
-              <span class="reason-index">04</span>
-              <div class="reason-body">
-                <h6 class="reason-title">Báo giá &amp; bảo hành minh bạch</h6>
-                <p class="reason-desc">Cam kết chuẩn hãng, đổi trả linh hoạt</p>
+            <div class="col-12 col-sm-6 col-lg-3 about-process-col">
+              <div class="about-step-card">
+                <div class="about-step-top">
+                  <span class="about-step-num">03</span>
+                  <i class="bi bi-arrow-right about-step-arrow d-none d-lg-inline-flex"></i>
+                </div>
+                <h6 class="about-step-title">Đặt hàng &amp; Báo giá</h6>
+                <p class="about-step-desc">Thanh toán linh hoạt sản phẩm có sẵn hoặc gửi yêu cầu báo giá minh bạch.</p>
+              </div>
+            </div>
+
+            <div class="col-12 col-sm-6 col-lg-3 about-process-col">
+              <div class="about-step-card">
+                <div class="about-step-top">
+                  <span class="about-step-num">04</span>
+                </div>
+                <h6 class="about-step-title">Giao tận xưởng &amp; cảng</h6>
+                <p class="about-step-desc">Đóng gói chống sốc chuyên dụng, gửi hỏa tốc hoặc chành xe toàn quốc.</p>
               </div>
             </div>
           </div>
@@ -320,7 +384,7 @@
     <!-- ========================================================
          KHỐI 5: TIN TỨC & KINH NGHIỆM (Cẩm nang kỹ thuật hàng hải)
          ======================================================== -->
-    <section class="news-section section bg-white">
+    <section class="news-section section home-section-slate">
       <div class="container section-title" data-aos="fade-up">
         <h2>Tin tức & Kinh nghiệm</h2>
         <p>Cập nhật kiến thức bảo dưỡng và tin tức mới nhất về thiết bị tàu thuyền</p>
@@ -1027,30 +1091,31 @@ export default {
 }
 
 /* ==============================================================
-   Khối 4: Banner Quảng Bá Tại Sao Chọn JPM Marine (Editorial Luxury)
+   Khối 4: Giới thiệu & Quy trình JPM Marine (Split + KPI + Card ảnh)
    ============================================================== */
-.home-full-banner {
-  align-items: flex-start !important;
+.home-about-section {
+  padding: 56px 0;
+  border-top: 1px solid #e2e8f0;
+  border-bottom: 1px solid #e2e8f0;
 }
 
-.banner-container {
-  padding-top: clamp(12px, 1.8vw, 28px);
-  padding-bottom: 0;
-}
-
-.banner-content {
-  max-width: 640px;
+.about-wide-container {
+  width: 100%;
+  max-width: 1720px;
+  padding-left: clamp(20px, 3vw, 48px) !important;
+  padding-right: clamp(20px, 3vw, 48px) !important;
+  margin: 0 auto;
 }
 
 .banner-eyebrow {
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
   font-family: var(--heading-font, 'Inter', sans-serif);
-  font-size: 0.72rem;
+  font-size: 0.74rem;
   font-weight: 700;
-  letter-spacing: 2px;
+  letter-spacing: 1.8px;
   text-transform: uppercase;
   color: var(--jpm-color-red-marine, #F82249);
 }
@@ -1063,82 +1128,232 @@ export default {
   background: var(--jpm-color-red-marine, #F82249);
 }
 
-.banner-content .home-banner-title {
-  margin-bottom: 28px;
+.home-about-title {
+  font-family: var(--heading-font, 'Inter', sans-serif);
+  font-size: clamp(1.55rem, 2.2vw, 1.95rem);
+  font-weight: 800;
+  color: var(--jpm-color-navy-dark, #0A1128);
+  letter-spacing: -0.02em;
+  line-height: 1.25;
 }
 
 .banner-title-accent {
   color: var(--jpm-color-red-marine, #F82249);
 }
 
-.banner-reasons-grid {
+.home-about-desc {
+  font-family: var(--default-font, 'Inter', sans-serif);
+  font-size: 0.96rem;
+  color: #475569;
+  line-height: 1.65;
+  max-width: 560px;
+}
+
+.about-metrics-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 20px 40px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px 16px;
+  padding: 14px 0;
+  border-top: 1px solid #e2e8f0;
+  border-bottom: 1px solid #e2e8f0;
 }
 
-.reason-item {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  padding-top: 14px;
-  border-top: 1px solid rgba(10, 17, 40, 0.08);
-}
-
-.reason-index {
+.about-metric-val {
   font-family: var(--jpm-font-mono, 'Roboto Mono', monospace);
-  font-size: 0.75rem;
+  font-size: 1.45rem;
+  font-weight: 700;
+  color: var(--jpm-color-navy-dark, #0A1128);
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+
+.about-metric-label {
+  font-size: 0.78rem;
+  color: #64748b;
+  margin-top: 3px;
+  line-height: 1.3;
+}
+
+.btn-about-outline {
+  height: var(--jpm-control-height, 37px);
+  padding: 0 18px;
+  border-radius: 50px !important;
+  border: 1px solid #cbd5e1 !important;
+  background-color: #ffffff !important;
+  color: var(--jpm-color-navy-dark, #0A1128) !important;
+  font-size: 0.92rem;
   font-weight: 600;
-  color: var(--jpm-color-red-marine, #F82249);
-  letter-spacing: 0.5px;
-  line-height: 1.55;
-  flex-shrink: 0;
-  opacity: 0.85;
+  display: inline-flex;
+  align-items: center;
+  box-shadow: none !important;
+  transition: all 0.2s ease;
 }
 
-.reason-body {
-  min-width: 0;
+.btn-about-outline:hover {
+  border-color: var(--jpm-color-navy-dark, #0A1128) !important;
+  background-color: var(--jpm-color-navy-dark, #0A1128) !important;
+  color: #ffffff !important;
 }
 
-.reason-title {
-  font-family: var(--heading-font, var(--jpm-font-heading, 'Inter', sans-serif));
-  font-size: 0.9375rem;
+.btn-about-link {
+  height: var(--jpm-control-height, 37px);
+  padding: 0 14px;
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: #475569 !important;
+  display: inline-flex;
+  align-items: center;
+  box-shadow: none !important;
+}
+
+.btn-about-link:hover {
+  color: var(--jpm-color-red-marine, #F82249) !important;
+}
+
+/* Card khung chờ ảnh (Tỉ lệ ngang cân đối, thay <img> là khớp ngay) */
+.about-media-card {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  min-height: 270px;
+  max-height: 400px;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid #dbe4ef;
+  background: linear-gradient(145deg, #ffffff 0%, #f1f5f9 55%, #e6eef7 100%);
+  box-shadow: 0 12px 32px -12px rgba(10, 17, 40, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.about-media-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 28px 24px;
+  max-width: 460px;
+}
+
+.about-media-badge {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 1.4px;
+  color: var(--jpm-color-blue-electric, #0284C7);
+  background: rgba(2, 132, 199, 0.1);
+  border: 1px solid rgba(2, 132, 199, 0.2);
+  padding: 4px 10px;
+  border-radius: 50px;
+  margin-bottom: 14px;
+}
+
+.about-media-icon-wrap {
+  width: 52px;
+  height: 52px;
+  border-radius: 12px;
+  background: #ffffff;
+  border: 1px dashed #cbd5e1;
+  color: #64748b;
+  font-size: 1.5rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 12px;
+}
+
+.about-media-title {
+  font-size: 1rem;
   font-weight: 700;
   color: var(--jpm-color-navy-dark, #0A1128);
   margin-bottom: 4px;
-  line-height: 1.35;
-  letter-spacing: -0.2px;
 }
 
-.reason-desc {
-  font-family: var(--default-font, var(--jpm-font-body, 'Inter', sans-serif));
-  font-size: 0.825rem;
-  color: var(--jpm-neutral-500, #64748B);
-  line-height: 1.45;
+.about-media-hint {
+  font-size: 0.82rem;
+  color: #64748b;
+}
+
+/* Tầng dưới: Quy trình 01 -> 04 */
+.about-process-wrapper {
+  border-top: 1px solid #e2e8f0;
+}
+
+.about-process-heading {
+  font-family: var(--heading-font, 'Inter', sans-serif);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--jpm-color-navy-dark, #0A1128);
+}
+
+.about-process-sub {
+  font-size: 0.85rem;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.about-step-card {
+  height: 100%;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: var(--jpm-radius-card, 10px);
+  padding: 16px 18px;
+}
+
+.about-step-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.about-step-num {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  color: var(--jpm-color-navy-dark, #0A1128);
+  font-family: var(--jpm-font-mono, 'Roboto Mono', monospace);
+  font-size: 0.78rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.about-step-arrow {
+  color: #94a3b8;
+  font-size: 0.95rem;
+}
+
+.about-step-title {
+  font-size: 0.96rem;
+  font-weight: 700;
+  color: var(--jpm-color-navy-dark, #0A1128);
+  margin-bottom: 5px;
+}
+
+.about-step-desc {
+  font-size: 0.86rem;
+  color: #64748b;
+  line-height: 1.5;
   margin-bottom: 0;
 }
 
-@media (max-width: 991px) {
-  .banner-container {
-    padding-top: 0;
-    padding-bottom: 0;
+@media (max-width: 991.98px) {
+  .home-about-section {
+    padding: 40px 0;
   }
-  .banner-content {
-    background: rgba(255, 255, 255, 0.94);
-    backdrop-filter: blur(10px);
-    padding: 24px;
-    border-radius: var(--jpm-radius-card, 12px);
-    box-shadow: 0 4px 20px rgba(10, 17, 40, 0.08);
-  }
-  .banner-content .home-banner-title {
-    margin-bottom: 20px;
+  .about-media-card {
+    min-height: 220px;
   }
 }
 
-@media (max-width: 576px) {
-  .banner-reasons-grid {
-    grid-template-columns: 1fr;
-    gap: 14px;
+@media (max-width: 575.98px) {
+  .about-metrics-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 </style>

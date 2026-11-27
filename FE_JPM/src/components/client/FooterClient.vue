@@ -1,21 +1,21 @@
 <template>
   <div class="footer-wrapper">
-    <!-- Pre-Footer Technical Concierge Band (Dùng chung toàn Client - Luxury Minimal) -->
-    <section class="prefooter-concierge">
-      <div class="container">
-        <div class="prefooter-inner d-flex flex-column flex-lg-row justify-content-between align-items-start align-items-lg-center gap-4">
-          <div class="prefooter-copy">
-            <span class="prefooter-eyebrow">Tư vấn kỹ thuật OEM</span>
-            <h4 class="prefooter-title">Chưa tìm thấy đúng mã phụ tùng cho đời máy của bạn?</h4>
-            <p class="prefooter-desc">
-              Gửi số khung (VIN) hoặc ảnh linh kiện — kỹ thuật viên JPM đối chiếu sơ đồ và báo giá nhanh.
-            </p>
-          </div>
+    <!-- Banner Tàu Thuyền Full Màn Hình Dính Liền Footer (Dùng chung toàn Client) -->
+    <section class="home-full-banner prefooter-marine-banner">
+      <div class="container prefooter-marine-container">
+        <div class="prefooter-marine-content">
+          <span class="prefooter-eyebrow">Tư vấn kỹ thuật OEM</span>
+          <h2 class="home-banner-title mb-2">
+            Chưa tìm đúng <span class="text-danger">mã phụ tùng</span><br class="d-none d-sm-inline" /> cho đời máy của bạn?
+          </h2>
+          <p class="home-banner-desc mb-3">
+            Gửi số khung (VIN) hoặc ảnh linh kiện — kỹ thuật viên JPM đối chiếu sơ đồ rã máy và phản hồi báo giá minh bạch trong vòng 24 giờ.
+          </p>
 
-          <div class="prefooter-actions d-flex flex-wrap align-items-center gap-2 flex-shrink-0">
+          <div class="prefooter-actions d-flex flex-wrap align-items-center gap-2">
             <a
               :href="'tel:' + (settings.company_hotline || '0909123456').replace(/\s+/g, '')"
-              class="btn btn-outline-secondary prefooter-btn d-inline-flex align-items-center justify-content-center gap-2 text-nowrap"
+              class="btn prefooter-btn prefooter-btn-navy-outline d-inline-flex align-items-center justify-content-center gap-2 text-nowrap"
             >
               <i class="bi bi-telephone"></i>
               <span>{{ settings.company_hotline || '0909 123 456' }}</span>
@@ -218,15 +218,36 @@ export default {
   color: var(--accent-color, #f82249) !important;
 }
 
-/* Pre-Footer Technical Concierge Band (Luxury Minimal - Dùng chung toàn Client) */
-.prefooter-concierge {
-  background-color: var(--jpm-neutral-50, #F8FAFC);
-  border-top: 1px solid var(--jpm-neutral-200, #E2E8F0);
-  padding: 36px 0;
+/* Banner Tàu Thuyền Full-Width Dính Liền Footer (Dùng chung toàn Client) */
+.prefooter-marine-banner {
+  background-color: #ffffff;
+  background-position: center bottom;
+  margin-bottom: 0;
+  border-bottom: none;
+  position: relative;
 }
 
-.prefooter-copy {
-  max-width: 620px;
+.prefooter-marine-banner::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 28px;
+  background: linear-gradient(to bottom, rgba(0, 8, 32, 0) 0%, #000820 100%);
+  pointer-events: none;
+  z-index: 2;
+}
+
+.prefooter-marine-container {
+  padding-top: clamp(22px, 3vw, 44px);
+  padding-bottom: 0;
+  position: relative;
+  z-index: 3;
+}
+
+.prefooter-marine-content {
+  max-width: 540px;
 }
 
 .prefooter-eyebrow {
@@ -234,12 +255,12 @@ export default {
   align-items: center;
   gap: 8px;
   font-family: var(--heading-font, 'Inter', sans-serif);
-  font-size: 0.7rem;
+  font-size: 0.74rem;
   font-weight: 700;
-  letter-spacing: 2px;
+  letter-spacing: 1.8px;
   text-transform: uppercase;
   color: var(--jpm-color-red-marine, #F82249);
-  margin-bottom: 6px;
+  margin-bottom: 8px;
 }
 
 .prefooter-eyebrow::before {
@@ -250,37 +271,42 @@ export default {
   background-color: var(--jpm-color-red-marine, #F82249);
 }
 
-.prefooter-title {
-  font-family: var(--heading-font, 'Inter', sans-serif);
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: var(--jpm-color-navy-dark, #0A1128);
-  letter-spacing: -0.3px;
-  line-height: 1.35;
-  margin-bottom: 4px;
-}
-
-.prefooter-desc {
-  font-family: var(--default-font, 'Inter', sans-serif);
-  font-size: 0.875rem;
-  color: var(--jpm-neutral-500, #64748B);
-  line-height: 1.5;
-  margin-bottom: 0;
-}
-
 .prefooter-btn {
   height: var(--jpm-control-height, 37px);
   padding: 0 18px !important;
   font-size: 0.92rem;
+  font-weight: 600;
+  border-radius: 50px !important;
+  box-shadow: none !important;
+}
+
+.prefooter-btn-navy-outline {
+  background-color: #ffffff !important;
+  border: 1px solid #cbd5e1 !important;
+  color: var(--jpm-color-navy-dark, #0A1128) !important;
+}
+
+.prefooter-btn-navy-outline:hover {
+  background-color: var(--jpm-color-navy-dark, #0A1128) !important;
+  border-color: var(--jpm-color-navy-dark, #0A1128) !important;
+  color: #ffffff !important;
+}
+
+@media (max-width: 991.98px) {
+  .prefooter-marine-container {
+    padding-top: 0;
+  }
+  .prefooter-marine-content {
+    max-width: 100%;
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(8px);
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(10, 17, 40, 0.08);
+  }
 }
 
 @media (max-width: 767.98px) {
-  .prefooter-concierge {
-    padding: 28px 0;
-  }
-  .prefooter-title {
-    font-size: 1.1rem;
-  }
   .prefooter-actions {
     width: 100%;
   }
