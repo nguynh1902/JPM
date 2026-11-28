@@ -10,6 +10,9 @@ import { loadClientCSS, unloadClientCSS } from '../utils/clientCssLoader';
 export default {
   name: 'LayoutBlank',
   beforeCreate() {
+    if (typeof document !== 'undefined') {
+      document.documentElement.classList.remove('light-style', 'layout-menu-fixed', 'layout-menu-expanded', 'layout-menu-collapsed');
+    }
     loadClientCSS();
   },
   beforeMount() {

@@ -1,6 +1,6 @@
 <template>
   <div class="exdoc-page">
-    <div class="container exdoc-container">
+    <div class="exdoc-container">
       <!-- Loading Skeleton -->
       <div v-if="loading" class="exdoc-sheet placeholder-glow">
         <div class="d-flex justify-content-between align-items-center pb-3 mb-4 border-bottom">
@@ -480,7 +480,8 @@ export default {
 }
 
 .exdoc-container {
-  max-width: 980px;
+  width: min(820px, calc(100% - 24px));
+  margin: 0 auto;
 }
 
 .text-navy {

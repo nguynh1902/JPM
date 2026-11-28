@@ -244,11 +244,11 @@ class DonHangController extends Controller
                 $donHang->da_thu = max(0, (float) $request->input('paid_amount', $request->input('da_thu')));
             }
             if ($request->filled('dia_chi_text') || $request->filled('address')) {
-                $donHang->dia_chi_text = $request->input('dia_chi_text', $request->input('address'));
+                $donHang->dia_chi_text = trim((string) $request->input('dia_chi_text', $request->input('address')));
             }
             if ($request->has('ten_don_vi_van_chuyen')) {
-                $carrier = trim((string) $request->input('ten_don_vi_van_chuyen'));
-                $donHang->ten_don_vi_van_chuyen = $carrier !== '' ? $carrier : null;
+                // Cột ten_don_vi_van_chuyen trong DB không cho phép NULL
+                $donHang->ten_don_vi_van_chuyen = trim((string) $request->input('ten_don_vi_van_chuyen'));
             }
             if ($request->has('ma_van_don')) {
                 $tracking = trim((string) $request->input('ma_van_don'));
@@ -271,9 +271,10 @@ class DonHangController extends Controller
             ]);
         } catch (\Exception $e) {
             DB::rollBack();
+            \Log::error('Lỗi cập nhật đơn hàng #' . $id . ': ' . $e->getMessage());
             return response()->json([
                 'success' => false,
-                'message' => 'Lỗi cập nhật đơn hàng: ' . $e->getMessage()
+                'message' => 'Không thể cập nhật đơn hàng lúc này. Vui lòng kiểm tra lại dữ liệu.'
             ], 500);
         }
     }
@@ -394,7 +395,11 @@ class DonHangController extends Controller
             ]);
         } catch (\Exception $e) {
             DB::rollBack();
-            return response()->json(['success' => false, 'message' => 'Lỗi: ' . $e->getMessage()], 500);
+            \Log::error('Lỗi xác nhận cọc đơn #' . $id . ': ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Không thể xác nhận nhận cọc lúc này.'
+            ], 500);
         }
     }
 
@@ -544,7 +549,11 @@ class DonHangController extends Controller
             ]);
         } catch (\Exception $e) {
             DB::rollBack();
-            return response()->json(['success' => false, 'message' => 'Lỗi: ' . $e->getMessage()], 500);
+            \Log::error('Lỗi đặt lại báo cọc đơn #' . $id . ': ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Không thể cập nhật trạng thái báo cọc lúc này.'
+            ], 500);
         }
     }
 
@@ -568,17 +577,9 @@ class DonHangController extends Controller
                 $donHang->ten_don_vi_van_chuyen = 'Giao trực tiếp / Chành xe';
             }
             if ($request->filled('dia_chi_text') || $request->filled('address')) {
-                $donHang->dia_chi_text = $request->input('dia_chi_text', $request->input('address'));
+                $donHang->dia_chi_text = trim((string) $request->input('dia_chi_text', $request->input('address')));
             }
-            if ($request->has('ten_don_vi_van_chuyen')) {
-                $carrier = trim((string) $request->input('ten_don_vi_van_chuyen'));
-                $donHang->ten_don_vi_van_chuyen = $carrier !== '' ? $carrier : null;
-            }
-            if ($request->has('ma_van_don')) {
-                $tracking = trim((string) $request->input('ma_van_don'));
-                $donHang->ma_van_don = $tracking !== '' ? $tracking : null;
-            }
-            
+
             $totalPayable = (float) ($donHang->tong_tien + ($donHang->khach_tu_tra_cuoc ? 0 : ($donHang->phi_van_chuyen ?? 0)));
             $daThu = (float) ($donHang->da_thu ?? 0);
             $calculatedCod = max(0, $totalPayable - $daThu);
@@ -600,7 +601,11 @@ class DonHangController extends Controller
             ]);
         } catch (\Exception $e) {
             DB::rollBack();
-            return response()->json(['success' => false, 'message' => 'Lỗi: ' . $e->getMessage()], 500);
+            \Log::error('Lỗi cập nhật vận chuyển đơn #' . $id . ': ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Không thể cập nhật thông tin vận chuyển lúc này.'
+            ], 500);
         }
     }
 
@@ -646,7 +651,11 @@ class DonHangController extends Controller
             ]);
         } catch (\Exception $e) {
             DB::rollBack();
-            return response()->json(['success' => false, 'message' => 'Lỗi: ' . $e->getMessage()], 500);
+            \Log::error('Lỗi hoàn thành đơn #' . $id . ': ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Không thể hoàn thành đơn hàng lúc này.'
+            ], 500);
         }
     }
 }

@@ -905,13 +905,18 @@
                         <label class="form-label text-dark small mb-1 fw-bold">Địa Chỉ Giao Hàng <span class="text-danger">*</span></label>
                         <textarea 
                           v-if="!isOrderAddressReadOnly"
+                          ref="orderAddressInput"
                           class="form-control form-control-sm" 
+                          :class="{ 'border-warning': !String(selectedOrder.address || '').trim() }"
                           rows="2"
                           style="resize: none;"
                           v-model="selectedOrder.address" 
                           placeholder="Số nhà, đường, phường/xã, bến tàu, chành xe..."
                         ></textarea>
-                        <div v-else class="tx-readonly-note py-2 px-2 small">
+                        <div v-if="!isOrderAddressReadOnly && !String(selectedOrder.address || '').trim()" class="text-warning-emphasis mt-1" style="font-size: 0.74rem;">
+                          <i class="bx bx-error-circle me-1"></i>Chưa có địa chỉ giao hàng — vui lòng bổ sung trước khi lưu hoặc xuất kho.
+                        </div>
+                        <div v-else-if="isOrderAddressReadOnly" class="tx-readonly-note py-2 px-2 small">
                           {{ selectedOrder.address || 'Chưa có địa chỉ' }}
                         </div>
                       </div>
@@ -1244,13 +1249,14 @@
             </button>
 
             <div class="d-flex align-items-center flex-wrap gap-2 ms-auto">
-              <!-- Nhóm tiện ích chia sẻ & in ấn (ẩn nút không còn dùng theo trạng thái đơn) -->
-              <template v-if="selectedOrder && selectedOrder.status < 4">
+              <!-- Nhóm tiện ích chia sẻ & in ấn (hiện Copy link / In Hóa Đơn sau khi đã lập hóa đơn hoặc xuất kho) -->
+              <template v-if="selectedOrder && selectedOrder.status < 4 && (hasOrderInvoice || selectedOrder.status === 0)">
                 <button 
                   type="button" 
                   class="btn tx-btn-utility" 
+                  v-if="hasOrderInvoice || selectedOrder.status === 0"
                   @click.prevent="copyQuoteLink(selectedOrder)" 
-                  title="Sao chép link tra cứu đơn gửi khách"
+                  :title="selectedOrder.status === 0 ? 'Sao chép link đơn hàng gửi khách' : 'Sao chép link hóa đơn gửi khách'"
                 >
                   <i class="bx bx-link"></i>
                   <span>Copy link</span>
@@ -1268,6 +1274,7 @@
                 <button 
                   type="button" 
                   class="btn tx-btn-utility" 
+                  v-if="hasOrderInvoice"
                   @click="printOrder"
                 >
                   <i class="bx bx-printer"></i>
@@ -1280,7 +1287,7 @@
               <!-- Nhóm điều hướng & xử lý nghiệp vụ chính -->
               <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Đóng</button>
               <button type="button" class="btn btn-outline-primary" @click="saveOrder" v-if="(!isOrderInfoReadOnly || !isOrderAddressReadOnly) && canEditOrders">
-                Lưu
+                {{ selectedOrder && selectedOrder.status === 1 ? 'Lưu & Tạo Hóa Đơn' : 'Lưu' }}
               </button>
               <button 
                 type="button" 
@@ -2092,6 +2099,7 @@ export default {
       searchQuery: '',
       typeFilter: 'all',
       selectedOrderIds: [],
+      invoiceCreatedOrderIds: JSON.parse(localStorage.getItem('jpm_created_invoice_ids') || '[]'),
       isExportingPO: false,
       selectedQuote: null,
       selectedOrder: null,
@@ -2252,6 +2260,15 @@ export default {
     // Địa chỉ giao hàng vẫn cho phép chỉnh sửa trước khi xuất kho giao hàng (Chờ cọc / Đang xử lý)
     isOrderAddressReadOnly() {
       return !this.selectedOrder || Number(this.selectedOrder.status) >= 2;
+    },
+    hasOrderInvoice() {
+      if (!this.selectedOrder) return false;
+      const id = this.selectedOrder.id;
+      return (
+        Number(this.selectedOrder.status) >= 2 ||
+        Boolean(String(this.selectedOrder.ma_van_don || '').trim()) ||
+        (Array.isArray(this.invoiceCreatedOrderIds) && this.invoiceCreatedOrderIds.includes(id))
+      );
     },
     selectableProcessingOrderIds() {
       if (this.currentTab !== 'processing') return [];
@@ -3442,6 +3459,7 @@ export default {
       const trimmedAddr = String(this.selectedOrder.address || '').trim();
       if (Number(this.selectedOrder.status) < 2 && !trimmedAddr) {
         this.toaster.warning('Vui lòng nhập địa chỉ giao hàng.');
+        this.$nextTick(() => this.$refs.orderAddressInput?.focus());
         return;
       }
 
@@ -3496,17 +3514,34 @@ export default {
               receipt_image_2: this.selectedOrder.receipt_image_2
             };
         await this.saveOrderMutation.mutateAsync({ id: this.selectedOrder.id, payload });
-        this.closeModal('orderModal');
-        this.toaster.success('Cập nhật đơn hàng thành công!');
         localStorage.removeItem('draft_order_' + this.selectedOrder.id);
+
+        if (Number(this.selectedOrder.status) === 1) {
+          this.markInvoiceCreated(this.selectedOrder.id);
+          this.toaster.success('Đã lưu thông tin và tạo hóa đơn thành công!');
+        } else {
+          this.closeModal('orderModal');
+          this.toaster.success('Cập nhật đơn hàng thành công!');
+        }
       } catch (error) {
-        console.warn("Lỗi mạng hoặc API, lưu nháp Offline...", error);
-        localStorage.setItem('draft_order_' + this.selectedOrder.id, JSON.stringify(this.selectedOrder));
-        const msg = error?.response?.data?.message || "Mất mạng hoặc lỗi hệ thống! Đơn hàng được lưu nháp cục bộ.";
-        this.toaster.warning(msg);
+        if (!navigator.onLine || !error?.response) {
+          console.warn("Mất mạng, lưu nháp Offline...", error);
+          localStorage.setItem('draft_order_' + this.selectedOrder.id, JSON.stringify(this.selectedOrder));
+          this.toaster.warning('Mất kết nối mạng! Thay đổi đã được lưu nháp cục bộ.');
+        } else {
+          const msg = error?.response?.data?.message || 'Không thể cập nhật đơn hàng lúc này.';
+          this.toaster.error(msg);
+        }
       }
     },
 
+    markInvoiceCreated(orderId) {
+      if (!orderId) return;
+      if (!this.invoiceCreatedOrderIds.includes(orderId)) {
+        this.invoiceCreatedOrderIds = [...this.invoiceCreatedOrderIds, orderId];
+        localStorage.setItem('jpm_created_invoice_ids', JSON.stringify(this.invoiceCreatedOrderIds));
+      }
+    },
     closeModal(modalId) {
       const modalEl = document.getElementById(modalId);
       if (modalEl) {
@@ -3662,7 +3697,19 @@ export default {
 
       const trimmedAddr = (targetOrder.address || '').trim();
       if (!trimmedAddr) {
-        this.toaster.warning('Vui lòng nhập địa chỉ giao hàng trước khi xuất kho.');
+        await Swal.fire({
+          title: 'Chưa có địa chỉ giao hàng!',
+          text: 'Vui lòng nhập Địa Chỉ Giao Hàng cho khách trước khi xuất kho giao hàng.',
+          icon: 'warning',
+          iconColor: '#d97706',
+          confirmButtonText: 'Quay lại nhập địa chỉ',
+          customClass: {
+            popup: 'swal-shift-up',
+            confirmButton: 'btn btn-primary px-4 shadow-sm'
+          },
+          buttonsStyling: false
+        });
+        this.$nextTick(() => this.$refs.orderAddressInput?.focus());
         return;
       }
 

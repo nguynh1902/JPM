@@ -1,6 +1,6 @@
 <template>
   <div class="exdoc-page inner-page-section">
-    <div class="container exdoc-container">
+    <div class="exdoc-container">
       <!-- Loading Skeleton -->
       <div v-if="loading" class="exdoc-sheet placeholder-glow">
         <div class="d-flex justify-content-between align-items-center pb-3 mb-4 border-bottom">
@@ -149,23 +149,6 @@
               <div v-if="order.ma_van_don" class="exdoc-field-pair">
                 <span class="exdoc-field-label">Mã vận đơn:</span>
                 <span class="exdoc-field-value fw-bold" style="color: #0369a1;">{{ order.ma_van_don }}</span>
-                <button
-                  type="button"
-                  class="exdoc-copy-mini no-print"
-                  @click="copyTrackingCode"
-                  title="Sao chép mã vận đơn"
-                >
-                  Copy
-                </button>
-                <a
-                  v-if="isViettelPost"
-                  :href="'https://viettelpost.com.vn/tra-cuu-hanh-trinh-don/?order_number=' + encodeURIComponent(order.ma_van_don)"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="exdoc-track-link no-print"
-                >
-                  Tra cứu hành trình <i class="bi bi-box-arrow-up-right"></i>
-                </a>
               </div>
             </div>
 
@@ -743,7 +726,8 @@ export default {
 }
 
 .exdoc-container {
-  max-width: 980px;
+  width: min(820px, calc(100% - 24px));
+  margin: 0 auto;
 }
 
 .text-navy {
