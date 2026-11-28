@@ -211,14 +211,36 @@ class DonHangController extends Controller
                     $donHang->loai_don = $orderType;
                 }
             }
+            if ($request->has('freight_collect') || $request->has('khach_tu_tra_cuoc')) {
+                $donHang->khach_tu_tra_cuoc = (int) (bool) $request->input('freight_collect', $request->input('khach_tu_tra_cuoc'));
+            }
+            $effectiveShipping = $donHang->khach_tu_tra_cuoc ? 0 : max(0, (float) $donHang->phi_van_chuyen);
+
             if ($request->has('deposit_required') || $request->has('tien_coc_yeu_cau')) {
-                $donHang->tien_coc_yeu_cau = max(0, (float) $request->input('deposit_required', $request->input('tien_coc_yeu_cau')));
+                $rawDeposit = (float) $request->input('deposit_required', $request->input('tien_coc_yeu_cau'));
+                if ($rawDeposit < 0) {
+                    DB::rollBack();
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Số tiền cọc yêu cầu không được âm.'
+                    ], 422);
+                }
+                $itemsSubtotal = (float) $donHang->chiTiet()->get()->sum(fn($ct) => max(1, (int) $ct->so_luong) * max(0, (float) $ct->don_gia));
+                $maxGrandTotal = $itemsSubtotal > 0
+                    ? max((float) $donHang->tong_tien, $itemsSubtotal + $effectiveShipping)
+                    : ((float) $donHang->tong_tien + $effectiveShipping);
+
+                if ($rawDeposit > ($maxGrandTotal + 0.01)) {
+                    DB::rollBack();
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Số tiền cọc yêu cầu không được vượt quá tổng giá trị đơn hàng (' . number_format($maxGrandTotal, 0, ',', '.') . ' đ).'
+                    ], 422);
+                }
+                $donHang->tien_coc_yeu_cau = $rawDeposit;
             }
             if ($request->has('paid_amount') || $request->has('da_thu')) {
                 $donHang->da_thu = max(0, (float) $request->input('paid_amount', $request->input('da_thu')));
-            }
-            if ($request->has('freight_collect') || $request->has('khach_tu_tra_cuoc')) {
-                $donHang->khach_tu_tra_cuoc = (int) (bool) $request->input('freight_collect', $request->input('khach_tu_tra_cuoc'));
             }
             if ($request->filled('dia_chi_text') || $request->filled('address')) {
                 $donHang->dia_chi_text = $request->input('dia_chi_text', $request->input('address'));

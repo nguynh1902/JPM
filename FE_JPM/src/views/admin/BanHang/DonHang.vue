@@ -229,7 +229,8 @@
                       <span v-if="item.status === 0" class="badge badge-custom bg-pastel-warning">CHỜ BÁO GIÁ</span>
                       <template v-else-if="item.status === 1">
                         <span v-if="item.da_bao_chuyen_khoan && Number(item.da_thu || 0) === 0" class="badge badge-custom" style="background: #dbeafe; color: #1d4ed8; border: 1px solid #93c5fd;">KHÁCH BÁO ĐÃ CỌC</span>
-                        <span v-else-if="item.deposit_required > 0 && Number(item.da_thu || 0) === 0" class="badge badge-custom bg-pastel-warning">CHỜ CỌC</span>
+                        <span v-else-if="item.khach_da_chot && item.deposit_required > 0 && Number(item.da_thu || 0) === 0" class="badge badge-custom bg-pastel-warning">ĐÃ CHỐT · CHỜ CỌC</span>
+                        <span v-else-if="item.khach_da_chot" class="badge badge-custom bg-pastel-info">KHÁCH ĐÃ CHỐT</span>
                         <span v-else class="badge badge-custom bg-pastel-info">ĐÃ BÁO GIÁ</span>
                       </template>
                       <span v-else-if="item.status === 2" class="badge badge-custom bg-pastel-warning">ĐÃ CỌC & XỬ LÝ</span>
@@ -347,6 +348,17 @@
                 >
                   Chưa nhận được tiền
                 </button>
+              </div>
+              <div
+                v-else-if="selectedQuote.status === 1 && selectedQuote.khach_da_chot && Number(selectedQuote.da_thu || 0) <= 0"
+                class="alert alert-info d-flex align-items-center gap-2 mb-3 py-2 px-3 small"
+              >
+                <i class="bx bx-check-circle fs-5"></i>
+                <span>
+                  <strong>Khách đã đồng ý chốt đơn</strong>
+                  <template v-if="selectedQuote.thoi_gian_khach_chot"> lúc {{ formatReportDateTime(selectedQuote.thoi_gian_khach_chot) }}</template>
+                  — đang chờ khách quét QR chuyển khoản đặt cọc.
+                </span>
               </div>
               <div class="row g-3 align-items-stretch">
                 <!-- Cột 1 (Trái): Card Thông tin Khách Hàng & Ghi chú -->
@@ -568,15 +580,20 @@
                               <input 
                                 type="number" 
                                 class="form-control form-control-sm text-end text-danger fw-bold" 
+                                :class="{ 'is-invalid': isQuoteDepositExceeded }"
                                 :value="selectedQuote.deposit_required ? selectedQuote.deposit_required : ''" 
-                                @input="selectedQuote.deposit_required = $event.target.value === '' ? 0 : Number($event.target.value)" 
+                                @input="handleDepositInput(selectedQuote, 'deposit_required', $event, quoteGrandTotal)" 
                                 min="0"
+                                :max="quoteGrandTotal"
                                 placeholder="0" 
                               >
                             </div>
                             <span v-else class="fw-bold text-danger fs-6">{{ formatCurrency(selectedQuote.deposit_required || 0) }}</span>
                           </div>
-                          <div v-if="!isQuoteReadOnly && selectedQuote.deposit_required > 0" class="text-end">
+                          <div v-if="!isQuoteReadOnly && isQuoteDepositExceeded" class="text-end text-danger fw-semibold" style="font-size: 0.74rem;">
+                            Không được vượt quá tổng đơn ({{ formatCurrency(quoteGrandTotal) }})
+                          </div>
+                          <div v-else-if="!isQuoteReadOnly && selectedQuote.deposit_required > 0" class="text-end">
                             <span class="text-danger fw-semibold" style="font-size: 0.76rem;">
                               {{ formatCurrency(selectedQuote.deposit_required) }}
                             </span>
@@ -1040,15 +1057,20 @@
                             <input 
                               type="number" 
                               class="form-control form-control-sm text-end text-danger fw-bold" 
+                              :class="{ 'is-invalid': isOrderDepositExceeded }"
                               :value="selectedOrder.deposit_required ? selectedOrder.deposit_required : ''" 
-                              @input="selectedOrder.deposit_required = $event.target.value === '' ? 0 : Number($event.target.value)" 
+                              @input="handleDepositInput(selectedOrder, 'deposit_required', $event, orderGrandTotal)" 
                               min="0"
+                              :max="orderGrandTotal"
                               placeholder="0" 
                             >
                           </div>
                           <span v-else class="fw-bold text-danger fs-6">{{ formatCurrency(selectedOrder.deposit_required || 0) }}</span>
                         </div>
-                        <div v-if="!isOrderInfoReadOnly && selectedOrder.deposit_required > 0" class="text-end">
+                        <div v-if="!isOrderInfoReadOnly && isOrderDepositExceeded" class="text-end text-danger fw-semibold" style="font-size: 0.74rem;">
+                          Không được vượt quá tổng đơn ({{ formatCurrency(orderGrandTotal) }})
+                        </div>
+                        <div v-else-if="!isOrderInfoReadOnly && selectedOrder.deposit_required > 0" class="text-end">
                           <span class="text-danger fw-semibold" style="font-size: 0.76rem;">
                             {{ formatCurrency(selectedOrder.deposit_required) }}
                           </span>
@@ -1767,14 +1789,19 @@
                               <input 
                                 type="number" 
                                 class="form-control form-control-sm text-end text-danger fw-bold" 
+                                :class="{ 'is-invalid': isCreateDepositExceeded }"
                                 :value="createOrderForm.tien_coc_yeu_cau ? createOrderForm.tien_coc_yeu_cau : ''" 
-                                @input="createOrderForm.tien_coc_yeu_cau = $event.target.value === '' ? 0 : Number($event.target.value)" 
+                                @input="handleDepositInput(createOrderForm, 'tien_coc_yeu_cau', $event, createFormGrandTotal)" 
                                 min="0" 
+                                :max="createFormGrandTotal"
                                 placeholder="0"
                               />
                             </div>
                           </div>
-                          <div v-if="createOrderForm.tien_coc_yeu_cau > 0" class="text-end">
+                          <div v-if="isCreateDepositExceeded" class="text-end text-danger fw-semibold" style="font-size: 0.74rem;">
+                            Không được vượt quá tổng đơn ({{ formatCurrency(createFormGrandTotal) }})
+                          </div>
+                          <div v-else-if="createOrderForm.tien_coc_yeu_cau > 0" class="text-end">
                             <span class="text-danger fw-semibold" style="font-size: 0.76rem;">
                               {{ formatCurrency(createOrderForm.tien_coc_yeu_cau) }}
                             </span>
@@ -2061,6 +2088,27 @@ export default {
     createFormGrandTotal() {
       return this.createFormSubtotal + Number(this.createOrderForm?.phi_van_chuyen || 0);
     },
+    quoteGrandTotal() {
+      if (!this.selectedQuote) return 0;
+      const itemsTotal = this.calculateTotal(this.selectedQuote.items);
+      const ship = this.selectedQuote.freight_collect ? 0 : (Number(this.selectedQuote.shipping_fee) || 0);
+      return itemsTotal + ship;
+    },
+    orderGrandTotal() {
+      if (!this.selectedOrder) return 0;
+      const itemsTotal = this.calculateTotal(this.selectedOrder.items);
+      const ship = this.selectedOrder.freight_collect ? 0 : (Number(this.selectedOrder.shipping_fee) || 0);
+      return itemsTotal + ship;
+    },
+    isQuoteDepositExceeded() {
+      return Boolean(this.selectedQuote) && Number(this.selectedQuote.deposit_required || 0) > this.quoteGrandTotal;
+    },
+    isOrderDepositExceeded() {
+      return Boolean(this.selectedOrder) && Number(this.selectedOrder.deposit_required || 0) > this.orderGrandTotal;
+    },
+    isCreateDepositExceeded() {
+      return Boolean(this.createOrderForm) && Number(this.createOrderForm.tien_coc_yeu_cau || 0) > this.createFormGrandTotal;
+    },
     createFormRemainingCod() {
       const rem = this.createFormGrandTotal - Number(this.createOrderForm?.da_thu || 0);
       return rem > 0 ? rem : 0;
@@ -2342,6 +2390,8 @@ export default {
           address: item.dia_chi_giao_hang || item.dia_chi_text || (item.dia_chi ? item.dia_chi.dia_chi_cu_the : '') || '',
           receipt_image: item.anh_chuyen_khoan || '',
           receipt_image_2: item.anh_chuyen_khoan_2 || '',
+          khach_da_chot: Boolean(item.khach_da_chot),
+          thoi_gian_khach_chot: item.thoi_gian_khach_chot || null,
           da_bao_chuyen_khoan: Boolean(item.da_bao_chuyen_khoan),
           thoi_gian_bao_coc: item.thoi_gian_bao_coc || null,
           items: (item.chi_tiet || []).map(i => ({
@@ -2380,6 +2430,8 @@ export default {
           address: (item.dia_chi ? item.dia_chi.dia_chi_cu_the : item.dia_chi_text) || '',
           receipt_image: item.anh_chuyen_khoan || '',
           receipt_image_2: item.anh_chuyen_khoan_2 || '',
+          khach_da_chot: Boolean(item.khach_da_chot),
+          thoi_gian_khach_chot: item.thoi_gian_khach_chot || null,
           da_bao_chuyen_khoan: Boolean(item.da_bao_chuyen_khoan),
           thoi_gian_bao_coc: item.thoi_gian_bao_coc || null,
           items: (item.chi_tiet || []).map(i => ({
@@ -2576,6 +2628,10 @@ export default {
 
       let targetStatus = 0;
       const depRequired = Number(this.createOrderForm.tien_coc_yeu_cau) || 0;
+      if (depRequired < 0 || depRequired > this.createFormGrandTotal) {
+        this.toaster.error(`Số tiền cọc yêu cầu không được vượt quá tổng đơn (${this.formatCurrency(this.createFormGrandTotal)})!`);
+        return;
+      }
       let daThuValue = Number(this.createOrderForm.da_thu) || 0;
       if (actionType === 'deposit') {
         targetStatus = 2; // Đã Cọc & Xử Lý
@@ -2937,12 +2993,41 @@ export default {
       if (!items || items.length === 0) return 0;
       return items.reduce((total, item) => total + (item.qty * (item.price || 0)), 0);
     },
+    handleDepositInput(targetObj, field, event, maxAllowed) {
+      if (!targetObj) return;
+      const raw = event?.target?.value ?? '';
+      if (raw === '') {
+        targetObj[field] = 0;
+        return;
+      }
+      let val = Number(raw);
+      if (Number.isNaN(val) || val < 0) {
+        val = 0;
+        if (event?.target) event.target.value = '0';
+      }
+      const cap = Math.max(0, Number(maxAllowed || 0));
+      if (val > cap) {
+        val = cap;
+        if (event?.target) event.target.value = cap > 0 ? String(cap) : '';
+        this.toaster.warning(
+          cap > 0
+            ? `Tiền cọc tối đa bằng Tổng Cộng (${this.formatCurrency(cap)})!`
+            : 'Vui lòng nhập đơn giá sản phẩm trước khi nhập tiền cọc!'
+        );
+      }
+      targetObj[field] = val;
+    },
     async saveDraftQuote() {
       if (!this.selectedQuote) return;
       if (this.selectedQuote.items && this.selectedQuote.items.length > 0) {
         this.selectedQuote.total_amount = this.calculateTotal(this.selectedQuote.items) + (this.selectedQuote.freight_collect ? 0 : (this.selectedQuote.shipping_fee || 0));
       } else {
         this.selectedQuote.total_amount = (this.selectedQuote.total_amount || 0) + (this.selectedQuote.freight_collect ? 0 : (this.selectedQuote.shipping_fee || 0));
+      }
+
+      if (Number(this.selectedQuote.deposit_required || 0) > this.quoteGrandTotal) {
+        this.toaster.error(`Tiền cọc không được vượt quá Tổng Cộng (${this.formatCurrency(this.quoteGrandTotal)})!`);
+        return;
       }
 
       // Giữ nguyên trạng thái hiện tại của báo giá khi lưu nháp/lưu thay đổi
@@ -2980,6 +3065,11 @@ export default {
       const itemsTotal = this.calculateTotal(this.selectedQuote.items);
       if (itemsTotal <= 0) {
         this.toaster.warning('Vui lòng nhập đơn giá cho các phụ tùng trước khi báo giá cho khách hàng!');
+        return;
+      }
+
+      if (Number(this.selectedQuote.deposit_required || 0) > this.quoteGrandTotal) {
+        this.toaster.error(`Tiền cọc không được vượt quá Tổng Cộng (${this.formatCurrency(this.quoteGrandTotal)})!`);
         return;
       }
 
@@ -3027,6 +3117,11 @@ export default {
         this.selectedQuote.total_amount = (this.selectedQuote.total_amount || 0) + (this.selectedQuote.freight_collect ? 0 : (this.selectedQuote.shipping_fee || 0));
       }
 
+      if (Number(this.selectedQuote.deposit_required || 0) > this.quoteGrandTotal) {
+        this.toaster.error(`Tiền cọc không được vượt quá Tổng Cộng (${this.formatCurrency(this.quoteGrandTotal)})!`);
+        return false;
+      }
+
       try {
         const payload = {
             tong_tien: this.selectedQuote.total_amount,
@@ -3056,6 +3151,11 @@ export default {
         this.selectedOrder.total_amount = this.calculateTotal(this.selectedOrder.items) + (this.selectedOrder.freight_collect ? 0 : (this.selectedOrder.shipping_fee || 0));
       } else {
         this.selectedOrder.total_amount = (this.selectedOrder.total_amount || 0) + (this.selectedOrder.freight_collect ? 0 : (this.selectedOrder.shipping_fee || 0));
+      }
+
+      if (Number(this.selectedOrder.deposit_required || 0) > this.orderGrandTotal) {
+        this.toaster.error(`Tiền cọc không được vượt quá Tổng Cộng (${this.formatCurrency(this.orderGrandTotal)})!`);
+        return;
       }
 
       try {
@@ -3185,7 +3285,8 @@ export default {
 
     async confirmDepositFromModal(quote) {
       if (!quote) return;
-      await this.saveQuoteSilent();
+      const saved = await this.saveQuoteSilent();
+      if (!saved) return;
       await this.confirmDepositBtn(quote);
     },
 

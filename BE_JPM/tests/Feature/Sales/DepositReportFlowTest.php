@@ -138,3 +138,105 @@ it('verifies phone ownership for direct order reportDeposit and supports admin r
     $order->refresh();
     expect((bool) $order->da_bao_chuyen_khoan)->toBeFalse();
 });
+
+it('sets khach_da_chot without creating premature order when quote requires deposit, and converts immediately when deposit is zero', function () {
+    // 1. Quote requiring deposit -> accept unlocks VietQR but preserves trang_thai = 1
+    $quoteWithDeposit = YeuCauBaoGia::create([
+        'ma_yeu_cau' => 'YCBG-TEST-ACCEPT-01',
+        'loai_yeu_cau' => 'quote',
+        'khach_hang_ten' => 'Pham Van D',
+        'khach_hang_sdt' => '0933221100',
+        'dia_chi_giao_hang' => 'Quan 2, TP.HCM',
+        'tong_tien' => 8000000,
+        'tien_coc_yeu_cau' => 2000000,
+        'da_thu' => 0,
+        'trang_thai' => 1,
+        'token' => 'tok-accept-dep-01',
+    ]);
+
+    $resDep = $this->postJson('/api/public/yeu-cau-bao-gia/tok-accept-dep-01/action', [
+        'action' => 'accept',
+    ]);
+    $resDep->assertStatus(200)
+        ->assertJsonPath('success', true)
+        ->assertJsonPath('requires_deposit', true);
+
+    $quoteWithDeposit->refresh();
+    expect((bool) $quoteWithDeposit->khach_da_chot)->toBeTrue();
+    expect($quoteWithDeposit->thoi_gian_khach_chot)->not->toBeNull();
+    expect((int) $quoteWithDeposit->trang_thai)->toBe(1);
+    expect(DonHang::where('ghi_chu_khach_hang', 'like', '%YCBG-TEST-ACCEPT-01%')->exists())->toBeFalse();
+
+    // Customer can still cancel while awaiting deposit before transfer
+    $this->postJson('/api/public/yeu-cau-bao-gia/tok-accept-dep-01/action', [
+        'action' => 'reject',
+    ])->assertStatus(200);
+    expect((int) $quoteWithDeposit->fresh()->trang_thai)->toBe(3);
+
+    // 2. Quote with 0 deposit (COD) -> accept immediately creates processing order
+    $quoteCod = YeuCauBaoGia::create([
+        'ma_yeu_cau' => 'YCBG-TEST-ACCEPT-02',
+        'loai_yeu_cau' => 'quote',
+        'khach_hang_ten' => 'Hoang Van E',
+        'khach_hang_sdt' => '0988776655',
+        'dia_chi_giao_hang' => 'Ben tau Phu Quoc',
+        'tong_tien' => 3000000,
+        'tien_coc_yeu_cau' => 0,
+        'da_thu' => 0,
+        'trang_thai' => 1,
+        'token' => 'tok-accept-cod-02',
+    ]);
+
+    $resCod = $this->postJson('/api/public/yeu-cau-bao-gia/tok-accept-cod-02/action', [
+        'action' => 'accept',
+    ]);
+    $resCod->assertStatus(200)
+        ->assertJsonPath('success', true)
+        ->assertJsonPath('requires_deposit', false);
+
+    $quoteCod->refresh();
+    expect((bool) $quoteCod->khach_da_chot)->toBeTrue();
+    expect((int) $quoteCod->trang_thai)->toBe(2);
+
+    $codOrder = DonHang::where('ghi_chu_khach_hang', 'like', '%YCBG-TEST-ACCEPT-02%')->firstOrFail();
+    expect((int) $codOrder->trang_thai)->toBe(1);
+});
+
+it('rejects deposit_required exceeding grand total on quote and order updates', function () {
+    $quote = YeuCauBaoGia::create([
+        'ma_yeu_cau' => 'YCBG-TEST-CAP-01',
+        'loai_yeu_cau' => 'quote',
+        'khach_hang_ten' => 'Nguyen Cap',
+        'khach_hang_sdt' => '0901010101',
+        'tong_tien' => 4499750,
+        'phi_van_chuyen' => 0,
+        'tien_coc_yeu_cau' => 0,
+        'trang_thai' => 0,
+        'token' => 'tok-cap-test-01',
+    ]);
+
+    $this->actingAs($this->admin)
+        ->putJson("/api/admin/yeu-cau-bao-gia/{$quote->id}", [
+            'tong_tien' => 4499750,
+            'deposit_required' => 300000000,
+            'trang_thai' => 1,
+        ])
+        ->assertStatus(422);
+
+    $order = DonHang::create([
+        'ma_don_hang' => 'DH-TEST-CAP-01',
+        'khach_hang_ten' => 'Tran Cap',
+        'khach_hang_sdt' => '0902020202',
+        'tong_tien' => 4499750,
+        'phi_van_chuyen' => 0,
+        'tien_coc_yeu_cau' => 0,
+        'trang_thai' => 0,
+        'trang_thai_thanh_toan' => 0,
+    ]);
+
+    $this->actingAs($this->admin)
+        ->putJson("/api/admin/don-hang/{$order->id}", [
+            'deposit_required' => 300000000,
+        ])
+        ->assertStatus(422);
+});

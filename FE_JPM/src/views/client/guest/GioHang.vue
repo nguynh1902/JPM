@@ -447,7 +447,7 @@
               class="btn btn-danger lux-confirm-btn"
               @click="goToConfirmTarget"
             >
-              <span>{{ orderConfirmModal.token ? 'Theo dõi báo giá' : (isAuthenticated ? 'Xem lịch sử đơn' : 'Về trang chủ') }}</span>
+              <span>Xem đơn hàng &amp; báo giá</span>
               <i class="bi bi-arrow-right"></i>
             </button>
           </div>
@@ -463,6 +463,7 @@ import { useCartStore, getCartItemKey } from '../../../stores/cartStore'
 import { useSiteSettings } from '../../../composables/useSiteSettings'
 import axiosClient from '../../../api/axiosClient'
 import { getImageUrl as resolveImageUrl } from '../../../utils/imageUrl'
+import { useQueryClient } from '@tanstack/vue-query'
 import Swal from 'sweetalert2'
 import { createToaster } from '@meforma/vue-toaster'
 
@@ -470,9 +471,10 @@ export default {
   name: 'GioHang',
   setup() {
     const cartStore = useCartStore()
+    const queryClient = useQueryClient()
     const { settings: siteSettings } = useSiteSettings()
     const toaster = createToaster({ position: 'top-right', duration: 2200 })
-    return { cartStore, siteSettings, toaster }
+    return { cartStore, queryClient, siteSettings, toaster }
   },
   data() {
     return {
@@ -814,10 +816,13 @@ export default {
 
           this.cartStore.removeItems(this.selectedItems)
           this.selectedItems = []
+          this.queryClient.invalidateQueries({ queryKey: ['clientQuotesHistory'] })
+          this.queryClient.invalidateQueries({ queryKey: ['clientOrdersHistory'] })
 
           this.orderConfirmModal = {
             show: true,
             code: this.pendingOrderId,
+            phone: finalPhone,
             token,
             itemCount: submittedCount || selectedCartItems.length,
             copied: false
@@ -856,14 +861,15 @@ export default {
       window.open(this.buildZaloUrl(chatMsg), '_blank', 'noopener,noreferrer')
     },
     goToConfirmTarget() {
-      const token = this.orderConfirmModal.token
+      const code = this.orderConfirmModal.code
+      const phone = this.orderConfirmModal.phone
       this.orderConfirmModal.show = false
-      if (token) {
-        this.$router.push(`/bao-gia/${token}`)
-      } else if (this.isAuthenticated) {
-        this.$router.push('/lich-su-don-hang')
+      if (this.isAuthenticated) {
+        this.$router.push({ path: '/lich-su-don-hang', query: { tab: '1' } })
+      } else if (code && phone) {
+        this.$router.push({ path: '/tra-cuu-don-hang', query: { code, phone } })
       } else {
-        this.$router.push('/')
+        this.$router.push('/tra-cuu-don-hang')
       }
     },
     closeConfirmModal() {

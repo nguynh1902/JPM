@@ -104,7 +104,25 @@ class HistoryController extends Controller
 
         $collection = $isPaginated ? $orders->getCollection() : $orders;
 
+        // Gắn lại token báo giá gốc (nếu đơn được lên từ phiếu YCBG) để khách vẫn mở được "Xem đơn báo giá"
+        $quoteCodes = $collection->map(function ($order) {
+            if (!empty($order->ghi_chu_khach_hang) && preg_match('/YCBG-[^\s|\]]+/', $order->ghi_chu_khach_hang, $m)) {
+                return $m[0];
+            }
+            return null;
+        })->filter()->unique()->values();
+
+        $quoteTokens = $quoteCodes->isNotEmpty()
+            ? YeuCauBaoGia::whereIn('ma_yeu_cau', $quoteCodes)->pluck('token', 'ma_yeu_cau')
+            : collect();
+
         foreach ($collection as $order) {
+            $matchedQuoteToken = null;
+            if (!empty($order->ghi_chu_khach_hang) && preg_match('/YCBG-[^\s|\]]+/', $order->ghi_chu_khach_hang, $m)) {
+                $matchedQuoteToken = $quoteTokens->get($m[0]);
+            }
+            $order->setAttribute('quote_token', $matchedQuoteToken);
+            $order->setAttribute('token', $matchedQuoteToken);
             $items = [];
             foreach ($order->chiTiet as $detail) {
                 $isSanPham = ($detail->loai_san_pham === 'san_pham');

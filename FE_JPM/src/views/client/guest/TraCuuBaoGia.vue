@@ -290,13 +290,20 @@
             </div>
           </div>
 
-          <!-- 6. KHU VỰC VIETQR ĐẶT CỌC (khi có yêu cầu cọc & còn hiệu lực / đã chốt) -->
+          <!-- 6. KHU VỰC VIETQR ĐẶT CỌC (CHỈ hiện sau khi khách đã Đồng ý chốt đơn & có yêu cầu cọc) -->
           <div
-            v-if="(quote.trang_thai === 1 || quote.trang_thai === 2) && Number(quote.tien_coc_yeu_cau) > 0 && !quote.is_expired"
+            v-if="showDepositSection"
+            ref="vietQrSection"
             class="exdoc-vietqr-box"
           >
-            <div class="exdoc-vietqr-head">
+            <div class="exdoc-vietqr-head d-flex flex-wrap justify-content-between align-items-center gap-2">
               <strong>THÔNG TIN CHUYỂN KHOẢN ĐẶT CỌC (VIETQR NAPAS 24/7)</strong>
+              <span v-if="isDepositReported" class="badge bg-primary-subtle text-primary border border-primary-subtle">
+                Chờ đối soát Sacombank
+              </span>
+              <span v-else-if="quote.trang_thai === 1" class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle">
+                Đã chốt · Chờ đặt cọc
+              </span>
             </div>
 
             <div v-if="vietQrData" class="exdoc-vietqr-grid">
@@ -329,23 +336,43 @@
                 </div>
                 <div class="exdoc-bank-line">
                   <span class="text-muted">Nội dung CK:</span>
-                  <code class="exdoc-transfer-code">{{ vietQrData.transfer_content }}</code>
+                  <code class="exdoc-transfer-code">
+                    {{ vietQrData.transfer_content }}
+                  </code>
                 </div>
-                <div v-if="quote.trang_thai === 1 && !quote.is_expired" class="pt-2 text-end no-print">
-                  <div v-if="isDepositReported" class="d-inline-flex align-items-center gap-2 text-primary fw-semibold small">
-                    <i class="bi bi-clock-history"></i>
-                    <span>
-                      Đã báo chuyển khoản{{ quote.thoi_gian_bao_coc ? ' lúc ' + formatDateTime(quote.thoi_gian_bao_coc) : '' }} — JPM đang đối soát Sacombank
-                    </span>
+                <div v-if="quote.trang_thai === 1 && !quote.is_expired" class="pt-3 no-print">
+                  <div v-if="isDepositReported" class="d-flex flex-wrap align-items-center justify-content-end gap-3">
+                    <a
+                      v-if="quote.anh_chuyen_khoan"
+                      :href="resolveImageUrl(quote.anh_chuyen_khoan)"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="d-inline-flex align-items-center gap-2 text-decoration-none border rounded p-1 bg-white"
+                      title="Xem lại ảnh biên lai đã gửi"
+                    >
+                      <img
+                        :src="resolveImageUrl(quote.anh_chuyen_khoan)"
+                        alt="Biên lai chuyển khoản"
+                        style="width: 44px; height: 44px; object-fit: cover; border-radius: 4px;"
+                      >
+                      <span class="small text-secondary fw-medium pe-1">Ảnh biên lai</span>
+                    </a>
+                    <div class="d-inline-flex align-items-center gap-2 text-primary fw-semibold small">
+                      <i class="bi bi-clock-history"></i>
+                      <span>
+                        Đã báo chuyển khoản{{ quote.thoi_gian_bao_coc ? ' lúc ' + formatDateTime(quote.thoi_gian_bao_coc) : '' }} — JPM đang đối soát Sacombank
+                      </span>
+                    </div>
                   </div>
-                  <button
-                    v-else
-                    type="button"
-                    class="btn btn-sm btn-outline-success fw-semibold"
-                    @click="showDepositReportModal = true"
-                  >
-                    <i class="bi bi-check-lg me-1"></i> Tôi đã chuyển khoản cọc
-                  </button>
+                  <div v-else class="text-end">
+                    <button
+                      type="button"
+                      class="btn btn-sm btn-outline-success fw-semibold"
+                      @click="showDepositReportModal = true"
+                    >
+                      <i class="bi bi-receipt me-1"></i> Xác nhận đã chuyển cọc / Tải ảnh
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -356,7 +383,9 @@
             <div class="exdoc-sig-col">
               <div class="exdoc-sig-spacer">&nbsp;</div>
               <div class="exdoc-sig-title">KHÁCH ĐẶT HÀNG</div>
-              <div class="exdoc-sig-sub">{{ quote.trang_thai === 2 ? `(Đã xác nhận: ${quote.khach_hang_ten})` : '(Xác nhận đơn trực tuyến hoặc ký nhận)' }}</div>
+              <div class="exdoc-sig-sub">
+                {{ isCustomerAccepted ? `(Đã xác nhận chốt: ${quote.khach_hang_ten})` : '(Vui lòng bấm Đồng ý chốt đơn bên dưới)' }}
+              </div>
             </div>
             <div class="exdoc-sig-col">
               <div class="exdoc-sig-date">{{ formatSignatureDate(quote.created_at) }}</div>
@@ -385,35 +414,64 @@
             </template>
 
             <template v-else-if="quote.trang_thai === 1 && !quote.is_expired">
-              <span class="exdoc-action-hint">Quý khách vui lòng kiểm tra kỹ mã sản phẩm, số lượng và tổng tiền trước khi chốt đơn.</span>
-              <div class="exdoc-action-btns">
-                <button
-                  type="button"
-                  class="btn exdoc-btn exdoc-btn-outline"
-                  :disabled="isSubmitting"
-                  @click="handleAction('reject')"
-                >
-                  Từ chối báo giá
-                </button>
-                <a
-                  :href="buildZaloWithMsg('Chào JPM Marine, tôi muốn hỏi thêm về báo giá #' + quote.ma_yeu_cau)"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="btn exdoc-btn exdoc-btn-outline"
-                >
-                  <i class="bi bi-chat-dots"></i>
-                  <span>Tư vấn Zalo</span>
-                </a>
-                <button
-                  type="button"
-                  class="btn exdoc-btn exdoc-btn-primary"
-                  :disabled="isSubmitting"
-                  @click="handleAction('accept')"
-                >
-                  <i class="bi bi-check2-circle"></i>
-                  <span>Đồng ý chốt đơn</span>
-                </button>
-              </div>
+              <template v-if="!isCustomerAccepted">
+                <span class="exdoc-action-hint">Quý khách vui lòng kiểm tra kỹ mã sản phẩm, số lượng và tổng tiền trước khi chốt đơn.</span>
+                <div class="exdoc-action-btns">
+                  <button
+                    type="button"
+                    class="btn exdoc-btn exdoc-btn-outline"
+                    :disabled="isSubmitting"
+                    @click="handleAction('reject')"
+                  >
+                    Từ chối báo giá
+                  </button>
+                  <a
+                    :href="buildZaloWithMsg('Chào JPM Marine, tôi muốn hỏi thêm về báo giá #' + quote.ma_yeu_cau)"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="btn exdoc-btn exdoc-btn-outline"
+                  >
+                    <i class="bi bi-chat-dots"></i>
+                    <span>Tư vấn Zalo</span>
+                  </a>
+                  <button
+                    type="button"
+                    class="btn exdoc-btn exdoc-btn-primary"
+                    :disabled="isSubmitting"
+                    @click="handleAction('accept')"
+                  >
+                    <i class="bi bi-check2-circle"></i>
+                    <span>Đồng ý chốt đơn</span>
+                  </button>
+                </div>
+              </template>
+              <template v-else>
+                <span class="exdoc-action-hint">
+                  {{ isDepositReported
+                    ? 'JPM đã tiếp nhận xác nhận chuyển khoản và đang đối soát tài khoản Sacombank để lên đơn.'
+                    : 'Bạn đã chốt đơn. Vui lòng quét mã VietQR phía trên để chuyển khoản đặt cọc và gửi xác nhận.' }}
+                </span>
+                <div class="exdoc-action-btns">
+                  <button
+                    v-if="!isDepositReported"
+                    type="button"
+                    class="btn exdoc-btn exdoc-btn-outline"
+                    :disabled="isSubmitting"
+                    @click="handleAction('reject')"
+                  >
+                    Hủy đơn
+                  </button>
+                  <a
+                    :href="buildZaloWithMsg('Chào JPM Marine, tôi cần hỗ trợ đơn báo giá #' + quote.ma_yeu_cau)"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="btn exdoc-btn exdoc-btn-outline"
+                  >
+                    <i class="bi bi-chat-dots"></i>
+                    <span>Tư vấn Zalo</span>
+                  </a>
+                </div>
+              </template>
             </template>
 
             <template v-else-if="quote.trang_thai === 2">
@@ -476,6 +534,7 @@ import axiosClient from '../../../api/axiosClient'
 import Swal from 'sweetalert2'
 import { useSiteSettings } from '../../../composables/useSiteSettings'
 import { useAuthStore } from '../../../stores/authStore'
+import { getImageUrl } from '../../../utils/imageUrl'
 import DepositReportModal from '../../../components/client/DepositReportModal.vue'
 
 export default {
@@ -527,11 +586,26 @@ export default {
       if (this.quote.trang_thai === 2) return 'confirmed'
       return 'expired'
     },
+    isCustomerAccepted() {
+      return Boolean(this.quote?.khach_da_chot) || Boolean(this.quote?.da_bao_chuyen_khoan) || Number(this.quote?.trang_thai) >= 2
+    },
     isDepositReported() {
       return Boolean(this.quote?.da_bao_chuyen_khoan) && Number(this.quote?.da_thu || 0) <= 0 && Number(this.quote?.trang_thai) === 1
     },
+    showDepositSection() {
+      return (
+        this.quote &&
+        (this.quote.trang_thai === 1 || this.quote.trang_thai === 2) &&
+        Number(this.quote.tien_coc_yeu_cau || 0) > 0 &&
+        !this.quote.is_expired &&
+        (this.isCustomerAccepted || this.isDepositReported)
+      )
+    },
     statusLabel() {
       if (this.isDepositReported && !this.quote?.is_expired) return 'Chờ đối soát cọc'
+      if (this.quote?.trang_thai === 1 && !this.quote?.is_expired && this.isCustomerAccepted && Number(this.quote?.tien_coc_yeu_cau || 0) > 0) {
+        return 'Chờ đặt cọc'
+      }
       const map = {
         pending: 'Chờ báo giá',
         quoted: 'Đã báo giá',
@@ -590,6 +664,9 @@ export default {
     this.stopCountdown()
   },
   methods: {
+    resolveImageUrl(path) {
+      return getImageUrl(path)
+    },
     getItemUnitPrice(item) {
       if (!item) return 0
       return Number(item.don_gia || item.gia_ban || 0)
@@ -734,9 +811,15 @@ export default {
           deliveryAddress = inputAddress.trim()
         }
       } else if (actionType === 'reject') {
-        confirmTitle = 'Từ chối báo giá?'
-        confirmMsg = 'Bạn chắc chắn muốn từ chối bảng báo giá này?'
-        confirmBtnText = 'Từ chối'
+        if (this.isCustomerAccepted) {
+          confirmTitle = 'Hủy đơn hàng?'
+          confirmMsg = 'Bạn chưa chuyển khoản đặt cọc. Bạn chắc chắn muốn hủy đơn này?'
+          confirmBtnText = 'Hủy đơn'
+        } else {
+          confirmTitle = 'Từ chối báo giá?'
+          confirmMsg = 'Bạn chắc chắn muốn từ chối bảng báo giá này?'
+          confirmBtnText = 'Từ chối'
+        }
       } else if (actionType === 're_quote') {
         confirmTitle = 'Yêu cầu báo giá lại?'
         confirmMsg = 'Gửi yêu cầu đến kỹ thuật viên JPM để cập nhật lại bảng giá mới nhất?'
@@ -762,8 +845,13 @@ export default {
           })
           const message = res?.message ?? res?.data?.message
           if (res?.success || res?.data?.success) {
-            Swal.fire({ icon: 'success', title: 'Đã cập nhật', text: message })
             await this.fetchQuote()
+            await Swal.fire({ icon: 'success', title: 'Đã cập nhật', text: message })
+            if (actionType === 'accept') {
+              this.$nextTick(() => {
+                this.$refs.vietQrSection?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+              })
+            }
           } else {
             Swal.fire({ icon: 'warning', title: 'Thông báo', text: message })
             await this.fetchQuote()

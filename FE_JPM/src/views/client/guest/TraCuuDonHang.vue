@@ -114,17 +114,27 @@
           <section v-if="result.data.trang_thai === 1" class="lux-callout callout-amber">
             <div class="lux-callout-icon"><i class="bi bi-shield-check"></i></div>
             <div class="lux-callout-body flex-grow-1">
-              <strong>Bảng báo giá đã sẵn sàng (Hiệu lực 72 giờ)</strong>
-              <p>
-                Kỹ thuật viên JPM đã hoàn tất kiểm tra phụ tùng, tính cước vận chuyển và mức cọc. Bạn có thể mở bảng báo giá chi tiết để xác nhận chốt đơn.
-              </p>
+              <template v-if="result.data.da_bao_chuyen_khoan && Number(result.data.da_thu || 0) <= 0">
+                <strong>Đã báo chuyển khoản — Đang đối soát Sacombank</strong>
+                <p>JPM Marine đã tiếp nhận xác nhận chuyển khoản cọc và đang đối chiếu tài khoản để lên đơn chính thức.</p>
+              </template>
+              <template v-else-if="result.data.khach_da_chot && Number(result.data.tien_coc_yeu_cau || 0) > 0">
+                <strong>Bạn đã chốt đơn — Vui lòng chuyển khoản đặt cọc</strong>
+                <p>Mở trang báo giá chi tiết để quét mã VietQR và gửi xác nhận đặt cọc.</p>
+              </template>
+              <template v-else>
+                <strong>Bảng báo giá đã sẵn sàng (Hiệu lực 72 giờ)</strong>
+                <p>
+                  Kỹ thuật viên JPM đã hoàn tất kiểm tra phụ tùng, tính cước vận chuyển và mức cọc. Bạn có thể mở bảng báo giá chi tiết để xác nhận chốt đơn.
+                </p>
+              </template>
               <div class="mt-3" v-if="result.data.token || result.data.token_xac_nhan">
                 <router-link
                   :to="'/bao-gia/' + (result.data.token || result.data.token_xac_nhan)"
                   class="btn btn-danger lux-btn-sm"
                 >
                   <i class="bi bi-file-earmark-text"></i>
-                  <span>Mở bảng báo giá chi tiết</span>
+                  <span>{{ result.data.khach_da_chot ? 'Mở báo giá & QR đặt cọc' : 'Xem đơn báo giá' }}</span>
                 </router-link>
               </div>
             </div>
@@ -243,9 +253,9 @@
                   Tiền cọc yêu cầu
                   <span
                     class="lux-deposit-pill"
-                    :class="Number(result.data.da_thu || 0) >= Number(result.data.tien_coc_yeu_cau) ? 'is-paid' : 'is-unpaid'"
+                    :class="Number(result.data.da_thu || 0) >= Number(result.data.tien_coc_yeu_cau) ? 'is-paid' : (result.data.da_bao_chuyen_khoan ? 'is-reported' : 'is-unpaid')"
                   >
-                    {{ Number(result.data.da_thu || 0) >= Number(result.data.tien_coc_yeu_cau) ? 'Đã cọc' : 'Chưa cọc' }}
+                    {{ Number(result.data.da_thu || 0) >= Number(result.data.tien_coc_yeu_cau) ? 'Đã cọc' : (result.data.da_bao_chuyen_khoan ? 'Chờ đối soát' : 'Chưa cọc') }}
                   </span>
                 </span>
                 <span class="lux-sum-val fw-semibold text-navy">
@@ -305,16 +315,7 @@
               </div>
               <div class="lux-bank-row">
                 <span class="lux-bank-label">Số tài khoản</span>
-                <div class="d-flex align-items-center gap-2">
-                  <span class="lux-bank-val font-monospace">{{ vietQrData.account_no }}</span>
-                  <button
-                    type="button"
-                    class="lux-inline-copy"
-                    @click="copyText(vietQrData.account_no, 'Đã sao chép số tài khoản')"
-                  >
-                    Sao chép
-                  </button>
-                </div>
+                <span class="lux-bank-val font-monospace">{{ vietQrData.account_no }}</span>
               </div>
               <div class="lux-bank-row">
                 <span class="lux-bank-label">Chủ tài khoản</span>
@@ -326,16 +327,9 @@
               </div>
               <div class="lux-bank-row">
                 <span class="lux-bank-label">Nội dung chuyển khoản</span>
-                <div class="d-flex align-items-center gap-2">
-                  <code class="lux-transfer-code">{{ vietQrData.transfer_content }}</code>
-                  <button
-                    type="button"
-                    class="lux-inline-copy"
-                    @click="copyText(vietQrData.transfer_content, 'Đã sao chép nội dung chuyển khoản')"
-                  >
-                    Sao chép
-                  </button>
-                </div>
+                <code class="lux-transfer-code">
+                  {{ vietQrData.transfer_content }}
+                </code>
               </div>
               <p class="lux-bank-hint">
                 Sau khi nhận biến động số dư, kỹ thuật viên JPM sẽ xác nhận và cập nhật trạng thái đơn hàng ngay.
@@ -348,7 +342,7 @@
                   </span>
                 </div>
                 <button v-else type="button" class="btn btn-sm btn-outline-success fw-semibold" @click="showDepositReportModal = true">
-                  <i class="bi bi-check-lg me-1"></i> Tôi đã chuyển khoản cọc
+                  <i class="bi bi-receipt me-1"></i> Xác nhận đã chuyển cọc / Tải ảnh
                 </button>
               </div>
             </div>
@@ -422,13 +416,26 @@ export default {
       isSubmittingReport: false
     }
   },
+  mounted() {
+    const qCode = this.$route?.query?.code ? String(this.$route.query.code).trim() : ''
+    const qPhone = this.$route?.query?.phone ? String(this.$route.query.phone).trim() : ''
+    if (qCode) this.form.code = qCode
+    if (qPhone) this.form.phone = qPhone
+    if (qCode && qPhone) {
+      this.searchTransaction()
+    }
+  },
   computed: {
     statusText() {
       if (!this.result) return ''
       const r = this.result.data
       if (this.result.type === 'quote') {
         if (r.trang_thai === 0) return 'Chờ báo giá'
-        if (r.trang_thai === 1) return r.da_bao_chuyen_khoan && Number(r.da_thu || 0) <= 0 ? 'Chờ đối soát cọc' : 'Đã báo giá'
+        if (r.trang_thai === 1) {
+          if (r.da_bao_chuyen_khoan && Number(r.da_thu || 0) <= 0) return 'Chờ đối soát cọc'
+          if (r.khach_da_chot && Number(r.tien_coc_yeu_cau || 0) > 0) return 'Chờ đặt cọc'
+          return 'Đã báo giá'
+        }
         if (r.trang_thai === 2) return 'Đang xử lý'
         if (r.trang_thai === 3) return 'Đã hủy / Hết hạn'
         if (r.trang_thai === 4) return 'Hoàn thành'

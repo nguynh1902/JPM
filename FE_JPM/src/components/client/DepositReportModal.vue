@@ -29,7 +29,7 @@
               </div>
               <div v-if="transferContent" class="d-flex justify-content-between align-items-center small">
                 <span class="text-muted">Nội dung CK</span>
-                <code class="fw-bold px-2 py-1 rounded bg-white border text-dark">{{ transferContent }}</code>
+                <code class="lux-transfer-code">{{ transferContent }}</code>
               </div>
             </div>
 

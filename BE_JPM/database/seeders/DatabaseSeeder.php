@@ -36,7 +36,6 @@ class DatabaseSeeder extends Seeder
             CauHinhSeeder::class,
             DiaChiSeeder::class,
             DashboardSeeder::class,
-            DonHangVaBaoGiaSeeder::class,
             NotificationSeeder::class,
             SystemLogSeeder::class,
         ]);

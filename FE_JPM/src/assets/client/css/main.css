@@ -6016,8 +6016,9 @@ a.btn-shopee-outline:hover {
   padding: 2px 7px;
   border-radius: var(--jpm-radius-badge, 6px);
 }
-.lux-deposit-pill.is-paid { background: #ecfdf5; color: #047857; }
-.lux-deposit-pill.is-unpaid { background: #fef2f2; color: #be123c; }
+.lux-deposit-pill.is-paid { background: #dcfce7; color: #15803d; }
+.lux-deposit-pill.is-unpaid { background: #fef3c7; color: #b45309; }
+.lux-deposit-pill.is-reported { background: #e0f2fe; color: #0369a1; }
 
 /* VietQR Đặt cọc dùng chung */
 .lux-vietqr-panel {

@@ -56,9 +56,31 @@ class YeuCauBaoGiaController extends Controller
         try {
             $maCode = 'YCBG-' . date('ymd') . '-' . strtoupper(substr(uniqid(), -4));
             
-            $phiVanChuyen = (float) $request->input('phi_van_chuyen', 0);
-            $tienCocYeuCau = (float) $request->input('tien_coc_yeu_cau', 0);
-            $daThu = (float) $request->input('da_thu', 0);
+            $phiVanChuyen = max(0, (float) $request->input('phi_van_chuyen', 0));
+            $tienCocYeuCau = max(0, (float) $request->input('tien_coc_yeu_cau', 0));
+            $daThu = max(0, (float) $request->input('da_thu', 0));
+
+            $tongTienTamTinh = 0;
+            foreach ($request->chi_tiet as $item) {
+                $qty = (int) ($item['so_luong'] ?? 1);
+                $price = max(0, (float) ($item['don_gia'] ?? $item['gia_ban'] ?? $item['price'] ?? 0));
+                $tongTienTamTinh += ($qty * $price);
+            }
+            $grandTotal = $tongTienTamTinh + $phiVanChuyen;
+            if ($tienCocYeuCau > ($grandTotal + 0.01)) {
+                DB::rollBack();
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Số tiền cọc yêu cầu không được vượt quá tổng giá trị đơn hàng (' . number_format($grandTotal, 0, ',', '.') . ' đ).'
+                ], 422);
+            }
+            if ($daThu > ($grandTotal + 0.01)) {
+                DB::rollBack();
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Số tiền đã thu không được vượt quá tổng giá trị đơn hàng (' . number_format($grandTotal, 0, ',', '.') . ' đ).'
+                ], 422);
+            }
             
             // Trạng thái:
             // 0: Chờ báo giá
@@ -458,15 +480,52 @@ class YeuCauBaoGiaController extends Controller
     {
         DB::beginTransaction();
         try {
-            $quote = YeuCauBaoGia::findOrFail($id);
+            $quote = YeuCauBaoGia::with('chiTiet')->findOrFail($id);
+
+            $freightCollect = (bool) $request->input('freight_collect', $request->input('khach_tu_tra_cuoc', $quote->khach_tu_tra_cuoc));
+            $shippingFee = $freightCollect ? 0 : max(0, (float) $request->input('shipping_fee', $request->input('phi_van_chuyen', $quote->phi_van_chuyen)));
+            $depositRequired = (float) $request->input('deposit_required', $request->input('tien_coc_yeu_cau', $quote->tien_coc_yeu_cau));
+
+            if ($depositRequired < 0) {
+                DB::rollBack();
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Số tiền cọc yêu cầu không được âm.'
+                ], 422);
+            }
+
+            $itemsSubtotal = 0;
+            if ($request->has('chi_tiet') && is_array($request->input('chi_tiet'))) {
+                foreach ($request->input('chi_tiet') as $item) {
+                    $qty = max(1, (int) ($item['qty'] ?? $item['so_luong'] ?? 1));
+                    $price = max(0, (float) ($item['price'] ?? $item['don_gia'] ?? 0));
+                    $itemsSubtotal += ($qty * $price);
+                }
+            } else {
+                foreach ($quote->chiTiet as $ct) {
+                    $itemsSubtotal += (max(1, (int) $ct->so_luong) * max(0, (float) $ct->don_gia));
+                }
+            }
+
+            $grandTotal = $itemsSubtotal > 0
+                ? ($itemsSubtotal + $shippingFee)
+                : max(0, (float) $request->input('tong_tien', $quote->tong_tien));
+
+            if ($depositRequired > ($grandTotal + 0.01)) {
+                DB::rollBack();
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Số tiền cọc yêu cầu không được vượt quá tổng giá trị đơn hàng (' . number_format($grandTotal, 0, ',', '.') . ' đ).'
+                ], 422);
+            }
 
             $quote->update([
                 'tong_tien'         => $request->input('tong_tien', $quote->tong_tien),
                 'trang_thai'        => $request->input('trang_thai', $quote->trang_thai),
                 'ghi_chu_zalo'      => $request->input('ghi_chu_zalo', $quote->ghi_chu_zalo),
-                'phi_van_chuyen'    => $request->input('shipping_fee', $request->input('phi_van_chuyen', $quote->phi_van_chuyen)),
-                'khach_tu_tra_cuoc' => $request->input('freight_collect', $request->input('khach_tu_tra_cuoc', $quote->khach_tu_tra_cuoc)),
-                'tien_coc_yeu_cau'  => $request->input('deposit_required', $request->input('tien_coc_yeu_cau', $quote->tien_coc_yeu_cau)),
+                'phi_van_chuyen'    => $shippingFee,
+                'khach_tu_tra_cuoc' => $freightCollect,
+                'tien_coc_yeu_cau'  => $depositRequired,
                 'dia_chi_giao_hang' => $request->input('dia_chi_giao_hang', $request->input('address', $quote->dia_chi_giao_hang)),
                 'anh_chuyen_khoan'  => $request->input('anh_chuyen_khoan', $request->input('receipt_image', $quote->anh_chuyen_khoan)),
                 'anh_chuyen_khoan_2'=> $request->input('anh_chuyen_khoan_2', $request->input('receipt_image_2', $quote->anh_chuyen_khoan_2)),
@@ -606,9 +665,17 @@ class YeuCauBaoGiaController extends Controller
             $action = $request->input('action', 'accept');
 
             if ($action === 'accept') {
-                // Kiểm tra nếu báo giá đã quá 72h thì không cho chốt giá cũ
+                if ((int) $quote->trang_thai === 3) {
+                    DB::rollBack();
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Báo giá này đã đóng hoặc bị từ chối.'
+                    ], 422);
+                }
+
+                // Kiểm tra nếu báo giá đã quá 72h khi đang chờ chốt thì không cho chốt giá cũ
                 $validHours = 72;
-                if ($quote->updated_at && now()->diffInHours($quote->updated_at) > $validHours) {
+                if ((int) $quote->trang_thai === 1 && $quote->updated_at && now()->diffInHours($quote->updated_at) > $validHours) {
                     $quote->trang_thai = 3;
                     $quote->save();
                     DB::commit();
@@ -626,17 +693,51 @@ class YeuCauBaoGiaController extends Controller
                     $quote->dia_chi_giao_hang = $request->input('address');
                 }
 
-                $quote->trang_thai = 2; // Khách đã chốt đơn hàng (Chờ cọc)
+                $quote->khach_da_chot = true;
+                $quote->thoi_gian_khach_chot = $quote->thoi_gian_khach_chot ?? now();
+
+                // Nếu yêu cầu đặt cọc (> 0): giữ trang_thai = 1 để hiện VietQR cọc, chưa tạo đơn ảo cho tới khi đối soát cọc
+                if ((float) ($quote->tien_coc_yeu_cau ?? 0) > 0) {
+                    $quote->save();
+                    DB::commit();
+
+                    return response()->json([
+                        'success' => true,
+                        'requires_deposit' => true,
+                        'message' => 'Đã xác nhận chốt đơn! Vui lòng quét mã VietQR bên dưới để chuyển khoản đặt cọc.',
+                        'data' => $quote->fresh('chiTiet')
+                    ]);
+                }
+
+                // Nếu không yêu cầu cọc (0đ - COD 100%): tự động tạo DonHang Đang xử lý ngay
+                $existingOrder = DonHang::where('ghi_chu_khach_hang', 'like', '%Báo giá #' . $quote->ma_yeu_cau . '%')->first();
+                if (!$existingOrder) {
+                    $existingOrder = $this->createOrderFromQuote($quote, [
+                        'da_thu' => 0,
+                        'trang_thai' => 1,
+                        'trang_thai_thanh_toan' => 0,
+                        'deduct_stock' => true,
+                    ]);
+                }
+
+                $quote->trang_thai = 2;
                 $quote->save();
                 DB::commit();
 
                 return response()->json([
                     'success' => true,
-                    'message' => 'Quý khách đã đồng ý chốt đơn thành công! Vui lòng chuyển khoản tiền cọc để kho tiến hành đặt hàng bên Nhật.'
+                    'requires_deposit' => false,
+                    'order_code' => $existingOrder->ma_don_hang,
+                    'message' => 'Quý khách đã chốt đơn thành công! Đơn hàng #' . $existingOrder->ma_don_hang . ' đã được chuyển xuống kho xử lý.',
+                    'data' => $quote->fresh('chiTiet')
                 ]);
             } elseif ($action === 're_quote') {
                 // Khách yêu cầu báo giá lại khi đơn cũ quá hạn
                 $quote->trang_thai = 0; // Chuyển về Chờ báo giá
+                $quote->khach_da_chot = false;
+                $quote->thoi_gian_khach_chot = null;
+                $quote->da_bao_chuyen_khoan = false;
+                $quote->thoi_gian_bao_coc = null;
                 $quote->updated_at = now();
                 $quote->ghi_chu_khach_hang = ($quote->ghi_chu_khach_hang ? $quote->ghi_chu_khach_hang . ' | ' : '') . 'Khách yêu cầu cập nhật lại báo giá vào ' . now()->format('d/m/Y H:i');
                 $quote->save();
@@ -706,6 +807,10 @@ class YeuCauBaoGiaController extends Controller
                     }
                 }
 
+                if (!$quote->khach_da_chot) {
+                    $quote->khach_da_chot = true;
+                    $quote->thoi_gian_khach_chot = $quote->thoi_gian_khach_chot ?? now();
+                }
                 $quote->da_bao_chuyen_khoan = true;
                 $quote->thoi_gian_bao_coc = now();
                 $quote->save();
@@ -743,19 +848,123 @@ class YeuCauBaoGiaController extends Controller
                     'data' => $quote->fresh('chiTiet')
                 ]);
             } else {
+                if ((int) $quote->trang_thai >= 2 || (float) ($quote->da_thu ?? 0) > 0) {
+                    DB::rollBack();
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Đơn hàng đã được xác nhận lên đơn hoặc đã thu cọc, vui lòng liên hệ JPM để được hỗ trợ.'
+                    ], 422);
+                }
+
+                $wasAccepted = (bool) $quote->khach_da_chot;
                 $quote->trang_thai = 3; // Hủy
+                $quote->da_bao_chuyen_khoan = false;
+                $quote->thoi_gian_bao_coc = null;
                 $quote->save();
                 DB::commit();
 
                 return response()->json([
                     'success' => true,
-                    'message' => 'Đã từ chối báo giá. Đơn yêu cầu này đã được đóng lại.'
+                    'message' => $wasAccepted
+                        ? 'Đã hủy đơn hàng thành công.'
+                        : 'Đã từ chối báo giá. Đơn yêu cầu này đã được đóng lại.'
                 ]);
             }
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json(['success' => false, 'message' => 'Lỗi xử lý: ' . $e->getMessage()], 500);
         }
+    }
+
+    /**
+     * Helper chuyển Yêu Cầu Báo Giá thành Đơn Hàng chính thức (dùng chung cho accept COD, convertToOrder, confirmDeposit)
+     */
+    private function createOrderFromQuote(YeuCauBaoGia $quote, array $options = []): DonHang
+    {
+        $idKhachHang = null;
+        $loaiDon = 'b2c';
+        if ($quote->user_id) {
+            $kh = KhachHang::where('id_tai_khoan', $quote->user_id)->first();
+            if ($kh) {
+                $idKhachHang = $kh->id;
+            }
+            if ($this->isB2BUser((int) $quote->user_id)) {
+                $loaiDon = 'b2b';
+            }
+        }
+
+        $daThu = (float) ($options['da_thu'] ?? $quote->da_thu ?? 0);
+        $trangThai = (int) ($options['trang_thai'] ?? ($daThu > 0 ? 1 : 0));
+        $payStatus = (int) ($options['trang_thai_thanh_toan'] ?? ($daThu > 0 ? 1 : 0));
+        $deductStock = (bool) ($options['deduct_stock'] ?? true);
+
+        $maDonHang = 'DH-' . date('ymd') . '-' . strtoupper(substr(uniqid(), -4));
+        $donHang = DonHang::create([
+            'ma_don_hang'           => $maDonHang,
+            'id_khach_hang'         => $idKhachHang,
+            'khach_hang_ten'        => $quote->khach_hang_ten,
+            'khach_hang_sdt'        => $quote->khach_hang_sdt,
+            'khach_hang_email'      => $quote->khach_hang_email,
+            'dia_chi_text'          => $quote->dia_chi_giao_hang,
+            'anh_chuyen_khoan'      => $quote->anh_chuyen_khoan,
+            'anh_chuyen_khoan_2'    => $quote->anh_chuyen_khoan_2,
+            'da_bao_chuyen_khoan'   => (bool) $quote->da_bao_chuyen_khoan,
+            'thoi_gian_bao_coc'     => $quote->thoi_gian_bao_coc,
+            'ghi_chu_khach_hang'    => 'Báo giá #' . $quote->ma_yeu_cau . ($quote->ghi_chu_khach_hang ? ' | ' . $quote->ghi_chu_khach_hang : '') . ($quote->ghi_chu_zalo ? ' | ' . $quote->ghi_chu_zalo : ''),
+            'tong_tien'             => $quote->tong_tien,
+            'phi_van_chuyen'        => $quote->phi_van_chuyen,
+            'tien_coc_yeu_cau'      => $quote->tien_coc_yeu_cau,
+            'da_thu'                => $daThu,
+            'khach_tu_tra_cuoc'     => $quote->khach_tu_tra_cuoc,
+            'loai_don'              => $loaiDon,
+            'trang_thai'            => $trangThai,
+            'trang_thai_thanh_toan' => $payStatus,
+        ]);
+
+        foreach ($quote->chiTiet as $ct) {
+            $idSanPham = null;
+            $loaiSanPham = 'phu_tung';
+            if (!empty($ct->ma_phu_tung) && $ct->ma_phu_tung !== 'N/A') {
+                $pt = \App\Domain\PIM\Models\PhuTung::where('ma_phu_tung', $ct->ma_phu_tung)->first();
+                if ($pt) {
+                    $idSanPham = $pt->id;
+                    $loaiSanPham = 'phu_tung';
+                } else {
+                    $sp = \App\Domain\CMS\Models\SanPham::where('ma_san_pham', $ct->ma_phu_tung)->first();
+                    if ($sp) {
+                        $idSanPham = $sp->id;
+                        $loaiSanPham = 'san_pham';
+                    }
+                }
+            }
+
+            if (!$idSanPham) {
+                $idSanPham = null;
+                $loaiSanPham = 'custom';
+            } elseif ($deductStock) {
+                \App\Domain\Sales\Services\OrderService::deductOrReserveStock(
+                    (int) $idSanPham,
+                    $loaiSanPham,
+                    (int) $ct->so_luong,
+                    (int) $donHang->id,
+                    'Xuất bán từ báo giá #' . $quote->ma_yeu_cau
+                );
+            }
+
+            ChiTietDonHang::create([
+                'id_don_hang'   => $donHang->id,
+                'id_san_pham'   => $idSanPham,
+                'loai_san_pham' => $loaiSanPham,
+                'ten_phu_tung'  => $ct->ten_phu_tung,
+                'ma_phu_tung'   => $ct->ma_phu_tung,
+                'model_may'     => $ct->model_may,
+                'so_luong'      => $ct->so_luong,
+                'don_gia'       => $ct->don_gia,
+                'thanh_tien'    => $ct->so_luong * $ct->don_gia,
+            ]);
+        }
+
+        return $donHang;
     }
 
     /**
@@ -767,7 +976,7 @@ class YeuCauBaoGiaController extends Controller
         try {
             $quote = YeuCauBaoGia::with('chiTiet')->lockForUpdate()->findOrFail($id);
 
-            // Kiểm tra đã tồn tại đơn hàng được chuyển từ báo giá này chưa (tránh nhầm với trạng thái khách tự duyệt trang_thai == 2)
+            // Kiểm tra đã tồn tại đơn hàng được chuyển từ báo giá này chưa
             $alreadyConverted = DonHang::where('ghi_chu_khach_hang', 'like', '%Báo giá #' . $quote->ma_yeu_cau . '%')->exists();
             if ($alreadyConverted || (int) $quote->trang_thai === 4) {
                 DB::rollBack();
@@ -777,86 +986,11 @@ class YeuCauBaoGiaController extends Controller
                 ], 409);
             }
 
-            // Nhận diện khách hàng B2B vs B2C
-            $idKhachHang = null;
-            $loaiDon = 'b2c';
-            if ($quote->user_id) {
-                $kh = KhachHang::where('id_tai_khoan', $quote->user_id)->first();
-                if ($kh) {
-                    $idKhachHang = $kh->id;
-                }
-                if ($this->isB2BUser((int) $quote->user_id)) {
-                    $loaiDon = 'b2b';
-                }
-            }
-
-            $maDonHang = 'DH-' . date('ymd') . '-' . strtoupper(substr(uniqid(), -4));
-            $donHang = DonHang::create([
-                'ma_don_hang'           => $maDonHang,
-                'id_khach_hang'         => $idKhachHang,
-                'khach_hang_ten'        => $quote->khach_hang_ten,
-                'khach_hang_sdt'        => $quote->khach_hang_sdt,
-                'khach_hang_email'      => $quote->khach_hang_email,
-                'dia_chi_text'          => $quote->dia_chi_giao_hang,
-                'anh_chuyen_khoan'      => $quote->anh_chuyen_khoan,
-                'anh_chuyen_khoan_2'    => $quote->anh_chuyen_khoan_2,
-                'ghi_chu_khach_hang'    => 'Báo giá #' . $quote->ma_yeu_cau . ($quote->ghi_chu_khach_hang ? ' | ' . $quote->ghi_chu_khach_hang : '') . ($quote->ghi_chu_zalo ? ' | ' . $quote->ghi_chu_zalo : ''),
-                'tong_tien'             => $quote->tong_tien,
-                'phi_van_chuyen'        => $quote->phi_van_chuyen,
-                'tien_coc_yeu_cau'      => $quote->tien_coc_yeu_cau,
-                'da_thu'                => (float) ($quote->da_thu ?? 0),
-                'khach_tu_tra_cuoc'     => $quote->khach_tu_tra_cuoc,
-                'loai_don'              => $loaiDon,
-                'trang_thai'            => ((float) ($quote->da_thu ?? 0) > 0) ? 1 : 0,
-                'trang_thai_thanh_toan' => ((float) ($quote->da_thu ?? 0) > 0) ? 1 : 0,
-            ]);
-
-            // Sao chép chi tiết từ Báo giá sang Đơn hàng
-            foreach ($quote->chiTiet as $ct) {
-                $idSanPham = null;
-                $loaiSanPham = 'phu_tung';
-                if (!empty($ct->ma_phu_tung) && $ct->ma_phu_tung !== 'N/A') {
-                    $pt = \App\Domain\PIM\Models\PhuTung::where('ma_phu_tung', $ct->ma_phu_tung)->first();
-                    if ($pt) {
-                        $idSanPham = $pt->id;
-                        $loaiSanPham = 'phu_tung';
-                    } else {
-                        $sp = \App\Domain\CMS\Models\SanPham::where('ma_san_pham', $ct->ma_phu_tung)->first();
-                        if ($sp) {
-                            $idSanPham = $sp->id;
-                            $loaiSanPham = 'san_pham';
-                        }
-                    }
-                }
-
-                // Fallback an toàn cho hàng đặt riêng (Custom / Bespoke SKU)
-                if (!$idSanPham) {
-                    $idSanPham = null;
-                    $loaiSanPham = "custom";
-                } else {
-                    \App\Domain\Sales\Services\OrderService::deductOrReserveStock(
-                        (int) $idSanPham,
-                        $loaiSanPham,
-                        (int) $ct->so_luong,
-                        (int) $donHang->id,
-                        'Xuất bán từ báo giá #' . $quote->ma_yeu_cau
-                    );
-                }
-
-                ChiTietDonHang::create([
-                    'id_don_hang'   => $donHang->id,
-                    'id_san_pham'   => $idSanPham,
-                    'loai_san_pham' => $loaiSanPham,
-                    'ten_phu_tung'  => $ct->ten_phu_tung,
-                    'ma_phu_tung'   => $ct->ma_phu_tung,
-                    'model_may'     => $ct->model_may,
-                    'so_luong'      => $ct->so_luong,
-                    'don_gia'       => $ct->don_gia,
-                    'thanh_tien'    => $ct->so_luong * $ct->don_gia,
-                ]);
-            }
+            $donHang = $this->createOrderFromQuote($quote, ['deduct_stock' => true]);
 
             // Đổi trạng thái báo giá sang Đã chuyển đơn (2)
+            $quote->khach_da_chot = true;
+            $quote->thoi_gian_khach_chot = $quote->thoi_gian_khach_chot ?? now();
             $quote->trang_thai = 2;
             $quote->save();
 
@@ -864,7 +998,7 @@ class YeuCauBaoGiaController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => "Đã chuyển đổi thành công sang Đơn hàng {$maDonHang}!",
+                'message' => "Đã chuyển đổi thành công sang Đơn hàng {$donHang->ma_don_hang}!",
                 'data'    => $donHang
             ]);
         } catch (\Exception $e) {
@@ -914,76 +1048,20 @@ class YeuCauBaoGiaController extends Controller
             }
 
             $quote->da_thu = $amount;
+            $quote->khach_da_chot = true;
+            $quote->thoi_gian_khach_chot = $quote->thoi_gian_khach_chot ?? now();
             $quote->trang_thai = 2; // Đã chốt & đã cọc
             $quote->save();
 
             // Tự động tạo/cập nhật Đơn hàng chính thức để nhân viên lên đơn Nhật
             $existingOrder = DonHang::where('ghi_chu_khach_hang', 'like', '%Báo giá #' . $quote->ma_yeu_cau . '%')->first();
             if (!$existingOrder) {
-                $idKhachHang = null;
-                $loaiDon = 'b2c';
-                if ($quote->user_id) {
-                    $kh = KhachHang::where('id_tai_khoan', $quote->user_id)->first();
-                    if ($kh) {
-                        $idKhachHang = $kh->id;
-                    }
-                    if ($this->isB2BUser((int) $quote->user_id)) {
-                        $loaiDon = 'b2b';
-                    }
-                }
-
-                $maDonHang = 'DH-' . date('ymd') . '-' . strtoupper(substr(uniqid(), -4));
-                $donHang = DonHang::create([
-                    'ma_don_hang'           => $maDonHang,
-                    'id_khach_hang'         => $idKhachHang,
-                    'khach_hang_ten'        => $quote->khach_hang_ten,
-                    'khach_hang_sdt'        => $quote->khach_hang_sdt,
-                    'khach_hang_email'      => $quote->khach_hang_email,
-                    'dia_chi_text'          => $quote->dia_chi_giao_hang,
-                    'anh_chuyen_khoan'      => $quote->anh_chuyen_khoan,
-                    'anh_chuyen_khoan_2'    => $quote->anh_chuyen_khoan_2,
-                    'da_bao_chuyen_khoan'   => (bool) $quote->da_bao_chuyen_khoan,
-                    'thoi_gian_bao_coc'     => $quote->thoi_gian_bao_coc,
-                    'ghi_chu_khach_hang'    => 'Báo giá #' . $quote->ma_yeu_cau . ($quote->ghi_chu_khach_hang ? ' | ' . $quote->ghi_chu_khach_hang : ''),
-                    'tong_tien'             => $quote->tong_tien,
-                    'phi_van_chuyen'        => $quote->phi_van_chuyen,
-                    'tien_coc_yeu_cau'      => $quote->tien_coc_yeu_cau,
-                    'da_thu'                => $amount,
-                    'khach_tu_tra_cuoc'     => $quote->khach_tu_tra_cuoc,
-                    'loai_don'              => $loaiDon,
-                    'trang_thai'            => 1, // 1 = Đang chuẩn bị / Lên đơn Nhật
-                    'trang_thai_thanh_toan' => 1, // 1 = Đã đặt cọc
+                $this->createOrderFromQuote($quote, [
+                    'da_thu' => $amount,
+                    'trang_thai' => 1,
+                    'trang_thai_thanh_toan' => 1,
+                    'deduct_stock' => false,
                 ]);
-
-                foreach ($quote->chiTiet as $ct) {
-                    $idSanPham = null;
-                    $loaiSanPham = 'phu_tung';
-                    if (!empty($ct->ma_phu_tung) && $ct->ma_phu_tung !== 'N/A') {
-                        $pt = \App\Domain\PIM\Models\PhuTung::where('ma_phu_tung', $ct->ma_phu_tung)->first();
-                        if ($pt) {
-                            $idSanPham = $pt->id;
-                            $loaiSanPham = 'phu_tung';
-                        } else {
-                            $sp = \App\Domain\CMS\Models\SanPham::where('ma_san_pham', $ct->ma_phu_tung)->first();
-                            if ($sp) {
-                                $idSanPham = $sp->id;
-                                $loaiSanPham = 'san_pham';
-                            }
-                        }
-                    }
-
-                    ChiTietDonHang::create([
-                        'id_don_hang'   => $donHang->id,
-                        'id_san_pham'   => $idSanPham,
-                        'loai_san_pham' => $loaiSanPham,
-                        'ten_phu_tung'  => $ct->ten_phu_tung,
-                        'ma_phu_tung'   => $ct->ma_phu_tung,
-                        'model_may'     => $ct->model_may,
-                        'so_luong'      => $ct->so_luong,
-                        'don_gia'       => $ct->don_gia,
-                        'thanh_tien'    => $ct->so_luong * $ct->don_gia,
-                    ]);
-                }
             } else {
                 $existingOrder->da_thu = $amount;
                 $existingOrder->trang_thai_thanh_toan = 1;
