@@ -96,6 +96,7 @@ class YeuCauBaoGiaController extends Controller
                 $price = (float) ($item['don_gia'] ?? $item['gia_ban'] ?? $item['price'] ?? 0);
                 $tenItem = trim($item['ten_phu_tung'] ?? $item['part_name'] ?? 'Phụ tùng');
                 $maItem = trim($item['ma_phu_tung'] ?? $item['part_code'] ?? 'N/A');
+                $modelMay = trim((string) ($item['model_may'] ?? $item['engine_model'] ?? ''));
 
                 $tongTienTamTinh += ($qty * $price);
 
@@ -103,6 +104,7 @@ class YeuCauBaoGiaController extends Controller
                     'yeu_cau_bao_gia_id' => $quote->id,
                     'ten_phu_tung'       => $tenItem,
                     'ma_phu_tung'        => $maItem,
+                    'model_may'          => $modelMay !== '' ? $modelMay : null,
                     'so_luong'           => $qty,
                     'don_gia'            => $price,
                 ]);
@@ -150,6 +152,7 @@ class YeuCauBaoGiaController extends Controller
                         'loai_san_pham' => $loaiSanPham,
                         'ten_phu_tung'  => $ct->ten_phu_tung,
                         'ma_phu_tung'   => $ct->ma_phu_tung,
+                        'model_may'     => $ct->model_may,
                         'so_luong'      => $ct->so_luong,
                         'don_gia'       => $ct->don_gia,
                         'thanh_tien'    => $ct->so_luong * $ct->don_gia,
@@ -215,7 +218,7 @@ class YeuCauBaoGiaController extends Controller
             // Nhận diện khách hàng B2B vs B2C — CHỈ tin cậy auth('sanctum')->id(), cấm spoof user_id từ request
             $idKhachHang = null;
             $loaiDon = 'b2c';
-            $khachTuTraCuoc = 1; // Mặc định B2C: Khách trả cước nội địa
+            $khachTuTraCuoc = 0; // Mặc định tắt khách tự trả cước; Admin chủ động bật khi cần
             $verifiedUserId = auth('sanctum')->id();
 
             if ($verifiedUserId) {
@@ -283,6 +286,7 @@ class YeuCauBaoGiaController extends Controller
                     $price = 0; // Chỉ lấy giá authoritative từ DB, không tin cậy gia_ban từ client
                     $tenItem = $item['ten_phu_tung'] ?? 'Không rõ';
                     $maItem = $item['ma_phu_tung'] ?? 'N/A';
+                    $modelMay = trim((string) ($item['model_may'] ?? $item['engine_model'] ?? ''));
 
                     $idItem = $item['id_san_pham'] ?? $item['id_phu_tung'] ?? null;
                     $loaiSanPham = $item['loai_san_pham'] ?? 'phu_tung';
@@ -322,6 +326,7 @@ class YeuCauBaoGiaController extends Controller
                         'yeu_cau_bao_gia_id' => $quote->id,
                         'ten_phu_tung'       => $tenItem,
                         'ma_phu_tung'        => $maItem,
+                        'model_may'          => $modelMay !== '' ? $modelMay : null,
                         'so_luong'           => $qty,
                         'don_gia'            => $price
                     ]);
@@ -470,18 +475,26 @@ class YeuCauBaoGiaController extends Controller
             // Cập nhật giá từng món hàng nếu có
             if ($request->has('chi_tiet') && is_array($request->input('chi_tiet'))) {
                 foreach ($request->input('chi_tiet') as $item) {
+                    $hasModelMay = array_key_exists('model_may', $item) || array_key_exists('engine_model', $item);
+                    $modelMay = $hasModelMay ? trim((string) ($item['model_may'] ?? $item['engine_model'] ?? '')) : '';
+
                     if (isset($item['id']) && $item['id']) {
+                        $updateData = [
+                            'don_gia'  => (float) ($item['price'] ?? $item['don_gia'] ?? 0),
+                            'so_luong' => (int) ($item['qty'] ?? $item['so_luong'] ?? 1),
+                        ];
+                        if ($hasModelMay) {
+                            $updateData['model_may'] = $modelMay !== '' ? $modelMay : null;
+                        }
                         ChiTietBaoGia::where('id', $item['id'])
                             ->where('yeu_cau_bao_gia_id', $quote->id)
-                            ->update([
-                                'don_gia'  => (float) ($item['price'] ?? $item['don_gia'] ?? 0),
-                                'so_luong' => (int) ($item['qty'] ?? $item['so_luong'] ?? 1),
-                            ]);
+                            ->update($updateData);
                     } elseif (!empty($item['part_name']) || !empty($item['ten_phu_tung'])) {
                         ChiTietBaoGia::create([
                             'yeu_cau_bao_gia_id' => $quote->id,
                             'ten_phu_tung'      => $item['part_name'] ?? $item['ten_phu_tung'] ?? '',
                             'ma_phu_tung'       => $item['part_code'] ?? $item['ma_phu_tung'] ?? null,
+                            'model_may'         => $modelMay !== '' ? $modelMay : null,
                             'so_luong'          => (int) ($item['qty'] ?? $item['so_luong'] ?? 1),
                             'don_gia'           => (float) ($item['price'] ?? $item['don_gia'] ?? 0),
                         ]);
@@ -766,6 +779,7 @@ class YeuCauBaoGiaController extends Controller
                     'loai_san_pham' => $loaiSanPham,
                     'ten_phu_tung'  => $ct->ten_phu_tung,
                     'ma_phu_tung'   => $ct->ma_phu_tung,
+                    'model_may'     => $ct->model_may,
                     'so_luong'      => $ct->so_luong,
                     'don_gia'       => $ct->don_gia,
                     'thanh_tien'    => $ct->so_luong * $ct->don_gia,
@@ -892,6 +906,7 @@ class YeuCauBaoGiaController extends Controller
                         'loai_san_pham' => $loaiSanPham,
                         'ten_phu_tung'  => $ct->ten_phu_tung,
                         'ma_phu_tung'   => $ct->ma_phu_tung,
+                        'model_may'     => $ct->model_may,
                         'so_luong'      => $ct->so_luong,
                         'don_gia'       => $ct->don_gia,
                         'thanh_tien'    => $ct->so_luong * $ct->don_gia,

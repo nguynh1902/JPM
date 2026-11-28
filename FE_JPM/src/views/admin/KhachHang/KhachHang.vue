@@ -1038,12 +1038,9 @@ export default {
       const file = event.target.files[0];
       if (file) {
         try {
-          const { file: optimizedFile, previewUrl, originalSize, compressedSize, savedPercent } = await compressAvatar(file);
+          const { file: optimizedFile, previewUrl } = await compressAvatar(file);
           this.avatarFile = optimizedFile;
           this.avatarPreview = previewUrl;
-          if (this.$toast && savedPercent > 10) {
-            this.$toast.info(`Đã tối ưu avatar: ${formatBytes(originalSize)} → ${formatBytes(compressedSize)} (giảm ${savedPercent}%)`);
-          }
         } catch (err) {
           console.warn('Lỗi nén avatar khách hàng, dùng ảnh gốc:', err);
           this.avatarFile = file;

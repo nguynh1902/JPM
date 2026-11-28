@@ -223,7 +223,7 @@ const handleLogoUpload = async (event) => {
   const file = event.target.files[0];
   if (file) {
     try {
-      const { file: optimizedFile, previewUrl, originalSize, compressedSize, savedPercent } = await compressImage(file, {
+      const { file: optimizedFile, previewUrl } = await compressImage(file, {
         maxWidth: 600,
         maxHeight: 600,
         quality: 0.85,
@@ -231,9 +231,6 @@ const handleLogoUpload = async (event) => {
       });
       logoFile.value = optimizedFile;
       formData.value.logo_path = previewUrl;
-      if (savedPercent > 10) {
-        toaster.info(`Đã tối ưu logo: ${formatBytes(originalSize)} → ${formatBytes(compressedSize)} (giảm ${savedPercent}%)`);
-      }
     } catch (err) {
       console.warn('Lỗi nén logo thương hiệu, dùng ảnh gốc:', err);
       logoFile.value = file;

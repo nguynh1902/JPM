@@ -181,7 +181,11 @@
                   <td>
                     <div class="lux-part-name">{{ item.ten_phu_tung }}</div>
                     <div class="lux-part-oem" v-if="item.ma_phu_tung">
-                      Mã OEM: <code>{{ item.ma_phu_tung }}</code>
+                      <span class="text-muted">Mã:</span> <span class="lux-part-code">{{ item.ma_phu_tung }}</span>
+                    </div>
+                    <div class="lux-part-model" v-if="item.model_may">
+                      <span class="lux-part-model-label">Model:</span>
+                      <span class="lux-part-model-val">{{ item.model_may }}</span>
                     </div>
                   </td>
                   <td class="text-center col-qty fw-semibold">{{ item.so_luong }}</td>
@@ -276,8 +280,12 @@
 
           <div v-if="vietQrData" class="lux-vietqr-grid">
             <div class="lux-vietqr-img-col">
-              <div class="lux-qr-frame">
+              <div class="lux-qr-frame text-center">
                 <img :src="vietQrData.qr_url" alt="VietQR Napas247">
+                <div v-if="vietQrData.account_name || vietQrData.account_no" class="mt-1 lh-sm pb-1">
+                  <div class="fw-bold text-dark" style="font-size: 0.75rem;">{{ vietQrData.account_name }}</div>
+                  <div class="font-monospace fw-semibold text-secondary" style="font-size: 0.76rem;">{{ vietQrData.account_no }}</div>
+                </div>
               </div>
               <a
                 :href="buildZaloUrl('Tôi vừa chuyển cọc cho đơn #' + (result.data.ma_don_hang || result.data.ma_yeu_cau))"
@@ -463,7 +471,9 @@ export default {
       if (!this.result) return 0
       const subtotal = this.calculateItemsTotal()
       const shipping = this.result.data.khach_tu_tra_cuoc ? 0 : Number(this.result.data.phi_van_chuyen || 0)
-      const paid = Number(this.result.data.da_thu || 0)
+      const paid = this.result.type === 'quote'
+        ? Math.max(Number(this.result.data.da_thu || 0), Number(this.result.data.tien_coc_yeu_cau || 0))
+        : Number(this.result.data.da_thu || 0)
       return subtotal + shipping - paid
     },
     async loadVietQR() {

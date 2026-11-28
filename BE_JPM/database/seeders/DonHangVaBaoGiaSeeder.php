@@ -22,10 +22,8 @@ class DonHangVaBaoGiaSeeder extends Seeder
     {
         $now = Carbon::now();
 
-        // 1. Đảm bảo có phương thức thanh toán, đơn vị vận chuyển và địa chỉ
+        // 1. Đảm bảo đã có dữ liệu địa chỉ mẫu
         $this->call([
-            PhuongThucThanhToanSeeder::class,
-            DonViVanChuyenSeeder::class,
             DiaChiSeeder::class,
         ]);
 

@@ -349,7 +349,10 @@
 
                     <div class="row row-cols-2 row-cols-md-3 row-cols-xl-4 g-2 g-sm-3">
                       <div class="col" v-for="prod in (filters.nhom_phu_tung_id ? group.items : group.items.slice(0, 4))" :key="prod.id">
-                        <ProductCard :product="prod" @add-to-cart="addToCart" />
+                        <ProductCard
+                          :product="prod"
+                          :detail-route="hasEngineSelected && filters.dong_co_model_id && prod.ma_phu_tung ? `/chi-tiet-phu-tung/${prod.ma_phu_tung}?from_model_id=${filters.dong_co_model_id}` : ''"
+                        />
                       </div>
                     </div>
                   </div>
@@ -620,7 +623,11 @@ export default {
             items: []
           });
         }
-        groupsMap.get(groupId).items.push(prod);
+        groupsMap.get(groupId).items.push(
+          selectedModelLabel.value
+            ? { ...prod, model_may: selectedModelLabel.value }
+            : prod
+        );
       });
       return Array.from(groupsMap.values());
     });
@@ -834,6 +841,18 @@ export default {
       const m = engineModels.value.find(x => x.id === filters.dong_co_model_id);
       return m ? m.ten_model : '-- Chọn model động cơ --';
     });
+    const selectedModelLabel = computed(() => {
+      if (!filters.dong_co_model_id || !engineModels.value) return '';
+      const m = engineModels.value.find(x => x.id === filters.dong_co_model_id);
+      if (!m) return '';
+      const modelText = String(m.ten_model || m.ma_model || '').trim();
+      const b = brands.value?.find(x => x.id === (m.thuong_hieu_id || filters.thuong_hieu_id));
+      const brandText = String(b?.name || '').trim();
+      if (brandText && modelText && !modelText.toUpperCase().startsWith(brandText.toUpperCase())) {
+        return `${brandText} ${modelText}`;
+      }
+      return modelText || brandText;
+    });
     const yearLabel = computed(() => filters.nam_sx || '-- Chọn năm sản xuất --');
 
     const goToDiagram = (diag) => {
@@ -954,11 +973,13 @@ export default {
   },
   methods: {
     addToCart(prod) {
+      if (!prod) return;
       this.cartStore.addItem({
         ...prod,
         id: prod.id,
         code: prod.ma_phu_tung,
         name: prod.ten_phu_tung,
+        model_may: prod.model_may || null,
         price: Number(prod.gia_ban || 0),
         is_gia_lien_he: Boolean(prod.is_gia_lien_he),
         image: prod.hinh_anh,

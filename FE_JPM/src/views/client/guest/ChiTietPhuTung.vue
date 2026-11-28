@@ -821,12 +821,28 @@ const formatPrice = (price) => {
   return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price);
 };
 
+const activeModelLabel = computed(() => {
+  if (!fromModelId.value || !compatibleModels.value.length) return '';
+  const targetId = parseInt(fromModelId.value, 10);
+  const matched = compatibleModels.value.find(m => parseInt(m.id, 10) === targetId);
+  if (!matched) return '';
+  const brand = String(matched.brand || '').trim();
+  const name = String(matched.name || '').trim();
+  if (brand && brand !== 'Chưa rõ' && name && !name.toUpperCase().startsWith(brand.toUpperCase())) {
+    return `${brand} ${name}`;
+  }
+  return name || brand;
+});
+
 // Add to Cart Interaction
 const addToCart = (item, isRelated = false) => {
     const quantity = isRelated ? 1 : qty.value;
     
     // Add to Pinia cartStore (persists to localStorage)
-    cartStore.addItem(item, quantity);
+    cartStore.addItem({
+      ...item,
+      model_may: !isRelated && activeModelLabel.value ? activeModelLabel.value : (item?.model_may || null)
+    }, quantity);
 
     toaster.success("Thêm sản phẩm thành công");
   };

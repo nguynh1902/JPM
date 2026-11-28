@@ -384,7 +384,7 @@
                     type="text" 
                     id="vietqr_account_no" 
                     class="form-control" 
-                    placeholder="VD: 108876543210" 
+                    placeholder="VD: 0357993134" 
                     v-model="formData.vietqr_account_no"
                   />
                 </div>
@@ -398,7 +398,7 @@
                     type="text" 
                     id="vietqr_account_name" 
                     class="form-control text-uppercase" 
-                    placeholder="VD: CONG TY PHU TUNG MAY THUY JPM" 
+                    placeholder="VD: NGUYEN THANH VIET" 
                     v-model="formData.vietqr_account_name"
                   />
                 </div>
@@ -437,7 +437,7 @@
                   <!-- Tiêu đề cột xem trước -->
                   <div class="d-flex justify-content-between align-items-center w-100 mb-3 pb-2 border-bottom">
                     <span class="fw-medium text-dark small">Xem trước Mã VietQR Thực Tế</span>
-                    <span class="badge badge-custom bg-pastel-primary">{{ formData.vietqr_bank_id || 'ICB' }}</span>
+                    <span class="badge badge-custom bg-pastel-primary">{{ formData.vietqr_bank_id || 'STB' }}</span>
                   </div>
 
                   <!-- Khung hiển thị ảnh QR tự sinh -->
@@ -454,7 +454,7 @@
                   <div class="text-start small bg-white p-3 rounded border w-100 mb-2">
                     <div class="d-flex justify-content-between py-1 border-bottom">
                       <span class="text-muted">Ngân hàng:</span>
-                      <span class="fw-bold text-dark">{{ formData.vietqr_bank_name || 'VietinBank' }} ({{ formData.vietqr_bank_id || 'ICB' }})</span>
+                      <span class="fw-bold text-dark">{{ formData.vietqr_bank_name || 'Sacombank' }} ({{ formData.vietqr_bank_id || 'STB' }})</span>
                     </div>
                     <div class="d-flex justify-content-between py-1 border-bottom">
                       <span class="text-muted">Số tài khoản:</span>
@@ -627,8 +627,8 @@ export default {
     ];
 
     const templateOptions = [
-      { value: 'compact2', label: 'Chuẩn đầy đủ: Khung viền + Logo Napas + Logo Ngân Hàng (Khuyên dùng)' },
-      { value: 'compact', label: 'Gọn nhẹ: Kèm logo ngân hàng thu nhỏ' },
+      { value: 'compact', label: 'Gọn sạch: Mã QR + Logo Napas & Ngân hàng, không chèn chữ số tiền (Khuyên dùng)' },
+      { value: 'compact2', label: 'Đầy đủ: Kèm Tên chủ TK, Số TK và Số tiền ở chân ảnh QR' },
       { value: 'qr_only', label: 'Đơn giản: Chỉ hiển thị mã QR vuông' }
     ];
 
@@ -659,11 +659,11 @@ export default {
       social_zalo: 'https://zalo.me/0357993134',
       social_instagram: 'https://www.instagram.com/linhkiencano_tauthuynhatban?cnvx=MW82ODJuNnEwc3Z6NQ%3D%3D',
       social_tiktok: 'https://www.tiktok.com/@tauthuyennhatban',
-      vietqr_bank_id: 'ICB',
-      vietqr_bank_name: 'VietinBank',
-      vietqr_account_no: '108876543210',
-      vietqr_account_name: 'CONG TY PHU TUNG MAY THUY JPM',
-      vietqr_template: 'compact2',
+      vietqr_bank_id: 'STB',
+      vietqr_bank_name: 'Sacombank',
+      vietqr_account_no: '0357993134',
+      vietqr_account_name: 'NGUYEN THANH VIET',
+      vietqr_template: 'compact',
       vietqr_prefix: 'COC'
     };
 
@@ -680,10 +680,10 @@ export default {
 
     // Live preview URL mã VietQR
     const previewQrUrl = computed(() => {
-      const bankId = formData.vietqr_bank_id || 'ICB';
-      const accountNo = (formData.vietqr_account_no || '').trim() || '108876543210';
-      const template = formData.vietqr_template || 'compact2';
-      const accountName = encodeURIComponent((formData.vietqr_account_name || 'CONG TY PHU TUNG MAY THUY JPM').trim().toUpperCase());
+      const bankId = formData.vietqr_bank_id || 'STB';
+      const accountNo = (formData.vietqr_account_no || '').trim() || '0357993134';
+      const template = formData.vietqr_template || 'compact';
+      const accountName = encodeURIComponent((formData.vietqr_account_name || 'NGUYEN THANH VIET').trim().toUpperCase());
       const prefix = (formData.vietqr_prefix || 'COC').trim().toUpperCase();
       const addInfo = encodeURIComponent(`${prefix} YCBG-DEMO`);
       return `https://img.vietqr.io/image/${bankId}-${accountNo}-${template}.png?amount=1000000&addInfo=${addInfo}&accountName=${accountName}`;

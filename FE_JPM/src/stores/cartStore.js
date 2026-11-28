@@ -5,6 +5,13 @@ import axiosClient from '../api/axiosClient'
 const MAX_CART_ITEMS = 200
 const SYNC_DEBOUNCE_MS = 350
 
+export function getCartItemKey(item) {
+  if (!item) return ''
+  const code = String(item.ma_phu_tung || item.ma_san_pham || '')
+  const model = String(item.model_may || '').trim()
+  return `${code}::${model}`
+}
+
 export const useCartStore = defineStore('cart', () => {
   // ─── STATE ────────────────────────────────────────────────
   let rawData = []
@@ -81,7 +88,8 @@ export const useCartStore = defineStore('cart', () => {
 
       if (cloudCart.length > 0 || localCart.length > 0) {
         localCart.forEach(localItem => {
-          const existing = cloudCart.find(c => c.ma_phu_tung === localItem.ma_phu_tung)
+          const localKey = getCartItemKey(localItem)
+          const existing = cloudCart.find(c => getCartItemKey(c) === localKey)
           if (existing) {
             existing.quantity = Math.max(Number(existing.quantity) || 1, Number(localItem.quantity) || 1)
           } else if (cloudCart.length < MAX_CART_ITEMS) {
@@ -97,13 +105,29 @@ export const useCartStore = defineStore('cart', () => {
     }
   }
 
+  function findItemIndex(keyOrCode, modelMay = null) {
+    const target = String(keyOrCode || '')
+    if (modelMay !== null && modelMay !== undefined) {
+      const m = String(modelMay || '').trim()
+      return items.value.findIndex(
+        i => i.ma_phu_tung === target && String(i.model_may || '').trim() === m
+      )
+    }
+    const byKey = items.value.findIndex(i => getCartItemKey(i) === target)
+    if (byKey !== -1) return byKey
+    return items.value.findIndex(i => i.ma_phu_tung === target)
+  }
+
   // ─── ACTIONS ──────────────────────────────────────────────
   function addItem(product, quantity = 1) {
     const qty = Math.max(1, parseInt(quantity, 10) || 1)
     const ma_item = product.ma_phu_tung || product.ma_san_pham
     if (!ma_item) return
+    const modelMay = String(product.model_may || '').trim() || null
 
-    const existing = items.value.find(i => i.ma_phu_tung === ma_item)
+    const existing = items.value.find(
+      i => i.ma_phu_tung === ma_item && (String(i.model_may || '').trim() || null) === modelMay
+    )
     if (existing) {
       existing.quantity = (Number(existing.quantity) || 0) + qty
     } else {
@@ -115,6 +139,7 @@ export const useCartStore = defineStore('cart', () => {
       items.value.push({
         id: product.id,
         ma_phu_tung: ma_item,
+        model_may: modelMay,
         ten_phu_tung: product.ten_phu_tung || product.ten_san_pham,
         hinh_anh: product.hinh_anh || product.hinh_anh_chinh || null,
         slug: product.slug || null,
@@ -127,12 +152,13 @@ export const useCartStore = defineStore('cart', () => {
     persist()
   }
 
-  function updateQuantity(ma_phu_tung, newQuantity) {
-    const item = items.value.find(i => i.ma_phu_tung === ma_phu_tung)
+  function updateQuantity(keyOrCode, newQuantity, modelMay = null) {
+    const idx = findItemIndex(keyOrCode, modelMay)
+    const item = idx !== -1 ? items.value[idx] : null
     if (item) {
       const qty = parseInt(newQuantity, 10) || 0
       if (qty <= 0) {
-        removeItem(ma_phu_tung)
+        removeItem(getCartItemKey(item))
       } else {
         item.quantity = Math.min(qty, 9999)
         persist()
@@ -140,19 +166,22 @@ export const useCartStore = defineStore('cart', () => {
     }
   }
 
-  function removeItem(ma_phu_tung) {
-    items.value = items.value.filter(i => i.ma_phu_tung !== ma_phu_tung)
-    persist()
+  function removeItem(keyOrCode, modelMay = null) {
+    const idx = findItemIndex(keyOrCode, modelMay)
+    if (idx !== -1) {
+      items.value.splice(idx, 1)
+      persist()
+    }
   }
 
   /**
-   * Xóa hàng loạt nhiều mã trong 1 lần ghi localStorage & 1 lần sync cloud (O(N), không storm API)
-   * @param {String[]} codes
+   * Xóa hàng loạt nhiều item key/mã trong 1 lần ghi localStorage & 1 lần sync cloud (O(N), không storm API)
+   * @param {String[]} keysOrCodes
    */
-  function removeItems(codes) {
-    if (!Array.isArray(codes) || codes.length === 0) return
-    const codeSet = new Set(codes)
-    items.value = items.value.filter(i => !codeSet.has(i.ma_phu_tung))
+  function removeItems(keysOrCodes) {
+    if (!Array.isArray(keysOrCodes) || keysOrCodes.length === 0) return
+    const keySet = new Set(keysOrCodes)
+    items.value = items.value.filter(i => !keySet.has(getCartItemKey(i)) && !keySet.has(i.ma_phu_tung))
     persist({ syncCloud: true, immediate: true })
   }
 

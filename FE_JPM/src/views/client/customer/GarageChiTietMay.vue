@@ -276,9 +276,22 @@ const removeItem = async (id) => {
 };
 
 // ─── CART ─────────────────────────────────────────────────────────────────────
+const garageModelLabel = computed(() => {
+  const model = String(garageData.value?.dong_co_model?.ten_model || garageData.value?.dong_co_model?.ma_model || '').trim();
+  const brand = String(garageData.value?.dong_co_model?.thuong_hieu?.name || '').trim();
+  if (!model) return brand || '';
+  if (brand && !model.toUpperCase().startsWith(brand.toUpperCase())) {
+    return `${brand} ${model}`;
+  }
+  return model;
+});
+
 const addOneToCart = (item) => {
   if (!item.phu_tung) return;
-  cartStore.addItem(item.phu_tung, item.so_luong || 1);
+  cartStore.addItem({
+    ...item.phu_tung,
+    model_may: garageModelLabel.value || null
+  }, item.so_luong || 1);
   toaster.success(`Đã thêm ${item.phu_tung.ten_phu_tung} vào giỏ!`);
 };
 </script>

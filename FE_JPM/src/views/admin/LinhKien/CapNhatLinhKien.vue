@@ -259,7 +259,7 @@ export default {
       const file = event.target.files[0];
       if (file) {
         try {
-          const { file: optimizedFile, previewUrl, originalSize, compressedSize, savedPercent } = await compressImage(file, {
+          const { file: optimizedFile, previewUrl } = await compressImage(file, {
             maxWidth: 600,
             maxHeight: 600,
             quality: 0.85,
@@ -267,9 +267,6 @@ export default {
           });
           this.logoFile = optimizedFile;
           this.formData.logo_path = previewUrl;
-          if (this.toaster && savedPercent > 10) {
-            this.toaster.info(`Đã tối ưu logo: ${formatBytes(originalSize)} → ${formatBytes(compressedSize)} (giảm ${savedPercent}%)`);
-          }
         } catch (err) {
           console.warn('Lỗi nén logo linh kiện, dùng ảnh gốc:', err);
           this.logoFile = file;

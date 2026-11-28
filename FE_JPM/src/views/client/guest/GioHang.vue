@@ -55,10 +55,10 @@
                       </tr>
                     </thead>
                     <tbody>
-                      <tr v-for="item in cartItems" :key="item.ma_phu_tung" class="table-row-hover">
+                      <tr v-for="item in cartItems" :key="getItemKey(item)" class="table-row-hover">
                         <!-- Cột Checkbox (căn lề thẳng hàng với Card Header px-4) -->
                         <td class="text-center th-check">
-                          <input class="form-check-input custom-checkbox" type="checkbox" :value="item.ma_phu_tung" v-model="selectedItems">
+                          <input class="form-check-input custom-checkbox" type="checkbox" :value="getItemKey(item)" v-model="selectedItems">
                         </td>
                         <!-- Cột Ảnh / Thumbnail (8px bo góc chuẩn Trang Chủ) -->
                         <td class="text-center th-thumb">
@@ -69,10 +69,12 @@
                         </td>
                         <!-- Cột Mã & Tên Phụ Tùng -->
                         <td>
-                          <div>
-                            <span class="part-code">{{ item.ma_phu_tung }}</span>
-                          </div>
+                          <div class="part-code">{{ item.ma_phu_tung }}</div>
                           <div class="part-name mt-1">{{ item.ten_phu_tung }}</div>
+                          <div v-if="item.model_may" class="part-model mt-1">
+                            <span class="part-model-label">Model:</span>
+                            <span class="part-model-val">{{ item.model_may }}</span>
+                          </div>
                         </td>
                         <!-- Cột Đơn Giá -->
                         <td class="text-center th-price">
@@ -457,7 +459,7 @@
 </template>
 
 <script>
-import { useCartStore } from '../../../stores/cartStore'
+import { useCartStore, getCartItemKey } from '../../../stores/cartStore'
 import { useSiteSettings } from '../../../composables/useSiteSettings'
 import axiosClient from '../../../api/axiosClient'
 import { getImageUrl as resolveImageUrl } from '../../../utils/imageUrl'
@@ -515,7 +517,7 @@ export default {
       return this.cartStore.items || []
     },
     selectedCartItems() {
-      return this.cartItems.filter(item => this.selectedItems.includes(item.ma_phu_tung))
+      return this.cartItems.filter(item => this.selectedItems.includes(getCartItemKey(item)))
     },
     totalQuantity() {
       return this.selectedCartItems.reduce((total, item) => total + item.quantity, 0)
@@ -558,7 +560,7 @@ export default {
       },
       set(value) {
         if (value) {
-          this.selectedItems = this.cartItems.map(item => item.ma_phu_tung)
+          this.selectedItems = this.cartItems.map(item => getCartItemKey(item))
         } else {
           this.selectedItems = []
         }
@@ -576,12 +578,9 @@ export default {
   },
   watch: {
     cartItems: {
-      immediate: true,
       handler(items) {
-        if (!this.hasAutoSelected && Array.isArray(items) && items.length > 0) {
-          this.selectedItems = items.map(item => item.ma_phu_tung)
-          this.hasAutoSelected = true
-        }
+        const validKeys = new Set((items || []).map(item => getCartItemKey(item)))
+        this.selectedItems = this.selectedItems.filter(k => validKeys.has(k))
       }
     }
   },
@@ -605,6 +604,9 @@ export default {
     }
   },
   methods: {
+    getItemKey(item) {
+      return getCartItemKey(item)
+    },
     getImageUrl(path) {
       return resolveImageUrl(path, 'https://placehold.co/400x300/f8f9fa/a1acb8?text=JPM+Marine')
     },
@@ -615,7 +617,7 @@ export default {
     updateQuantity(item, amount) {
       const newQty = item.quantity + amount
       if (newQty < 1) return
-      this.cartStore.updateQuantity(item.ma_phu_tung, newQty)
+      this.cartStore.updateQuantity(getCartItemKey(item), newQty)
     },
     async removeItem(item) {
       const result = await Swal.fire({
@@ -629,8 +631,9 @@ export default {
         cancelButtonText: 'Hủy',
       })
       if (result.isConfirmed) {
-        this.cartStore.removeItem(item.ma_phu_tung)
-        this.selectedItems = this.selectedItems.filter(id => id !== item.ma_phu_tung)
+        const itemKey = getCartItemKey(item)
+        this.cartStore.removeItem(itemKey)
+        this.selectedItems = this.selectedItems.filter(id => id !== itemKey)
       }
     },
     async removeSelectedItems() {
@@ -752,7 +755,7 @@ export default {
         }
       }
 
-      const selectedCartItems = this.cartItems.filter(item => this.selectedItems.includes(item.ma_phu_tung))
+      const selectedCartItems = this.cartItems.filter(item => this.selectedItems.includes(getCartItemKey(item)))
       
       let finalName = (this.checkoutForm.name || '').trim()
       let finalPhone = (this.checkoutForm.phone || '').trim()
@@ -779,6 +782,7 @@ export default {
           loai_san_pham: item.loai_san_pham || (item.ma_san_pham && !item.ma_phu_tung ? 'san_pham' : 'phu_tung'),
           ten_phu_tung: item.ten_phu_tung,
           ma_phu_tung:  item.ma_phu_tung,
+          model_may:    item.model_may || null,
           so_luong:     item.quantity,
           gia_ban:      item.is_gia_lien_he ? 0 : item.gia_ban
         }))
@@ -1035,17 +1039,35 @@ export default {
 }
 
 .part-code {
-  font-family: var(--heading-font, var(--jpm-font-family));
+  font-family: 'Roboto Mono', monospace;
+  font-variant-numeric: tabular-nums;
   font-weight: 700;
-  color: var(--jpm-color-navy-deep, #0A1128);
-  font-size: 0.95rem;
+  color: var(--jpm-color-blue-electric, #0284c7);
+  font-size: 0.85rem;
+  line-height: 1.3;
 }
 
 .part-name {
-  color: #475569;
-  font-size: 0.85rem;
+  color: var(--jpm-color-navy-dark, #0f172a);
+  font-size: 0.92rem;
   line-height: 1.4;
+  font-weight: 600;
+}
+
+.part-model {
+  font-size: 0.75rem;
+  line-height: 1.35;
+}
+
+.part-model-label {
+  color: #94a3b8;
   font-weight: 400;
+  margin-right: 4px;
+}
+
+.part-model-val {
+  color: #64748b;
+  font-weight: 500;
 }
 
 .part-price-val {

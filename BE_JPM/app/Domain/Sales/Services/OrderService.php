@@ -122,6 +122,7 @@ class OrderService
                 }
             }
 
+            $modelMay = trim((string) ($item['model_may'] ?? $item['engine_model'] ?? ''));
             $processedItems[] = [
                 'id_don_hang'   => $donHangId,
                 'id_san_pham'   => $idItem,
@@ -131,6 +132,7 @@ class OrderService
                 'thanh_tien'    => $donGia * $soLuong,
                 'ten_phu_tung'  => $tenItem,
                 'ma_phu_tung'   => $maItem,
+                'model_may'     => $modelMay !== '' ? $modelMay : null,
             ];
         }
 

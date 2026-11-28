@@ -230,12 +230,9 @@ const handleAvatarUpload = async (event) => {
   const file = event.target.files[0];
   if (file) {
     try {
-      const { file: optimizedFile, previewUrl, originalSize, compressedSize, savedPercent } = await compressAvatar(file);
+      const { file: optimizedFile, previewUrl } = await compressAvatar(file);
       avatarFile.value = optimizedFile;
       previewAvatar.value = previewUrl;
-      if (savedPercent > 10) {
-        toaster.info(`Đã tối ưu avatar: ${formatBytes(originalSize)} → ${formatBytes(compressedSize)} (giảm ${savedPercent}%)`);
-      }
     } catch (err) {
       console.warn('Lỗi nén avatar admin, dùng ảnh gốc:', err);
       avatarFile.value = file;

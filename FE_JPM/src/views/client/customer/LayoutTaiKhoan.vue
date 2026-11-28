@@ -111,7 +111,7 @@ const handleAvatarFileChange = async (event) => {
     isUploadingAvatar.value = true;
     
     // Tự động crop vuông 1:1, resize 300x300 và nén WebP ngay trên trình duyệt
-    const { file: compressedFile, previewUrl, originalSize, compressedSize, savedPercent } = await compressAvatar(file);
+    const { file: compressedFile, previewUrl } = await compressAvatar(file);
     
     // Preview tức thì
     avatarPreview.value = previewUrl;
@@ -131,7 +131,7 @@ const handleAvatarFileChange = async (event) => {
       }
       queryClient.invalidateQueries({ queryKey: ['clientProfile'] });
       
-      toaster.success(`Đổi ảnh đại diện thành công! (tiết kiệm ${savedPercent}% dung lượng)`);
+      toaster.success('Đổi ảnh đại diện thành công!');
     }
   } catch (error) {
     console.error('Lỗi upload avatar:', error);

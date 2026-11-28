@@ -177,9 +177,9 @@ class PaymentController extends Controller
         $content = $data['content'] ?: ("JPM " . $code . " TEST CHUYEN TIEN");
 
         $fakePayload = [
-            'gateway' => 'VietinBank (Sandbox Test)',
+            'gateway' => 'Sacombank (Sandbox Test)',
             'referenceNumber' => 'SIM_' . strtoupper(uniqid()),
-            'accountNumber' => config('services.vietqr.account_no', '108876543210'),
+            'accountNumber' => config('services.vietqr.account_no', '0357993134'),
             'amountIn' => (float)$data['amount'],
             'transactionContent' => $content,
             'transactionDate' => now()->toIso8601String(),

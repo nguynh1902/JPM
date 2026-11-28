@@ -41,11 +41,11 @@ class VietQRService
         });
 
         return [
-            'bank_id'      => !empty($dbConfigs['vietqr_bank_id']) ? $dbConfigs['vietqr_bank_id'] : config('services.vietqr.bank_id', 'ICB'),
-            'bank_name'    => !empty($dbConfigs['vietqr_bank_name']) ? $dbConfigs['vietqr_bank_name'] : config('services.vietqr.bank_name', 'VietinBank'),
-            'account_no'   => !empty($dbConfigs['vietqr_account_no']) ? $dbConfigs['vietqr_account_no'] : config('services.vietqr.account_no', ''),
-            'account_name' => !empty($dbConfigs['vietqr_account_name']) ? $dbConfigs['vietqr_account_name'] : config('services.vietqr.account_name', 'CONG TY PHU TUNG MAY THUY JPM'),
-            'template'     => !empty($dbConfigs['vietqr_template']) ? $dbConfigs['vietqr_template'] : config('services.vietqr.template', 'compact2'),
+            'bank_id'      => !empty($dbConfigs['vietqr_bank_id']) ? $dbConfigs['vietqr_bank_id'] : config('services.vietqr.bank_id', 'STB'),
+            'bank_name'    => !empty($dbConfigs['vietqr_bank_name']) ? $dbConfigs['vietqr_bank_name'] : config('services.vietqr.bank_name', 'Sacombank'),
+            'account_no'   => !empty($dbConfigs['vietqr_account_no']) ? $dbConfigs['vietqr_account_no'] : config('services.vietqr.account_no', '0357993134'),
+            'account_name' => !empty($dbConfigs['vietqr_account_name']) ? $dbConfigs['vietqr_account_name'] : config('services.vietqr.account_name', 'NGUYEN THANH VIET'),
+            'template'     => !empty($dbConfigs['vietqr_template']) ? $dbConfigs['vietqr_template'] : config('services.vietqr.template', 'compact'),
             'prefix'       => !empty($dbConfigs['vietqr_prefix']) ? trim($dbConfigs['vietqr_prefix']) : 'COC',
         ];
     }

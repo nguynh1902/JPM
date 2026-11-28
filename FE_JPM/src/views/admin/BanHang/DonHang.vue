@@ -300,386 +300,401 @@
       </div>
     </div>
     <!-- Modal Chi Tiết & Báo Giá (Từ YeuCauBaoGia) -->
-    <div class="modal fade" id="quoteModal" tabindex="-1" aria-hidden="true" ref="quoteModal">
+    <div class="modal fade tx-modal" id="quoteModal" tabindex="-1" aria-hidden="true" ref="quoteModal">
       <div class="modal-dialog modal-xl mt-3 mt-lg-4" style="max-width: 1400px; width: 95%;" role="document">
-        <div class="modal-content border-0 shadow-lg">
-          <div class="modal-header border-bottom pb-3">
-            <h4 class="modal-title fw-bold text-dark mb-0 fs-4">
-              Báo Giá Yêu Cầu - <span class="text-primary">{{ selectedQuote?.code }}</span>
-            </h4>
+        <div class="modal-content border-0 shadow-lg overflow-hidden">
+          <div class="modal-header bg-white border-bottom px-4 py-3">
+            <div class="d-flex align-items-center flex-wrap gap-2">
+              <h4 class="modal-title fw-bold text-dark mb-0 fs-4">
+                Báo Giá Yêu Cầu - <span class="text-primary font-monospace">{{ selectedQuote?.code }}</span>
+              </h4>
+              <template v-if="selectedQuote">
+                <span v-if="selectedQuote.status === 0" class="badge badge-custom bg-pastel-warning">CHỜ BÁO GIÁ</span>
+                <span v-else-if="selectedQuote.status === 1 && selectedQuote.deposit_required > 0 && Number(selectedQuote.da_thu || 0) === 0" class="badge badge-custom bg-pastel-warning">CHỜ CỌC</span>
+                <span v-else-if="selectedQuote.status === 1" class="badge badge-custom bg-pastel-info">ĐÃ BÁO GIÁ</span>
+                <span v-else-if="selectedQuote.status === 2" class="badge badge-custom bg-pastel-warning">ĐÃ CỌC &amp; XỬ LÝ</span>
+                <span v-else-if="selectedQuote.status === 3" class="badge badge-custom bg-pastel-danger">ĐÃ HỦY</span>
+                <span v-else-if="selectedQuote.status === 4" class="badge badge-custom bg-pastel-success">HOÀN THÀNH</span>
+              </template>
+            </div>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" ref="quoteModalCloseBtn"></button>
           </div>
           <form @submit.prevent="saveQuote">
-            <div class="modal-body pb-2" v-if="selectedQuote">
-              <div class="row">
-                <!-- Cột 1 (Trái): Thông tin Khách Hàng & Ghi chú -->
-                <div class="col-lg-3 col-12 mb-3 mb-lg-0 border-end d-flex flex-column">
-                  <h6 class="fw-bold mb-3 text-uppercase text-primary" style="font-size: 0.75rem;">Thông tin Khách Hàng</h6>
-                  <div class="mb-3">
-                    <p class="mb-1 fw-bold text-dark">{{ selectedQuote.customer_name }}</p>
-                    <p class="mb-1 text-muted">{{ selectedQuote.customer_phone }}</p>
-                    <p class="mb-2 text-muted small" v-if="selectedQuote.customer_email">{{ selectedQuote.customer_email }}</p>
-                    
-                    <div class="mt-2">
-                      <label class="form-label text-dark small mb-1 fw-bold">Địa Chỉ Giao Hàng: <span class="text-danger">*</span></label>
-                      <textarea 
-                        v-if="!isQuoteReadOnly"
-                        class="form-control form-control-sm text-dark" 
-                        rows="2"
-                        v-model="selectedQuote.address" 
-                        placeholder="Số nhà, đường, bến tàu, chành xe..."
-                      ></textarea>
-                      <p v-else class="mb-0 text-dark small" style="white-space: pre-wrap;">
-                        {{ selectedQuote.address || 'Chưa cung cấp địa chỉ' }}
-                      </p>
+            <div class="modal-body tx-modal-body" v-if="selectedQuote">
+              <div class="row g-3 align-items-stretch">
+                <!-- Cột 1 (Trái): Card Thông tin Khách Hàng & Ghi chú -->
+                <div class="col-lg-3 col-12">
+                  <div class="tx-card">
+                    <div class="tx-card-header">
+                      <span><i class="bx bx-user text-primary me-1 align-middle"></i> Thông Tin Khách Hàng</span>
+                    </div>
+                    <div class="tx-card-body">
+                      <div class="pb-3 mb-3 border-bottom">
+                        <div class="fw-bold mb-1" style="font-size: 0.98rem; color: #0f172a;">{{ selectedQuote.customer_name }}</div>
+                        <div class="small mb-1" style="color: #334155;">
+                          <i class="bx bx-phone me-1 text-primary"></i>
+                          <span class="font-monospace fw-semibold">{{ selectedQuote.customer_phone || 'Chưa có SĐT' }}</span>
+                        </div>
+                        <div class="small text-break" style="color: #475569;" v-if="selectedQuote.customer_email">
+                          <i class="bx bx-envelope me-1 text-primary"></i>{{ selectedQuote.customer_email }}
+                        </div>
+                        <div class="mt-3">
+                          <label class="form-label text-dark small mb-1 fw-bold">Địa Chỉ Giao Hàng <span class="text-danger">*</span></label>
+                          <textarea 
+                            v-if="!isQuoteReadOnly"
+                            class="form-control form-control-sm" 
+                            rows="2"
+                            style="resize: none;"
+                            v-model="selectedQuote.address" 
+                            placeholder="Số nhà, đường, bến tàu, chành xe..."
+                          ></textarea>
+                          <div v-else class="tx-readonly-note py-2 px-2 small">
+                            {{ selectedQuote.address || 'Chưa cung cấp địa chỉ' }}
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- Thông Tin Vận Chuyển -->
+                      <div class="mb-3 p-2 bg-light border rounded" v-if="selectedQuote.status === 2">
+                        <div class="fw-bold mb-2 text-uppercase" style="font-size: 0.72rem; color: #334155;">
+                          <i class="bx bx-package me-1 text-primary"></i>Thông Tin Vận Chuyển
+                        </div>
+                        <div class="mb-2">
+                          <label class="form-label text-dark small mb-1 fw-semibold">Đơn vị vận chuyển <span class="text-danger">*</span></label>
+                          <input 
+                            type="text" 
+                            class="form-control form-control-sm" 
+                            v-model="selectedQuote.ten_don_vi_van_chuyen" 
+                            placeholder="ViettelPost, GHTK, Chành xe..."
+                          />
+                        </div>
+                        <div class="mb-1">
+                          <label class="form-label text-dark small mb-1 fw-semibold">Mã vận đơn <span class="text-danger">*</span></label>
+                          <input 
+                            type="text" 
+                            class="form-control form-control-sm font-monospace fw-bold" 
+                            v-model="selectedQuote.ma_van_don" 
+                            placeholder="Nhập mã vận đơn..."
+                          />
+                        </div>
+                      </div>
+
+                      <div class="mb-3 p-2 bg-light border rounded" v-else-if="selectedQuote.status >= 3 && (selectedQuote.ten_don_vi_van_chuyen || selectedQuote.ma_van_don)">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                          <span class="fw-bold text-uppercase" style="font-size: 0.72rem; color: #334155;">Vận Chuyển</span>
+                          <span class="badge bg-label-info" style="font-size: 0.65rem;">
+                            {{ selectedQuote.status === 4 ? 'Đã Giao Xong' : 'Đang Vận Chuyển' }}
+                          </span>
+                        </div>
+                        <div class="small text-dark mb-1">
+                          <span class="text-muted">Đơn vị:</span> 
+                          <span class="fw-bold ms-1">{{ selectedQuote.ten_don_vi_van_chuyen || 'Chành xe / Giao trực tiếp' }}</span>
+                        </div>
+                        <div class="small text-dark d-flex align-items-center justify-content-between">
+                          <div>
+                            <span class="text-muted">Mã vận đơn:</span> 
+                            <span class="fw-bold text-primary font-monospace ms-1">{{ selectedQuote.ma_van_don || 'Chưa có mã' }}</span>
+                          </div>
+                          <button 
+                            v-if="selectedQuote.ma_van_don" 
+                            type="button" 
+                            class="btn btn-sm btn-icon btn-link p-0 text-primary" 
+                            @click="copyText(selectedQuote.ma_van_don, 'Đã sao chép mã vận đơn!')"
+                            title="Sao chép mã vận đơn"
+                          >
+                            <i class="bx bx-copy"></i>
+                          </button>
+                        </div>
+                      </div>
+
+                      <div class="mb-3 flex-grow-1 d-flex flex-column">
+                        <label class="form-label text-dark small mb-1 fw-bold">Ghi Chú Của Khách Hàng <span class="text-muted fw-normal">(Chỉ đọc)</span></label>
+                        <div class="tx-readonly-note flex-grow-1 custom-scroll overflow-auto" style="min-height: 110px; max-height: 220px;">
+                          {{ selectedQuote.customer_notes || 'Không có ghi chú từ khách hàng.' }}
+                        </div>
+                      </div>
+
+                      <div class="mt-auto">
+                        <label class="form-label text-dark small mb-1 fw-bold">Ghi Chú Zalo (Nội Bộ)</label>
+                        <textarea v-if="!isQuoteReadOnly" class="form-control form-control-sm" rows="2" style="resize: none;" v-model="selectedQuote.zalo_notes" placeholder="Ghi chú kết quả thương lượng Zalo..."></textarea>
+                        <div v-else class="tx-readonly-note py-2 px-2 small">{{ selectedQuote.zalo_notes || 'N/A' }}</div>
+                      </div>
                     </div>
                   </div>
+                </div>
 
-                  <!-- Thông Tin Vận Chuyển: Khi Đang Xử Lý (status = 2) hiển thị ô nhập; Khi Đã Giao/Hoàn Thành hiển thị thông tin -->
-                  <div class="mb-3 p-2 bg-light border rounded" v-if="selectedQuote.status === 2">
-                    <h6 class="fw-bold mb-2 text-uppercase text-primary" style="font-size: 0.72rem;">
-                      Thông Tin Vận Chuyển
-                    </h6>
-                    <div class="mb-2">
-                      <label class="form-label text-dark small mb-1 fw-semibold">Đơn vị vận chuyển: <span class="text-danger">*</span></label>
-                      <input 
-                        type="text" 
-                        class="form-control form-control-sm text-dark bg-white" 
-                        v-model="selectedQuote.ten_don_vi_van_chuyen" 
-                        placeholder="ViettelPost, GHTK, Chành xe Tô Châu, Phương Trang..."
-                      />
+                <!-- Cột 2 (Giữa): Card Danh sách Phụ Tùng -->
+                <div class="col-lg-6 col-12">
+                  <div class="tx-card">
+                    <div class="tx-card-header">
+                      <span><i class="bx bx-list-ul text-primary me-1 align-middle"></i> Chi Tiết Sản Phẩm Cần Báo Giá</span>
+                      <span class="badge bg-label-primary">{{ selectedQuote.items?.length || 0 }} dòng</span>
                     </div>
-                    <div class="mb-1">
-                      <label class="form-label text-dark small mb-1 fw-semibold">Mã vận đơn: <span class="text-danger">*</span></label>
-                      <input 
-                        type="text" 
-                        class="form-control form-control-sm text-danger fw-bold bg-white" 
-                        v-model="selectedQuote.ma_van_don" 
-                        placeholder="Nhập mã vận đơn (nếu có)..."
-                      />
+                    <div class="tx-card-body p-0">
+                      <div class="table-responsive custom-scroll flex-grow-1" style="max-height: 520px; overflow-y: auto;">
+                        <table class="table table-hover mb-0 tx-items-table">
+                          <thead class="sticky-top">
+                            <tr>
+                              <th class="text-center" style="width: 7%">STT</th>
+                              <th style="width: 39%">Tên Phụ Tùng &amp; Mã OEM</th>
+                              <th class="text-center" style="width: 10%">SL</th>
+                              <th class="text-end" style="width: 24%">Đơn Giá (VNĐ)</th>
+                              <th class="text-end" style="width: 20%">Thành Tiền</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr v-if="!selectedQuote.items || selectedQuote.items.length === 0">
+                              <td colspan="5" class="text-center py-5 text-muted">
+                                <i class="bx bx-folder-open text-secondary fs-2 d-block mb-1"></i>
+                                Không có dữ liệu
+                              </td>
+                            </tr>
+                            <tr v-for="(detail, idx) in selectedQuote.items" :key="idx">
+                              <td class="text-center align-middle fw-semibold text-muted">{{ idx + 1 }}</td>
+                              <td class="align-middle">
+                                <div class="fw-semibold mb-1" style="font-size: 0.88rem; color: #0f172a; line-height: 1.38;">{{ detail.part_name }}</div>
+                                <div style="font-size: 0.79rem; line-height: 1.35;">
+                                  <span style="color: #94a3b8;">Mã:</span> <span class="font-monospace fw-bold" style="color: #0284c7;">{{ detail.part_code || 'N/A' }}</span>
+                                </div>
+                                <div v-if="detail.model_may" style="font-size: 0.73rem; line-height: 1.35; margin-top: 2px;">
+                                  <span style="color: #94a3b8;">Model:</span> <span style="color: #64748b; font-weight: 500;">{{ detail.model_may }}</span>
+                                </div>
+                              </td>
+                              <td class="text-center align-middle">
+                                <span class="fw-bold text-dark">{{ detail.qty }}</span>
+                              </td>
+                              <td class="align-middle" style="min-width: 150px;">
+                                <input 
+                                  v-if="!isQuoteReadOnly" 
+                                  type="number" 
+                                  class="form-control form-control-sm text-end fw-bold" 
+                                  :value="detail.price ? detail.price : ''" 
+                                  @input="detail.price = $event.target.value === '' ? 0 : Number($event.target.value)" 
+                                  min="0"
+                                  placeholder="0" 
+                                />
+                                <span v-else class="fw-bold text-dark d-block text-end">{{ formatCurrency(detail.price || 0) }}</span>
+                              </td>
+                              <td class="text-end fw-bold text-danger align-middle">
+                                {{ formatCurrency(detail.qty * (detail.price || 0)) }}
+                                <div v-if="detail.qty > 1" class="text-muted fw-semibold" style="font-size: 0.74rem;">
+                                  x{{ detail.qty }} cái
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
                     </div>
                   </div>
+                </div>
 
-                  <div class="mb-3 p-2 bg-light border rounded" v-else-if="selectedQuote.status >= 3 && (selectedQuote.ten_don_vi_van_chuyen || selectedQuote.ma_van_don)">
-                    <div class="d-flex justify-content-between align-items-center mb-1">
-                      <h6 class="fw-bold mb-0 text-uppercase text-primary" style="font-size: 0.72rem;">
-                        Vận Chuyển
-                      </h6>
-                      <span class="badge bg-label-info" style="font-size: 0.65rem;">
-                        {{ selectedQuote.status === 4 ? 'Đã Giao Xong' : 'Đang Vận Chuyển' }}
-                      </span>
+                <!-- Cột 3 (Phải): Card Tổng Hợp Chi Phí & Thanh Toán -->
+                <div class="col-lg-3 col-12">
+                  <div class="tx-card">
+                    <div class="tx-card-header">
+                      <span><i class="bx bx-receipt text-primary me-1 align-middle"></i> Tổng Hợp Chi Phí</span>
                     </div>
-                    <div class="small text-dark mb-1">
-                      <span class="text-muted">Đơn vị:</span> 
-                      <span class="fw-bold ms-1">{{ selectedQuote.ten_don_vi_van_chuyen || 'Chành xe / Giao trực tiếp' }}</span>
-                    </div>
-                    <div class="small text-dark d-flex align-items-center justify-content-between">
+                    <div class="tx-card-body justify-content-between">
                       <div>
-                        <span class="text-muted">Mã vận đơn:</span> 
-                        <span class="fw-bold text-danger ms-1">{{ selectedQuote.ma_van_don || 'Chưa có mã' }}</span>
-                      </div>
-                      <button 
-                        v-if="selectedQuote.ma_van_don" 
-                        type="button" 
-                        class="btn btn-sm btn-icon btn-link p-0 text-primary" 
-                        @click="copyText(selectedQuote.ma_van_don, 'Đã sao chép mã vận đơn!')"
-                        title="Sao chép mã vận đơn"
-                      >
-                        <i class="bx bx-copy"></i>
-                      </button>
-                    </div>
-                  </div>
-
-                  <h6 class="fw-bold mb-2 text-uppercase text-primary" style="font-size: 0.75rem;">Ghi Chú (Khách Hàng)</h6>
-                  <div class="p-3 bg-label-secondary rounded flex-grow-1 mb-3 overflow-auto" style="min-height: 140px; max-height: 240px;">
-                    <p class="mb-0 text-dark" style="font-size: 0.85rem; white-space: pre-wrap;">{{ selectedQuote.customer_notes || 'N/A.' }}</p>
-                  </div>
-
-                  <div class="mt-auto">
-                    <h6 class="fw-bold mb-2 text-uppercase text-primary" style="font-size: 0.75rem;">Ghi Chú Zalo (Nội Bộ)</h6>
-                    <div class="mb-0">
-                      <textarea v-if="!isQuoteReadOnly" class="form-control" rows="2" v-model="selectedQuote.zalo_notes" placeholder="Ghi chú kết quả thương lượng Zalo..."></textarea>
-                      <div v-else class="p-2 bg-light rounded text-dark border" style="white-space: pre-wrap; font-size: 0.85rem;">{{ selectedQuote.zalo_notes || 'N/A' }}</div>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Cột 2 (Giữa): Danh sách Phụ Tùng (Cuộn dọc) -->
-                <div class="col-lg-6 col-12 mb-3 mb-lg-0">
-                  <h6 class="fw-bold mb-3 text-uppercase text-primary" style="font-size: 0.75rem;">Chi Tiết Sản Phẩm Cần Báo Giá</h6>
-                  
-                  <!-- Bảng danh sách phụ tùng (cuộn bên trong khi có nhiều sản phẩm) -->
-                  <div class="table-responsive border rounded custom-scroll" style="max-height: 480px; overflow-y: auto;">
-                    <table class="table table-bordered table-sm mb-0 table-sticky-header">
-                      <thead class="table-light sticky-top">
-                        <tr>
-                          <th class="text-center text-uppercase bg-light" style="width: 7%">STT</th>
-                          <th class="text-uppercase bg-light" style="width: 38%">Tên Phụ Tùng</th>
-                          <th class="text-center text-uppercase bg-light" style="width: 12%">SL</th>
-                          <th class="text-uppercase bg-light" style="width: 23%">Đơn Giá</th>
-                          <th class="text-end text-uppercase bg-light" style="width: 20%">Thành Tiền</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr v-if="!selectedQuote.items || selectedQuote.items.length === 0">
-                          <td colspan="5" class="text-center py-4 text-muted">
-                            <i class="bx bx-folder-open text-secondary fs-2 d-block mb-1"></i>
-                            Không có dữ liệu
-                          </td>
-                        </tr>
-                        <tr v-for="(detail, idx) in selectedQuote.items" :key="idx">
-                          <td class="text-center align-middle">{{ idx + 1 }}</td>
-                          <td class="align-middle">
-                            <span class="d-block fw-bold" style="font-size: 0.85rem;">{{ detail.part_name }}</span>
-                            <span class="text-dark fw-medium" style="font-size: 0.75rem;">Mã: {{ detail.part_code }}</span>
-                          </td>
-                          <td class="text-center align-middle">{{ detail.qty }}</td>
-                          <td class="align-middle" style="min-width: 140px;">
-                            <input 
-                              v-if="!isQuoteReadOnly" 
-                              type="number" 
-                              class="form-control form-control-sm text-end fw-bold text-dark" 
-                              :value="detail.price ? detail.price : ''" 
-                              @input="detail.price = $event.target.value === '' ? 0 : Number($event.target.value)" 
-                              min="0"
-                              placeholder="0" 
-                            />
-                            <span v-else class="fw-bold text-dark d-block text-end">{{ formatCurrency(detail.price || 0) }}</span>
-                          </td>
-                          <td class="text-end fw-bold text-danger align-middle">
-                            {{ formatCurrency(detail.qty * (detail.price || 0)) }}
-                            <div v-if="detail.qty > 1" class="text-dark fw-bold" style="font-size: 0.75rem;">
-                              x{{ detail.qty }} cái
-                            </div>
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-
-                </div>
-
-                <!-- Cột 3 (Phải): Tổng Hợp Chi Phí & Thanh Toán -->
-                <div class="col-lg-3 col-12 border-start ps-lg-3 pe-lg-3 d-flex flex-column justify-content-between">
-                  <div>
-                    <h6 class="fw-bold mb-3 text-uppercase text-primary" style="font-size: 0.75rem;">Tổng Hợp Chi Phí</h6>
-                    
-                    <!-- Tạm Tính -->
-                    <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
-                      <span class="text-dark fw-bold" style="font-size: 0.88rem;">Tạm Tính:</span>
-                      <span class="fw-bold text-dark fs-6">{{ formatCurrency(calculateTotal(selectedQuote.items)) }}</span>
-                    </div>
-
-                    <!-- Phí Vận Chuyển -->
-                    <div class="mb-3 pb-2 border-bottom">
-                      <div class="d-flex justify-content-between align-items-center mb-1">
-                        <label class="text-dark fw-bold mb-0" style="font-size: 0.88rem;">Phí Vận Chuyển:</label>
-                        <div style="width: 140px;" v-if="!isQuoteReadOnly">
-                          <input 
-                            type="number" 
-                            class="form-control form-control-sm text-end text-danger fw-bold" 
-                            :value="selectedQuote.shipping_fee ? selectedQuote.shipping_fee : ''" 
-                            @input="selectedQuote.shipping_fee = $event.target.value === '' ? 0 : Number($event.target.value)" 
-                            min="0"
-                            :disabled="selectedQuote.freight_collect" 
-                            placeholder="0"
-                          >
+                        <!-- Tạm Tính -->
+                        <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
+                          <span class="text-dark fw-semibold" style="font-size: 0.88rem;">Tạm Tính</span>
+                          <span class="fw-bold text-dark fs-6">{{ formatCurrency(calculateTotal(selectedQuote.items)) }}</span>
                         </div>
-                        <span v-else class="fw-bold text-danger fs-6">
-                          {{ selectedQuote.freight_collect ? 'Khách trả cước' : formatCurrency(selectedQuote.shipping_fee || 0) }}
-                        </span>
-                      </div>
-                      <div class="d-flex justify-content-between align-items-center mt-1" v-if="!isQuoteReadOnly">
-                        <div class="form-check form-switch mb-0">
-                          <input class="form-check-input" type="checkbox" id="freightCollectQuote" v-model="selectedQuote.freight_collect" @change="selectedQuote.freight_collect ? selectedQuote.shipping_fee = 0 : null">
-                          <label class="form-check-label text-dark fw-semibold" for="freightCollectQuote" style="font-size: 0.8rem;">Khách trả cước</label>
-                        </div>
-                        <span v-if="!selectedQuote.freight_collect" class="text-danger fw-semibold" style="font-size: 0.75rem;">
-                          {{ formatCurrency(selectedQuote.shipping_fee || 0) }}
-                        </span>
-                      </div>
-                    </div>
 
-                    <!-- Yêu Cầu Cọc -->
-                    <div class="mb-3 pb-2 border-bottom">
-                      <div class="d-flex justify-content-between align-items-center mb-1">
-                        <label class="text-dark fw-bold mb-0" style="font-size: 0.88rem;">Yêu Cầu Cọc:</label>
-                        <div style="width: 140px;" v-if="!isQuoteReadOnly">
-                          <input 
-                            type="number" 
-                            class="form-control form-control-sm text-end text-danger fw-bold" 
-                            :value="selectedQuote.deposit_required ? selectedQuote.deposit_required : ''" 
-                            @input="selectedQuote.deposit_required = $event.target.value === '' ? 0 : Number($event.target.value)" 
-                            min="0"
-                            placeholder="0" 
-                          >
-                        </div>
-                        <span v-else class="fw-bold text-danger fs-6">{{ formatCurrency(selectedQuote.deposit_required || 0) }}</span>
-                      </div>
-                      <div v-if="!isQuoteReadOnly" class="text-end">
-                        <span class="text-danger fw-semibold" style="font-size: 0.75rem;">
-                          {{ formatCurrency(selectedQuote.deposit_required || 0) }}
-                        </span>
-                      </div>
-                    </div>
-
-                    <!-- Đã Thu (Cọc / Trả trước): Hiển thị khi ĐÃ BÁO GIÁ status >= 1 -->
-                    <div class="mb-3 pb-2 border-bottom" v-if="selectedQuote && selectedQuote.status >= 1">
-                      <div class="d-flex justify-content-between align-items-center mb-1">
-                        <label class="text-dark fw-bold mb-0" style="font-size: 0.88rem;">Đã Thu (Cọc / Trả trước):</label>
-                        <div style="width: 140px;" v-if="!isQuoteReadOnly">
-                          <input 
-                            type="number" 
-                            class="form-control form-control-sm text-end text-primary fw-bold" 
-                            :value="selectedQuote.da_thu ? selectedQuote.da_thu : ''" 
-                            @input="selectedQuote.da_thu = $event.target.value === '' ? 0 : Number($event.target.value)" 
-                            min="0"
-                            placeholder="0" 
-                          >
-                        </div>
-                        <span v-else class="fw-bold text-primary fs-6">{{ formatCurrency(selectedQuote.da_thu || 0) }}</span>
-                      </div>
-                      <div v-if="!isQuoteReadOnly" class="text-end">
-                        <span class="text-primary fw-semibold" style="font-size: 0.75rem;">
-                          {{ formatCurrency(selectedQuote.da_thu || 0) }}
-                        </span>
-                      </div>
-                    </div>
-
-                    <!-- KHU VỰC BIÊN LAI CHUYỂN TIỀN (1 ROW 2 PHẦN - Chỉ hiển thị khi ĐÃ BÁO GIÁ status >= 1, ẩn khi CHỜ BÁO GIÁ) -->
-                    <div class="mt-3 pt-2 border-top mb-3" v-if="selectedQuote && selectedQuote.status >= 1">
-                      <!-- Input file ẩn để kích hoạt khi bấm nút hoặc bấm ô ảnh -->
-                      <input type="file" ref="quoteReceiptSlot1" class="d-none" accept="image/*,.jpg,.jpeg,.png,.webp,.gif,.svg,.bmp,.avif,.heic,.heif,.tiff,.tif,.ico,.jfif" @change="onFileSelected($event, 'quote', 1)">
-                      <input type="file" ref="quoteReceiptSlot2" class="d-none" accept="image/*,.jpg,.jpeg,.png,.webp,.gif,.svg,.bmp,.avif,.heic,.heif,.tiff,.tif,.ico,.jfif" @change="onFileSelected($event, 'quote', 2)">
-
-                      <div class="mb-2">
-                        <label class="form-label fw-bold text-dark mb-0 text-uppercase" style="font-size: 0.75rem;">
-                          Biên Lai Chuyển Tiền
-                        </label>
-                      </div>
-
-                      <!-- 1 ROW GỒM 2 PHẦN CHO 2 ẢNH -->
-                      <div class="row g-2">
-                        <!-- Phần 1: Ảnh 1 (Cọc) -->
-                        <div class="col-6">
-                          <div 
-                            class="d-flex flex-column justify-content-center align-items-center border rounded bg-light position-relative p-1" 
-                            style="height: 105px; cursor: pointer;"
-                            :style="!selectedQuote.receipt_image ? 'border-style: dashed !important;' : ''"
-                            @paste="onPasteReceipt($event, 'quote', 1)"
-                            @click="!selectedQuote.receipt_image && !isQuoteReadOnly ? triggerAddReceiptSlot('quote', 1) : null"
-                            tabindex="0"
-                            :title="selectedQuote.receipt_image ? 'Nhấp để xem phóng to' : 'Nhấp để tải ảnh hoặc Ctrl+V để dán'"
-                          >
-                            <div v-if="uploadingKey === 'quote_1'" class="text-center">
-                              <span class="spinner-border spinner-border-sm text-primary"></span>
-                              <div class="text-muted small mt-1" style="font-size: 0.65rem;">Đang tải...</div>
-                            </div>
-                            <template v-else-if="selectedQuote.receipt_image">
-                              <img 
-                                :src="getImageUrl(selectedQuote.receipt_image)" 
-                                alt="Biên lai 1" 
-                                class="rounded" 
-                                style="max-height: 95px; max-width: 100%; object-fit: contain;" 
-                                @click.stop="openReceiptViewer(selectedQuote.receipt_image)" 
-                                title="Nhấp để xem phóng to"
-                              />
-                              <button 
-                                v-if="!isQuoteReadOnly" 
-                                type="button" 
-                                class="btn btn-icon btn-sm bg-white text-danger position-absolute top-0 end-0 m-1 rounded-circle shadow-sm border" 
-                                @click.stop="removeReceipt('quote', 1)" 
-                                style="width: 24px; height: 24px; padding: 0; line-height: 1;" 
-                                title="Xóa ảnh"
+                        <!-- Phí Vận Chuyển -->
+                        <div class="mb-3 pb-3 border-bottom">
+                          <div class="d-flex justify-content-between align-items-center mb-2 gap-2">
+                            <label class="text-dark fw-semibold mb-0 text-nowrap" style="font-size: 0.88rem;">Phí Vận Chuyển</label>
+                            <div style="width: 145px;" v-if="!isQuoteReadOnly">
+                              <input 
+                                type="number" 
+                                class="form-control form-control-sm text-end text-danger fw-bold" 
+                                :value="selectedQuote.shipping_fee ? selectedQuote.shipping_fee : ''" 
+                                @input="selectedQuote.shipping_fee = $event.target.value === '' ? 0 : Number($event.target.value)" 
+                                min="0"
+                                :disabled="selectedQuote.freight_collect" 
+                                placeholder="0"
                               >
-                                <i class="bx bx-trash" style="font-size: 13px;"></i>
-                              </button>
-                            </template>
-                            <div v-else class="text-center text-muted">
-                              <i class="bx bx-image-add fs-3 d-block text-secondary mb-1"></i>
-                              <span style="font-size: 0.68rem;">Ảnh 1</span>
                             </div>
+                            <span v-else class="fw-bold text-danger fs-6">
+                              {{ selectedQuote.freight_collect ? 'Khách trả cước' : formatCurrency(selectedQuote.shipping_fee || 0) }}
+                            </span>
+                          </div>
+                          <div class="d-flex justify-content-between align-items-center" v-if="!isQuoteReadOnly">
+                            <div class="form-check form-switch mb-0">
+                              <input class="form-check-input" type="checkbox" id="freightCollectQuote" v-model="selectedQuote.freight_collect" @change="selectedQuote.freight_collect ? selectedQuote.shipping_fee = 0 : null">
+                              <label class="form-check-label text-dark fw-medium" for="freightCollectQuote" style="font-size: 0.8rem;">Khách trả cước</label>
+                            </div>
+                            <span v-if="!selectedQuote.freight_collect && selectedQuote.shipping_fee > 0" class="text-danger fw-semibold" style="font-size: 0.76rem;">
+                              {{ formatCurrency(selectedQuote.shipping_fee) }}
+                            </span>
                           </div>
                         </div>
 
-                        <!-- Phần 2: Ảnh 2 (Còn lại) -->
-                        <div class="col-6">
-                          <div 
-                            class="d-flex flex-column justify-content-center align-items-center border rounded bg-light position-relative p-1" 
-                            style="height: 105px; cursor: pointer;"
-                            :style="!selectedQuote.receipt_image_2 ? 'border-style: dashed !important;' : ''"
-                            @paste="onPasteReceipt($event, 'quote', 2)"
-                            @click="!selectedQuote.receipt_image_2 && !isQuoteReadOnly ? triggerAddReceiptSlot('quote', 2) : null"
-                            tabindex="0"
-                            :title="selectedQuote.receipt_image_2 ? 'Nhấp để xem phóng to' : 'Nhấp để tải ảnh hoặc Ctrl+V để dán'"
-                          >
-                            <div v-if="uploadingKey === 'quote_2'" class="text-center">
-                              <span class="spinner-border spinner-border-sm text-primary"></span>
-                              <div class="text-muted small mt-1" style="font-size: 0.65rem;">Đang tải...</div>
-                            </div>
-                            <template v-else-if="selectedQuote.receipt_image_2">
-                              <img 
-                                :src="getImageUrl(selectedQuote.receipt_image_2)" 
-                                alt="Biên lai 2" 
-                                class="rounded" 
-                                style="max-height: 95px; max-width: 100%; object-fit: contain;" 
-                                @click.stop="openReceiptViewer(selectedQuote.receipt_image_2)" 
-                                title="Nhấp để xem phóng to"
-                              />
-                              <button 
-                                v-if="!isQuoteReadOnly" 
-                                type="button" 
-                                class="btn btn-icon btn-sm bg-white text-danger position-absolute top-0 end-0 m-1 rounded-circle shadow-sm border" 
-                                @click.stop="removeReceipt('quote', 2)" 
-                                style="width: 24px; height: 24px; padding: 0; line-height: 1;" 
-                                title="Xóa ảnh"
+                        <!-- Yêu Cầu Cọc -->
+                        <div class="mb-3 pb-3 border-bottom">
+                          <div class="d-flex justify-content-between align-items-center mb-1 gap-2">
+                            <label class="text-dark fw-semibold mb-0 text-nowrap" style="font-size: 0.88rem;">Yêu Cầu Cọc</label>
+                            <div style="width: 145px;" v-if="!isQuoteReadOnly">
+                              <input 
+                                type="number" 
+                                class="form-control form-control-sm text-end text-danger fw-bold" 
+                                :value="selectedQuote.deposit_required ? selectedQuote.deposit_required : ''" 
+                                @input="selectedQuote.deposit_required = $event.target.value === '' ? 0 : Number($event.target.value)" 
+                                min="0"
+                                placeholder="0" 
                               >
-                                <i class="bx bx-trash" style="font-size: 13px;"></i>
-                              </button>
-                            </template>
-                            <div v-else class="text-center text-muted">
-                              <i class="bx bx-image-add fs-3 d-block text-secondary mb-1"></i>
-                              <span style="font-size: 0.68rem;">Ảnh 2</span>
+                            </div>
+                            <span v-else class="fw-bold text-danger fs-6">{{ formatCurrency(selectedQuote.deposit_required || 0) }}</span>
+                          </div>
+                          <div v-if="!isQuoteReadOnly && selectedQuote.deposit_required > 0" class="text-end">
+                            <span class="text-danger fw-semibold" style="font-size: 0.76rem;">
+                              {{ formatCurrency(selectedQuote.deposit_required) }}
+                            </span>
+                          </div>
+                        </div>
+
+                        <!-- Đã Thu (Cọc): chỉ hiển thị khi báo giá đã chốt/đã cọc (chế độ xem) -->
+                        <div class="mb-3 pb-3 border-bottom" v-if="selectedQuote && isQuoteReadOnly">
+                          <div class="d-flex justify-content-between align-items-center mb-1 gap-2">
+                            <label class="text-dark fw-semibold mb-0" style="font-size: 0.85rem;">Đã Thu (Cọc)</label>
+                            <span class="fw-bold text-danger fs-6">{{ formatCurrency(selectedQuote.da_thu || 0) }}</span>
+                          </div>
+                        </div>
+
+                        <!-- KHU VỰC BIÊN LAI CHUYỂN TIỀN (2 CỘT: CỌC & THU COD) -->
+                        <div class="mt-2 mb-3" v-if="selectedQuote && selectedQuote.status >= 1">
+                          <input type="file" ref="quoteReceiptSlot1" class="d-none" accept="image/*,.jpg,.jpeg,.png,.webp,.gif,.svg,.bmp,.avif,.heic,.heif,.tiff,.tif,.ico,.jfif" @change="onFileSelected($event, 'quote', 1)">
+                          <input type="file" ref="quoteReceiptSlot2" class="d-none" accept="image/*,.jpg,.jpeg,.png,.webp,.gif,.svg,.bmp,.avif,.heic,.heif,.tiff,.tif,.ico,.jfif" @change="onFileSelected($event, 'quote', 2)">
+
+                          <div class="row g-2">
+                            <div class="col-6">
+                              <div class="mb-1 fw-bold text-uppercase" style="font-size: 0.7rem; color: #334155;">
+                                Biên Lai Cọc
+                              </div>
+                              <div 
+                                class="d-flex flex-column justify-content-center align-items-center border rounded bg-light position-relative p-1" 
+                                style="height: 100px; cursor: pointer;"
+                                :style="!selectedQuote.receipt_image ? 'border-style: dashed !important; border-color: #94a3b8 !important;' : ''"
+                                @paste="onPasteReceipt($event, 'quote', 1)"
+                                @click="!selectedQuote.receipt_image && !isQuoteReadOnly ? triggerAddReceiptSlot('quote', 1) : null"
+                                tabindex="0"
+                                :title="selectedQuote.receipt_image ? 'Nhấp để xem phóng to' : 'Nhấp để tải ảnh hoặc Ctrl+V để dán'"
+                              >
+                                <div v-if="uploadingKey === 'quote_1'" class="text-center">
+                                  <span class="spinner-border spinner-border-sm text-primary"></span>
+                                  <div class="text-muted small mt-1" style="font-size: 0.65rem;">Đang tải...</div>
+                                </div>
+                                <template v-else-if="selectedQuote.receipt_image">
+                                  <img 
+                                    :src="getImageUrl(selectedQuote.receipt_image)" 
+                                    alt="Biên lai cọc" 
+                                    class="rounded" 
+                                    style="max-height: 90px; max-width: 100%; object-fit: contain;" 
+                                    @click.stop="openReceiptViewer(selectedQuote.receipt_image)" 
+                                    title="Nhấp để xem phóng to"
+                                  />
+                                  <button 
+                                    v-if="!isQuoteReadOnly" 
+                                    type="button" 
+                                    class="btn btn-icon btn-sm bg-white text-danger position-absolute top-0 end-0 m-1 rounded-circle shadow-sm border" 
+                                    @click.stop="removeReceipt('quote', 1)" 
+                                    style="width: 24px; height: 24px; padding: 0; line-height: 1;" 
+                                    title="Xóa ảnh"
+                                  >
+                                    <i class="bx bx-trash" style="font-size: 13px;"></i>
+                                  </button>
+                                </template>
+                                <div v-else class="text-center text-muted">
+                                  <i class="bx bx-image-add fs-3 d-block text-secondary mb-1"></i>
+                                  <span style="font-size: 0.68rem;">Biên lai cọc</span>
+                                </div>
+                              </div>
+                            </div>
+
+                            <div class="col-6">
+                              <div class="mb-1 fw-bold text-uppercase" style="font-size: 0.7rem; color: #334155;">
+                                Biên Lai Thu COD
+                              </div>
+                              <div 
+                                class="d-flex flex-column justify-content-center align-items-center border rounded bg-light position-relative p-1" 
+                                style="height: 100px; cursor: pointer;"
+                                :style="!selectedQuote.receipt_image_2 ? 'border-style: dashed !important; border-color: #94a3b8 !important;' : ''"
+                                @paste="onPasteReceipt($event, 'quote', 2)"
+                                @click="!selectedQuote.receipt_image_2 && !isQuoteReadOnly ? triggerAddReceiptSlot('quote', 2) : null"
+                                tabindex="0"
+                                :title="selectedQuote.receipt_image_2 ? 'Nhấp để xem phóng to' : 'Nhấp để tải ảnh hoặc Ctrl+V để dán'"
+                              >
+                                <div v-if="uploadingKey === 'quote_2'" class="text-center">
+                                  <span class="spinner-border spinner-border-sm text-primary"></span>
+                                  <div class="text-muted small mt-1" style="font-size: 0.65rem;">Đang tải...</div>
+                                </div>
+                                <template v-else-if="selectedQuote.receipt_image_2">
+                                  <img 
+                                    :src="getImageUrl(selectedQuote.receipt_image_2)" 
+                                    alt="Biên lai thu COD" 
+                                    class="rounded" 
+                                    style="max-height: 90px; max-width: 100%; object-fit: contain;" 
+                                    @click.stop="openReceiptViewer(selectedQuote.receipt_image_2)" 
+                                    title="Nhấp để xem phóng to"
+                                  />
+                                  <button 
+                                    v-if="!isQuoteReadOnly" 
+                                    type="button" 
+                                    class="btn btn-icon btn-sm bg-white text-danger position-absolute top-0 end-0 m-1 rounded-circle shadow-sm border" 
+                                    @click.stop="removeReceipt('quote', 2)" 
+                                    style="width: 24px; height: 24px; padding: 0; line-height: 1;" 
+                                    title="Xóa ảnh"
+                                  >
+                                    <i class="bx bx-trash" style="font-size: 13px;"></i>
+                                  </button>
+                                </template>
+                                <div v-else class="text-center text-muted">
+                                  <i class="bx bx-image-add fs-3 d-block text-secondary mb-1"></i>
+                                  <span style="font-size: 0.68rem;">Biên lai thu COD</span>
+                                </div>
+                              </div>
                             </div>
                           </div>
                         </div>
                       </div>
-                    </div>
-                  </div>
 
-                  <!-- Cụm Tổng Cộng & Thu COD ở đáy -->
-                  <div class="mt-3 pt-2 bg-light p-3 rounded border">
-                    <div class="d-flex justify-content-between align-items-center mb-2">
-                      <span class="fw-bold text-dark" style="font-size: 0.9rem;">Tổng Cộng:</span>
-                      <span class="fw-bold text-danger fs-5">{{ formatCurrency(calculateTotal(selectedQuote.items) + (selectedQuote.freight_collect ? 0 : (selectedQuote.shipping_fee || 0))) }}</span>
-                    </div>
-                    <div class="d-flex justify-content-between align-items-center pt-2 border-top">
-                      <span class="text-dark fw-bold" style="font-size: 0.9rem;">Thu COD:</span>
-                      <span class="fw-bold text-dark fs-5">
-                        {{ formatCurrency(Math.max(0, (calculateTotal(selectedQuote.items) + (selectedQuote.freight_collect ? 0 : (selectedQuote.shipping_fee || 0))) - (selectedQuote.deposit_required || 0))) }}
-                      </span>
+                      <!-- Cụm Tổng Cộng & Thu COD ở đáy -->
+                      <div class="tx-summary-box mt-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                          <span class="fw-bold text-dark" style="font-size: 0.9rem;">Tổng Cộng</span>
+                          <span class="fw-bold text-danger fs-5">{{ formatCurrency(calculateTotal(selectedQuote.items) + (selectedQuote.freight_collect ? 0 : (selectedQuote.shipping_fee || 0))) }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center pt-2" style="border-top: 1px dashed #fca5a5;">
+                          <span class="text-dark fw-bold" style="font-size: 0.9rem;">Thu COD</span>
+                          <span class="fw-bold fs-5" style="color: #0f172a;">
+                            {{ formatCurrency(Math.max(0, (calculateTotal(selectedQuote.items) + (selectedQuote.freight_collect ? 0 : (selectedQuote.shipping_fee || 0))) - Math.max(selectedQuote.da_thu || 0, selectedQuote.deposit_required || 0))) }}
+                          </span>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-            <div class="modal-footer border-top py-3 mt-2 bg-light d-flex justify-content-end align-items-center gap-2">
-              <!-- Nút Hủy Đơn: Đặt bên phải cùng với các nút khác, chuẩn btn-outline-danger -->
+            <div class="modal-footer bg-white border-top px-4 py-3 d-flex align-items-center gap-2">
               <button 
                 type="button" 
-                class="btn btn-outline-danger px-4 shadow-sm" 
+                class="btn btn-outline-danger px-4 me-auto" 
                 v-if="selectedQuote && selectedQuote.status !== 3 && !isQuoteReadOnly" 
                 @click.prevent="cancelQuoteFromModal(selectedQuote)"
                 title="Hủy yêu cầu báo giá này"
               >
-                Hủy Đơn
+                <i class="bx bx-x-circle me-1"></i> Hủy Đơn
               </button>
 
-              <!-- Tiện ích Copy Link & Mã VietQR (khi ĐÃ BÁO GIÁ status >= 1) -->
+              <!-- Tiện ích Copy Link & Mã VietQR -->
               <template v-if="selectedQuote && selectedQuote.status >= 1">
                 <button 
                   type="button" 
-                  class="btn btn-outline-secondary shadow-sm d-inline-flex align-items-center justify-content-center" 
+                  class="btn btn-outline-secondary d-inline-flex align-items-center justify-content-center" 
                   style="width: 38px; height: 38px; padding: 0;"
                   v-if="selectedQuote.token" 
                   @click.prevent="copyQuoteLink(selectedQuote)"
@@ -690,7 +705,7 @@
 
                 <button 
                   type="button" 
-                  class="btn btn-outline-secondary shadow-sm d-inline-flex align-items-center justify-content-center" 
+                  class="btn btn-outline-secondary d-inline-flex align-items-center justify-content-center" 
                   style="width: 38px; height: 38px; padding: 0;"
                   @click.prevent="openVietQrModal(selectedQuote)"
                   title="Xem mã VietQR chuyển tiền cọc"
@@ -699,14 +714,12 @@
                 </button>
               </template>
 
-              <!-- Nút Đóng: Chuẩn btn-outline-secondary đồng bộ với các trang khác -->
               <button type="button" class="btn btn-outline-secondary px-4" data-bs-dismiss="modal">Đóng</button>
 
-              <!-- Khi đang CHỜ BÁO GIÁ (Status 0): Nút Lưu Tạm và Nút Báo Giá -->
               <template v-if="selectedQuote && selectedQuote.status === 0 && !isQuoteReadOnly">
                 <button 
                   type="button" 
-                  class="btn btn-outline-primary px-4 shadow-sm" 
+                  class="btn btn-outline-primary px-4" 
                   @click.prevent="saveDraftQuote"
                 >
                   Lưu Tạm
@@ -720,11 +733,10 @@
                 </button>
               </template>
 
-              <!-- Khi ĐÃ BÁO GIÁ (Status 1): Nút Lưu và Nút Xác Nhận -->
               <template v-else-if="selectedQuote && selectedQuote.status === 1 && !isQuoteReadOnly">
                 <button 
                   type="button" 
-                  class="btn btn-outline-primary px-4 shadow-sm" 
+                  class="btn btn-outline-primary px-4" 
                   @click.prevent="saveDraftQuote"
                 >
                   Lưu
@@ -735,11 +747,10 @@
                   @click.prevent="confirmDepositFromModal(selectedQuote)"
                   title="Khách đã cọc -> Bắt đầu lên đơn xử lý"
                 >
-                  Đã Cọc & Lên Đơn
+                  Đã Cọc &amp; Lên Đơn
                 </button>
               </template>
 
-              <!-- Khi ĐANG XỬ LÝ (Status 2): Nút Gom Đơn Xong -> Chuyển Sang Đang Giao -->
               <button 
                 type="button" 
                 class="btn btn-primary px-4 shadow-sm" 
@@ -756,364 +767,381 @@
     </div>
 
     <!-- Modal Chi Tiết Đơn Hàng -->
-    <div class="modal fade" id="orderModal" tabindex="-1" aria-hidden="true">
+    <div class="modal fade tx-modal" id="orderModal" tabindex="-1" aria-hidden="true">
       <div class="modal-dialog modal-xl mt-3 mt-lg-4" style="max-width: 1400px; width: 95%;" role="document">
-        <div class="modal-content border-0 shadow-lg">
-          <div class="modal-header border-bottom pb-3">
-            <h4 class="modal-title fw-bold text-dark mb-0 fs-4">
-              Chi Tiết Đơn Hàng - <span class="text-primary">{{ selectedOrder?.code }}</span>
-            </h4>
+        <div class="modal-content border-0 shadow-lg overflow-hidden">
+          <div class="modal-header bg-white border-bottom px-4 py-3">
+            <div class="d-flex align-items-center flex-wrap gap-2">
+              <h4 class="modal-title fw-bold text-dark mb-0 fs-4">
+                Chi Tiết Đơn Hàng - <span class="text-primary font-monospace">{{ selectedOrder?.code }}</span>
+              </h4>
+              <template v-if="selectedOrder">
+                <span v-if="selectedOrder.status === 0 && selectedOrder.deposit_required > 0 && Number(selectedOrder.paid_amount || 0) === 0" class="badge badge-custom bg-pastel-warning">CHỜ CỌC</span>
+                <span v-else-if="selectedOrder.status === 0" class="badge badge-custom bg-pastel-info">CHỜ DUYỆT</span>
+                <span v-else-if="selectedOrder.status === 1" class="badge badge-custom bg-pastel-warning">ĐÃ CỌC &amp; XỬ LÝ</span>
+                <span v-else-if="selectedOrder.status === 2" class="badge badge-custom bg-pastel-info">ĐANG GIAO HÀNG</span>
+                <span v-else-if="selectedOrder.status === 3" class="badge badge-custom bg-pastel-success">HOÀN THÀNH</span>
+                <span v-else-if="selectedOrder.status === 4" class="badge badge-custom bg-pastel-danger">ĐÃ HỦY</span>
+              </template>
+            </div>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" ref="orderModalCloseBtn"></button>
           </div>
-          <div class="modal-body pb-2" v-if="selectedOrder">
-            <div class="row">
-              <!-- Cột 1 (Trái): Thông tin Khách Hàng, Vận Chuyển & Ghi Chú -->
-              <div class="col-lg-3 col-12 mb-3 mb-lg-0 border-end d-flex flex-column">
-                <h6 class="fw-bold mb-3 text-uppercase text-primary" style="font-size: 0.75rem;">Thông tin Khách Hàng</h6>
-                <div class="mb-3">
-                  <p class="mb-1 fw-bold text-dark">{{ selectedOrder.customer_name }}</p>
-                  <p class="mb-1 text-muted">{{ selectedOrder.customer_phone }}</p>
-                  <p class="mb-2 text-muted small" v-if="selectedOrder.customer_email">{{ selectedOrder.customer_email }}</p>
-                  <div class="mt-2">
-                    <label class="form-label text-dark small mb-1 fw-bold">Địa Chỉ Giao Hàng: <span class="text-danger">*</span></label>
-                    <textarea 
-                      v-if="!isOrderInfoReadOnly"
-                      class="form-control form-control-sm text-dark" 
-                      rows="2"
-                      v-model="selectedOrder.address" 
-                      placeholder="Số nhà, đường, phường/xã, bến tàu, chành xe..."
-                    ></textarea>
-                    <p v-else class="mb-0 text-dark small" style="white-space: pre-wrap;">
-                      {{ selectedOrder.address || 'Chưa có địa chỉ' }}
-                    </p>
+          <div class="modal-body tx-modal-body" v-if="selectedOrder">
+            <div class="row g-3 align-items-stretch">
+              <!-- Cột 1 (Trái): Card Thông tin Khách Hàng -->
+              <div class="col-lg-3 col-12">
+                <div class="tx-card">
+                  <div class="tx-card-header">
+                    <span><i class="bx bx-user text-primary me-1 align-middle"></i> Thông Tin Khách Hàng</span>
+                  </div>
+                  <div class="tx-card-body">
+                    <div class="pb-3 mb-3 border-bottom">
+                      <div class="fw-bold mb-1" style="font-size: 0.98rem; color: #0f172a;">{{ selectedOrder.customer_name }}</div>
+                      <div class="small mb-1" style="color: #334155;">
+                        <i class="bx bx-phone me-1 text-primary"></i>
+                        <span class="font-monospace fw-semibold">{{ selectedOrder.customer_phone || 'Chưa có SĐT' }}</span>
+                      </div>
+                      <div class="small text-break" style="color: #475569;" v-if="selectedOrder.customer_email">
+                        <i class="bx bx-envelope me-1 text-primary"></i>{{ selectedOrder.customer_email }}
+                      </div>
+                      <div class="mt-3">
+                        <label class="form-label text-dark small mb-1 fw-bold">Địa Chỉ Giao Hàng <span class="text-danger">*</span></label>
+                        <textarea 
+                          v-if="!isOrderInfoReadOnly"
+                          class="form-control form-control-sm" 
+                          rows="2"
+                          style="resize: none;"
+                          v-model="selectedOrder.address" 
+                          placeholder="Số nhà, đường, phường/xã, bến tàu, chành xe..."
+                        ></textarea>
+                        <div v-else class="tx-readonly-note py-2 px-2 small">
+                          {{ selectedOrder.address || 'Chưa có địa chỉ' }}
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Thông Tin Vận Chuyển -->
+                    <div class="mb-3 p-2 bg-light border rounded" v-if="selectedOrder.status === 1">
+                      <div class="fw-bold mb-2 text-uppercase" style="font-size: 0.72rem; color: #334155;">
+                        <i class="bx bx-package me-1 text-primary"></i>Thông Tin Vận Chuyển
+                      </div>
+                      <div class="mb-2">
+                        <label class="form-label text-dark small mb-1 fw-semibold">Đơn vị vận chuyển <span class="text-danger">*</span></label>
+                        <input 
+                          type="text" 
+                          class="form-control form-control-sm" 
+                          v-model="selectedOrder.ten_don_vi_van_chuyen" 
+                          placeholder="ViettelPost, GHTK, Chành xe..."
+                        />
+                      </div>
+                      <div class="mb-1">
+                        <label class="form-label text-dark small mb-1 fw-semibold">Mã vận đơn <span class="text-danger">*</span></label>
+                        <input 
+                          type="text" 
+                          class="form-control form-control-sm font-monospace fw-bold" 
+                          v-model="selectedOrder.ma_van_don" 
+                          placeholder="Nhập mã vận đơn..."
+                        />
+                      </div>
+                    </div>
+
+                    <div class="mb-3 p-2 bg-light border rounded" v-else-if="selectedOrder.status >= 2 || selectedOrder.ten_don_vi_van_chuyen || selectedOrder.ma_van_don">
+                      <div class="d-flex justify-content-between align-items-center mb-1">
+                        <span class="fw-bold text-uppercase" style="font-size: 0.72rem; color: #334155;">Vận Chuyển</span>
+                        <span class="badge bg-label-info" style="font-size: 0.65rem;">
+                          {{ selectedOrder.status === 3 ? 'Đã Giao Xong' : 'Đang Vận Chuyển' }}
+                        </span>
+                      </div>
+                      <div class="small text-dark mb-1">
+                        <span class="text-muted">Đơn vị:</span> 
+                        <span class="fw-bold ms-1">{{ selectedOrder.ten_don_vi_van_chuyen || 'Chành xe / Giao trực tiếp' }}</span>
+                      </div>
+                      <div class="small text-dark d-flex align-items-center justify-content-between">
+                        <div>
+                          <span class="text-muted">Mã vận đơn:</span> 
+                          <span class="fw-bold text-primary font-monospace ms-1">{{ selectedOrder.ma_van_don || 'Chưa có mã' }}</span>
+                        </div>
+                        <button 
+                          v-if="selectedOrder.ma_van_don" 
+                          type="button" 
+                          class="btn btn-sm btn-icon btn-link p-0 text-primary" 
+                          @click="copyText(selectedOrder.ma_van_don, 'Đã sao chép mã vận đơn!')"
+                          title="Sao chép mã vận đơn"
+                        >
+                          <i class="bx bx-copy"></i>
+                        </button>
+                      </div>
+                    </div>
+
+                    <!-- Ghi Chú Khách Hàng -->
+                    <div class="flex-grow-1 d-flex flex-column">
+                      <label class="form-label text-dark small mb-1 fw-bold">Ghi Chú Của Khách Hàng <span class="text-muted fw-normal">(Chỉ đọc)</span></label>
+                      <div class="tx-readonly-note flex-grow-1 custom-scroll overflow-auto" style="min-height: 120px; max-height: 240px;">
+                        {{ selectedOrder.customer_notes || 'Không có ghi chú.' }}
+                      </div>
+                    </div>
                   </div>
                 </div>
+              </div>
 
-                <!-- Thông Tin Vận Chuyển: Khi Đang Xử Lý (status = 1), hiển thị ô nhập; Khi Đang Giao / Hoàn Thành, hiển thị thông tin -->
-                <div class="mb-3 p-2 bg-light border rounded" v-if="selectedOrder.status === 1">
-                  <h6 class="fw-bold mb-2 text-uppercase text-primary" style="font-size: 0.72rem;">
-                    Thông Tin Vận Chuyển
-                  </h6>
-                  <div class="mb-2">
-                    <label class="form-label text-dark small mb-1 fw-semibold">Đơn vị vận chuyển: <span class="text-danger">*</span></label>
-                    <input 
-                      type="text" 
-                      class="form-control form-control-sm text-dark bg-white" 
-                      v-model="selectedOrder.ten_don_vi_van_chuyen" 
-                      placeholder="ViettelPost, GHTK, Chành xe Tô Châu, Phương Trang..."
-                    />
+              <!-- Cột 2 (Giữa): Card Sản Phẩm Trong Đơn -->
+              <div class="col-lg-6 col-12">
+                <div class="tx-card">
+                  <div class="tx-card-header">
+                    <span><i class="bx bx-list-ul text-primary me-1 align-middle"></i> Sản Phẩm Trong Đơn</span>
+                    <span class="badge bg-label-primary">{{ selectedOrder.items?.length || 0 }} dòng</span>
                   </div>
-                  <div class="mb-1">
-                    <label class="form-label text-dark small mb-1 fw-semibold">Mã vận đơn: <span class="text-danger">*</span></label>
-                    <input 
-                      type="text" 
-                      class="form-control form-control-sm text-danger fw-bold bg-white" 
-                      v-model="selectedOrder.ma_van_don" 
-                      placeholder="Nhập mã vận đơn (nếu có)..."
-                    />
+                  <div class="tx-card-body p-0">
+                    <div class="table-responsive custom-scroll flex-grow-1" style="max-height: 520px; overflow-y: auto;">
+                      <table class="table table-hover mb-0 tx-items-table">
+                        <thead class="sticky-top">
+                          <tr>
+                            <th class="text-center" style="width: 7%">STT</th>
+                            <th style="width: 40%">Tên Phụ Tùng &amp; Mã OEM</th>
+                            <th class="text-center" style="width: 11%">SL</th>
+                            <th class="text-end" style="width: 21%">Đơn Giá</th>
+                            <th class="text-end" style="width: 21%">Thành Tiền</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr v-if="!selectedOrder.items || selectedOrder.items.length === 0">
+                            <td colspan="5" class="text-center py-5 text-muted">
+                              <i class="bx bx-folder-open text-secondary fs-2 d-block mb-1"></i>
+                              Không có dữ liệu
+                            </td>
+                          </tr>
+                          <tr v-for="(detail, idx) in selectedOrder.items" :key="idx">
+                            <td class="text-center align-middle fw-semibold text-muted">{{ idx + 1 }}</td>
+                            <td class="align-middle">
+                              <div class="fw-semibold mb-1" style="font-size: 0.88rem; color: #0f172a; line-height: 1.38;">{{ detail.part_name }}</div>
+                              <div style="font-size: 0.79rem; line-height: 1.35;">
+                                <span style="color: #94a3b8;">Mã:</span> <span class="font-monospace fw-bold" style="color: #0284c7;">{{ detail.part_code || 'N/A' }}</span>
+                              </div>
+                              <div v-if="detail.model_may" style="font-size: 0.73rem; line-height: 1.35; margin-top: 2px;">
+                                <span style="color: #94a3b8;">Model:</span> <span style="color: #64748b; font-weight: 500;">{{ detail.model_may }}</span>
+                              </div>
+                            </td>
+                            <td class="text-center align-middle">
+                              <span class="fw-bold text-dark">{{ detail.qty }}</span>
+                            </td>
+                            <td class="text-end align-middle fw-semibold text-dark">{{ formatCurrency(detail.price) }}</td>
+                            <td class="text-end fw-bold text-danger align-middle">
+                              {{ formatCurrency(detail.qty * (detail.price || 0)) }}
+                              <div v-if="detail.qty > 1" class="text-muted fw-semibold" style="font-size: 0.74rem;">
+                                x{{ detail.qty }} cái
+                              </div>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
                   </div>
                 </div>
+              </div>
 
-                <div class="mb-3 p-2 bg-light border rounded" v-else-if="selectedOrder.status >= 2 || selectedOrder.ten_don_vi_van_chuyen || selectedOrder.ma_van_don">
-                  <div class="d-flex justify-content-between align-items-center mb-1">
-                    <h6 class="fw-bold mb-0 text-uppercase text-primary" style="font-size: 0.72rem;">
-                      Vận Chuyển
-                    </h6>
-                    <span class="badge bg-label-info" style="font-size: 0.65rem;">
-                      {{ selectedOrder.status === 3 ? 'Đã Giao Xong' : 'Đang Vận Chuyển' }}
-                    </span>
+              <!-- Cột 3 (Phải): Card Chi Phí & Thanh Toán -->
+              <div class="col-lg-3 col-12">
+                <div class="tx-card">
+                  <div class="tx-card-header">
+                    <span><i class="bx bx-receipt text-primary me-1 align-middle"></i> Tổng Hợp Chi Phí</span>
                   </div>
-                  <div class="small text-dark mb-1">
-                    <span class="text-muted">Đơn vị:</span> 
-                    <span class="fw-bold ms-1">{{ selectedOrder.ten_don_vi_van_chuyen || 'Chành xe / Giao trực tiếp' }}</span>
-                  </div>
-                  <div class="small text-dark d-flex align-items-center justify-content-between">
+                  <div class="tx-card-body justify-content-between">
                     <div>
-                      <span class="text-muted">Mã vận đơn:</span> 
-                      <span class="fw-bold text-danger ms-1">{{ selectedOrder.ma_van_don || 'Chưa có mã' }}</span>
-                    </div>
-                    <button 
-                      v-if="selectedOrder.ma_van_don" 
-                      type="button" 
-                      class="btn btn-sm btn-icon btn-link p-0 text-primary" 
-                      @click="copyText(selectedOrder.ma_van_don, 'Đã sao chép mã vận đơn!')"
-                      title="Sao chép mã vận đơn"
-                    >
-                      <i class="bx bx-copy"></i>
-                    </button>
-                  </div>
-                </div>
-
-                <!-- Ghi Chú Khách Hàng: Đồng bộ hoàn toàn với Modal Báo Giá -->
-                <div class="flex-grow-1 d-flex flex-column mb-2">
-                  <h6 class="fw-bold mb-2 text-uppercase text-primary" style="font-size: 0.75rem;">Ghi Chú (Khách Hàng)</h6>
-                  <div class="p-3 bg-label-secondary rounded flex-grow-1 overflow-auto" style="min-height: 120px; max-height: 240px;">
-                    <p class="mb-0 text-dark" style="font-size: 0.85rem; white-space: pre-wrap;">{{ selectedOrder.customer_notes || 'Không có ghi chú.' }}</p>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Cột 2 (Giữa): Sản Phẩm Trong Đơn (Cuộn dọc) -->
-              <div class="col-lg-6 col-12 mb-3 mb-lg-0">
-                <h6 class="fw-bold mb-3 text-uppercase text-primary" style="font-size: 0.75rem;">Sản Phẩm Trong Đơn</h6>
-                <div class="table-responsive border rounded custom-scroll" style="max-height: 480px; overflow-y: auto;">
-                  <table class="table table-bordered table-sm mb-0 table-sticky-header">
-                    <thead class="table-light sticky-top">
-                      <tr>
-                        <th class="text-center text-uppercase bg-light" style="width: 7%">STT</th>
-                        <th class="text-uppercase bg-light" style="width: 38%">Tên Phụ Tùng</th>
-                        <th class="text-center text-uppercase bg-light" style="width: 15%">SL</th>
-                        <th class="text-uppercase bg-light" style="width: 20%">Đơn Giá</th>
-                        <th class="text-end text-uppercase bg-light" style="width: 20%">Thành Tiền</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr v-if="!selectedOrder.items || selectedOrder.items.length === 0">
-                        <td colspan="5" class="text-center py-4 text-muted">
-                          <i class="bx bx-folder-open text-secondary fs-2 d-block mb-1"></i>
-                          Không có dữ liệu
-                        </td>
-                      </tr>
-                      <tr v-for="(detail, idx) in selectedOrder.items" :key="idx">
-                        <td class="text-center align-middle">{{ idx + 1 }}</td>
-                        <td class="align-middle">
-                          <span class="d-block fw-bold" style="font-size: 0.85rem;">{{ detail.part_name }}</span>
-                          <span class="text-dark fw-medium" style="font-size: 0.75rem;">Mã: {{ detail.part_code }}</span>
-                        </td>
-                        <td class="text-center align-middle">
-                          <span class="fw-bold fs-6 text-dark">{{ detail.qty }}</span>
-                        </td>
-                        <td class="text-end align-middle">{{ formatCurrency(detail.price) }}</td>
-                        <td class="text-end fw-bold text-danger align-middle">
-                          {{ formatCurrency(detail.qty * (detail.price || 0)) }}
-                          <div v-if="detail.qty > 1" class="text-dark fw-bold" style="font-size: 0.75rem;">
-                            x{{ detail.qty }} cái
-                          </div>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-
-              <!-- Cột 3 (Phải): Chi Phí & Thanh Toán -->
-              <div class="col-lg-3 col-12 border-start ps-lg-3 pe-lg-3 d-flex flex-column justify-content-between">
-                <div>
-                  <h6 class="fw-bold mb-3 text-uppercase text-primary" style="font-size: 0.75rem;">Tổng Hợp Chi Phí</h6>
-                  
-                  <!-- Tạm Tính -->
-                  <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
-                    <span class="text-dark fw-bold" style="font-size: 0.88rem;">Tạm Tính:</span>
-                    <span class="fw-bold text-dark fs-6">{{ formatCurrency(calculateTotal(selectedOrder.items)) }}</span>
-                  </div>
-
-                  <!-- Phí Vận Chuyển -->
-                  <div class="mb-3 pb-2 border-bottom">
-                    <div class="d-flex justify-content-between align-items-center mb-1">
-                      <label class="text-dark fw-bold mb-0" style="font-size: 0.88rem;">Phí Vận Chuyển:</label>
-                      <div style="width: 140px;" v-if="!isOrderInfoReadOnly">
-                        <input 
-                          type="number" 
-                          class="form-control form-control-sm text-end text-danger fw-bold" 
-                          :value="selectedOrder.shipping_fee ? selectedOrder.shipping_fee : ''" 
-                          @input="selectedOrder.shipping_fee = $event.target.value === '' ? 0 : Number($event.target.value)" 
-                          min="0"
-                          :disabled="selectedOrder.freight_collect" 
-                          placeholder="0"
-                        >
+                      <!-- Tạm Tính -->
+                      <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
+                        <span class="text-dark fw-semibold" style="font-size: 0.88rem;">Tạm Tính</span>
+                        <span class="fw-bold text-dark fs-6">{{ formatCurrency(calculateTotal(selectedOrder.items)) }}</span>
                       </div>
-                      <span v-else class="fw-bold text-danger fs-6">
-                        {{ selectedOrder.freight_collect ? 'Khách trả cước' : formatCurrency(selectedOrder.shipping_fee || 0) }}
-                      </span>
-                    </div>
-                    <div class="d-flex justify-content-between align-items-center mt-1" v-if="!isOrderInfoReadOnly">
-                      <div class="form-check form-switch mb-0">
-                        <input class="form-check-input" type="checkbox" id="freightCollectOrder" v-model="selectedOrder.freight_collect" @change="selectedOrder.freight_collect ? selectedOrder.shipping_fee = 0 : null">
-                        <label class="form-check-label text-dark fw-semibold" for="freightCollectOrder" style="font-size: 0.8rem;">Khách trả cước</label>
-                      </div>
-                      <span v-if="!selectedOrder.freight_collect" class="text-danger fw-semibold" style="font-size: 0.75rem;">
-                        {{ formatCurrency(selectedOrder.shipping_fee || 0) }}
-                      </span>
-                    </div>
-                  </div>
 
-                  <!-- Yêu Cầu Cọc -->
-                  <div class="mb-3 pb-2 border-bottom">
-                    <div class="d-flex justify-content-between align-items-center mb-1">
-                      <label class="text-dark fw-bold mb-0" style="font-size: 0.88rem;">Yêu Cầu Cọc:</label>
-                      <div style="width: 140px;" v-if="!isOrderInfoReadOnly">
-                        <input 
-                          type="number" 
-                          class="form-control form-control-sm text-end text-danger fw-bold" 
-                          :value="selectedOrder.deposit_required ? selectedOrder.deposit_required : ''" 
-                          @input="selectedOrder.deposit_required = $event.target.value === '' ? 0 : Number($event.target.value)" 
-                          min="0"
-                          placeholder="0" 
-                        >
-                      </div>
-                      <span v-else class="fw-bold text-danger fs-6">{{ formatCurrency(selectedOrder.deposit_required || 0) }}</span>
-                    </div>
-                    <div v-if="!isOrderInfoReadOnly" class="text-end">
-                      <span class="text-danger fw-semibold" style="font-size: 0.75rem;">
-                        {{ formatCurrency(selectedOrder.deposit_required || 0) }}
-                      </span>
-                    </div>
-                  </div>
-
-                  <!-- Đã Thu -->
-                  <div class="mb-3 pb-2 border-bottom">
-                    <div class="d-flex justify-content-between align-items-center mb-1">
-                      <label class="text-dark fw-bold mb-0" style="font-size: 0.88rem;">Đã Thu (Cọc / Trả trước):</label>
-                      <div style="width: 140px;" v-if="!isOrderInfoReadOnly">
-                        <input 
-                          type="number" 
-                          class="form-control form-control-sm text-end text-primary fw-bold" 
-                          :value="selectedOrder.paid_amount ? selectedOrder.paid_amount : ''" 
-                          @input="selectedOrder.paid_amount = $event.target.value === '' ? 0 : Number($event.target.value)" 
-                          min="0"
-                          placeholder="0" 
-                        >
-                      </div>
-                      <span v-else class="fw-bold text-primary fs-6">{{ formatCurrency(selectedOrder.paid_amount || 0) }}</span>
-                    </div>
-                    <div v-if="!isOrderInfoReadOnly" class="text-end">
-                      <span class="text-primary fw-semibold" style="font-size: 0.75rem;">
-                        {{ formatCurrency(selectedOrder.paid_amount || 0) }}
-                      </span>
-                    </div>
-                  </div>
-
-                  <!-- KHU VỰC BIÊN LAI CHUYỂN TIỀN (1 ROW 2 PHẦN) -->
-                  <div class="mt-3 pt-2 border-top mb-3">
-                    <!-- Input file ẩn để kích hoạt khi bấm nút hoặc bấm ô ảnh -->
-                    <input type="file" ref="orderReceiptSlot1" class="d-none" accept="image/*,.jpg,.jpeg,.png,.webp,.gif,.svg,.bmp,.avif,.heic,.heif,.tiff,.tif,.ico,.jfif" @change="onFileSelected($event, 'order', 1)">
-                    <input type="file" ref="orderReceiptSlot2" class="d-none" accept="image/*,.jpg,.jpeg,.png,.webp,.gif,.svg,.bmp,.avif,.heic,.heif,.tiff,.tif,.ico,.jfif" @change="onFileSelected($event, 'order', 2)">
-
-                    <div class="mb-2">
-                      <label class="form-label fw-bold text-dark mb-0 text-uppercase" style="font-size: 0.75rem;">
-                        Biên Lai Chuyển Tiền
-                      </label>
-                    </div>
-
-                    <!-- 1 ROW GỒM 2 PHẦN CHO 2 ẢNH -->
-                    <div class="row g-2">
-                      <!-- Phần 1: Ảnh 1 (Cọc) -->
-                      <div class="col-6">
-                        <div 
-                          class="d-flex flex-column justify-content-center align-items-center border rounded bg-light position-relative p-1" 
-                          style="height: 105px; cursor: pointer;"
-                          :style="!selectedOrder.receipt_image ? 'border-style: dashed !important;' : ''"
-                          @paste="onPasteReceipt($event, 'order', 1)"
-                          @click="!selectedOrder.receipt_image && !isOrderReceiptReadOnly ? triggerAddReceiptSlot('order', 1) : null"
-                          tabindex="0"
-                          :title="selectedOrder.receipt_image ? 'Nhấp để xem phóng to' : 'Nhấp để tải ảnh hoặc Ctrl+V để dán'"
-                        >
-                          <div v-if="uploadingKey === 'order_1'" class="text-center">
-                            <span class="spinner-border spinner-border-sm text-primary"></span>
-                            <div class="text-muted small mt-1" style="font-size: 0.65rem;">Đang tải...</div>
-                          </div>
-                          <template v-else-if="selectedOrder.receipt_image">
-                            <img 
-                              :src="getImageUrl(selectedOrder.receipt_image)" 
-                              alt="Biên lai 1" 
-                              class="rounded" 
-                              style="max-height: 95px; max-width: 100%; object-fit: contain;" 
-                              @click.stop="openReceiptViewer(selectedOrder.receipt_image)" 
-                              title="Nhấp để xem phóng to"
-                            />
-                            <button 
-                              v-if="!isOrderReceiptReadOnly" 
-                              type="button" 
-                              class="btn btn-icon btn-sm bg-white text-danger position-absolute top-0 end-0 m-1 rounded-circle shadow-sm border" 
-                              @click.stop="removeReceipt('order', 1)" 
-                              style="width: 24px; height: 24px; padding: 0; line-height: 1;" 
-                              title="Xóa ảnh"
+                      <!-- Phí Vận Chuyển -->
+                      <div class="mb-3 pb-3 border-bottom">
+                        <div class="d-flex justify-content-between align-items-center mb-2 gap-2">
+                          <label class="text-dark fw-semibold mb-0 text-nowrap" style="font-size: 0.88rem;">Phí Vận Chuyển</label>
+                          <div style="width: 145px;" v-if="!isOrderInfoReadOnly">
+                            <input 
+                              type="number" 
+                              class="form-control form-control-sm text-end text-danger fw-bold" 
+                              :value="selectedOrder.shipping_fee ? selectedOrder.shipping_fee : ''" 
+                              @input="selectedOrder.shipping_fee = $event.target.value === '' ? 0 : Number($event.target.value)" 
+                              min="0"
+                              :disabled="selectedOrder.freight_collect" 
+                              placeholder="0"
                             >
-                              <i class="bx bx-trash" style="font-size: 13px;"></i>
-                            </button>
-                          </template>
-                          <div v-else class="text-center text-muted">
-                            <i class="bx bx-image-add fs-3 d-block text-secondary mb-1"></i>
-                            <span style="font-size: 0.68rem;">Ảnh 1</span>
                           </div>
+                          <span v-else class="fw-bold text-danger fs-6">
+                            {{ selectedOrder.freight_collect ? 'Khách trả cước' : formatCurrency(selectedOrder.shipping_fee || 0) }}
+                          </span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center" v-if="!isOrderInfoReadOnly">
+                          <div class="form-check form-switch mb-0">
+                            <input class="form-check-input" type="checkbox" id="freightCollectOrder" v-model="selectedOrder.freight_collect" @change="selectedOrder.freight_collect ? selectedOrder.shipping_fee = 0 : null">
+                            <label class="form-check-label text-dark fw-medium" for="freightCollectOrder" style="font-size: 0.8rem;">Khách trả cước</label>
+                          </div>
+                          <span v-if="!selectedOrder.freight_collect && selectedOrder.shipping_fee > 0" class="text-danger fw-semibold" style="font-size: 0.76rem;">
+                            {{ formatCurrency(selectedOrder.shipping_fee) }}
+                          </span>
                         </div>
                       </div>
 
-                      <!-- Phần 2: Ảnh 2 (Còn lại) -->
-                      <div class="col-6">
-                        <div 
-                          class="d-flex flex-column justify-content-center align-items-center border rounded bg-light position-relative p-1" 
-                          style="height: 105px; cursor: pointer;"
-                          :style="!selectedOrder.receipt_image_2 ? 'border-style: dashed !important;' : ''"
-                          @paste="onPasteReceipt($event, 'order', 2)"
-                          @click="!selectedOrder.receipt_image_2 && !isOrderReceiptReadOnly ? triggerAddReceiptSlot('order', 2) : null"
-                          tabindex="0"
-                          :title="selectedOrder.receipt_image_2 ? 'Nhấp để xem phóng to' : 'Nhấp để tải ảnh hoặc Ctrl+V để dán'"
-                        >
-                          <div v-if="uploadingKey === 'order_2'" class="text-center">
-                            <span class="spinner-border spinner-border-sm text-primary"></span>
-                            <div class="text-muted small mt-1" style="font-size: 0.65rem;">Đang tải...</div>
-                          </div>
-                          <template v-else-if="selectedOrder.receipt_image_2">
-                            <img 
-                              :src="getImageUrl(selectedOrder.receipt_image_2)" 
-                              alt="Biên lai 2" 
-                              class="rounded" 
-                              style="max-height: 95px; max-width: 100%; object-fit: contain;" 
-                              @click.stop="openReceiptViewer(selectedOrder.receipt_image_2)" 
-                              title="Nhấp để xem phóng to"
-                            />
-                            <button 
-                              v-if="!isOrderReceiptReadOnly" 
-                              type="button" 
-                              class="btn btn-icon btn-sm bg-white text-danger position-absolute top-0 end-0 m-1 rounded-circle shadow-sm border" 
-                              @click.stop="removeReceipt('order', 2)" 
-                              style="width: 24px; height: 24px; padding: 0; line-height: 1;" 
-                              title="Xóa ảnh"
+                      <!-- Yêu Cầu Cọc -->
+                      <div class="mb-3 pb-3 border-bottom">
+                        <div class="d-flex justify-content-between align-items-center mb-1 gap-2">
+                          <label class="text-dark fw-semibold mb-0 text-nowrap" style="font-size: 0.88rem;">Yêu Cầu Cọc</label>
+                          <div style="width: 145px;" v-if="!isOrderInfoReadOnly">
+                            <input 
+                              type="number" 
+                              class="form-control form-control-sm text-end text-danger fw-bold" 
+                              :value="selectedOrder.deposit_required ? selectedOrder.deposit_required : ''" 
+                              @input="selectedOrder.deposit_required = $event.target.value === '' ? 0 : Number($event.target.value)" 
+                              min="0"
+                              placeholder="0" 
                             >
-                              <i class="bx bx-trash" style="font-size: 13px;"></i>
-                            </button>
-                          </template>
-                          <div v-else class="text-center text-muted">
-                            <i class="bx bx-image-add fs-3 d-block text-secondary mb-1"></i>
-                            <span style="font-size: 0.68rem;">Ảnh 2</span>
+                          </div>
+                          <span v-else class="fw-bold text-danger fs-6">{{ formatCurrency(selectedOrder.deposit_required || 0) }}</span>
+                        </div>
+                        <div v-if="!isOrderInfoReadOnly && selectedOrder.deposit_required > 0" class="text-end">
+                          <span class="text-danger fw-semibold" style="font-size: 0.76rem;">
+                            {{ formatCurrency(selectedOrder.deposit_required) }}
+                          </span>
+                        </div>
+                      </div>
+
+                      <!-- Đã Thu (Cọc): chỉ hiển thị khi đơn đã xác nhận cọc (status >= 1) -->
+                      <div class="mb-3 pb-3 border-bottom" v-if="selectedOrder && isOrderInfoReadOnly">
+                        <div class="d-flex justify-content-between align-items-center mb-1 gap-2">
+                          <label class="text-dark fw-semibold mb-0" style="font-size: 0.85rem;">Đã Thu (Cọc)</label>
+                          <span class="fw-bold text-danger fs-6">{{ formatCurrency(selectedOrder.paid_amount || 0) }}</span>
+                        </div>
+                      </div>
+
+                      <!-- KHU VỰC BIÊN LAI CHUYỂN TIỀN (2 CỘT: CỌC & THU COD) -->
+                      <div class="mt-2 mb-3">
+                        <input type="file" ref="orderReceiptSlot1" class="d-none" accept="image/*,.jpg,.jpeg,.png,.webp,.gif,.svg,.bmp,.avif,.heic,.heif,.tiff,.tif,.ico,.jfif" @change="onFileSelected($event, 'order', 1)">
+                        <input type="file" ref="orderReceiptSlot2" class="d-none" accept="image/*,.jpg,.jpeg,.png,.webp,.gif,.svg,.bmp,.avif,.heic,.heif,.tiff,.tif,.ico,.jfif" @change="onFileSelected($event, 'order', 2)">
+
+                        <div class="row g-2">
+                          <div class="col-6">
+                            <div class="mb-1 fw-bold text-uppercase" style="font-size: 0.7rem; color: #334155;">
+                              Biên Lai Cọc
+                            </div>
+                            <div 
+                              class="d-flex flex-column justify-content-center align-items-center border rounded bg-light position-relative p-1" 
+                              style="height: 100px; cursor: pointer;"
+                              :style="!selectedOrder.receipt_image ? 'border-style: dashed !important; border-color: #94a3b8 !important;' : ''"
+                              @paste="onPasteReceipt($event, 'order', 1)"
+                              @click="!selectedOrder.receipt_image && !isOrderReceiptReadOnly ? triggerAddReceiptSlot('order', 1) : null"
+                              tabindex="0"
+                              :title="selectedOrder.receipt_image ? 'Nhấp để xem phóng to' : 'Nhấp để tải ảnh hoặc Ctrl+V để dán'"
+                            >
+                              <div v-if="uploadingKey === 'order_1'" class="text-center">
+                                <span class="spinner-border spinner-border-sm text-primary"></span>
+                                <div class="text-muted small mt-1" style="font-size: 0.65rem;">Đang tải...</div>
+                              </div>
+                              <template v-else-if="selectedOrder.receipt_image">
+                                <img 
+                                  :src="getImageUrl(selectedOrder.receipt_image)" 
+                                  alt="Biên lai cọc" 
+                                  class="rounded" 
+                                  style="max-height: 90px; max-width: 100%; object-fit: contain;" 
+                                  @click.stop="openReceiptViewer(selectedOrder.receipt_image)" 
+                                  title="Nhấp để xem phóng to"
+                                />
+                                <button 
+                                  v-if="!isOrderReceiptReadOnly" 
+                                  type="button" 
+                                  class="btn btn-icon btn-sm bg-white text-danger position-absolute top-0 end-0 m-1 rounded-circle shadow-sm border" 
+                                  @click.stop="removeReceipt('order', 1)" 
+                                  style="width: 24px; height: 24px; padding: 0; line-height: 1;" 
+                                  title="Xóa ảnh"
+                                >
+                                  <i class="bx bx-trash" style="font-size: 13px;"></i>
+                                </button>
+                              </template>
+                              <div v-else class="text-center text-muted">
+                                <i class="bx bx-image-add fs-3 d-block text-secondary mb-1"></i>
+                                <span style="font-size: 0.68rem;">Biên lai cọc</span>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div class="col-6">
+                            <div class="mb-1 fw-bold text-uppercase" style="font-size: 0.7rem; color: #334155;">
+                              Biên Lai Thu COD
+                            </div>
+                            <div 
+                              class="d-flex flex-column justify-content-center align-items-center border rounded bg-light position-relative p-1" 
+                              style="height: 100px; cursor: pointer;"
+                              :style="!selectedOrder.receipt_image_2 ? 'border-style: dashed !important; border-color: #94a3b8 !important;' : ''"
+                              @paste="onPasteReceipt($event, 'order', 2)"
+                              @click="!selectedOrder.receipt_image_2 && !isOrderReceiptReadOnly ? triggerAddReceiptSlot('order', 2) : null"
+                              tabindex="0"
+                              :title="selectedOrder.receipt_image_2 ? 'Nhấp để xem phóng to' : 'Nhấp để tải ảnh hoặc Ctrl+V để dán'"
+                            >
+                              <div v-if="uploadingKey === 'order_2'" class="text-center">
+                                <span class="spinner-border spinner-border-sm text-primary"></span>
+                                <div class="text-muted small mt-1" style="font-size: 0.65rem;">Đang tải...</div>
+                              </div>
+                              <template v-else-if="selectedOrder.receipt_image_2">
+                                <img 
+                                  :src="getImageUrl(selectedOrder.receipt_image_2)" 
+                                  alt="Biên lai thu COD" 
+                                  class="rounded" 
+                                  style="max-height: 90px; max-width: 100%; object-fit: contain;" 
+                                  @click.stop="openReceiptViewer(selectedOrder.receipt_image_2)" 
+                                  title="Nhấp để xem phóng to"
+                                />
+                                <button 
+                                  v-if="!isOrderReceiptReadOnly" 
+                                  type="button" 
+                                  class="btn btn-icon btn-sm bg-white text-danger position-absolute top-0 end-0 m-1 rounded-circle shadow-sm border" 
+                                  @click.stop="removeReceipt('order', 2)" 
+                                  style="width: 24px; height: 24px; padding: 0; line-height: 1;" 
+                                  title="Xóa ảnh"
+                                >
+                                  <i class="bx bx-trash" style="font-size: 13px;"></i>
+                                </button>
+                              </template>
+                              <div v-else class="text-center text-muted">
+                                <i class="bx bx-image-add fs-3 d-block text-secondary mb-1"></i>
+                                <span style="font-size: 0.68rem;">Biên lai thu COD</span>
+                              </div>
+                            </div>
                           </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                </div>
 
-                <!-- Cụm Tổng Cộng & Thu COD ở đáy (Đồng bộ 100% với Modal Báo Giá) -->
-                <div class="mt-3 pt-2 bg-light p-3 rounded border">
-                  <div class="d-flex justify-content-between align-items-center mb-2">
-                    <span class="fw-bold text-dark" style="font-size: 0.9rem;">Tổng Cộng:</span>
-                    <span class="fw-bold text-danger fs-5">{{ formatCurrency(calculateTotal(selectedOrder.items) + (selectedOrder.freight_collect ? 0 : (selectedOrder.shipping_fee || 0))) }}</span>
-                  </div>
-                  <div class="d-flex justify-content-between align-items-center pt-2 border-top">
-                    <span class="text-dark fw-bold" style="font-size: 0.9rem;">Thu COD:</span>
-                    <span :class="selectedOrder.status === 3 ? 'fw-bold text-primary fs-5' : 'fw-bold text-dark fs-5'">
-                      {{ formatCurrency(Math.max(0, (calculateTotal(selectedOrder.items) + (selectedOrder.freight_collect ? 0 : (selectedOrder.shipping_fee || 0))) - (selectedOrder.paid_amount || 0))) }}
-                    </span>
+                    <!-- Cụm Tổng Cộng & Thu COD ở đáy -->
+                    <div class="tx-summary-box mt-3">
+                      <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="fw-bold text-dark" style="font-size: 0.9rem;">Tổng Cộng</span>
+                        <span class="fw-bold text-danger fs-5">{{ formatCurrency(calculateTotal(selectedOrder.items) + (selectedOrder.freight_collect ? 0 : (selectedOrder.shipping_fee || 0))) }}</span>
+                      </div>
+                      <div class="d-flex justify-content-between align-items-center pt-2" style="border-top: 1px dashed #fca5a5;">
+                        <span class="text-dark fw-bold" style="font-size: 0.9rem;">Thu COD</span>
+                        <span :class="selectedOrder.status === 3 ? 'fw-bold text-primary fs-5' : 'fw-bold fs-5'" style="color: #0f172a;">
+                          {{ formatCurrency(Math.max(0, (calculateTotal(selectedOrder.items) + (selectedOrder.freight_collect ? 0 : (selectedOrder.shipping_fee || 0))) - (selectedOrder.paid_amount || 0))) }}
+                        </span>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-          <div class="modal-footer border-top py-3 mt-2 bg-light d-flex justify-content-end align-items-center gap-2">
-            <!-- Nút Hủy Đơn (Chỉ hủy được khi đơn chưa giao hàng) -->
+          <div class="modal-footer bg-white border-top px-4 py-3 d-flex align-items-center gap-2">
             <button 
               type="button" 
-              class="btn btn-outline-danger px-4 shadow-sm" 
+              class="btn btn-outline-danger px-4 me-auto" 
               v-if="selectedOrder && selectedOrder.status < 2" 
               @click.prevent="handleCancel(selectedOrder)"
               title="Hủy đơn hàng này"
             >
-              Hủy Đơn
+              <i class="bx bx-x-circle me-1"></i> Hủy Đơn
             </button>
             <button 
               type="button" 
-              class="btn btn-outline-secondary shadow-sm d-inline-flex align-items-center justify-content-center" 
+              class="btn btn-outline-secondary d-inline-flex align-items-center justify-content-center" 
               style="width: 38px; height: 38px; padding: 0;"
               @click.prevent="copyQuoteLink(selectedOrder)" 
               title="Sao chép link tra cứu đơn gửi khách"
@@ -1122,7 +1150,7 @@
             </button>
             <button 
               type="button" 
-              class="btn btn-outline-secondary shadow-sm d-inline-flex align-items-center justify-content-center" 
+              class="btn btn-outline-secondary d-inline-flex align-items-center justify-content-center" 
               style="width: 38px; height: 38px; padding: 0;"
               @click="openVietQrModal(selectedOrder)" 
               title="Xem mã VietQR"
@@ -1130,7 +1158,7 @@
               <i class="bx bx-qr-scan fs-5"></i>
             </button>
             <button type="button" class="btn btn-outline-secondary px-4" data-bs-dismiss="modal">Đóng</button>
-            <button type="button" class="btn btn-outline-primary px-4 shadow-sm" @click="saveOrder" v-if="!isOrderInfoReadOnly && canEditOrders">
+            <button type="button" class="btn btn-outline-primary px-4" @click="saveOrder" v-if="!isOrderInfoReadOnly && canEditOrders">
               Lưu
             </button>
             <button 
@@ -1140,7 +1168,7 @@
               @click="confirmDepositBtn(selectedOrder)"
               title="Khách đã cọc -> Bắt đầu lên đơn xử lý"
             >
-              Đã Cọc & Lên Đơn
+              Đã Cọc &amp; Lên Đơn
             </button>
             <button 
               type="button" 
@@ -1158,9 +1186,9 @@
               @click="completeOrderBtn(selectedOrder)" 
               title="Khách hàng đã nhận hàng & chuyển tiền -> Hoàn thành đơn"
             >
-              Khách Hàng Đã Nhận Hàng & Chuyển Tiền
+              Khách Hàng Đã Nhận Hàng &amp; Chuyển Tiền
             </button>
-            <button type="button" class="btn btn-outline-secondary px-4 shadow-sm" @click="printOrder">
+            <button type="button" class="btn btn-outline-secondary px-4" @click="printOrder">
               In Hóa Đơn
             </button>
           </div>
@@ -1186,6 +1214,10 @@
             <div v-else-if="adminVietQr">
               <div class="bg-white p-3 rounded-4 shadow-sm border d-inline-block mb-3">
                 <img :src="adminVietQr.qr_url" alt="VietQR" class="img-fluid" style="max-width: 250px; border-radius: 8px;">
+                <div v-if="adminVietQr.account_name || adminVietQr.account_no" class="mt-1 lh-sm">
+                  <div class="fw-bold text-dark" style="font-size: 0.82rem;">{{ adminVietQr.account_name }}</div>
+                  <div class="font-monospace fw-semibold text-secondary" style="font-size: 0.84rem;">{{ adminVietQr.account_no }}</div>
+                </div>
               </div>
               <div class="text-start bg-light p-3 rounded-3 border">
                 <div class="d-flex justify-content-between py-1 border-bottom small">
@@ -1400,21 +1432,25 @@
     </div>
 
     <!-- Modal Lên Đơn Hàng / Báo Giá Mới (Zalo / Tại Quầy) -->
-    <div class="modal fade" id="createOrderModal" tabindex="-1" aria-hidden="true" ref="createOrderModal">
+    <div class="modal fade tx-modal" id="createOrderModal" tabindex="-1" aria-hidden="true" ref="createOrderModal">
       <div class="modal-dialog modal-xl mt-3 mt-lg-4 modal-dialog-scrollable" style="max-width: 1400px; width: 95%;" role="document">
-        <div class="modal-content border-0 shadow-lg">
-          <div class="modal-header border-bottom pb-3">
+        <div class="modal-content border-0 shadow-lg overflow-hidden">
+          <div class="modal-header bg-white border-bottom px-4 py-3">
             <h4 class="modal-title fw-bold text-dark mb-0 fs-4">
               Báo Giá Yêu Cầu - <span class="text-primary">Tạo Mới (Zalo / Quầy)</span>
             </h4>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <form @submit.prevent>
-            <div class="modal-body pb-2">
-              <div class="row">
-                <!-- Cột 1 (Trái): Thông tin Khách Hàng & Ghi chú -->
-                <div class="col-lg-3 col-12 mb-3 mb-lg-0 border-end d-flex flex-column">
-                  <h6 class="fw-bold mb-3 text-uppercase text-primary" style="font-size: 0.75rem;">Thông tin Khách Hàng</h6>
+            <div class="modal-body tx-modal-body">
+              <div class="row g-3 align-items-stretch">
+                <!-- Cột 1 (Trái): Card Thông tin Khách Hàng -->
+                <div class="col-lg-3 col-12">
+                  <div class="tx-card">
+                    <div class="tx-card-header">
+                      <span><i class="bx bx-user text-primary me-1 align-middle"></i> Thông Tin Khách Hàng</span>
+                    </div>
+                    <div class="tx-card-body">
                   
                   <div class="mb-3">
                     <!-- Chọn nhanh khách hàng cũ -->
@@ -1477,7 +1513,7 @@
 
                   <!-- Thông Tin Vận Chuyển: Y HỆT quoteModal -->
                   <div class="mb-3 p-2 bg-light border rounded">
-                    <h6 class="fw-bold mb-2 text-uppercase text-primary" style="font-size: 0.72rem;">
+                    <h6 class="fw-bold mb-2 text-uppercase" style="font-size: 0.72rem; color: #566a7f; letter-spacing: 0.04em;">
                       Thông Tin Vận Chuyển
                     </h6>
                     <div class="mb-2">
@@ -1493,14 +1529,14 @@
                       <label class="form-label text-dark small mb-1 fw-semibold">Mã vận đơn: <span class="text-danger">*</span></label>
                       <input 
                         type="text" 
-                        class="form-control form-control-sm text-danger fw-bold bg-white" 
+                        class="form-control form-control-sm text-primary fw-bold bg-white" 
                         v-model="createOrderForm.ma_van_don" 
                         placeholder="Nhập mã vận đơn (nếu có)..."
                       />
                     </div>
                   </div>
 
-                  <h6 class="fw-bold mb-2 text-uppercase text-primary" style="font-size: 0.75rem;">Ghi Chú (Khách Hàng)</h6>
+                  <h6 class="fw-bold mb-2 text-uppercase" style="font-size: 0.75rem; color: #566a7f; letter-spacing: 0.04em;">Ghi Chú (Khách Hàng)</h6>
                   <div class="mb-3">
                     <textarea 
                       class="form-control form-control-sm text-dark" 
@@ -1510,52 +1546,54 @@
                     ></textarea>
                   </div>
 
-                  <div class="mt-auto">
-                    <h6 class="fw-bold mb-2 text-uppercase text-primary" style="font-size: 0.75rem;">Ghi Chú Zalo (Nội Bộ)</h6>
-                    <div class="mb-0">
-                      <textarea 
-                        class="form-control" 
-                        rows="2" 
-                        v-model="createOrderForm.ghi_chu_zalo" 
-                        placeholder="Ghi chú kết quả thương lượng Zalo..."
-                      ></textarea>
+                      <div class="mt-auto">
+                        <label class="form-label text-dark small mb-1 fw-bold">Ghi Chú Zalo (Nội Bộ)</label>
+                        <textarea 
+                          class="form-control form-control-sm" 
+                          rows="2" 
+                          style="resize: none;"
+                          v-model="createOrderForm.ghi_chu_zalo" 
+                          placeholder="Ghi chú kết quả thương lượng Zalo..."
+                        ></textarea>
+                      </div>
                     </div>
                   </div>
                 </div>
 
-                <!-- Cột 2 (Giữa): Danh sách Phụ Tùng (Cuộn dọc) -->
-                <div class="col-lg-6 col-12 mb-3 mb-lg-0">
-                  <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h6 class="fw-bold mb-0 text-uppercase text-primary" style="font-size: 0.75rem;">Chi Tiết Sản Phẩm Cần Báo Giá</h6>
-                    <button type="button" class="btn btn-xs btn-outline-primary" @click="addCreateOrderItem">
-                      <i class="bx bx-plus me-1"></i>Thêm Dòng
-                    </button>
-                  </div>
+                <!-- Cột 2 (Giữa): Card Danh sách Phụ Tùng -->
+                <div class="col-lg-6 col-12">
+                  <div class="tx-card">
+                    <div class="tx-card-header">
+                      <span><i class="bx bx-list-ul text-primary me-1 align-middle"></i> Chi Tiết Sản Phẩm Cần Báo Giá</span>
+                      <button type="button" class="btn btn-xs btn-outline-primary" @click="addCreateOrderItem">
+                        <i class="bx bx-plus me-1"></i>Thêm Dòng
+                      </button>
+                    </div>
+                    <div class="tx-card-body">
+                      <!-- Chọn nhanh phụ tùng trong kho -->
+                      <div class="mb-3">
+                        <v-select
+                          v-model="selectedPartQuick"
+                          :options="partsList"
+                          placeholder="Tìm nhanh phụ tùng trong kho để thêm vào bảng..."
+                          :searchable="true"
+                          :can-clear="true"
+                          @change="onSelectPartQuick"
+                        />
+                      </div>
 
-                  <!-- Chọn nhanh phụ tùng trong kho -->
-                  <div class="mb-3">
-                    <v-select
-                      v-model="selectedPartQuick"
-                      :options="partsList"
-                      placeholder="Tìm nhanh phụ tùng trong kho để thêm vào bảng..."
-                      :searchable="true"
-                      :can-clear="true"
-                      @change="onSelectPartQuick"
-                    />
-                  </div>
-
-                  <!-- Bảng danh sách phụ tùng (cuộn bên trong khi có nhiều sản phẩm) -->
-                  <div class="table-responsive border rounded custom-scroll" style="max-height: 480px; overflow-y: auto;">
-                    <table class="table table-bordered table-sm mb-0 table-sticky-header">
-                      <thead class="table-light sticky-top">
-                        <tr>
-                          <th class="text-center text-uppercase bg-light" style="width: 7%">STT</th>
-                          <th class="text-uppercase bg-light" style="width: 38%">Tên Phụ Tùng</th>
-                          <th class="text-center text-uppercase bg-light" style="width: 12%">SL</th>
-                          <th class="text-uppercase bg-light" style="width: 23%">Đơn Giá</th>
-                          <th class="text-end text-uppercase bg-light" style="width: 20%">Thành Tiền</th>
-                        </tr>
-                      </thead>
+                      <!-- Bảng danh sách phụ tùng -->
+                      <div class="table-responsive border rounded custom-scroll flex-grow-1" style="max-height: 460px; overflow-y: auto;">
+                        <table class="table table-hover table-sm mb-0 tx-items-table">
+                          <thead class="sticky-top">
+                            <tr>
+                              <th class="text-center" style="width: 7%">STT</th>
+                              <th style="width: 38%">Tên Phụ Tùng &amp; Mã</th>
+                              <th class="text-center" style="width: 12%">SL</th>
+                              <th class="text-end" style="width: 23%">Đơn Giá (VNĐ)</th>
+                              <th class="text-end" style="width: 20%">Thành Tiền</th>
+                            </tr>
+                          </thead>
                       <tbody>
                         <tr v-for="(detail, idx) in createOrderForm.chi_tiet" :key="idx">
                           <td class="text-center align-middle">
@@ -1564,21 +1602,33 @@
                           <td class="align-middle">
                             <input 
                               type="text" 
-                              class="form-control form-control-sm border-0 p-0 fw-bold text-dark mb-1" 
-                              style="font-size: 0.85rem;" 
+                              class="form-control form-control-sm border-0 p-0 fw-bold mb-1" 
+                              style="font-size: 0.88rem; color: #1e293b;" 
                               placeholder="Tên phụ tùng *" 
                               v-model="detail.ten_phu_tung" 
                               required
                             />
-                            <div class="d-flex align-items-center">
-                              <span class="text-dark fw-medium me-1" style="font-size: 0.75rem;">Mã:</span>
-                              <input 
-                                type="text" 
-                                class="form-control form-control-sm border-0 p-0 text-muted" 
-                                style="font-size: 0.75rem;" 
-                                placeholder="Nhập mã phụ tùng..." 
-                                v-model="detail.ma_phu_tung" 
-                              />
+                            <div class="d-flex flex-wrap align-items-center gap-2">
+                              <div class="d-flex align-items-center flex-grow-1">
+                                <span class="text-muted me-1" style="font-size: 0.78rem;">Mã:</span>
+                                <input 
+                                  type="text" 
+                                  class="form-control form-control-sm border-0 p-0 font-monospace fw-bold text-primary" 
+                                  style="font-size: 0.78rem;" 
+                                  placeholder="Nhập mã phụ tùng..." 
+                                  v-model="detail.ma_phu_tung" 
+                                />
+                              </div>
+                              <div class="d-flex align-items-center flex-grow-1">
+                                <span class="text-muted me-1" style="font-size: 0.78rem;">Model:</span>
+                                <input 
+                                  type="text" 
+                                  class="form-control form-control-sm border-0 p-0 fw-semibold text-dark" 
+                                  style="font-size: 0.78rem;" 
+                                  placeholder="Model máy (tùy chọn)..." 
+                                  v-model="detail.model_may" 
+                                />
+                              </div>
                             </div>
                           </td>
                           <td class="text-center align-middle">
@@ -1617,106 +1667,86 @@
                             </div>
                           </td>
                         </tr>
-                      </tbody>
-                    </table>
+                        </tbody>
+                      </table>
+                    </div>
+                    </div>
                   </div>
                 </div>
 
-                <!-- Cột 3 (Phải): Tổng Hợp Chi Phí & Thanh Toán -->
-                <div class="col-lg-3 col-12 border-start ps-lg-3 pe-lg-3 d-flex flex-column justify-content-between">
-                  <div>
-                    <h6 class="fw-bold mb-3 text-uppercase text-primary" style="font-size: 0.75rem;">Tổng Hợp Chi Phí</h6>
-                    
-                    <!-- Tạm Tính -->
-                    <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
-                      <span class="text-dark fw-bold" style="font-size: 0.88rem;">Tạm Tính:</span>
-                      <span class="fw-bold text-dark fs-6">{{ formatCurrency(createFormSubtotal) }}</span>
+                <!-- Cột 3 (Phải): Card Tổng Hợp Chi Phí & Thanh Toán -->
+                <div class="col-lg-3 col-12">
+                  <div class="tx-card">
+                    <div class="tx-card-header">
+                      <span><i class="bx bx-receipt text-primary me-1 align-middle"></i> Tổng Hợp Chi Phí</span>
                     </div>
-
-                    <!-- Phí Vận Chuyển -->
-                    <div class="mb-3 pb-2 border-bottom">
-                      <div class="d-flex justify-content-between align-items-center mb-1">
-                        <label class="text-dark fw-bold mb-0" style="font-size: 0.88rem;">Phí Vận Chuyển:</label>
-                        <div style="width: 140px;">
-                          <input 
-                            type="number" 
-                            class="form-control form-control-sm text-end text-danger fw-bold" 
-                            :value="createOrderForm.phi_van_chuyen ? createOrderForm.phi_van_chuyen : ''" 
-                            @input="createOrderForm.phi_van_chuyen = $event.target.value === '' ? 0 : Number($event.target.value)" 
-                            min="0" 
-                            placeholder="0"
-                          />
+                    <div class="tx-card-body justify-content-between">
+                      <div>
+                        <!-- Tạm Tính -->
+                        <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
+                          <span class="text-dark fw-semibold" style="font-size: 0.88rem;">Tạm Tính</span>
+                          <span class="fw-bold text-dark fs-6">{{ formatCurrency(createFormSubtotal) }}</span>
                         </div>
-                      </div>
-                      <div class="text-end">
-                        <span class="text-danger fw-semibold" style="font-size: 0.75rem;">
-                          {{ formatCurrency(createOrderForm.phi_van_chuyen || 0) }}
-                        </span>
-                      </div>
-                    </div>
 
-                    <!-- Yêu Cầu Cọc -->
-                    <div class="mb-3 pb-2 border-bottom">
-                      <div class="d-flex justify-content-between align-items-center mb-1">
-                        <label class="text-dark fw-bold mb-0" style="font-size: 0.88rem;">Yêu Cầu Cọc:</label>
-                        <div style="width: 140px;">
-                          <input 
-                            type="number" 
-                            class="form-control form-control-sm text-end text-danger fw-bold" 
-                            :value="createOrderForm.tien_coc_yeu_cau ? createOrderForm.tien_coc_yeu_cau : ''" 
-                            @input="createOrderForm.tien_coc_yeu_cau = $event.target.value === '' ? 0 : Number($event.target.value)" 
-                            min="0" 
-                            placeholder="0"
-                          />
+                        <!-- Phí Vận Chuyển -->
+                        <div class="mb-3 pb-2 border-bottom">
+                          <div class="d-flex justify-content-between align-items-center mb-1 gap-2">
+                            <label class="text-dark fw-semibold mb-0 text-nowrap" style="font-size: 0.88rem;">Phí Vận Chuyển</label>
+                            <div style="width: 145px;">
+                              <input 
+                                type="number" 
+                                class="form-control form-control-sm text-end text-danger fw-bold" 
+                                :value="createOrderForm.phi_van_chuyen ? createOrderForm.phi_van_chuyen : ''" 
+                                @input="createOrderForm.phi_van_chuyen = $event.target.value === '' ? 0 : Number($event.target.value)" 
+                                min="0" 
+                                placeholder="0"
+                              />
+                            </div>
+                          </div>
+                          <div v-if="createOrderForm.phi_van_chuyen > 0" class="text-end">
+                            <span class="text-danger fw-semibold" style="font-size: 0.76rem;">
+                              {{ formatCurrency(createOrderForm.phi_van_chuyen) }}
+                            </span>
+                          </div>
                         </div>
-                      </div>
-                      <div class="text-end">
-                        <span class="text-danger fw-semibold" style="font-size: 0.75rem;">
-                          {{ formatCurrency(createOrderForm.tien_coc_yeu_cau || 0) }}
-                        </span>
-                      </div>
-                    </div>
 
-                    <!-- Đã Thu (Cọc / Trả trước) -->
-                    <div class="mb-3 pb-2 border-bottom">
-                      <div class="d-flex justify-content-between align-items-center mb-1">
-                        <label class="text-dark fw-bold mb-0" style="font-size: 0.88rem;">Đã Thu (Cọc / Trả trước):</label>
-                        <div style="width: 140px;">
-                          <input 
-                            type="number" 
-                            class="form-control form-control-sm text-end text-primary fw-bold" 
-                            :value="createOrderForm.da_thu ? createOrderForm.da_thu : ''" 
-                            @input="createOrderForm.da_thu = $event.target.value === '' ? 0 : Number($event.target.value)" 
-                            min="0" 
-                            placeholder="0"
-                          />
+                        <!-- Yêu Cầu Cọc -->
+                        <div class="mb-3 pb-2 border-bottom">
+                          <div class="d-flex justify-content-between align-items-center mb-1 gap-2">
+                            <label class="text-dark fw-semibold mb-0 text-nowrap" style="font-size: 0.88rem;">Yêu Cầu Cọc</label>
+                            <div style="width: 145px;">
+                              <input 
+                                type="number" 
+                                class="form-control form-control-sm text-end text-danger fw-bold" 
+                                :value="createOrderForm.tien_coc_yeu_cau ? createOrderForm.tien_coc_yeu_cau : ''" 
+                                @input="createOrderForm.tien_coc_yeu_cau = $event.target.value === '' ? 0 : Number($event.target.value)" 
+                                min="0" 
+                                placeholder="0"
+                              />
+                            </div>
+                          </div>
+                          <div v-if="createOrderForm.tien_coc_yeu_cau > 0" class="text-end">
+                            <span class="text-danger fw-semibold" style="font-size: 0.76rem;">
+                              {{ formatCurrency(createOrderForm.tien_coc_yeu_cau) }}
+                            </span>
+                          </div>
                         </div>
-                      </div>
-                      <div class="text-end">
-                        <span class="text-primary fw-semibold" style="font-size: 0.75rem;">
-                          {{ formatCurrency(createOrderForm.da_thu || 0) }}
-                        </span>
-                      </div>
-                    </div>
 
-                    <!-- KHU VỰC BIÊN LAI CHUYỂN TIỀN (1 ROW 2 PHẦN) -->
+                    <!-- KHU VỰC BIÊN LAI CHUYỂN TIỀN (2 CỘT: CỌC & THU COD) -->
                     <div class="mt-3 pt-2 border-top mb-3">
                       <input type="file" ref="createReceiptSlot1" class="d-none" accept="image/*,.jpg,.jpeg,.png,.webp,.gif,.svg,.bmp,.avif,.heic,.heif,.tiff,.tif,.ico,.jfif" @change="handleUploadCreateReceipt($event, 'anh_chuyen_khoan')">
                       <input type="file" ref="createReceiptSlot2" class="d-none" accept="image/*,.jpg,.jpeg,.png,.webp,.gif,.svg,.bmp,.avif,.heic,.heif,.tiff,.tif,.ico,.jfif" @change="handleUploadCreateReceipt($event, 'anh_chuyen_khoan_2')">
 
-                      <div class="mb-2">
-                        <label class="form-label fw-bold text-dark mb-0 text-uppercase" style="font-size: 0.75rem;">
-                          Biên Lai Chuyển Tiền
-                        </label>
-                      </div>
-
                       <div class="row g-2">
-                        <!-- Ảnh 1 -->
+                        <!-- Biên lai cọc -->
                         <div class="col-6">
+                          <div class="mb-1 fw-bold text-uppercase" style="font-size: 0.7rem; color: #334155;">
+                            Biên Lai Cọc
+                          </div>
                           <div 
                             class="d-flex flex-column justify-content-center align-items-center border rounded bg-light position-relative p-1" 
                             style="height: 105px; cursor: pointer;"
-                            :style="!createOrderForm.anh_chuyen_khoan ? 'border-style: dashed !important;' : ''"
+                            :style="!createOrderForm.anh_chuyen_khoan ? 'border-style: dashed !important; border-color: #94a3b8 !important;' : ''"
                             @click="!createOrderForm.anh_chuyen_khoan ? $refs.createReceiptSlot1.click() : null"
                             tabindex="0"
                             title="Nhấp để tải ảnh"
@@ -1724,7 +1754,7 @@
                             <template v-if="createOrderForm.anh_chuyen_khoan">
                               <img 
                                 :src="getImageUrl(createOrderForm.anh_chuyen_khoan)" 
-                                alt="Biên lai 1" 
+                                alt="Biên lai cọc" 
                                 class="rounded" 
                                 style="max-height: 95px; max-width: 100%; object-fit: contain;" 
                                 @click.stop="openReceiptViewer(createOrderForm.anh_chuyen_khoan)" 
@@ -1742,17 +1772,20 @@
                             </template>
                             <div v-else class="text-center text-muted">
                               <i class="bx bx-image-add fs-3 d-block text-secondary mb-1"></i>
-                              <span style="font-size: 0.68rem;">Ảnh 1</span>
+                              <span style="font-size: 0.68rem;">Biên lai cọc</span>
                             </div>
                           </div>
                         </div>
 
-                        <!-- Ảnh 2 -->
+                        <!-- Biên lai thu COD -->
                         <div class="col-6">
+                          <div class="mb-1 fw-bold text-uppercase" style="font-size: 0.7rem; color: #334155;">
+                            Biên Lai Thu COD
+                          </div>
                           <div 
                             class="d-flex flex-column justify-content-center align-items-center border rounded bg-light position-relative p-1" 
                             style="height: 105px; cursor: pointer;"
-                            :style="!createOrderForm.anh_chuyen_khoan_2 ? 'border-style: dashed !important;' : ''"
+                            :style="!createOrderForm.anh_chuyen_khoan_2 ? 'border-style: dashed !important; border-color: #94a3b8 !important;' : ''"
                             @click="!createOrderForm.anh_chuyen_khoan_2 ? $refs.createReceiptSlot2.click() : null"
                             tabindex="0"
                             title="Nhấp để tải ảnh"
@@ -1760,7 +1793,7 @@
                             <template v-if="createOrderForm.anh_chuyen_khoan_2">
                               <img 
                                 :src="getImageUrl(createOrderForm.anh_chuyen_khoan_2)" 
-                                alt="Biên lai 2" 
+                                alt="Biên lai thu COD" 
                                 class="rounded" 
                                 style="max-height: 95px; max-width: 100%; object-fit: contain;" 
                                 @click.stop="openReceiptViewer(createOrderForm.anh_chuyen_khoan_2)" 
@@ -1778,7 +1811,7 @@
                             </template>
                             <div v-else class="text-center text-muted">
                               <i class="bx bx-image-add fs-3 d-block text-secondary mb-1"></i>
-                              <span style="font-size: 0.68rem;">Ảnh 2</span>
+                              <span style="font-size: 0.68rem;">Biên lai thu COD</span>
                             </div>
                           </div>
                         </div>
@@ -1786,17 +1819,19 @@
                     </div>
                   </div>
 
-                  <!-- Cụm Tổng Cộng & Thu COD ở đáy -->
-                  <div class="mt-3 pt-2 bg-light p-3 rounded border">
-                    <div class="d-flex justify-content-between align-items-center mb-2">
-                      <span class="fw-bold text-dark" style="font-size: 0.9rem;">Tổng Cộng:</span>
-                      <span class="fw-bold text-danger fs-5">{{ formatCurrency(createFormGrandTotal) }}</span>
-                    </div>
-                    <div class="d-flex justify-content-between align-items-center pt-2 border-top">
-                      <span class="text-dark fw-bold" style="font-size: 0.9rem;">Thu COD:</span>
-                      <span class="fw-bold text-dark fs-5">
-                        {{ formatCurrency(createFormRemainingCod) }}
-                      </span>
+                      <!-- Cụm Tổng Cộng & Thu COD ở đáy -->
+                      <div class="tx-summary-box mt-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                          <span class="fw-bold text-dark" style="font-size: 0.9rem;">Tổng Cộng</span>
+                          <span class="fw-bold text-danger fs-5">{{ formatCurrency(createFormGrandTotal) }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center pt-2" style="border-top: 1px dashed #fca5a5;">
+                          <span class="text-dark fw-bold" style="font-size: 0.9rem;">Thu COD</span>
+                          <span class="fw-bold fs-5" style="color: #0f172a;">
+                            {{ formatCurrency(createFormRemainingCod) }}
+                          </span>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -1804,7 +1839,7 @@
             </div>
 
             <!-- Modal Footer -->
-            <div class="modal-footer border-top py-3 mt-2 bg-light d-flex justify-content-end align-items-center gap-2">
+            <div class="modal-footer bg-white border-top px-4 py-3 d-flex justify-content-end align-items-center gap-2">
               <button type="button" class="btn btn-outline-secondary px-4" data-bs-dismiss="modal">
                 Đóng
               </button>
@@ -1963,7 +1998,7 @@ export default {
         anh_chuyen_khoan: '',
         anh_chuyen_khoan_2: '',
         chi_tiet: [
-          { ten_phu_tung: '', ma_phu_tung: '', so_luong: 1, don_gia: 0 }
+          { ten_phu_tung: '', ma_phu_tung: '', model_may: '', so_luong: 1, don_gia: 0 }
         ]
       }
     };
@@ -2227,6 +2262,7 @@ export default {
             id: i.id,
             part_name: i.ten_phu_tung || '',
             part_code: i.ma_phu_tung || '',
+            model_may: i.model_may || '',
             qty: i.so_luong || 0,
             price: Number(i.don_gia || 0)
           }))
@@ -2262,6 +2298,7 @@ export default {
             id: i.id,
             part_name: i.ten_phu_tung || (i.phu_tung ? i.phu_tung.ten_phu_tung : (i.san_pham ? i.san_pham.ten_san_pham : 'Sản phẩm ID: ' + i.id_san_pham)),
             part_code: i.ma_phu_tung || (i.phu_tung ? i.phu_tung.ma_phu_tung : (i.san_pham ? i.san_pham.ma_san_pham : (i.loai_san_pham === 'phu_tung' ? 'PT-' + i.id_san_pham : 'SP-' + i.id_san_pham))),
+            model_may: i.model_may || '',
             qty: i.so_luong || 0,
             price: Number(i.don_gia || 0),
             in_stock: Number(i.phu_tung ? i.phu_tung.so_luong_ton : (i.san_pham ? i.san_pham.so_luong_ton : 0)) >= Number(i.so_luong || 0)
@@ -2309,7 +2346,7 @@ export default {
         anh_chuyen_khoan: '',
         anh_chuyen_khoan_2: '',
         chi_tiet: [
-          { ten_phu_tung: '', ma_phu_tung: '', so_luong: 1, don_gia: 0 }
+          { ten_phu_tung: '', ma_phu_tung: '', model_may: '', so_luong: 1, don_gia: 0 }
         ]
       };
     },
@@ -2364,11 +2401,13 @@ export default {
         if (lastItem && !lastItem.ten_phu_tung && !lastItem.ma_phu_tung) {
           lastItem.ten_phu_tung = found.part_name;
           lastItem.ma_phu_tung = found.part_code;
+          lastItem.model_may = '';
           lastItem.don_gia = found.price;
         } else {
           this.createOrderForm.chi_tiet.push({
             ten_phu_tung: found.part_name,
             ma_phu_tung: found.part_code,
+            model_may: '',
             so_luong: 1,
             don_gia: found.price
           });
@@ -2382,13 +2421,14 @@ export default {
       this.createOrderForm.chi_tiet.push({
         ten_phu_tung: '',
         ma_phu_tung: '',
+        model_may: '',
         so_luong: 1,
         don_gia: 0
       });
     },
     removeCreateOrderItem(index) {
       if (this.createOrderForm.chi_tiet.length <= 1) {
-        this.createOrderForm.chi_tiet = [{ ten_phu_tung: '', ma_phu_tung: '', so_luong: 1, don_gia: 0 }];
+        this.createOrderForm.chi_tiet = [{ ten_phu_tung: '', ma_phu_tung: '', model_may: '', so_luong: 1, don_gia: 0 }];
       } else {
         this.createOrderForm.chi_tiet.splice(index, 1);
       }
@@ -2406,11 +2446,8 @@ export default {
 
       let uploadFile = file;
       try {
-        const { file: optimizedFile, originalSize, compressedSize, savedPercent } = await compressReceipt(file);
+        const { file: optimizedFile } = await compressReceipt(file);
         uploadFile = optimizedFile;
-        if (this.toaster && savedPercent > 10) {
-          this.toaster.info(`Đã tối ưu ảnh biên lai: ${formatBytes(originalSize)} → ${formatBytes(compressedSize)} (giảm ${savedPercent}%)`);
-        }
       } catch (compErr) {
         console.warn('Lỗi nén biên lai, dùng file gốc:', compErr);
       }
@@ -2450,7 +2487,12 @@ export default {
       }
 
       let targetStatus = 0;
-      if (actionType === 'deposit' || Number(this.createOrderForm.da_thu) > 0) {
+      const depRequired = Number(this.createOrderForm.tien_coc_yeu_cau) || 0;
+      let daThuValue = Number(this.createOrderForm.da_thu) || 0;
+      if (actionType === 'deposit') {
+        targetStatus = 2; // Đã Cọc & Xử Lý
+        daThuValue = depRequired > 0 ? depRequired : this.createFormGrandTotal;
+      } else if (Number(this.createOrderForm.da_thu) > 0) {
         targetStatus = 2; // Đã Cọc & Xử Lý
       } else if (actionType === 'quoted') {
         targetStatus = 1; // Đã Báo Giá
@@ -2466,14 +2508,15 @@ export default {
         ten_don_vi_van_chuyen: this.createOrderForm.ten_don_vi_van_chuyen?.trim() || null,
         ma_van_don: this.createOrderForm.ma_van_don?.trim() || null,
         phi_van_chuyen: Number(this.createOrderForm.phi_van_chuyen) || 0,
-        tien_coc_yeu_cau: Number(this.createOrderForm.tien_coc_yeu_cau) || 0,
-        da_thu: Number(this.createOrderForm.da_thu) || 0,
+        tien_coc_yeu_cau: depRequired,
+        da_thu: daThuValue,
         anh_chuyen_khoan: this.createOrderForm.anh_chuyen_khoan || null,
         anh_chuyen_khoan_2: this.createOrderForm.anh_chuyen_khoan_2 || null,
         trang_thai: targetStatus,
         chi_tiet: validItems.map(item => ({
           ten_phu_tung: item.ten_phu_tung.trim(),
           ma_phu_tung: item.ma_phu_tung?.trim() || 'N/A',
+          model_may: item.model_may?.trim() || null,
           so_luong: Number(item.so_luong) || 1,
           don_gia: Number(item.don_gia) || 0
         }))
@@ -2853,7 +2896,6 @@ export default {
       }
 
       this.selectedQuote.total_amount = itemsTotal + (this.selectedQuote.freight_collect ? 0 : (this.selectedQuote.shipping_fee || 0));
-      this.selectedQuote.status = 1; // Chuyển sang Đã Báo Giá
 
       try {
         const payload = {
@@ -2873,15 +2915,13 @@ export default {
             chi_tiet: this.selectedQuote.items
         };
         await this.saveQuoteMutation.mutateAsync({ id: this.selectedQuote.id, payload });
+        this.selectedQuote.status = 1; // Chuyển sang Đã Báo Giá
         this.closeModal('quoteModal');
 
         // Chuyển tab sang "Đã Báo Giá"
         this.currentTab = 'quoted_quotes';
 
-        // Mở Zalo gửi khách
-        this.quickOpenZalo(this.selectedQuote);
-
-        this.toaster.success('Đã chuyển sang tab "Đã Báo Giá" và mở Zalo gửi khách!');
+        this.toaster.success('Báo giá thành công!');
       } catch (error) {
         console.error("Lỗi gửi báo giá:", error);
         const msg = error?.response?.data?.message || 'Lỗi khi báo giá cho khách!';
@@ -3024,6 +3064,33 @@ export default {
           }
         } catch (err) {
           this.toaster.error(err?.response?.data?.message || 'Không thể xác nhận cọc.');
+        }
+      }
+    },
+
+    toggleDepositCollected(mode) {
+      if (mode === 'quote' && this.selectedQuote) {
+        if (Number(this.selectedQuote.da_thu || 0) > 0) {
+          this.selectedQuote.da_thu = 0;
+        } else {
+          const dep = Number(this.selectedQuote.deposit_required || 0);
+          const total = this.calculateTotal(this.selectedQuote.items) + (this.selectedQuote.freight_collect ? 0 : (this.selectedQuote.shipping_fee || 0));
+          this.selectedQuote.da_thu = dep > 0 ? dep : total;
+        }
+      } else if (mode === 'order' && this.selectedOrder) {
+        if (Number(this.selectedOrder.paid_amount || 0) > 0) {
+          this.selectedOrder.paid_amount = 0;
+        } else {
+          const dep = Number(this.selectedOrder.deposit_required || 0);
+          const total = this.calculateTotal(this.selectedOrder.items) + (this.selectedOrder.freight_collect ? 0 : (this.selectedOrder.shipping_fee || 0));
+          this.selectedOrder.paid_amount = dep > 0 ? dep : total;
+        }
+      } else if (mode === 'create' && this.createOrderForm) {
+        if (Number(this.createOrderForm.da_thu || 0) > 0) {
+          this.createOrderForm.da_thu = 0;
+        } else {
+          const dep = Number(this.createOrderForm.tien_coc_yeu_cau || 0);
+          this.createOrderForm.da_thu = dep > 0 ? dep : this.createFormGrandTotal;
         }
       }
     },
@@ -3310,11 +3377,8 @@ export default {
       try {
         let uploadFile = file;
         try {
-          const { file: optimizedFile, originalSize, compressedSize, savedPercent } = await compressReceipt(file);
+          const { file: optimizedFile } = await compressReceipt(file);
           uploadFile = optimizedFile;
-          if (this.toaster && savedPercent > 10) {
-            this.toaster.info(`Đã tối ưu ảnh biên lai: ${formatBytes(originalSize)} → ${formatBytes(compressedSize)} (giảm ${savedPercent}%)`);
-          }
         } catch (compErr) {
           console.warn('Lỗi nén biên lai, dùng file gốc:', compErr);
         }
@@ -3432,6 +3496,121 @@ input[type=number] {
   z-index: 2;
   background-color: #f5f5f9 !important;
   box-shadow: inset 0 -1px 0 #d9dee3;
+}
+
+/* ==========================================================================
+   ENTERPRISE TRANSACTION MODALS (#quoteModal, #orderModal, #createOrderModal)
+   Nền canvas xám nhẹ tách biệt 3 Card trắng, viền input sắc nét, chỉ đọc vs nhập liệu rõ ràng
+   ========================================================================== */
+.tx-modal-body {
+  background-color: #f1f4f9;
+  padding: 1.15rem 1.35rem;
+}
+
+.tx-card {
+  background-color: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.tx-card-header {
+  background-color: #f8fafc;
+  border-bottom: 1px solid #cbd5e1;
+  padding: 0.68rem 1rem;
+  font-size: 0.76rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #334155;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+
+.tx-card-body {
+  padding: 1rem;
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Viền input / textarea rõ nét hẳn trên nền Card trắng */
+.tx-modal .form-control,
+.tx-modal .multiselect {
+  border: 1.5px solid #94a3b8 !important;
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+  font-weight: 500;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.tx-modal .form-control::placeholder {
+  color: #94a3b8 !important;
+  font-weight: 400;
+}
+
+.tx-modal .form-control:hover:not(:disabled):not([readonly]) {
+  border-color: #475569 !important;
+}
+
+.tx-modal .form-control:focus {
+  border-color: #17a2b8 !important;
+  box-shadow: 0 0 0 3px rgba(23, 162, 184, 0.16) !important;
+}
+
+.tx-modal .form-control:disabled {
+  background-color: #f1f5f9 !important;
+  border-color: #cbd5e1 !important;
+  color: #64748b !important;
+  cursor: not-allowed;
+}
+
+/* Khối Ghi Chú Khách Hàng (Chỉ đọc) tách biệt hoàn toàn với ô textarea nhập liệu */
+.tx-readonly-note {
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.375rem;
+  padding: 0.7rem 0.85rem;
+  color: #1e293b;
+  font-size: 0.85rem;
+  white-space: pre-wrap;
+  line-height: 1.55;
+}
+
+
+.tx-items-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background-color: #f1f5f9 !important;
+  color: #334155 !important;
+  font-size: 0.74rem !important;
+  font-weight: 700 !important;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 0.65rem 0.75rem !important;
+  border-bottom: 1.5px solid #cbd5e1 !important;
+}
+
+.tx-items-table tbody td {
+  padding: 0.72rem 0.75rem !important;
+  border-bottom: 1px solid #e2e8f0;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Khối Tổng Cộng nổi bật, sắc nét */
+.tx-summary-box {
+  background-color: #fff5f5;
+  border: 1.5px solid #fecaca;
+  border-radius: 0.5rem;
+  padding: 0.85rem 1rem;
+  font-variant-numeric: tabular-nums;
 }
 /* Ẩn placeholder khi focus để con trỏ chuột không đè lên số 0 */
 input:focus::placeholder,

@@ -36,11 +36,11 @@ return [
     ],
 
     'vietqr' => [
-        'bank_id' => env('VIETQR_BANK_ID', 'ICB'), // Mã ngân hàng Napas (ICB: Vietinbank, VCB: Vietcombank, MB: MBBank)
-        'bank_name' => env('VIETQR_BANK_NAME', 'VietinBank'),
-        'account_no' => env('VIETQR_ACCOUNT_NO', '108876543210'),
-        'account_name' => env('VIETQR_ACCOUNT_NAME', 'CONG TY PHU TUNG MAY THUY JPM'),
-        'template' => env('VIETQR_TEMPLATE', 'compact2'), // compact, compact2, qr_only, print
+        'bank_id' => env('VIETQR_BANK_ID', 'STB'), // Mã ngân hàng Napas (STB: Sacombank, ICB: Vietinbank, VCB: Vietcombank, MB: MBBank)
+        'bank_name' => env('VIETQR_BANK_NAME', 'Sacombank'),
+        'account_no' => env('VIETQR_ACCOUNT_NO', '0357993134'),
+        'account_name' => env('VIETQR_ACCOUNT_NAME', 'NGUYEN THANH VIET'),
+        'template' => env('VIETQR_TEMPLATE', 'compact'), // compact, compact2, qr_only, print
     ],
 
     'sepay' => [

@@ -128,6 +128,7 @@ class HistoryController extends Controller
                     'loai_san_pham' => $detail->loai_san_pham ?? 'phu_tung',
                     'ten_san_pham'  => $tenSanPham,
                     'ma_phu_tung'   => $maPhuTung,
+                    'model_may'     => $detail->model_may ?? null,
                     'hinh_anh'      => $hinhAnh,
                     'slug'          => $slug,
                     'so_luong'      => $detail->so_luong,

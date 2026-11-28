@@ -415,12 +415,9 @@ export default {
       const file = event.target.files[0];
       if (file) {
         try {
-          const { file: optimizedFile, previewUrl, originalSize, compressedSize, savedPercent } = await compressProductImage(file);
+          const { file: optimizedFile, previewUrl } = await compressProductImage(file);
           this.mainImageFile = optimizedFile;
           this.mainImagePreview = previewUrl;
-          if (this.toaster && savedPercent > 10) {
-            this.toaster.info(`Đã nén tối ưu ảnh: ${formatBytes(originalSize)} → ${formatBytes(compressedSize)} (giảm ${savedPercent}%)`);
-          }
         } catch (err) {
           console.warn('Lỗi nén ảnh, sử dụng ảnh gốc:', err);
           this.mainImageFile = file;

@@ -488,9 +488,22 @@ const diagramsList = computed(() => {
 const toaster = createToaster({ position: "top-right" });
 const cartStore = useCartStore();
 
+const diagramModelLabel = computed(() => {
+  const model = String(modelName.value || '').trim();
+  const brand = String(brandName.value || '').trim();
+  if (!model) return brand || '';
+  if (brand && !model.toUpperCase().startsWith(brand.toUpperCase())) {
+    return `${brand} ${model}`;
+  }
+  return model;
+});
+
 const addToCart = (part) => {
   if (!part.phu_tung) return;
-  cartStore.addItem(part.phu_tung, 1);
+  cartStore.addItem({
+    ...part.phu_tung,
+    model_may: diagramModelLabel.value || null
+  }, 1);
   toaster.success("Đã thêm phụ tùng vào giỏ hàng");
 };
 
@@ -499,7 +512,10 @@ const addAllSelectedToCart = () => {
   let count = 0;
   partsToAdd.forEach(part => {
     if (part.phu_tung) {
-      cartStore.addItem(part.phu_tung, 1);
+      cartStore.addItem({
+        ...part.phu_tung,
+        model_may: diagramModelLabel.value || null
+      }, 1);
       count++;
     }
   });

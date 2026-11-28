@@ -338,6 +338,8 @@ class DonHangController extends Controller
                     $partName = $item->ten_phu_tung ?? ($item->phuTung->ten_phu_tung ?? $item->sanPham->ten_san_pham ?? 'Không rõ');
                     $brand = $item->phuTung->thuongHieu->ten_thuong_hieu ?? 'Yamaha / Yanmar / Mercury';
 
+                    $engineModelNote = trim(($item->model_may ? '[Model: ' . $item->model_may . '] ' : '') . ($order->ghi_chu_khach_hang ?? 'Theo tiêu chuẩn nhà sản xuất'));
+
                     fputcsv($output, [
                         $stt++,
                         $sanitizeCsv($order->ma_don_hang),
@@ -345,7 +347,7 @@ class DonHangController extends Controller
                         $sanitizeCsv($partName),
                         (int) $item->so_luong,
                         $sanitizeCsv($brand),
-                        $sanitizeCsv($order->ghi_chu_khach_hang ?? 'Theo tiêu chuẩn nhà sản xuất'),
+                        $sanitizeCsv($engineModelNote),
                         $sanitizeCsv($order->khach_hang_ten),
                         $order->created_at ? $order->created_at->format('Y-m-d H:i') : ''
                     ]);

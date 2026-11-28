@@ -502,7 +502,7 @@ export default {
       if (file) {
         try {
           // Nén WebP chất lượng cao (2000px, 88%) dành riêng cho bản vẽ sơ đồ rã máy
-          const { file: optimizedFile, previewUrl, originalSize, compressedSize, savedPercent } = await compressImage(file, {
+          const { file: optimizedFile, previewUrl } = await compressImage(file, {
             maxWidth: 2000,
             maxHeight: 2000,
             quality: 0.88,
@@ -510,9 +510,6 @@ export default {
           });
           this.imageFile = optimizedFile;
           this.formData.hinh_anh = previewUrl;
-          if (this.toaster && savedPercent > 10) {
-            this.toaster.info(`Đã tối ưu sơ đồ: ${formatBytes(originalSize)} → ${formatBytes(compressedSize)} (giảm ${savedPercent}%)`);
-          }
         } catch (err) {
           console.warn('Lỗi nén sơ đồ, dùng ảnh gốc:', err);
           this.imageFile = file;

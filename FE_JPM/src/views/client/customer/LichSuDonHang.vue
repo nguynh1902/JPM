@@ -159,6 +159,10 @@
                   </span>
                 </template>
               </div>
+              <div v-if="getItemProducts(order)[0]?.model_may" class="lux-item-model">
+                <span class="lux-model-label">Model:</span>
+                <span class="lux-model-val">{{ getItemProducts(order)[0].model_may }}</span>
+              </div>
             </div>
 
             <div class="lux-item-price">
@@ -187,7 +191,13 @@
           </div>
           <div v-else class="qr-inner">
             <div class="text-center qr-img-col">
-              <img :src="vietQrData.qr_url" alt="VietQR" class="img-fluid rounded border p-1 bg-white" style="max-width: 175px;">
+              <div class="d-inline-block rounded border p-2 bg-white">
+                <img :src="vietQrData.qr_url" alt="VietQR" class="img-fluid" style="max-width: 175px;">
+                <div v-if="vietQrData.account_name || vietQrData.account_no" class="mt-1 lh-sm">
+                  <div class="fw-bold text-dark" style="font-size: 0.74rem;">{{ vietQrData.account_name }}</div>
+                  <div class="font-monospace fw-semibold text-secondary" style="font-size: 0.75rem;">{{ vietQrData.account_no }}</div>
+                </div>
+              </div>
               <div class="mt-2 text-muted small d-flex align-items-center justify-content-center gap-1">
                 <span class="spinner-grow spinner-grow-sm text-danger"></span>
                 <span>Đang chờ chuyển khoản...</span>
@@ -497,6 +507,10 @@
                           <span class="lux-meta-divider" aria-hidden="true">|</span>
                           <span class="lux-sub-label">SL:</span>
                           <strong class="lux-sub-qty">{{ prod.qty }}</strong>
+                        </div>
+                        <div v-if="prod.model_may" class="lux-item-model">
+                          <span class="lux-model-label">Model:</span>
+                          <span class="lux-model-val">{{ prod.model_may }}</span>
                         </div>
                       </div>
                     </div>
@@ -897,6 +911,7 @@ const getItemProducts = (order) => {
     loai_san_pham: p.loai_san_pham || (p.slug || p.san_pham?.slug ? 'san_pham' : 'phu_tung'),
     name: p.ten_phu_tung || p.ten_san_pham || 'Phụ tùng tàu thuyền',
     code: p.ma_phu_tung || p.ma_san_pham || '',
+    model_may: p.model_may || '',
     slug: p.slug || p.san_pham?.slug || '',
     image: p.hinh_anh || p.hinh_anh_chinh || p.san_pham?.hinh_anh_chinh || p.san_pham?.hinh_anh || null,
     qty: p.so_luong || 1,
@@ -1038,6 +1053,7 @@ const handleAddSelectedToCart = () => {
       loai_san_pham: prod.loai_san_pham || 'phu_tung',
       slug: prod.slug || null,
       ma_phu_tung: prod.code,
+      model_may: prod.model_may || null,
       ten_phu_tung: prod.name,
       hinh_anh: prod.image,
       gia_ban: prod.price > 0 ? prod.price : 0,
@@ -1069,6 +1085,7 @@ const handleAddToCart = (prod) => {
     loai_san_pham: prod.loai_san_pham || 'phu_tung',
     slug: prod.slug || null,
     ma_phu_tung: prod.code,
+    model_may: prod.model_may || null,
     ten_phu_tung: prod.name,
     hinh_anh: prod.image,
     gia_ban: prod.price > 0 ? prod.price : 0,
@@ -1087,6 +1104,7 @@ const handleReorderAll = (order) => {
       loai_san_pham: prod.loai_san_pham || 'phu_tung',
       slug: prod.slug || null,
       ma_phu_tung: prod.code,
+      model_may: prod.model_may || null,
       ten_phu_tung: prod.name,
       hinh_anh: prod.image,
       gia_ban: prod.price > 0 ? prod.price : 0,
@@ -1486,12 +1504,29 @@ const formatDate = (dateStr) => {
 
 /* Mã sản phẩm chữ xanh đồng bộ 100% với ProductCard, VatTuThuongMua, GarageChiTietMay */
 .lux-sku-code {
-  font-family: var(--default-font, 'Inter', sans-serif);
+  font-family: 'Roboto Mono', monospace;
   font-variant-numeric: tabular-nums;
   color: var(--jpm-color-blue-electric, #0284C7);
-  font-size: 0.875rem;
+  font-size: 0.8125rem;
   font-weight: 700;
   letter-spacing: 0.1px;
+}
+
+.lux-item-model {
+  font-size: 0.74rem;
+  line-height: 1.35;
+  margin-top: 2px;
+}
+
+.lux-model-label {
+  color: #94a3b8;
+  font-weight: 400;
+  margin-right: 4px;
+}
+
+.lux-model-val {
+  color: #64748b;
+  font-weight: 500;
 }
 
 .lux-sub-qty {

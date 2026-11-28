@@ -5653,6 +5653,13 @@ a.btn-shopee-outline:hover {
   box-shadow: 0 4px 24px -6px rgba(10, 17, 40, 0.06);
 }
 
+/* Ngăn rule section toàn cục (padding: 60px 0; background-color: #F8FAFC) tràn vào bên trong chứng từ */
+.lux-doc-sheet section {
+  padding: 0;
+  background-color: transparent;
+  scroll-margin-top: 0;
+}
+
 .lux-doc-header {
   display: flex;
   align-items: flex-start;
@@ -5699,13 +5706,13 @@ a.btn-shopee-outline:hover {
 
 .lux-status-indicator.status-quoted,
 .lux-status-indicator.status-stage-2 {
-  background: #fef2f2;
-  border-color: #fecdd3;
-  color: #be123c;
+  background: #eff6ff;
+  border-color: #bfdbfe;
+  color: #0369a1;
 }
 .lux-status-indicator.status-quoted .status-dot,
 .lux-status-indicator.status-stage-2 .status-dot {
-  background: var(--jpm-color-red-marine, #F82249);
+  background: #0284c7;
 }
 
 .lux-status-indicator.status-processing,
@@ -5830,7 +5837,7 @@ a.btn-shopee-outline:hover {
 .lux-callout.callout-expired .lux-callout-icon,
 .lux-callout.callout-danger .lux-callout-icon { color: var(--jpm-color-red-marine, #F82249); }
 
-.lux-callout-body strong {
+.lux-callout-body > strong:first-child {
   display: block;
   font-size: 0.9rem;
   font-weight: 600;
@@ -5887,28 +5894,53 @@ a.btn-shopee-outline:hover {
 .lux-parts-table .col-stt { width: 44px; padding-left: 4px; }
 .lux-parts-table .col-qty { width: 64px; }
 .lux-parts-table .col-price,
-.lux-parts-table .col-total { width: 145px; white-space: nowrap; }
-.lux-parts-table .col-total { padding-right: 4px; }
+.lux-parts-table .col-total { width: 155px; white-space: nowrap; }
+.lux-parts-table .col-total { padding-right: 12px; }
 
 .lux-part-name {
   font-weight: 600;
-  color: #0A1128;
+  font-size: 0.9rem;
+  color: #0f172a;
   line-height: 1.4;
 }
 
 .lux-part-oem {
-  font-size: 0.78rem;
+  font-size: 0.8rem;
   color: #64748b;
   margin-top: 3px;
+  line-height: 1.35;
+}
+
+.lux-part-oem .lux-part-code {
+  font-family: 'Roboto Mono', monospace;
+  font-weight: 700;
+  color: var(--jpm-color-blue-electric, #0284c7);
+}
+
+.lux-part-model {
+  font-size: 0.74rem;
+  line-height: 1.35;
+  margin-top: 2px;
+}
+
+.lux-part-model-label {
+  color: #94a3b8;
+  font-weight: 400;
+  margin-right: 4px;
+}
+
+.lux-part-model-val {
+  color: #64748b;
+  font-weight: 500;
 }
 
 .lux-part-oem code {
   font-family: 'Roboto Mono', monospace;
-  font-size: 0.76rem;
-  color: #334155;
-  background: #f1f5f9;
-  padding: 2px 7px;
-  border-radius: var(--jpm-radius-badge, 6px);
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--jpm-color-blue-electric, #0284c7);
+  background: transparent;
+  padding: 0;
 }
 
 .lux-num { font-variant-numeric: tabular-nums; }
