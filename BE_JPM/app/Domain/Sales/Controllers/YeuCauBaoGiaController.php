@@ -165,7 +165,17 @@ class YeuCauBaoGiaController extends Controller
                         $pt = \App\Domain\PIM\Models\PhuTung::where('ma_phu_tung', $ct->ma_phu_tung)->first();
                         if ($pt) {
                             $idSanPham = $pt->id;
+                            $loaiSanPham = 'phu_tung';
+                        } else {
+                            $sp = \App\Domain\CMS\Models\SanPham::where('ma_san_pham', $ct->ma_phu_tung)->first();
+                            if ($sp) {
+                                $idSanPham = $sp->id;
+                                $loaiSanPham = 'san_pham';
+                            }
                         }
+                    }
+                    if (!$idSanPham) {
+                        $loaiSanPham = 'custom';
                     }
 
                     ChiTietDonHang::create([
@@ -485,6 +495,45 @@ class YeuCauBaoGiaController extends Controller
             $freightCollect = (bool) $request->input('freight_collect', $request->input('khach_tu_tra_cuoc', $quote->khach_tu_tra_cuoc));
             $shippingFee = $freightCollect ? 0 : max(0, (float) $request->input('shipping_fee', $request->input('phi_van_chuyen', $quote->phi_van_chuyen)));
             $depositRequired = (float) $request->input('deposit_required', $request->input('tien_coc_yeu_cau', $quote->tien_coc_yeu_cau));
+            $requestedStatus = (int) $request->input('trang_thai', $quote->trang_thai);
+
+            if ((int) $quote->trang_thai >= 1 && $requestedStatus !== 3) {
+                $existingItems = $quote->chiTiet->keyBy('id');
+                $itemsChanged = false;
+                if ($request->has('chi_tiet') && is_array($request->input('chi_tiet'))) {
+                    foreach ($request->input('chi_tiet') as $item) {
+                        $itemId = $item['id'] ?? null;
+                        $existing = $itemId ? $existingItems->get($itemId) : null;
+                        if (!$existing) {
+                            $itemsChanged = true;
+                            break;
+                        }
+                        $reqQty = max(1, (int) ($item['qty'] ?? $item['so_luong'] ?? $existing->so_luong));
+                        $reqPrice = max(0, (float) ($item['price'] ?? $item['don_gia'] ?? $existing->don_gia));
+                        if ($reqQty !== (int) $existing->so_luong || abs($reqPrice - (float) $existing->don_gia) > 0.01) {
+                            $itemsChanged = true;
+                            break;
+                        }
+                    }
+                }
+
+                $shippingChanged = $request->hasAny(['shipping_fee', 'phi_van_chuyen'])
+                    && abs($shippingFee - (float) $quote->phi_van_chuyen) > 0.01;
+                $freightChanged = $request->hasAny(['freight_collect', 'khach_tu_tra_cuoc'])
+                    && ($freightCollect !== (bool) $quote->khach_tu_tra_cuoc);
+                $depositChanged = $request->hasAny(['deposit_required', 'tien_coc_yeu_cau'])
+                    && abs($depositRequired - (float) $quote->tien_coc_yeu_cau) > 0.01;
+                $totalChanged = $request->has('tong_tien')
+                    && abs((float) $request->input('tong_tien') - (float) $quote->tong_tien) > 0.01;
+
+                if ($itemsChanged || $shippingChanged || $freightChanged || $depositChanged || $totalChanged) {
+                    DB::rollBack();
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Báo giá đã phát hành cho khách, không thể chỉnh sửa đơn giá, phí vận chuyển hoặc tiền cọc.'
+                    ], 422);
+                }
+            }
 
             if ($depositRequired < 0) {
                 DB::rollBack();

@@ -7,7 +7,7 @@
       style="z-index: 1065;"
       @click.self="handleClose"
     >
-      <div class="modal-dialog modal-dialog-centered" style="max-width: 470px;">
+      <div class="modal-dialog" style="max-width: 470px; margin: clamp(44px, 9vh, 96px) auto 1.5rem;">
         <div class="modal-content border-0 shadow-lg" style="border-radius: 14px; overflow: hidden;">
           <div class="modal-header bg-white border-bottom px-4 py-3">
             <div>

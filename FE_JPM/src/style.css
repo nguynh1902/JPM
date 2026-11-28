@@ -129,13 +129,144 @@ body.layout-admin .form-control[type="file"]:focus::-webkit-file-upload-button {
 }
 
 /* Fix SweetAlert2 z-index for Sneat template */
+div:where(.swal2-container),
 .swal2-container {
     z-index: 1105 !important;
 }
 
-/* Shift SweetAlert modal up slightly */
+/* Position ALL SweetAlert2 modal dialogs slightly above vertical center (both Admin & Client) */
+div:where(.swal2-container).swal2-center:not(.swal2-top):not(.swal2-top-end):not(.swal2-bottom) {
+    align-items: start !important;
+    padding-top: 0 !important;
+}
+
+div:where(.swal2-container).swal2-center > .swal2-popup:not(.swal2-toast) {
+    place-self: start center !important;
+    margin-top: clamp(38px, 7vh, 74px) !important;
+    margin-bottom: auto !important;
+}
+
 .swal-shift-up {
-    margin-top: -10vh !important;
+    margin-top: clamp(38px, 7vh, 74px) !important;
+}
+
+/* Uniform button layout & spacing in SweetAlert2 across Admin & Client */
+div:where(.swal2-container) .swal2-popup:not(.swal2-toast) .swal2-actions {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 10px !important;
+    margin-top: 1.35rem !important;
+    width: 100% !important;
+}
+
+div:where(.swal2-container) .swal2-popup:not(.swal2-toast) .swal2-actions .btn,
+div:where(.swal2-container) .swal2-popup:not(.swal2-toast) .swal2-actions .swal2-styled {
+    margin: 0 !important;
+}
+
+/* ========================================================================= */
+/* JPM ADMIN THEME CHO SWEETALERT2 (ĐỒNG BỘ SNEAT & MÀU THƯƠNG HIỆU ADMIN)   */
+/* ========================================================================= */
+body.layout-admin .swal2-container.swal2-backdrop-show {
+    background: rgba(15, 23, 42, 0.48) !important;
+}
+
+body.layout-admin .swal2-popup:not(.swal2-toast) {
+    width: 440px !important;
+    max-width: calc(100vw - 32px) !important;
+    padding: 1.75rem 1.75rem 1.5rem !important;
+    border-radius: 0.75rem !important;
+    border: 1px solid #cbd5e1 !important;
+    background: #ffffff !important;
+    color: #0f172a !important;
+    box-shadow: 0 20px 50px -12px rgba(15, 23, 42, 0.25), 0 4px 14px rgba(15, 23, 42, 0.08) !important;
+}
+
+body.layout-admin .swal2-popup:not(.swal2-toast) .swal2-icon {
+    transform: scale(0.76);
+    margin: 0 auto 8px !important;
+}
+
+body.layout-admin .swal2-popup:not(.swal2-toast) .swal2-icon.swal2-question,
+body.layout-admin .swal2-popup:not(.swal2-toast) .swal2-icon.swal2-info {
+    border-color: rgba(23, 162, 184, 0.3) !important;
+    color: #17a2b8 !important;
+}
+
+body.layout-admin .swal2-popup:not(.swal2-toast) .swal2-icon.swal2-warning {
+    border-color: rgba(255, 171, 0, 0.4) !important;
+    color: #f59e0b !important;
+}
+
+body.layout-admin .swal2-popup:not(.swal2-toast) .swal2-icon.swal2-error {
+    border-color: rgba(248, 34, 73, 0.3) !important;
+    color: #f82249 !important;
+}
+
+body.layout-admin .swal2-popup:not(.swal2-toast) .swal2-icon.swal2-error [class^="swal2-x-mark-line"] {
+    background-color: #f82249 !important;
+}
+
+body.layout-admin .swal2-popup:not(.swal2-toast) .swal2-title {
+    font-size: 1.18rem !important;
+    font-weight: 700 !important;
+    color: #0f172a !important;
+    padding: 0 0 6px !important;
+    line-height: 1.35 !important;
+}
+
+body.layout-admin .swal2-popup:not(.swal2-toast) .swal2-html-container {
+    font-size: 0.88rem !important;
+    line-height: 1.58 !important;
+    color: #475569 !important;
+    margin: 4px 0 0 !important;
+    padding: 0 !important;
+}
+
+body.layout-admin .swal2-popup:not(.swal2-toast) .swal2-actions .btn,
+body.layout-admin .swal2-popup:not(.swal2-toast) .swal2-actions .swal2-styled {
+    height: 38px !important;
+    min-height: 38px !important;
+    padding: 0 18px !important;
+    border-radius: 0.375rem !important;
+    font-size: 0.875rem !important;
+    font-weight: 600 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    box-shadow: none !important;
+    transition: all 0.15s ease !important;
+}
+
+body.layout-admin .swal2-popup:not(.swal2-toast) .swal2-actions .swal2-styled[style*="display: none"],
+body.layout-admin .swal2-popup:not(.swal2-toast) .swal2-actions .swal2-styled[style*="display:none"],
+body.layout-admin .swal2-popup:not(.swal2-toast) .swal2-actions .swal2-deny:not(.swal2-deny-shown) {
+    display: none !important;
+}
+
+body.layout-admin .swal2-popup:not(.swal2-toast) .swal2-styled.swal2-confirm {
+    background-color: #17a2b8 !important;
+    border: 1px solid #17a2b8 !important;
+    color: #ffffff !important;
+}
+
+body.layout-admin .swal2-popup:not(.swal2-toast) .swal2-styled.swal2-confirm:hover {
+    background-color: #138496 !important;
+    border-color: #138496 !important;
+}
+
+body.layout-admin .swal2-popup:not(.swal2-toast) .swal2-styled.swal2-cancel {
+    background-color: #ffffff !important;
+    border: 1px solid #cbd5e1 !important;
+    color: #475569 !important;
+}
+
+body.layout-admin .swal2-popup:not(.swal2-toast) .swal2-styled.swal2-cancel:hover {
+    background-color: #f8fafc !important;
+    border-color: #94a3b8 !important;
+    color: #0f172a !important;
 }
 
 /* ========================================================================= */

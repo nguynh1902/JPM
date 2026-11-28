@@ -924,7 +924,7 @@ export default {
           title: 'Xác nhận xóa',
           html: `Bạn có chắc chắn muốn xóa phụ tùng <b>"${item.ten_phu_tung}"</b>?<br><br><small class="text-danger">CẢNH BÁO: Liên kết đơn hàng sẽ bị ảnh hưởng.</small>`, 
           icon: 'warning',
-          iconColor: '#f82249',
+          iconColor: '#dc3545',
           showCancelButton: true,
           confirmButtonText: 'Xóa Phụ tùng',
           cancelButtonText: 'Hủy',

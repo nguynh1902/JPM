@@ -623,14 +623,15 @@ export default {
     },
     async removeItem(item) {
       const result = await Swal.fire({
-        title: 'Xóa phụ tùng?',
-        text: `"${item.ten_phu_tung}" sẽ bị xóa khỏi giỏ hàng.`,
+        title: 'Xóa sản phẩm khỏi giỏ?',
+        text: `"${item.ten_phu_tung}" sẽ được xóa khỏi giỏ hàng của bạn.`,
         icon: 'warning',
         showCancelButton: true,
+        reverseButtons: true,
         confirmButtonColor: '#f82249',
         cancelButtonColor: '#64748b',
         confirmButtonText: 'Xóa',
-        cancelButtonText: 'Hủy',
+        cancelButtonText: 'Quay lại',
       })
       if (result.isConfirmed) {
         const itemKey = getCartItemKey(item)
@@ -641,14 +642,15 @@ export default {
     async removeSelectedItems() {
       if (this.selectedItems.length === 0) return
       const result = await Swal.fire({
-        title: `Xóa ${this.selectedItems.length} phụ tùng?`,
-        text: 'Hành động này sẽ xóa các sản phẩm đã chọn khỏi giỏ.',
+        title: `Xóa ${this.selectedItems.length} sản phẩm đã chọn?`,
+        text: 'Các sản phẩm đang tích chọn sẽ được xóa khỏi giỏ hàng.',
         icon: 'warning',
         showCancelButton: true,
+        reverseButtons: true,
         confirmButtonColor: '#f82249',
         cancelButtonColor: '#64748b',
         confirmButtonText: 'Xóa',
-        cancelButtonText: 'Hủy',
+        cancelButtonText: 'Quay lại',
       })
       if (result.isConfirmed) {
         this.cartStore.removeItems(this.selectedItems)

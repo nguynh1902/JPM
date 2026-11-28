@@ -583,7 +583,7 @@ export default {
         title: "Xác nhận xóa",
         html: "Bạn có chắc chắn muốn xóa bài viết <b>\"" + safeTitle + "\"</b>?<br><br><small class=\"text-danger\">Lưu ý: Hành động này không thể hoàn tác.</small>",
         icon: "warning",
-        iconColor: "#f82249",
+        iconColor: "#dc3545",
         showCancelButton: true,
         confirmButtonText: "Đồng ý xóa",
         cancelButtonText: "Hủy",

@@ -260,7 +260,7 @@ export default {
         title: "Xác nhận xóa",
         html: `Bạn có chắc chắn muốn xóa nhóm <b>"${item.ten_nhom}"</b>?<br><br><small class="text-danger">Lưu ý: Dữ liệu sau khi xóa sẽ không thể khôi phục.</small>`,
         icon: "warning",
-        iconColor: "#f82249",
+        iconColor: "#dc3545",
         showCancelButton: true,
         confirmButtonText: "Đồng ý xóa",
         cancelButtonText: "Hủy",

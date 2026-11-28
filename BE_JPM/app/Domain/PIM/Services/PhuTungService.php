@@ -17,7 +17,7 @@ class PhuTungService
 
     public function getAll(array $filters = [], ?int $perPage = null)
     {
-        $query = PhuTung::with(['nhomPhuTung', 'thuongHieu']);
+        $query = PhuTung::with(['nhomPhuTung', 'thuongHieu', 'dongCoModels', 'soDoPhuTungs.model']);
 
         if (!empty($filters['keyword'])) {
             $kw = trim($filters['keyword']);

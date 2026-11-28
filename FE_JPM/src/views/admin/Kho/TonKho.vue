@@ -561,7 +561,7 @@ export default {
         title: 'Xác nhận xóa',
         html: `Bạn có chắc chắn muốn xóa mã <b>"${item.ma_san_pham || item.ten_san_pham}"</b> khỏi kho?<br><br><small class="text-danger">Lưu ý: Chỉ xóa được dòng khi tồn kho và chờ giao đều bằng 0.</small>`,
         icon: 'warning',
-        iconColor: '#f82249',
+        iconColor: '#dc3545',
         showCancelButton: true,
         confirmButtonText: 'Xóa Tồn kho',
         cancelButtonText: 'Hủy',

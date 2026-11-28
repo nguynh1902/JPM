@@ -266,7 +266,7 @@ export default {
         title: "Xác nhận xóa",
         html: "Bạn có chắc chắn muốn xóa danh mục <b>\"" + item.ten_danh_muc + "\"</b>?<br><br><small class=\"text-danger\">Lưu ý: Không thể xóa nếu có danh mục con hoặc sản phẩm.</small>",
         icon: "warning",
-        iconColor: "#f82249",
+        iconColor: "#dc3545",
         showCancelButton: true,
         confirmButtonText: "Đồng ý xóa",
         cancelButtonText: "Hủy",

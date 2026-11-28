@@ -34,6 +34,19 @@ class AdminPhuTungResource extends JsonResource
                 'id'       => $this->nhomPhuTung->id,
                 'ten_nhom' => $this->nhomPhuTung->ten_nhom,
             ]),
+            'models'            => $this->when(
+                $this->relationLoaded('dongCoModels') || $this->relationLoaded('soDoPhuTungs'),
+                function () {
+                    $names = collect();
+                    if ($this->relationLoaded('dongCoModels')) {
+                        $names = $names->merge($this->dongCoModels->pluck('ten_model'));
+                    }
+                    if ($this->relationLoaded('soDoPhuTungs')) {
+                        $names = $names->merge($this->soDoPhuTungs->map(fn ($sd) => $sd->model?->ten_model));
+                    }
+                    return $names->filter()->map(fn ($v) => trim((string) $v))->unique()->values()->all();
+                }
+            ),
             'created_at'        => $this->created_at?->format('Y-m-d H:i:s'),
             'updated_at'        => $this->updated_at?->format('Y-m-d H:i:s'),
         ];

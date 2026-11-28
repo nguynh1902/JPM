@@ -1389,6 +1389,7 @@ const handleAcceptQuote = async (order) => {
     text: 'Bạn đồng ý với mức báo giá này và chốt đặt hàng?',
     icon: 'question',
     showCancelButton: true,
+    reverseButtons: true,
     confirmButtonText: 'Đồng ý chốt đơn',
     cancelButtonText: 'Đóng'
   });
@@ -1419,14 +1420,15 @@ const handleAcceptQuote = async (order) => {
 const handleRejectQuote = async (order) => {
   const isCancelAfterAccept = isQuoteAccepted(order);
   const result = await Swal.fire({
-    title: isCancelAfterAccept ? 'Hủy Đơn Hàng?' : 'Từ Chối Báo Giá?',
+    title: isCancelAfterAccept ? 'Hủy đơn hàng?' : 'Từ chối báo giá?',
     text: isCancelAfterAccept
-      ? 'Bạn chưa chuyển khoản đặt cọc. Bạn chắc chắn muốn hủy đơn này?'
-      : 'Bạn chắc chắn muốn từ chối báo giá này?',
+      ? 'Bạn chưa hoàn tất đặt cọc. Bạn chắc chắn muốn hủy đơn này?'
+      : 'Bạn chắc chắn muốn từ chối bảng báo giá này?',
     icon: 'warning',
     showCancelButton: true,
-    confirmButtonText: isCancelAfterAccept ? 'Hủy đơn' : 'Từ chối',
-    cancelButtonText: 'Đóng',
+    reverseButtons: true,
+    confirmButtonText: isCancelAfterAccept ? 'Đồng ý hủy' : 'Từ chối',
+    cancelButtonText: 'Quay lại',
     confirmButtonColor: '#f82249'
   });
 

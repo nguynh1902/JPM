@@ -329,7 +329,7 @@ const confirmDelete = async (item) => {
     title: 'Xác nhận xóa',
     html: `Bạn có chắc chắn muốn xóa lời nhắn của <b>${item.ho_ten}</b>?`,
     icon: 'warning',
-    iconColor: '#f82249',
+    iconColor: '#dc3545',
     showCancelButton: true,
     confirmButtonText: 'Xóa',
     cancelButtonText: 'Hủy',

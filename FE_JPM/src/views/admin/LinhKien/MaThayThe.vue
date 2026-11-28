@@ -342,7 +342,7 @@ const confirmDelete = (id) => {
     title: 'Xác nhận xóa?',
     text: "Bạn có chắc chắn muốn xóa mã thay thế này?",
     icon: 'warning',
-          iconColor: '#f82249',
+          iconColor: '#dc3545',
     showCancelButton: true,
     confirmButtonText: 'Đồng ý xóa',
     cancelButtonText: 'Hủy bỏ'

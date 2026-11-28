@@ -323,7 +323,7 @@ export default {
         title: 'Xác nhận xóa',
         html: `Bạn có chắc chắn muốn xóa kho bãi <b>"${item.ten_kho}"</b>?<br><br><small class="text-danger">Lưu ý: Hệ thống sẽ từ chối xóa nếu kho vẫn còn hàng tồn hoặc hàng đang giữ chỗ.</small>`,
         icon: 'warning',
-        iconColor: '#f82249',
+        iconColor: '#dc3545',
         showCancelButton: true,
         confirmButtonText: 'Xóa Kho bãi',
         cancelButtonText: 'Hủy',

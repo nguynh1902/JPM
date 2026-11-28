@@ -122,8 +122,8 @@
   border-radius: 0.375rem;
   line-height: 1;
   background-color: #ffffff !important;
-  color: #f82249 !important;
-  border: 1px solid rgba(248, 34, 73, 0.25);
+  color: #dc3545 !important;
+  border: 1px solid rgba(220, 53, 69, 0.25);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
   transition: all 0.2s ease;
 }
@@ -132,14 +132,14 @@
 .nav-pills .nav-link .tab-count-badge,
 .nav-pills .nav-link:not(.active) .tab-count-badge {
   background-color: #ffffff !important;
-  color: #f82249 !important;
-  border-color: rgba(248, 34, 73, 0.25) !important;
+  color: #dc3545 !important;
+  border-color: rgba(220, 53, 69, 0.25) !important;
 }
 
 /* Nổi bật khi Tab Active */
 .nav-pills .nav-link.active .tab-count-badge {
   background-color: #ffffff !important;
-  color: #f82249 !important;
+  color: #dc3545 !important;
   border-color: #ffffff !important;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
@@ -617,6 +617,10 @@ input:focus::-moz-placeholder {
 #admin-layout .btn {
   font-size: 0.923rem;
   font-weight: 600;
+}
+
+#admin-layout .btn:not(.rounded-circle):not(.rounded-pill) {
+  border-radius: 0.375rem !important;
 }
 
 /* Chuẩn hóa Input File theo mẫu gốc Sneat 1.0.0 (không vỡ layout, không lệch viền, không gạch chân) */

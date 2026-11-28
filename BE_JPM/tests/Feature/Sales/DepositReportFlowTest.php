@@ -240,3 +240,30 @@ it('rejects deposit_required exceeding grand total on quote and order updates', 
         ])
         ->assertStatus(422);
 });
+
+it('prevents editing quote pricing or deposit after quote has been published (status >= 1)', function () {
+    $quote = YeuCauBaoGia::create([
+        'ma_yeu_cau' => 'YCBG-TEST-LOCK-01',
+        'loai_yeu_cau' => 'quote',
+        'khach_hang_ten' => 'Nguyen Lock',
+        'khach_hang_sdt' => '0903030303',
+        'tong_tien' => 4500000,
+        'phi_van_chuyen' => 50000,
+        'tien_coc_yeu_cau' => 2000000,
+        'trang_thai' => 1,
+        'token' => 'tok-lock-test-01',
+    ]);
+
+    $this->actingAs($this->admin)
+        ->putJson("/api/admin/yeu-cau-bao-gia/{$quote->id}", [
+            'tong_tien' => 5000000,
+            'deposit_required' => 2500000,
+        ])
+        ->assertStatus(422);
+
+    $this->actingAs($this->admin)
+        ->putJson("/api/admin/yeu-cau-bao-gia/{$quote->id}", [
+            'trang_thai' => 3,
+        ])
+        ->assertOk();
+});

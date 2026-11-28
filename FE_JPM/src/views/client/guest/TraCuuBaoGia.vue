@@ -798,6 +798,7 @@ export default {
             inputLabel: 'Vui lòng cung cấp địa chỉ nhận hàng (bến tàu, chành xe hoặc số nhà):',
             inputPlaceholder: 'Ví dụ: Bến tàu Rạch Giá, Kiên Giang hoặc Số 123 đường ABC...',
             showCancelButton: true,
+            reverseButtons: true,
             confirmButtonColor: '#F82249',
             confirmButtonText: 'Tiếp tục',
             cancelButtonText: 'Hủy',
@@ -813,8 +814,8 @@ export default {
       } else if (actionType === 'reject') {
         if (this.isCustomerAccepted) {
           confirmTitle = 'Hủy đơn hàng?'
-          confirmMsg = 'Bạn chưa chuyển khoản đặt cọc. Bạn chắc chắn muốn hủy đơn này?'
-          confirmBtnText = 'Hủy đơn'
+          confirmMsg = 'Bạn chưa hoàn tất đặt cọc. Bạn chắc chắn muốn hủy đơn này?'
+          confirmBtnText = 'Đồng ý hủy'
         } else {
           confirmTitle = 'Từ chối báo giá?'
           confirmMsg = 'Bạn chắc chắn muốn từ chối bảng báo giá này?'
@@ -831,9 +832,10 @@ export default {
         text: confirmMsg,
         icon: 'question',
         showCancelButton: true,
+        reverseButtons: true,
         confirmButtonColor: confirmBtnColor,
         confirmButtonText: confirmBtnText,
-        cancelButtonText: 'Hủy'
+        cancelButtonText: 'Quay lại'
       })
 
       if (result.isConfirmed) {

@@ -347,7 +347,7 @@ const confirmDelete = async (item) => {
     title: 'Xác nhận xóa',
     html: `Bạn có chắc chắn muốn xóa thương hiệu <b>"${item.name}"</b>?<br><br><small class="text-danger">CẢNH BÁO: Dữ liệu liên kết có thể bị ảnh hưởng.</small>` ,
     icon: 'warning',
-          iconColor: '#f82249',
+          iconColor: '#dc3545',
     showCancelButton: true,
     confirmButtonText: 'Xóa Thương hiệu',
     cancelButtonText: 'Hủy',

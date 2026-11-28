@@ -487,7 +487,7 @@ export default {
         title: 'Xác nhận xóa',
         html: `Bạn có chắc chắn muốn xóa vai trò <b>"${item.name}"</b>?`,
         icon: 'warning',
-          iconColor: '#f82249',
+          iconColor: '#dc3545',
         showCancelButton: true,
         confirmButtonText: 'Xóa Vai trò',
         cancelButtonText: 'Hủy',
