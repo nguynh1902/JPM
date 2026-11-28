@@ -21,14 +21,29 @@ class KhoController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'ten_kho' => 'required|string',
-            'dia_chi' => 'nullable|string',
-            'trang_thai' => 'integer'
+            'ten_kho' => 'required|string|max:100',
+            'dia_chi' => 'nullable|string|max:255',
+            'trang_thai' => 'nullable|integer|in:0,1',
         ]);
 
-        $lastKho = Kho::withTrashed()->orderBy('id', 'desc')->first();
-        $nextId = $lastKho ? $lastKho->id + 1 : 1;
-        $data['ma_kho'] = 'KHO' . str_pad($nextId, 3, '0', STR_PAD_LEFT);
+        $data['ten_kho'] = trim($data['ten_kho']);
+        $data['trang_thai'] = isset($data['trang_thai']) ? (int) $data['trang_thai'] : 1;
+
+        $duplicate = Kho::whereRaw('LOWER(ten_kho) = ?', [mb_strtolower($data['ten_kho'], 'UTF-8')])->exists();
+        if ($duplicate) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Tên kho đã tồn tại trong hệ thống!'
+            ], 422);
+        }
+
+        $nextNum = (int) (Kho::withTrashed()->max('id') ?? 0) + 1;
+        do {
+            $maKho = 'KHO' . str_pad($nextNum, 3, '0', STR_PAD_LEFT);
+            $nextNum++;
+        } while (Kho::withTrashed()->where('ma_kho', $maKho)->exists());
+
+        $data['ma_kho'] = $maKho;
 
         $kho = Kho::create($data);
 
@@ -51,13 +66,28 @@ class KhoController extends Controller
     public function update(Request $request, string $id)
     {
         $kho = Kho::findOrFail($id);
-        
+
         $data = $request->validate([
-            'ten_kho' => 'required|string',
-            'dia_chi' => 'nullable|string',
-            'trang_thai' => 'integer'
+            'ten_kho' => 'required|string|max:100',
+            'dia_chi' => 'nullable|string|max:255',
+            'trang_thai' => 'nullable|integer|in:0,1',
         ]);
-        
+
+        $data['ten_kho'] = trim($data['ten_kho']);
+        if (!array_key_exists('trang_thai', $data) || $data['trang_thai'] === null) {
+            $data['trang_thai'] = (int) ($kho->trang_thai ?? 1);
+        }
+
+        $duplicate = Kho::where('id', '!=', $kho->id)
+            ->whereRaw('LOWER(ten_kho) = ?', [mb_strtolower($data['ten_kho'], 'UTF-8')])
+            ->exists();
+        if ($duplicate) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Tên kho đã tồn tại ở bản ghi khác!'
+            ], 422);
+        }
+
         $kho->update($data);
 
         return response()->json([

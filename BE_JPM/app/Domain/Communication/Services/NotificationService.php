@@ -158,6 +158,41 @@ class NotificationService
     }
 
     /**
+     * 5. Thông báo nội bộ cho Admin: Khách hàng vừa báo đã chuyển khoản cọc
+     */
+    public function notifyAdminDepositReported(
+        string $code,
+        string $customerName,
+        string $phone,
+        float $amount,
+        bool $hasReceipt = false
+    ): LichSuThongBao {
+        $amountFormatted = number_format($amount, 0, ',', '.') . ' đ';
+        $receiptNote = $hasReceipt ? ' (có đính kèm ảnh biên lai)' : ' (không đính kèm ảnh)';
+        $content = "Khách {$customerName} ({$phone}) vừa báo đã chuyển khoản cọc {$amountFormatted} cho mã #{$code}{$receiptNote}. Vui lòng kiểm tra tài khoản ngân hàng và xác nhận.";
+
+        Log::info("[DEPOSIT REPORT] {$content}");
+
+        return LichSuThongBao::create([
+            'loai_tin' => 'system_alert',
+            'kenh_gui' => 'Admin Portal',
+            'nguoi_nhan_loai' => 'admin',
+            'so_dien_thoai' => $phone ?: 'N/A',
+            'ten_nguoi_nhan' => $customerName ?: 'Khách hàng',
+            'mau_thong_bao' => 'khach_bao_coc',
+            'tieu_de' => "Khách báo đã chuyển cọc #{$code}",
+            'noi_dung' => $content,
+            'ma_tham_chieu' => $code,
+            'trang_thai' => 'da_ghi_nhan',
+            'phan_hoi_gateway' => [
+                'has_receipt' => $hasReceipt,
+                'amount' => $amount,
+                'reported_at' => now()->toIso8601String(),
+            ],
+        ]);
+    }
+
+    /**
      * Xử lý điều phối và ghi log thông báo
      */
     public function dispatchNotification(array $data): array

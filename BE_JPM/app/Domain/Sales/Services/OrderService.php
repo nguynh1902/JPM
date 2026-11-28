@@ -5,11 +5,76 @@ namespace App\Domain\Sales\Services;
 use Illuminate\Support\Facades\DB;
 use App\Domain\PIM\Models\PhuTung;
 use App\Domain\CMS\Models\SanPham;
+use App\Domain\Procurement\Models\Kho;
 use App\Domain\Procurement\Models\TonKho;
 use App\Domain\Procurement\Models\TheKho;
 
 class OrderService
 {
+    /**
+     * Trừ tồn kho từ kho đang hoạt động hoặc ghi nhận chờ giao (gom PO) tại 1 kho hợp lệ.
+     */
+    public static function deductOrReserveStock(
+        int $idItem,
+        string $loaiSanPham,
+        int $soLuong,
+        int $donHangId,
+        string $note = 'Xuất bán cho đơn hàng'
+    ): void {
+        // 1. Ưu tiên tìm kho đang Hoạt Động (trang_thai = 1) có đủ tồn thực tế
+        $availableTon = TonKho::where('id_san_pham', $idItem)
+            ->where('loai_san_pham', $loaiSanPham)
+            ->where('so_luong_ton', '>=', $soLuong)
+            ->whereHas('kho', fn($q) => $q->where('trang_thai', 1))
+            ->orderByDesc('so_luong_ton')
+            ->lockForUpdate()
+            ->first();
+
+        if ($availableTon) {
+            $availableTon->so_luong_ton -= $soLuong;
+            $availableTon->save();
+
+            TheKho::create([
+                'id_kho' => $availableTon->id_kho,
+                'id_san_pham' => $idItem,
+                'loai_san_pham' => $loaiSanPham,
+                'loai_giao_dich' => 'XUAT_KHO',
+                'so_luong_thay_doi' => -$soLuong,
+                'so_luong_ton_cuoi' => $availableTon->so_luong_ton,
+                'id_tham_chieu' => $donHangId,
+                'ma_tham_chieu' => 'DH' . str_pad($donHangId, 5, '0', STR_PAD_LEFT),
+                'ghi_chu' => $note,
+                'created_by' => auth()->id() ?? 1,
+            ]);
+            return;
+        }
+
+        // 2. Chưa đủ tồn ở kho hoạt động -> giữ chỗ chờ gom đơn PO trên kho hoạt động mặc định
+        $targetKhoId = Kho::where('trang_thai', 1)->orderBy('id')->value('id')
+            ?? Kho::orderBy('id')->value('id')
+            ?? 1;
+
+        $holdTon = TonKho::where('id_kho', $targetKhoId)
+            ->where('id_san_pham', $idItem)
+            ->where('loai_san_pham', $loaiSanPham)
+            ->lockForUpdate()
+            ->first();
+
+        if ($holdTon) {
+            $holdTon->so_luong_dang_giu = ($holdTon->so_luong_dang_giu ?? 0) + $soLuong;
+            $holdTon->save();
+            return;
+        }
+
+        TonKho::create([
+            'id_kho' => $targetKhoId,
+            'id_san_pham' => $idItem,
+            'loai_san_pham' => $loaiSanPham,
+            'so_luong_ton' => 0,
+            'so_luong_dang_giu' => $soLuong,
+        ]);
+    }
+
     /**
      * Tính tiền từ DB và xử lý tồn kho / chờ gom đơn PO với Pessimistic Locking.
      *
@@ -82,45 +147,8 @@ class OrderService
 
             $tongTien += $donGia * $soLuong;
 
-            // 2. Xử lý Tồn Kho & Gom Đơn (Order to PO Model)
-            $tonKho = TonKho::where('id_san_pham', $idItem)
-                            ->where('loai_san_pham', $loaiSanPham)
-                            ->lockForUpdate()
-                            ->first();
-
-            if ($tonKho && $tonKho->so_luong_ton >= $soLuong) {
-                // Hàng có sẵn trong kho -> Trừ tồn kho và ghi nhận Thẻ Kho
-                $tonKho->so_luong_ton -= $soLuong;
-                $tonKho->save();
-
-                TheKho::create([
-                    'id_kho' => $tonKho->id_kho,
-                    'id_san_pham' => $idItem,
-                    'loai_san_pham' => $loaiSanPham,
-                    'loai_giao_dich' => 'XUAT_KHO',
-                    'so_luong_thay_doi' => -$soLuong,
-                    'so_luong_ton_cuoi' => $tonKho->so_luong_ton,
-                    'id_tham_chieu' => $donHangId,
-                    'ma_tham_chieu' => 'DH' . str_pad($donHangId, 5, '0', STR_PAD_LEFT),
-                    'ghi_chu' => 'Xuất bán cho đơn hàng',
-                    'created_by' => auth()->id() ?? 1,
-                ]);
-            } else {
-                // Hàng chưa có sẵn trong kho (mô hình Gom đơn PO đi Nhật của JPM)
-                // Cập nhật số lượng chờ giao thay vì chặn đứng khách đặt hàng
-                if ($tonKho) {
-                    $tonKho->so_luong_dang_giu = ($tonKho->so_luong_dang_giu ?? 0) + $soLuong;
-                    $tonKho->save();
-                } else {
-                    TonKho::create([
-                        'id_kho' => 1,
-                        'id_san_pham' => $idItem,
-                        'loai_san_pham' => $loaiSanPham,
-                        'so_luong_ton' => 0,
-                        'so_luong_dang_giu' => $soLuong,
-                    ]);
-                }
-            }
+            // 2. Xử lý Tồn Kho & Gom Đơn (Order to PO Model) — chỉ lấy ở các kho đang Hoạt Động
+            self::deductOrReserveStock($idItem, $loaiSanPham, $soLuong, $donHangId, 'Xuất bán cho đơn hàng');
 
             $modelMay = trim((string) ($item['model_may'] ?? $item['engine_model'] ?? ''));
             $processedItems[] = [

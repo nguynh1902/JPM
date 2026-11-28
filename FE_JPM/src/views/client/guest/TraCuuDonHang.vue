@@ -340,6 +340,17 @@
               <p class="lux-bank-hint">
                 Sau khi nhận biến động số dư, kỹ thuật viên JPM sẽ xác nhận và cập nhật trạng thái đơn hàng ngay.
               </p>
+              <div v-if="result.type === 'order' && result.data.trang_thai === 0" class="mt-2 text-end">
+                <div v-if="result.data.da_bao_chuyen_khoan" class="d-inline-flex align-items-center gap-2 text-primary fw-semibold small">
+                  <i class="bi bi-clock-history"></i>
+                  <span>
+                    Đã báo chuyển khoản{{ result.data.thoi_gian_bao_coc ? ' lúc ' + formatDateTime(result.data.thoi_gian_bao_coc) : '' }} — JPM đang đối soát Sacombank
+                  </span>
+                </div>
+                <button v-else type="button" class="btn btn-sm btn-outline-success fw-semibold" @click="showDepositReportModal = true">
+                  <i class="bi bi-check-lg me-1"></i> Tôi đã chuyển khoản cọc
+                </button>
+              </div>
             </div>
           </div>
 
@@ -364,6 +375,15 @@
         </footer>
       </article>
 
+      <DepositReportModal
+        :show="showDepositReportModal"
+        :code="result?.data?.ma_don_hang || ''"
+        :amount-formatted="vietQrData?.amount_formatted || formatCurrency(result?.data?.tien_coc_yeu_cau || 0)"
+        :transfer-content="vietQrData?.transfer_content || (result?.data?.ma_don_hang ? `COC ${result.data.ma_don_hang}` : '')"
+        :submitting="isSubmittingReport"
+        @close="showDepositReportModal = false"
+        @submit="submitOrderDepositReport"
+      />
     </div>
   </div>
 </template>
@@ -373,9 +393,11 @@ import axiosClient from '../../../api/axiosClient'
 import Swal from 'sweetalert2'
 import { createToaster } from '@meforma/vue-toaster'
 import { useSiteSettings } from '../../../composables/useSiteSettings'
+import DepositReportModal from '../../../components/client/DepositReportModal.vue'
 
 export default {
   name: 'TraCuuDonHang',
+  components: { DepositReportModal },
   setup() {
     const { settings } = useSiteSettings()
     const toaster = createToaster({ position: 'top-right', duration: 2200 })
@@ -395,7 +417,9 @@ export default {
       },
       isLoading: false,
       result: null,
-      vietQrData: null
+      vietQrData: null,
+      showDepositReportModal: false,
+      isSubmittingReport: false
     }
   },
   computed: {
@@ -404,12 +428,12 @@ export default {
       const r = this.result.data
       if (this.result.type === 'quote') {
         if (r.trang_thai === 0) return 'Chờ báo giá'
-        if (r.trang_thai === 1) return 'Đã báo giá'
+        if (r.trang_thai === 1) return r.da_bao_chuyen_khoan && Number(r.da_thu || 0) <= 0 ? 'Chờ đối soát cọc' : 'Đã báo giá'
         if (r.trang_thai === 2) return 'Đang xử lý'
         if (r.trang_thai === 3) return 'Đã hủy / Hết hạn'
         if (r.trang_thai === 4) return 'Hoàn thành'
       } else {
-        if (r.trang_thai === 0) return 'Chờ xác nhận'
+        if (r.trang_thai === 0) return r.da_bao_chuyen_khoan && Number(r.da_thu || 0) <= 0 ? 'Chờ đối soát cọc' : 'Chờ xác nhận'
         if (r.trang_thai === 1) return 'Đang xử lý'
         if (r.trang_thai === 2) return 'Đang giao hàng'
         if (r.trang_thai === 3) return 'Hoàn thành'
@@ -523,6 +547,32 @@ export default {
         }
       } finally {
         this.isLoading = false
+      }
+    },
+    async submitOrderDepositReport(file) {
+      if (!this.result || this.result.type !== 'order' || this.isSubmittingReport) return
+      this.isSubmittingReport = true
+      try {
+        const formData = new FormData()
+        formData.append('phone', this.form.phone || this.result.data.khach_hang_sdt || '')
+        if (file) {
+          formData.append('file', file)
+        }
+        const res = await axiosClient.post(`/public/don-hang/${this.result.data.ma_don_hang}/bao-chuyen-khoan`, formData, {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        })
+        const updated = res?.data?.ma_don_hang ? res.data : (res?.data?.data?.ma_don_hang ? res.data.data : null)
+        if (updated) {
+          this.result.data = { ...this.result.data, ...updated }
+        } else {
+          this.result.data.da_bao_chuyen_khoan = true
+        }
+        this.showDepositReportModal = false
+        this.toaster.success(res?.message || res?.data?.message || 'Đã tiếp nhận thông báo chuyển khoản!')
+      } catch (err) {
+        this.toaster.error(err?.response?.data?.message || 'Không thể gửi thông báo chuyển khoản lúc này.')
+      } finally {
+        this.isSubmittingReport = false
       }
     }
   },

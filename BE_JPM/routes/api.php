@@ -60,6 +60,7 @@ Route::prefix('public')->middleware(['throttle:public-api'])->group(function () 
     Route::post('/yeu-cau-bao-gia', [\App\Domain\Sales\Controllers\YeuCauBaoGiaController::class, 'publicStore']);
     Route::get('/yeu-cau-bao-gia/{token}', [\App\Domain\Sales\Controllers\YeuCauBaoGiaController::class, 'showByToken']);
     Route::post('/yeu-cau-bao-gia/{token}/action', [\App\Domain\Sales\Controllers\YeuCauBaoGiaController::class, 'customerAction']);
+    Route::post('/don-hang/{code}/bao-chuyen-khoan', [\App\Domain\Sales\Controllers\DonHangController::class, 'reportDeposit']);
 
     // VietQR Payment Info (Public, Miễn phí chuẩn Napas)
     Route::prefix('vietqr')->group(function () {
@@ -217,6 +218,7 @@ Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
         Route::get('admin/ton-kho/hang-can-nhap', [\App\Domain\Procurement\Controllers\TonKhoController::class, 'hangCanNhap']);
         Route::get('admin/ton-kho', [\App\Domain\Procurement\Controllers\TonKhoController::class, 'index']);
         Route::get('admin/ton-kho/{id}', [\App\Domain\Procurement\Controllers\TonKhoController::class, 'show']);
+        Route::get('admin/the-kho/bao-cao-xnt', [\App\Domain\Procurement\Controllers\TheKhoController::class, 'reportXNT']);
         Route::get('admin/the-kho', [\App\Domain\Procurement\Controllers\TheKhoController::class, 'index']);
         Route::get('admin/the-kho/{id}', [\App\Domain\Procurement\Controllers\TheKhoController::class, 'show']);
     });
@@ -307,10 +309,12 @@ Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
         Route::put('admin/yeu-cau-bao-gia/{id}', [\App\Domain\Sales\Controllers\YeuCauBaoGiaController::class, 'update']);
         Route::post('admin/yeu-cau-bao-gia/{id}/chuyen-don', [\App\Domain\Sales\Controllers\YeuCauBaoGiaController::class, 'convertToOrder']);
         Route::post('admin/yeu-cau-bao-gia/{id}/xac-nhan-coc', [\App\Domain\Sales\Controllers\YeuCauBaoGiaController::class, 'confirmDeposit']);
+        Route::post('admin/yeu-cau-bao-gia/{id}/tu-choi-bao-coc', [\App\Domain\Sales\Controllers\YeuCauBaoGiaController::class, 'rejectDepositReport']);
         Route::post('admin/yeu-cau-bao-gia/{id}/hoan-thanh', [\App\Domain\Sales\Controllers\YeuCauBaoGiaController::class, 'completeQuote']);
 
         Route::put('admin/don-hang/{id}', [\App\Domain\Sales\Controllers\DonHangController::class, 'update']);
         Route::post('admin/don-hang/{id}/xac-nhan-coc', [\App\Domain\Sales\Controllers\DonHangController::class, 'confirmDeposit']);
+        Route::post('admin/don-hang/{id}/tu-choi-bao-coc', [\App\Domain\Sales\Controllers\DonHangController::class, 'rejectDepositReport']);
         Route::post('admin/don-hang/{id}/cap-nhat-van-chuyen', [\App\Domain\Sales\Controllers\DonHangController::class, 'updateShipping']);
         Route::post('admin/don-hang/{id}/hoan-thanh', [\App\Domain\Sales\Controllers\DonHangController::class, 'completeOrder']);
 

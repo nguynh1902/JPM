@@ -646,6 +646,102 @@ class YeuCauBaoGiaController extends Controller
                     'success' => true,
                     'message' => 'Đã gửi yêu cầu báo giá lại tới JPM Marine. Kỹ thuật viên sẽ kiểm tra lại giá và gửi bảng giá mới nhất qua Zalo cho quý khách.'
                 ]);
+            } elseif ($action === 'report_deposit') {
+                if ((int) $quote->trang_thai === 3) {
+                    DB::rollBack();
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Yêu cầu báo giá này đã đóng hoặc hết hạn.'
+                    ], 422);
+                }
+
+                $validHours = 72;
+                if ((int) $quote->trang_thai === 1 && $quote->updated_at && now()->diffInHours($quote->updated_at) > $validHours) {
+                    $quote->trang_thai = 3;
+                    $quote->save();
+                    DB::commit();
+
+                    return response()->json([
+                        'success' => false,
+                        'is_expired' => true,
+                        'message' => 'Báo giá này đã quá thời hạn giữ giá (' . $validHours . ' giờ). Vui lòng liên hệ JPM để cập nhật báo giá mới.'
+                    ], 422);
+                }
+
+                if ((int) $quote->trang_thai >= 2 && (float) ($quote->da_thu ?? 0) > 0) {
+                    DB::commit();
+                    return response()->json([
+                        'success' => true,
+                        'message' => 'Báo giá này đã được xác nhận nhận cọc trước đó.',
+                        'data' => $quote->fresh('chiTiet')
+                    ]);
+                }
+
+                $uploadedUrl = null;
+                if ($request->hasFile('file')) {
+                    $request->validate([
+                        'file' => 'required|image|mimes:jpeg,png,jpg,webp|extensions:jpg,jpeg,png,webp|max:5120'
+                    ]);
+                    $uploadedUrl = ImageUploadService::storeUploadedFile(
+                        $request->file('file'),
+                        'uploads/receipts',
+                        'receipt',
+                        1600
+                    );
+                } elseif ($request->filled('image_base64')) {
+                    $uploadedUrl = ImageUploadService::storeBase64(
+                        (string) $request->input('image_base64'),
+                        'uploads/receipts',
+                        'receipt',
+                        1600,
+                        5 * 1024 * 1024
+                    );
+                }
+
+                if ($uploadedUrl) {
+                    $oldReceipt = $quote->anh_chuyen_khoan;
+                    $quote->anh_chuyen_khoan = $uploadedUrl;
+                    if ($oldReceipt && $oldReceipt !== $uploadedUrl) {
+                        ImageUploadService::delete($oldReceipt);
+                    }
+                }
+
+                $quote->da_bao_chuyen_khoan = true;
+                $quote->thoi_gian_bao_coc = now();
+                $quote->save();
+
+                $linkedOrder = DonHang::where('ghi_chu_khach_hang', 'like', '%Báo giá #' . $quote->ma_yeu_cau . '%')
+                    ->where('trang_thai', 0)
+                    ->first();
+                if ($linkedOrder) {
+                    if ($uploadedUrl) {
+                        $linkedOrder->anh_chuyen_khoan = $uploadedUrl;
+                    }
+                    $linkedOrder->da_bao_chuyen_khoan = true;
+                    $linkedOrder->thoi_gian_bao_coc = $quote->thoi_gian_bao_coc;
+                    $linkedOrder->save();
+                }
+
+                DB::commit();
+
+                try {
+                    app(\App\Domain\Communication\Services\NotificationService::class)
+                        ->notifyAdminDepositReported(
+                            (string) $quote->ma_yeu_cau,
+                            (string) ($quote->khach_hang_ten ?? 'Khách hàng'),
+                            (string) ($quote->khach_hang_sdt ?? ''),
+                            (float) ($quote->tien_coc_yeu_cau ?: $quote->tong_tien ?: 0),
+                            (bool) ($uploadedUrl || $quote->anh_chuyen_khoan)
+                        );
+                } catch (\Throwable $ne) {
+                    // Không làm gián đoạn phản hồi của khách nếu ghi log thông báo lỗi
+                }
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'JPM Marine đã tiếp nhận thông báo chuyển khoản. Kỹ thuật viên sẽ đối soát ngân hàng và lên đơn ngay.',
+                    'data' => $quote->fresh('chiTiet')
+                ]);
             } else {
                 $quote->trang_thai = 3; // Hủy
                 $quote->save();
@@ -738,39 +834,13 @@ class YeuCauBaoGiaController extends Controller
                     $idSanPham = null;
                     $loaiSanPham = "custom";
                 } else {
-                    // Xử lý tồn kho & ghi nhận Thẻ Kho tương tự OrderService
-                    $tonKho = \App\Domain\Procurement\Models\TonKho::where("id_san_pham", $idSanPham)
-                        ->where("loai_san_pham", $loaiSanPham)
-                        ->lockForUpdate()
-                        ->first();
-                    if ($tonKho && $tonKho->so_luong_ton >= $ct->so_luong) {
-                        $tonKho->so_luong_ton -= $ct->so_luong;
-                        $tonKho->save();
-
-                        \App\Domain\Procurement\Models\TheKho::create([
-                            'id_kho' => $tonKho->id_kho,
-                            'id_san_pham' => $idSanPham,
-                            'loai_san_pham' => $loaiSanPham,
-                            'loai_giao_dich' => 'XUAT_KHO',
-                            'so_luong_thay_doi' => -$ct->so_luong,
-                            'so_luong_ton_cuoi' => $tonKho->so_luong_ton,
-                            'id_tham_chieu' => $donHang->id,
-                            'ma_tham_chieu' => 'DH' . str_pad($donHang->id, 5, '0', STR_PAD_LEFT),
-                            'ghi_chu' => 'Xuất bán từ báo giá #' . $quote->ma_yeu_cau,
-                            'created_by' => auth()->id() ?? 1,
-                        ]);
-                    } elseif ($tonKho) {
-                        $tonKho->so_luong_dang_giu = ($tonKho->so_luong_dang_giu ?? 0) + $ct->so_luong;
-                        $tonKho->save();
-                    } else {
-                        \App\Domain\Procurement\Models\TonKho::create([
-                            'id_kho' => 1,
-                            'id_san_pham' => $idSanPham,
-                            'loai_san_pham' => $loaiSanPham,
-                            'so_luong_ton' => 0,
-                            'so_luong_dang_giu' => $ct->so_luong,
-                        ]);
-                    }
+                    \App\Domain\Sales\Services\OrderService::deductOrReserveStock(
+                        (int) $idSanPham,
+                        $loaiSanPham,
+                        (int) $ct->so_luong,
+                        (int) $donHang->id,
+                        'Xuất bán từ báo giá #' . $quote->ma_yeu_cau
+                    );
                 }
 
                 ChiTietDonHang::create([
@@ -872,6 +942,8 @@ class YeuCauBaoGiaController extends Controller
                     'dia_chi_text'          => $quote->dia_chi_giao_hang,
                     'anh_chuyen_khoan'      => $quote->anh_chuyen_khoan,
                     'anh_chuyen_khoan_2'    => $quote->anh_chuyen_khoan_2,
+                    'da_bao_chuyen_khoan'   => (bool) $quote->da_bao_chuyen_khoan,
+                    'thoi_gian_bao_coc'     => $quote->thoi_gian_bao_coc,
                     'ghi_chu_khach_hang'    => 'Báo giá #' . $quote->ma_yeu_cau . ($quote->ghi_chu_khach_hang ? ' | ' . $quote->ghi_chu_khach_hang : ''),
                     'tong_tien'             => $quote->tong_tien,
                     'phi_van_chuyen'        => $quote->phi_van_chuyen,
@@ -1088,5 +1160,37 @@ class YeuCauBaoGiaController extends Controller
             }
         }
         return response()->json(['success' => true, 'message' => 'Đã gỡ ảnh biên lai']);
+    }
+
+    /**
+     * Admin: Đánh dấu chưa nhận được tiền cọc sau khi khách báo đã chuyển khoản
+     */
+    public function rejectDepositReport($id)
+    {
+        DB::beginTransaction();
+        try {
+            $quote = YeuCauBaoGia::lockForUpdate()->findOrFail($id);
+            if ((int) $quote->trang_thai >= 2 && (float) ($quote->da_thu ?? 0) > 0) {
+                DB::rollBack();
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Báo giá này đã được xác nhận thu cọc trước đó.'
+                ], 409);
+            }
+
+            $quote->da_bao_chuyen_khoan = false;
+            $quote->thoi_gian_bao_coc = null;
+            $quote->save();
+
+            DB::commit();
+            return response()->json([
+                'success' => true,
+                'message' => 'Đã đặt lại trạng thái chờ khách chuyển cọc.',
+                'data' => $quote->fresh('chiTiet')
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['success' => false, 'message' => 'Lỗi xử lý: ' . $e->getMessage()], 500);
+        }
     }
 }

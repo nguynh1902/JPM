@@ -32,6 +32,9 @@
           >
             <span>Đã Báo Giá</span>
             <span v-if="countQuotedQuotes > 0" class="tab-count-badge ms-2">{{ countQuotedQuotes }}</span>
+            <span v-if="countReportedDeposits > 0" class="badge bg-primary text-white ms-2" style="font-size: 0.68rem;">
+              {{ countReportedDeposits }} báo cọc
+            </span>
           </button>
         </li>
 
@@ -225,7 +228,8 @@
                     <template v-if="item._type === 'quote'">
                       <span v-if="item.status === 0" class="badge badge-custom bg-pastel-warning">CHỜ BÁO GIÁ</span>
                       <template v-else-if="item.status === 1">
-                        <span v-if="item.deposit_required > 0 && Number(item.da_thu || 0) === 0" class="badge badge-custom bg-pastel-warning">CHỜ CỌC</span>
+                        <span v-if="item.da_bao_chuyen_khoan && Number(item.da_thu || 0) === 0" class="badge badge-custom" style="background: #dbeafe; color: #1d4ed8; border: 1px solid #93c5fd;">KHÁCH BÁO ĐÃ CỌC</span>
+                        <span v-else-if="item.deposit_required > 0 && Number(item.da_thu || 0) === 0" class="badge badge-custom bg-pastel-warning">CHỜ CỌC</span>
                         <span v-else class="badge badge-custom bg-pastel-info">ĐÃ BÁO GIÁ</span>
                       </template>
                       <span v-else-if="item.status === 2" class="badge badge-custom bg-pastel-warning">ĐÃ CỌC & XỬ LÝ</span>
@@ -236,7 +240,8 @@
                     <!-- Trạng thái Đơn Hàng -->
                     <template v-else>
                       <template v-if="item.status === 0">
-                        <span v-if="item.deposit_required > 0 && Number(item.paid_amount || 0) === 0" class="badge badge-custom bg-pastel-warning">CHỜ CỌC</span>
+                        <span v-if="item.da_bao_chuyen_khoan && Number(item.paid_amount || 0) === 0" class="badge badge-custom" style="background: #dbeafe; color: #1d4ed8; border: 1px solid #93c5fd;">KHÁCH BÁO ĐÃ CỌC</span>
+                        <span v-else-if="item.deposit_required > 0 && Number(item.paid_amount || 0) === 0" class="badge badge-custom bg-pastel-warning">CHỜ CỌC</span>
                         <span v-else class="badge badge-custom bg-pastel-info">CHỜ DUYỆT</span>
                       </template>
                       <span v-else-if="item.status === 1" class="badge badge-custom bg-pastel-warning">ĐÃ CỌC & XỬ LÝ</span>
@@ -321,6 +326,28 @@
           </div>
           <form @submit.prevent="saveQuote">
             <div class="modal-body tx-modal-body" v-if="selectedQuote">
+              <div
+                v-if="selectedQuote.status === 1 && selectedQuote.da_bao_chuyen_khoan && Number(selectedQuote.da_thu || 0) <= 0"
+                class="alert alert-primary d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3 py-2 px-3"
+              >
+                <div class="d-flex align-items-center gap-2 small">
+                  <i class="bx bx-transfer-alt fs-5"></i>
+                  <span>
+                    <strong>Khách hàng đã báo chuyển khoản cọc</strong>
+                    <template v-if="selectedQuote.thoi_gian_bao_coc"> lúc {{ formatReportDateTime(selectedQuote.thoi_gian_bao_coc) }}</template>
+                    <template v-if="selectedQuote.receipt_image"> (đã đính kèm ảnh biên lai ở cột Biên Lai Cọc)</template>.
+                    Vui lòng kiểm tra tài khoản Sacombank rồi bấm <strong>Đã Cọc &amp; Lên Đơn</strong>.
+                  </span>
+                </div>
+                <button
+                  v-if="!isQuoteReadOnly"
+                  type="button"
+                  class="btn btn-sm btn-outline-danger bg-white fw-semibold"
+                  @click="rejectDepositReport(selectedQuote, 'quote')"
+                >
+                  Chưa nhận được tiền
+                </button>
+              </div>
               <div class="row g-3 align-items-stretch">
                 <!-- Cột 1 (Trái): Card Thông tin Khách Hàng & Ghi chú -->
                 <div class="col-lg-3 col-12">
@@ -787,6 +814,28 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" ref="orderModalCloseBtn"></button>
           </div>
           <div class="modal-body tx-modal-body" v-if="selectedOrder">
+            <div
+              v-if="selectedOrder.status === 0 && selectedOrder.da_bao_chuyen_khoan && Number(selectedOrder.paid_amount || 0) <= 0"
+              class="alert alert-primary d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3 py-2 px-3"
+            >
+              <div class="d-flex align-items-center gap-2 small">
+                <i class="bx bx-transfer-alt fs-5"></i>
+                <span>
+                  <strong>Khách hàng đã báo chuyển khoản cọc</strong>
+                  <template v-if="selectedOrder.thoi_gian_bao_coc"> lúc {{ formatReportDateTime(selectedOrder.thoi_gian_bao_coc) }}</template>
+                  <template v-if="selectedOrder.receipt_image"> (đã đính kèm ảnh biên lai ở cột Biên Lai Cọc)</template>.
+                  Vui lòng kiểm tra tài khoản Sacombank rồi bấm <strong>Đã Cọc &amp; Lên Đơn</strong>.
+                </span>
+              </div>
+              <button
+                v-if="!isOrderInfoReadOnly"
+                type="button"
+                class="btn btn-sm btn-outline-danger bg-white fw-semibold"
+                @click="rejectDepositReport(selectedOrder, 'order')"
+              >
+                Chưa nhận được tiền
+              </button>
+            </div>
             <div class="row g-3 align-items-stretch">
               <!-- Cột 1 (Trái): Card Thông tin Khách Hàng -->
               <div class="col-lg-3 col-12">
@@ -2081,7 +2130,12 @@ export default {
             list.push({ ...o, _type: 'order' });
           }
         });
-      return list.sort((a, b) => b.id - a.id);
+      return list.sort((a, b) => {
+        const aRep = a.da_bao_chuyen_khoan && Number((a._type === 'quote' ? a.da_thu : a.paid_amount) || 0) <= 0 ? 1 : 0;
+        const bRep = b.da_bao_chuyen_khoan && Number((b._type === 'quote' ? b.da_thu : b.paid_amount) || 0) <= 0 ? 1 : 0;
+        if (aRep !== bRep) return bRep - aRep;
+        return b.id - a.id;
+      });
     },
     processingOrders() {
       const list = [];
@@ -2098,14 +2152,24 @@ export default {
           list.push({ ...q, _type: 'quote' });
         }
       });
-      return list.sort((a, b) => b.id - a.id);
+      return list.sort((a, b) => {
+        const aRep = a.da_bao_chuyen_khoan && Number((a._type === 'quote' ? a.da_thu : a.paid_amount) || 0) <= 0 ? 1 : 0;
+        const bRep = b.da_bao_chuyen_khoan && Number((b._type === 'quote' ? b.da_thu : b.paid_amount) || 0) <= 0 ? 1 : 0;
+        if (aRep !== bRep) return bRep - aRep;
+        return b.id - a.id;
+      });
     },
     shippingOrders() {
       const list = [];
       this.orders.filter(o => o.status === 2).forEach(o => {
         list.push({ ...o, _type: 'order' });
       });
-      return list.sort((a, b) => b.id - a.id);
+      return list.sort((a, b) => {
+        const aRep = a.da_bao_chuyen_khoan && Number((a._type === 'quote' ? a.da_thu : a.paid_amount) || 0) <= 0 ? 1 : 0;
+        const bRep = b.da_bao_chuyen_khoan && Number((b._type === 'quote' ? b.da_thu : b.paid_amount) || 0) <= 0 ? 1 : 0;
+        if (aRep !== bRep) return bRep - aRep;
+        return b.id - a.id;
+      });
     },
     completedOrders() {
       const list = [];
@@ -2120,19 +2184,34 @@ export default {
           list.push({ ...o, _type: 'order' });
         }
       });
-      return list.sort((a, b) => b.id - a.id);
+      return list.sort((a, b) => {
+        const aRep = a.da_bao_chuyen_khoan && Number((a._type === 'quote' ? a.da_thu : a.paid_amount) || 0) <= 0 ? 1 : 0;
+        const bRep = b.da_bao_chuyen_khoan && Number((b._type === 'quote' ? b.da_thu : b.paid_amount) || 0) <= 0 ? 1 : 0;
+        if (aRep !== bRep) return bRep - aRep;
+        return b.id - a.id;
+      });
     },
     cancelledItems() {
       const list = [];
       this.quotes.filter(q => q.status === 3).forEach(q => list.push({ ...q, _type: 'quote' }));
       this.orders.filter(o => o.status === 4).forEach(o => list.push({ ...o, _type: 'order' }));
-      return list.sort((a, b) => b.id - a.id);
+      return list.sort((a, b) => {
+        const aRep = a.da_bao_chuyen_khoan && Number((a._type === 'quote' ? a.da_thu : a.paid_amount) || 0) <= 0 ? 1 : 0;
+        const bRep = b.da_bao_chuyen_khoan && Number((b._type === 'quote' ? b.da_thu : b.paid_amount) || 0) <= 0 ? 1 : 0;
+        if (aRep !== bRep) return bRep - aRep;
+        return b.id - a.id;
+      });
     },
     allTransactionsList() {
       const list = [];
       this.quotes.forEach(q => list.push({ ...q, _type: 'quote' }));
       this.orders.forEach(o => list.push({ ...o, _type: 'order' }));
-      return list.sort((a, b) => b.id - a.id);
+      return list.sort((a, b) => {
+        const aRep = a.da_bao_chuyen_khoan && Number((a._type === 'quote' ? a.da_thu : a.paid_amount) || 0) <= 0 ? 1 : 0;
+        const bRep = b.da_bao_chuyen_khoan && Number((b._type === 'quote' ? b.da_thu : b.paid_amount) || 0) <= 0 ? 1 : 0;
+        if (aRep !== bRep) return bRep - aRep;
+        return b.id - a.id;
+      });
     },
 
     // COUNTS
@@ -2141,6 +2220,11 @@ export default {
     },
     countQuotedQuotes() {
       return this.quotedQuotes.length;
+    },
+    countReportedDeposits() {
+      return this.quotedQuotes.filter(
+        item => item.da_bao_chuyen_khoan && Number((item._type === 'quote' ? item.da_thu : item.paid_amount) || 0) <= 0
+      ).length;
     },
     countProcessing() {
       return this.processingOrders.length;
@@ -2258,6 +2342,8 @@ export default {
           address: item.dia_chi_giao_hang || item.dia_chi_text || (item.dia_chi ? item.dia_chi.dia_chi_cu_the : '') || '',
           receipt_image: item.anh_chuyen_khoan || '',
           receipt_image_2: item.anh_chuyen_khoan_2 || '',
+          da_bao_chuyen_khoan: Boolean(item.da_bao_chuyen_khoan),
+          thoi_gian_bao_coc: item.thoi_gian_bao_coc || null,
           items: (item.chi_tiet || []).map(i => ({
             id: i.id,
             part_name: i.ten_phu_tung || '',
@@ -2294,6 +2380,8 @@ export default {
           address: (item.dia_chi ? item.dia_chi.dia_chi_cu_the : item.dia_chi_text) || '',
           receipt_image: item.anh_chuyen_khoan || '',
           receipt_image_2: item.anh_chuyen_khoan_2 || '',
+          da_bao_chuyen_khoan: Boolean(item.da_bao_chuyen_khoan),
+          thoi_gian_bao_coc: item.thoi_gian_bao_coc || null,
           items: (item.chi_tiet || []).map(i => ({
             id: i.id,
             part_name: i.ten_phu_tung || (i.phu_tung ? i.phu_tung.ten_phu_tung : (i.san_pham ? i.san_pham.ten_san_pham : 'Sản phẩm ID: ' + i.id_san_pham)),
@@ -3099,6 +3187,41 @@ export default {
       if (!quote) return;
       await this.saveQuoteSilent();
       await this.confirmDepositBtn(quote);
+    },
+
+    formatReportDateTime(dateStr) {
+      if (!dateStr) return '';
+      const d = new Date(dateStr);
+      if (Number.isNaN(d.getTime())) return '';
+      return d.toLocaleString('vi-VN', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit' });
+    },
+
+    async rejectDepositReport(item, mode) {
+      if (!item) return;
+      const result = await Swal.fire({
+        title: 'Chưa nhận được tiền cọc?',
+        text: `Đặt lại mã ${item.code} về trạng thái chờ khách chuyển khoản cọc?`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Đúng, chưa nhận được',
+        cancelButtonText: 'Đóng',
+        confirmButtonColor: '#f82249',
+        customClass: { popup: 'swal-shift-up' }
+      });
+      if (!result.isConfirmed) return;
+
+      try {
+        const endpoint = mode === 'quote'
+          ? `/admin/yeu-cau-bao-gia/${item.id}/tu-choi-bao-coc`
+          : `/admin/don-hang/${item.id}/tu-choi-bao-coc`;
+        await axiosClient.post(endpoint);
+        item.da_bao_chuyen_khoan = false;
+        item.thoi_gian_bao_coc = null;
+        this.toaster.info('Đã chuyển lại trạng thái chờ khách chuyển cọc.');
+        this.refreshData();
+      } catch (err) {
+        this.toaster.error(err?.response?.data?.message || 'Không thể cập nhật trạng thái.');
+      }
     },
 
     async startShippingBtn(item) {

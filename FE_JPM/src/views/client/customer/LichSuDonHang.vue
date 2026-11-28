@@ -103,6 +103,7 @@
       <article
         v-for="order in displayedOrders"
         :key="order._type + order.id"
+        :data-order-code="order.code"
         class="lux-order-card"
       >
         <!-- 1. Header: Loại phiếu + Mã đơn | Ngày đặt bên trái | Trạng thái bên phải -->
@@ -231,7 +232,11 @@
                 </div>
               </div>
               <div class="mt-3 text-end">
-                <button type="button" class="btn btn-sm btn-outline-success" @click="confirmManualPaid(order)">
+                <div v-if="isDepositReported(order)" class="d-inline-flex align-items-center gap-2 text-primary fw-semibold small">
+                  <i class="bi bi-clock-history"></i>
+                  <span>Đã báo chuyển khoản — JPM đang đối soát Sacombank</span>
+                </div>
+                <button v-else type="button" class="btn btn-sm btn-outline-success" @click="openDepositReportModal(order)">
                   <i class="bi bi-check-lg me-1"></i> Tôi đã chuyển khoản cọc
                 </button>
               </div>
@@ -262,9 +267,9 @@
                   <strong class="text-navy">{{ formatPrice(getDepositRequired(order)) }} ₫</strong>
                   <span
                     class="lux-deposit-state"
-                    :class="getDepositStatus(order) === 'paid' ? 'is-paid' : 'is-unpaid'"
+                    :class="getDepositStatus(order) === 'paid' ? 'is-paid' : (getDepositStatus(order) === 'reported' ? 'is-reported' : 'is-unpaid')"
                   >
-                    {{ getDepositStatus(order) === 'paid' ? 'Đã cọc' : 'Chưa cọc' }}
+                    {{ getDepositStatus(order) === 'paid' ? 'Đã cọc' : (getDepositStatus(order) === 'reported' ? 'Chờ đối soát' : 'Chưa cọc') }}
                   </span>
                 </span>
               </div>
@@ -344,15 +349,24 @@
 
             <template v-else-if="getStage(order) === 2">
               <button
-                v-if="order._type === 'quote' && order.token"
+                v-if="order._type === 'quote' && order.token && !isDepositReported(order)"
                 type="button"
                 class="btn btn-outline-secondary lux-action-btn"
                 @click="handleRejectQuote(order)"
               >
                 Từ chối
               </button>
+              <a
+                v-if="isDepositReported(order)"
+                :href="buildZaloUrl('Chào JPM Marine, tôi đã báo chuyển khoản cọc cho đơn #' + order.code + ', nhờ kỹ thuật viên kiểm tra giúp tôi.')"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="btn btn-outline-primary lux-action-btn"
+              >
+                <i class="bi bi-chat-dots me-1"></i> Nhắn Zalo hỗ trợ
+              </a>
               <button
-                v-if="getDepositRequired(order) > 0"
+                v-else-if="getDepositRequired(order) > 0"
                 type="button"
                 class="btn btn-danger lux-action-btn"
                 @click="toggleVietQR(order)"
@@ -604,9 +618,9 @@
                       {{ formatPrice(getDepositRequired(selectedOrderForModal)) }} ₫
                       <span
                         class="lux-deposit-state ms-1"
-                        :class="getDepositStatus(selectedOrderForModal) === 'paid' ? 'is-paid' : 'is-unpaid'"
+                        :class="getDepositStatus(selectedOrderForModal) === 'paid' ? 'is-paid' : (getDepositStatus(selectedOrderForModal) === 'reported' ? 'is-reported' : 'is-unpaid')"
                       >
-                        {{ getDepositStatus(selectedOrderForModal) === 'paid' ? 'Đã cọc' : 'Chưa cọc' }}
+                        {{ getDepositStatus(selectedOrderForModal) === 'paid' ? 'Đã cọc' : (getDepositStatus(selectedOrderForModal) === 'reported' ? 'Chờ đối soát' : 'Chưa cọc') }}
                       </span>
                     </span>
                   </div>
@@ -631,10 +645,10 @@
             </div>
           </div>
 
-          <!-- Footer: Nút Bảng báo giá bên trái | Đóng & nút Thêm vào giỏ (chỉ hiện khi đã tick chọn) bên phải -->
+          <!-- Footer: Nút phụ bên trái | Đóng & CTA chính theo giai đoạn bên phải -->
           <div class="lux-modal-footer" v-if="selectedOrderForModal">
             <div class="lux-modal-actions">
-              <div class="d-flex align-items-center gap-3 flex-wrap">
+              <div class="d-flex align-items-center gap-2 flex-wrap">
                 <router-link
                   v-if="selectedOrderForModal.token && getStage(selectedOrderForModal) >= 2"
                   :to="'/bao-gia/' + selectedOrderForModal.token"
@@ -643,15 +657,24 @@
                 >
                   Bảng báo giá
                 </router-link>
-                <span v-if="selectedModalItemIds.length > 0" class="text-muted small fw-medium">
+                <button
+                  v-if="getStage(selectedOrderForModal) === 2 && selectedOrderForModal._type === 'quote' && selectedOrderForModal.token && !isDepositReported(selectedOrderForModal)"
+                  type="button"
+                  class="btn btn-outline-secondary lux-action-btn"
+                  @click="handleRejectFromModal(selectedOrderForModal)"
+                >
+                  Từ chối
+                </button>
+                <span v-if="selectedModalItemIds.length > 0" class="text-muted small fw-medium ms-1">
                   Đã chọn <strong class="text-navy">{{ selectedModalItemIds.length }}</strong> sản phẩm
                 </span>
               </div>
 
-              <div class="d-flex align-items-center gap-2 ms-auto">
+              <div class="d-flex align-items-center gap-2 flex-wrap ms-auto">
                 <button type="button" class="btn btn-outline-secondary lux-action-btn px-4" @click="closeProductModal">
                   Đóng
                 </button>
+
                 <button
                   v-if="selectedModalItemIds.length > 0"
                   type="button"
@@ -661,12 +684,92 @@
                   <i class="bi bi-cart-plus me-1"></i>
                   Thêm vào giỏ ({{ selectedModalItemIds.length }})
                 </button>
+
+                <template v-else>
+                  <a
+                    v-if="getStage(selectedOrderForModal) === 1"
+                    :href="buildZaloUrl('Chào JPM Marine, tôi muốn hỏi về đơn mã #' + selectedOrderForModal.code)"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="btn btn-danger lux-action-btn"
+                  >
+                    <i class="bi bi-chat-dots me-1"></i> Liên hệ kỹ thuật
+                  </a>
+
+                  <a
+                    v-else-if="getStage(selectedOrderForModal) === 2 && isDepositReported(selectedOrderForModal)"
+                    :href="buildZaloUrl('Chào JPM Marine, tôi đã báo chuyển khoản cọc cho đơn #' + selectedOrderForModal.code + ', nhờ kỹ thuật viên kiểm tra giúp tôi.')"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="btn btn-outline-primary lux-action-btn"
+                  >
+                    <i class="bi bi-chat-dots me-1"></i> Nhắn Zalo hỗ trợ
+                  </a>
+
+                  <button
+                    v-else-if="getStage(selectedOrderForModal) === 2 && getDepositRequired(selectedOrderForModal) > 0"
+                    type="button"
+                    class="btn btn-danger lux-action-btn"
+                    @click="openQrFromModal(selectedOrderForModal)"
+                  >
+                    <i class="bi bi-qr-scan me-1"></i>
+                    Quét QR cọc ({{ formatPrice(getDepositRequired(selectedOrderForModal)) }}₫)
+                  </button>
+
+                  <button
+                    v-else-if="getStage(selectedOrderForModal) === 2 && selectedOrderForModal._type === 'quote' && selectedOrderForModal.token"
+                    type="button"
+                    class="btn btn-danger lux-action-btn"
+                    @click="handleAcceptFromModal(selectedOrderForModal)"
+                  >
+                    <i class="bi bi-check2-circle me-1"></i> Đồng ý chốt đơn
+                  </button>
+
+                  <a
+                    v-else-if="getStage(selectedOrderForModal) === 3"
+                    :href="buildZaloUrl('Hỏi tiến độ chuẩn bị hàng cho đơn #' + selectedOrderForModal.code)"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="btn btn-outline-secondary lux-action-btn"
+                  >
+                    Hỏi tiến độ
+                  </a>
+
+                  <a
+                    v-else-if="getStage(selectedOrderForModal) === 4"
+                    :href="buildZaloUrl('Hỏi tiến độ giao hàng cho đơn #' + selectedOrderForModal.code)"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="btn btn-danger lux-action-btn"
+                  >
+                    <i class="bi bi-truck me-1"></i> Theo dõi giao hàng
+                  </a>
+
+                  <button
+                    v-else-if="getStage(selectedOrderForModal) === 5"
+                    type="button"
+                    class="btn btn-danger lux-action-btn"
+                    @click="handleReorderAll(selectedOrderForModal)"
+                  >
+                    Mua lại đơn này
+                  </button>
+                </template>
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
+
+    <DepositReportModal
+      :show="Boolean(depositReportTarget)"
+      :code="depositReportTarget?.code || ''"
+      :amount-formatted="`${formatPrice(getDepositRequired(depositReportTarget) || calculateItemTotal(depositReportTarget))} ₫`"
+      :transfer-content="depositReportTransferContent"
+      :submitting="isSubmittingDepositReport"
+      @close="depositReportTarget = null"
+      @submit="submitDepositReport"
+    />
   </div>
 </template>
 
@@ -681,6 +784,7 @@ import axiosClient from "../../../api/axiosClient";
 import { useQuery, useQueryClient } from "@tanstack/vue-query";
 import { useSiteSettings } from "../../../composables/useSiteSettings";
 import { getImageUrl } from "../../../utils/imageUrl";
+import DepositReportModal from "../../../components/client/DepositReportModal.vue";
 
 const router = useRouter();
 const authStore = useAuthStore();
@@ -823,6 +927,11 @@ const getPricedSubtotal = (order) => {
   return getItemProducts(order).filter(p => p.price > 0).reduce((sum, p) => sum + (p.price * p.qty), 0);
 };
 
+const isDepositReported = (order) => {
+  if (!order) return false;
+  return Boolean(order.da_bao_chuyen_khoan) && getRealPaidAmount(order) <= 0;
+};
+
 const getStatusText = (order) => {
   if (order._type === 'order') {
     const st = Number(order.trang_thai);
@@ -831,14 +940,17 @@ const getStatusText = (order) => {
     if (st === 3) return 'Hoàn thành';
     if (st === 2) return 'Đang giao hàng';
     if (st === 1) return 'Đang xử lý';
-    if (st === 0) return paySt === 0 ? 'Chờ đặt cọc' : 'Đã thanh toán';
+    if (st === 0) {
+      if (isDepositReported(order)) return 'Chờ đối soát cọc';
+      return paySt === 0 ? 'Chờ đặt cọc' : 'Đã thanh toán';
+    }
   }
   const stage = getStage(order);
   switch (stage) {
     case 1:
       return 'Chờ báo giá';
     case 2:
-      return 'Chờ đặt cọc';
+      return isDepositReported(order) ? 'Chờ đối soát cọc' : 'Chờ đặt cọc';
     case 3:
       return 'Đang xử lý';
     case 4:
@@ -850,13 +962,25 @@ const getStatusText = (order) => {
   }
 };
 
+const formatReportTime = (dateStr) => {
+  if (!dateStr) return '';
+  const d = new Date(dateStr);
+  if (Number.isNaN(d.getTime())) return '';
+  return d.toLocaleString('vi-VN', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit' });
+};
+
 const getProcessNote = (order) => {
   const stage = getStage(order);
   switch (stage) {
     case 1:
       return 'JPM Marine đang kiểm tra giá phụ tùng & cước vận chuyển.';
-    case 2:
+    case 2: {
+      if (isDepositReported(order)) {
+        const at = formatReportTime(order.thoi_gian_bao_coc);
+        return `JPM đã tiếp nhận thông báo chuyển khoản${at ? ' lúc ' + at : ''} và đang kiểm tra tài khoản Sacombank.`;
+      }
       return 'Báo giá hiệu lực 72 giờ. Vui lòng đặt cọc để tiến hành xuất kho hoặc đặt hàng Nhật.';
+    }
     case 3:
       return getLogisticsStatus(order);
     case 4:
@@ -965,7 +1089,7 @@ const getDepositRequired = (order) => {
   return Number(order.tien_coc_yeu_cau || 0);
 };
 
-// 6. Tình trạng cọc: 'paid' (Đã cọc), 'unpaid' (Chưa cọc), 'waiting' (Chờ báo giá), 'none' (Không yêu cầu)
+// 6. Tình trạng cọc: 'paid' (Đã cọc), 'reported' (Chờ đối soát), 'unpaid' (Chưa cọc), 'waiting' (Chờ báo giá), 'none' (Không yêu cầu)
 const getDepositStatus = (order) => {
   if (!order) return 'none';
   const dep = getDepositRequired(order);
@@ -974,16 +1098,17 @@ const getDepositStatus = (order) => {
   }
   const paid = getRealPaidAmount(order);
   if (paid >= dep) return 'paid';
+  if (isDepositReported(order)) return 'reported';
   return 'unpaid';
 };
 
-// 7. Số tiền còn lại phải thanh toán khi nhận hàng
+// 7. Số tiền còn lại phải thanh toán khi nhận hàng (đã trừ cọc yêu cầu hoặc số đã thu)
 const getRemainingAmount = (order) => {
   if (!order) return 0;
   const grand = getGrandTotal(order);
   if (!grand || grand <= 0) return 0;
-  const paid = getRealPaidAmount(order);
-  return Math.max(0, grand - paid);
+  const depositOrPaid = Math.max(getRealPaidAmount(order), getDepositRequired(order));
+  return Math.max(0, grand - depositOrPaid);
 };
 
 const calculateItemTotal = (order) => {
@@ -1157,46 +1282,56 @@ const copyText = (text, msg) => {
   toaster.success(msg || 'Đã sao chép!');
 };
 
-const confirmManualPaid = async (order) => {
-  const depositAmt = Number(order.tien_coc_yeu_cau || 0);
-  const transferContent = vietQrData.value?.transfer_content || ('COC ' + order.code);
-  
-  const result = await Swal.fire({
-    title: 'Xác nhận đã chuyển khoản cọc?',
-    html: `Bạn đã chuyển cọc số tiền <b>${formatPrice(depositAmt)}₫</b> với nội dung <code>${transferContent}</code>?<br><small class="text-muted">Kỹ thuật viên JPM sẽ kiểm tra thông báo ngân hàng và cập nhật đơn ngay.</small>`,
-    icon: 'question',
-    showCancelButton: true,
-    confirmButtonText: 'Tôi đã chuyển cọc',
-    cancelButtonText: 'Đóng'
-  });
+const depositReportTarget = ref(null);
+const depositReportTransferContent = ref('');
+const isSubmittingDepositReport = ref(false);
 
-  if (result.isConfirmed) {
-    if (order._type === 'quote' && order.token) {
-      try {
-        await axiosClient.post(`/public/yeu-cau-bao-gia/${order.token}/action`, { action: 'accept' });
-      } catch (_) {}
+const openDepositReportModal = (order) => {
+  if (!order) return;
+  depositReportTarget.value = order;
+  depositReportTransferContent.value = vietQrData.value?.transfer_content || `COC ${order.code}`;
+};
+
+const submitDepositReport = async (file) => {
+  const order = depositReportTarget.value;
+  if (!order) return;
+
+  isSubmittingDepositReport.value = true;
+  try {
+    const formData = new FormData();
+    if (order._type === 'quote') {
+      formData.append('action', 'report_deposit');
+    } else if (order.khach_hang_sdt) {
+      formData.append('phone', order.khach_hang_sdt);
+    }
+    if (file) {
+      formData.append('file', file);
     }
 
+    const endpoint = order._type === 'quote'
+      ? `/public/yeu-cau-bao-gia/${order.token}/action`
+      : `/public/don-hang/${order.code}/bao-chuyen-khoan`;
+
+    const res = await axiosClient.post(endpoint, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    });
+
+    depositReportTarget.value = null;
     activeQrOrderCode.value = null;
     vietQrData.value = null;
 
-    const msg = `Chào JPM Marine, tôi vừa chuyển cọc ${formatPrice(depositAmt)}₫ cho đơn #${order.code}. Nhờ kỹ thuật viên kiểm tra ngân hàng và lên đơn giúp tôi.`;
+    await Promise.all([
+      queryClient.invalidateQueries({ queryKey: ["clientQuotesHistory"] }),
+      queryClient.invalidateQueries({ queryKey: ["clientOrdersHistory"] })
+    ]);
 
-    Swal.fire({
-      icon: 'success',
-      title: 'Đã tiếp nhận thông tin cọc',
-      text: `JPM Marine đã ghi nhận thông báo chuyển cọc cho đơn #${order.code}. Kỹ thuật viên sẽ đối soát ngân hàng và cập nhật tiến độ ngay.`,
-      showCancelButton: true,
-      confirmButtonText: '<i class="bi bi-chat-dots me-1"></i> Gửi biên lai qua Zalo',
-      cancelButtonText: 'Đóng'
-    }).then((res) => {
-      if (res.isConfirmed) {
-        window.open(buildZaloUrl(msg), '_blank', 'noopener,noreferrer');
-      }
-    });
-
-    queryClient.invalidateQueries({ queryKey: ["clientQuotesHistory"] });
-    queryClient.invalidateQueries({ queryKey: ["clientOrdersHistory"] });
+    toaster.success(
+      res?.message || res?.data?.message || 'JPM Marine đã tiếp nhận thông báo chuyển khoản và đang kiểm tra tài khoản Sacombank.'
+    );
+  } catch (err) {
+    toaster.error(err?.response?.data?.message || 'Không thể gửi thông báo chuyển khoản lúc này.');
+  } finally {
+    isSubmittingDepositReport.value = false;
   }
 };
 
@@ -1216,10 +1351,12 @@ const handleAcceptQuote = async (order) => {
       queryClient.invalidateQueries({ queryKey: ["clientQuotesHistory"] });
       queryClient.invalidateQueries({ queryKey: ["clientOrdersHistory"] });
       Swal.fire({ icon: 'success', title: 'Đã chốt đơn thành công!' });
+      return true;
     } catch (e) {
       Swal.fire({ icon: 'error', title: 'Lỗi', text: e.response?.data?.message || 'Không thể chốt đơn lúc này.' });
     }
   }
+  return false;
 };
 
 const handleRejectQuote = async (order) => {
@@ -1238,10 +1375,36 @@ const handleRejectQuote = async (order) => {
       await axiosClient.post(`/public/yeu-cau-bao-gia/${order.token}/action`, { action: 'reject' });
       queryClient.invalidateQueries({ queryKey: ["clientQuotesHistory"] });
       Swal.fire({ icon: 'success', title: 'Đã từ chối đơn' });
+      return true;
     } catch (e) {
       Swal.fire({ icon: 'error', title: 'Lỗi', text: 'Không thể từ chối lúc này.' });
     }
   }
+  return false;
+};
+
+const openQrFromModal = async (order) => {
+  const targetCode = order?.code;
+  closeProductModal();
+  if (activeQrOrderCode.value !== targetCode) {
+    await toggleVietQR(order);
+  }
+  setTimeout(() => {
+    const cardEl = document.querySelector(`[data-order-code="${targetCode}"]`);
+    if (cardEl) {
+      cardEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }, 120);
+};
+
+const handleAcceptFromModal = async (order) => {
+  const ok = await handleAcceptQuote(order);
+  if (ok) closeProductModal();
+};
+
+const handleRejectFromModal = async (order) => {
+  const ok = await handleRejectQuote(order);
+  if (ok) closeProductModal();
 };
 
 const formatPrice = (price) => {
@@ -1675,6 +1838,10 @@ const formatDate = (dateStr) => {
 .lux-deposit-state.is-unpaid {
   background: #ffe4e6;
   color: #be123c;
+}
+.lux-deposit-state.is-reported {
+  background: #e0f2fe;
+  color: #0369a1;
 }
 
 /* ========================================================================= */

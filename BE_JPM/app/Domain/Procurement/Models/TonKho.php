@@ -29,4 +29,8 @@ class TonKho extends Model {
         } else {
             \App\Domain\PIM\Models\PhuTung::where('id', $this->id_san_pham)->update(['so_luong_ton' => $total]);
         }
-    } public function kho() { return $this->belongsTo(Kho::class, 'id_kho'); } public function sanPham() { return $this->belongsTo(SanPham::class, 'id_san_pham'); } public function phuTung() { return $this->belongsTo(PhuTung::class, 'id_san_pham'); } }
+    }
+    public function kho() { return $this->belongsTo(Kho::class, 'id_kho')->withTrashed(); }
+    public function sanPham() { return $this->belongsTo(SanPham::class, 'id_san_pham'); }
+    public function phuTung() { return $this->belongsTo(PhuTung::class, 'id_san_pham')->withTrashed(); }
+}

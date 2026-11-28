@@ -331,6 +331,22 @@
                   <span class="text-muted">Nội dung CK:</span>
                   <code class="exdoc-transfer-code">{{ vietQrData.transfer_content }}</code>
                 </div>
+                <div v-if="quote.trang_thai === 1 && !quote.is_expired" class="pt-2 text-end no-print">
+                  <div v-if="isDepositReported" class="d-inline-flex align-items-center gap-2 text-primary fw-semibold small">
+                    <i class="bi bi-clock-history"></i>
+                    <span>
+                      Đã báo chuyển khoản{{ quote.thoi_gian_bao_coc ? ' lúc ' + formatDateTime(quote.thoi_gian_bao_coc) : '' }} — JPM đang đối soát Sacombank
+                    </span>
+                  </div>
+                  <button
+                    v-else
+                    type="button"
+                    class="btn btn-sm btn-outline-success fw-semibold"
+                    @click="showDepositReportModal = true"
+                  >
+                    <i class="bi bi-check-lg me-1"></i> Tôi đã chuyển khoản cọc
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -442,6 +458,15 @@
         </article>
       </template>
 
+      <DepositReportModal
+        :show="showDepositReportModal"
+        :code="quote?.ma_yeu_cau || ''"
+        :amount-formatted="formatCurrency(quote?.tien_coc_yeu_cau || quote?.tong_tien || 0)"
+        :transfer-content="vietQrData?.transfer_content || (quote?.ma_yeu_cau ? `COC ${quote.ma_yeu_cau}` : '')"
+        :submitting="isSubmitting"
+        @close="showDepositReportModal = false"
+        @submit="submitQuoteDepositReport"
+      />
     </div>
   </div>
 </template>
@@ -451,9 +476,11 @@ import axiosClient from '../../../api/axiosClient'
 import Swal from 'sweetalert2'
 import { useSiteSettings } from '../../../composables/useSiteSettings'
 import { useAuthStore } from '../../../stores/authStore'
+import DepositReportModal from '../../../components/client/DepositReportModal.vue'
 
 export default {
   name: 'TraCuuBaoGia',
+  components: { DepositReportModal },
   setup() {
     const { settings } = useSiteSettings()
     const authStore = useAuthStore()
@@ -466,6 +493,7 @@ export default {
       loading: true,
       error: null,
       isSubmitting: false,
+      showDepositReportModal: false,
       vietQrData: null,
       remainingSeconds: 0,
       countdownTimer: null
@@ -499,7 +527,11 @@ export default {
       if (this.quote.trang_thai === 2) return 'confirmed'
       return 'expired'
     },
+    isDepositReported() {
+      return Boolean(this.quote?.da_bao_chuyen_khoan) && Number(this.quote?.da_thu || 0) <= 0 && Number(this.quote?.trang_thai) === 1
+    },
     statusLabel() {
+      if (this.isDepositReported && !this.quote?.is_expired) return 'Chờ đối soát cọc'
       const map = {
         pending: 'Chờ báo giá',
         quoted: 'Đã báo giá',
@@ -743,6 +775,33 @@ export default {
         } finally {
           this.isSubmitting = false
         }
+      }
+    },
+    async submitQuoteDepositReport(file) {
+      if (!this.quote || this.isSubmitting) return
+      this.isSubmitting = true
+      try {
+        const formData = new FormData()
+        formData.append('action', 'report_deposit')
+        if (file) {
+          formData.append('file', file)
+        }
+        const res = await axiosClient.post(`/public/yeu-cau-bao-gia/${this.token}/action`, formData, {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        })
+        const message = res?.message ?? res?.data?.message
+        this.showDepositReportModal = false
+        await this.fetchQuote()
+        Swal.fire({
+          icon: 'success',
+          title: 'Đã tiếp nhận thông báo cọc',
+          text: message || 'JPM Marine đã tiếp nhận thông báo chuyển khoản và đang kiểm tra tài khoản Sacombank.'
+        })
+      } catch (err) {
+        const msg = err.response?.data?.message || 'Không thể gửi thông báo chuyển khoản lúc này.'
+        Swal.fire({ icon: 'error', title: 'Không thể thực hiện', text: msg })
+      } finally {
+        this.isSubmitting = false
       }
     }
   }

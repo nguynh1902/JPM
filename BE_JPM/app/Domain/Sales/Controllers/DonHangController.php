@@ -10,6 +10,8 @@ use App\Domain\Sales\Models\ChiTietDonHang;
 use App\Domain\Sales\Models\YeuCauBaoGia;
 use App\Domain\Procurement\Models\TonKho;
 use App\Domain\Procurement\Models\TheKho;
+use App\Domain\IAM\Models\KhachHang;
+use App\Domain\Core\Services\ImageUploadService;
 use App\Domain\Sales\Services\OrderService;
 
 class DonHangController extends Controller
@@ -400,6 +402,156 @@ class DonHangController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Đã xác nhận nhận cọc ' . number_format($amount, 0, ',', '.') . ' đ thành công!',
+                'data' => $donHang
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['success' => false, 'message' => 'Lỗi: ' . $e->getMessage()], 500);
+        }
+    }
+
+    /**
+     * Khách hàng báo đã chuyển khoản cọc cho Đơn Hàng trực tiếp (kèm ảnh biên lai không bắt buộc)
+     */
+    public function reportDeposit(Request $request, $code)
+    {
+        DB::beginTransaction();
+        try {
+            $donHang = DonHang::lockForUpdate()->where('ma_don_hang', $code)->firstOrFail();
+
+            // Xác thực quyền sở hữu: User đăng nhập khớp đơn HOẶC số điện thoại khớp
+            $user = auth('sanctum')->user();
+            $authorized = false;
+            if ($user) {
+                $khachHangId = KhachHang::where('id_tai_khoan', $user->id)->value('id');
+                if (($khachHangId && (int) $donHang->id_khach_hang === (int) $khachHangId)
+                    || (!empty($user->email) && strcasecmp((string) $donHang->khach_hang_email, (string) $user->email) === 0)
+                    || $user->hasAnyRole(['admin', 'Super Admin'])) {
+                    $authorized = true;
+                }
+            }
+            if (!$authorized && $request->filled('phone')) {
+                $inputPhone = preg_replace('/\D/', '', (string) $request->input('phone'));
+                $orderPhone = preg_replace('/\D/', '', (string) $donHang->khach_hang_sdt);
+                if ($inputPhone !== '' && $inputPhone === $orderPhone) {
+                    $authorized = true;
+                }
+            }
+            if (!$authorized) {
+                DB::rollBack();
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Không có quyền cập nhật thông tin chuyển khoản cho đơn hàng này.'
+                ], 403);
+            }
+
+            if ((int) $donHang->trang_thai === 4) {
+                DB::rollBack();
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Đơn hàng này đã bị hủy.'
+                ], 422);
+            }
+
+            if ((int) $donHang->trang_thai >= 1 && (float) ($donHang->da_thu ?? 0) > 0) {
+                DB::commit();
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Đơn hàng này đã được xác nhận thanh toán trước đó.',
+                    'data' => $donHang
+                ]);
+            }
+
+            $uploadedUrl = null;
+            if ($request->hasFile('file')) {
+                $request->validate([
+                    'file' => 'required|image|mimes:jpeg,png,jpg,webp|extensions:jpg,jpeg,png,webp|max:5120'
+                ]);
+                $uploadedUrl = ImageUploadService::storeUploadedFile(
+                    $request->file('file'),
+                    'uploads/receipts',
+                    'receipt',
+                    1600
+                );
+            } elseif ($request->filled('image_base64')) {
+                $uploadedUrl = ImageUploadService::storeBase64(
+                    (string) $request->input('image_base64'),
+                    'uploads/receipts',
+                    'receipt',
+                    1600,
+                    5 * 1024 * 1024
+                );
+            }
+
+            if ($uploadedUrl) {
+                $oldReceipt = $donHang->anh_chuyen_khoan;
+                $donHang->anh_chuyen_khoan = $uploadedUrl;
+                if ($oldReceipt && $oldReceipt !== $uploadedUrl) {
+                    ImageUploadService::delete($oldReceipt);
+                }
+            }
+
+            $donHang->da_bao_chuyen_khoan = true;
+            $donHang->thoi_gian_bao_coc = now();
+            $donHang->save();
+
+            DB::commit();
+
+            try {
+                app(\App\Domain\Communication\Services\NotificationService::class)
+                    ->notifyAdminDepositReported(
+                        (string) $donHang->ma_don_hang,
+                        (string) ($donHang->khach_hang_ten ?? 'Khách hàng'),
+                        (string) ($donHang->khach_hang_sdt ?? ''),
+                        (float) ($donHang->tien_coc_yeu_cau ?: $donHang->tong_tien ?: 0),
+                        (bool) ($uploadedUrl || $donHang->anh_chuyen_khoan)
+                    );
+            } catch (\Throwable $ne) {
+                // Ignore notification error
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'JPM Marine đã tiếp nhận thông báo chuyển khoản. Kỹ thuật viên sẽ kiểm tra và xác nhận đơn ngay.',
+                'data' => $donHang
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => 'File ảnh không hợp lệ (chỉ chấp nhận JPG, PNG, WebP tối đa 5MB).',
+                'errors' => $e->errors(),
+            ], 422);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['success' => false, 'message' => 'Lỗi xử lý: ' . $e->getMessage()], 500);
+        }
+    }
+
+    /**
+     * Admin: Đánh dấu chưa nhận được tiền cọc sau khi khách báo đã chuyển khoản
+     */
+    public function rejectDepositReport($id)
+    {
+        DB::beginTransaction();
+        try {
+            $donHang = DonHang::lockForUpdate()->findOrFail($id);
+            if ((int) $donHang->trang_thai >= 1 && (float) ($donHang->da_thu ?? 0) > 0) {
+                DB::rollBack();
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Đơn hàng này đã được xác nhận thu cọc trước đó.'
+                ], 409);
+            }
+
+            $donHang->da_bao_chuyen_khoan = false;
+            $donHang->thoi_gian_bao_coc = null;
+            $donHang->save();
+
+            DB::commit();
+            return response()->json([
+                'success' => true,
+                'message' => 'Đã đặt lại trạng thái chờ khách chuyển cọc.',
                 'data' => $donHang
             ]);
         } catch (\Exception $e) {

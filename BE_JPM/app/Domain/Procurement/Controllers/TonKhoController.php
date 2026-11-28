@@ -3,6 +3,9 @@
 namespace App\Domain\Procurement\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Domain\CMS\Models\SanPham;
+use App\Domain\PIM\Models\PhuTung;
+use App\Domain\Procurement\Models\Kho;
 use App\Domain\Procurement\Models\TonKho;
 use App\Domain\Procurement\Models\TheKho;
 use App\Domain\Core\Resources\TonKhoResource;
@@ -15,7 +18,11 @@ class TonKhoController extends Controller
     public function show($id)
     {
         try {
-            $item = TonKho::with(['kho', 'sanPham', 'phuTung'])->findOrFail($id);
+            $item = TonKho::with([
+                'kho' => fn($q) => $q->withTrashed(),
+                'sanPham',
+                'phuTung' => fn($q) => $q->withTrashed(),
+            ])->findOrFail($id);
             return response()->json(['success' => true, 'data' => new TonKhoResource($item)]);
         } catch (Exception $e) {
             return response()->json(['success' => false, 'message' => 'Không tìm thấy tồn kho.'], 404);
@@ -25,7 +32,38 @@ class TonKhoController extends Controller
     public function index(Request $request)
     {
         try {
-            $query = TonKho::with(['kho', 'sanPham', 'phuTung'])->orderBy('id', 'desc');
+            $query = TonKho::with([
+                'kho' => fn($q) => $q->withTrashed(),
+                'sanPham',
+                'phuTung' => fn($q) => $q->withTrashed(),
+            ])->orderBy('id', 'desc');
+
+            if ($request->filled('warehouse_id')) {
+                $query->where('id_kho', (int) $request->warehouse_id);
+            }
+
+            if ($request->filled('loai_san_pham')) {
+                $query->where('loai_san_pham', $request->loai_san_pham);
+            }
+
+            if ($request->boolean('has_pending')) {
+                $query->where('so_luong_dang_giu', '>', 0);
+            }
+
+            if ($request->filled('keyword')) {
+                $kw = trim($request->keyword);
+                $query->where(function ($q) use ($kw) {
+                    $q->whereHas('phuTung', function ($sub) use ($kw) {
+                        $sub->withTrashed()
+                            ->where('ma_phu_tung', 'like', "%{$kw}%")
+                            ->orWhere('ten_phu_tung', 'like', "%{$kw}%");
+                    })->orWhereHas('sanPham', function ($sub) use ($kw) {
+                        $sub->where('ma_san_pham', 'like', "%{$kw}%")
+                            ->orWhere('ten_san_pham', 'like', "%{$kw}%");
+                    });
+                });
+            }
+
             $items = $request->filled('cursor') ? $query->cursorPaginate(50) : $query->get();
             return response()->json([
                 'success' => true,
@@ -40,17 +78,42 @@ class TonKhoController extends Controller
     {
         DB::beginTransaction();
         try {
-            // Validate
             if (!$request->id_kho || !$request->id_san_pham || !$request->loai_san_pham) {
+                DB::rollBack();
                 return response()->json(['success' => false, 'message' => 'Thiếu thông tin bắt buộc'], 400);
             }
-            
-            // Check if exists
-            $exists = TonKho::where('id_kho', $request->id_kho)
-                            ->where('id_san_pham', $request->id_san_pham)
-                            ->where('loai_san_pham', $request->loai_san_pham)
-                            ->first();
+
+            $loaiSanPham = (string) $request->loai_san_pham;
+            if (!in_array($loaiSanPham, ['phu_tung', 'san_pham'], true)) {
+                DB::rollBack();
+                return response()->json(['success' => false, 'message' => 'Loại sản phẩm không hợp lệ'], 422);
+            }
+
+            $kho = Kho::find((int) $request->id_kho);
+            if (!$kho) {
+                DB::rollBack();
+                return response()->json(['success' => false, 'message' => 'Kho chứa không tồn tại hoặc đã bị xóa'], 422);
+            }
+            if ((int) $kho->trang_thai !== 1) {
+                DB::rollBack();
+                return response()->json(['success' => false, 'message' => 'Kho này đang tạm khóa, không thể thêm tồn kho mới'], 422);
+            }
+
+            $productExists = $loaiSanPham === 'san_pham'
+                ? SanPham::where('id', (int) $request->id_san_pham)->exists()
+                : PhuTung::where('id', (int) $request->id_san_pham)->exists();
+
+            if (!$productExists) {
+                DB::rollBack();
+                return response()->json(['success' => false, 'message' => 'Sản phẩm/Phụ tùng không tồn tại'], 422);
+            }
+
+            $exists = TonKho::where('id_kho', (int) $request->id_kho)
+                ->where('id_san_pham', (int) $request->id_san_pham)
+                ->where('loai_san_pham', $loaiSanPham)
+                ->first();
             if ($exists) {
+                DB::rollBack();
                 return response()->json(['success' => false, 'message' => 'Sản phẩm này đã có trong kho, vui lòng dùng chức năng Cập nhật'], 400);
             }
 
@@ -61,15 +124,15 @@ class TonKhoController extends Controller
             }
 
             $tonKho = new TonKho();
-            $tonKho->id_kho = $request->id_kho;
-            $tonKho->id_san_pham = $request->id_san_pham;
-            $tonKho->loai_san_pham = $request->loai_san_pham;
+            $tonKho->id_kho = (int) $request->id_kho;
+            $tonKho->id_san_pham = (int) $request->id_san_pham;
+            $tonKho->loai_san_pham = $loaiSanPham;
             $tonKho->so_luong_ton = $soLuongTon;
             $tonKho->so_luong_dang_giu = 0;
             $tonKho->save();
 
-            // Tự động ghi nhận vào Thẻ Kho nếu có số lượng tồn ban đầu
-            if ($soLuongTon != 0) {
+            if ($soLuongTon > 0) {
+                $ghiChu = trim((string) $request->input('ghi_chu', ''));
                 TheKho::create([
                     'id_kho' => $tonKho->id_kho,
                     'id_san_pham' => $tonKho->id_san_pham,
@@ -79,13 +142,18 @@ class TonKhoController extends Controller
                     'so_luong_ton_cuoi' => $tonKho->so_luong_ton,
                     'id_tham_chieu' => $tonKho->id,
                     'ma_tham_chieu' => 'TK-INIT-' . $tonKho->id,
-                    'ghi_chu' => $request->input('ghi_chu', 'Khởi tạo tồn kho ban đầu'),
+                    'ghi_chu' => $ghiChu !== '' ? $ghiChu : 'Khởi tạo tồn kho ban đầu',
                     'created_by' => auth()->id() ?? 1,
                 ]);
             }
 
             DB::commit();
-            return response()->json(['success' => true, 'message' => 'Thêm tồn kho thành công', 'data' => $tonKho]);
+            $tonKho->load([
+                'kho' => fn($q) => $q->withTrashed(),
+                'sanPham',
+                'phuTung' => fn($q) => $q->withTrashed(),
+            ]);
+            return response()->json(['success' => true, 'message' => 'Thêm tồn kho thành công', 'data' => new TonKhoResource($tonKho)]);
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
@@ -102,6 +170,14 @@ class TonKhoController extends Controller
                 return response()->json(['success' => false, 'message' => 'Không tìm thấy bản ghi tồn kho'], 404);
             }
 
+            if ($request->filled('id_kho') && (int) $request->id_kho !== (int) $tonKho->id_kho) {
+                DB::rollBack();
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Không thể đổi kho chứa trực tiếp trên dòng tồn kho. Vui lòng tạo dòng tồn mới tại kho đích.'
+                ], 422);
+            }
+
             $oldQty = (int) $tonKho->so_luong_ton;
             $newQty = $request->has('so_luong_ton') ? (int) $request->so_luong_ton : $oldQty;
             if ($newQty < 0) {
@@ -109,30 +185,33 @@ class TonKhoController extends Controller
                 return response()->json(['success' => false, 'message' => 'Số lượng tồn kho không được âm'], 422);
             }
             $diff = $newQty - $oldQty;
-            
-            // Only update what we can safely update
-            $tonKho->id_kho = $request->id_kho ?? $tonKho->id_kho;
+
             $tonKho->so_luong_ton = $newQty;
             $tonKho->save();
 
-            // Tự động ghi nhận biến động vào bảng TheKho khi có thay đổi số lượng tồn
             if ($diff !== 0) {
+                $ghiChu = trim((string) $request->input('ghi_chu', ''));
                 TheKho::create([
                     'id_kho' => $tonKho->id_kho,
                     'id_san_pham' => $tonKho->id_san_pham,
                     'loai_san_pham' => $tonKho->loai_san_pham ?? 'phu_tung',
-                    'loai_giao_dich' => $diff > 0 ? 'NHAP_KHO' : 'DIEU_CHINH',
+                    'loai_giao_dich' => 'DIEU_CHINH',
                     'so_luong_thay_doi' => $diff,
                     'so_luong_ton_cuoi' => $tonKho->so_luong_ton,
                     'id_tham_chieu' => $tonKho->id,
                     'ma_tham_chieu' => 'DC-' . date('ymd') . '-' . $tonKho->id,
-                    'ghi_chu' => $request->input('ghi_chu', 'Điều chỉnh tồn kho trực tiếp từ Admin'),
+                    'ghi_chu' => $ghiChu !== '' ? $ghiChu : ($diff > 0 ? 'Điều chỉnh tăng tồn kho trực tiếp từ Admin' : 'Điều chỉnh giảm tồn kho trực tiếp từ Admin'),
                     'created_by' => auth()->id() ?? 1,
                 ]);
             }
 
             DB::commit();
-            return response()->json(['success' => true, 'message' => 'Cập nhật thành công', 'data' => $tonKho]);
+            $tonKho->load([
+                'kho' => fn($q) => $q->withTrashed(),
+                'sanPham',
+                'phuTung' => fn($q) => $q->withTrashed(),
+            ]);
+            return response()->json(['success' => true, 'message' => 'Cập nhật thành công', 'data' => new TonKhoResource($tonKho)]);
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
