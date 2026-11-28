@@ -219,7 +219,7 @@
 <script setup>
 import { ref, computed } from 'vue';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/vue-query';
-import { createToaster } from '@meforma/vue-toaster';
+import { createToaster } from '../../../utils/notify';
 import Swal from 'sweetalert2';
 import axiosClient from '../../../api/axiosClient';
 import { useAuthStore } from '../../../stores/authStore';

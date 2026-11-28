@@ -107,7 +107,7 @@ import { useRoute } from 'vue-router';
 import Swal from 'sweetalert2';
 import axiosClient from '../../../api/axiosClient';
 import { useAuthStore } from '../../../stores/authStore';
-import { createToaster } from "@meforma/vue-toaster";
+import { createToaster } from '../../../utils/notify';
 import { useMutation } from '@tanstack/vue-query';
 
 const route = useRoute();

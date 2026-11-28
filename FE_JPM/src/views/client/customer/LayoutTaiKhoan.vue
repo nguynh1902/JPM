@@ -51,7 +51,7 @@ import axiosClient from '../../../api/axiosClient';
 import { compressAvatar, formatBytes } from '../../../utils/imageOptimizer';
 import { useAuthStore } from '../../../stores/authStore';
 import Swal from 'sweetalert2';
-import { createToaster } from '@meforma/vue-toaster';
+import { createToaster } from '../../../utils/notify';
 
 const route = useRoute();
 const authStore = useAuthStore();

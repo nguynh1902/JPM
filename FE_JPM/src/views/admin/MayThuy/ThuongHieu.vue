@@ -167,7 +167,7 @@ import vSelect from '@vueform/multiselect';
 import axiosClient from '../../../api/axiosClient';
 import Swal from 'sweetalert2';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/vue-query';
-import { createToaster } from "@meforma/vue-toaster";
+import { createToaster } from '../../../utils/notify';
 import { compressImage, formatBytes } from '../../../utils/imageOptimizer';
 
 const toaster = createToaster({ position: "top-right", duration: 3000 });

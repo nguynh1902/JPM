@@ -1,11 +1,13 @@
 import { createApp } from 'vue'
 import App from './App.vue'
+import 'vue-sonner/style.css'
 import './style.css'
 import router from './router'
 import Admin from './layout/LayoutAdmin.vue'
 import Client from './layout/LayoutClient.vue'
 import Auth from './layout/LayoutAuth.vue'
-import Toaster from "@meforma/vue-toaster"
+import Blank from './layout/LayoutBlank.vue'
+import notify from './utils/notify'
 
 import { createPinia } from 'pinia'
 import { VueQueryPlugin } from '@tanstack/vue-query'
@@ -28,9 +30,7 @@ app.use(VueQueryPlugin, {
   },
 })
 app.use(router)
-app.use(Toaster, {
-  position: "top-right"
-});
+app.config.globalProperties.$toast = notify;
 
 import Multiselect from '@vueform/multiselect'
 import '@vueform/multiselect/themes/default.css'
@@ -42,6 +42,7 @@ app.use(VueApexCharts);
 app.component("admin-layout", Admin);
 app.component("client-layout", Client);
 app.component("auth-layout", Auth);
+app.component("blank-layout", Blank);
 
 import { getImageUrl } from './utils/imageUrl'
 

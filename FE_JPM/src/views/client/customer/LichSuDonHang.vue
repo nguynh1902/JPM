@@ -579,6 +579,15 @@
                       <span class="lux-info-label">Địa chỉ</span>
                       <span class="lux-info-val">{{ getOrderAddress(selectedOrderForModal) || 'Chưa cập nhật' }}</span>
                     </div>
+                    <div class="lux-info-row" v-if="selectedOrderForModal.ten_don_vi_van_chuyen || selectedOrderForModal.ma_van_don">
+                      <span class="lux-info-label">Vận chuyển</span>
+                      <span class="lux-info-val">
+                        {{ selectedOrderForModal.ten_don_vi_van_chuyen || 'Đang cập nhật' }}
+                        <template v-if="selectedOrderForModal.ma_van_don">
+                          · Mã: <strong class="font-monospace text-navy">{{ selectedOrderForModal.ma_van_don }}</strong>
+                        </template>
+                      </span>
+                    </div>
                   </div>
 
                   <div class="lux-note-box mt-3" v-if="selectedOrderForModal.ghi_chu_khach_hang">
@@ -663,12 +672,20 @@
             <div class="lux-modal-actions">
               <div class="d-flex align-items-center gap-2 flex-wrap">
                 <router-link
-                  v-if="selectedOrderForModal.token && getStage(selectedOrderForModal) >= 2"
+                  v-if="selectedOrderForModal.token && getStage(selectedOrderForModal) >= 2 && selectedOrderForModal._type !== 'order'"
                   :to="'/bao-gia/' + selectedOrderForModal.token"
                   class="btn btn-outline-secondary lux-action-btn"
                   @click="closeProductModal"
                 >
                   Xem đơn báo giá
+                </router-link>
+                <router-link
+                  v-if="selectedOrderForModal._type === 'order'"
+                  :to="`/don-hang/${selectedOrderForModal.ma_don_hang || selectedOrderForModal.code}?phone=${encodeURIComponent(getOrderCustomerPhone(selectedOrderForModal) || '')}`"
+                  class="btn btn-outline-secondary lux-action-btn"
+                  @click="closeProductModal"
+                >
+                  <i class="bi bi-receipt me-1"></i>Xem &amp; In hóa đơn
                 </router-link>
                 <button
                   v-if="getStage(selectedOrderForModal) === 2 && selectedOrderForModal._type === 'quote' && selectedOrderForModal.token && !isDepositReported(selectedOrderForModal)"
@@ -792,7 +809,7 @@ import { useRouter, useRoute } from "vue-router";
 import { useAuthStore } from "../../../stores/authStore";
 import { useCartStore } from "../../../stores/cartStore";
 import Swal from "sweetalert2";
-import { createToaster } from "@meforma/vue-toaster";
+import { createToaster } from '../../../utils/notify';
 import axiosClient from "../../../api/axiosClient";
 import { useQuery, useQueryClient } from "@tanstack/vue-query";
 import { useSiteSettings } from "../../../composables/useSiteSettings";

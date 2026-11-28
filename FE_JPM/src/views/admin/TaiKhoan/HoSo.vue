@@ -148,7 +148,7 @@ import { ref, onMounted, computed } from 'vue';
 import { useRoute } from 'vue-router';
 import axiosClient from '../../../api/axiosClient';
 import { useAuthStore } from '../../../stores/authStore';
-import { createToaster } from "@meforma/vue-toaster";
+import { createToaster } from '../../../utils/notify';
 import Swal from 'sweetalert2';
 import { useMutation } from '@tanstack/vue-query';
 import { compressAvatar, formatBytes } from '../../../utils/imageOptimizer';

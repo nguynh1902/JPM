@@ -61,7 +61,7 @@ export const syncOfflineData = async (toaster) => {
   if (drafts.length === 0) return;
 
   if (toaster) {
-    toaster.info(`Đang đồng bộ ${drafts.length} bản ghi bị gián đoạn...`);
+    toaster.info(`Đang đồng bộ ${drafts.length} bản ghi ngoại tuyến...`);
   }
 
   for (const draft of drafts) {
@@ -82,7 +82,7 @@ export const syncOfflineData = async (toaster) => {
   }
 
   if (toaster) {
-    toaster.success('Đồng bộ dữ liệu Offline thành công!');
+    toaster.success('Đã đồng bộ dữ liệu ngoại tuyến thành công.');
   }
 };
 

@@ -72,6 +72,11 @@ const routes = [
     meta: { layout: "client" },
   },
   {
+    path: "/don-hang/:code",
+    component: () => import("../views/client/guest/DonHangKhach.vue"),
+    meta: { layout: "client" },
+  },
+  {
     path: "/tra-cuu-don-hang",
     component: () => import("../views/client/guest/TraCuuDonHang.vue"),
     meta: { layout: "client" },
@@ -158,6 +163,12 @@ const routes = [
     name: "PortalDonHang",
     component: () => import("../views/admin/BanHang/DonHang.vue"),
     meta: { layout: "admin", requiresAuth: true, permission: "Xem Đơn hàng" },
+  },
+  {
+    path: "/portal/don-hang/:id/hoa-don",
+    name: "PortalHoaDon",
+    component: () => import("../views/admin/BanHang/HoaDon.vue"),
+    meta: { layout: "blank", requiresAuth: true, permission: "Xem Đơn hàng" },
   },
   {
     path: "/portal/thanh-toan",

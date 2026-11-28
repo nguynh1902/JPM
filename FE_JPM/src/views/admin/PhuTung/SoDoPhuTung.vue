@@ -296,7 +296,7 @@ import axiosClient from '../../../api/axiosClient';
 import Swal from 'sweetalert2';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/vue-query';
 import { useAuthStore } from '../../../stores/authStore';
-import { createToaster } from "@meforma/vue-toaster";
+import { createToaster } from '../../../utils/notify';
 import { compressImage, formatBytes } from '../../../utils/imageOptimizer';
 
 export default {

@@ -785,7 +785,7 @@ export default {
     },
     async submitAddressForm() {
       if (!this.addressForm.ten_nguoi_nhan || !this.addressForm.so_dien_thoai || !this.addressForm.dia_chi_cu_the) {
-        if (this.$toast) this.$toast.error("Vui lòng nhập đầy đủ tên người nhận, số điện thoại và địa chỉ!");
+        if (this.$toast) this.$toast.warning("Vui lòng nhập đầy đủ tên người nhận, số điện thoại và địa chỉ.");
         return;
       }
       this.isSavingAddress = true;
@@ -967,15 +967,15 @@ export default {
         title: "Xác nhận xóa tài khoản",
         html: `Bạn có chắc chắn muốn XÓA tài khoản khách hàng <b>"${item.name}"</b>?<br><br><small class="text-danger">CẢNH BÁO: Dữ liệu liên kết có thể bị ảnh hưởng.</small>` ,
         icon: 'warning',
-          iconColor: '#dc3545',
+          iconColor: '#f82249',
         showCancelButton: true,
-        confirmButtonText: "XÓA tài khoản",
+        confirmButtonText: "Xóa tài khoản",
         cancelButtonText: "Hủy",
         reverseButtons: true,
         animation: false,
         customClass: {
           confirmButton: "btn btn-danger px-4 shadow-sm",
-          cancelButton: "btn btn-outline-secondary px-4 me-3",
+          cancelButton: "btn btn-outline-secondary px-4",
         },
         buttonsStyling: false,
       });
@@ -983,12 +983,12 @@ export default {
       if (result.isConfirmed) {
         this.deleteMutation.mutate(item.id, {
           onSuccess: () => {
-            if (this.$toast) this.$toast.success("Đã XÓA tài khoản!");
+            if (this.$toast) this.$toast.success("Đã xóa tài khoản khách hàng.");
           },
           onError: (err) => {
             if (this.$toast)
               this.$toast.error(
-                err.response?.data?.message || "Đã có lỗi xảy ra!",
+                err.response?.data?.message || "Không thể xóa tài khoản lúc này.",
               );
           },
         });

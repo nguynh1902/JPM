@@ -536,7 +536,7 @@ import { computed } from "vue";
 import { useAuthStore } from "../../../stores/authStore";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/vue-query";
 import Swal from "sweetalert2";
-import { createToaster } from "@meforma/vue-toaster";
+import { createToaster } from '../../../utils/notify';
 import { compressProductImage, formatBytes } from "../../../utils/imageOptimizer";
 
 export default {

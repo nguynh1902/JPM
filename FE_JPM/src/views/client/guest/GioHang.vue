@@ -465,7 +465,7 @@ import axiosClient from '../../../api/axiosClient'
 import { getImageUrl as resolveImageUrl } from '../../../utils/imageUrl'
 import { useQueryClient } from '@tanstack/vue-query'
 import Swal from 'sweetalert2'
-import { createToaster } from '@meforma/vue-toaster'
+import { createToaster } from '../../../utils/notify'
 
 export default {
   name: 'GioHang',

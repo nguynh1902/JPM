@@ -357,15 +357,25 @@
         <!-- Footer hỗ trợ -->
         <footer class="lux-doc-footer">
           <span class="lux-footer-hint">Cần hỗ trợ thêm về giao dịch này?</span>
-          <a
-            :href="buildZaloUrl('Chào JPM Marine, tôi cần hỗ trợ giao dịch #' + (result.data.ma_don_hang || result.data.ma_yeu_cau))"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="btn btn-outline-secondary lux-btn"
-          >
-            <i class="bi bi-chat-dots"></i>
-            <span>Liên hệ Zalo CSKH</span>
-          </a>
+          <div class="d-flex align-items-center gap-2 flex-wrap">
+            <router-link
+              v-if="result.type === 'order'"
+              :to="`/don-hang/${result.data.ma_don_hang}?phone=${encodeURIComponent(form.phone || result.data.khach_hang_sdt || '')}`"
+              class="btn btn-outline-primary lux-btn"
+            >
+              <i class="bi bi-receipt"></i>
+              <span>Xem &amp; In hóa đơn</span>
+            </router-link>
+            <a
+              :href="buildZaloUrl('Chào JPM Marine, tôi cần hỗ trợ giao dịch #' + (result.data.ma_don_hang || result.data.ma_yeu_cau))"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="btn btn-outline-secondary lux-btn"
+            >
+              <i class="bi bi-chat-dots"></i>
+              <span>Liên hệ Zalo CSKH</span>
+            </a>
+          </div>
         </footer>
       </article>
 
@@ -385,7 +395,7 @@
 <script>
 import axiosClient from '../../../api/axiosClient'
 import Swal from 'sweetalert2'
-import { createToaster } from '@meforma/vue-toaster'
+import { createToaster } from '../../../utils/notify'
 import { useSiteSettings } from '../../../composables/useSiteSettings'
 import DepositReportModal from '../../../components/client/DepositReportModal.vue'
 

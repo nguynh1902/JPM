@@ -540,7 +540,7 @@ import { ref, computed, watch, onMounted, onUnmounted } from 'vue';
 import { useRoute } from 'vue-router';
 import { useQuery } from '@tanstack/vue-query';
 import axiosClient from '../../../api/axiosClient';
-import { createToaster } from '@meforma/vue-toaster';
+import { createToaster } from '../../../utils/notify';
 
 const toaster = createToaster({ position: 'top-right', duration: 3000 });
 const FALLBACK = 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=1000&auto=format&fit=crop&q=80';

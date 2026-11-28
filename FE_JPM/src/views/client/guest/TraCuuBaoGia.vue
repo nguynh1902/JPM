@@ -290,95 +290,7 @@
             </div>
           </div>
 
-          <!-- 6. KHU VỰC VIETQR ĐẶT CỌC (CHỈ hiện sau khi khách đã Đồng ý chốt đơn & có yêu cầu cọc) -->
-          <div
-            v-if="showDepositSection"
-            ref="vietQrSection"
-            class="exdoc-vietqr-box"
-          >
-            <div class="exdoc-vietqr-head d-flex flex-wrap justify-content-between align-items-center gap-2">
-              <strong>THÔNG TIN CHUYỂN KHOẢN ĐẶT CỌC (VIETQR NAPAS 24/7)</strong>
-              <span v-if="isDepositReported" class="badge bg-primary-subtle text-primary border border-primary-subtle">
-                Chờ đối soát Sacombank
-              </span>
-              <span v-else-if="quote.trang_thai === 1" class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle">
-                Đã chốt · Chờ đặt cọc
-              </span>
-            </div>
-
-            <div v-if="vietQrData" class="exdoc-vietqr-grid">
-              <div class="exdoc-qr-side">
-                <div class="exdoc-qr-card">
-                  <img :src="vietQrData.qr_url" alt="VietQR Napas247" class="exdoc-qr-img">
-                  <div v-if="vietQrData.account_name || vietQrData.account_no" class="exdoc-qr-account">
-                    <div class="exdoc-qr-acc-name">{{ vietQrData.account_name }}</div>
-                    <div class="exdoc-qr-acc-no">{{ vietQrData.account_no }}</div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="exdoc-bank-side">
-                <div class="exdoc-bank-line">
-                  <span class="text-muted">Ngân hàng:</span>
-                  <strong>{{ vietQrData.bank_name }} ({{ vietQrData.bank_id }})</strong>
-                </div>
-                <div class="exdoc-bank-line">
-                  <span class="text-muted">Số tài khoản:</span>
-                  <strong class="font-monospace">{{ vietQrData.account_no }}</strong>
-                </div>
-                <div class="exdoc-bank-line">
-                  <span class="text-muted">Chủ tài khoản:</span>
-                  <strong>{{ vietQrData.account_name }}</strong>
-                </div>
-                <div class="exdoc-bank-line">
-                  <span class="text-muted">Số tiền cọc:</span>
-                  <strong class="text-danger exdoc-num">{{ formatCurrency(quote.tien_coc_yeu_cau) }}</strong>
-                </div>
-                <div class="exdoc-bank-line">
-                  <span class="text-muted">Nội dung CK:</span>
-                  <code class="exdoc-transfer-code">
-                    {{ vietQrData.transfer_content }}
-                  </code>
-                </div>
-                <div v-if="quote.trang_thai === 1 && !quote.is_expired" class="pt-3 no-print">
-                  <div v-if="isDepositReported" class="d-flex flex-wrap align-items-center justify-content-end gap-3">
-                    <a
-                      v-if="quote.anh_chuyen_khoan"
-                      :href="resolveImageUrl(quote.anh_chuyen_khoan)"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      class="d-inline-flex align-items-center gap-2 text-decoration-none border rounded p-1 bg-white"
-                      title="Xem lại ảnh biên lai đã gửi"
-                    >
-                      <img
-                        :src="resolveImageUrl(quote.anh_chuyen_khoan)"
-                        alt="Biên lai chuyển khoản"
-                        style="width: 44px; height: 44px; object-fit: cover; border-radius: 4px;"
-                      >
-                      <span class="small text-secondary fw-medium pe-1">Ảnh biên lai</span>
-                    </a>
-                    <div class="d-inline-flex align-items-center gap-2 text-primary fw-semibold small">
-                      <i class="bi bi-clock-history"></i>
-                      <span>
-                        Đã báo chuyển khoản{{ quote.thoi_gian_bao_coc ? ' lúc ' + formatDateTime(quote.thoi_gian_bao_coc) : '' }} — JPM đang đối soát Sacombank
-                      </span>
-                    </div>
-                  </div>
-                  <div v-else class="text-end">
-                    <button
-                      type="button"
-                      class="btn btn-sm btn-outline-success fw-semibold"
-                      @click="showDepositReportModal = true"
-                    >
-                      <i class="bi bi-receipt me-1"></i> Xác nhận đã chuyển cọc / Tải ảnh
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- 7. CHỮ KÝ CHỨNG TỪ (chỉ hiện sau khi JPM đã lập báo giá hoặc đã chốt đơn) -->
+          <!-- 6. CHỮ KÝ CHỨNG TỪ (chỉ hiện sau khi JPM đã lập báo giá hoặc đã chốt đơn) -->
           <div v-if="quote.trang_thai === 1 || quote.trang_thai === 2" class="exdoc-signatures">
             <div class="exdoc-sig-col">
               <div class="exdoc-sig-spacer">&nbsp;</div>
@@ -514,6 +426,94 @@
             </template>
           </footer>
         </article>
+
+        <!-- KHU VỰC VIETQR ĐẶT CỌC TÁCH RIÊNG BÊN DƯỚI TỜ BÁO GIÁ (Chỉ hiện khi đang chờ đặt cọc & ẩn khi in) -->
+        <section
+          v-if="showDepositSection"
+          ref="vietQrSection"
+          class="exdoc-deposit-card no-print"
+        >
+          <div class="exdoc-vietqr-head d-flex flex-wrap justify-content-between align-items-center gap-2">
+            <strong>THÔNG TIN CHUYỂN KHOẢN ĐẶT CỌC (VIETQR NAPAS 24/7)</strong>
+            <span v-if="isDepositReported" class="badge bg-primary-subtle text-primary border border-primary-subtle">
+              Chờ đối soát Sacombank
+            </span>
+            <span v-else class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle">
+              Đã chốt · Chờ đặt cọc
+            </span>
+          </div>
+
+          <div v-if="vietQrData" class="exdoc-vietqr-grid">
+            <div class="exdoc-qr-side">
+              <div class="exdoc-qr-card">
+                <img :src="vietQrData.qr_url" alt="VietQR Napas247" class="exdoc-qr-img">
+                <div v-if="vietQrData.account_name || vietQrData.account_no" class="exdoc-qr-account">
+                  <div class="exdoc-qr-acc-name">{{ vietQrData.account_name }}</div>
+                  <div class="exdoc-qr-acc-no">{{ vietQrData.account_no }}</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="exdoc-bank-side">
+              <div class="exdoc-bank-line">
+                <span class="text-muted">Ngân hàng:</span>
+                <strong>{{ vietQrData.bank_name }} ({{ vietQrData.bank_id }})</strong>
+              </div>
+              <div class="exdoc-bank-line">
+                <span class="text-muted">Số tài khoản:</span>
+                <strong class="font-monospace">{{ vietQrData.account_no }}</strong>
+              </div>
+              <div class="exdoc-bank-line">
+                <span class="text-muted">Chủ tài khoản:</span>
+                <strong>{{ vietQrData.account_name }}</strong>
+              </div>
+              <div class="exdoc-bank-line">
+                <span class="text-muted">Số tiền cọc:</span>
+                <strong class="text-danger exdoc-num">{{ formatCurrency(quote.tien_coc_yeu_cau) }}</strong>
+              </div>
+              <div class="exdoc-bank-line">
+                <span class="text-muted">Nội dung CK:</span>
+                <code class="exdoc-transfer-code">
+                  {{ vietQrData.transfer_content }}
+                </code>
+              </div>
+              <div class="pt-3">
+                <div v-if="isDepositReported" class="d-flex flex-wrap align-items-center justify-content-end gap-3">
+                  <a
+                    v-if="quote.anh_chuyen_khoan"
+                    :href="resolveImageUrl(quote.anh_chuyen_khoan)"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="d-inline-flex align-items-center gap-2 text-decoration-none border rounded p-1 bg-white"
+                    title="Xem lại ảnh biên lai đã gửi"
+                  >
+                    <img
+                      :src="resolveImageUrl(quote.anh_chuyen_khoan)"
+                      alt="Biên lai chuyển khoản"
+                      style="width: 44px; height: 44px; object-fit: cover; border-radius: 4px;"
+                    >
+                    <span class="small text-secondary fw-medium pe-1">Ảnh biên lai</span>
+                  </a>
+                  <div class="d-inline-flex align-items-center gap-2 text-primary fw-semibold small">
+                    <i class="bi bi-clock-history"></i>
+                    <span>
+                      Đã báo chuyển khoản{{ quote.thoi_gian_bao_coc ? ' lúc ' + formatDateTime(quote.thoi_gian_bao_coc) : '' }} — JPM đang đối soát Sacombank
+                    </span>
+                  </div>
+                </div>
+                <div v-else class="text-end">
+                  <button
+                    type="button"
+                    class="btn btn-sm btn-outline-success fw-semibold"
+                    @click="showDepositReportModal = true"
+                  >
+                    <i class="bi bi-receipt me-1"></i> Xác nhận đã chuyển cọc / Tải ảnh
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
       </template>
 
       <DepositReportModal
@@ -595,7 +595,8 @@ export default {
     showDepositSection() {
       return (
         this.quote &&
-        (this.quote.trang_thai === 1 || this.quote.trang_thai === 2) &&
+        Number(this.quote.trang_thai) === 1 &&
+        Number(this.quote.da_thu || 0) <= 0 &&
         Number(this.quote.tien_coc_yeu_cau || 0) > 0 &&
         !this.quote.is_expired &&
         (this.isCustomerAccepted || this.isDepositReported)
@@ -768,7 +769,7 @@ export default {
           }
           if (quoteData.vietqr_data) {
             this.vietQrData = quoteData.vietqr_data
-          } else if ((this.quote.trang_thai === 1 || this.quote.trang_thai === 2) && this.quote.tien_coc_yeu_cau > 0 && !this.quote.is_expired) {
+          } else if (Number(this.quote.trang_thai) === 1 && Number(this.quote.da_thu || 0) <= 0 && this.quote.tien_coc_yeu_cau > 0 && !this.quote.is_expired) {
             await this.loadVietQR()
           }
         } else {
@@ -1153,18 +1154,18 @@ export default {
 }
 
 .exdoc-field-label {
-  color: #475569;
-  font-weight: 600;
+  color: #64748b;
+  font-weight: 500;
   white-space: nowrap;
 }
 
 .exdoc-field-value {
   color: #0f172a;
-  font-weight: 500;
+  font-weight: 600;
 }
 
 .exdoc-customer-name-val {
-  font-size: 1.04rem;
+  font-size: 0.98rem;
   font-weight: 700;
   color: #0A1128;
 }
@@ -1279,7 +1280,9 @@ export default {
 }
 
 .exdoc-num {
-  font-variant-numeric: tabular-nums;
+  font-family: var(--jpm-font-family, 'Inter', sans-serif);
+  font-weight: 600;
+  color: #1e293b;
   white-space: nowrap;
 }
 
@@ -1293,10 +1296,7 @@ export default {
 }
 
 .exdoc-notes-section {
-  padding: 14px 16px;
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
+  padding: 6px 4px 4px 0;
 }
 
 .exdoc-notes-heading {
@@ -1381,11 +1381,13 @@ export default {
   color: #dc2626;
 }
 
-/* 6. VietQR tối giản */
-.exdoc-vietqr-box {
+/* 6. Khối VietQR tách riêng bên ngoài tờ chứng từ */
+.exdoc-deposit-card {
+  background: #ffffff;
   border: 1px solid #cbd5e1;
-  border-radius: 6px;
-  margin-bottom: 24px;
+  border-radius: 8px;
+  margin-top: 20px;
+  box-shadow: 0 4px 20px rgba(15, 23, 42, 0.06);
   overflow: hidden;
 }
 

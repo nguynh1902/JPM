@@ -443,9 +443,9 @@ export default {
     async saveData() {
       if (!this.formData.name || !this.formData.email || !this.formData.phone || !this.formData.role) {
         if (this.$toast) {
-          this.$toast.error("Vui lòng nhập đầy đủ các thông tin bắt buộc!");
+          this.$toast.warning("Vui lòng nhập đầy đủ các thông tin bắt buộc.");
         } else {
-          Swal.fire('Lỗi', 'Vui lòng nhập đầy đủ các thông tin bắt buộc!', 'error');
+          Swal.fire('Thiếu thông tin', 'Vui lòng nhập đầy đủ các thông tin bắt buộc.', 'warning');
         }
         return;
       }
@@ -499,11 +499,11 @@ export default {
             confirmButtonText: 'Đã lưu'
           });
         } else if (this.$toast) {
-          this.$toast.success(this.isEditMode ? "Cập nhật thành công!" : "Đã thêm mới!");
+          this.$toast.success(this.isEditMode ? "Đã cập nhật thông tin nhân viên." : "Đã thêm nhân viên mới.");
         }
         this.closeModal();
       } catch (error) {
-        if (this.$toast) this.$toast.error(error.response?.data?.message || "Đã có lỗi xảy ra!");
+        if (this.$toast) this.$toast.error(error.response?.data?.message || "Không thể lưu thông tin nhân viên.");
       } finally {
         this.isSubmitting = false;
       }
@@ -511,26 +511,26 @@ export default {
     async confirmDelete(item) {
       const result = await Swal.fire({
         title: 'Xác nhận xóa tài khoản',
-          html: `Bạn có chắc chắn muốn XÓA tài khoản nhân viên <b>"${item.name}"</b>?<br><br><small class="text-danger">CẢNH BÁO: Dữ liệu liên kết có thể bị ảnh hưởng.</small>` ,
+          html: `Bạn có chắc chắn muốn xóa tài khoản nhân viên <b>"${item.name}"</b>?<div class="mt-2 small text-danger">Lưu ý: Dữ liệu liên kết có thể bị ảnh hưởng.</div>`,
           icon: 'warning',
-          iconColor: '#dc3545',
+          iconColor: '#f82249',
           showCancelButton: true,
-          confirmButtonText: 'XÓA tài khoản',
+          confirmButtonText: 'Xóa tài khoản',
           cancelButtonText: 'Hủy',
           reverseButtons: true,
           animation: false,
           customClass: {
             popup: 'swal-shift-up',
             confirmButton: 'btn btn-danger px-4 shadow-sm',
-            cancelButton: 'btn btn-outline-secondary px-4 me-3'
+            cancelButton: 'btn btn-outline-secondary px-4'
           },
           buttonsStyling: false
       });
 
       if (result.isConfirmed) {
         this.deleteMutation.mutate(item.id, {
-          onSuccess: () => { if (this.$toast) this.$toast.success("Đã XÓA tài khoản!"); },
-          onError: (err) => { if (this.$toast) this.$toast.error(err.response?.data?.message || "Đã có lỗi xảy ra!"); }
+          onSuccess: () => { if (this.$toast) this.$toast.success("Đã xóa tài khoản nhân viên."); },
+          onError: (err) => { if (this.$toast) this.$toast.error(err.response?.data?.message || "Không thể xóa tài khoản lúc này."); }
         });
       }
     },

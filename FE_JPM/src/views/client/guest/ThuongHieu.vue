@@ -274,7 +274,7 @@ import { computed, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useQuery, useQueryClient } from '@tanstack/vue-query';
 import Swal from 'sweetalert2';
-import { createToaster } from '@meforma/vue-toaster';
+import { createToaster } from '../../../utils/notify';
 import axiosClient from '../../../api/axiosClient';
 import { useAuthStore } from '../../../stores/authStore';
 import JpmSelect from '../../../components/client/JpmSelect.vue';

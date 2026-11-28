@@ -421,7 +421,7 @@ import { ref, computed, watch, onMounted, onUnmounted, nextTick } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useQuery, useMutation } from '@tanstack/vue-query';
 import axiosClient from '../../../api/axiosClient';
-import { createToaster } from '@meforma/vue-toaster';
+import { createToaster } from '../../../utils/notify';
 import { useCartStore } from '../../../stores/cartStore';
 import ProductCard from '../../../components/client/ProductCard.vue';
 import GLightbox from 'glightbox';

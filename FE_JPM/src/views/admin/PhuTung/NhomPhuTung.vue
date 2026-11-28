@@ -144,7 +144,7 @@ import axiosClient from '../../../api/axiosClient';
 import { computed } from 'vue';
   import { useAuthStore } from '../../../stores/authStore';
   import { useQuery, useMutation, useQueryClient } from '@tanstack/vue-query';
-import { createToaster } from "@meforma/vue-toaster";
+import { createToaster } from '../../../utils/notify';
 import Swal from 'sweetalert2';
 
 export default {

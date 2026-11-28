@@ -218,7 +218,7 @@ function handleAddToCart() {
   if (!props.product || isOutOfStock.value) return;
   cartStore.addItem(props.product);
   if (toast) {
-    toast.success(`Đã thêm "${productName.value}" vào giỏ hàng!`);
+    toast.success(`Đã thêm "${productName.value}" vào giỏ hàng.`);
   }
   emit('add-to-cart', props.product);
 }
@@ -227,7 +227,7 @@ function handleRequestQuote() {
   if (!props.product) return;
   cartStore.addItem(props.product);
   if (toast) {
-    toast.info(`Đã thêm "${productName.value}" vào danh sách yêu cầu báo giá!`);
+    toast.info(`Đã thêm "${productName.value}" vào danh sách yêu cầu báo giá.`);
   }
   emit('request-quote', props.product);
 }

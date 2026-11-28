@@ -12,6 +12,7 @@ use App\Domain\Procurement\Models\TonKho;
 use App\Domain\Procurement\Models\TheKho;
 use App\Domain\IAM\Models\KhachHang;
 use App\Domain\Core\Services\ImageUploadService;
+use App\Domain\Sales\Services\JapanPoExportService;
 use App\Domain\Sales\Services\OrderService;
 
 class DonHangController extends Controller
@@ -245,6 +246,14 @@ class DonHangController extends Controller
             if ($request->filled('dia_chi_text') || $request->filled('address')) {
                 $donHang->dia_chi_text = $request->input('dia_chi_text', $request->input('address'));
             }
+            if ($request->has('ten_don_vi_van_chuyen')) {
+                $carrier = trim((string) $request->input('ten_don_vi_van_chuyen'));
+                $donHang->ten_don_vi_van_chuyen = $carrier !== '' ? $carrier : null;
+            }
+            if ($request->has('ma_van_don')) {
+                $tracking = trim((string) $request->input('ma_van_don'));
+                $donHang->ma_van_don = $tracking !== '' ? $tracking : null;
+            }
             if ($request->has('anh_chuyen_khoan') || $request->has('receipt_image')) {
                 $donHang->anh_chuyen_khoan = $request->input('anh_chuyen_khoan', $request->input('receipt_image'));
             }
@@ -299,89 +308,46 @@ class DonHangController extends Controller
     }
 
     /**
-     * Admin: Xuất file Excel/CSV gom đơn đặt hàng sang đối tác Nhật Bản (Purchase Order - PO)
+     * Admin: Xuất file Excel (.xlsx) gom đơn đặt hàng sang đối tác Nhật Bản (Purchase Order - PO)
      */
     public function exportJapanPO(Request $request)
     {
-        $query = DonHang::with(['chiTiet.phuTung.thuongHieu', 'chiTiet.sanPham']);
+        $query = DonHang::with(['khachHang', 'chiTiet.phuTung.thuongHieu', 'chiTiet.sanPham']);
 
-        // Cho phép lọc theo danh sách ID đơn cụ thể hoặc mặc định gom các đơn đã cọc/chờ nhập hàng
-        if ($request->has('order_ids') && is_array($request->order_ids)) {
-            $query->whereIn('id', $request->order_ids);
+        $rawOrderIds = $request->input('order_ids', []);
+        if (is_string($rawOrderIds) && $rawOrderIds !== '') {
+            $rawOrderIds = array_filter(array_map('intval', explode(',', $rawOrderIds)));
+        } elseif (is_array($rawOrderIds)) {
+            $rawOrderIds = array_values(array_filter(array_map('intval', $rawOrderIds)));
         } else {
-            $query->whereIn('trang_thai', [0, 1]);
+            $rawOrderIds = [];
         }
 
-        $totalOrders = (clone $query)->count();
-        $ordersCursor = $query->orderBy('created_at', 'desc')->lazy(200);
+        // Nếu Admin có chọn đơn cụ thể -> xuất đúng các đơn đó (bỏ đơn đã hủy);
+        // mặc định chỉ xuất các đơn Đang Xử Lý (trang_thai = 1, đã xác nhận / đã nhận cọc).
+        if (!empty($rawOrderIds)) {
+            $query->whereIn('id', $rawOrderIds)->where('trang_thai', '!=', 4);
+        } else {
+            $query->where('trang_thai', 1);
+        }
 
-        $filename = 'JPM_PO_JAPAN_' . date('Ymd_His') . '.csv';
+        $orders = $query->orderBy('created_at', 'desc')->get();
+        if ($orders->isEmpty()) {
+            return response()->json([
+                'success' => false,
+                'message' => !empty($rawOrderIds)
+                    ? 'Không tìm thấy đơn hàng hợp lệ trong danh sách đã chọn để xuất PO.'
+                    : 'Hiện chưa có đơn hàng Đang Xử Lý nào để xuất PO đặt hàng Nhật.'
+            ], 422);
+        }
 
-        $headers = [
-            'Content-Type' => 'text/csv; charset=UTF-8',
-            'Content-Disposition' => "attachment; filename=\"$filename\"",
-            'Pragma' => 'no-cache',
-            'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
-            'Expires' => '0',
-        ];
+        $xlsxPath = app(JapanPoExportService::class)->buildWorkbook($orders);
+        $filename = 'JPM_PO_Nhat_' . date('Ymd_His') . '.xlsx';
 
-        $sanitizeCsv = static function ($value): string {
-            $str = (string) ($value ?? '');
-            if ($str !== '' && preg_match('/^[=+\-@\t\r]/', $str)) {
-                return "'" . $str;
-            }
-            return $str;
-        };
-
-        $callback = function () use ($ordersCursor, $totalOrders, $sanitizeCsv) {
-            $output = fopen('php://output', 'w');
-
-            // Ghi UTF-8 BOM để Excel hiển thị đúng dấu tiếng Việt / tiếng Nhật
-            fprintf($output, chr(0xEF) . chr(0xBB) . chr(0xBF));
-
-            fputcsv($output, ['JPM MARINE - PURCHASE ORDER (PO) TO JAPAN SUPPLIER']);
-            fputcsv($output, ['Export Date', date('Y-m-d H:i:s'), 'Total Orders', $totalOrders]);
-            fputcsv($output, []);
-
-            fputcsv($output, [
-                'STT (No.)',
-                'Mã Đơn Hàng (Order Ref)',
-                'Mã Phụ Tùng (Part Number OEM)',
-                'Tên Phụ Tùng (Part Name Description)',
-                'Số Lượng (Qty)',
-                'Thương Hiệu / Hãng (Brand)',
-                'Ghi Chú Đời Máy (Engine Model / Note)',
-                'Tên Khách Hàng (Customer)',
-                'Ngày Cọc (Deposit Date)'
-            ]);
-
-            $stt = 1;
-            foreach ($ordersCursor as $order) {
-                foreach ($order->chiTiet as $item) {
-                    $partNo = $item->ma_phu_tung ?? ($item->phuTung->ma_phu_tung ?? $item->sanPham->ma_san_pham ?? 'N/A');
-                    $partName = $item->ten_phu_tung ?? ($item->phuTung->ten_phu_tung ?? $item->sanPham->ten_san_pham ?? 'Không rõ');
-                    $brand = $item->phuTung->thuongHieu->ten_thuong_hieu ?? 'Yamaha / Yanmar / Mercury';
-
-                    $engineModelNote = trim(($item->model_may ? '[Model: ' . $item->model_may . '] ' : '') . ($order->ghi_chu_khach_hang ?? 'Theo tiêu chuẩn nhà sản xuất'));
-
-                    fputcsv($output, [
-                        $stt++,
-                        $sanitizeCsv($order->ma_don_hang),
-                        $sanitizeCsv($partNo),
-                        $sanitizeCsv($partName),
-                        (int) $item->so_luong,
-                        $sanitizeCsv($brand),
-                        $sanitizeCsv($engineModelNote),
-                        $sanitizeCsv($order->khach_hang_ten),
-                        $order->created_at ? $order->created_at->format('Y-m-d H:i') : ''
-                    ]);
-                }
-            }
-
-            fclose($output);
-        };
-
-        return response()->stream($callback, 200, $headers);
+        return response()->download($xlsxPath, $filename, [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            'Cache-Control' => 'no-store, no-cache, must-revalidate',
+        ])->deleteFileAfterSend(true);
     }
 
     /**
@@ -591,8 +557,27 @@ class DonHangController extends Controller
         try {
             $donHang = DonHang::lockForUpdate()->findOrFail($id);
             
-            $donHang->ma_van_don = $request->input('ma_van_don', $donHang->ma_van_don);
-            $donHang->ten_don_vi_van_chuyen = $request->input('ten_don_vi_van_chuyen') ?: ($donHang->ten_don_vi_van_chuyen ?: null);
+            if ($request->has('ma_van_don')) {
+                $tracking = trim((string) $request->input('ma_van_don'));
+                $donHang->ma_van_don = $tracking !== '' ? $tracking : null;
+            }
+            if ($request->has('ten_don_vi_van_chuyen')) {
+                $carrier = trim((string) $request->input('ten_don_vi_van_chuyen'));
+                $donHang->ten_don_vi_van_chuyen = $carrier !== '' ? $carrier : 'Giao trực tiếp / Chành xe';
+            } elseif (!$donHang->ten_don_vi_van_chuyen) {
+                $donHang->ten_don_vi_van_chuyen = 'Giao trực tiếp / Chành xe';
+            }
+            if ($request->filled('dia_chi_text') || $request->filled('address')) {
+                $donHang->dia_chi_text = $request->input('dia_chi_text', $request->input('address'));
+            }
+            if ($request->has('ten_don_vi_van_chuyen')) {
+                $carrier = trim((string) $request->input('ten_don_vi_van_chuyen'));
+                $donHang->ten_don_vi_van_chuyen = $carrier !== '' ? $carrier : null;
+            }
+            if ($request->has('ma_van_don')) {
+                $tracking = trim((string) $request->input('ma_van_don'));
+                $donHang->ma_van_don = $tracking !== '' ? $tracking : null;
+            }
             
             $totalPayable = (float) ($donHang->tong_tien + ($donHang->khach_tu_tra_cuoc ? 0 : ($donHang->phi_van_chuyen ?? 0)));
             $daThu = (float) ($donHang->da_thu ?? 0);

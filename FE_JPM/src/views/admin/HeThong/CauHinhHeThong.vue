@@ -595,7 +595,7 @@
 import { ref, reactive, computed, watch, onMounted } from 'vue';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/vue-query';
 import axiosClient from '../../../api/axiosClient';
-import { createToaster } from '@meforma/vue-toaster';
+import { createToaster } from '../../../utils/notify';
 import { compressImage } from '../../../utils/imageOptimizer';
 
 export default {

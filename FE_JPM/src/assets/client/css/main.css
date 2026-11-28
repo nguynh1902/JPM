@@ -6205,7 +6205,12 @@ a.btn-shopee-outline:hover {
 }
 
 @media print {
-  .no-print { display: none !important; }
+  .no-print,
+  #header,
+  .footer-wrapper,
+  .floating-contact-actions,
+  .scroll-top { display: none !important; }
+  .main-inner-page { padding-top: 0 !important; }
   .lux-doc-sheet {
     border: none !important;
     box-shadow: none !important;

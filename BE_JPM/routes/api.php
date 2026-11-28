@@ -371,7 +371,7 @@ Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
         // Xem Đơn hàng, Báo giá & Xuất PO Nhật
         Route::get('admin/yeu-cau-bao-gia', [\App\Domain\Sales\Controllers\YeuCauBaoGiaController::class, 'index']);
         Route::get('admin/yeu-cau-bao-gia/{id}', [\App\Domain\Sales\Controllers\YeuCauBaoGiaController::class, 'show']);
-        Route::get('admin/don-hang/xuat-excel-po-nhat', [\App\Domain\Sales\Controllers\DonHangController::class, 'exportJapanPO']);
+        Route::match(['get', 'post'], 'admin/don-hang/xuat-excel-po-nhat', [\App\Domain\Sales\Controllers\DonHangController::class, 'exportJapanPO']);
         Route::get('admin/don-hang', [\App\Domain\Sales\Controllers\DonHangController::class, 'index']);
         Route::get('admin/don-hang/{id}', [\App\Domain\Sales\Controllers\DonHangController::class, 'show']);
 

@@ -298,7 +298,7 @@ import { useQuery } from '@tanstack/vue-query';
 import axiosClient from '../../../api/axiosClient';
 import { useRoute, useRouter } from 'vue-router';
 import { useCartStore } from '../../../stores/cartStore';
-import { createToaster } from '@meforma/vue-toaster';
+import { createToaster } from '../../../utils/notify';
 import { useSiteSettings } from '../../../composables/useSiteSettings';
 import ProductCard from '../../../components/client/ProductCard.vue';
 import JpmSelect from '../../../components/client/JpmSelect.vue';

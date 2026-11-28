@@ -103,7 +103,7 @@ class TraCuuController extends Controller
         $phone = trim($request->phone);
 
         // Check if it's an Order (Don Hang)
-        $order = \App\Domain\Sales\Models\DonHang::with('chiTiet')
+        $order = \App\Domain\Sales\Models\DonHang::with(['chiTiet.phuTung', 'chiTiet.sanPham', 'diaChi'])
             ->where('ma_don_hang', $code)
             ->where('khach_hang_sdt', $phone)
             ->first();

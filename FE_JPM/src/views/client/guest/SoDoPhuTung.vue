@@ -428,7 +428,7 @@ import { useRoute, useRouter } from 'vue-router';
 import { useQuery } from '@tanstack/vue-query';
 import axiosClient from '../../../api/axiosClient';
 import { useCartStore } from '../../../stores/cartStore';
-import { createToaster } from '@meforma/vue-toaster';
+import { createToaster } from '../../../utils/notify';
 
 const route = useRoute();
 const router = useRouter();

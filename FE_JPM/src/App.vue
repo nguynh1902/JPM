@@ -2,27 +2,44 @@
   <component :is="layout">
     <router-view />
   </component>
+  <Toaster
+    position="top-right"
+    :offset="toastOffset"
+    :mobile-offset="{ top: '14px', left: '14px', right: '14px' }"
+    :visible-toasts="4"
+    :gap="10"
+    rich-colors
+  />
 </template>
 
 <script>
+import { Toaster } from 'vue-sonner'
 import { useAuthStore } from './stores/authStore'
 import { useCartStore } from './stores/cartStore'
 import { setupOfflineListener, syncOfflineData } from './utils/offlineSyncService'
-import { createToaster } from '@meforma/vue-toaster'
+import { notify } from './utils/notify'
 
 export default {
+  components: {
+    Toaster
+  },
   computed: {
     layout() {
       return (this.$route.meta.layout || "client") + "-layout";
+    },
+    toastOffset() {
+      const currentLayout = this.$route.meta?.layout || 'client';
+      return currentLayout === 'client'
+        ? { top: '76px', right: '20px' }
+        : { top: '16px', right: '20px' };
     },
     authStore() {
       return useAuthStore();
     }
   },
   created() {
-    const toaster = createToaster({ position: "top-right" });
-    setupOfflineListener(toaster);
-    syncOfflineData(toaster);
+    setupOfflineListener(notify);
+    syncOfflineData(notify);
 
     // Luôn gọi ngầm API để lấy dữ liệu User mới nhất (Stale-While-Revalidate)
     if (this.authStore.token) {
@@ -45,7 +62,7 @@ export default {
       immediate: true,
       handler(layout) {
         const layoutName = layout || 'client';
-        document.body.classList.remove('layout-client', 'layout-admin', 'layout-auth');
+        document.body.classList.remove('layout-client', 'layout-admin', 'layout-auth', 'layout-blank');
         document.body.classList.add(`layout-${layoutName}`);
       }
     }
